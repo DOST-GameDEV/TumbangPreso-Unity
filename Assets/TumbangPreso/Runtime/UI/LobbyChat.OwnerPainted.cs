@@ -18,6 +18,7 @@ namespace TumbangPreso.UI
             _ownerVisibility.alpha=shown?1:0;_ownerVisibility.interactable=shown;_ownerVisibility.blocksRaycasts=shown;
             if(!shown){Close();CloseHistory();}
             if(_field!=null)_field.interactable=shown;
+            if(changed)PresentLobbyColumn(shown);
             if(changed)PresentedChanged?.Invoke(shown);
         }
         public void PlaceLobbyColumn()
@@ -26,11 +27,12 @@ namespace TumbangPreso.UI
             // Keep the chat in the lobby's centered room columns on every canvas width.
             _rect.anchorMin=_rect.anchorMax=new Vector2(.5f,0);
             _rect.pivot=Vector2.zero;
-            _rect.anchoredPosition=new Vector2(Hub.HubLobby.RoomChatLeft,220);
-            _rect.sizeDelta=new Vector2(Hub.HubLobby.RoomChatWidth,_rect.sizeDelta.y);
+            _rect.anchoredPosition=new Vector2(Hub.HubLobby.RoomChatLeft,Hub.HubLobby.RoomColumnBottom);
+            _rect.sizeDelta=new Vector2(Hub.HubLobby.RoomChatWidth,_lobbyColumn?Hub.HubLobby.RoomColumnHeight:_rect.sizeDelta.y);
         }
         private void ConstructNative()
         {
+            if(!_inMatch){ConstructLobbyColumn();return;}
             _nativeChat=true;_rect=gameObject.AddComponent<RectTransform>();
             gameObject.AddComponent<OwnerUiCanvas>();
             _rect.anchorMin=_rect.anchorMax=_rect.pivot=Vector2.zero;
@@ -92,6 +94,7 @@ namespace TumbangPreso.UI
         }
         private void SetNativeLines()
         {
+            if(_lobbyColumn){DrawLobbyColumn();return;}
             if(!_inMatch)
             {
                 int first=Mathf.Max(0,_history.Count-LobbyVisibleLines);

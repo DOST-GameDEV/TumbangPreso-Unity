@@ -480,6 +480,7 @@ namespace TumbangPreso.UI
                     ScreenTakeover.ConsumeEscape();
                     _historyPanel.SetActive(false);
                 }
+                AnimateLobbyColumn();
                 return;
             }
 
@@ -615,6 +616,7 @@ namespace TumbangPreso.UI
 
             if (!_inMatch)
             {
+                CountRoomLine();
                 SetLines();
                 RefreshHistoryPanel();
 

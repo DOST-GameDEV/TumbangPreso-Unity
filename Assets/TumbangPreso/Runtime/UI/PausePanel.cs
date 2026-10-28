@@ -90,6 +90,7 @@ namespace TumbangPreso.UI
         {
             RefreshTrainingRange();
             if (Canvas != null) Canvas.gameObject.SetActive(true);
+            ResetLiveMenu();
             // End a transient hitstop before saving the actual requested match speed.
             // A presentation hold retains this request until its own release.
             _pausedOffline = !SceneFlow.Networked && !(Net.NetSession.Instance?.IsNetworked ?? false);

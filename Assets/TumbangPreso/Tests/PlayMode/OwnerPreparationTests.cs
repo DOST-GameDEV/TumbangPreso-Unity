@@ -169,16 +169,11 @@ namespace TumbangPreso.PlayTests
                 foreach(var size in TumpUiCapture.HudViewports)
                     yield return TumpUiCapture.Capture("RoomChat-compact-"+size.x+"x"+size.y,canvas,size.x,size.y,false,
                         checkActionBounds:true,inspectViewport:()=>AssertRoomChatLayout(canvas,chat,false));
-                Press("ChatHistoryButton");yield return null;
-                Assert.IsTrue(TumpHub.Current.Canvas.enabled, "Nested chat history must not hide its parent canvas.");
+                // The column is the history now: the whole log, not a two-line strip with a door.
                 var transcript=chat.GetComponentsInChildren<Text>().First(t=>t.name=="FullTranscript");
                 StringAssert.Contains("Local test note",transcript.text);
-                foreach(var size in TumpUiCapture.HudViewports)
-                    yield return TumpUiCapture.Capture("RoomChat-history-"+size.x+"x"+size.y,canvas,size.x,size.y,false,
-                        checkActionBounds:true,inspectViewport:()=>AssertRoomChatLayout(canvas,chat,true));
-                Press("ChatHistoryBack");yield return null;
-                Assert.True(chat.IsPresented,"Closing history keeps the compact room chat open.");
-                AssertRoomChatLayout(canvas,chat,false);
+                Assert.IsFalse(canvas.transform.Find("Screens/HubLobby/MatchCard").gameObject.activeSelf,
+                    "The chat takes the MATCH card's column while it is open.");
                 Press("ChatDoor");yield return null;
                 Assert.False(chat.IsPresented);Assert.True(chat.isActiveAndEnabled);
                 AssertRoomChatCentered(canvas);
@@ -192,11 +187,6 @@ namespace TumbangPreso.PlayTests
                 foreach(var size in new[]{new Vector2Int(960,540),TumpUiCapture.OwnerWindow})
                     yield return TumpUiCapture.Capture("RoomChat-large-compact-"+size.x+"x"+size.y,canvas,size.x,size.y,false,
                         checkActionBounds:true,inspectViewport:()=>AssertRoomChatLayout(canvas,chat,false));
-                Press("ChatHistoryButton");yield return null;
-                foreach(var size in new[]{new Vector2Int(960,540),TumpUiCapture.OwnerWindow})
-                    yield return TumpUiCapture.Capture("RoomChat-large-history-"+size.x+"x"+size.y,canvas,size.x,size.y,false,
-                        checkActionBounds:true,inspectViewport:()=>AssertRoomChatLayout(canvas,chat,true));
-                Press("ChatHistoryBack");yield return null;
                 Press("CloseChatButton");yield return null;
                 AssertRoomChatCentered(canvas);
 
@@ -214,6 +204,12 @@ namespace TumbangPreso.PlayTests
                 Press("ChatDoor");yield return null;
                 Press("BackButton");yield return null;yield return null;
                 Assert.False(chat.IsPresented,"Leaving the room must close its chat.");
+                // The host is asked first: leaving closes the room for everyone in it.
+                Assert.IsInstanceOf<HubRoomClosePopup>(TumpHub.Current.Top);
+                Press("KeepRoom");yield return null;
+                Assert.IsInstanceOf<HubLobby>(TumpHub.Current.Top,"KEEP ROOM keeps the host in the room.");
+                Press("BackButton");yield return null;
+                Press("CloseRoom");yield return null;yield return null;
                 Assert.IsInstanceOf<HubHome>(TumpHub.Current.Top);
             }
             finally
@@ -225,9 +221,12 @@ namespace TumbangPreso.PlayTests
 
         private static void AssertRoomChatCentered(Canvas canvas)
         {
+            // The host's seats keep their column whether the chat is open or not; the chat swaps with
+            // the MATCH card beside them.
             var players=(RectTransform)canvas.transform.Find("Screens/HubLobby/Players");
             Assert.IsNotNull(players);
-            Assert.That(players.anchoredPosition.x,Is.EqualTo(0).Within(.1f));
+            Assert.That(players.anchoredPosition.x,Is.EqualTo(-454).Within(.1f));
+            Assert.IsTrue(canvas.transform.Find("Screens/HubLobby/MatchCard").gameObject.activeSelf);
         }
 
         private static void AssertRoomChatLayout(Canvas canvas,LobbyChat chat,bool history)
@@ -237,12 +236,11 @@ namespace TumbangPreso.PlayTests
             Assert.IsNotNull(lobby);
             var players=(RectTransform)lobby.Find("Players");
             var compact=(RectTransform)chat.transform;
-            var visible=history?(RectTransform)chat.transform.Find("OwnerChatHistory"):compact;
+            var visible=compact;
             Assert.IsNotNull(visible);
             Assert.That(players.anchoredPosition.x,Is.EqualTo(-454).Within(.1f));
             var chatBounds=RoomRect(root,visible);
-            foreach(var name in new[]{"Players","StartGame","MapDoor","ChatDoor","SettingsDoor",
-                "CharacterDoor","CodeChip","Address","Heading","MapLine","Status"})
+            foreach(var name in new[]{"Players","StartGame","ChatDoor","CharacterDoor","CodeChip","Status"})
             {
                 var other=lobby.Find(name) as RectTransform;
                 Assert.IsNotNull(other,name);
@@ -261,13 +259,8 @@ namespace TumbangPreso.PlayTests
                 Assert.That(bounds.yMax,Is.LessThanOrEqualTo(panelBounds.yMax+1));
                 Assert.IsFalse(chatBounds.Overlaps(bounds),"Chat hides Seat"+i);
             }
-            if(history)
-            {
-                Assert.True(visible.gameObject.activeInHierarchy);
-                Assert.IsNotNull(visible.Find("ChatHistoryBack"));
-                Assert.IsNotNull(visible.Find("ChatHistoryScroll"));
-                Assert.IsFalse(RoomRect(root,compact).Overlaps(panelBounds));
-            }
+            Assert.IsNotNull(visible.Find("ChatSheet/ChatHistoryScroll"),"The column carries the scrollable log.");
+            Assert.IsNotNull(visible.Find("ChatSheet/ChatFieldRow/SendChat"),"The column carries its SEND sticker.");
             Assert.That(chatBounds.xMin,Is.GreaterThanOrEqualTo(root.rect.xMin-1));
             Assert.That(chatBounds.xMax,Is.LessThanOrEqualTo(root.rect.xMax+1));
         }

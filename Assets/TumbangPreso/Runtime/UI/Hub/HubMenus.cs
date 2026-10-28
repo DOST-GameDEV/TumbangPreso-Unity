@@ -110,25 +110,33 @@ namespace TumbangPreso.UI.Hub
         {
             var panel = HubCards.Panel(Root, this, "PICTURE", "Pick the face your name plate wears.", new Vector2(1320, 760));
 
+            // ⚠️ THE LARGE PICTURE IS HELD NEAR ITS ART'S OWN SIZE (owner 2026-10-28: "so pixelated").
+            // The avatars are 256 px; drawn 408 wide they were stretched 1.6 times. At 384 the frame
+            // still leads the panel, and it is centred on the grid's height beside it.
             var frame = HubKit.Shape(panel, "BigFrame", HubStyle.Golden, false, 161, 6, 30);
-            HubKit.Place(frame.rectTransform, HubKit.BottomLeft, new Vector2(48, 60), new Vector2(460, 460));
+            HubKit.Place(frame.rectTransform, HubKit.BottomLeft, new Vector2(68, 110), new Vector2(420, 420));
             _big = HubKit.Picture(frame.transform, "Picture", null);
-            HubKit.Stretch(_big.rectTransform, 26);
+            HubKit.Stretch(_big.rectTransform, 18);
 
-            var grid = HubKit.Place(HubKit.Rect(panel, "Grid"), HubKit.BottomRight, new Vector2(-48, 60), new Vector2(690, 460));
-            // The grid sizes its tiles to the set: five across, as many rows as it takes, each tile
-            // as large as the 690 by 460 area allows (20 pictures: 106 units).
-            const int columns = 5; const float gap = 12;
+            // ⚠️ SIX ACROSS, AS LARGE AS THE AREA ALLOWS, AND CENTRED IN IT (owner 2026-10-28: "so off
+            // center or not even kita"). Five across with a row gap tuned for 20 pictures left the 22 of
+            // today in five rows of 76-unit tiles pinned to the area's top-left, with a third of the
+            // area empty on the right. The block is measured and set in the middle of its area.
+            const float areaW = 700, areaH = 520, gap = 14;
+            var grid = HubKit.Place(HubKit.Rect(panel, "Grid"), HubKit.BottomRight, new Vector2(-48, 60), new Vector2(areaW, areaH));
+            const int columns = 6;
             int rows = (Avatars.Ids.Length + columns - 1) / columns;
-            float size = Mathf.Min((690 - gap * (columns - 1)) / columns, (460 - (gap + 8) * (rows - 1)) / rows);
+            float size = Mathf.Floor(Mathf.Min((areaW - gap * (columns - 1)) / columns, (areaH - gap * (rows - 1)) / rows));
+            float blockW = columns * size + (columns - 1) * gap, blockH = rows * size + (rows - 1) * gap;
+            var origin = new Vector2((areaW - blockW) * 0.5f, -(areaH - blockH) * 0.5f);
             for (int i = 0; i < Avatars.Ids.Length; i++)
             {
                 string id = Avatars.Ids[i];
                 int col = i % columns, row = i / columns;
                 var tile = HubKit.Button(grid, "Avatar_" + id, null, HubStyle.Night, () => Choose(id), 0, 170 + i);
-                HubKit.Place((RectTransform)tile.transform, HubKit.TopLeft, new Vector2(col * (size + gap), -row * (size + gap + 8)), new Vector2(size, size));
+                HubKit.Place((RectTransform)tile.transform, HubKit.TopLeft, origin + new Vector2(col * (size + gap), -row * (size + gap)), new Vector2(size, size));
                 var face = HubKit.Picture(tile.Body, "Face", Avatars.Get(id));
-                HubKit.Stretch(face.rectTransform, 9);
+                HubKit.Stretch(face.rectTransform, 8);
                 _tiles.Add(tile);
             }
             Show();

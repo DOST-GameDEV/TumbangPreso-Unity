@@ -436,14 +436,25 @@ namespace TumbangPreso.UI.Hub
     }
 
     /// <summary>
-    /// GAME LOBBY: BACK, the lobby's name, the map behind everything, the players n/4 with their
-    /// portraits and the host marked, START GAME, and the character and settings icons bottom right.
+    /// GAME LOBBY, the custom room. Rebuilt 2026-10-28 from the room UX pass
+    /// (`docs/reports/lobby-ui-2026-10-28/ux-research.md`): one room for every role, where the
+    /// host gets controls in the places everyone else gets a summary.
+    ///
+    ///   host       players panel on the left, the MATCH card on the right (map previous/next,
+    ///              mode, network, rules, the LAN firewall notice), START GAME
+    ///   joined     the players panel alone, centred, under a one-line summary of the match
+    ///              (owner, 2026-10-28: "summary nalang dapat pag joined"), READY
+    ///   spectator  the joined view with no primary; the status line says what happens next
+    ///
+    /// CHAT opens in the right-hand column: in place of the host's MATCH card, or beside a joined
+    /// player's panel, which slides over to make room. SPECTATE stays in the players' heading.
     ///
     /// THE FOUR ANSWERS:
     ///   the one thing   the players, n of 4
     ///   first press     START GAME for the host; READY for everyone else, in the same place
-    ///   not needed now  the match rules, behind the settings icon
-    ///   out             BACK or Escape leaves the room (the host's leaving closes it)
+    ///   not needed now  rules and chat, one press away
+    ///   out             BACK or Escape: a player leaves; the host is asked first, because
+    ///                   leaving closes the room for everyone in it
     /// </summary>
     public sealed class HubLobby : HubScreen
     {
@@ -453,114 +464,199 @@ namespace TumbangPreso.UI.Hub
         internal const float RoomColumnGap = 24;
         internal const float RoomChatWidth = RoomContentWidth - RoomSeatWidth - RoomColumnGap;
         internal const float RoomChatLeft = -RoomContentWidth * .5f + RoomSeatWidth + RoomColumnGap;
-        private const float RoomSeatsOffset = -(RoomContentWidth - RoomSeatWidth) * .5f;
+        /// <summary>Both columns stand on the same line above the primary, measured from the bottom,
+        /// so a taller canvas (4:3) adds sky above the room instead of pulling the columns apart.</summary>
+        internal const float RoomColumnBottom = 256;
+        internal const float RoomColumnHeight = 560;
+        internal const float RoomSeatsOffset = -(RoomContentWidth - RoomSeatWidth) * .5f;
+        private const float RowPitch = 108, RowHeight = 96;
         public override float CourtShade => 0.3f;
-        private Text _title, _code, _count, _mapLine, _status, _address;
-        private RectTransform _rows, _playersPanel;
-        private HubButton _primary, _map, _watch;
+        private Text _title, _code, _count, _status, _address, _summary, _mode, _network;
+        private RectTransform _rows, _playersPanel, _matchCard, _summaryStrip;
+        private HubButton _primary, _watch, _rules, _viewRules, _chatDoor, _codeChip;
+        private HubArrowChoice _mapChoice;
+        private GameObject _unread;
         private bool _chatShown;
+        private bool _hostLayout;
+        private int _seenLines;
+        private float _panelX;
 
         // ⚠️⚠️ THE HOST'S FIREWALL LINE (LAN-VPN-JOIN-1020). A zip copy of the game hosting a LAN
         // room can be listed by every player on a VPN and answer none of them, because Windows'
         // first-run prompt allows it on Private networks only and files Hamachi and Radmin under
         // Public. `LanFirewall` reads, without admin, whether this program is reachable on the
-        // active networks; when it is not, the room says so in one line beside the address the
-        // line is about, with ALLOW LAN PLAY, which asks Windows (UAC) to add the installer's rule.
-        // An installed copy reads Open and shows nothing, and so does an online room, a client and
-        // every non-Windows player. Pad and keyboard reach the control on the screen's focus path,
-        // a thumb taps it, and BACK still leaves the room; it opens no layer of its own.
-        // ⚠️ IT SITS IN THE RIGHT-HAND COLUMN BESIDE THE PLAYERS' PANEL, 430 wide so it never runs
-        // under WATCH INSTEAD, and steps aside while the chat panel holds that column.
-        internal const float FirewallWidth = 430;
+        // active networks; when it is not, the room says so in one line, with ALLOW LAN PLAY, which
+        // asks Windows (UAC) to add the installer's rule. An installed copy reads Open and shows
+        // nothing, and so does an online room, a client and every non-Windows player.
+        // ⚠️ IT LIVES IN THE MATCH CARD UNDER NETWORK, the fact it is about, and steps aside with
+        // the card while the chat holds that column.
+        internal const float FirewallWidth = 824;
         private RectTransform _firewall;
         private Text _firewallLine;
         private HubButton _firewallAllow;
         private string _firewallDrawn = "";
         private int _firewallAllowedSeen;
 
-        public override Selectable FirstFocus => _primary;
+        public override Selectable FirstFocus => _primary != null && _primary.gameObject.activeInHierarchy ? _primary : (Selectable)_watch;
         private string _drawn = "";
 
         public override void Build()
         {
             // ⚠️ THE ROOM IS A GATHERING, SO IT GETS THE FIESTA'S BUNTING (`HubScenery`), strung
-            // across the court behind the players' panel and stirring on the same breeze as the
-            // title street. It is built first so every sticker draws over it, and hung 200 units
-            // down so its strings clear the title, the map line and the address above the panel.
+            // behind the panels and stirring on the same breeze as the title street.
             HubScenery.Bunting(Root, 7, 200, 0.1f);
             HubChrome.Back(Root, Hub);
             _title = HubChrome.Title(Root, "LOBBY");
 
-            var codeChip = HubKit.Button(Root, "CodeChip", null, HubStyle.Night, CopyCode, 0, 961);
-            HubKit.Place((RectTransform)codeChip.transform, HubKit.TopRight, new Vector2(-HubKit.Margin, -HubKit.Margin), new Vector2(420, 110));
-            _code = HubKit.Text(codeChip.Body, "Code", "", HubStyle.Title, true, HubStyle.Golden, TextAnchor.MiddleCenter);
-            HubKit.Stretch(_code.rectTransform, 10);
-            _address = HubKit.Text(Root, "Address", "", HubStyle.Floor, false, HubStyle.Honey, TextAnchor.MiddleRight);
-            HubKit.Place(_address.rectTransform, HubKit.TopRight, new Vector2(-HubKit.Margin, -(HubKit.Margin + 120)), new Vector2(600, 48));
-            _address.gameObject.AddComponent<Shadow>().effectColor = HubStyle.Ink;
+            // The code is the one fact a host reads out loud, so it is the big chip; the LAN address
+            // rides under it on the same sticker instead of floating over the scenery.
+            _codeChip = HubKit.Button(Root, "CodeChip", null, HubStyle.Night, CopyCode, 0, 961);
+            HubKit.Place((RectTransform)_codeChip.transform, HubKit.TopRight, new Vector2(-HubKit.Margin, -HubKit.Margin), new Vector2(460, 130));
+            _code = HubKit.Text(_codeChip.Body, "Code", "", HubStyle.Title, true, HubStyle.Golden, TextAnchor.MiddleCenter);
+            HubKit.Stretch(_code.rectTransform);
+            _address = HubKit.Text(_codeChip.Body, "Address", "", HubStyle.Floor, false, HubStyle.HoneySoft, TextAnchor.MiddleCenter);
+            HubKit.Place(_address.rectTransform, HubKit.Bottom, new Vector2(0, 14), new Vector2(420, 40));
 
-            // 16 units under the address line, two rows of text, then the control.
-            _firewall = HubKit.Place(HubKit.Rect(Root, "LanFirewall"), HubKit.TopRight,
-                                     new Vector2(-HubKit.Margin, -(HubKit.Margin + 184)), new Vector2(FirewallWidth, 176));
-            _firewallLine = HubKit.Text(_firewall, "Line", "", HubStyle.Floor, false, HubStyle.Honey, TextAnchor.UpperRight);
-            HubKit.Place(_firewallLine.rectTransform, HubKit.TopRight, Vector2.zero, new Vector2(FirewallWidth, 76));
-            _firewallLine.gameObject.AddComponent<Shadow>().effectColor = HubStyle.Ink;
-            _firewallAllow = HubKit.Button(_firewall, "AllowLanPlay", LanFirewallRules.AllowLabel, HubStyle.Honey, AllowLanPlay,
-                                           HubStyle.Label, 969, HubGlyph.Mark.House);
-            HubKit.Place((RectTransform)_firewallAllow.transform, HubKit.TopRight, new Vector2(0, -84), new Vector2(FirewallWidth, 92));
-            HubKit.Fit(HubKit.LabelOf(_firewallAllow), FirewallWidth - 110);
-            _firewall.gameObject.SetActive(false);
-            Net.LanFirewall.Invalidate();
-            _firewallAllowedSeen = Net.LanFirewall.AllowedCount;
-
-            _mapLine =HubKit.Text(Root, "MapLine", "", HubStyle.Label, true, HubStyle.Honey, TextAnchor.MiddleLeft);
-            HubKit.Place(_mapLine.rectTransform, HubKit.TopLeft, new Vector2(HubKit.Margin + HubChrome.BarHeight + 34, -HubKit.Margin - 100), new Vector2(900, 50));
-
-            var panel = _playersPanel = HubKit.Place(HubKit.Rect(Root, "Players"), HubKit.Centre, new Vector2(0, 10), new Vector2(RoomSeatWidth, 620));
-            var plate = HubKit.Shape(panel, "Plate", HubStyle.Night, false, 962, 6, 30);
-            HubKit.Stretch(plate.rectTransform);
-            plate.color = new Color(1, 1, 1, 0.93f);
-            _count = HubKit.Text(panel, "Heading", "", HubStyle.Title, true, HubStyle.Golden, TextAnchor.MiddleLeft);
-            HubKit.Place(_count.rectTransform, HubKit.TopLeft, new Vector2(36, -22), new Vector2(600, 64));
-            _rows = HubKit.Span(HubKit.Rect(panel, "Rows"), Vector2.zero, Vector2.one, new Vector2(30, 30), new Vector2(30, 104));
-            _watch = HubKit.Button(panel, "WatchToggle", "WATCH INSTEAD", HubStyle.Honey, () => { Hub.Host.ToggleSpectate(); _drawn = ""; },
-                                   HubStyle.Floor, 968, HubGlyph.Mark.Eye);
-            HubKit.Place((RectTransform)_watch.transform, HubKit.TopRight, new Vector2(-30, -20), new Vector2(300, 72));
+            BuildPlayers();
+            BuildMatchCard();
+            BuildSummary();
 
             _primary = HubKit.Button(Root, "StartGame", "START GAME", HubStyle.Chartreuse, Primary, HubStyle.Title, 963);
             HubKit.Place((RectTransform)_primary.transform, HubKit.Bottom, new Vector2(0, HubKit.Margin), new Vector2(560, 130));
             _primary.Shape.BandFraction = 0.12f;
             _status = HubKit.Text(Root, "Status", "", HubStyle.Floor, false, HubStyle.Honey, TextAnchor.MiddleCenter);
             HubKit.Place(_status.rectTransform, HubKit.Bottom, new Vector2(0, HubKit.Margin + 140), new Vector2(1200, 48));
+            _status.gameObject.AddComponent<Shadow>().effectColor = HubStyle.Ink;
 
-            // Bottom right: character and loadout, settings, chat. Each a square sticker with its name.
-            _characterDoor = Door("CharacterDoor", HubGlyph.Mark.Person, "CHARACTER", 0, () => Hub.Push<HubCharacterSelect>(c => c.Timed = false));
-            Door("SettingsDoor", HubGlyph.Mark.Gear, "RULES", 1, () => Hub.Host.OpenCustomRules());
-            Door("ChatDoor", HubGlyph.Mark.Friends, "CHAT", 2, () => Hub.Host.ToggleChat());
+            // Bottom right: the doors that leave the room's picture for a moment. CHAT carries a
+            // persimmon dot while lines arrive unread; CHARACTER exists only where heroes are not
+            // chosen together after START (offline rooms).
+            _chatDoor = Door("ChatDoor", HubGlyph.Mark.Friends, "CHAT", 0, () => Hub.Host.ToggleChat());
+            _unread = HubKit.Notice(_chatDoor.Body);
+            _unread.SetActive(false);
+            _seenLines = LobbyChat.RoomLineCount;
+            _characterDoor = Door("CharacterDoor", HubGlyph.Mark.Person, "CHARACTER", 1, () => Hub.Push<HubCharacterSelect>(c => c.Timed = false));
 
-            _map = HubKit.Button(Root, "MapDoor", null, HubStyle.Honey, () =>
-            {
-                if (_chatShown) Hub.Host.ToggleChat();
-                ChangeMap();
-            }, 0, 967, HubGlyph.Mark.Globe);
-            HubKit.Place((RectTransform)_map.transform, HubKit.BottomLeft, new Vector2(HubKit.Margin, HubKit.Margin), new Vector2(420, 110));
-            var mapLabel = HubKit.Text(_map.Body, "Label", "CHANGE MAP", HubStyle.Label, true, HubStyle.Ink, TextAnchor.MiddleCenter);
-            HubKit.Stretch(mapLabel.rectTransform);
-            mapLabel.rectTransform.offsetMin = new Vector2(72, 6);
+            foreach (var words in new[] { _title, _count, _status, _firewallLine, _summary, _mode, _network })
+                if (words != null) HubDepthText.On(words, TextDepth);
 
-            plate.Depth = PanelDepth;
-            foreach (var words in new[] { _title, _mapLine, _address, _count, _status, _firewallLine })
-                HubDepthText.On(words, TextDepth);
-
+            Net.LanFirewall.Invalidate();
+            _firewallAllowedSeen = Net.LanFirewall.AllowedCount;
             Draw(true);
             DrawFirewall();
-            HubSlap.On(panel, 0, -1);
+            HubSlap.On(_playersPanel, 0, -1);
+            HubSlap.On(_matchCard, 0.06f, 1);
+        }
+
+        private void BuildPlayers()
+        {
+            var panel = _playersPanel = HubKit.Place(HubKit.Rect(Root, "Players"), HubKit.Bottom,
+                                                     new Vector2(0, RoomColumnBottom), new Vector2(RoomSeatWidth, RoomColumnHeight));
+            var plate = HubKit.Shape(panel, "Plate", HubStyle.Night, false, 962, 6, 30);
+            HubKit.Stretch(plate.rectTransform);
+            plate.color = new Color(1, 1, 1, 0.93f);
+            plate.Depth = PanelDepth;
+            _count = HubKit.Text(panel, "Heading", "", HubStyle.Title, true, HubStyle.Golden, TextAnchor.MiddleLeft);
+            HubKit.Place(_count.rectTransform, HubKit.TopLeft, new Vector2(36, -22), new Vector2(560, 64));
+            _rows = HubKit.Span(HubKit.Rect(panel, "Rows"), Vector2.zero, Vector2.one, new Vector2(30, 24), new Vector2(30, 104));
+            // ⚠️ SPECTATE STAYS IN THE PLAYERS' HEADING (owner 2026-10-28: "put spectate in the same
+            // place", renamed from WATCH INSTEAD the same day). It is a seat choice, so it sits on the
+            // list of seats.
+            _watch = HubKit.Button(panel, "WatchToggle", "SPECTATE", HubStyle.Honey, () => { Hub.Host.ToggleSpectate(); _drawn = ""; },
+                                   HubStyle.Floor, 968, HubGlyph.Mark.Eye);
+            HubKit.Place((RectTransform)_watch.transform, HubKit.TopRight, new Vector2(-30, -20), new Vector2(300, 72));
+        }
+
+        /// <summary>The host's MATCH card: everything the host decides before START, in one place.</summary>
+        private void BuildMatchCard()
+        {
+            var card = _matchCard = HubKit.Place(HubKit.Rect(Root, "MatchCard"), HubKit.Bottom,
+                                                 new Vector2(RoomChatLeft + RoomChatWidth * .5f, RoomColumnBottom),
+                                                 new Vector2(RoomChatWidth, RoomColumnHeight));
+            var plate = HubKit.Shape(card, "Plate", HubStyle.Night, false, 972, 6, 30);
+            HubKit.Stretch(plate.rectTransform);
+            plate.color = new Color(1, 1, 1, 0.93f);
+            plate.Depth = PanelDepth;
+            var heading = HubKit.Text(card, "MatchHeading", "MATCH", HubStyle.Title, true, HubStyle.Golden, TextAnchor.MiddleLeft);
+            HubKit.Place(heading.rectTransform, HubKit.TopLeft, new Vector2(36, -20), new Vector2(500, 60));
+            HubDepthText.On(heading, TextDepth);
+
+            // ⚠️ THE SAME PREVIOUS/NEXT SELECTOR AS HOST GAME (`HubArrowChoice`), on the same
+            // `SelectMap` call the old CHANGE MAP popup made, so the room changes map in one press.
+            string[] maps = new string[SceneFlow.MapRegistry.Length];
+            for (int i = 0; i < maps.Length; i++) maps[i] = SceneFlow.MapRegistry[i].Name;
+            HubField.Label(card, "MAP", new Vector2(40, -92));
+            _mapChoice = HubArrowChoice.Build(card, "Map", maps, MapIndex(), 967);
+            HubKit.Place((RectTransform)_mapChoice.transform, HubKit.TopLeft, new Vector2(30, -134), new Vector2(RoomChatWidth - 60, 92));
+            _mapChoice.Changed += i => { Hub.Host.SelectMap(SceneFlow.MapRegistry[i].Id); _drawn = ""; };
+
+            _mode = Fact(card, "Mode", "MODE", -244);
+            _network = Fact(card, "Network", "NETWORK", -300);
+
+            _rules = HubKit.Button(card, "SettingsDoor", "MATCH RULES", HubStyle.Honey, OpenRules, HubStyle.Label, 966, HubGlyph.Mark.Gear);
+            HubKit.Place((RectTransform)_rules.transform, HubKit.TopLeft, new Vector2(30, -366), new Vector2(RoomChatWidth - 60, 84));
+
+            _firewall = HubKit.Place(HubKit.Rect(card, "LanFirewall"), HubKit.TopLeft, new Vector2(30, -462), new Vector2(FirewallWidth, 84));
+            _firewallLine = HubKit.Text(_firewall, "Line", "", HubStyle.Floor, false, HubStyle.Honey, TextAnchor.MiddleLeft);
+            HubKit.Place(_firewallLine.rectTransform, HubKit.Left, new Vector2(6, 0), new Vector2(FirewallWidth - 340, 84));
+            _firewallAllow = HubKit.Button(_firewall, "AllowLanPlay", LanFirewallRules.AllowLabel, HubStyle.Honey, AllowLanPlay,
+                                           HubStyle.Floor, 969, HubGlyph.Mark.House);
+            HubKit.Place((RectTransform)_firewallAllow.transform, HubKit.Right, Vector2.zero, new Vector2(320, 84));
+            HubKit.Fit(HubKit.LabelOf(_firewallAllow), 220);
+            _firewall.gameObject.SetActive(false);
+        }
+
+        /// <summary>A label on the left of a card line, its value on the right, both on one baseline.</summary>
+        private static Text Fact(RectTransform card, string name, string label, float y)
+        {
+            var key = HubKit.Text(card, name + "Label", label, HubStyle.Floor, false, HubStyle.HoneySoft, TextAnchor.MiddleLeft);
+            HubKit.Place(key.rectTransform, HubKit.TopLeft, new Vector2(40, y), new Vector2(260, 52));
+            var value = HubKit.Text(card, name + "Value", "", HubStyle.Label, true, HubStyle.Honey, TextAnchor.MiddleRight);
+            HubKit.Place(value.rectTransform, HubKit.TopRight, new Vector2(-40, y), new Vector2(520, 52));
+            return value;
+        }
+
+        /// <summary>
+        /// A joined player's or spectator's view of the match: one line above the seats, with the
+        /// rules one press away and read-only (`CustomGameScreen.MayEdit`). It rides with the players'
+        /// panel, so it moves with it when the chat opens.
+        /// </summary>
+        private void BuildSummary()
+        {
+            _summaryStrip = HubKit.Rect(_playersPanel, "MatchSummary");
+            _summaryStrip.anchorMin = _summaryStrip.anchorMax = new Vector2(0.5f, 1);
+            _summaryStrip.pivot = new Vector2(0.5f, 0);
+            _summaryStrip.anchoredPosition = new Vector2(0, 16);
+            _summaryStrip.sizeDelta = new Vector2(RoomSeatWidth, 64);
+            var plate = HubKit.Shape(_summaryStrip, "Plate", HubStyle.Maroon, false, 973, 4, 18);
+            HubKit.Stretch(plate.rectTransform);
+            plate.Depth = RowDepth;
+            var map = HubKit.Glyph(_summaryStrip, "Icon", HubGlyph.Mark.Globe, HubStyle.Golden);
+            HubKit.Place(map.rectTransform, HubKit.Left, new Vector2(22, 0), new Vector2(36, 36));
+            _summary = HubKit.Text(_summaryStrip, "Line", "", HubStyle.Label, true, HubStyle.Honey, TextAnchor.MiddleLeft);
+            HubKit.Place(_summary.rectTransform, HubKit.Left, new Vector2(74, 0), new Vector2(RoomSeatWidth - 330, 56));
+            _viewRules = HubKit.Button(_summaryStrip, "ViewRules", "VIEW RULES", HubStyle.Honey, OpenRules, HubStyle.Floor, 974, HubGlyph.Mark.Eye);
+            HubKit.Place((RectTransform)_viewRules.transform, HubKit.Right, new Vector2(-6, 0), new Vector2(240, 56));
+            HubKit.Fit(HubKit.LabelOf(_viewRules), 150);
+        }
+
+        private static int MapIndex()
+        {
+            for (int i = 0; i < SceneFlow.MapRegistry.Length; i++)
+                if (SceneFlow.MapRegistry[i].Id == SceneFlow.SelectedMap) return i;
+            return 0;
+        }
+
+        private void OpenRules()
+        {
+            if (_chatShown) Hub.Host.ToggleChat();
+            Hub.Host.OpenCustomRules();
         }
 
         // ⚠️⚠️ DEPTH ON EVERYTHING IN THE ROOM, owner 2026-10-17: *"increase depth for everything
         // such as using 4 shadows"*. Three heights, so the stack reads as layers rather than as one
-        // blur everywhere: the players' panel floats highest over the street, every button sits
-        // on it at button height, and the seat rows sit lowest because they lie ON the panel.
+        // blur everywhere: the panels float highest over the street, every button sits on them at
+        // button height, and the seat rows sit lowest because they lie ON the panel.
         private const float PanelDepth = 48.0f, ButtonDepth = 28.0f, RowDepth = 16.0f, TextDepth = 10.0f;
 
         /// <summary>Give every surface in the room its height. Run after each draw, because the
@@ -584,7 +680,7 @@ namespace TumbangPreso.UI.Hub
         {
             var door = HubKit.Button(Root, name, null, HubStyle.Honey, () =>
             {
-                if (index != 2 && _chatShown) Hub.Host.ToggleChat();
+                if (index != 0 && _chatShown) Hub.Host.ToggleChat();
                 action();
             }, 0, 964 + index);
             // ⚠️ 176 WIDE, FOR "CHARACTER" AT THE 28 FLOOR, which overran a 150 door in the first capture.
@@ -597,42 +693,43 @@ namespace TumbangPreso.UI.Hub
             return door;
         }
 
+        /// <summary>
+        /// The chat took or gave back the right-hand column. The host's MATCH card steps aside for
+        /// it; a joined player's panel slides over (<see cref="Tick"/> eases it) so the seats never
+        /// sit under the chat.
+        /// </summary>
         public void SetChatPresented(bool shown)
         {
             if (_chatShown == shown) return;
             _chatShown = shown;
-            if (_playersPanel != null)
-                _playersPanel.anchoredPosition = shown ? new Vector2(RoomSeatsOffset, 10) : new Vector2(0, 10);
+            if (shown) { _seenLines = LobbyChat.RoomLineCount; if (_unread != null) _unread.SetActive(false); }
+            Layout(false);
+            _firewallDrawn = "";
+            DrawFirewall();
+            Hub?.RefreshFocus();
+        }
+
+        private float PanelTarget => _hostLayout || _chatShown ? RoomSeatsOffset : 0;
+
+        /// <summary>Place the columns for the role and the chat. Snaps on a rebuild, eases otherwise.</summary>
+        private void Layout(bool snap)
+        {
+            if (_playersPanel == null) return;
+            if (_matchCard != null) _matchCard.gameObject.SetActive(_hostLayout && !_chatShown);
+            if (_summaryStrip != null) _summaryStrip.gameObject.SetActive(!_hostLayout);
+            if (snap || HubStyle.ReducedMotion) _panelX = PanelTarget;
+            _playersPanel.anchoredPosition = new Vector2(_panelX, RoomColumnBottom);
             if (_status != null)
             {
-                _status.rectTransform.anchoredPosition = shown
-                    ? new Vector2(RoomSeatsOffset, HubKit.Margin + 140)
-                    : new Vector2(0, HubKit.Margin + 140);
-                _status.rectTransform.sizeDelta = new Vector2(shown ? RoomSeatWidth : 1200, 48);
+                bool column = _chatShown && !_hostLayout;
+                _status.rectTransform.anchoredPosition = new Vector2(column ? RoomSeatsOffset : 0, HubKit.Margin + 140);
+                _status.rectTransform.sizeDelta = new Vector2(column ? RoomSeatWidth : 1200, 48);
             }
         }
 
         private void OnDisable()
         {
             if (_chatShown && Hub != null) Hub.Host.ToggleChat();
-        }
-
-        private void ChangeMap()
-        {
-            string[] maps = new string[SceneFlow.MapRegistry.Length];
-            int current = 0;
-            for (int i = 0; i < maps.Length; i++)
-            {
-                maps[i] = SceneFlow.MapRegistry[i].Name;
-                if (SceneFlow.MapRegistry[i].Id == SceneFlow.SelectedMap) current = i;
-            }
-            Hub.Push<HubChoicePopup>(p =>
-            {
-                p.Title = "MAP";
-                p.Options = maps;
-                p.Current = current;
-                p.Chosen = i => { Hub.Host.SelectMap(SceneFlow.MapRegistry[i].Id); _drawn = ""; };
-            });
         }
 
         private void CopyCode()
@@ -645,6 +742,19 @@ namespace TumbangPreso.UI.Hub
         {
             Draw(false);
             DrawFirewall();
+            if (_playersPanel != null && !Mathf.Approximately(_panelX, PanelTarget))
+            {
+                // A short ease rather than a jump, so the eye follows the seats to their new place.
+                _panelX = HubStyle.ReducedMotion ? PanelTarget
+                    : Mathf.MoveTowards(Mathf.Lerp(_panelX, PanelTarget, 1 - Mathf.Exp(-Time.unscaledDeltaTime * 18)), PanelTarget, Time.unscaledDeltaTime * 400);
+                _playersPanel.anchoredPosition = new Vector2(_panelX, RoomColumnBottom);
+            }
+            if (_unread != null)
+            {
+                if (_chatShown) _seenLines = LobbyChat.RoomLineCount;
+                bool waiting = !_chatShown && LobbyChat.RoomLineCount > _seenLines;
+                if (_unread.activeSelf != waiting) _unread.SetActive(waiting);
+            }
         }
 
         /// <summary>
@@ -679,6 +789,7 @@ namespace TumbangPreso.UI.Hub
             bool focused = events != null && events.currentSelectedGameObject == _firewallAllow.gameObject;
             _firewall.gameObject.SetActive(shown);
             _firewallLine.text = line;
+            _firewallLine.rectTransform.sizeDelta = new Vector2(offer ? FirewallWidth - 340 : FirewallWidth - 12, 84);
             _firewallAllow.gameObject.SetActive(offer);
             Hub.RefreshFocus();
             if (focused && !offer && _primary != null) events.SetSelectedGameObject(_primary.gameObject);
@@ -689,6 +800,8 @@ namespace TumbangPreso.UI.Hub
             Net.LanFirewall.RequestAllow();
             DrawFirewall();
         }
+
+        private static string ModeName => SceneFlow.SelectedMode == GameMode.Classic ? "CLASSIC" : "HERO STRIKE";
 
         private void Draw(bool force)
         {
@@ -701,19 +814,28 @@ namespace TumbangPreso.UI.Hub
             }
 
             var seats = host.Seats();
-            string key = host.RoomTitle + host.RoomCode + host.IsHost + host.LocalReady + SceneFlow.SelectedMap + SceneFlow.SelectedMode + host.Spectating + host.MatchInProgress + host.SeatSwapOffer?.Id + host.SeatSwapResult + HubQueueWatch.QueueRoom;
+            string key = host.RoomTitle + host.RoomCode + host.IsHost + host.LocalReady + SceneFlow.SelectedMap + SceneFlow.SelectedMode + host.Spectating + host.MatchInProgress + host.SeatSwapOffer?.Id + host.SeatSwapResult + HubQueueWatch.QueueRoom + host.RoomOnline + host.RoomAddress;
             key += host.CanEditBots;
             key += Net.MatchRpc.Instance != null && (Net.MatchRpc.Instance.CharacterSelecting || Net.MatchRpc.Instance.QueueMapVoting);
-            foreach (var s in seats) key += s.Occupied + ":" + s.Name + ":" + s.CharacterPick + ":" + s.Ready + ":" + s.Bot + ":" + host.CanTakeSeat(s.Slot) + "|";
+            foreach (var s in seats) key += s.Occupied + ":" + s.Name + ":" + s.CharacterPick + ":" + s.Ready + ":" + s.Bot + ":" + s.Host + ":" + host.CanTakeSeat(s.Slot) + "|";
             if (!force && key == _drawn) return;
             _drawn = key;
 
+            bool hostLayout = host.IsHost && !HubQueueWatch.QueueRoom;
+            bool snap = force || hostLayout != _hostLayout;
+            _hostLayout = hostLayout;
+            Layout(snap);
+
             // Retitled with its plate, or the host's title runs off a plate sized for "LOBBY" (playtest 2026-10-23).
-            HubChrome.Retitle(_title, string.IsNullOrWhiteSpace(host.RoomTitle) ? "LOBBY" : host.RoomTitle.ToUpperInvariant());
-            _code.text = "CODE: " + (host.RoomCode ?? "");
+            HubChrome.Retitle(_title, string.IsNullOrWhiteSpace(host.RoomTitle) ? "LOBBY" : host.RoomTitle.ToUpperInvariant(), 760);
+            _code.text = "CODE  " + (host.RoomCode ?? "");
             string address = host.RoomAddress;
-            _address.text = string.IsNullOrEmpty(address) ? "" : "or join by address  " + address;
-            HubKit.SetLabel(_watch, host.Spectating ? "TAKE A SEAT" : "WATCH INSTEAD");
+            bool hasAddress = !string.IsNullOrEmpty(address);
+            _address.text = hasAddress ? "LAN  " + address : "";
+            _code.rectTransform.offsetMin = new Vector2(10, hasAddress ? 44 : 6);
+            _code.rectTransform.offsetMax = new Vector2(-10, -6);
+
+            HubKit.SetLabel(_watch, host.Spectating ? "TAKE A SEAT" : "SPECTATE");
             // The picture follows the words: an eye to go and watch, a person to come back and sit.
             var watchIcon = _watch.Body.Find("Icon")?.GetComponent<HubGlyph>();
             if (watchIcon != null && watchIcon.Kind != (host.Spectating ? HubGlyph.Mark.Person : HubGlyph.Mark.Eye))
@@ -723,111 +845,21 @@ namespace TumbangPreso.UI.Hub
             }
             HubKit.LabelOf(_watch).fontSize = HubStyle.Size(HubStyle.Floor);
             HubKit.Fit(HubKit.LabelOf(_watch), 210);
-            _mapLine.text = SceneFlow.PreviewFor(SceneFlow.SelectedMap).Name + "   ·   " +
-                            (SceneFlow.SelectedMode == GameMode.Classic ? "CLASSIC" : "HERO STRIKE") + "   ·   " +
-                            (host.RoomOnline ? "ONLINE" : "LAN");
+
+            string network = host.RoomOnline ? "ONLINE" : "LAN";
+            if (_mapChoice != null && _mapChoice.Value != MapIndex()) _mapChoice.Set(MapIndex(), false);
+            _mode.text = ModeName;
+            _network.text = network;
+            _summary.text = SceneFlow.PreviewFor(SceneFlow.SelectedMap).Name + "   ·   " + ModeName + "   ·   " + network;
+            _summary.fontSize = HubStyle.Size(HubStyle.Label);
+            HubKit.Fit(_summary, RoomSeatWidth - 330);
 
             int occupied = 0;
             foreach (var s in seats)
                 if (s.Occupied) occupied++;
             _count.text = "PLAYERS  " + occupied + " / " + Balance.PlayerCount;
 
-            for (int i = _rows.childCount - 1; i >= 0; i--) Destroy(_rows.GetChild(i).gameObject);
-            var people = Roster.GetPeople(SceneFlow.SelectedMode);
-            for (int i = 0; i < seats.Length; i++)
-            {
-                var seat = seats[i];
-                var row = HubKit.Place(HubKit.Rect(_rows, "Seat" + i), HubKit.TopLeft, new Vector2(0, -(i * 118)), new Vector2(840, 106));
-                Color fill = seat.Mine ? HubStyle.Persimmon : seat.Occupied ? HubStyle.Night : new Color(0.2f, 0.12f, 0.06f);
-                int destination = seat.Slot;
-                bool editBots = host.CanEditBots && !seat.Occupied;
-
-                // ⚠️⚠️ THE WHOLE ROW IS THE DOOR, owner 2026-10-17: *"in order to change your P
-                // position, you could instead hover on other p positions and click anywhere on
-                // their respective rectangle"*. The SIT HERE / SWITCH button it replaces was a
-                // second, smaller target inside a target that already meant "this seat". A row
-                // the player can move to is a pressable sticker (`CLAUDE.md` § 6.5: a chamfer
-                // means pressable), lifts under the pointer and says what a press does; a row
-                // they cannot move to stays a rounded plate and does not pretend to be a button.
-                // ⚠️ IT KEEPS THE NAME `TakeSeat{n}` AND THE SAME AUTHORITATIVE REQUEST, re-checked
-                // on press because the host may have filled or started the room since this draw.
-                Transform surface = row;
-                if (!seat.Mine && host.CanTakeSeat(destination))
-                {
-                    var take = HubKit.Button(row, "TakeSeat" + destination, null, fill, () =>
-                    {
-                        if (Hub.Host.CanTakeSeat(destination)) Hub.Host.TakeSeat(destination);
-                    }, HubStyle.Label, 980 + destination);
-                    HubKit.Stretch((RectTransform)take.transform);
-                    take.Shape.OutlineWidth = 4;
-                    take.Shape.Corner = 18;
-                    take.Shape.Depth = RowDepth;
-                    surface = take.Body;
-
-                    // The hint names the press, so the row reads before it is clicked (§ 6.2).
-                    // Shown on hover and on pad focus; a thumb has no hover and simply taps.
-                    var hint = HubKit.Text(take.Body, "Label", seat.Occupied ? "SWITCH" : "MOVE HERE",
-                                           HubStyle.Floor, true, HubStyle.Golden, TextAnchor.MiddleRight);
-                    HubKit.Place(hint.rectTransform, HubKit.Right, new Vector2(editBots ? -270 : -28, 0), new Vector2(220, 44));
-                    HubKit.Fit(hint, 220);
-                    HubDepthText.On(hint, 5.0f);
-                    hint.enabled = false;
-                    take.Attention += attended => { if (hint != null) hint.enabled = attended; };
-                }
-                else
-                {
-                    var plate = HubKit.Shape(row, "Plate", fill, false, 970 + i, 4, 18);
-                    HubKit.Stretch(plate.rectTransform);
-                    plate.Depth = RowDepth;
-                }
-
-                var person = seat.Occupied ? Roster.At(people, seat.CharacterPick) : null;
-                var face = HubKit.Picture(surface, "Face", HubKit.Portrait(person?.Id));
-                HubKit.Place(face.rectTransform, HubKit.Left, new Vector2(8, 2), new Vector2(96, 96));
-                if (face.sprite == null)
-                {
-                    // An OPEN seat is an empty chair now that bots are added one by one, so it no
-                    // longer wears the bot's face: a faint person outline, waiting.
-                    var mark = seat.Occupied ? HubGlyph.Mark.Person : seat.Bot ? HubGlyph.Mark.Bots : HubGlyph.Mark.Person;
-                    Color tint = HubStyle.HoneySoft;
-                    if (!seat.Occupied && !seat.Bot) tint.a *= 0.4f;
-                    var icon = HubKit.Glyph(surface, "Icon", mark, tint);
-                    HubKit.Place(icon.rectTransform, HubKit.Left, new Vector2(26, 0), new Vector2(60, 60));
-                }
-                Color ink = seat.Mine ? HubStyle.Ink : HubStyle.Honey;
-                string name = seat.Occupied ? (seat.Mine ? "YOU" : seat.Name) : seat.Bot ? "BOT" : "OPEN";
-                var label = HubKit.Text(surface, "Name", "P" + (seat.Slot + 1) + " · " + name, HubStyle.Label, true, ink, TextAnchor.MiddleLeft);
-                HubKit.Place(label.rectTransform, HubKit.Left, new Vector2(122, 15), new Vector2(410, 50));
-                HubKit.Fit(label, 410);
-                if (seat.Host)
-                {
-                    // The crown sits just after the name it belongs to. It was pinned 280 in from the row's right
-                    // edge, where a bot's REMOVE BOT button would be, so on the host's own row it floated alone in
-                    // the middle (playtest 2026-10-23).
-                    var crown = HubKit.Glyph(surface, "HostMark", HubGlyph.Mark.Crown, HubStyle.Golden);
-                    float after = 122 + Mathf.Min(label.preferredWidth, 410) + 14;
-                    HubKit.Place(crown.rectTransform, HubKit.Left, new Vector2(after, 15), new Vector2(36, 36));
-                }
-                string state = seat.Host ? "HOST" : seat.Ready ? "READY" : "";
-                var tag = HubKit.Text(surface, "State", state, HubStyle.Floor, true, seat.Ready ? HubStyle.Chartreuse : ink, TextAnchor.MiddleLeft);
-                HubKit.Place(tag.rectTransform, HubKit.Left, new Vector2(122, -26), new Vector2(340, 38));
-
-                // ⚠️ ADD BOT REPLACES SIT HERE, owner 2026-10-17. Only the host of a custom room
-                // decides, so everyone else sees the bot and no button. ⚠️ IT IS A SIBLING OF THE
-                // ROW'S BUTTON, NOT A CHILD OF ITS BODY: a child would light the row and show
-                // "MOVE HERE" while the pointer is on ADD BOT, naming the wrong press.
-                if (editBots)
-                {
-                    bool removing = seat.Bot;
-                    var bot = HubKit.Button(row, (removing ? "RemoveBot" : "AddBot") + destination,
-                                            removing ? "REMOVE BOT" : "ADD BOT", HubStyle.Honey,
-                                            () => Hub.Host.SetSeatBot(destination, !removing),
-                                            HubStyle.Floor, 990 + destination,
-                                            removing ? HubGlyph.Mark.None : HubGlyph.Mark.Bots);
-                    HubKit.Place((RectTransform)bot.transform, HubKit.Right, new Vector2(-12, 0), new Vector2(240, 88));
-                    HubKit.Fit(HubKit.LabelOf(bot), removing ? 200 : 140);
-                }
-            }
+            DrawSeats(host, seats);
 
             if (host.IsHost)
             {
@@ -836,21 +868,24 @@ namespace TumbangPreso.UI.Hub
                 HubKit.SetLabel(_primary, "START GAME");
                 _primary.gameObject.SetActive(true);
                 _primary.interactable = true;
-                _status.text = "";
+                int open = 0;
+                foreach (var s in seats) if (!s.Occupied && !s.Bot) open++;
+                _status.text = open == 0 ? "" : open == 1 ? "One seat is open. It stays empty unless you add a bot."
+                    : open + " seats are open. They stay empty unless you add bots.";
             }
             else if (host.Spectating)
             {
                 // ⚠️ A SPECTATOR HAS NOTHING TO READY: the host refuses a spectator's READY
                 // (`MatchRpc.HostDeclareReady`), so the button was a press that did nothing.
                 _primary.gameObject.SetActive(false);
-                _status.text = "You're watching. The match plays out in front of you once the host starts it.";
+                _status.text = "You're spectating. The match plays out in front of you once the host starts it.";
             }
             else
             {
                 HubKit.SetLabel(_primary, host.LocalReady ? "READY  ✓" : "READY");
                 _primary.gameObject.SetActive(true);
                 _primary.interactable = true;
-                _status.text = host.LocalReady ? "Waiting for the host." : "The host starts the match.";
+                _status.text = host.LocalReady ? "You're ready. Waiting for the host to start." : "Press READY when you're set. The host starts the match.";
             }
             if (host.Spectating && Net.MatchRpc.Instance != null && Net.MatchRpc.Instance.CharacterSelecting)
                 _status.text = "The players are choosing their heroes.";
@@ -864,9 +899,129 @@ namespace TumbangPreso.UI.Hub
             if (host.SeatSwapOffer != null && !host.SeatSwapOffer.Incoming)
                 _status.text = "Waiting for the other player to accept the seat switch.";
             else if (!string.IsNullOrEmpty(host.SeatSwapResult)) _status.text = host.SeatSwapResult;
-            _map.gameObject.SetActive(host.IsHost);
+            _status.fontSize = HubStyle.Size(HubStyle.Floor);
             Deepen();
             Hub.RefreshFocus();
+        }
+
+        private void DrawSeats(IHubHost host, HubSeat[] seats)
+        {
+            for (int i = _rows.childCount - 1; i >= 0; i--) Destroy(_rows.GetChild(i).gameObject);
+            var people = Roster.GetPeople(SceneFlow.SelectedMode);
+            for (int i = 0; i < seats.Length; i++)
+            {
+                var seat = seats[i];
+                var row = HubKit.Place(HubKit.Rect(_rows, "Seat" + i), HubKit.TopLeft, new Vector2(0, -(i * RowPitch)), new Vector2(840, RowHeight));
+                bool open = !seat.Occupied && !seat.Bot;
+                Color fill = seat.Mine ? HubStyle.Persimmon : open ? new Color(0.2f, 0.12f, 0.06f) : HubStyle.Night;
+                int destination = seat.Slot;
+                bool editBots = host.CanEditBots && !seat.Occupied;
+
+                // ⚠️⚠️ THE WHOLE ROW IS THE DOOR, owner 2026-10-17: *"in order to change your P
+                // position, you could instead hover on other p positions and click anywhere on
+                // their respective rectangle"*. A row the player can move to is a pressable sticker,
+                // lifts under the pointer and says what a press does; a row they cannot move to
+                // stays a rounded plate and does not pretend to be a button.
+                // ⚠️ IT KEEPS THE NAME `TakeSeat{n}` AND THE SAME AUTHORITATIVE REQUEST, re-checked
+                // on press because the host may have filled or started the room since this draw.
+                Transform surface = row;
+                float controls = editBots ? (seat.Bot ? 96 : 236) : 0;
+                if (!seat.Mine && host.CanTakeSeat(destination))
+                {
+                    var take = HubKit.Button(row, "TakeSeat" + destination, null, fill, () =>
+                    {
+                        if (Hub.Host.CanTakeSeat(destination)) Hub.Host.TakeSeat(destination);
+                    }, HubStyle.Label, 980 + destination);
+                    HubKit.Stretch((RectTransform)take.transform);
+                    take.Shape.OutlineWidth = 4;
+                    take.Shape.Corner = 18;
+                    take.Shape.Depth = RowDepth;
+                    surface = take.Body;
+
+                    // The hint names the press, so the row reads before it is clicked. Shown on
+                    // hover and on pad focus; a thumb has no hover and simply taps.
+                    var hint = HubKit.Text(take.Body, "Label", seat.Occupied ? "SWITCH" : "MOVE HERE",
+                                           HubStyle.Floor, true, HubStyle.Golden, TextAnchor.MiddleRight);
+                    HubKit.Place(hint.rectTransform, HubKit.Right, new Vector2(-(28 + controls), 0), new Vector2(200, 44));
+                    HubKit.Fit(hint, 200);
+                    HubDepthText.On(hint, 5.0f);
+                    hint.enabled = false;
+                    take.Attention += attended => { if (hint != null) hint.enabled = attended; };
+                }
+                else
+                {
+                    var plate = HubKit.Shape(row, "Plate", fill, false, 970 + i, 4, 18);
+                    HubKit.Stretch(plate.rectTransform);
+                    plate.Depth = RowDepth;
+                }
+
+                var person = seat.Occupied ? Roster.At(people, seat.CharacterPick) : null;
+                var face = HubKit.Picture(surface, "Face", HubKit.Portrait(person?.Id));
+                HubKit.Place(face.rectTransform, HubKit.Left, new Vector2(8, 2), new Vector2(86, 86));
+                if (face.sprite == null)
+                {
+                    // An OPEN seat is an empty chair, a faint person outline, waiting; a bot wears the bot.
+                    var mark = seat.Bot && !seat.Occupied ? HubGlyph.Mark.Bots : HubGlyph.Mark.Person;
+                    Color tint = HubStyle.HoneySoft;
+                    if (open) tint.a *= 0.4f;
+                    var icon = HubKit.Glyph(surface, "Icon", mark, tint);
+                    HubKit.Place(icon.rectTransform, HubKit.Left, new Vector2(22, 0), new Vector2(56, 56));
+                }
+
+                Color ink = seat.Mine ? HubStyle.Ink : HubStyle.Honey;
+                if (open) ink = HubStyle.HoneySoft;
+                string name = seat.Occupied ? (seat.Mine ? "YOU" : seat.Name) : seat.Bot ? "BOT" : "OPEN SEAT";
+                var label = HubKit.Text(surface, "Name", "P" + (seat.Slot + 1) + "  " + name, HubStyle.Label, true, ink, TextAnchor.MiddleLeft);
+                float nameWidth = 840 - 112 - 160 - controls;
+                HubKit.Place(label.rectTransform, HubKit.Left, new Vector2(112, 14), new Vector2(nameWidth, 48));
+                HubKit.Fit(label, nameWidth);
+                if (seat.Host)
+                {
+                    // The crown sits just after the name it belongs to (playtest 2026-10-23).
+                    var crown = HubKit.Glyph(surface, "HostMark", HubGlyph.Mark.Crown, HubStyle.Golden);
+                    float after = 112 + Mathf.Min(label.preferredWidth, nameWidth) + 12;
+                    HubKit.Place(crown.rectTransform, HubKit.Left, new Vector2(after, 14), new Vector2(34, 34));
+                }
+
+                // One state per row, in the reading face, under the name: who runs the room, who is
+                // set, who is still getting ready, which chair is waiting.
+                string state; Color stateInk;
+                if (seat.Host) { state = "Host"; stateInk = seat.Mine ? HubStyle.Ink : HubStyle.Golden; }
+                else if (seat.Occupied && seat.Ready) { state = "Ready"; stateInk = seat.Mine ? HubStyle.Ink : HubStyle.Chartreuse; }
+                else if (seat.Occupied) { state = "Not ready yet"; stateInk = seat.Mine ? HubStyle.Ink : HubStyle.HoneySoft; }
+                else if (seat.Bot) { state = "Plays this seat"; stateInk = HubStyle.HoneySoft; }
+                else { state = "Waiting for a player"; stateInk = new Color(HubStyle.Honey.r, HubStyle.Honey.g, HubStyle.Honey.b, 0.55f); }
+                var tag = HubKit.Text(surface, "State", state, HubStyle.Floor, false, stateInk, TextAnchor.MiddleLeft);
+                HubKit.Place(tag.rectTransform, HubKit.Left, new Vector2(114, -24), new Vector2(nameWidth, 38));
+                if (seat.Ready && !seat.Host && !seat.Mine)
+                {
+                    var tick = HubKit.Glyph(surface, "ReadyMark", HubGlyph.Mark.Check, HubStyle.Chartreuse);
+                    HubKit.Place(tick.rectTransform, HubKit.Left, new Vector2(114 + tag.preferredWidth + 10, -24), new Vector2(28, 28));
+                }
+
+                // ⚠️ ADD BOT IN THE EMPTY CHAIR, A SMALL X ON A BOT (owner 2026-10-17 put the bot
+                // controls per seat; the 2026-10-28 pass made them quiet, so three REMOVE BOT stickers
+                // no longer out-shout START). Only the host of a custom room decides. ⚠️ A SIBLING
+                // OF THE ROW'S BUTTON, NOT A CHILD OF ITS BODY: a child would light the row and show
+                // "MOVE HERE" while the pointer is on the bot control, naming the wrong press.
+                if (editBots)
+                {
+                    HubButton bot;
+                    if (seat.Bot)
+                    {
+                        bot = HubKit.IconButton(row, "RemoveBot" + destination, HubGlyph.Mark.Close, HubStyle.Honey,
+                                                () => Hub.Host.SetSeatBot(destination, false), 990 + destination);
+                        HubKit.Place((RectTransform)bot.transform, HubKit.Right, new Vector2(-12, 0), new Vector2(72, 72));
+                    }
+                    else
+                    {
+                        bot = HubKit.Button(row, "AddBot" + destination, "ADD BOT", HubStyle.Honey,
+                                            () => Hub.Host.SetSeatBot(destination, true), HubStyle.Floor, 990 + destination, HubGlyph.Mark.Plus);
+                        HubKit.Place((RectTransform)bot.transform, HubKit.Right, new Vector2(-12, 0), new Vector2(212, 72));
+                        HubKit.Fit(HubKit.LabelOf(bot), 120);
+                    }
+                }
+            }
         }
 
         private void Primary()
@@ -876,11 +1031,70 @@ namespace TumbangPreso.UI.Hub
             _drawn = "";
         }
 
+        /// <summary>
+        /// BACK and Escape. A player or spectator leaves at once: the code brings them back, so a
+        /// question would only slow a routine exit. The host is asked first, because the room and
+        /// everyone in it go with them (`HubRoomClosePopup`).
+        /// </summary>
         public override bool Back()
         {
-            Hub.Host.LeaveRoom();
+            var host = Hub.Host;
+            if (host.InRoom && host.IsHost && !HubQueueWatch.QueueRoom && !host.MatchInProgress)
+            {
+                int others = 0;
+                foreach (var s in host.Seats()) if (s.Occupied && !s.Mine) others++;
+                if (_chatShown) host.ToggleChat();
+                Hub.Push<HubRoomClosePopup>(p => p.Others = others);
+                return true;
+            }
+            host.LeaveRoom();
             Hub.Home();
             return true;
+        }
+    }
+
+    /// <summary>
+    /// The host's "close this room?" question. Named answers, never YES/NO, and the safe one has
+    /// focus, so an Escape or a mashed A keeps the room (NN/g's confirmation rules, quoted in
+    /// `docs/reports/lobby-ui-2026-10-28/ux-research.md`). Back is KEEP ROOM.
+    /// </summary>
+    public sealed class HubRoomClosePopup : HubScreen
+    {
+        public override bool WearsBoard => true;
+        public override bool IsPopup => true;
+        public int Others;
+        private HubButton _keep;
+        private bool _closing;
+        public override Selectable FirstFocus => _keep;
+
+        public override void Build()
+        {
+            var panel = HubCards.Panel(Root, this, "CLOSE ROOM?", "", new Vector2(820, 420));
+            string who = Others <= 0 ? "Nobody else is in it yet."
+                : Others == 1 ? "The other player in it goes back to the menu."
+                : "The " + Others + " other players in it go back to the menu.";
+            var message = HubKit.Text(panel, "Consequence", "Leaving closes this room. " + who,
+                                      HubStyle.Body, false, HubStyle.Honey, TextAnchor.MiddleLeft);
+            HubKit.Place(message.rectTransform, HubKit.TopLeft, new Vector2(52, -140), new Vector2(716, 110));
+            _keep = HubKit.Button(panel, "KeepRoom", "KEEP ROOM", HubStyle.Honey, Close, HubStyle.Label, 995);
+            HubKit.Place((RectTransform)_keep.transform, HubKit.BottomLeft, new Vector2(44, 40), new Vector2(340, 96));
+            var close = HubKit.Button(panel, "CloseRoom", "CLOSE ROOM", HubStyle.DeepRed, CloseRoom, HubStyle.Label, 996, HubGlyph.Mark.Exit);
+            HubKit.Place((RectTransform)close.transform, HubKit.BottomRight, new Vector2(-44, 40), new Vector2(340, 96));
+        }
+
+        private void CloseRoom()
+        {
+            if (_closing) return;
+            _closing = true;
+            Hub.Host.LeaveRoom();
+            Hub.Home();
+        }
+
+        public override bool Back() { Close(); return true; }
+
+        public override void Tick()
+        {
+            if (!_closing && (!Hub.Host.InRoom || Hub.Host.MatchInProgress)) Close();
         }
     }
 }

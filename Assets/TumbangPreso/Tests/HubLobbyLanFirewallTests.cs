@@ -165,7 +165,7 @@ namespace TumbangPreso.Tests
             Assert.Fail("the firewall read or request never finished");
         }
 
-        private GameObject Notice => _root.transform.Find("LanFirewall").gameObject;
+        private GameObject Notice => _root.transform.Find("MatchCard/LanFirewall").gameObject;
         private Text Line => Notice.transform.Find("Line").GetComponent<Text>();
         private HubButton Allow => _root.GetComponentsInChildren<HubButton>(true).First(b => b.name == "AllowLanPlay");
         private ScreenFocus Focus => _root.GetComponent<ScreenFocus>();
