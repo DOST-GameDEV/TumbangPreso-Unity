@@ -25,6 +25,25 @@ namespace TumbangPreso.Map
         private readonly bool[][] _seatShown = new bool[Seats][];
         private readonly bool[] _seatHidden = new bool[Seats];
         private bool _posing;
+        private readonly List<Light> _filmLights = new List<Light>();
+        private readonly List<float> _filmLightLevels = new List<float>();
+
+        private void RestoreFilmLightLevels()
+        {
+            for (int i = 0; i < _filmLights.Count; i++)
+                if (_filmLights[i] != null && float.IsFinite(_filmLightLevels[i]))
+                    _filmLights[i].intensity = _filmLightLevels[i];
+        }
+
+        private void FadeFilmLights(float age)
+        {
+            float weight = 1f - Smooth((age - Timeline.Handoff) / Mathf.Max(.01f, Timeline.End - Timeline.Handoff));
+            for (int i = 0; i < _filmLights.Count; i++)
+            {
+                var light = _filmLights[i];if (light == null) continue;
+                _filmLightLevels[i] = light.intensity;light.intensity *= weight;
+            }
+        }
         private readonly Vector3[] _castWorld = new Vector3[Seats];
         private readonly Quaternion[] _castTurn = new Quaternion[Seats];
         private readonly bool[] _castPinned = new bool[Seats];
@@ -75,6 +94,8 @@ namespace TumbangPreso.Map
                 // drawn through the film, whatever the plate's own update decides (frames showed "P1 · TAYA" and the ring).
                 foreach (var plate in body.GetComponentsInChildren<CharacterNameplate>(true)) Hide(plate.GetComponentsInChildren<Renderer>(true));
                 var visual = body.GetComponent<CharacterVisual>();
+                // A replica's interpolation offset is transient, not the actor's authored rest pose.
+                visual?.SnapForCinematic();
                 var root = visual != null ? visual.ModelRoot : null;
                 // A model hung on the seat itself cannot move without the body: it stays on its mark.
                 if (root == null || root == body.transform) continue;
@@ -245,7 +266,7 @@ namespace TumbangPreso.Map
         {
             for (int i = _owned.Count - 1; i >= 0; i--)
                 if (_owned[i] != null) Destroy(_owned[i] is Component c ? c.gameObject : _owned[i]);
-            _owned.Clear();
+            _owned.Clear();_filmLights.Clear();_filmLightLevels.Clear();
         }
 
         /// <summary>Stops drawing scene renderers for the film; `End` draws them as they were.</summary>
@@ -479,6 +500,7 @@ namespace TumbangPreso.Map
             go.transform.SetParent(transform, false);
             go.transform.position = at;
             var light = go.AddComponent<Light>();
+            _filmLights.Add(light);_filmLightLevels.Add(float.NaN);
             light.type = type; light.color = colour; light.range = range; light.intensity = 0.0f;
             if (type == LightType.Spot) light.spotAngle = angle;
             light.shadows = LightShadows.None;

@@ -245,6 +245,7 @@ namespace TumbangPreso.Map
             float age = Age;
             FrameDelta = _last < 0.0f ? 0.0f : Mathf.Clamp(age - _last, 0.0f, 0.1f);
             _shot = false;
+            RestoreFilmLightLevels();
             try { Stage(age); }
             catch (System.Exception failure) { Debug.LogException(failure); End("failed to stage"); return; }
             if (!_prepared) return;
@@ -252,6 +253,7 @@ namespace TumbangPreso.Map
             Picture(age);
             Overlay(age);
             Sound(age);
+            FadeFilmLights(age);
             RememberCastPose();
             _last = age;
         }

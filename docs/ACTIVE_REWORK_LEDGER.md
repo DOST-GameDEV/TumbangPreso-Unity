@@ -2,11 +2,11 @@
 
 Updated 2026-10-28. [TODO](TODO.md) is the only active queue.
 
-- ONLINE-CAST-1028: Claude handoff: floating/network
-  desync, especially client-only floating. Gameplay65da4de68 built/verified;
-  player14864 open. Core97/97, verifier5/5. Native tests stuck on reload.
-  Next: same-build host/client reproduction. Six owner files preserved.
-  Logs/online-selection-20261028/handoff-receipt.json.
+- ONLINE-CAST-1028: owner asleep; continue floating/network/Ermita fixes.
+  Candidate: cinematic rest pose, light ownership and lamp fade.
+  Next: build, then same-build native peer traces.
+  Core97/97; verifier5/5. Preserve six owner files; no broad PlayMode.
+  Logs/online-selection-20261028/. Old65da player retained; no player running.
 - Owner requested wrapping up and handing off unfinished mobile UI work.
   [Resume here](reports/mobile-ui-2026-10-26/HANDOFF.md): ff9 Android candidate is
   built/uploaded, native41/41 and recorded actual touch journeys passed. Newer

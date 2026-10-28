@@ -42,6 +42,59 @@ namespace TumbangPreso.Tests
                 ~0, QueryTriggerInteraction.Ignore));
             Assert.AreSame(wall, hit.collider, "The intended wall must be the native collision hit.");
         }
+        [Test] public void OpeningRestPoseCannotCaptureTheReplicaInterpolationOffset()
+        {
+            var body=Own("Replica with a lagged visual").AddComponent<CharacterMotor>();
+            body.transform.position=_focus;
+            var visual=body.gameObject.AddComponent<TumbangPreso.Visual.CharacterVisual>();
+            var model=Own("Authored visual root").transform;model.SetParent(body.transform,false);
+            visual.SetModelRoot(model);model.localPosition=new Vector3(0,3,0);
+            var filmRoot=Own("Dormant rest capture film");filmRoot.SetActive(false);
+            var film=filmRoot.AddComponent<TumbangPreso.Map.TondoFilm>();
+            var type=typeof(TumbangPreso.Map.MapFilm);var flags=BindingFlags.Instance|BindingFlags.NonPublic;
+            try
+            {
+                type.GetMethod("TakeModels",flags).Invoke(film,new object[]{new[]{body}});
+                var rest=(Vector3[])type.GetField("_rest",flags).GetValue(film);
+                Assert.AreEqual(0,rest[0].y,.001f,"A remote mesh lag cannot become the film's permanent rest height.");
+                Assert.AreEqual(_focus,body.transform.position,"Preparing the picture cannot move its physics body.");
+            }
+            finally{type.GetField("_posing",flags).SetValue(film,false);}
+        }
+
+        [Test] public void AFilmThatKeepsGameLightDoesNotRestoreAnOldWorldTint()
+        {
+            var filmRoot=Own("Dormant lighting ownership film");filmRoot.SetActive(false);
+            var film=filmRoot.AddComponent<TumbangPreso.Map.TondoFilm>();
+            var type=typeof(TumbangPreso.Map.MapFilm);var flags=BindingFlags.Instance|BindingFlags.NonPublic;
+            Color original=RenderSettings.ambientSkyColor;
+            try
+            {
+                RenderSettings.ambientSkyColor=Color.red;
+                type.GetMethod("SnapshotLight",flags).Invoke(film,null);
+                RenderSettings.ambientSkyColor=Color.green;
+                type.GetMethod("RestoreLight",flags).Invoke(film,null);
+                Assert.AreEqual(Color.green,RenderSettings.ambientSkyColor,"Unchanged cinematic lighting cannot overwrite the current game look.");
+            }
+            finally{RenderSettings.ambientSkyColor=original;}
+        }
+
+        [Test] public void TemporaryFilmLightsFadeWithoutCompoundingAtTheHandoff()
+        {
+            var filmRoot=Own("Dormant lamp handoff film");filmRoot.SetActive(false);
+            var film=filmRoot.AddComponent<TumbangPreso.Map.TondoFilm>();
+            var light=Own("Temporary film lamp").AddComponent<Light>();light.intensity=4;
+            var type=typeof(TumbangPreso.Map.MapFilm);var flags=BindingFlags.Instance|BindingFlags.NonPublic;
+            ((List<Light>)type.GetField("_filmLights",flags).GetValue(film)).Add(light);
+            ((List<float>)type.GetField("_filmLightLevels",flags).GetValue(film)).Add(float.NaN);
+            type.GetProperty("Timeline").SetValue(film,new TumbangPreso.Map.MapFilm.Times{Handoff=2,End=4});
+            var fade=type.GetMethod("FadeFilmLights",flags);var restore=type.GetMethod("RestoreFilmLightLevels",flags);
+            fade.Invoke(film,new object[]{3f});Assert.AreEqual(2,light.intensity,.001f);
+            restore.Invoke(film,null);Assert.AreEqual(4,light.intensity,.001f);
+            fade.Invoke(film,new object[]{3f});Assert.AreEqual(2,light.intensity,.001f);
+            restore.Invoke(film,null);fade.Invoke(film,new object[]{4f});Assert.AreEqual(0,light.intensity,.001f);
+        }
+
         [Test] public void NetworkParentCorrectionCannotLiftTheOpeningCastBeforeRender()
         {
             var body=Own("Replicated body").transform;body.position=_focus;

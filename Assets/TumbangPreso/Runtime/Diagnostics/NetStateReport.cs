@@ -42,7 +42,7 @@ namespace TumbangPreso.Diagnostics
     /// continuous quantity, so it covers only the DISCRETE state a divergence would show up in:
     /// character indices, bot flags, the defender, slipper states and holders, and the scores.
     /// </summary>
-    public sealed class NetStateReport : MonoBehaviour
+    public sealed partial class NetStateReport : MonoBehaviour
     {
         public const string ReportSwitch = "-tp-netreport";
         public const string SecondsSwitch = "-tp-netseconds";
@@ -81,6 +81,7 @@ namespace TumbangPreso.Diagnostics
             var report = go.AddComponent<NetStateReport>();
             report._path = path;
             report._left = Seconds();
+            report.ConfigureGroundingTrace();
 
             Debug.Log($"[NetReport] writing {path} after {report._left:F0} s.");
         }
@@ -122,6 +123,7 @@ namespace TumbangPreso.Diagnostics
                 _automaticCountdownSeen |= !UI.SceneFlow.SelectedRules.ManualReady && ready != null && ready.CountingDown;
             }
 
+            TryGroundingUltimate();
             Sample();
 
             _left -= dt;

@@ -381,6 +381,7 @@ namespace TumbangPreso.Visual
         /// `CarryAnchor`. Read-only on purpose: <see cref="SetModelRoot"/> is the one writer.
         /// </summary>
         public Transform ModelRoot => _modelRoot;
+        public Vector3 AlignedLocalPosition => _alignedLocal;
 
         /// <summary>`character_visual.gd::HAND_BONE_CANDIDATES`. The right arm first, because
         /// the rig ships `holding-right` and `holding-right-shoot` and nothing for the left.
@@ -699,6 +700,7 @@ namespace TumbangPreso.Visual
         /// whole arena in front of everybody. The Godot side records this as its own rule.
         /// </summary>
         public void SnapRemoteTransform() => SnapRemotePose(true);
+        public void SnapForCinematic() => SnapRemotePose(false);
 
         private void SnapRemotePose(bool reseatGround)
         {
