@@ -60,12 +60,28 @@ Reused controls refresh from range state, and each gameplay setter rechecks the
 offline gate. Choice popups own nested Back through `ScreenTakeover`.
 [Current evidence and remaining native checks](reports/stability-2026-09-27/practice-range.md).
 
+## Custom Room By Role
+
+October 28, 2026: one room layout for every role
+([research and plan](reports/lobby-ui-2026-10-28/ux-research.md)). The host gets
+the players panel beside a MATCH card: MAP uses the HOST GAME `HubArrowChoice`
+on the same `SelectMap` call (the CHANGE MAP popup is gone), then MODE, NETWORK,
+MATCH RULES and the LAN firewall notice. Joined players and spectators get the
+centred players panel under a one-line match summary with VIEW RULES; no card.
+SPECTATE stays in the players heading. ADD BOT sits in an open row and a small X
+removes a bot. CHAT opens a fixed column that is the whole scrollable log with a
+composer and SEND; it replaces the host's card or slides a player's seats aside,
+and an unread dot marks CHAT while closed. Escape closes chat first; the host's
+Back then asks CLOSE ROOM? with KEEP ROOM focused; players leave at once.
+
 ## Offline Match Menu
 
 Esc/menu pauses offline simulation and retains that pause through nested Settings.
 Resume, repeated closes and destruction restore the prior requested speed unless
 scene exit already selected another rate. Online matches continue running. The
-notice reflects the current mode. Menu animation/navigation remain unscaled, and
+notice reflects the current mode. LEAVE MATCH asks in the same card (role-specific
+consequence, LEAVE MATCH above, STAY focused where RESUME was; Escape is STAY);
+spectators and ended matches leave at once. Menu animation/navigation remain unscaled, and
 hitstop may not unpause a stopped clock. Human play confirmation remains separate
 from native menu/clock checks.
 

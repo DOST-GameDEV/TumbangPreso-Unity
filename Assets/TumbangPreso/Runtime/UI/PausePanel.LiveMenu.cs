@@ -52,14 +52,117 @@ namespace TumbangPreso.UI
             OwnerUiLayout.Place(notice.rectTransform, 46, 194, 530, 84);
             notice.verticalOverflow = VerticalWrapMode.Overflow;
 
-            Action("ResumeMatch", "Resume", MatchMenuButton.Kind.Primary, () => Resume(), 318, 104, 50);
-            Action("PauseSettings", "Settings", MatchMenuButton.Kind.Ordinary, OpenSettings, 446, 88, 40);
-            Action("LeaveMatch", "Leave match", MatchMenuButton.Kind.Destructive, SceneFlow.LeaveMatchToMainMenu, 572, 80, 36);
-            void Action(string name, string words, MatchMenuButton.Kind kind, System.Action press, float y, float height, int size)
+            _menuChoices = OwnerUiLayout.Rect(holder, "MenuChoices"); OwnerUiLayout.Fill(_menuChoices);
+            _menuChoicesGroup = _menuChoices.gameObject.AddComponent<CanvasGroup>();
+            notice.transform.SetParent(_menuChoices, true);
+            _resume = Action(_menuChoices, "ResumeMatch", "Resume", MatchMenuButton.Kind.Primary, () => Resume(), 318, 104, 50);
+            Action(_menuChoices, "PauseSettings", "Settings", MatchMenuButton.Kind.Ordinary, OpenSettings, 446, 88, 40);
+            Action(_menuChoices, "LeaveMatch", "Leave match", MatchMenuButton.Kind.Destructive, AskToLeave, 572, 80, 36);
+
+            // ⚠️ THE LEAVE QUESTION LIVES IN THE SAME CARD (2026-10-28 room and menu pass). It says
+            // what leaving does for this player, names both answers, and focuses STAY. LEAVE MATCH
+            // moves up to where SETTINGS was and STAY sits where RESUME was, so a second click on the
+            // old LEAVE spot lands on nothing and a mashed confirm keeps the player in the match.
+            _leaveChoices = OwnerUiLayout.Rect(holder, "LeaveConfirm"); OwnerUiLayout.Fill(_leaveChoices);
+            _leaveChoicesGroup = _leaveChoices.gameObject.AddComponent<CanvasGroup>();
+            _leaveLine = OwnerUiLayout.Text(_leaveChoices, "LeaveConsequence", "", 32);
+            _leaveLine.color = HudDraw.BrownMuted;
+            OwnerUiLayout.Place(_leaveLine.rectTransform, 46, 194, 530, 110);
+            _leaveLine.verticalOverflow = VerticalWrapMode.Overflow;
+            Action(_leaveChoices, "ConfirmLeaveMatch", "Leave match", MatchMenuButton.Kind.Destructive, SceneFlow.LeaveMatchToMainMenu, 330, 88, 38);
+            _stay = Action(_leaveChoices, "StayInMatch", "Stay", MatchMenuButton.Kind.Primary, HideLeaveQuestion, 446, 104, 50);
+            _leaveChoices.gameObject.SetActive(false);
+            _menuCard = holder;
+            _menuRest = holder.anchoredPosition;
+            ScreenTakeover.Register(this, () => _leaveChoices != null && _leaveChoices.gameObject.activeInHierarchy);
+
+            MatchMenuButton Action(RectTransform parent, string name, string words, MatchMenuButton.Kind kind, System.Action press, float y, float height, int size)
             {
-                var button = MatchMenuButton.Create(holder, name, words, kind, press, size);
+                var button = MatchMenuButton.Create(parent, name, words, kind, press, size);
                 OwnerUiLayout.Place((RectTransform)button.transform, 46, y, 528, height);
+                return button;
             }
+        }
+
+        private RectTransform _menuChoices, _leaveChoices, _menuCard;
+        private CanvasGroup _menuChoicesGroup, _leaveChoicesGroup;
+        private MatchMenuButton _resume, _stay;
+        private Text _leaveLine;
+        private Vector2 _menuRest;
+        private float _menuEnter = 1, _swap = 1;
+
+        /// <summary>
+        /// LEAVE MATCH. A spectator's broadcast and a finished match leave at once, because nothing is
+        /// lost; a live match asks first, saying what leaving costs this player.
+        /// </summary>
+        private void AskToLeave()
+        {
+            if (GameLaunch.Spectator || GameServices.Match?.HasCompleted == true || _leaveChoices == null)
+            {
+                SceneFlow.LeaveMatchToMainMenu();
+                return;
+            }
+            bool networked = SceneFlow.Networked || (Net.NetSession.Instance?.IsNetworked ?? false);
+            _leaveLine.text = !networked ? "This match ends here and its progress is lost."
+                : NetAuthority.IsHost ? "You're hosting. Leaving ends the match for everyone in it."
+                : "The match keeps going without you.";
+            if (_title != null) _title.text = "Leave the match?";
+            _menuChoices.gameObject.SetActive(false);
+            _leaveChoices.gameObject.SetActive(true);
+            _swap = Settings.SettingsStore.Current.ReducedUiMotion ? 1 : 0;
+            Select(_stay);
+        }
+
+        /// <summary>STAY, Escape, or the menu reopening: back to the three choices.</summary>
+        private void HideLeaveQuestion()
+        {
+            if (_leaveChoices == null || !_leaveChoices.gameObject.activeSelf) return;
+            _leaveChoices.gameObject.SetActive(false);
+            _menuChoices.gameObject.SetActive(true);
+            if (_title != null)
+                _title.text = PracticeRange.Active ? "Training" : GameLaunch.Spectator ? "Broadcast Menu" : "Match Menu";
+            _swap = Settings.SettingsStore.Current.ReducedUiMotion ? 1 : 0;
+            Select(_resume);
+        }
+
+        private static void Select(Selectable target)
+        {
+            var events = UnityEngine.EventSystems.EventSystem.current;
+            if (events != null && target != null) events.SetSelectedGameObject(target.gameObject);
+        }
+
+        /// <summary>Called from <see cref="OnOpened"/>: every open starts on the three choices, with the
+        /// card sliding in from the left edge it is anchored to.</summary>
+        private void ResetLiveMenu()
+        {
+            HideLeaveQuestion();
+            _menuEnter = Settings.SettingsStore.Current.ReducedUiMotion ? 1 : 0;
+            _swap = 1;
+            AnimateLiveMenu();
+        }
+
+        private void Update()
+        {
+            UpdateTrainingRange();
+            if (_leaveChoices != null && _leaveChoices.gameObject.activeInHierarchy && InputLayer.MenuNav.CancelPressed)
+            {
+                ScreenTakeover.ConsumeEscape();
+                HideLeaveQuestion();
+            }
+            AnimateLiveMenu();
+        }
+
+        private void AnimateLiveMenu()
+        {
+            if (_menuCard == null) return;
+            float dt = Time.unscaledDeltaTime;
+            if (_menuEnter < 1) _menuEnter = Mathf.MoveTowards(_menuEnter, 1, dt / 0.2f);
+            if (_swap < 1) _swap = Mathf.MoveTowards(_swap, 1, dt / 0.14f);
+            float enter = 1 - Mathf.Pow(1 - _menuEnter, 3);
+            _menuCard.anchoredPosition = _menuRest + new Vector2((enter - 1) * 56, 0);
+            float swap = 1 - Mathf.Pow(1 - _swap, 2);
+            if (_menuChoicesGroup != null) _menuChoicesGroup.alpha = swap;
+            if (_leaveChoicesGroup != null) _leaveChoicesGroup.alpha = swap;
         }
 
         /// <summary>Paused, live or ended: the pill and the notice always agree.</summary>

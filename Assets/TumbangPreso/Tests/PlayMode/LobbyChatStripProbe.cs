@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
 using TumbangPreso.UI;
@@ -103,7 +104,7 @@ namespace TumbangPreso.PlayTests
         };
 
         [UnityTest]
-        public IEnumerator TheLobbyStripShowsTheLastTwoLinesAndDrawsThem()
+        public IEnumerator TheRoomChatColumnDrawsEveryReceivedLine()
         {
             var canvasGo = new GameObject("~ChatCanvas", typeof(Canvas), typeof(CanvasScaler),
                                           typeof(GraphicRaycaster));
@@ -135,48 +136,21 @@ namespace TumbangPreso.PlayTests
             Canvas.ForceUpdateCanvases();
             yield return null;
 
-            // ---- what the strip is actually showing ----------------------------------------
-            var rows = chat.GetComponentsInChildren<Text>(includeInactive: true);
-
-            int active = 0;
-            int drawn = 0;
-            var detail = new System.Text.StringBuilder();
-
-            foreach (var row in rows)
-            {
-                // The input field's own label and placeholder live under the same object.
-                if (row.transform.parent != chat.transform) continue;
-
-                bool on = row.gameObject.activeInHierarchy;
-                float have = ((RectTransform)row.transform).rect.height;
-                float need = row.preferredHeight;
-
-                detail.AppendLine($"  row '{row.name}' active={on} text='{row.text}' " +
-                                  $"rect={have:F1} needs={need:F1} size={row.fontSize}");
-
-                if (!on || string.IsNullOrEmpty(row.text)) continue;
-
-                active++;
-
-                // ⚠️ THIS IS THE CONDITION LEGACY `Text` DRAWS NOTHING UNDER. On
-                // `VerticalWrapMode.Truncate` a label whose content is taller than its rect is
-                // clipped by WHOLE LINES, so when even one line does not fit, nothing is
-                // rasterised and the row is invisible while remaining active and non-empty.
-                if (need <= have + 0.5f) drawn++;
-            }
-
-            Debug.Log($"[ChatStrip] active={active} drawn={drawn}\n{detail}");
-
-            Assert.AreEqual(LobbyChat.LobbyVisibleLines, active,
-                $"the lobby strip has {active} active rows against " +
-                $"{LobbyChat.LobbyVisibleLines} it is built for, after {Lines.Length} messages.\n"
-                + detail);
-
-            Assert.AreEqual(active, drawn,
-                $"{active - drawn} of the strip's {active} rows hold text and are active but are " +
-                "taller than the rect they are clipped to, so legacy Text on Truncate paints " +
-                "nothing and the box above the field reads as empty. That is " +
-                "docs/reports/2026-08-29/reported/18.png.\n" + detail);
+            // ---- what the room's chat column is actually showing ---------------------------
+            // ⚠️ SINCE 2026-10-28 THE LOBBY COLUMN IS THE WHOLE LOG (`LobbyChat.Lobby.cs`), not a
+            // two-row strip with a separate history sheet. The question this probe exists for is
+            // unchanged: are the newest lines DRAWN, not merely assigned.
+            var transcript = chat.GetComponentsInChildren<Text>(includeInactive: true)
+                .FirstOrDefault(t => t.name == "FullTranscript");
+            Assert.IsNotNull(transcript, "The room's chat column has no transcript.");
+            foreach (string line in Lines)
+                StringAssert.Contains(line.Substring(line.IndexOf(":  ", System.StringComparison.Ordinal) + 3), transcript.text,
+                    "A received line is missing from the room's log.");
+            float have = transcript.rectTransform.rect.height, need = transcript.preferredHeight;
+            Debug.Log($"[ChatStrip] transcript rect={have:F1} needs={need:F1} visible={transcript.cachedTextGenerator.characterCountVisible}");
+            Assert.LessOrEqual(need, have + 0.5f, "The log's text is taller than its own rect, so legacy Text clips it.");
+            Assert.GreaterOrEqual(transcript.cachedTextGenerator.characterCountVisible, transcript.text.Replace("\n", "").TrimEnd().Length - 4,
+                "Part of the log is generated but not drawn.");
 
             Object.Destroy(canvasGo);
             yield return null;

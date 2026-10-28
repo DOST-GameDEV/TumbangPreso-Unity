@@ -36,6 +36,19 @@ namespace TumbangPreso.UI.Hub
             HubScenery.SprayTitle(HubChrome.Title(Root, "GAMEMODE", "SELECT"));
             HubChrome.TopRight(Root, Hub);
 
+            // ⚠️ TUTORIAL ONE PRESS FROM HERE (owner 2026-10-28, "add tutorial button here too"). It
+            // also stays inside PRACTICE; this is the same route, beside the title where a new
+            // player's eye lands first, at the title plate's height.
+            var tutorial = HubKit.Button(Root, "TutorialShortcut", "TUTORIAL", HubStyle.Honey, () =>
+            {
+                Hub.Host.LeaveRoom();
+                SceneFlow.StartTraining();
+            }, HubStyle.Label, 207, HubGlyph.Mark.Book);
+            var titlePlate = (RectTransform)Root.Find("TitlePlate");
+            float afterTitle = titlePlate != null ? titlePlate.anchoredPosition.x + titlePlate.sizeDelta.x + 24 : 760;
+            HubKit.Place((RectTransform)tutorial.transform, HubKit.TopLeft, new Vector2(afterTitle, -HubKit.Margin), new Vector2(300, HubChrome.BarHeight));
+            HubSlap.On(tutorial.transform, 0.2f, 2);
+
             var area = HubKit.Span(HubKit.Rect(Root, "Cards"), new Vector2(0, 0), new Vector2(1, 1),
                                    new Vector2(HubKit.Margin, 70), new Vector2(HubKit.Margin, 250));
 

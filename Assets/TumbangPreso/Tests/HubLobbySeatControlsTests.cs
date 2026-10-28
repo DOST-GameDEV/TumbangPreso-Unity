@@ -23,9 +23,9 @@ namespace TumbangPreso.Tests
                 new HubSeat{Slot=1,Occupied=true,Name="GUEST",Ready=true,CharacterPick=-1},
                 new HubSeat{Slot=2,Bot=true,CharacterPick=-1},new HubSeat{Slot=3,CharacterPick=-1}};
             public MapPreviewSurface Preview=>null; public bool OverlayOpen=>false;
-            public bool InRoom=>true; public bool IsHost=>true; public bool LocalReady=>false;
+            public bool InRoom=>true; public bool Hosting=true; public bool IsHost=>Hosting; public bool LocalReady=>false;
             public string RoomCode=>"TEST";public bool RoomOnline=>false;public string RoomTitle=>"SEAT CONTROLS";
-            public bool MatchInProgress{get;set;}public bool Spectating=>false;public string RoomAddress=>"";
+            public bool MatchInProgress{get;set;}public bool Watching; public bool Spectating=>Watching;public string RoomAddress=>Hosting?"192.168.1.7:8910":"";
             public bool MapVoting=>false;public float MapVoteSecondsLeft=>0;public int MapVoteWinner=>0;
             public int MapVoteFor(int seat)=>-1;public HubSeat[] Seats()=>Data;
             public TumbangPreso.Net.LobbySeatSwapOffer SeatSwapOffer {get;set;}
@@ -42,7 +42,7 @@ namespace TumbangPreso.Tests
             public Task<string> HostRoom(string title,string map,GameMode mode,RoomVisibility visibility,bool online)=>Task.FromResult("");
             public Task<string> Join(string codeOrAddress)=>Task.FromResult("");
             public void StartGame(){}public void ToggleReady(){}public void LockIn(){}public void VoteMap(int index){}
-            public void PublishPicks(){}public void SelectMap(string map){}public void SelectMode(GameMode mode){}
+            public void PublishPicks(){}public string Map;public void SelectMap(string map){Map=map;}public void SelectMode(GameMode mode){}
             public void Browse(){}public void RefreshRooms(bool lan){}public List<HubRoom> Rooms(bool lan)=>new List<HubRoom>();public void ToggleChat(){}public void ToggleSpectate(){}
         }
         GameObject _root,_hubRoot,_cameraRoot;Host _host;HubLobby _screen;Camera _camera;RenderTexture _target;
@@ -118,6 +118,51 @@ namespace TumbangPreso.Tests
             Canvas.ForceUpdateCanvases();_camera.Render();var previous=RenderTexture.active;var image=new Texture2D(960,540,TextureFormat.RGBA32,false);
             try{RenderTexture.active=_target;image.ReadPixels(new Rect(0,0,960,540),0,0);image.Apply();File.WriteAllBytes(path,image.EncodeToPNG());}
             finally{RenderTexture.active=previous;Object.DestroyImmediate(image);}
+        }
+        /// <summary>
+        /// The joined and spectating rooms for review, written beside the host's picture when
+        /// TUMP_LOBBY_CAPTURE names a file (`_joined`, `_spectator` suffixes).
+        /// </summary>
+        [Test] public void RenderTheOtherRolesForReview()
+        {
+            string path=System.Environment.GetEnvironmentVariable("TUMP_LOBBY_CAPTURE");
+            if(string.IsNullOrEmpty(path) || SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null) return;
+            foreach(var role in new[]{"joined","spectator"})
+            {
+                _host.Hosting=false;_host.EditBots=false;_host.Watching=role=="spectator";
+                _host.Data[0]=new HubSeat{Slot=0,Occupied=true,Host=true,Name="PLAYER",CharacterPick=-1};
+                _host.Data[1]=role=="joined"?new HubSeat{Slot=1,Occupied=true,Mine=true,Name="YOU",CharacterPick=-1}:new HubSeat{Slot=1,Occupied=true,Name="GUEST",Ready=true,CharacterPick=-1};
+                RebuildForCurrentSeats();
+                _camera.backgroundColor=new Color(.47f,.45f,.38f);
+                foreach(var slap in _root.GetComponentsInChildren<HubSlap>(true))
+                {
+                    slap.enabled=false;slap.transform.localScale=Vector3.one;slap.transform.localRotation=Quaternion.identity;
+                    var group=slap.GetComponent<CanvasGroup>();if(group!=null)group.alpha=1;
+                }
+                Write(Path.Combine(Path.GetDirectoryName(path),Path.GetFileNameWithoutExtension(path)+"_"+role+".png"));
+            }
+        }
+        [Test] public void TheHostChangesTheMapWithTheHostGameSelector()
+        {
+            var card=_root.transform.Find("MatchCard");Assert.IsNotNull(card,"The host's room has its MATCH card.");
+            Assert.IsTrue(card.gameObject.activeSelf);
+            var choice=card.GetComponentInChildren<HubArrowChoice>(true);
+            Assert.IsNotNull(choice,"MAP is the same previous/next selector HOST GAME uses.");
+            Assert.IsNull(Button("MapDoor"),"The CHANGE MAP popup door is gone.");
+            choice.Next.onClick.Invoke();
+            Assert.AreEqual(SceneFlow.MapRegistry[choice.Value].Id,_host.Map,"NEXT selects the following registered map.");
+            Assert.IsFalse(_root.transform.Find("Players/MatchSummary").gameObject.activeSelf,"The host reads the card, not the summary.");
+        }
+        [Test] public void AJoinedPlayerSeesASummaryNotTheHostsControls()
+        {
+            _host.Hosting=false;_host.EditBots=false;RebuildForCurrentSeats();
+            Assert.IsFalse(_root.transform.Find("MatchCard").gameObject.activeSelf,"A joined player gets no MATCH card.");
+            var summary=_root.transform.Find("Players/MatchSummary");
+            Assert.IsTrue(summary.gameObject.activeSelf,"A joined player reads the match in one line.");
+            Assert.IsNotNull(summary.GetComponentsInChildren<Button>().FirstOrDefault(b=>b.name=="ViewRules"));
+            Assert.AreEqual(0,((RectTransform)_root.transform.Find("Players")).anchoredPosition.x,.1f,"With the chat closed the seats are centred.");
+            Assert.AreEqual("READY",HubKit.LabelOf((HubButton)Button("StartGame")).text);
+            Assert.AreEqual("SPECTATE",HubKit.LabelOf((HubButton)Button("WatchToggle")).text);
         }
         [Test] public void NoBoardPieceIsShadedOverItsOwnFace()
         {

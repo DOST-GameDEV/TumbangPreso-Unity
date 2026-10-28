@@ -58,16 +58,26 @@ namespace TumbangPreso.UI.Hub
             // "ScreenTitle", not "Heading": a board screen's own heading (HERO's hero name) keeps that name.
             var title = HubKit.Text(root, "ScreenTitle", words, HubStyle.Display, true, HubBoard.Colour("#E1D2B7"), TextAnchor.MiddleCenter);
             title.horizontalOverflow = HorizontalWrapMode.Overflow;
-            float width = Mathf.Clamp(title.preferredWidth + 96, 220, 900);
-            HubKit.Place(plate.rectTransform, HubKit.TopLeft, new Vector2(x, -HubKit.Margin), new Vector2(width, BarHeight));
-            HubKit.Place(title.rectTransform, HubKit.TopLeft, new Vector2(x, -HubKit.Margin - 4), new Vector2(width, BarHeight - 8));
-            HubKit.Fit(title, width - 60);
-            if (!string.IsNullOrEmpty(second))
+            if (string.IsNullOrEmpty(second))
             {
-                var sub = HubKit.Text(root, "SubTitle", second, HubStyle.Label, true, HubBoard.Colour("#FCD39F"), TextAnchor.MiddleLeft);
-                HubKit.Place(sub.rectTransform, HubKit.TopLeft,
-                             new Vector2(x + 8, -HubKit.Margin - BarHeight - 12), new Vector2(700, 50));
+                float width = Mathf.Clamp(title.preferredWidth + 96, 220, 900);
+                HubKit.Place(plate.rectTransform, HubKit.TopLeft, new Vector2(x, -HubKit.Margin), new Vector2(width, BarHeight));
+                HubKit.Place(title.rectTransform, HubKit.TopLeft, new Vector2(x, -HubKit.Margin - 4), new Vector2(width, BarHeight - 8));
+                HubKit.Fit(title, width - 60);
+                return title;
             }
+            // ⚠️ THE SECOND WORD RIDES ON THE SAME PLATE (owner 2026-10-28, "ito restyle"): GAMEMODE
+            // with SELECT beside it in the plate's golden, smaller, one title. Hung under the plate
+            // on its own it read as a stray caption floating over the ground.
+            var sub = HubKit.Text(root, "SubTitle", second, HubStyle.Title, true, HubStyle.Golden, TextAnchor.MiddleLeft);
+            sub.horizontalOverflow = HorizontalWrapMode.Overflow;
+            float main = title.preferredWidth, rest = sub.preferredWidth;
+            float plateWidth = Mathf.Min(main + 22 + rest + 96, 1000);
+            HubKit.Place(plate.rectTransform, HubKit.TopLeft, new Vector2(x, -HubKit.Margin), new Vector2(plateWidth, BarHeight));
+            title.alignment = TextAnchor.MiddleLeft;
+            HubKit.Place(title.rectTransform, HubKit.TopLeft, new Vector2(x + 48, -HubKit.Margin - 4), new Vector2(main + 8, BarHeight - 8));
+            // Set a little low so the small word shares the big word's baseline, not its middle.
+            HubKit.Place(sub.rectTransform, HubKit.TopLeft, new Vector2(x + 48 + main + 22, -HubKit.Margin - 14), new Vector2(rest + 8, BarHeight - 16));
             return title;
         }
 
@@ -159,6 +169,21 @@ namespace TumbangPreso.UI.Hub
             HubBoard.Place(root, group, "currency_field", "Field");
             chip._amount = HubBoard.Write(root, group, "000,000", "Balance");
             chip._spec = HubBoard.Label("000,000");
+            // ⚠️ THE BALANCE SITS IN THE MIDDLE OF ITS FIELD (owner 2026-10-28: "font here looks
+            // offcenter"). The board's text box starts at the field's left lip with a left alignment,
+            // so the digits crowded the left edge and left the right half empty. Same field, same
+            // supersampled text; centred on the field in both directions.
+            var field = root.Find("Field") as RectTransform;
+            if (field != null)
+            {
+                var words = chip._amount.rectTransform;
+                words.anchorMin = field.anchorMin; words.anchorMax = field.anchorMax;
+                words.pivot = field.pivot; words.anchoredPosition = field.anchoredPosition;
+                words.sizeDelta = field.sizeDelta * 2f;
+                chip._amount.alignment = TextAnchor.MiddleCenter;
+                var baseline = chip._amount.GetComponent<BoardBaseline>();
+                if (baseline != null) UnityEngine.Object.Destroy(baseline);
+            }
 
             var plus = HubBoard.Sticker(root, "EarnButton", new Vector2(0, 1), "plus_button", () => hub.Push<HubTasks>(), out var plusFace, out var plusGroup);
             // the + hangs inside the chip: re-anchor it to the chip's own top-left

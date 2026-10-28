@@ -146,7 +146,7 @@ namespace TumbangPreso.UI
             toggle.GetComponentInChildren<Text>().text = value ? "On" : "Off";
         }
 
-        private void Update()
+        private void UpdateTrainingRange()
         {
             if (_range != null && Canvas != null && Canvas.gameObject.activeSelf) RefreshTrainingRange();
         }
