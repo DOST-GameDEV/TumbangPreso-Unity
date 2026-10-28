@@ -70,6 +70,9 @@ Do not load historical TODO bodies or all reports to start a session.
 
 ## Validation and continuity
 
+- **NO FULL OR BROAD PLAYMODE RUNS, EVER (owner 2026-10-28).** Run only the exact
+  affected test by full name, once per coherent change. No class-wide or suite-wide
+  PlayMode filters, and no reruns to chase cosmetic clips; prefer EditMode captures.
 - Use focused meaningful checks, then integration checks for a coherent candidate.
   Reuse unchanged evidence; never weaken tests or infer runtime success from compile.
 - [TESTING](docs/TESTING.md) owns commands and evidence rules. One heavy Unity job
