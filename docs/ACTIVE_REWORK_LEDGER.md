@@ -1,12 +1,14 @@
 # Current checkpoint
 
-Updated 2026-10-27. Owner scope: [TODO](TODO.md).
+Updated 2026-10-28. Owner scope: [TODO](TODO.md).
 
+- LOBBY-UI-1028: main 95e4b6b28, mobile+network 642504339; room EditMode
+  27/27. Next: owner review, room PlayMode tests, real joined peer.
 - Zack refinement follows main `6ab16b867`: short Momentum streamers, tapered
   ribbons, correct gold/ink layering and two empty zap hands with prop return.
   Final native film passed 1/1 across 12 takes; final focused zap capture passed
   1/1. Five Unity starts and five bundled-Mono listener probes completed; the old
-  startup crash was not reproduced. No machine network settings were changed.
+  startup crash was not reproduced.
   Evidence: `Logs/zack-refine-20261026/`. Protocol 184, clip schema 17 unchanged.
   [Refinement](reports/zack-kit-2026-10-25/refinement-2026-10-26.md).
   Next: owner picture review, Wiki/voice text, rejected SFX and real peers.
@@ -29,7 +31,6 @@ Updated 2026-10-27. Owner scope: [TODO](TODO.md).
   Next: regular skill/live events alongside NETWORKFIX. Current peer proof is
   controlled on one PC, not natural/WAN/separate-machine/Android.
 - General reliability stays on NETWORKFIX; the mobile refresh follows it.
-  Do not restore a mobile-every-feature mandate.
 
 Keep jobs and exact commands in task-local receipts while running. Older
 [checkpoints](archive/cleanup-2026-10-25/docs/ACTIVE_REWORK_LEDGER.md) are history.

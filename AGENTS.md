@@ -1,5 +1,21 @@
 # TUMP working instructions
 
+## Build or open the game: one command, nothing else
+
+Any request to build, open, play, launch or test the latest Windows game means
+exactly this, from the canonical checkout (`tools/build_latest_windows.cmd` and the
+Desktop `Build Latest TUMP.lnk` run the same thing):
+
+`python tools/build_windows.py --launch`
+
+It fetches origin, requires latest main, builds current source with the installed
+Editor to `Builds/Windows/TumbangPreso.exe`, verifies it and launches it. Progress
+and results: `Logs/windows-build-current.json` and its job folder. Do not search for
+other scripts or old executables, write a new build script, or fall back to an old
+player; on failure read the job log and fix the cause. Bare `unity` on this PC is
+an Editor wrapper, never a CLI: no verbs, Hub, license or account changes. Hub's
+`resources/unity.exe serve` is not an Editor; preserve it and any open Editor.
+
 ## Start and resume
 
 1. Inspect branch, remote divergence, worktrees and dirty files. Preserve others' work.
@@ -73,28 +89,3 @@ Do not load historical TODO bodies or all reports to start a session.
 
 [Historical instructions](docs/archive/cleanup-2026-10-25/AGENTS.before.md)
 retain old incident context; expired schedules and branch commands are not current.
-
-## Build and open the latest Windows game
-
-When the owner asks to open/play the latest game, build current source and launch
-that fresh player. Do not search old executables or open the newest existing file.
-Use the canonical checkout and this one command:
-
-`python tools/build_windows.py --launch`
-
-The double-click entry is `tools/build_latest_windows.cmd`; the Desktop shortcut
-is `Build Latest TUMP.lnk`. Output is always `Builds/Windows/TumbangPreso.exe`.
-The helper fetches origin, requires latest main to be included, invokes the matching
-installed Editor with an explicit project/output, preserves settings/profiles,
-checks successful build plus fresh source identity and runtime files, then launches
-and verifies a responsive window. It refreshes the Desktop play shortcuts only
-after that fresh launch. Read `Logs/windows-build-current.json` and its job folder
-for progress/results. A failed build never falls back to an old player.
-
-On this PC, bare `unity` is `C:\Users\matth\bin\unity.cmd`, an Editor wrapper,
-not the Unity CLI. Never send it CLI verbs such as self-update, status or command:
-that opens the projectless Editor wizard. Normal builds need no CLI install/update,
-Hub changes, sign-out, license reset or project creation. The helper uses the
-installed Editor executable directly. Hub's `resources/unity.exe serve` process
-is not a Unity Editor and must be preserved. Detect Editors by executable path,
-not name alone. Preserve an active Editor's unsaved work rather than killing it.
