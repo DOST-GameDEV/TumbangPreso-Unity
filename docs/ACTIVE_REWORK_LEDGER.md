@@ -1,7 +1,9 @@
 # Current checkpoint
 
-Updated 2026-10-27. [TODO](TODO.md) is the only active queue.
+Updated 2026-10-28. [TODO](TODO.md) is the only active queue.
 
+- LOBBY-UI-1028: room/menu pass from main 95e4b6b28 is applied here
+  (642504339). Next: owner review, room PlayMode tests, real joined peer.
 - Owner requested wrapping up and handing off unfinished mobile UI work.
   [Resume here](reports/mobile-ui-2026-10-26/HANDOFF.md): ff9 Android candidate is
   built/uploaded, native41/41 and recorded actual touch journeys passed. Newer
