@@ -21,7 +21,9 @@ namespace TumbangPreso.Diagnostics
             public float time, filmAge, filmEnd, filmHandoff, roundLeft;
             public double serverTime;
             public int local, round, quality;
-            public bool host, held, scriptedUltimate, ultimateThreshold;
+            public bool host, held, scriptedUltimate, ultimateThreshold, terraceStaged;
+            public float terraceHeight;
+            public Vector3 terraceAt;
             public string scene, phase, beat, pipeline;
             public Color sky, equator, groundColour, fog, sun;
             public float sunIntensity, brightness=1, saturation=1;
@@ -39,7 +41,7 @@ namespace TumbangPreso.Diagnostics
         [Serializable] private sealed class GroundProp
         {
             public string kind;
-            public int owner, state, holder=-1;
+            public int owner, origin=-1, state, holder=-1;
             public Vector3 position, boundsMin, boundsMax;
             public bool hasFloor, visible;
             public float floor;
@@ -49,6 +51,11 @@ namespace TumbangPreso.Diagnostics
         private float _groundNext, _groundLive=-1;
         private bool _groundCast, _groundThreshold, _groundCapturing;
         private float _groundRelease=-1;
+        private bool _groundTerrain;
+        private Vector3 _groundTerraceAt;
+        private float _groundTerraceHeight;
+        private readonly List<GameObject> _groundProxies=new List<GameObject>();
+        private float _groundProxiesNext;
         private readonly HashSet<string> _groundShots=new HashSet<string>();
         private readonly List<Slipper> _groundShoes=new List<Slipper>();
         private string _groundScene;
@@ -78,7 +85,7 @@ namespace TumbangPreso.Diagnostics
                     round=GameServices.Match?.RoundNumber??-1,roundLeft=round.TimeLeft,held=PresentationClock.Held,
                     scene=SceneManager.GetActiveScene().name,quality=QualitySettings.GetQualityLevel(),scriptedUltimate=_groundCast,
                     pipeline=RenderPipelineManager.currentPipeline!=null?RenderPipelineManager.currentPipeline.GetType().Name:"Built-in",
-                    ultimateThreshold=_groundThreshold,sky=RenderSettings.ambientSkyColor,equator=RenderSettings.ambientEquatorColor,
+                    ultimateThreshold=_groundThreshold,terraceStaged=_groundTerrain,terraceAt=_groundTerraceAt,terraceHeight=_groundTerraceHeight,sky=RenderSettings.ambientSkyColor,equator=RenderSettings.ambientEquatorColor,
                     groundColour=RenderSettings.ambientGroundColor,fog=RenderSettings.fogColor};
                 var nm=NetworkManager.Singleton;frame.serverTime=nm!=null&&nm.IsListening?nm.ServerTime.Time:0;
                 frame.phase=film!=null&&film.Playing?"film":SharedUltimatePhase.Instance!=null&&SharedUltimatePhase.Instance.Active?"ultimate":
@@ -104,7 +111,7 @@ namespace TumbangPreso.Diagnostics
                 foreach(var shoe in _groundShoes)
                 {
                     if(shoe==null||!shoe.gameObject.activeInHierarchy)continue;
-                    var row=new GroundProp{kind="slipper",owner=shoe.OwnerSlot,state=(int)shoe.State,holder=shoe.Holder!=null?shoe.Holder.PlayerSlot:-1,position=shoe.transform.position};
+                    var row=new GroundProp{kind="slipper",owner=shoe.OwnerSlot,origin=shoe.SeatOfOrigin,state=(int)shoe.State,holder=shoe.Holder!=null?shoe.Holder.PlayerSlot:-1,position=shoe.transform.position};
                     row.hasFloor=WorldGround.TryBelow(row.position,.3f,14f,out row.floor);if(!row.hasFloor)row.floor=0;
                     row.visible=GroundBounds(shoe.gameObject,out row.boundsMin,out row.boundsMax);frame.props.Add(row);
                 }
@@ -113,6 +120,23 @@ namespace TumbangPreso.Diagnostics
                     var can=round.Lata;var row=new GroundProp{kind="can",position=can.transform.position,state=can.IsUpright?1:0};
                     row.hasFloor=WorldGround.TryBelow(row.position,.3f,14f,out row.floor);if(!row.hasFloor)row.floor=0;
                     row.visible=GroundBounds(can.gameObject,out row.boundsMin,out row.boundsMax);frame.props.Add(row);
+                }
+                if(frame.phase=="ultimate")
+                {
+                    if(Time.realtimeSinceStartup>=_groundProxiesNext)
+                    {
+                        _groundProxiesNext=Time.realtimeSinceStartup+.5f;_groundProxies.Clear();
+                        var stage=GameObject.Find("IntroductionScene-nemu");
+                        if(stage!=null)foreach(var child in stage.GetComponentsInChildren<Transform>())
+                            if(child.name.StartsWith("IntroductionOther-P",StringComparison.Ordinal))_groundProxies.Add(child.gameObject);
+                    }
+                    foreach(var proxy in _groundProxies)
+                    {
+                        if(proxy==null)continue;
+                        var row=new GroundProp{kind="proxy:"+proxy.name,position=proxy.transform.position};
+                        row.hasFloor=WorldGround.TryBelow(row.position,.35f,14f,out row.floor);if(!row.hasFloor)row.floor=0;
+                        row.visible=GroundBounds(proxy,out row.boundsMin,out row.boundsMax);frame.props.Add(row);
+                    }
                 }
                 _groundWriter.WriteLine(JsonUtility.ToJson(frame));
                 string shot=null;
@@ -155,6 +179,30 @@ namespace TumbangPreso.Diagnostics
             var round=GameServices.Round;if(round==null||!round.RoundActive||PresentationClock.Held)return;
             if(_groundLive<0){_groundLive=Time.realtimeSinceStartup;return;}
             if(Time.realtimeSinceStartup-_groundLive<6f)return;
+            if(!_groundTerrain && !string.IsNullOrEmpty(Argument("-tp-grounding-terraces")))
+            {
+                var victim=round.PlayerAt(2);var caster=round.PlayerAt(NetAuthority.LocalSlot);
+                if(victim!=null&&caster!=null)
+                {
+                    float baseFloor=caster.transform.position.y,best=baseFloor+1f;Vector3 selected=Vector3.zero;
+                    for(int x=1;x<10;x++)for(int z=1;z<10;z++)
+                    {
+                        var point=new Vector3(Mathf.Lerp(AIController.PlayableMinX+1,AIController.PlayableMaxX-1,x/10f),baseFloor+8,
+                            Mathf.Lerp(AIController.PlayableMinZ+1,AIController.PlayableMaxZ-1,z/10f));
+                        if(WorldGround.TryBelow(point,0,16,out var floor)&&floor>best&&floor<baseFloor+7.5f)
+                        {best=floor;selected=new Vector3(point.x,floor+.1f,point.z);}
+                    }
+                    if(selected!=Vector3.zero)
+                    {
+                        var brain=victim.GetComponent<AIController>();if(brain!=null)brain.enabled=false;
+                        victim.Intent.Clear();victim.Intent.Parked=true;victim.Teleport(selected,keepStatuses:true);
+                        _groundTerrain=true;_groundTerraceAt=selected;_groundTerraceHeight=best-baseFloor;
+                        Debug.Log("[GroundAudit] Named uneven-terrain scenario placed bot2 on height delta "+_groundTerraceHeight);
+                        _groundLive=Time.realtimeSinceStartup-4f;return;
+                    }
+                }
+                File.WriteAllText(Path.Combine(_groundFolder,"terrace-inconclusive.txt"),"No elevated walkable surface found inside the playable bounds.");
+            }
             var actor=round.PlayerAt(NetAuthority.LocalSlot);if(actor==null)return;
             var kit=actor.AbilitySystem?.Kit;if(kit==null||kit.HeroId!="nemu")return;
             if(kit.UltimateCharge<=kit.UltimateCost-3)

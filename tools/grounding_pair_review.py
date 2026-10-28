@@ -35,6 +35,7 @@ def main():
     parser.add_argument('--protocol',required=True,type=int)
     parser.add_argument('--seconds',type=int,default=145)
     parser.add_argument('--cast-nemu',action='store_true')
+    parser.add_argument('--terraces',action='store_true',help='Named host scenario places one bot on a raised map surface before the ordinary Nemu cast')
     parser.add_argument('--allbots',action='store_true',help='Diagnostic spectator route; omit for normal player cameras')
     args=parser.parse_args();exe=args.exe.resolve();out=args.out.resolve()
     assert exe.parent==ROOT/'Builds/Windows' and out.is_relative_to(ROOT/'Logs')
@@ -67,6 +68,7 @@ def main():
             if args.allbots:command.append('-tp-allbots')
             if role=='client':command+=['-tp-lobbyjoin','127.0.0.1:'+str(port)]
             elif args.cast_nemu:command+=['-tp-grounding-cast','nemu']
+            if args.terraces:command+=['-tp-grounding-terraces','1']
             startup=subprocess.STARTUPINFO();startup.dwFlags|=subprocess.STARTF_USESHOWWINDOW;startup.wShowWindow=4
             process=subprocess.Popen(command,cwd=ROOT,env=unity_environment(),startupinfo=startup,creationflags=subprocess.CREATE_NO_WINDOW)
             children.append(process);commands.append(command);save('running');print(role,'PID',process.pid,flush=True)
@@ -95,6 +97,9 @@ def main():
                         suspects.append({'time':r['time'],'slot':a['slot'],'offsetY':offset,'body':a['body'],'visual':a['visual'],'floor':a['floor']})
             results[role]={'frames':len(rows),'phases':phases,'picks':seen_picks,'suspects':suspects,'exitCode':codes[0 if role=='host' else 1],
                 'error':(out/role/'error.txt').read_text() if (out/role/'error.txt').exists() else '',
+                'scenes':sorted(set(r['scene'] for r in rows)),
+                'terraceStaged':any(r.get('terraceStaged') for r in rows),
+                'terraceHeight':max([r.get('terraceHeight',0) for r in rows] or [0]),
                 'ultimateThresholdObserved':any(r.get('ultimateThreshold') for r in rows)}
         after_hashes={str(p.relative_to(exe.parent)):build_windows.sha(p) for p in build_windows.player_artifacts(exe.parent)}
         assert before_hashes==after_hashes,'Artifact changed during peer review'
@@ -103,7 +108,7 @@ def main():
             'map':args.map,'sharedInputUnchanged':unchanged,'artifactUnchanged':True,'peers':results}
         (out/'result.json').write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8');save('complete')
         print(json.dumps({r:{k:v for k,v in x.items() if k!='suspects'}|{'suspectCount':len(x['suspects'])} for r,x in results.items()}),flush=True)
-        return 0 if unchanged and all(x['frames'] and 'play' in x['phases'] and x['exitCode']==0 and not x['error'] for x in results.values()) else 1
+        return 0 if unchanged and all(x['frames'] and 'play' in x['phases'] and x['exitCode']==0 and not x['error'] and args.map in x['scenes'] for x in results.values()) else 1
     finally:
         for process in children:
             if process.poll() is None:process.terminate()

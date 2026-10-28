@@ -756,6 +756,9 @@ namespace TumbangPreso.Visual
             float t = 1.0f - Mathf.Exp(-RemoteSmoothRate * dt);
 
             _smoothedWorld = Vector3.Lerp(_smoothedWorld, body, t);
+            if (_motor == null) _motor = GetComponent<CharacterMotor>();
+            // Ground contact follows the replicated body; only airborne height keeps a visual lag.
+            if (_motor != null && _motor.IsGrounded && !_motor.IsFlying) _smoothedWorld.y = body.y;
             _smoothedYawDeg = Mathf.LerpAngle(_smoothedYawDeg, bodyYaw, t);
 
             // ⚠️⚠️ ADDED TO THE FLOOR ALIGNMENT, NEVER WRITTEN OVER IT. 
