@@ -105,6 +105,202 @@ namespace TumbangPreso.EditorTools
             Debug.Log("[TumpPortraitAuthor] Re-baked " + written.Count + " people and tsinelas thumbnails: " + string.Join(", ", written));
         }
 
+        /// <summary>
+        /// Every PERSON re-baked at <see cref="FaceSize"/> by the face rule (<see cref="CaptureFace"/>).
+        /// `-tp-portrait-out Logs/x` writes a study there and leaves the roster assets alone;
+        /// `-tp-portrait-id a,b` limits it to those people.
+        ///
+        /// ⚠️ WHY (owner 2026-10-28, of the room cards: "the character pics ... look phaister or paete
+        /// its a bad angle"). The shared rule shot from above, and steeper for a wide figure
+        /// (`ModelPreview`'s flat pitch, 52 degrees for Paete's spread branches), and sized the head by
+        /// the top third of the silhouette, so a witch's brim or a crown of antlers became "the head"
+        /// and the face shrank to the bottom of the square. The room's cards show these big, popping
+        /// out of the tile like HOME's HERO icon, so the angle is the whole picture.
+        /// </summary>
+        public static void CaptureFaces()
+        {
+            var book = RosterBook.Load();
+            if (book == null) throw new System.InvalidOperationException("RosterBook is required for real portraits.");
+            var args = System.Environment.GetCommandLineArgs();
+            int outAt = System.Array.IndexOf(args, "-tp-portrait-out");
+            int idAt = System.Array.IndexOf(args, "-tp-portrait-id");
+            string folder = outAt >= 0 && outAt + 1 < args.Length ? args[outAt + 1] : Output;
+            var only = idAt >= 0 && idAt + 1 < args.Length ? new List<string>(args[idAt + 1].Split(',')) : null;
+            bool study = folder != Output;
+            Directory.CreateDirectory(folder);
+            var written = new List<string>();
+            foreach (var person in Roster.AllPeople)
+            {
+                if (written.Contains(person.Id) || (only != null && !only.Contains(person.Id))) continue;
+                var art = book.FindPersonArt(person.Id);
+                if (art == null || art.Model == null) throw new System.InvalidOperationException("Missing approved art for " + person.Id);
+                CaptureFace(art, folder + "/" + person.Id + ".png");
+                written.Add(person.Id);
+            }
+            if (study) { Debug.Log("[TumpPortraitAuthor] Face study of " + written.Count + " people in " + folder + "; no roster assets changed."); return; }
+            AssetDatabase.Refresh();
+            foreach (var id in written)
+            {
+                var importer = (TextureImporter)AssetImporter.GetAtPath(Output + "/" + id + ".png");
+                importer.textureType = TextureImporterType.Sprite;
+                importer.spriteImportMode = SpriteImportMode.Single;
+                importer.alphaIsTransparency = true;
+                importer.mipmapEnabled = false;
+                importer.filterMode = FilterMode.Bilinear;
+                importer.maxTextureSize = FaceSize;
+                importer.textureCompression = TextureImporterCompression.Uncompressed;
+                importer.SaveAndReimport();
+            }
+            AssetDatabase.Refresh();
+            Debug.Log("[TumpPortraitAuthor] Re-baked " + written.Count + " people by the face rule: " + string.Join(", ", written));
+        }
+
+        /// <summary>The face study and the GAMEMODE poses in one Editor run (one Unity job, not two).</summary>
+        public static void CaptureFacesAndPoses()
+        {
+            CaptureFaces();
+            ModeCardPoseAuthor.Run();
+        }
+
+        /// <summary>The face rule's square, twice the old thumbnail: the room cards show it near full size.</summary>
+        public const int FaceSize = 640;
+        /// <summary>A small turn and a camera just above the eyes: the cast's flat faces read straight on.</summary>
+        private const float FaceYaw = 16f, FacePitch = 6f;
+
+        /// <summary>
+        /// One person by the face rule: the approved preview stage, pose, palette and lights
+        /// (`ModelPreview`), with the camera moved to the HEAD. The head is the `head` bone's own
+        /// mesh where the rig has one (so a hat, a brim or antlers do not count as the face), else
+        /// everything the bone carries. Rendered at twice <see cref="FaceSize"/> and halved.
+        /// </summary>
+        private static void CaptureFace(RosterEntryAsset art, string path)
+        {
+            int render = FaceSize * 3;
+            var host = new GameObject("PortraitFace_" + art.Id, typeof(RectTransform));
+            var rect = (RectTransform)host.transform;
+            rect.sizeDelta = new Vector2(render, render);
+            var preview = host.AddComponent<ModelPreview>();
+            Texture2D image = null;
+            var active = RenderTexture.active;
+            try
+            {
+                preview.Attach(rect);
+                preview.Show(art.Model, art.Clips, art.Palette, null);
+                preview.CentreSubject();
+                preview.LookAt(.72f, .68f);
+                preview.StepForCapture();
+                var model = preview.Subject;
+                if (model == null || preview.Target == null) throw new System.InvalidOperationException("Portrait stage missing: " + art.Id);
+                if (!FaceFrame(model.transform, out Vector3 centre, out float frameHeight)) throw new System.InvalidOperationException("No figure on " + art.Id);
+                var camera = preview.PreviewCamera;
+                // The model faces the camera at `FacingYaw`; the camera sits in front of it, turned a little.
+                Vector3 front = model.transform.forward;
+                var rot = Quaternion.LookRotation(-front, Vector3.up) * Quaternion.Euler(FacePitch, FaceYaw, 0);
+                float distance = frameHeight * .5f / Mathf.Tan(camera.fieldOfView * .5f * Mathf.Deg2Rad);
+                Vector3 aim = centre;
+                camera.transform.rotation = rot;
+                camera.transform.position = aim - rot * Vector3.forward * distance;
+                camera.farClipPlane = distance * 2f + 1f;
+                camera.Render();
+                RenderTexture.active = preview.Target;
+                image = new Texture2D(render, render, TextureFormat.RGBA32, false);
+                image.ReadPixels(new Rect(0, 0, render, render), 0, 0);
+                image.Apply();
+                if (path.StartsWith("Logs")) File.WriteAllBytes(path.Replace(".png", ".raw.png"), image.EncodeToPNG());
+                var bust = CropBust(image, art.Id);
+                Object.DestroyImmediate(image); image = bust;
+                File.WriteAllBytes(path, image.EncodeToPNG());
+            }
+            finally
+            {
+                RenderTexture.active = active;
+                if (image != null) Object.DestroyImmediate(image);
+                if (preview.Subject != null) Object.DestroyImmediate(preview.Subject.transform.parent.gameObject);
+                Object.DestroyImmediate(host);
+            }
+        }
+
+        /// <summary>
+        /// Head and shoulders, measured on the posed figure: the frame runs from just above the top
+        /// of the figure (hair, hat, antlers) down past the `head` bone (the neck) by as much again
+        /// as the head stands above it, so every square shows a face and a chest at the same size
+        /// whatever sits on the head. A rig with no `head` bone takes the top 62 per cent of its height.
+        /// </summary>
+        private static bool FaceFrame(Transform model, out Vector3 centre, out float height)
+        {
+            centre = default; height = 0;
+            Bounds body = default; bool any = false;
+            foreach (var r in model.GetComponentsInChildren<Renderer>())
+            {
+                if (!r.enabled || !(r is SkinnedMeshRenderer || r is MeshRenderer)) continue;
+                if (!any) { body = r.bounds; any = true; } else body.Encapsulate(r.bounds);
+            }
+            if (!any) return false;
+            // The whole figure, a little air round it; `CropBust` then cuts head and chest from the pixels.
+            // Generous: a skinned mesh's bounds can lag its pose, and `CropBust` measures the real pixels anyway.
+            height = Mathf.Max(body.size.y, body.size.x) * 1.5f;
+            centre = body.center;
+            return true;
+        }
+
+        /// <summary>
+        /// Head and chest, cut from the rendered figure itself: from just above its top (hair, hat,
+        /// antlers) down <see cref="BustShare"/> of its height, centred on the head band's middle, and
+        /// resampled to <see cref="FaceSize"/>. Measured on pixels, so every rig frames the same way.
+        /// </summary>
+        private const float BustShare = .80f, BustLead = .16f;
+
+        /// <summary>A hat or a crown of antlers taller than the cast's hair needs more of the figure to reach the chin.</summary>
+        private static readonly Dictionary<string, Vector2> BustFor = new Dictionary<string, Vector2>
+        {
+            { "phaister", new Vector2(1.02f, .08f) }, { "paete", new Vector2(.78f, .10f) },
+        };
+
+        private static Texture2D CropBust(Texture2D source, string id)
+        {
+            float share = BustFor.TryGetValue(id, out var own) ? own.x : BustShare, lead = BustFor.ContainsKey(id) ? own.y : BustLead;
+            int w = source.width, h = source.height;
+            var px = source.GetPixels32();
+            int top = -1, bottom = -1;
+            for (int row = 0; row < h && top < 0; row++)
+                for (int x = 0; x < w; x++) if (px[(h - 1 - row) * w + x].a > 20) { top = row; break; }
+            for (int row = h - 1; row >= 0 && bottom < 0; row--)
+                for (int x = 0; x < w; x++) if (px[(h - 1 - row) * w + x].a > 20) { bottom = row; break; }
+            if (top < 0 || bottom <= top) return Downsample(source, FaceSize);
+            float side = (bottom - top) * share;
+            float sum = 0; int count = 0;
+            int bandEnd = top + Mathf.RoundToInt(side * .55f);
+            for (int row = top; row <= bandEnd && row < h; row++)
+            {
+                int left = -1, right = -1, y = h - 1 - row;
+                for (int x = 0; x < w; x++) if (px[y * w + x].a > 20) { if (left < 0) left = x; right = x; }
+                if (left >= 0) { sum += (left + right) * .5f; count++; }
+            }
+            float cx = count > 0 ? sum / count : w * .5f;
+            Debug.Log("[TumpPortraitAuthor] bust: figure rows " + top + ".." + bottom + " of " + h + ", side " + side);
+            // Air above the head as the old thumbnails had (their head started 72 of 320 down), so the
+            // HUD chips, pickers and avatars that frame these keep their framing.
+            float x0 = cx - side * .5f, y0 = top - side * lead;
+            var output = new Texture2D(FaceSize, FaceSize, TextureFormat.RGBA32, false);
+            var result = new Color32[FaceSize * FaceSize];
+            float k = side / FaceSize;
+            for (int v = 0; v < FaceSize; v++)
+                for (int u = 0; u < FaceSize; u++)
+                {
+                    // Four taps per output pixel: the crop is usually larger than the output, so this smooths it.
+                    Color c = Color.clear;
+                    for (int t = 0; t < 4; t++)
+                    {
+                        float sx = x0 + (u + .25f + .5f * (t & 1)) * k, sy = y0 + (v + .25f + .5f * (t >> 1)) * k;
+                        if (sx < 0 || sx >= w - 1 || sy < 0 || sy >= h - 1) continue;
+                        c += source.GetPixelBilinear((sx + .5f) / w, (h - 1 - sy + .5f) / h);
+                    }
+                    result[(FaceSize - 1 - v) * FaceSize + u] = c * .25f;
+                }
+            output.SetPixels32(result); output.Apply();
+            return output;
+        }
+
         [MenuItem("Tumbang Preso/UI/Bake roster portraits")]
         public static void CaptureAll()
         {

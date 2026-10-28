@@ -108,7 +108,7 @@ namespace TumbangPreso.PlayTests
             NetSession.Instance.Query.StopBrowsing();
             var join = hub.Push<HubJoin>();
             yield return null;
-            yield return HubFlowTests.Press("Source1");
+            yield return null;
             var beacon = NetSession.Instance.Beacon;
             Assert.IsTrue(beacon.Listening, "The LAN source did not start the real discovery listener.");
 
@@ -164,11 +164,8 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual("REFRESH", HubKit.LabelOf(refresh).text);
             Assert.AreNotEqual(Navigation.Mode.None, refresh.navigation.mode, "A pad cannot reach REFRESH.");
 
-            // JOIN BY CODE has no list to refresh; the online list's REFRESH asks UGS on the next frame.
-            yield return HubFlowTests.Press("Source2");
-            Assert.IsFalse(refresh.gameObject.activeInHierarchy, "REFRESH stayed up over JOIN BY CODE.");
-            yield return HubFlowTests.Press("Source0");
-            Assert.IsTrue(refresh.gameObject.activeInHierarchy && refresh.interactable, "REFRESH was not ready on the online list.");
+            // One list for both networks (owner 2026-10-28): the same REFRESH also asks UGS on the next frame.
+            Assert.IsTrue(refresh.gameObject.activeInHierarchy && refresh.interactable, "REFRESH was not ready on the merged list.");
             var query = NetSession.Instance.Query;
             var sinceQuery = typeof(ServerQuery).GetField("_sinceQuery", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
             sinceQuery.SetValue(query, 0f);

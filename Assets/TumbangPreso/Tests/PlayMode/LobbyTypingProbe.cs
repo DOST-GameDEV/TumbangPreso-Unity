@@ -86,7 +86,6 @@ namespace TumbangPreso.PlayTests
             TumbangPreso.UI.Hub.TumpHub.Current.Back(); yield return null;
             yield return HubFlowTests.Press("CustomCard");
             yield return HubFlowTests.Press("JoinDoor");
-            yield return HubFlowTests.Press("Source2");
             yield return Check("join code", report, broken);
             Directory.CreateDirectory("Logs");
             File.WriteAllText(OutPath, report.ToString(), new UTF8Encoding(false));
@@ -132,7 +131,8 @@ namespace TumbangPreso.PlayTests
                     .Single(input => input.name == "LobbyName");
                 var plate = field.targetGraphic;
                 Assert.IsNotNull(plate);
-                Assert.AreEqual("Plate", plate.name);
+                // The field's own knit face (HOME's peach well) takes the press.
+                Assert.AreEqual("Face", plate.name);
                 Assert.IsTrue(plate.transform.IsChildOf(field.transform));
                 Assert.AreEqual(TumbangPreso.Settings.GameSettings.RoomTitleMax, field.characterLimit);
                 const string full = "ABCDEFGHIJKLMNOPQRSTUVWX";
@@ -208,7 +208,7 @@ namespace TumbangPreso.PlayTests
                 Assert.AreEqual(edited, TumbangPreso.Net.NetSession.RoomTitle);
                 Assert.AreEqual(edited, hub.Host.RoomTitle);
                 Assert.AreEqual(edited, TumbangPreso.Net.NetSession.Instance.Beacon.HostName);
-                var heading = hub.Top.Root.Find("Heading").GetComponent<Text>();
+                var heading = hub.Top.Root.Find("TitlePlate/Face/ScreenTitle").GetComponent<Text>();
                 Assert.AreEqual(edited, heading.text);
                 yield return TumpUiCapture.Capture("qa04-host-name-created-960x540", hub.Canvas,
                     960, 540, false, checkActionBounds: true);

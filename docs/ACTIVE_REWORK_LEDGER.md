@@ -2,13 +2,12 @@
 
 Updated 2026-10-28. Owner scope: [TODO](TODO.md).
 
-- LOBBY-UI-1028: main 95e4b6b28, mobile+network 642504339; room EditMode
-  27/27. Next: owner review, room PlayMode tests, real joined peer.
+- LOBBY-UI-1028: knit rebuild on lobby-ui-revamp. Next: owner review,
+  room PlayMode tests, real joined peer, then main and mobile+network.
 - Zack refinement follows main `6ab16b867`: short Momentum streamers, tapered
   ribbons, correct gold/ink layering and two empty zap hands with prop return.
   Final native film passed 1/1 across 12 takes; final focused zap capture passed
-  1/1. Five Unity starts and five bundled-Mono listener probes completed; the old
-  startup crash was not reproduced.
+  1/1.
   Evidence: `Logs/zack-refine-20261026/`. Protocol 184, clip schema 17 unchanged.
   [Refinement](reports/zack-kit-2026-10-25/refinement-2026-10-26.md).
   Next: owner picture review, Wiki/voice text, rejected SFX and real peers.

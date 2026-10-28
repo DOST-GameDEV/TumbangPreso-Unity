@@ -34,8 +34,11 @@ namespace TumbangPreso.UI
             if (PracticeRange.Requested && PracticeRange.Instance != null) { BuildTrainingRange(); return; }
             var design = OwnerUiLayout.DesignArea(Canvas.transform, "LiveMenuComposition");
             var holder = OwnerUiLayout.Rect(design, "LiveMenuColumn"); OwnerUiLayout.Place(holder, 96, 196, 620, 700);
-            var card = holder.gameObject.AddComponent<HudCard>();
-            card.Toy(HudDraw.Cream, HudDraw.CreamSide, 12, 30, .5f).raycastTarget = true; card.FollowContrast = false;
+            // ⚠️ THE CARD IS HOME'S WINE KNIT (owner 2026-10-28), the same deep plate as the room's chat
+            // drawer, so the match menu and its leave question belong to the room family. An invisible
+            // image keeps the card's job of catching every press that lands on it.
+            var catcher = holder.gameObject.AddComponent<Image>(); catcher.color = Color.clear; catcher.raycastTarget = true;
+            var plate = Hub.HubKnit.Plate(holder, "Knit", Hub.Knit.Wine); OwnerUiLayout.Fill(plate); plate.SetAsFirstSibling();
 
             _statePlate = OwnerUiLayout.Rect(holder, "PauseState").gameObject.AddComponent<HudCard>();
             OwnerUiLayout.Place(_statePlate.rectTransform, 44, 44, 150, 44);
@@ -45,10 +48,10 @@ namespace TumbangPreso.UI
             _statePill.horizontalOverflow = HorizontalWrapMode.Overflow;
 
             _title = OwnerUiLayout.Text(holder, "PauseTitle", "Match Menu", 66, OwnerUiLayout.TypeRole.Display);
-            OwnerUiLayout.Place(_title.rectTransform, 44, 100, 540, 92); _title.color = HudDraw.Brown;
+            OwnerUiLayout.Place(_title.rectTransform, 44, 100, 540, 92); _title.color = Hub.HubKnit.Honey;
             _title.horizontalOverflow = HorizontalWrapMode.Overflow; _title.verticalOverflow = VerticalWrapMode.Overflow;
             var notice = OwnerUiLayout.Text(holder, "LiveNotice", "The match keeps playing while this menu is open.", 32);
-            _notice = notice; notice.color = HudDraw.BrownMuted;
+            _notice = notice; notice.color = new Color(Hub.HubKnit.Cream.r, Hub.HubKnit.Cream.g, Hub.HubKnit.Cream.b, .8f);
             OwnerUiLayout.Place(notice.rectTransform, 46, 194, 530, 84);
             notice.verticalOverflow = VerticalWrapMode.Overflow;
 
@@ -66,7 +69,7 @@ namespace TumbangPreso.UI
             _leaveChoices = OwnerUiLayout.Rect(holder, "LeaveConfirm"); OwnerUiLayout.Fill(_leaveChoices);
             _leaveChoicesGroup = _leaveChoices.gameObject.AddComponent<CanvasGroup>();
             _leaveLine = OwnerUiLayout.Text(_leaveChoices, "LeaveConsequence", "", 32);
-            _leaveLine.color = HudDraw.BrownMuted;
+            _leaveLine.color = Hub.HubKnit.Cream;
             OwnerUiLayout.Place(_leaveLine.rectTransform, 46, 194, 530, 110);
             _leaveLine.verticalOverflow = VerticalWrapMode.Overflow;
             Action(_leaveChoices, "ConfirmLeaveMatch", "Leave match", MatchMenuButton.Kind.Destructive, SceneFlow.LeaveMatchToMainMenu, 330, 88, 38);

@@ -676,22 +676,18 @@ namespace TumbangPreso.PlayTests
                         .Single(b => b.name == name);
                     var art = card.Body.Find("Art");
                     Assert.IsNotNull(art, name + " has no poster region");
+                    // Owner 2026-10-28: the cards are HOME knit tiles with the poster in a rounded window.
                     var mask = art.GetComponent<Mask>();
-                    var stencil = art.GetComponent<HubShape>();
-                    Assert.IsNotNull(mask, name + " has no chamfered art mask");
-                    Assert.IsNotNull(stencil, name + " has no shaped stencil");
+                    var stencil = art.GetComponent<Image>();
+                    Assert.IsNotNull(mask, name + " has no rounded art mask");
+                    Assert.IsNotNull(stencil, name + " has no rounded stencil");
                     Assert.IsFalse(mask.showMaskGraphic);
                     Assert.IsFalse(stencil.raycastTarget);
-                    Assert.AreEqual(0, stencil.OutlineWidth);
-                    Assert.AreEqual(0, stencil.RimWidth);
-                    Assert.AreEqual(0, stencil.RingWidth);
-                    Assert.AreEqual(Vector2.zero, stencil.ShadowOffset);
-                    Assert.AreEqual(card.Shape.Seed, stencil.Seed);
+                    Assert.IsNull(card.Shape, name + " is still an old sticker");
+                    Assert.IsNotNull(card.GetComponent<HubStickerFeel>(), name + " lacks HOME's knit feel");
                     Assert.IsNotNull(art.Find("Poster"));
                     Assert.IsFalse(card.Body.Find("Label").IsChildOf(art),
-                        name + " must keep its title above the poster mask");
-                    Assert.IsFalse(card.transform.Find("Tape").IsChildOf(art),
-                        name + " must leave the tape outside the poster mask");
+                        name + " must keep its title outside the poster mask");
                 }
                 yield return Shots("GameModes");
 
@@ -727,21 +723,17 @@ namespace TumbangPreso.PlayTests
                 yield return Press("HostDoor");
                 Assert.IsInstanceOf<HubHost>(TumpHub.Current.Top);
                 yield return Shots("Host");
-                int nextMap = (System.Array.FindIndex(SceneFlow.MapRegistry,x=>x.Id==SceneFlow.SelectedMap)+1)%SceneFlow.MapRegistry.Length;
-                yield return Press("MapNext");
-                Assert.IsInstanceOf<HubHost>(TumpHub.Current.Top,"Map arrows must stay on the form without a popup.");
-                yield return Shots("Host-map-choice");
-                Assert.AreEqual(SceneFlow.MapRegistry[nextMap].Id, SceneFlow.SelectedMap, "The map choice moves the court behind the form.");
+                // Owner 2026-10-28: HOST GAME asks only what cannot change later; map and mode are the room's.
+                Assert.IsFalse(TumpHub.Current.Canvas.GetComponentsInChildren<HubArrowChoice>().Any(),
+                    "HOST GAME must not offer the map or mode the room chooses.");
                 Back(); yield return null;
                 Assert.IsInstanceOf<HubModeSelect>(TumpHub.Current.Top, "BACK from HOST returns to GAMEMODE SELECT.");
                 yield return Press("CustomCard");
                 yield return Press("JoinDoor");
                 Assert.IsInstanceOf<HubJoin>(TumpHub.Current.Top);
-                yield return Shots("Join-online");
-                yield return Press("Source1");
-                yield return Shots("Join-lan");
-                yield return Press("Source2");
-                yield return Shots("Join-code");
+                // One list of LAN and online rooms, the code entry above it (owner 2026-10-28).
+                Assert.IsNotNull(TumpHub.Current.Canvas.GetComponentsInChildren<InputField>().FirstOrDefault(f => f.name == "CodeField"));
+                yield return Shots("Join");
                 yield return BackToHome();
             }
             finally
