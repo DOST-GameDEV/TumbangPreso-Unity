@@ -330,6 +330,7 @@ namespace TumbangPreso.UI.Hub
             HubKit.Place((RectTransform)prompt.transform, HubKit.BottomRight, new Vector2(16, -16), new Vector2(40, 40));
             var title = HubKit.Text(panel, "Heading", heading, HubStyle.Display, true, HubKnit.Honey, TextAnchor.MiddleLeft);
             HubKit.Place(title.rectTransform, HubKit.TopLeft, new Vector2(146, -20), new Vector2(size.x - 200, 96));
+            HubKit.Fit(title, size.x - 200);
             var sub = HubKit.Text(panel, "Line", line, HubStyle.Body, false, HubKnit.Cream, TextAnchor.MiddleLeft);
             HubKit.Place(sub.rectTransform, HubKit.TopLeft, new Vector2(150, -108), new Vector2(size.x - 200, 44));
             HubSlap.On(plate, 0, -1.5f);

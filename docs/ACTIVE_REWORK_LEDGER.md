@@ -2,8 +2,9 @@
 
 Updated 2026-10-28. Owner scope: [TODO](TODO.md).
 
-- LOBBY-UI-1028: knit rebuild on lobby-ui-revamp. Next: owner review,
-  room PlayMode tests, real joined peer, then main and mobile+network.
+- LOBBY-UI-1028: desktop rules/chat/layout fixes, lobby-ui-revamp.
+  Edit20/20; exact Play1/1. Evidence/build/push: Logs/lobby-ui-20261028/fixes/.
+  Push mobile+network; main separate. Phone excluded; pad/peer review open.
 - Zack refinement follows main `6ab16b867`: short Momentum streamers, tapered
   ribbons, correct gold/ink layering and two empty zap hands with prop return.
   Final native film passed 1/1 across 12 takes; final focused zap capture passed

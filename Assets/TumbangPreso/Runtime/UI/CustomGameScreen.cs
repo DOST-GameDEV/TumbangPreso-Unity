@@ -173,6 +173,13 @@ namespace TumbangPreso.UI
         {
             if (_root == null) return;
             _root.SetActive(false);
+            // Closing restores pointer and pad access now, including when the hub tick ran first.
+            var hub = Hub.TumpHub.Current;
+            if (hub != null && !hub.Host.OverlayOpen)
+            {
+                hub.Canvas.enabled = true;
+                hub.RefreshFocus();
+            }
         }
 
         // -------------------------------------------------------------------

@@ -783,6 +783,7 @@ namespace TumbangPreso.UI.Hub
 
         private float WidthTarget => _chatShown ? RoomSeatsNarrow : RoomContentWidth;
         private float PanelTarget => _chatShown ? RoomSeatsOffset : 0;
+        private float CardsTopForRole => CardsTop - (!_hostLayout && !_chatShown ? 76 : 0);
 
         /// <summary>Place the pieces for the role and the chat. Snaps on a rebuild, eases otherwise.</summary>
         private void Layout(bool snap)
@@ -795,10 +796,12 @@ namespace TumbangPreso.UI.Hub
             if (_characterDoor != null)
                 _characterDoor.gameObject.SetActive(!_chatShown && Hub != null && !Hub.Host.Spectating
                     && !(Net.NetSession.Instance != null && Net.NetSession.Instance.IsNetworked));
+            if (_count != null)
+                _count.rectTransform.anchoredPosition = new Vector2(-RoomContentWidth * .5f + 200, CardsTopForRole + 110);
             if (_watch != null)
             {
                 var w = (RectTransform)_watch.transform;
-                w.anchoredPosition = new Vector2((_chatShown ? RoomSeatsOffset + RoomSeatsNarrow * .5f : RoomContentWidth * .5f) - 140, CardsTop + 110);
+                w.anchoredPosition = new Vector2((_chatShown ? RoomSeatsOffset + RoomSeatsNarrow * .5f : RoomContentWidth * .5f) - 140, CardsTopForRole + 110);
             }
             if (snap || HubStyle.ReducedMotion) { _panelX = PanelTarget; _panelWidth = WidthTarget; }
             ApplyPanel();
@@ -813,7 +816,7 @@ namespace TumbangPreso.UI.Hub
 
         private void ApplyPanel()
         {
-            _playersPanel.anchoredPosition = new Vector2(_panelX, CardsTop);
+            _playersPanel.anchoredPosition = new Vector2(_panelX, CardsTopForRole);
             _playersPanel.sizeDelta = new Vector2(_panelWidth, CardHeight);
         }
 
@@ -1240,7 +1243,7 @@ namespace TumbangPreso.UI.Hub
                 if (classic) facts.Add(new KeyValuePair<string, string>("SLIPPERS EACH", rules.Tsinelas.ToString()));
             }
             facts.Add(new KeyValuePair<string, string>("NETWORK", host.RoomOnline ? "ONLINE" : "LAN"));
-            float rowH = 62, height = 230 + facts.Count * rowH;
+            float rowH = 62, height = 320 + facts.Count * rowH;
             var panel = HubCards.KnitPanel(Root, this, "MATCH SETTINGS", "Set by the host.", new Vector2(760, height));
             for (int i = 0; i < facts.Count; i++)
             {

@@ -172,7 +172,11 @@ namespace TumbangPreso.UI.Hub
                 words.sizeDelta = field.sizeDelta * 2f;
                 chip._amount.alignment = TextAnchor.MiddleCenter;
                 var baseline = chip._amount.GetComponent<BoardBaseline>();
-                if (baseline != null) UnityEngine.Object.Destroy(baseline);
+                if (baseline != null)
+                {
+                    if (Application.isPlaying) UnityEngine.Object.Destroy(baseline);
+                    else UnityEngine.Object.DestroyImmediate(baseline);
+                }
             }
 
             var plus = HubBoard.Sticker(root, "EarnButton", new Vector2(0, 1), "plus_button", () => hub.Push<HubTasks>(), out var plusFace, out var plusGroup);
