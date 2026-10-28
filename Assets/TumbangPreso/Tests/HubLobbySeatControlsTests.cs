@@ -61,7 +61,7 @@ namespace TumbangPreso.Tests
             typeof(HubScreen).GetProperty("Root").SetValue(_screen,_root.GetComponent<RectTransform>());
             _cameraRoot=new GameObject("Seat control UI camera",typeof(Camera));_camera=_cameraRoot.GetComponent<Camera>();
             _camera.enabled=false;_camera.cullingMask=1<<31;_camera.clearFlags=CameraClearFlags.SolidColor;_camera.backgroundColor=new Color(.1f,.1f,.1f);
-            _target=new RenderTexture(960,540,24);_camera.targetTexture=_target;
+            _target=new RenderTexture(1920,1080,24);_camera.targetTexture=_target;
             var canvas=_root.GetComponent<Canvas>();canvas.renderMode=RenderMode.ScreenSpaceCamera;canvas.worldCamera=_camera;canvas.planeDistance=1;
             var scaler=_root.GetComponent<CanvasScaler>();scaler.uiScaleMode=CanvasScaler.ScaleMode.ScaleWithScreenSize;scaler.referenceResolution=new Vector2(1920,1080);
             _screen.Build();foreach(var t in _root.GetComponentsInChildren<Transform>(true))t.gameObject.layer=31;
@@ -99,6 +99,9 @@ namespace TumbangPreso.Tests
         {
             string path=System.Environment.GetEnvironmentVariable("TUMP_LOBBY_CAPTURE");
             if(string.IsNullOrEmpty(path) || SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null) return;
+            // Real heroes on the cards, so the review shows the portraits popping out of them.
+            for(int i=0;i<_host.Data.Length;i++) if(_host.Data[i].Occupied) _host.Data[i].CharacterPick=i;
+            RebuildForCurrentSeats();
             // A warm street tone rather than flat grey: every shadow alpha is judged against what is behind it.
             _camera.backgroundColor=new Color(.47f,.45f,.38f);
             foreach(var slap in _root.GetComponentsInChildren<HubSlap>(true))
@@ -108,15 +111,15 @@ namespace TumbangPreso.Tests
             }
             Write(path);
             var row=(HubButton)Button("TakeSeat3");
-            row.Shape.Lit=1;row.Shape.OutlineBoost=1.5f;row.Shape.DepthScale=1.45f;row.Shape.Redraw();
-            row.Body.anchoredPosition=new Vector2(0,4);
+            // The knit card's hover pose, as `HubStickerFeel` holds it: grown a little, its hint shown.
+            row.Body.localScale=new Vector3(1.035f,1.035f,1);
             row.Body.Find("Label").GetComponent<Text>().enabled=true;
             Write(Path.Combine(Path.GetDirectoryName(path),Path.GetFileNameWithoutExtension(path)+"_hover.png"));
         }
         private void Write(string path)
         {
-            Canvas.ForceUpdateCanvases();_camera.Render();var previous=RenderTexture.active;var image=new Texture2D(960,540,TextureFormat.RGBA32,false);
-            try{RenderTexture.active=_target;image.ReadPixels(new Rect(0,0,960,540),0,0);image.Apply();File.WriteAllBytes(path,image.EncodeToPNG());}
+            Canvas.ForceUpdateCanvases();_camera.Render();var previous=RenderTexture.active;var image=new Texture2D(1920,1080,TextureFormat.RGBA32,false);
+            try{RenderTexture.active=_target;image.ReadPixels(new Rect(0,0,1920,1080),0,0);image.Apply();File.WriteAllBytes(path,image.EncodeToPNG());}
             finally{RenderTexture.active=previous;Object.DestroyImmediate(image);}
         }
         /// <summary>
@@ -130,8 +133,8 @@ namespace TumbangPreso.Tests
             foreach(var role in new[]{"joined","spectator"})
             {
                 _host.Hosting=false;_host.EditBots=false;_host.Watching=role=="spectator";
-                _host.Data[0]=new HubSeat{Slot=0,Occupied=true,Host=true,Name="PLAYER",CharacterPick=-1};
-                _host.Data[1]=role=="joined"?new HubSeat{Slot=1,Occupied=true,Mine=true,Name="YOU",CharacterPick=-1}:new HubSeat{Slot=1,Occupied=true,Name="GUEST",Ready=true,CharacterPick=-1};
+                _host.Data[0]=new HubSeat{Slot=0,Occupied=true,Host=true,Name="PLAYER",CharacterPick=0};
+                _host.Data[1]=role=="joined"?new HubSeat{Slot=1,Occupied=true,Mine=true,Name="YOU",CharacterPick=1}:new HubSeat{Slot=1,Occupied=true,Name="GUEST",Ready=true,CharacterPick=1};
                 RebuildForCurrentSeats();
                 _camera.backgroundColor=new Color(.47f,.45f,.38f);
                 foreach(var slap in _root.GetComponentsInChildren<HubSlap>(true))
@@ -164,15 +167,17 @@ namespace TumbangPreso.Tests
             Assert.AreEqual("READY",HubKit.LabelOf((HubButton)Button("StartGame")).text);
             Assert.AreEqual("SPECTATE",HubKit.LabelOf((HubButton)Button("WatchToggle")).text);
         }
-        [Test] public void NoBoardPieceIsShadedOverItsOwnFace()
+        [Test] public void EveryRoomControlIsHomeKnit()
         {
-            // Playtest 2026-10-23 "darked out lahat": the room's depth pass gave each piece's clear
-            // hatch layer four shadows, drawn over the face, and every button read at half brightness.
-            var shapes=_root.GetComponentsInChildren<HubShape>(true);
-            var hatches=shapes.Where(s=>s.SkinHatch!=null).Select(s=>s.SkinHatch).ToList();
-            Assert.IsNotEmpty(hatches,"The room's buttons wear the board pieces.");
-            foreach(var hatch in hatches)
-                Assert.AreEqual(0f,hatch.Depth,"A piece's hatch must draw no depth over its face: "+hatch.transform.parent.parent.name);
+            // Owner 2026-10-28: the room is new UI in HOME's knit, not the old stickers rearranged.
+            // Every control is a `HubKnit` piece moving with HOME's feel; BACK is HOME's own red piece.
+            var buttons=_root.GetComponentsInChildren<HubButton>(true).Where(b=>b.name!="BackButton").ToList();
+            Assert.IsNotEmpty(buttons);
+            foreach(var button in buttons)
+            {
+                Assert.IsNull(button.Shape,"An old sticker in the room: "+button.name);
+                Assert.IsNotNull(button.GetComponent<HubStickerFeel>(),"A room control without HOME's feel: "+button.name);
+            }
         }
         [Test] public void TheWholeRowIsTheSeatDoorAndSitHereIsGone()
         {
@@ -231,6 +236,36 @@ namespace TumbangPreso.Tests
             var button=Button("TakeSeat3");Assert.IsNotNull(button);
             _host.Data[3].Occupied=true;button.onClick.Invoke();Assert.AreEqual(3,_host.Requested);
             Assert.IsTrue(_host.Data[3].Occupied);
+        }
+        /// <summary>MATCH SETTINGS (owner 2026-10-28: the host's picks one press away, not printed across
+        /// the room) lists what the host chose and closes on BACK. Written beside the room's picture as
+        /// `_settings` when TUMP_LOBBY_CAPTURE names a file.</summary>
+        [Test] public void MatchSettingsCardListsTheHostsPicks()
+        {
+            _host.Hosting=false;_host.EditBots=false;RebuildForCurrentSeats();
+            var popupRoot=new GameObject("Settings popup",typeof(RectTransform));
+            popupRoot.transform.SetParent(_root.transform,false);
+            var rect=(RectTransform)popupRoot.transform;rect.anchorMin=Vector2.zero;rect.anchorMax=Vector2.one;rect.sizeDelta=Vector2.zero;
+            var popup=popupRoot.AddComponent<HubMatchSettingsPopup>();
+            typeof(HubScreen).GetProperty("Hub").SetValue(popup,_hubRoot.GetComponent<TumpHub>());
+            typeof(HubScreen).GetProperty("Root").SetValue(popup,rect);popup.Build();
+            var words=popupRoot.GetComponentsInChildren<Text>(true).Select(t=>t.text).ToList();
+            Assert.Contains("MAP",words);Assert.Contains("MODE",words);Assert.Contains("ROUNDS",words);
+            Assert.Contains(SceneFlow.SelectedRules.Rounds.ToString(),words);
+            Assert.Contains("LAN",words,"A LAN room says so.");
+            Assert.AreEqual("CloseSettings",popup.FirstFocus.name);
+            string path=System.Environment.GetEnvironmentVariable("TUMP_LOBBY_CAPTURE");
+            if(!string.IsNullOrEmpty(path) && SystemInfo.graphicsDeviceType != UnityEngine.Rendering.GraphicsDeviceType.Null)
+            {
+                foreach(var t in popupRoot.GetComponentsInChildren<Transform>(true))t.gameObject.layer=31;
+                _camera.backgroundColor=new Color(.47f,.45f,.38f);
+                foreach(var slap in _root.GetComponentsInChildren<HubSlap>(true))
+                {
+                    slap.enabled=false;slap.transform.localScale=Vector3.one;slap.transform.localRotation=Quaternion.identity;
+                    var group=slap.GetComponent<CanvasGroup>();if(group!=null)group.alpha=1;
+                }
+                Write(Path.Combine(Path.GetDirectoryName(path),Path.GetFileNameWithoutExtension(path)+"_settings.png"));
+            }
         }
         [TestCase(true),TestCase(false)] public void RecipientPopupSendsTheChosenAnswerExactlyOnce(bool accept)
         {

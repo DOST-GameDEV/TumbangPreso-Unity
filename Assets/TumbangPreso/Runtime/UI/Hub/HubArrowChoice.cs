@@ -33,6 +33,30 @@ namespace TumbangPreso.UI.Hub
             return choice;
         }
 
+        /// <summary>
+        /// The same selector in the room family (`HubKnit`): the value in cream display lettering
+        /// between two small gold knit arrow buttons, for a caller that seats it on its own knit plate.
+        /// </summary>
+        public static HubArrowChoice BuildKnit(Transform parent,string name,string[] options,int value,int step=HubStyle.Title)
+        {
+            var root=HubKit.Rect(parent,name+"Choice");
+            var choice=root.gameObject.AddComponent<HubArrowChoice>();
+            choice.Options=options ?? Array.Empty<string>();
+            choice._step=step;
+            choice._label=HubKit.Text(root,"CurrentValue","",step,true,HubKnit.Cream,TextAnchor.MiddleCenter);
+            HubKit.Stretch(choice._label.rectTransform);
+            choice._label.rectTransform.offsetMin=new Vector2(96,4);
+            choice._label.rectTransform.offsetMax=new Vector2(-96,-4);
+            choice.Previous=HubKnit.Button(root,name+"Previous",null,Knit.Gold,()=>choice.Step(-1),HubStyle.Label,HubGlyph.Mark.Left);
+            choice.Next=HubKnit.Button(root,name+"Next",null,Knit.Gold,()=>choice.Step(1),HubStyle.Label,HubGlyph.Mark.Right);
+            HubKit.Place((RectTransform)choice.Previous.transform,HubKit.Left,new Vector2(6,4),new Vector2(78,70));
+            HubKit.Place((RectTransform)choice.Next.transform,HubKit.Right,new Vector2(-22,4),new Vector2(78,70));
+            choice.Set(value,false);
+            return choice;
+        }
+
+        private int _step=HubStyle.Label;
+
         private static HubButton Arrow(Transform parent,string name,HubGlyph.Mark mark,Action clicked,int seed)
         {
             // An inline chevron keeps the existing field as one surface. The
@@ -65,7 +89,7 @@ namespace TumbangPreso.UI.Hub
             int previous=Value;
             Value=Options.Length==0?0:Mathf.Clamp(value,0,Options.Length-1);
             _label.text=Options.Length==0?"":Options[Value];
-            _label.fontSize=HubStyle.Size(HubStyle.Label); HubKit.Fit(_label);
+            _label.fontSize=HubStyle.Size(_step); HubKit.Fit(_label);
             Previous.interactable=Next.interactable=Options.Length>1;
             if(notify && previous!=Value) Changed?.Invoke(Value);
         }

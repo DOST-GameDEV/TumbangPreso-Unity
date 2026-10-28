@@ -2,8 +2,11 @@
 
 Updated 2026-10-28. [TODO](TODO.md) is the only active queue.
 
-- LOBBY-UI-1028: room/menu pass from main 95e4b6b28 is applied here
-  (642504339). Next: owner review, room PlayMode tests, real joined peer.
+- LOBBY-UI-1028: knit e7f0298be/a9916921a integrated into mobile+network
+  at owner request. One authorized chat test
+  failed at CharacterDoor after chat closes (OwnerPreparationTests.cs:200).
+  PC evidence: Logs/lobby-ui-20261028/resume-validation/chat.xml. No rerun.
+  Next: diagnose, then fresh build and visual/peer/pad/phone review.
 - Owner requested wrapping up and handing off unfinished mobile UI work.
   [Resume here](reports/mobile-ui-2026-10-26/HANDOFF.md): ff9 Android candidate is
   built/uploaded, native41/41 and recorded actual touch journeys passed. Newer

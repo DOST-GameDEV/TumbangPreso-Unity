@@ -23,13 +23,13 @@ namespace TumbangPreso.EditorTools
     /// frame of every clip they own, on a transparent ground. `tools/build_mode_cards.py` picks
     /// the poses and composes each poster in the logo palette.
     ///
-    /// Output: Logs/mode-card-poses/&lt;id&gt;/&lt;clip&gt;.png, 640 px square, plus clips.txt. Nothing in
+    /// Output: Logs/mode-card-poses/&lt;id&gt;/&lt;clip&gt;.png, 1024 px square (640 until the 2026-10-28 re-render), plus clips.txt. Nothing in
     /// Assets is written, and no model, clip or palette is changed.
     /// </summary>
     public static class ModeCardPoseAuthor
     {
         private const string Output = "Logs/mode-card-poses";
-        private const int Size = 640;
+        private const int Size = 1024;
 
         private static readonly string[] Ids =
         {

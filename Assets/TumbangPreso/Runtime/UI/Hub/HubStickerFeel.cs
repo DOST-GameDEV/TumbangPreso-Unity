@@ -35,6 +35,8 @@ namespace TumbangPreso.UI.Hub
         public Vector2 Depth = new Vector2(4, -6);
         public bool Primary;
         public float Phase;
+        /// <summary>The piece draws its own focus rim (`HubKnit`'s, round face and slab), so no outline here.</summary>
+        public bool OwnRim;
 
         private Vector2 _faceRest, _slabRest;
         private RectTransform _slab;
@@ -57,7 +59,7 @@ namespace TumbangPreso.UI.Hub
             _pictureRest = new Vector2[Pictures.Length];
             for (int i = 0; i < Pictures.Length; i++) if (Pictures[i] != null) _pictureRest[i] = Pictures[i].anchoredPosition;
             var faceImage = Face.GetComponent<Image>();
-            if (faceImage != null)
+            if (faceImage != null && !OwnRim)
             {
                 _rim = HubKit.Ensure<Outline>(Face.gameObject);
                 _rim.effectColor = new Color(0.961f, 0.71f, 0.129f, 0f);
