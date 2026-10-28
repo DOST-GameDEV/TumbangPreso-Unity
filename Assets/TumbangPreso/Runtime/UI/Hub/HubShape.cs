@@ -176,8 +176,16 @@ namespace TumbangPreso.UI.Hub
             {
                 if (RingWidth > 0.0f)
                 {
-                    float c = Mathf.Min(Corner, Mathf.Min(r.width, r.height) * 0.45f);
-                    Build(Outer, Grow(r, RingWidth), c + RingWidth, 0.0f);
+                    // ⚠️ THE FOCUS RING HUGS HER PIECE (owner 2026-10-28, "u didnt fix the highlight
+                    // problem"). It was the old sticker's hand-cut octagon, eight jittered points sized
+                    // to the face alone, so a rounded knit piece sat inside a jagged gold frame that
+                    // also stopped short of the slab under it. Now: rounded like the piece, down over
+                    // the slab, and thinner, so it reads as the piece's own edge lighting up.
+                    var hug = r;
+                    if (SkinSlab != null) { float drop = -SkinSlab.rectTransform.offsetMin.y; hug.yMin -= Mathf.Max(0, drop); }
+                    float ring = Mathf.Min(RingWidth, 5.0f);
+                    float c = Mathf.Min(hug.height * 0.24f, 24.0f);
+                    CleanOutline(Outer, Grow(hug, ring), c + ring, false);
                     SmoothFan(vh, Outer, RingColor * color);
                 }
                 return;
