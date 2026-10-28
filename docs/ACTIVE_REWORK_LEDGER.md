@@ -2,10 +2,11 @@
 
 Updated 2026-10-28. [TODO](TODO.md) is the only active queue.
 
-- ONLINE-CAST-1028: unique nine-hero cast, ultimates+3; defender speed restored.
-  Client opening root pin; Nemu terrain heights/pull+25%. Core97/97.
-  Native compiled; test execution stuck on reload. Fresh protocol185 build next.
-  Logs/online-selection-20261028/. Six owner files preserved.
+- ONLINE-CAST-1028: Claude handoff: floating/network
+  desync, especially client-only floating. Gameplay65da4de68 built/verified;
+  player14864 open. Core97/97, verifier5/5. Native tests stuck on reload.
+  Next: same-build host/client reproduction. Six owner files preserved.
+  Logs/online-selection-20261028/handoff-receipt.json.
 - Owner requested wrapping up and handing off unfinished mobile UI work.
   [Resume here](reports/mobile-ui-2026-10-26/HANDOFF.md): ff9 Android candidate is
   built/uploaded, native41/41 and recorded actual touch journeys passed. Newer
