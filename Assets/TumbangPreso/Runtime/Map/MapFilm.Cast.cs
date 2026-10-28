@@ -25,6 +25,33 @@ namespace TumbangPreso.Map
         private readonly bool[][] _seatShown = new bool[Seats][];
         private readonly bool[] _seatHidden = new bool[Seats];
         private bool _posing;
+        private readonly Vector3[] _castWorld = new Vector3[Seats];
+        private readonly Quaternion[] _castTurn = new Quaternion[Seats];
+        private readonly bool[] _castPinned = new bool[Seats];
+
+        private void RememberCastPose()
+        {
+            for (int s = 0; s < Seats; s++)
+            {
+                _castPinned[s] = _posing && _root[s] != null;
+                if (!_castPinned[s]) continue;
+                _castWorld[s] = _root[s].position;_castTurn[s] = _root[s].rotation;
+            }
+        }
+
+        private void PinCastBeforeSrpRender(UnityEngine.Rendering.ScriptableRenderContext context, Camera camera)
+            => PinCastBeforeRender(camera);
+
+        private void PinCastBeforeRender(Camera camera)
+        {
+            if (!_prepared || camera != Camera) return;
+            for (int s = 0; s < Seats; s++)
+            {
+                if (!_castPinned[s] || _root[s] == null) continue;
+                _root[s].SetPositionAndRotation(_castWorld[s], _castTurn[s]);
+                _anim[s]?.RefreshArrivalGround();
+            }
+        }
         private readonly RaycastHit[] _hits = new RaycastHit[32];
         /// <summary>A scratch buffer for a director's own casts.</summary>
         protected RaycastHit[] Hits => _hits;

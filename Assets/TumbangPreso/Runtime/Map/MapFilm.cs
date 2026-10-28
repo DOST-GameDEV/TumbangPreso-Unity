@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Rendering;
 using TumbangPreso.UI;
 
 namespace TumbangPreso.Map
@@ -167,6 +168,10 @@ namespace TumbangPreso.Map
             BuildOverlay();
             BuildSound();
             _prepared = true; Playing = true;
+            UnityEngine.Camera.onPreCull -= PinCastBeforeRender;
+            UnityEngine.Camera.onPreCull += PinCastBeforeRender;
+            RenderPipelineManager.beginCameraRendering -= PinCastBeforeSrpRender;
+            RenderPipelineManager.beginCameraRendering += PinCastBeforeSrpRender;
             try { Prepare(); }
             catch (System.Exception failure) { Debug.LogException(failure); End("failed to prepare"); return false; }
             Frame();
@@ -192,6 +197,8 @@ namespace TumbangPreso.Map
             if (!_prepared) return;
             MatchArrivalPresentation.Trace($"{MapId} film {why} at {Age:F1} of {Timeline.End:F1} s");
             _prepared = false; Playing = false;
+            UnityEngine.Camera.onPreCull -= PinCastBeforeRender;
+            RenderPipelineManager.beginCameraRendering -= PinCastBeforeSrpRender;
             try { Restore(); } catch (System.Exception failure) { Debug.LogException(failure); }
             ReleaseModels();
             RestoreHidden();
@@ -245,6 +252,7 @@ namespace TumbangPreso.Map
             Picture(age);
             Overlay(age);
             Sound(age);
+            RememberCastPose();
             _last = age;
         }
 

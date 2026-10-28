@@ -16,7 +16,7 @@ This supersedes historical slide/timing descriptions below. Protocol144.
 ## Current movement values, October 3 owner revision
 
 In both modes, attackers walk at 2.5 m/s and run at 5 m/s; defenders walk at
-3.0 m/s and run at 6.0 m/s (owner, October 28: both reduced20%). No innate role/hero speed multipliers. Stamina
+3.75 m/s and run at 7.5 m/s (owner restored these values October 29). No innate role/hero speed multipliers. Stamina
 capacity is 250, drain/regen 100 per second, sprint start floor 50, regen delay
 1 second. Fatigue lasts 2.5 seconds with no walking penalty and no sprint/regen.
 Jump launch is 5.75 m/s, character gravity 20 m/s², maximum falling speed 25 m/s.

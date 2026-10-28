@@ -42,6 +42,46 @@ namespace TumbangPreso.Tests
                 ~0, QueryTriggerInteraction.Ignore));
             Assert.AreSame(wall, hit.collider, "The intended wall must be the native collision hit.");
         }
+        [Test] public void NetworkParentCorrectionCannotLiftTheOpeningCastBeforeRender()
+        {
+            var body=Own("Replicated body").transform;body.position=_focus;
+            var model=Own("Authored film root").transform;model.SetParent(body,false);
+            model.localPosition=new Vector3(1,.2f,2);model.localRotation=Quaternion.Euler(0,35,0);
+            var filmRoot=Own("Dormant client film");filmRoot.SetActive(false);
+            var film=filmRoot.AddComponent<TumbangPreso.Map.TondoFilm>();
+            var camera=Own("Client opening camera").AddComponent<Camera>();camera.enabled=false;
+            var type=typeof(TumbangPreso.Map.MapFilm);var flags=BindingFlags.Instance|BindingFlags.NonPublic;
+            ((Transform[])type.GetField("_root",flags).GetValue(film))[0]=model;
+            type.GetField("_posing",flags).SetValue(film,true);type.GetField("_prepared",flags).SetValue(film,true);
+            type.GetProperty("Camera",flags).SetValue(film,camera);
+            Vector3 authored=model.position;Quaternion turn=model.rotation;
+            try
+            {
+                type.GetMethod("RememberCastPose",flags).Invoke(film,null);
+                body.position+=new Vector3(2,3,1);body.rotation=Quaternion.Euler(0,70,0);
+                Vector3 authoritative=body.position;
+                type.GetMethod("PinCastBeforeSrpRender",flags).Invoke(film,new object[]{default(UnityEngine.Rendering.ScriptableRenderContext),camera});
+                Assert.Less(Vector3.Distance(authored,model.position),.001f);
+                Assert.Less(Quaternion.Angle(turn,model.rotation),.001f);
+                Assert.AreEqual(authoritative,body.position,"The film must never overwrite the networked physics body.");
+            }
+            finally{type.GetField("_prepared",flags).SetValue(film,false);type.GetField("_posing",flags).SetValue(film,false);}
+        }
+
+        [Test] public void NemuVictimPathUsesItsOwnFloorOnUnevenTerrain()
+        {
+            var ground=Own("Low floor").AddComponent<BoxCollider>();ground.transform.position=new Vector3(_focus.x,-.1f,_focus.z);ground.size=new Vector3(30,.2f,20);
+            var raised=Own("Raised floor").AddComponent<BoxCollider>();raised.transform.position=new Vector3(_focus.x+5,2.9f,_focus.z);raised.size=new Vector3(4,.2f,4);
+            var stage=Own("Nemu stage on upper terrace").transform;stage.position=_focus;
+            Physics.SyncTransforms();
+            var project=typeof(TumbangPreso.Visual.HeroIntroductionScene).GetMethod("NemuTerrainPoint",BindingFlags.Static|BindingFlags.NonPublic);
+            var high=(Vector3)project.Invoke(null,new object[]{stage,new Vector3(5,-.7f,0)});
+            var low=(Vector3)project.Invoke(null,new object[]{stage,new Vector3(-5,-3.7f,0)});
+            Assert.AreEqual(3,stage.TransformPoint(high).y,.001f);
+            Assert.AreEqual(0,stage.TransformPoint(low).y,.001f);
+            Assert.AreEqual(5,high.x,.001f);Assert.AreEqual(-5,low.x,.001f);
+        }
+
         [TestCase(.55f)] [TestCase(.95f)]
         public void ACloseWallCannotLeaveTheCameraBeyondItsCollisionClearance(float distance)
         {

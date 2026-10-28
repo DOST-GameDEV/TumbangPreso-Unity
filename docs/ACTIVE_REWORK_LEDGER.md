@@ -2,9 +2,10 @@
 
 Updated 2026-10-28. [TODO](TODO.md) is the only active queue.
 
-- ONLINE-CAST-1028: MIRROR retired; nine heroes unlocked/unique. Defender3/6 m/s
-  (-20%); ultimates+3 points. Core84/84. Protocol185; fresh build/peer check open.
-  Evidence: Logs/online-selection-20261028/. Six owner files preserved.
+- ONLINE-CAST-1028: unique nine-hero cast, ultimates+3; defender speed restored.
+  Client opening root pin; Nemu terrain heights/pull+25%. Core97/97.
+  Native compiled; test execution stuck on reload. Fresh protocol185 build next.
+  Logs/online-selection-20261028/. Six owner files preserved.
 - Owner requested wrapping up and handing off unfinished mobile UI work.
   [Resume here](reports/mobile-ui-2026-10-26/HANDOFF.md): ff9 Android candidate is
   built/uploaded, native41/41 and recorded actual touch journeys passed. Newer

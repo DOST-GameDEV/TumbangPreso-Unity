@@ -434,6 +434,13 @@ namespace TumbangPreso.Visual
         /// lying down (no one lies down since v17). A stagger back as the court splits; running from the first one; the one who
         /// trips stumbles, turns round and backs away, then walks at the lens; the others are thrown on a little as they are caught.
         /// </summary>
+        internal static Vector3 NemuTerrainPoint(Transform stage, Vector3 local)
+        {
+            Vector3 world = stage.TransformPoint(local);
+            if (WorldGround.TryBelow(world, 1.25f, 12f, out var floor)) world.y = floor;
+            return stage.InverseTransformPoint(world);
+        }
+
         private void NmBody(NmVictim v, float s, out Vector3 pos, out Quaternion rot, out float lying)
         {
             NmBodyPath(v, s, out pos, out rot, out lying);
@@ -444,6 +451,7 @@ namespace TumbangPreso.Visual
                 float x = Mathf.Min(s, NmSnap) - NmTripSettle;
                 if (ahead.sqrMagnitude > 1e-4f) pos += ahead.normalized * (.85f * x * x / (x + .2f));
             }
+            pos = NemuTerrainPoint(_root.transform, pos);
         }
 
         /// <summary>
@@ -459,7 +467,7 @@ namespace TumbangPreso.Visual
                 // Only a copy of a real player (a film's stand-in has no seat to move).
                 if (v == null || v.Seat < 0 || v.Holder == null || v.Holder.name != "IntroductionOther-P" + (v.Seat + 1)) continue;
                 NmBody(v, Seconds, out var pos, out _, out _);
-                into.Add((v.Seat, _root.transform.TransformPoint(new Vector3(pos.x, 0f, pos.z))));
+                into.Add((v.Seat, _root.transform.TransformPoint(pos)));
             }
         }
 

@@ -62,7 +62,9 @@ namespace TumbangPreso.Visual
                     // The copy's root is put back where the live model is from the live feet, as the TAKE does.
                     var model = visual.Model.transform; var motor = p.transform;
                     var yaw = Quaternion.Euler(0f, motor.eulerAngles.y, 0f);
-                    var feet = new Vector3(motor.position.x, Slipper.GroundY(motor.position + Vector3.up * .3f), motor.position.z);
+                    float floor = Slipper.GroundY(motor.position + Vector3.up * .3f);
+                    if (_hero == "nemu" && WorldGround.TryBelow(motor.position, .35f, 12f, out var nearbyFloor)) floor = nearbyFloor;
+                    var feet = new Vector3(motor.position.x, floor, motor.position.z);
                     holder.transform.SetPositionAndRotation(feet, yaw);
                     copy.Root.transform.localPosition = Quaternion.Inverse(yaw) * (model.position - feet);
                     copy.Root.transform.localRotation = Quaternion.Inverse(yaw) * model.rotation;
@@ -88,12 +90,14 @@ namespace TumbangPreso.Visual
 
         private void AdoptOther(GameObject holder, float nearest, float farthest)
         {
-            var home = holder.transform.localPosition; home.y = 0f;
+            var home = holder.transform.localPosition;
+            float floorOffset = _hero == "nemu" ? home.y : 0f;
+            home.y = 0f;
             float reach = home.magnitude;
             // Never on top of the caster and never out of the frame; which way they stand from the caster is kept.
             var way = reach > .05f ? home / reach : Quaternion.Euler(0f, 40f + 110f * _others.Count, 0f) * Vector3.forward;
             reach = Mathf.Clamp(reach, nearest, farthest);
-            home = way * reach;
+            home = way * reach;home.y = floorOffset;
             holder.transform.localPosition = home;
             _others.Add(new Other { Holder = holder, Renderers = holder.GetComponentsInChildren<Renderer>(true), Home = home, Yaw = holder.transform.localEulerAngles.y, Reach = reach });
         }

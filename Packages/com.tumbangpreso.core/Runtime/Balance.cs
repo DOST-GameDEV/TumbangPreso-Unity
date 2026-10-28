@@ -152,9 +152,9 @@ namespace TumbangPreso.Core
         // October 3 playtest revision: explicit role speeds, identical across character
         // picks and both modes. Active statuses, abilities and terrain remain separate.
         public const float AttackerWalkSpeed = 2.5f;
-        public const float DefenderWalkSpeed = 3.0f;
+        public const float DefenderWalkSpeed = 3.75f;
         public const float AttackerRunSpeed = 5.0f;
-        public const float DefenderRunSpeed = 6.0f;
+        public const float DefenderRunSpeed = 7.5f;
 
         public const float SprintScale = 1.50f;
         public const float Friction = 30.0f;
