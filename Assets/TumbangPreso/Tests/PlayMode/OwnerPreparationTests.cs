@@ -172,10 +172,10 @@ namespace TumbangPreso.PlayTests
                 // The column is the history now: the whole log, not a two-line strip with a door.
                 // The drawer is the history: one bubble per line (owner 2026-10-28 knit rebuild).
                 Assert.That(chat.GetComponentsInChildren<Text>().Any(t=>t.name=="Words"&&t.text.Contains("Local test note")));
-                Assert.IsFalse(canvas.transform.Find("Screens/HubLobby/MatchCard").gameObject.activeSelf,
+                Assert.IsFalse(TumpHub.Current.Find<HubLobby>().Root.Find("MatchCard").gameObject.activeSelf,
                     "The chat takes the MATCH card's column while it is open.");
                 // CHAT steps aside while the drawer is open; the drawer's own X closes it.
-                Assert.IsFalse(canvas.transform.Find("Screens/HubLobby/ChatDoor").gameObject.activeInHierarchy);
+                Assert.IsFalse(TumpHub.Current.Find<HubLobby>().Root.Find("ChatDoor").gameObject.activeInHierarchy);
                 Press("CloseChatButton");yield return null;
                 Assert.False(chat.IsPresented);Assert.True(chat.isActiveAndEnabled);
                 AssertRoomChatCentered(canvas);
@@ -194,13 +194,22 @@ namespace TumbangPreso.PlayTests
 
                 local.Invoke(chat,new object[]{"Second local note survives hiding."});
                 Press("ChatDoor");yield return null;
-                Assert.IsFalse(canvas.transform.Find("Screens/HubLobby/CharacterDoor").gameObject.activeInHierarchy,
+                Assert.IsFalse(TumpHub.Current.Find<HubLobby>().Root.Find("CharacterDoor").gameObject.activeInHierarchy,
                     "The chat drawer takes the right-hand side, its doors included.");
                 Press("CloseChatButton");yield return null;yield return null;
-                Press("CharacterDoor"); yield return null;
-                Assert.False(chat.IsPresented,"Navigating away from the room leaves chat closed.");
-                Assert.IsInstanceOf<HubCharacterSelect>(TumpHub.Current.Top);
-                TumpHub.Current.Back(); yield return null;
+                Assert.IsFalse(TumpHub.Current.Find<HubLobby>().Root.Find("CharacterDoor").gameObject.activeInHierarchy,
+                    "Network rooms choose characters together after START, not from the room.");
+                Assert.IsTrue(TumpHub.Current.Find<HubLobby>().Root.Find("ChatDoor").gameObject.activeInHierarchy,
+                    "Closing the drawer restores its room action immediately.");
+                Press("SettingsDoor"); yield return null;
+                Assert.False(chat.IsPresented,"Opening rules leaves chat closed.");
+                Assert.IsTrue(Object.FindFirstObjectByType<CustomGameScreen>().IsOpen);
+                var rulesCanvas=GameObject.Find("OwnerCustomGameCanvas").GetComponent<Canvas>();
+                yield return TumpUiCapture.Capture("KnitRules-match-960x540",rulesCanvas,960,540,false,checkActionBounds:true);
+                Press("RoomRulesTab");yield return null;
+                yield return TumpUiCapture.Capture("KnitRules-room-960x540",rulesCanvas,960,540,false,checkActionBounds:true);
+                Press("UseRulesButton"); yield return null;
+                Assert.IsFalse(Object.FindFirstObjectByType<CustomGameScreen>().IsOpen);
                 AssertRoomChatCentered(canvas);
                 Press("ChatDoor");yield return null;
                 Assert.That(chat.GetComponentsInChildren<Text>().Any(t=>t.text.Contains("Second local note")));
@@ -227,17 +236,17 @@ namespace TumbangPreso.PlayTests
         private static void AssertRoomChatCentered(Canvas canvas)
         {
             // With the chat shut the cards are centred at full width and the host's strip is back under them.
-            var players=(RectTransform)canvas.transform.Find("Screens/HubLobby/Players");
+            var players=(RectTransform)TumpHub.Current.Find<HubLobby>().Root.Find("Players");
             Assert.IsNotNull(players);
             Assert.That(players.anchoredPosition.x,Is.EqualTo(0).Within(.1f));
             Assert.That(players.sizeDelta.x,Is.EqualTo(HubLobby.RoomContentWidth).Within(.1f));
-            Assert.IsTrue(canvas.transform.Find("Screens/HubLobby/MatchCard").gameObject.activeSelf);
+            Assert.IsTrue(TumpHub.Current.Find<HubLobby>().Root.Find("MatchCard").gameObject.activeSelf);
         }
 
         private static void AssertRoomChatLayout(Canvas canvas,LobbyChat chat,bool history)
         {
             var root=(RectTransform)canvas.transform;
-            var lobby=canvas.transform.Find("Screens/HubLobby");
+            var lobby=TumpHub.Current.Find<HubLobby>().Root;
             Assert.IsNotNull(lobby);
             var players=(RectTransform)lobby.Find("Players");
             var compact=(RectTransform)chat.transform;

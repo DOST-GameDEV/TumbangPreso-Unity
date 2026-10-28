@@ -95,10 +95,16 @@ namespace TumbangPreso.UI
         {
             if(!_ownerRules || _editing==null)return;
             _ownerMatchPage.gameObject.SetActive(!_roomOpen);_ownerRoomPage.gameObject.SetActive(_roomOpen);
-            var selectedTab = _slateRules ? Hub.HubStyle.Chartreuse : OwnerUiTheme.Current.Green;
-            var restingTab = _slateRules ? Hub.HubStyle.Honey : OwnerUiTheme.Current.ActionInk;
-            _ownerMatchTab.GetComponentInChildren<Text>().color=!_roomOpen?selectedTab:restingTab;
-            _ownerRoomTab.GetComponentInChildren<Text>().color=_roomOpen?selectedTab:restingTab;
+            if (_slateRules)
+            {
+                Hub.HubKnit.Recolour((RectTransform)_ownerMatchTab.transform, _roomOpen ? Hub.Knit.Maroon : Hub.Knit.Gold);
+                Hub.HubKnit.Recolour((RectTransform)_ownerRoomTab.transform, _roomOpen ? Hub.Knit.Gold : Hub.Knit.Maroon);
+            }
+            else
+            {
+                _ownerMatchTab.GetComponentInChildren<Text>().color=!_roomOpen?OwnerUiTheme.Current.Green:OwnerUiTheme.Current.ActionInk;
+                _ownerRoomTab.GetComponentInChildren<Text>().color=_roomOpen?OwnerUiTheme.Current.Green:OwnerUiTheme.Current.ActionInk;
+            }
             _ownerMatchTab.transform.Find("SelectedTab").gameObject.SetActive(!_roomOpen);
             _ownerRoomTab.transform.Find("SelectedTab").gameObject.SetActive(_roomOpen);
             _ownerValues["Format"].text=CustomGameRules.FormatName(_editing.Format);

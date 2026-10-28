@@ -43,7 +43,8 @@ namespace TumbangPreso.Tests
             public Task<string> Join(string codeOrAddress)=>Task.FromResult("");
             public void StartGame(){}public void ToggleReady(){}public void LockIn(){}public void VoteMap(int index){}
             public void PublishPicks(){}public string Map;public void SelectMap(string map){Map=map;}public void SelectMode(GameMode mode){}
-            public void Browse(){}public void RefreshRooms(bool lan){}public List<HubRoom> Rooms(bool lan)=>new List<HubRoom>();public void ToggleChat(){}public void ToggleSpectate(){}
+            public List<HubRoom> LanRooms=new List<HubRoom>(),OnlineRooms=new List<HubRoom>();
+            public void Browse(){}public void RefreshRooms(bool lan){}public List<HubRoom> Rooms(bool lan)=>lan?LanRooms:OnlineRooms;public void ToggleChat(){}public void ToggleSpectate(){}
         }
         GameObject _root,_hubRoot,_cameraRoot;Host _host;HubLobby _screen;Camera _camera;RenderTexture _target;
         [SetUp] public void Before()
@@ -95,6 +96,28 @@ namespace TumbangPreso.Tests
         /// `Update`, which never runs inside an EditMode test, so the first capture of this screen
         /// was a room with no panel in it at all.
         /// </summary>
+        [Test] public void RenderTheKnitScreensForReview()
+        {
+            string path=System.Environment.GetEnvironmentVariable("TUMP_LOBBY_CAPTURE");
+            if(string.IsNullOrEmpty(path) || SystemInfo.graphicsDeviceType==UnityEngine.Rendering.GraphicsDeviceType.Null)return;
+            foreach(Transform child in _root.transform)child.gameObject.SetActive(false);
+            _host.LanRooms.Add(new HubRoom{Name="NEIGHBOURHOOD",Map="TONDO",Players=2,Capacity=4,IsJoinable=true,Key="192.168.1.7:8910"});
+            _host.LanRooms.Add(new HubRoom{Name="OLDER GAME",Map="ERMITA",Players=1,Capacity=4,DifferentVersion=true,Key="192.168.1.8:8910"});
+            _host.OnlineRooms.Add(new HubRoom{Name="FRIENDS ONLINE",Map="SITANGKAI",Players=3,Capacity=4,IsJoinable=true,Key="ABCD"});
+            foreach(var type in new[]{typeof(HubModeSelect),typeof(HubHost),typeof(HubJoin),typeof(HubPracticePopup),typeof(HubClassicPopup),typeof(HubCustomPopup),typeof(HubRoomClosePopup)})
+            {
+                var dock=new GameObject(type.Name,typeof(RectTransform));dock.transform.SetParent(_root.transform,false);
+                var rect=(RectTransform)dock.transform;HubKit.Stretch(rect);
+                var view=(HubScreen)dock.AddComponent(type);view.enabled=false;
+                typeof(HubScreen).GetProperty("Hub").SetValue(view,_hubRoot.GetComponent<TumpHub>());
+                typeof(HubScreen).GetProperty("Root").SetValue(view,rect);view.Build();
+                foreach(var t in dock.GetComponentsInChildren<Transform>(true))t.gameObject.layer=31;
+                foreach(var slap in dock.GetComponentsInChildren<HubSlap>(true))
+                {slap.enabled=false;slap.transform.localScale=Vector3.one;slap.transform.localRotation=Quaternion.identity;var group=slap.GetComponent<CanvasGroup>();if(group!=null)group.alpha=1;}
+                Write(Path.Combine(Path.GetDirectoryName(path),type.Name+".png"));
+                Object.DestroyImmediate(dock);
+            }
+        }
         [Test] public void RenderTheRoomForReview()
         {
             string path=System.Environment.GetEnvironmentVariable("TUMP_LOBBY_CAPTURE");
@@ -240,6 +263,35 @@ namespace TumbangPreso.Tests
         /// <summary>MATCH SETTINGS (owner 2026-10-28: the host's picks one press away, not printed across
         /// the room) lists what the host chose and closes on BACK. Written beside the room's picture as
         /// `_settings` when TUMP_LOBBY_CAPTURE names a file.</summary>
+        [Test] public void OfflineChatCloseRestoresTheRoomDoors()
+        {
+            var character=Button("CharacterDoor");var chat=Button("ChatDoor");
+            Assert.IsTrue(character.gameObject.activeSelf);
+            _screen.SetChatPresented(true);
+            Assert.IsFalse(character.gameObject.activeSelf);Assert.IsFalse(chat.gameObject.activeSelf);
+            _screen.SetChatPresented(false);
+            Assert.IsTrue(character.gameObject.activeSelf);Assert.IsTrue(chat.gameObject.activeSelf);
+        }
+        [Test] public void FullRulesUseTheKnitControls()
+        {
+            var rules=_hubRoot.AddComponent<CustomGameScreen>();rules.Open();
+            var canvas=GameObject.Find("OwnerCustomGameCanvas").GetComponent<Canvas>();
+            try
+            {
+                foreach(var name in new[]{"CustomRulesBack","MatchRulesTab","RoomRulesTab","RoundsNext","UseRulesButton"})
+                    Assert.IsInstanceOf<HubButton>(canvas.GetComponentsInChildren<Button>(true).First(b=>b.name==name));
+                string path=System.Environment.GetEnvironmentVariable("TUMP_LOBBY_CAPTURE");
+                if(!string.IsNullOrEmpty(path) && SystemInfo.graphicsDeviceType!=UnityEngine.Rendering.GraphicsDeviceType.Null)
+                {
+                    canvas.renderMode=RenderMode.ScreenSpaceCamera;canvas.worldCamera=_camera;canvas.planeDistance=.5f;
+                    foreach(var t in canvas.GetComponentsInChildren<Transform>(true))t.gameObject.layer=31;
+                    Write(Path.Combine(Path.GetDirectoryName(path),"full_rules_match.png"));
+                    canvas.GetComponentsInChildren<Button>().First(b=>b.name=="RoomRulesTab").onClick.Invoke();
+                    Write(Path.Combine(Path.GetDirectoryName(path),"full_rules_room.png"));
+                }
+            }
+            finally{rules.Close();Object.DestroyImmediate(canvas.gameObject);Object.DestroyImmediate(rules);}
+        }
         [Test] public void MatchSettingsCardListsTheHostsPicks()
         {
             _host.Hosting=false;_host.EditBots=false;RebuildForCurrentSeats();
@@ -254,6 +306,12 @@ namespace TumbangPreso.Tests
             Assert.Contains(SceneFlow.SelectedRules.Rounds.ToString(),words);
             Assert.Contains("LAN",words,"A LAN room says so.");
             Assert.AreEqual("CloseSettings",popup.FirstFocus.name);
+            Canvas.ForceUpdateCanvases();
+            var last=popupRoot.GetComponentsInChildren<Text>(true).Where(t=>t.name.StartsWith("Value")).Last();
+            var footer=popupRoot.GetComponentsInChildren<Button>(true).First(b=>b.name=="CloseSettings");
+            var lastBounds=RectTransformUtility.CalculateRelativeRectTransformBounds(rect,last.rectTransform);
+            var footerBounds=RectTransformUtility.CalculateRelativeRectTransformBounds(rect,footer.transform);
+            Assert.Greater(lastBounds.min.y,footerBounds.max.y,"All facts must sit above the footer actions.");
             string path=System.Environment.GetEnvironmentVariable("TUMP_LOBBY_CAPTURE");
             if(!string.IsNullOrEmpty(path) && SystemInfo.graphicsDeviceType != UnityEngine.Rendering.GraphicsDeviceType.Null)
             {

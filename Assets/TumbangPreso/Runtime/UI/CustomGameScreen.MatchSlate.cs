@@ -15,27 +15,30 @@ namespace TumbangPreso.UI
             _slateRules = true;
             _canvas = OwnerUiLayout.Canvas(transform, "OwnerCustomGameCanvas", SortingOrder);
             _root = OwnerUiLayout.Rect(_canvas.transform, "CustomGameRoot").gameObject; OwnerUiLayout.Fill((RectTransform)_root.transform);
-            var ground = OwnerUiLayout.Rect(_root.transform, "MatchSlateGround").gameObject.AddComponent<Image>();
-            OwnerUiLayout.Fill(ground.rectTransform); ground.color = HubStyle.Maroon; ground.raycastTarget = false;
+            var ground = HubKnit.Plate(_root.transform, "MatchSlateGround", Knit.Maroon);
+            OwnerUiLayout.Fill(ground);
+            var catcher = _root.AddComponent<Image>();catcher.color = Color.clear;
             var design = OwnerUiLayout.DesignArea(_root.transform, "CustomRulesComposition");
-            var back = OwnerTextAction.CreateBack(design, "CustomRulesBack", Close, 57, 24);
-            back.GetComponentInChildren<OwnerUiGlyph>().color = HubStyle.Honey;
-            var title = OwnerUiLayout.Text(design, "CustomRulesTitle", "CUSTOM MATCH", 64, OwnerUiLayout.TypeRole.Display);
-            OwnerUiLayout.Place(title.rectTransform, 96, 106, 1697, 103);
-            title.color = HubStyle.Paper;
+            var back = HubKnit.Button(design, "CustomRulesBack", null, Knit.Red, Close, HubStyle.Title, HubGlyph.Mark.Back);
+            OwnerUiLayout.Place((RectTransform)back.transform, 58, 52, 88, 84);
+            var titlePlate = HubKnit.Plate(design, "CustomRulesTitlePlate", Knit.Wine);
+            OwnerUiLayout.Place(titlePlate, 176, 42, 694, 110);
+            var title = HubKit.Text(HubKnit.FaceOf(titlePlate), "CustomRulesTitle", "CUSTOM MATCH", 64, true, HubKnit.Honey);
+            HubKit.Stretch(title.rectTransform); title.rectTransform.offsetMin = new Vector2(32, 8); title.rectTransform.offsetMax = new Vector2(-28, -8);
+            HubKit.Fit(title, 630);
             _headline = OwnerUiLayout.Text(design, "RulesHeadline", "", 29);
-            OwnerUiLayout.Place(_headline.rectTransform, 98, 211, 1720, 68); _headline.color = HubStyle.Honey;
-            _ownerMatchTab = OwnerTextAction.Create(design, "MatchRulesTab", "THE MATCH", () => ShowOwnerRulesPage(false), 98, 287, 400, 70, 34);
-            _ownerRoomTab = OwnerTextAction.Create(design, "RoomRulesTab", "THE ROOM", () => ShowOwnerRulesPage(true), 570, 287, 400, 70, 34);
+            OwnerUiLayout.Place(_headline.rectTransform, 104, 185, 1700, 68); _headline.color = HubKnit.Cream;
+            _ownerMatchTab = HubKnit.Button(design, "MatchRulesTab", "THE MATCH", Knit.Gold, () => ShowOwnerRulesPage(false), 34);
+            OwnerUiLayout.Place((RectTransform)_ownerMatchTab.transform, 104, 274, 400, 76);
+            _ownerRoomTab = HubKnit.Button(design, "RoomRulesTab", "THE ROOM", Knit.Maroon, () => ShowOwnerRulesPage(true), 34);
+            OwnerUiLayout.Place((RectTransform)_ownerRoomTab.transform, 548, 274, 400, 76);
             foreach (var tab in new[] { _ownerMatchTab, _ownerRoomTab })
             {
                 var line = OwnerUiLayout.Rect(tab.transform, "SelectedTab").gameObject.AddComponent<Image>();
-                OwnerUiLayout.Place(line.rectTransform, 79, 66, 242, 4); line.color = HubStyle.Chartreuse; line.raycastTarget = false;
+                OwnerUiLayout.Place(line.rectTransform, 79, 66, 242, 4); line.color = HubKnit.Honey; line.raycastTarget = false;
             }
-            var plate = OwnerUiLayout.Rect(design, "RulesPlate").gameObject.AddComponent<HubShape>();
-            OwnerUiLayout.Place(plate.rectTransform, 104, 369, 1705, 545);
-            plate.Fill = HubStyle.Night; plate.Pressable = false; plate.Seed = 419;
-            plate.ShadowOffset = Vector2.zero; plate.raycastTarget = false;
+            var plate = HubKnit.Plate(design, "RulesPlate", Knit.Wine);
+            OwnerUiLayout.Place(plate, 104, 369, 1705, 545);
             _ownerMatchPage = OwnerUiLayout.Rect(design, "MatchRulesPage"); OwnerUiLayout.Place(_ownerMatchPage, 122, 380, 1670, 516);
             _ownerRoomPage = OwnerUiLayout.Rect(design, "RoomRulesPage"); OwnerUiLayout.Place(_ownerRoomPage, 122, 380, 1670, 516);
             SlateRule(_ownerMatchPage, "Format", "FORMAT", 0, d => { _editing.Format = (MatchFormat)Cycle((int)_editing.Format, d, FormatCount); Apply(); }, "Choose how the round is played.");
@@ -49,31 +52,20 @@ namespace TumbangPreso.UI
             SlateRule(_ownerRoomPage, "MapVote", "MAP VOTE", 228, d => { _editing.MapVote = !_editing.MapVote; Apply(); }, "ON lets players vote after character select. OFF uses the host-selected court.");
             _passwordRow = OwnerUiLayout.Rect(_ownerRoomPage, "PasswordRow").gameObject;
             OwnerUiLayout.Place((RectTransform)_passwordRow.transform, 21, 352, 1599, 159);
-            var field = OwnerUiLayout.Rect(_passwordRow.transform, "RoomPassword").gameObject.AddComponent<Image>();
-            OwnerUiLayout.Place(field.rectTransform, 0, 0, 592, 90); field.color = new Color32(247, 239, 209, 255);
-            _password = field.gameObject.AddComponent<InputField>(); _password.targetGraphic = field;
-            _password.contentType = InputField.ContentType.Password; _password.lineType = InputField.LineType.SingleLine;
-            _password.characterLimit = CustomGameRules.MaxPasswordLength;
-            var typed = OwnerUiLayout.Text(field.transform, "EnteredText", "", 31); typed.color = OwnerUiTheme.Current.EnteredInk;
-            OwnerUiLayout.Place(typed.rectTransform, 22, 8, 548, 73); typed.horizontalOverflow = HorizontalWrapMode.Overflow; _password.textComponent = typed;
-            var placeholder = OwnerUiLayout.Text(field.transform, "Placeholder", "ROOM PASSWORD", 29, OwnerUiLayout.TypeRole.Accent);
-            OwnerUiLayout.Place(placeholder.rectTransform, 22, 8, 548, 73); placeholder.color = OwnerUiTheme.Current.Ochre; _password.placeholder = placeholder;
+            _password = HubKnit.Field(_passwordRow.transform, "RoomPassword", "", "ROOM PASSWORD", CustomGameRules.MaxPasswordLength, 31);
+            OwnerUiLayout.Place((RectTransform)_password.transform, 0, 0, 592, 90);
+            _password.contentType = InputField.ContentType.Password;
             _password.onValueChanged.AddListener(value => { if (_editing == null || !MayEdit) return; _editing.Password = value ?? ""; Apply(); });
             var hint = OwnerUiLayout.Text(_passwordRow.transform, "PasswordHelp", "Optional. Use 4 to 16 characters.", 28);
-            OwnerUiLayout.Place(hint.rectTransform, 652, 11, 916, 69); hint.color = HubStyle.Honey;
+            OwnerUiLayout.Place(hint.rectTransform, 652, 11, 916, 69); hint.color = HubKnit.Cream;
             _ranked = OwnerUiLayout.Text(design, "RankedRulesNote", "Custom rooms do not enter ranked matchmaking.", 28);
-            OwnerUiLayout.Place(_ranked.rectTransform, 104, 918, 1120, 54); _ranked.color = HubStyle.Honey;
+            OwnerUiLayout.Place(_ranked.rectTransform, 104, 918, 970, 54); _ranked.color = HubStyle.Honey;
             _refusal = OwnerUiLayout.Text(design, "RulesRefusal", "", 28, OwnerUiLayout.TypeRole.Display);
-            OwnerUiLayout.Place(_refusal.rectTransform, 103, 972, 1115, 61); _refusal.color = HubStyle.Persimmon;
-            _ownerReset = OwnerTextAction.Create(design, "ResetRulesButton", "RESET TO DEFAULTS", OnReset, 1280, 912, 520, 65, 28);
-            _ownerReset.GetComponentInChildren<Text>().color = HubStyle.Honey;
-            _use = OwnerTextAction.Create(design, "UseRulesButton", "DONE", OnUse, 1385, 985, 417, 70, 42);
-            _use.GetComponentInChildren<Text>().font = OwnerUiTheme.Current.Display;
-            _use.GetComponentInChildren<Text>().color = HubStyle.Ink;
-            var donePlate = OwnerUiLayout.Rect(_use.transform, "PrimaryPlate").gameObject.AddComponent<HubShape>();
-            OwnerUiLayout.Fill(donePlate.rectTransform); donePlate.transform.SetAsFirstSibling();
-            donePlate.Fill = HubStyle.Chartreuse; donePlate.Seed = 420;
-            donePlate.BandFraction = .15f; donePlate.raycastTarget = false;
+            OwnerUiLayout.Place(_refusal.rectTransform, 103, 972, 970, 61); _refusal.color = HubStyle.Persimmon;
+            _ownerReset = HubKnit.Button(design, "ResetRulesButton", "DEFAULT RULES", Knit.Orange, OnReset, 28);
+            OwnerUiLayout.Place((RectTransform)_ownerReset.transform, 1110, 947, 360, 90);
+            _use = HubKnit.Button(design, "UseRulesButton", "DONE", Knit.Gold, OnUse, 42, primary: true);
+            OwnerUiLayout.Place((RectTransform)_use.transform, 1510, 947, 290, 90);
             _root.SetActive(false);
         }
 
@@ -82,29 +74,22 @@ namespace TumbangPreso.UI
             var row = OwnerUiLayout.Rect(parent, id + "Rule"); OwnerUiLayout.Place(row, 0, y, 1650, 86); _ownerRuleRows[id] = row.gameObject;
             var caption = OwnerUiLayout.Text(row, id + "Label", title, 31, OwnerUiLayout.TypeRole.Accent);
             OwnerUiLayout.Place(caption.rectTransform, 17, 5, 364, 76);
-            caption.color = HubStyle.Persimmon;
+            caption.color = HubKnit.Honey;
             var value = OwnerUiLayout.Text(row, id + "Value", "", 31, OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(value.rectTransform, 464, 5, 448, 76); value.alignment = TextAnchor.MiddleCenter; _ownerValues[id] = value;
-            value.color = HubStyle.Paper;
-            var hint = OwnerUiLayout.Text(row, id + "Help", help, 28); hint.color = HubStyle.Honey;
-            OwnerUiLayout.Place(hint.rectTransform, 1000, 1, 624, 83);
+            value.color = HubKnit.Cream;
+            var hint = OwnerUiLayout.Text(row, id + "Help", help, 28); hint.color = HubKnit.Cream;
+            OwnerUiLayout.Place(hint.rectTransform, 1024, 1, 600, 83);
             var line = OwnerUiLayout.Rect(row, "RuleLine").gameObject.AddComponent<Image>();
             OwnerUiLayout.Place(line.rectTransform, 14, 84, 1614, 1); line.color = new Color(HubStyle.Honey.r, HubStyle.Honey.g, HubStyle.Honey.b, .18f); line.raycastTarget = false;
             foreach (int direction in new[] { -1, 1 })
             {
                 int delta = direction;
-                var root = OwnerUiLayout.Rect(row, id + (delta < 0 ? "Previous" : "Next"));
-                OwnerUiLayout.Place(root, delta < 0 ? 394 : 918, 12, 60, 61);
-                var hit = root.gameObject.AddComponent<Image>(); hit.color = Color.clear;
-                var arrow = OwnerUiGlyph.Create(root, "Arrow", OwnerUiGlyph.Mark.Back, Color.white);
-                // Mirroring a top-left-pivot glyph moves it left by its width.
-                // Offset the mirrored origin so the drawn arrow stays inside its button.
-                OwnerUiLayout.Place(arrow.rectTransform, delta > 0 ? 47 : 15, 14, 32, 31);
-                if (delta > 0) arrow.rectTransform.localScale = new Vector3(-1, 1, 1);
-                var button = root.gameObject.AddComponent<Button>(); button.targetGraphic = arrow;
-                var colours = button.colors; colours.normalColor = HubStyle.Golden; colours.highlightedColor = colours.selectedColor = HubStyle.Persimmon;
-                colours.disabledColor = new Color(HubStyle.Honey.r, HubStyle.Honey.g, HubStyle.Honey.b, .4f); button.colors = colours;
-                button.onClick.AddListener(() => { if (MayEdit) { MenuSfx.Click(); change(delta); } });
+                var button = HubKnit.Button(row, id + (delta < 0 ? "Previous" : "Next"), null, Knit.Orange,
+                    () => { if (MayEdit) change(delta); }, HubStyle.Label, HubGlyph.Mark.Back);
+                OwnerUiLayout.Place((RectTransform)button.transform, delta < 0 ? 388 : 912, 10, 68, 64);
+                var arrow = button.Body.Find("Icon");
+                if (delta > 0) arrow.localScale = new Vector3(-1, 1, 1);
             }
         }
     }

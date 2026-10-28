@@ -2,11 +2,10 @@
 
 Updated 2026-10-28. [TODO](TODO.md) is the only active queue.
 
-- LOBBY-UI-1028: knit e7f0298be/a9916921a integrated into mobile+network
-  at owner request. One authorized chat test
-  failed at CharacterDoor after chat closes (OwnerPreparationTests.cs:200).
-  PC evidence: Logs/lobby-ui-20261028/resume-validation/chat.xml. No rerun.
-  Next: diagnose, then fresh build and visual/peer/pad/phone review.
+- LOBBY-UI-1028: desktop rules/chat/layout fixes7c1a7a0ac integrated here.
+  Edit20/20; exact chat/rules Play1/1. Evidence/build/push receipt on PC:
+  Logs/lobby-ui-20261028/fixes/. Main separate; phone work excluded.
+  Desktop visual review, physical pad and real-peer acceptance remain separate.
 - Owner requested wrapping up and handing off unfinished mobile UI work.
   [Resume here](reports/mobile-ui-2026-10-26/HANDOFF.md): ff9 Android candidate is
   built/uploaded, native41/41 and recorded actual touch journeys passed. Newer
