@@ -8,6 +8,13 @@ namespace TumbangPreso.Visual
     // One travelling body and one hologram rewind through the recorded route. Layered contours belong to the hologram
     // material, giving a dense temporal smear without independently moving past actors. Small electrical bursts mark
     // the activation and catch; gameplay still uses the accepted instant teleport.
+    //
+    // PAST MOMENTS (owner, 2026-10-26: "see other moments of Zack's past that he merges with during the rewind"). Up to three
+    // frozen moments from the real route stand where he really was, in the pose and facing he really had, drawn in the same
+    // approved electrical outline (fainter the older they are). They are chosen at the route's real corners first, then evenly,
+    // never closer than 1.2 m to each other, his body or the landing, so they read as separate beats instead of a muddy lineup.
+    // They stamp in during the reveal; as the rewinding body reaches each one it flashes, swells a touch and is absorbed with a
+    // crack of sparks. The moving lead hologram still marks the destination and merges at the catch.
     [DefaultExecutionOrder(2500)]
     public sealed class ZackBacktrackLook : MonoBehaviour
     {
@@ -26,6 +33,22 @@ namespace TumbangPreso.Visual
         private int _serial, _round;
         private ZackFx.Echo _body;
         private ZackFx.Echo[] _moments = new ZackFx.Echo[0];
+        private const int MaxPast = 3;
+        private const float PastSpacing = 1.2f, PastAbsorb = .07f;
+        private ZackFx.Echo[] _past = new ZackFx.Echo[0];
+        private float[] _pastAt = new float[0], _pastMergedAt = new float[0];
+        private Vector3[] _pastFeet = new Vector3[0], _pastScale = new Vector3[0];
+        /// <summary>How many past moments stand on the route this frame (not yet absorbed), for review traces.</summary>
+        public int PastMomentsDrawn { get; private set; }
+        public int PastMomentsChosen => _past.Length;
+        /// <summary>Read-only past-moment state for traces and lifecycle checks: feet, the route share it sits at, absorbed.</summary>
+        public bool TryPastMoment(int index, out Vector3 feet, out float at, out bool absorbed)
+        {
+            feet = Vector3.zero; at = 0; absorbed = false;
+            if (index < 0 || index >= _past.Length) return false;
+            feet = _pastFeet[index]; at = _pastAt[index]; absorbed = _pastMergedAt[index] >= 0;
+            return true;
+        }
         private readonly Vector4[] _echoTrail = new Vector4[5];
         private LineRenderer[] _streaks = new LineRenderer[0];
         private float[] _streakBorn = new float[0];
@@ -83,6 +106,7 @@ namespace TumbangPreso.Visual
                 if(echo!=null){v.CopyShoe(echo);echo.Past(.1f);v._moments=new[]{echo};}
             }
             bool calm=Settings.SettingsStore.Current.ReducedEffects;
+            if(v._body!=null)v.ChoosePastMoments(calm?1:MaxPast);
             ZackFx.Sparks(to+Vector3.up*.15f,.22f,calm?1:3,1.3f);
             // The kick-off: a crack of sparks at his feet where the present lets go of him.
             ZackFx.Sparks(from+Vector3.up*.2f,.35f,calm?2:5,.6f);
@@ -192,6 +216,74 @@ namespace TumbangPreso.Visual
                 best=Mathf.Min(best,Vector3.Distance(point,a+ab*u));
             }
             return best;
+        }
+
+        // ------------------------------------------------------------------ past moments
+
+        private void ChoosePastMoments(int most)
+        {
+            float length=RouteLength;
+            if(_route==null||_route.Length<3||length<PastSpacing*2f)return;
+            // Candidates: every route corner (heading change), sharpest first, then the even thirds of the route.
+            var candidates=new List<(float share,float score)>();
+            for(int i=1;i<_route.Length-1;i++)
+            {
+                var a=_route[i]-_route[i-1];var b=_route[i+1]-_route[i];a.y=b.y=0;
+                if(a.sqrMagnitude<1e-4f||b.sqrMagnitude<1e-4f)continue;
+                float turn=Vector3.Angle(a,b);
+                if(turn>25f)candidates.Add((_routeDistance[i]/length,turn));
+            }
+            candidates.Sort((x,y)=>y.score.CompareTo(x.score));
+            foreach(float even in new[]{.33f,.58f,.8f})candidates.Add((even,0));
+            var chosen=new List<float>();
+            foreach(var c in candidates)
+            {
+                if(chosen.Count>=most)break;
+                float d=c.share*length;
+                if(d<PastSpacing||length-d<PastSpacing)continue;
+                bool clear=true;foreach(float other in chosen)if(Mathf.Abs(other*length-d)<PastSpacing){clear=false;break;}
+                if(clear)chosen.Add(c.share);
+            }
+            chosen.Sort();
+            _past=new ZackFx.Echo[chosen.Count];_pastAt=chosen.ToArray();_pastMergedAt=new float[chosen.Count];_pastFeet=new Vector3[chosen.Count];_pastScale=new Vector3[chosen.Count];
+            for(int k=0;k<chosen.Count;k++)
+            {
+                _pastMergedAt[k]=-1;
+                var echo=ZackFx.Echo.Of(_motor.PlayerSlot,transform);
+                if(echo==null)continue;
+                var feet=Route(chosen[k],out float then,out _);
+                echo.PoseAt(then);
+                var root=echo.Copy.Root.transform;
+                root.SetPositionAndRotation(feet+_modelOffset,root.rotation);
+                CopyShoe(echo);
+                echo.Past(.25f+.15f*k,0);
+                _past[k]=echo;_pastFeet[k]=feet;_pastScale[k]=root.localScale;
+            }
+        }
+
+        private void StepPastMoments(float age,float e,bool eyes,Vector3 eye,bool calm)
+        {
+            PastMomentsDrawn=0;
+            for(int k=0;k<_past.Length;k++)
+            {
+                var echo=_past[k];if(echo==null)continue;
+                // Stamped in one after another during the reveal, nearest first.
+                float enter=Mathf.Clamp01((age-.015f*k)/Mathf.Max(.02f,RevealSeconds));
+                if(_pastMergedAt[k]<0&&e>=_pastAt[k])
+                {
+                    _pastMergedAt[k]=age;
+                    ZackFx.Sparks(_pastFeet[k]+Vector3.up*.9f,.32f,calm?1:3,k*3.1f+age);
+                }
+                float absorb=_pastMergedAt[k]<0?0:Mathf.Clamp01((age-_pastMergedAt[k])/PastAbsorb);
+                float near=eyes?Mathf.SmoothStep(0,1,Mathf.InverseLerp(1.1f,1.8f,Vector3.Distance(_pastFeet[k]+Vector3.up*1.2f,eye))):1;
+                // Absorbed: one bright beat as he passes through it, then gone.
+                float glow=absorb>0?Mathf.Lerp(1.5f,0,absorb):1;
+                float visible=enter*glow*near*(age<PullSeconds+.02f?1:0);
+                echo.Past(.25f+.15f*k,visible);
+                var root=echo.Copy.Root.transform;
+                root.localScale=_pastScale[k]*(1+.15f*Mathf.Sin(Mathf.PI*absorb));
+                bool on=visible>.015f;Show(echo,on);if(on&&absorb<=0)PastMomentsDrawn++;
+            }
         }
 
         // ------------------------------------------------------------------ timing
@@ -317,6 +409,7 @@ namespace TumbangPreso.Visual
                 echo.Trail(_echoTrail);
                 bool on=enter*glow*near>.015f;Show(echo,on);MomentsDrawn=on?1:0;
             }
+            StepPastMoments(age,e,eyes,eye,calm);
             // Short electrical wisps sample the traversed route, including its bends. In first person they occupy the
             // periphery and sweep across the turn instead of remaining parallel to the camera's forward axis.
             Route(e,out _,out var along);
@@ -374,7 +467,7 @@ namespace TumbangPreso.Visual
         private void Finish(){Restore();if(_motor!=null&&Live.TryGetValue(_motor.PlayerSlot,out var v)&&v==this)Live.Remove(_motor.PlayerSlot);Destroy(gameObject);}
         private void OnDestroy()
         {
-            Restore();_body?.Destroy();foreach(var m in _moments)m?.Destroy();
+            Restore();_body?.Destroy();foreach(var m in _moments)m?.Destroy();foreach(var m in _past)m?.Destroy();
             if(_motor!=null&&Live.TryGetValue(_motor.PlayerSlot,out var v)&&v==this)Live.Remove(_motor.PlayerSlot);
         }
     }

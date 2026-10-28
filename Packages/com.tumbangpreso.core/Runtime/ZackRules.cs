@@ -4,31 +4,44 @@ namespace TumbangPreso.Core
 {
     /// <summary>
     /// Zack, the speedster (owner's V3 skill sheet on the Wiki, approved 2026-10-25; `docs/reports/zack-kit-2026-10-25/plan.md`).
-    /// MOMENTUM, BACKTRACK, AFTERIMAGE, LIVE WIRE and OVERCLOCK. Every number is the plan's starting value and is asserted by
+    /// MOMENTUM, BACKTRACK, FULL THROTTLE (Afterimage until 2026-10-26), LIVE WIRE and OVERCLOCK, refined from the owner's 2026-10-26 feedback (the V4
+    /// note on the Wiki's Zack Kit Rework tab). Every number is a starting value and is asserted by
     /// `Core.Tests/ZackRulesTests.cs`. Anything every peer must agree on is a pure function here: the wire's crossing test,
     /// its sag, the copies' fan and the Backtrack history window.
     /// </summary>
     public static class ZackRules
     {
-        // ------------------------------------------------------------------ MOMENTUM (passive)
+        // ------------------------------------------------------------------ MOMENTUM (passive) and his base speed
 
-        /// <summary>Owner's sheet: *"up to 20% faster after 3 seconds"*.</summary>
-        public const float MomentumMaxBonus = 0.20f;
-        public const float MomentumRampSeconds = 3.0f;
+        /// <summary>
+        /// Owner, 2026-10-26: *"Zack feels too slow. Increase his actual speed modestly and make Momentum build faster."* He is
+        /// the one hero whose ordinary locomotion is quicker than the shared role speeds, by this much, always.
+        /// </summary>
+        public const float BaseSpeedScale = 1.08f;
+
+        /// <summary>Up to 25% faster after 2 seconds (was 20% after 3; owner: its benefit barely registered).</summary>
+        public const float MomentumMaxBonus = 0.25f;
+        public const float MomentumRampSeconds = 2.0f;
 
         /// <summary>Running means moving at least this fast on the court (a walk is 2.5, a jog more).</summary>
         public const float MomentumRunSpeed = 1.5f;
 
-        /// <summary>A stop is slower than <see cref="MomentumRunSpeed"/> for longer than this: one slow footstep is not a stop.</summary>
-        public const float MomentumStopGrace = 0.15f;
+        /// <summary>
+        /// A stop is slower than <see cref="MomentumRunSpeed"/> for longer than this. A hard cut or a reversal dips the speed
+        /// for a moment; that dip is not a stop, so a weaving run keeps its Momentum.
+        /// </summary>
+        public const float MomentumStopGrace = 0.25f;
 
-        /// <summary>The movement multiplier after this many seconds of uninterrupted running: 1.0 to 1.2, linear over 3 s.</summary>
+        /// <summary>The three visible stages, in seconds of running: the thirds of the ramp.</summary>
+        public const float MomentumStageOne = 0.7f, MomentumStageTwo = 1.4f;
+
+        /// <summary>The Momentum multiplier after this many seconds of uninterrupted running: 1.0 to 1.25, linear over 2 s.</summary>
         public static float MomentumScale(float seconds)
             => 1.0f + MomentumMaxBonus * Clamp01(Finite(seconds) ? seconds / MomentumRampSeconds : 0.0f);
 
-        /// <summary>The visible step (0 none, 1 at one second, 2 at two, 3 full), drawn on his heels and hands.</summary>
+        /// <summary>The visible stage (0 none, 1 at 0.7 s, 2 at 1.4 s, 3 full at 2 s), drawn on his run, heels and hands.</summary>
         public static int MomentumStep(float seconds)
-            => !(seconds >= 1.0f) ? 0 : seconds < 2.0f ? 1 : seconds < MomentumRampSeconds ? 2 : 3;
+            => !(seconds >= MomentumStageOne) ? 0 : seconds < MomentumStageTwo ? 1 : seconds < MomentumRampSeconds ? 2 : 3;
 
         /// <summary>
         /// One step of the passive: running builds it (capped at the ramp), a stop longer than the grace resets it. Returns the new
@@ -81,7 +94,38 @@ namespace TumbangPreso.Core
 
         public static float BacktrackCooldownFor(bool overclocked) => overclocked ? BacktrackOverclockedCooldown : BacktrackCooldown;
 
-        // ------------------------------------------------------------------ AFTERIMAGE (attacking)
+        // ------------------------------------------------------------------ FULL THROTTLE (attacking)
+
+        /// <summary>
+        /// Owner, 2026-10-26: *"i approve full throttle"* (option 1 of the Afterimage replacements in
+        /// `docs/reports/zack-kit-2026-10-25/refinement-2026-10-26.md`). One tap: Momentum is full at once, Charge is full
+        /// at once, and for 3 s Momentum cannot run out. A stop, a throw or a snap does not cost it inside the lock; a hit,
+        /// a stun, a trip, a root or a tag still does, and ends the lock with it.
+        /// </summary>
+        public const float FullThrottleCooldown = 24.0f;
+        public const float FullThrottleSeconds = 3.0f;
+
+        /// <summary>Overclocked: *"every skill overclocked"*. Full Throttle recharges in this long instead.</summary>
+        public const float FullThrottleOverclockedCooldown = 8.0f;
+
+        public static float FullThrottleCooldownFor(bool overclocked)
+            => overclocked ? FullThrottleOverclockedCooldown : FullThrottleCooldown;
+
+        /// <summary>
+        /// One step of the passive under Full Throttle's lock: full, whatever he does with his feet. Outside the lock it is
+        /// <see cref="StepMomentum"/> exactly.
+        /// </summary>
+        public static float StepMomentum(float seconds, ref float stoppedFor, bool running, float dt, bool throttled)
+        {
+            if (!throttled) return StepMomentum(seconds, ref stoppedFor, running, dt);
+            stoppedFor = 0.0f;
+            return MomentumRampSeconds;
+        }
+
+        // ------------------------------------------------------------------ AFTERIMAGE (retired attacking skill)
+
+        // ⚠️ RETIRED 2026-10-26 for FULL THROTTLE. Nothing casts it; the numbers stay because replay clips of schema 16 and 17
+        // still restore and draw its copies (`RecordedFieldView`, `ZackAfterimage.Valid`), and world-effect kind 20 stays reserved.
 
         /// <summary>Owner's sheet: *"running straight ahead for 3 seconds"*, 30 s cooldown.</summary>
         public const float AfterimageCooldown = 30.0f;
@@ -120,11 +164,67 @@ namespace TumbangPreso.Core
 
         // ------------------------------------------------------------------ LIVE WIRE (defending)
 
-        /// <summary>Owner's sheet: *"between two points up to 6 metres apart"*, *"Lasts 10 seconds"*, 30 s cooldown.</summary>
-        public const float LiveWireCooldown = 30.0f;
-        public const float LiveWireSeconds = 10.0f;
+        /// <summary>
+        /// Owner, 2026-10-26: the wire STAYS on the court after it trips someone, until the round ends or he reels it in. The
+        /// cooldown runs from each cast; with one wire that outlives it, it only gates moving the wire, so it is 20 s, not 30.
+        /// </summary>
+        public const float LiveWireCooldown = 20.0f;
         public const float LiveWireMaxLength = 6.0f;
         public const float LiveWireMinLength = 1.5f;
+
+        /// <summary>
+        /// NOT AN EXPIRY. A round is `Balance.RoundTime` (90 s) and round end retires every wire, so this bound is never
+        /// reached in play; it exists so a snapshot's lifetime fields stay finite and validated like every other field's.
+        /// </summary>
+        public const float LiveWireLifeBound = 600.0f;
+
+        /// <summary>After a normal wire Zaps someone it goes dark (harmless, visibly unlit) this long, then rearms.</summary>
+        public const float LiveWireDarkSeconds = 5.0f;
+
+        /// <summary>An overcharged wire never goes dark, but the attacker it just Zapped cannot be Zapped by it again for this long.</summary>
+        public const float LiveWireOverchargeGrace = 3.0f;
+
+        /// <summary>Reeling it in: look at your own wire within this reach and hold the skill this long.</summary>
+        public const float LiveWireReelRange = 4.0f;
+        public const float LiveWireReelHoldSeconds = 0.35f;
+
+        /// <summary>How close the look ray must pass to the wire (flat metres) to count as looking at it.</summary>
+        public const float LiveWireReelAimTolerance = 0.6f;
+
+        /// <summary>The host's allowance on the owner's look and reach for a reel it times itself (poses cross the wire late).</summary>
+        public const float LiveWireReelLeeway = 0.75f;
+
+        /// <summary>A wire that tripped someone at <paramref name="dischargedAt"/> (0 never) is dark at <paramref name="age"/>.</summary>
+        public static bool LiveWireDark(float dischargedAt, float age)
+            => Finite(dischargedAt) && Finite(age) && dischargedAt > 0.0f && age >= dischargedAt
+               && age - dischargedAt < LiveWireDarkSeconds;
+
+        /// <summary>
+        /// The flat distance from the look ray (origin <paramref name="ox"/>,<paramref name="oz"/>, flat direction
+        /// <paramref name="dx"/>,<paramref name="dz"/>) to the wire segment, counting only the part of the ray within
+        /// <paramref name="reach"/>. Infinity when no part of the wire is ahead within reach. Owner and host compute it alike.
+        /// </summary>
+        public static float LookToWire(float ox, float oz, float dx, float dz, float reach,
+                                       float ax, float az, float bx, float bz)
+        {
+            if (!Finite(ox) || !Finite(oz) || !Finite(dx) || !Finite(dz) || !Finite(reach)
+                || !Finite(ax) || !Finite(az) || !Finite(bx) || !Finite(bz)) return float.PositiveInfinity;
+            float len = (float)Math.Sqrt(dx * dx + dz * dz);
+            if (len < 1e-5f || reach <= 0.0f) return float.PositiveInfinity;
+            dx /= len; dz /= len;
+            float best = float.PositiveInfinity;
+            const int samples = 32;
+            for (int i = 0; i <= samples; i++)
+            {
+                float t = i / (float)samples;
+                float px = ax + (bx - ax) * t - ox, pz = az + (bz - az) * t - oz;
+                float along = px * dx + pz * dz;
+                if (along < 0.0f || along > reach) continue;
+                float side = Math.Abs(px * dz - pz * dx);
+                if (side < best) best = side;
+            }
+            return best;
+        }
 
         /// <summary>An ankle-height tension wire on floor cleats. A timed jump clears the visible line.</summary>
         public const float LiveWirePostHeight = 0.28f;
@@ -178,18 +278,91 @@ namespace TumbangPreso.Core
             return s > 0.0f ? 1 : s < 0.0f ? -1 : 0;
         }
 
+        // ------------------------------------------------------------------ CHARGE (his own energy, in the stamina bar's place)
+
+        /// <summary>
+        /// Owner, 2026-10-26: *"his own energy system and a distinct meter in the existing stamina location"*. The pool keeps the
+        /// shared capacity (`Balance.StaminaMax`) so every resource snapshot and paid verb reads the same units; what is his is
+        /// how it spends and refills. A full bar is about 4.2 s of sprint (the shared one is 2.5), it starts refilling 0.6 s
+        /// after the sprint ends (1.0) and refills in 2 s (2.5). While Overclocked his sprint costs nothing and the same bar
+        /// shows Overclock fuel instead, so there is never a second meter.
+        /// </summary>
+        public const float ChargeDrainRate = 60.0f;
+        public const float ChargeRegenDelay = 0.6f;
+        public const float ChargeRegenRate = 125.0f;
+
+        public static StaminaProfile ChargeProfile(bool overclocked)
+            => new StaminaProfile(ChargeDrainRate, ChargeRegenDelay, ChargeRegenRate, overclocked);
+
         // ------------------------------------------------------------------ OVERCLOCK (ultimate) and OVERCLOCKED (status)
 
-        /// <summary>Owner's sheet: 15 objective points; *"Zack becomes Overclocked for 25 seconds"*.</summary>
+        /// <summary>15 objective points. Overclock runs on fuel: 25 seconds of it, burning 1 per second on its own.</summary>
         public const float OverclockCost = 15.0f;
         public const float OverclockSeconds = 25.0f;
 
-        /// <summary>Overclocked: *"Moves 40% faster"*. It multiplies with Momentum (owner, 2026-10-25: stack, 1.68 at most).</summary>
-        public const float OverclockSpeedScale = 1.4f;
+        /// <summary>Overclocked moves 30% faster (was 40%: his base speed and the faster Momentum carry the rest).</summary>
+        public const float OverclockSpeedScale = 1.3f;
 
-        /// <summary>His whole kit speed scale: Momentum times Overclocked.</summary>
+        /// <summary>His whole kit speed scale: his base, Momentum and Overclocked, multiplied.</summary>
         public static float SpeedScale(float momentumSeconds, bool overclocked)
-            => MomentumScale(momentumSeconds) * (overclocked ? OverclockSpeedScale : 1.0f);
+            => BaseSpeedScale * MomentumScale(momentumSeconds) * (overclocked ? OverclockSpeedScale : 1.0f);
+
+        // ------------------------------------------------------------------ THE OVERCLOCK ZAP (hold the ultimate while Overclocked)
+
+        /// <summary>
+        /// Owner, 2026-10-26: *"While Overclocked, HOLD X and aim at an enemy to channel the zap, spending fuel. It should stop on
+        /// release or fuel exhaustion."* A rival within this range whose chest he can see.
+        /// </summary>
+        public const float ZapRange = 9.0f;
+
+        /// <summary>A rival this close to the crosshair (degrees) is taken; once taken, he stays held out to the wider angle.</summary>
+        public const float ZapAcquireDegrees = 8.0f;
+        public const float ZapHoldDegrees = 16.0f;
+
+        /// <summary>The host's allowance on the owner's aim (its pose stream lags): a held target must stay inside this cone.</summary>
+        public const float ZapHostDegrees = 26.0f;
+
+        /// <summary>The host's allowance on range for the same reason.</summary>
+        public const float ZapHostRangeLeeway = 0.75f;
+
+        /// <summary>Held in the zap this long without a real break, a rival is Zapped (`StatusRules.ZappedSeconds`).</summary>
+        public const float ZapLockSeconds = 1.0f;
+
+        /// <summary>A break in the beam shorter than this keeps the lock's progress; longer, it starts again.</summary>
+        public const float ZapLockGrace = 0.3f;
+
+        /// <summary>After the zap Zaps a rival, that rival is grounded against it this long (the beam still shows, harmlessly).</summary>
+        public const float ZapImmunitySeconds = 3.0f;
+
+        /// <summary>Extra fuel per second on top of Overclock's own 1 per second: while connected to a rival, and while searching.</summary>
+        public const float ZapFuelConnected = 2.0f;
+        public const float ZapFuelSearching = 0.5f;
+
+        /// <summary>He walks while he channels: no sprint and this share of his speed.</summary>
+        public const float ZapMoveScale = 0.6f;
+
+        /// <summary>Fuel spent per second right now.</summary>
+        public static float FuelBurn(bool zapping, bool connected)
+            => 1.0f + (!zapping ? 0.0f : connected ? ZapFuelConnected : ZapFuelSearching);
+
+        /// <summary>The lock's progress after a step: it builds while connected, holds through a short break, then resets.</summary>
+        public static float StepZapLock(float progress, ref float brokenFor, bool connected, float dt)
+        {
+            if (!Finite(progress)) progress = 0.0f;
+            if (!Finite(dt) || dt <= 0.0f) return Clamp(progress, 0.0f, ZapLockSeconds);
+            if (connected) { brokenFor = 0.0f; return Math.Min(ZapLockSeconds, Math.Max(0.0f, progress) + dt); }
+            brokenFor = (Finite(brokenFor) ? Math.Max(0.0f, brokenFor) : 0.0f) + dt;
+            return brokenFor > ZapLockGrace ? 0.0f : Clamp(progress, 0.0f, ZapLockSeconds);
+        }
+
+        /// <summary>The angle in degrees between a flat aim and the flat direction to a target; 180 when either is degenerate.</summary>
+        public static float FlatAngle(float aimX, float aimZ, float toX, float toZ)
+        {
+            float a = (float)Math.Sqrt(aimX * aimX + aimZ * aimZ), b = (float)Math.Sqrt(toX * toX + toZ * toZ);
+            if (!Finite(a) || !Finite(b) || a < 1e-5f || b < 1e-5f) return 180.0f;
+            float c = Clamp((aimX * toX + aimZ * toZ) / (a * b), -1.0f, 1.0f);
+            return (float)(Math.Acos(c) * 180.0 / Math.PI);
+        }
 
         // ------------------------------------------------------------------ helpers
 

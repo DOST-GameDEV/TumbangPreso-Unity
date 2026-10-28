@@ -5,22 +5,35 @@ using UnityEngine;
 namespace TumbangPreso.Visual
 {
     /// <summary>
-    /// What LIVE WIRE looks like (plan section 3): two compact floor cleats and insulated reels at `LiveWirePostHeight`, a gold wire on an
-    /// ink edge sagging to `LiveWireSagHeight` (the same `ZackRules.LiveWireHeightAt` the rules use), tangles of sparks at the
-    /// anchors and a hum. Overcharged it is doubled and sparks more. It snaps (the halves drop to the court) or, at the end of
-    /// its 10 s, goes slack, sags to the court and the posts sink. Render only: no collider (the primitives' are stripped).
+    /// What LIVE WIRE looks like: two compact floor cleats and insulated reels at `LiveWirePostHeight`, a gold wire on an ink
+    /// edge sagging to `LiveWireSagHeight` (the same `ZackRules.LiveWireHeightAt` the rules use), tangles of sparks at the
+    /// anchors and a hum. Owner, 2026-10-26: it STAYS on the court after a trip, so it never sinks. Its states:
+    ///
+    /// * LIT: gold, buzzing, tangles striking at both sockets. Overcharged (strung while Overclocked, he still is) it doubles.
+    /// * DARK (after a trip): the gold drains out to a dull grey copper line on its ink, the sockets go cold, and over the last
+    ///   part of the dark window a single spark crawls in from both sockets to the middle; when they meet it relights.
+    /// * REELED: the wire whips back into his hand and both cleats unbolt and follow it.
+    ///
+    /// Render only: no collider (the primitives' are stripped).
     /// </summary>
     public sealed class ZackLiveWireLook : MonoBehaviour, IVfxTimeline
     {
         private const int Points = 17;
+        private static readonly Color DarkCopper = new Color(.42f, .36f, .3f);
         private WorldEffectSnapshot.Field _state;
         private Transform _postA, _postB;
-        private LineRenderer _ink, _wire, _second, _tangleA, _tangleB;
-        private float _age, _snapAge = -1.0f;
-        private bool _renderOnly;
+        private Renderer[] _sockets;
+        private LineRenderer _ink, _wire, _second, _tangleA, _tangleB, _crawlA, _crawlB;
+        private float _age, _reelAge = -1.0f, _dischargeAge = -1.0f;
+        private bool _renderOnly, _presented, _dark, _overcharged, _aimed;
+        private float _rearm = 1.0f;
+        private Vector3 _hand;
         private ZackCurrentAudio _current;
 
         public float LifeSeconds => _state.Duration;
+        public bool DrawnDark => _dark;
+        public bool DrawnOvercharged => _overcharged;
+        public bool Reeling => _reelAge >= 0.0f;
 
         public static ZackLiveWireLook Build(Transform parent, WorldEffectSnapshot.Field state, bool renderOnly = false)
         {
@@ -30,53 +43,73 @@ namespace TumbangPreso.Visual
             var look = go.AddComponent<ZackLiveWireLook>();
             look._state = state;
             look._renderOnly = renderOnly;
+            look._hand = (state.Path[0] + state.Path[1]) * 0.5f + Vector3.up;
             if (!renderOnly) look._current = ZackCurrentAudio.Attach(go.transform, "sfx_zack_livewire_loop");
-            look._postA = Anchor(go.transform, state.Path[0], state.Forward, "AnchorA");
-            look._postB = Anchor(go.transform, state.Path[1], -state.Forward, "AnchorB");
+            var socketA = new System.Collections.Generic.List<Renderer>();
+            look._postA = Anchor(go.transform, state.Path[0], state.Forward, "AnchorA", socketA);
+            look._postB = Anchor(go.transform, state.Path[1], -state.Forward, "AnchorB", socketA);
+            look._sockets = socketA.ToArray();
             look._ink = ZackFx.Line(go.transform, "WireInk", Points, 0.075f, ZackFx.Ink, 0.0f);
             look._wire = ZackFx.Line(go.transform, "Wire", Points, 0.04f, ZackFx.Body, 1.4f);
-            if (state.SecondScale > 0.5f) look._second = ZackFx.Line(go.transform, "WireOvercharged", Points, 0.03f, ZackFx.Core, 1.6f);
+            look._second = ZackFx.Line(go.transform, "WireOvercharged", Points, 0.03f, ZackFx.Core, 1.6f);
+            look._second.enabled = false;
             look._tangleA = ZackFx.Line(go.transform, "TangleA", 5, 0.025f, ZackFx.Core, 1.6f);
             look._tangleB = ZackFx.Line(go.transform, "TangleB", 5, 0.025f, ZackFx.Core, 1.6f);
-            if (state.Split) look._snapAge = state.FirstScale;
+            look._crawlA = ZackFx.Line(go.transform, "RearmCrawlA", 4, 0.03f, ZackFx.Core, 1.8f);
+            look._crawlB = ZackFx.Line(go.transform, "RearmCrawlB", 4, 0.03f, ZackFx.Core, 1.8f);
+            look._overcharged = state.SecondScale > 0.5f;
             return look;
         }
 
-        private static Transform Anchor(Transform parent, Vector3 foot, Vector3 facing, string name)
+        private static Transform Anchor(Transform parent, Vector3 foot, Vector3 facing, string name, System.Collections.Generic.List<Renderer> sockets)
         {
             var root = new GameObject(name).transform; root.SetParent(parent, false);
             root.SetPositionAndRotation(foot, Quaternion.LookRotation(facing));
-            void Part(string label, PrimitiveType type, Vector3 at, Vector3 scale, Color colour, Quaternion turn)
+            Renderer Part(string label, PrimitiveType type, Vector3 at, Vector3 scale, Color colour, Quaternion turn)
             {
                 var go = GameObject.CreatePrimitive(type); go.name = label; VfxMaterial.StripCollider(go);
                 go.transform.SetParent(root, false); go.transform.localPosition = at;
                 go.transform.localScale = scale; go.transform.localRotation = turn;
-                VfxMaterial.Solid(go.GetComponent<Renderer>(), colour);
+                var r = go.GetComponent<Renderer>(); VfxMaterial.Solid(r, colour); return r;
             }
             var steel = new Color(.25f,.23f,.24f); var porcelain = new Color(.74f,.67f,.45f);
             Part("GroundCleat", PrimitiveType.Cube, new Vector3(0,.035f,0), new Vector3(.38f,.07f,.30f), steel, Quaternion.identity);
             Part("YokeLeft", PrimitiveType.Cube, new Vector3(-.11f,.14f,0), new Vector3(.06f,.22f,.13f), ZackFx.Ink, Quaternion.Euler(0,0,-18));
             Part("YokeRight", PrimitiveType.Cube, new Vector3(.11f,.14f,0), new Vector3(.06f,.22f,.13f), ZackFx.Ink, Quaternion.Euler(0,0,18));
             Part("InsulatorReel", PrimitiveType.Cylinder, new Vector3(0,.24f,0), new Vector3(.19f,.055f,.19f), porcelain, Quaternion.Euler(90,0,0));
-            Part("LiveSocket", PrimitiveType.Cylinder, new Vector3(0,ZackRules.LiveWirePostHeight,.065f), new Vector3(.07f,.018f,.07f), ZackFx.Body, Quaternion.Euler(90,0,0));
+            sockets.Add(Part("LiveSocket", PrimitiveType.Cylinder, new Vector3(0,ZackRules.LiveWirePostHeight,.065f), new Vector3(.07f,.018f,.07f), ZackFx.Body, Quaternion.Euler(90,0,0)));
             for(int i=0;i<2;i++)Part("FootBolt"+i,PrimitiveType.Cylinder,new Vector3(i==0?-.13f:.13f,.08f,-.09f),new Vector3(.045f,.015f,.045f),ZackFx.Ink,Quaternion.identity);
             return root;
         }
 
-        /// <summary>The wire snapped: the halves drop from the crossing to the court.</summary>
-        public void Snap()
+        /// <summary>The live wire's state this frame, from `ZackLiveWire` (dark, rearm progress, overcharged, his hand).</summary>
+        public void Present(bool dark, float rearm, bool overcharged, Vector3 hand, bool aimed = false)
         {
-            if (_snapAge >= 0.0f) return;
-            _snapAge = _age;
-            if (!_renderOnly) ZackFx.Sparks(Point(0.5f, 0.0f), 0.45f, 4, _state.EventId);
-            StepTo(_age);
+            _presented = true; _dark = dark; _rearm = Mathf.Clamp01(rearm); _overcharged = overcharged; _hand = hand; _aimed = aimed;
         }
 
-        /// <summary>A point on the wire at <paramref name="t"/> (0 post A, 1 post B), dropped by <paramref name="slack"/> (0 to 1).</summary>
+        /// <summary>His own screen: he is looking at it within reel reach, so it is outlined and its sockets glint.</summary>
+        public bool DrawnAimed => _aimed;
+
+        /// <summary>It just tripped someone: a burst at the middle, then the gold drains out.</summary>
+        public void Discharge()
+        {
+            _dischargeAge = _age;
+            if (!_renderOnly) ZackFx.Sparks(Point(0.5f, 0.0f), 0.45f, Settings.SettingsStore.Current.ReducedEffects ? 2 : 5, _state.EventId);
+        }
+
+        /// <summary>He reeled it in: the wire whips back to his hand and the cleats follow it.</summary>
+        public void Reel()
+        {
+            if (_reelAge >= 0.0f) return;
+            _reelAge = _age;
+            if (!_renderOnly) ZackFx.Sparks(_state.Path[0] + Vector3.up * .25f, .3f, 3, _state.EventId + 11);
+        }
+
+        /// <summary>A point on the wire at <paramref name="t"/> (0 post A, 1 post B).</summary>
         private Vector3 Point(float t, float slack)
         {
-            var a = _state.Path[0]; var b = _state.Path[1];
-            var p = Vector3.Lerp(a, b, t);
+            var p = Vector3.Lerp(_state.Path[0], _state.Path[1], t);
             float height = ZackRules.LiveWireHeightAt(t) * (1.0f - slack);
             return p + Vector3.up * Mathf.Max(0.03f, height);
         }
@@ -84,42 +117,72 @@ namespace TumbangPreso.Visual
         public void StepTo(float seconds)
         {
             _age = Mathf.Max(0.0f, seconds);
-            float left = _state.Duration - _age;
-            bool snapped = _snapAge >= 0.0f;
-            _current?.Step((_state.Path[0] + _state.Path[1]) * .5f + Vector3.up * .25f, !snapped && left > 0, _second != null ? 1f : .75f);
-            float fall = snapped ? Mathf.Clamp01((_age - _snapAge) / 0.35f) : 0.0f;
-            // The last 0.6 s: it goes slack, sags to the court, and the posts sink.
-            float slack = snapped ? fall : Mathf.Clamp01(1.0f - left / 0.6f);
-            float sink = snapped ? Mathf.Clamp01((_age - _snapAge - 0.2f) / 0.4f) : Mathf.Clamp01(1.0f - left / 0.4f);
+            if (!_presented)
+            {
+                // A recorded or render-only copy reads the field alone: dark from its discharge age, reeled from its flag.
+                _dark = ZackRules.LiveWireDark(_state.FirstScale, _age) && _state.SecondScale < 0.5f;
+                _rearm = _dark ? Mathf.Clamp01((_age - _state.FirstScale) / ZackRules.LiveWireDarkSeconds) : 1.0f;
+                if (_state.Split && _reelAge < 0.0f) _reelAge = _age;
+            }
             bool reduced = Settings.SettingsStore.Current.ReducedEffects;
-            // The taut snap on arrival: the wire whips out flat in the first 0.12 s and settles to its sag.
+            float reel = _reelAge >= 0.0f ? Mathf.Clamp01((_age - _reelAge) / Abilities.ZackLiveWire.ReelSeconds) : 0.0f;
+            float reelEase = reel * reel * (3.0f - 2.0f * reel);
+            _current?.Step((_state.Path[0] + _state.Path[1]) * .5f + Vector3.up * .25f, !_dark && reel <= 0.0f, _overcharged ? 1f : .75f);
+            // Gold drains out over the first 0.25 s of dark; a rearm brightens back in its last 0.15 s.
+            float lit = _dark ? Mathf.Clamp01(1.0f - (_dischargeAge >= 0.0f ? (_age - _dischargeAge) / 0.25f : 1.0f)) : 1.0f;
             float whip = Mathf.Clamp01(_age / 0.12f);
+            var colour = Color.Lerp(DarkCopper, ZackFx.Body, lit);
             for (int i = 0; i < Points; i++)
             {
                 float t = i / (float)(Points - 1);
-                float hang = snapped ? (t < 0.5f ? t / 0.5f : (1.0f - t) / 0.5f) : 1.0f;
-                var p = Point(t, slack * hang);
+                // Dark wires hang a touch slacker so the change reads even without colour.
+                var p = Point(t, _dark ? 0.25f : 0.0f);
                 if (whip < 1.0f) p = Vector3.Lerp(Vector3.Lerp(_state.Path[0], _state.Path[1], t) + Vector3.up * ZackRules.LiveWirePostHeight, p, whip);
-                float buzz = reduced ? 0.0f : 0.012f * Mathf.Sin(_age * 100.0f + i * 1.7f);
+                if (reel > 0.0f)
+                {
+                    // Reeling: every point is drawn toward his hand, the far end first, so it whips in like a measuring tape.
+                    float pull = Mathf.Clamp01(reelEase * 1.6f - (1.0f - t) * 0.6f);
+                    p = Vector3.Lerp(p, _hand, pull);
+                }
+                float buzz = reduced || _dark ? 0.0f : (_overcharged ? 0.02f : 0.012f) * Mathf.Sin(_age * 100.0f + i * 1.7f);
                 _wire.SetPosition(i, p + Vector3.up * buzz);
                 _ink.SetPosition(i, p + Vector3.up * buzz + Vector3.down * 0.01f);
-                if (_second != null) _second.SetPosition(i, p + Vector3.up * (0.07f - buzz));
+                _second.SetPosition(i, p + Vector3.up * (0.07f - buzz));
             }
-            // A snapped wire is two halves: break the line at the middle by fading the two centre points.
-            float alpha = snapped ? 1.0f - Mathf.Clamp01((_age - _snapAge - 0.3f) / 0.3f) : 1.0f;
-            ZackFx.Tint(_wire, new Color(ZackFx.Body.r, ZackFx.Body.g, ZackFx.Body.b, alpha));
+            float alpha = 1.0f - Mathf.Clamp01((reel - 0.8f) / 0.2f);
+            ZackFx.Tint(_wire, new Color(colour.r, colour.g, colour.b, alpha));
             ZackFx.Tint(_ink, new Color(ZackFx.Ink.r, ZackFx.Ink.g, ZackFx.Ink.b, alpha * 0.85f));
-            if (_second != null) ZackFx.Tint(_second, new Color(ZackFx.Core.r, ZackFx.Core.g, ZackFx.Core.b, alpha));
-            // The tangles: a short re-striking arc at each post top.
-            int strike = reduced ? 0 : Mathf.FloorToInt(_age / (_second != null ? 0.06f : 0.09f));
-            float tangle = snapped ? 0.0f : (Mathf.Repeat(_age, _second != null ? 0.06f : 0.09f) < 0.04f ? 0.95f : 0.25f);
-            ZackFx.Jag(_tangleA, Point(0.0f, slack) + Vector3.up * 0.05f, Point(0.08f, slack), 0.06f, strike);
-            ZackFx.Jag(_tangleB, Point(1.0f, slack) + Vector3.up * 0.05f, Point(0.92f, slack), 0.06f, strike + 7);
+            // Aimed at for a reel-in (his own screen only): a wider, pulsing ink outline so "this is the thing you will pick up" reads.
+            float pulse = _aimed && reel <= 0.0f ? 0.5f + 0.5f * Mathf.Sin(_age * 14.0f) : 0.0f;
+            _ink.widthMultiplier = 0.075f * (1.0f + 0.9f * pulse);
+            if (_aimed) ZackFx.Tint(_wire, Color.Lerp(new Color(colour.r, colour.g, colour.b, alpha), new Color(1, .96f, .8f, alpha), 0.35f * pulse));
+            _second.enabled = _overcharged && !_dark && reel <= 0.0f;
+            if (_second.enabled) ZackFx.Tint(_second, new Color(ZackFx.Core.r, ZackFx.Core.g, ZackFx.Core.b, 1.0f));
+            foreach (var socket in _sockets) ZackFx.Tint(socket, Color.Lerp(DarkCopper, ZackFx.Body, lit));
+            // The tangles: a short re-striking arc at each socket while lit.
+            float period = _overcharged ? 0.06f : 0.09f;
+            int strike = reduced ? 0 : Mathf.FloorToInt(_age / period);
+            float tangle = _dark || reel > 0.0f ? 0.0f : (Mathf.Repeat(_age, period) < 0.04f ? 0.95f : 0.25f);
+            ZackFx.Jag(_tangleA, Point(0.0f, 0.0f) + Vector3.up * 0.05f, Point(0.08f, 0.0f), 0.06f, strike);
+            ZackFx.Jag(_tangleB, Point(1.0f, 0.0f) + Vector3.up * 0.05f, Point(0.92f, 0.0f), 0.06f, strike + 7);
             ZackFx.Tint(_tangleA, new Color(ZackFx.Core.r, ZackFx.Core.g, ZackFx.Core.b, tangle));
             ZackFx.Tint(_tangleB, new Color(ZackFx.Core.r, ZackFx.Core.g, ZackFx.Core.b, tangle));
-            float postDrop = ZackRules.LiveWirePostHeight * sink;
-            _postA.position = _state.Path[0] + Vector3.up * (-postDrop);
-            _postB.position = _state.Path[1] + Vector3.up * (-postDrop);
+            // The rearm crawl: over the last 60% of the dark window one spark runs in from each socket; they meet at relight.
+            float crawl = _dark ? Mathf.Clamp01((_rearm - 0.4f) / 0.6f) : 0.0f;
+            bool crawling = crawl > 0.0f && reel <= 0.0f;
+            _crawlA.enabled = crawling; _crawlB.enabled = crawling;
+            if (crawling)
+            {
+                float u = 0.5f * crawl;
+                ZackFx.Jag(_crawlA, Point(Mathf.Max(0, u - .05f), .25f) + Vector3.up * .02f, Point(u, .25f) + Vector3.up * .05f, .03f, strike + 3);
+                ZackFx.Jag(_crawlB, Point(Mathf.Min(1, 1 - u + .05f), .25f) + Vector3.up * .02f, Point(1 - u, .25f) + Vector3.up * .05f, .03f, strike + 5);
+            }
+            // The cleats: planted, or unbolting and flying after the wire into his hand while it reels.
+            float follow = Mathf.Clamp01((reel - 0.35f) / 0.65f);
+            float shrink = 1.0f - Mathf.Clamp01((reel - 0.7f) / 0.3f);
+            _postA.position = Vector3.Lerp(_state.Path[0], _hand, follow * follow);
+            _postB.position = Vector3.Lerp(_state.Path[1], _hand, follow);
+            _postA.localScale = _postB.localScale = Vector3.one * Mathf.Max(0.001f, shrink);
         }
     }
 }

@@ -30,7 +30,7 @@ namespace TumbangPreso.UI
 
             // Zack (the Speedster, 2026-10-25)
             { "zack_skill1", AbilityGlyph.ZackBacktrack },
-            { "zack_skill2", AbilityGlyph.ZackAfterimage },
+            { "zack_skill2", AbilityGlyph.ZackFullThrottle },
             { "zack_skill2d", AbilityGlyph.ZackLiveWire },
             { "zack_ultimate", AbilityGlyph.ZackOverclock },
 

@@ -89,6 +89,7 @@ namespace TumbangPreso.Abilities
         internal void ClearPresentationInput()
         {
             _skill1BufferedAt = _skill2BufferedAt = _ultimateBufferedAt = float.NegativeInfinity;
+            ReleaseHeldCommands();
             ClearAimPresentation();
             _reticle?.Hide();
         }

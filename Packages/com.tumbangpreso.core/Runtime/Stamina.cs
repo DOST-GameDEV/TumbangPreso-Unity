@@ -51,6 +51,30 @@ namespace TumbangPreso.Core
     }
 
     /// <summary>
+    /// How one body's stamina spends and refills. The capacity is always `Balance.StaminaMax`, so snapshots, the sprint floor
+    /// and every paid verb keep one unit; a hero with its own energy changes only these rates (Zack's Charge, 2026-10-26).
+    /// Every peer derives it from the body's kit and state, so the host's authoritative pool and the owner's agree.
+    /// </summary>
+    public readonly struct StaminaProfile
+    {
+        public readonly float DrainRate, RegenDelay, RegenRate;
+        /// <summary>A sprint that costs nothing and needs no start floor (Zack while Overclocked); the bar refills under it.</summary>
+        public readonly bool FreeSprint;
+
+        public StaminaProfile(float drainRate, float regenDelay, float regenRate, bool freeSprint = false)
+        {
+            DrainRate = drainRate; RegenDelay = regenDelay; RegenRate = regenRate; FreeSprint = freeSprint;
+        }
+
+        public static StaminaProfile Shared => new StaminaProfile(Balance.StaminaDrainRate, Balance.StaminaRegenDelay, Balance.StaminaRegenRate);
+
+        public bool IsValid => Finite(DrainRate) && DrainRate > 0.0f && Finite(RegenDelay) && RegenDelay >= 0.0f
+                               && Finite(RegenRate) && RegenRate > 0.0f;
+
+        private static bool Finite(float v) => !float.IsNaN(v) && !float.IsInfinity(v);
+    }
+
+    /// <summary>
     /// The stamina pool, the sprint, and the fatigue penalty.
     ///
     /// ⚠️⚠️ THE FINDING IS THE DISTANCE, NOT THE TIME. StaminaMax, StaminaDrainRate,
@@ -85,6 +109,15 @@ namespace TumbangPreso.Core
         public float FatigueLeft => _fatigueLeft;
         public float IdleSeconds => _idle;
         public SpeedZoneStack SpeedZones => _speedZones;
+
+        private StaminaProfile _profile = StaminaProfile.Shared;
+
+        /// <summary>The body's spend and refill rates (`StaminaProfile`); an invalid profile falls back to the shared one.</summary>
+        public StaminaProfile Profile
+        {
+            get => _profile;
+            set => _profile = value.IsValid ? value : StaminaProfile.Shared;
+        }
 
         /// <summary>
         /// Applies the host's resource state to a joining or live client.
@@ -135,12 +168,20 @@ namespace TumbangPreso.Core
             // ⚠️ THE FLOOR IS WHAT STOPS THE BAR BEING FEATHERED. You may CONTINUE a
             // sprint at any level, but you may not START one below StaminaSprintFloor,
             // so tapping Shift on a sub-tick rhythm cannot buy a permanent sprint.
-            bool mayStart = _isSprinting || _current >= Balance.StaminaSprintFloor;
-            _isSprinting = wants && mayStart && _current > 0.0f;
+            bool mayStart = _isSprinting || _current >= Balance.StaminaSprintFloor || _profile.FreeSprint;
+            _isSprinting = wants && mayStart && (_current > 0.0f || _profile.FreeSprint);
 
             if (_isSprinting)
             {
-                _current -= Balance.StaminaDrainRate * delta;
+                // A free sprint spends nothing, and the bar underneath keeps refilling as if he were resting.
+                if (_profile.FreeSprint)
+                {
+                    _idle += delta;
+                    if (_idle >= _profile.RegenDelay && !RecoveryBlocked)
+                        _current = System.Math.Min(Balance.StaminaMax, _current + _profile.RegenRate * delta);
+                    return Balance.SprintScale;
+                }
+                _current -= _profile.DrainRate * delta;
                 if (_current < 0.0f) _current = 0.0f;
                 _idle = 0.0f;
 
@@ -153,9 +194,9 @@ namespace TumbangPreso.Core
             }
 
             _idle += delta;
-            if (_idle >= Balance.StaminaRegenDelay && !RecoveryBlocked)
+            if (_idle >= _profile.RegenDelay && !RecoveryBlocked)
             {
-                _current += Balance.StaminaRegenRate * delta;
+                _current += _profile.RegenRate * delta;
                 if (_current > Balance.StaminaMax) _current = Balance.StaminaMax;
             }
             return 1.0f;

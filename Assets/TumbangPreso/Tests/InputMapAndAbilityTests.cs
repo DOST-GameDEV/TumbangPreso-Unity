@@ -157,11 +157,17 @@ namespace TumbangPreso.Tests
         [Test]
         public void ZackTimedSnapshotCarriesOverclockIndependentlyOfTheRoleSlot()
         {
-            // Zack (protocol 182): no personal window; OVERCLOCKED's 25 s rides the passive fields beside a pending ultimate.
+            // Zack: OVERCLOCKED's 25 s rides the passive fields beside a pending ultimate. Since 2026-10-26 the personal window
+            // is FULL THROTTLE's 3 s lock, bound to the attacking skill itself, never to whichever skill holds the live slot.
             var zack = new ZackHeroKit();
             zack.SetRole(true, null);
             var overclock = zack.CaptureTimedKit();
-            Assert.IsNull(overclock.PersonalAbility);
+            Assert.AreSame(zack.AttackingSkill, overclock.PersonalAbility);
+            Assert.AreNotSame(zack.Skill2, overclock.PersonalAbility);
+            Assert.AreEqual(0f, overclock.PersonalRemaining);
+            Assert.IsTrue(overclock.TryAge(2.5f, 0, false, .5f, out var agedLock));
+            Assert.AreEqual(2f, agedLock.PersonalRemaining, .001f);
+            Assert.IsFalse(overclock.TryAge(ZackRules.FullThrottleSeconds + 1, 0, false, 0, out _), "A lock longer than 3 s is refused.");
             Assert.AreSame(zack.Ultimate, overclock.UltimateAbility);
             Assert.AreEqual(ZackRules.OverclockSeconds, overclock.PassiveCapacity);
             Assert.IsTrue(overclock.TryAge(0, 0, true, 0, out _));
@@ -668,7 +674,7 @@ namespace TumbangPreso.Tests
                 Assert.IsFalse(skill.UsesCharges, skill.Id + " still uses the retired ice charges");
             }
 
-            // Sean left this list on 2026-10-24 (MOLTEN THROW is on a cooldown) and Zack on 2026-10-25 (AFTERIMAGE is 30 s):
+            // Sean left this list on 2026-10-24 (MOLTEN THROW is on a cooldown) and Zack on 2026-10-25 (FULL THROTTLE is 24 s):
             // no attacking skill recharges on a knock any more. The loop stays for the next one that does.
             Assert.IsFalse(HeroAbilitySystem.CreateKitFor("zack").AttackingSkill.UsesCharges);
             foreach (string hero in new string[0])

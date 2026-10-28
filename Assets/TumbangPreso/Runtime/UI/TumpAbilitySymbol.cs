@@ -153,7 +153,7 @@ namespace TumbangPreso.UI
                 case AbilityGlyph.CheskaNova:
                     for(int i=0;i<3;i++){float a=i*Mathf.PI/3;V(vh,Dir(a)*.40f,Dir(a+Mathf.PI)*.40f);}
                     Ring(vh,0,0,.17f); break;
-                case AbilityGlyph.ZackSprint: case AbilityGlyph.ZackBacktrack: case AbilityGlyph.ZackOverclock:
+                case AbilityGlyph.ZackSprint: case AbilityGlyph.ZackBacktrack: case AbilityGlyph.ZackOverclock: case AbilityGlyph.ZackFullThrottle:
                     P(vh,-.04f,.33f,-.10f,.02f,.18f,-.07f,.34f,-.26f,-.20f,-.26f,-.25f,-.14f,-.10f,.02f);
                     P(vh,-.39f,.17f,-.20f,.17f);P(vh,-.42f,.02f,-.24f,.02f);P(vh,.08f,.35f,.01f,.18f,.17f,.18f,.08f,.03f);break;
                 case AbilityGlyph.ZackOvercharge: case AbilityGlyph.Empower: case AbilityGlyph.ZackAfterimage:

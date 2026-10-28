@@ -35,9 +35,9 @@ namespace TumbangPreso.Abilities
                 // RafiHeroKit: 1.2x movement for 1.5 s on a genuine own retrieve.
                 case "rafi": return new Passive("BACKWASH",
                     "Retrieving your own thrown slipper grants 20% movement speed for 1.5 seconds, once per throw. Dropping and picking it up again does not count.");
-                // ZackHeroKit MOMENTUM: `ZackRules.MomentumMaxBonus`, `MomentumRampSeconds`, `StepMomentum` (rework, 2026-10-25).
+                // ZackHeroKit MOMENTUM: `ZackRules.BaseSpeedScale`, `MomentumMaxBonus`, `MomentumRampSeconds`, Charge (refined 2026-10-26).
                 case "zack": return new Passive("MOMENTUM",
-                    "The longer Zack keeps running, the faster he gets, up to 20% faster after 3 seconds. Stopping, throwing or being hit resets it.");
+                    "Zack runs 8% faster than other heroes and sprints on Charge, his own energy bar: about 4 seconds of sprint, refilling in 2 seconds. The longer he keeps running, the faster he gets: up to 25% faster after 2 seconds, in three visible stages. Stopping, throwing or being hit resets it.");
                 // SeanHeroKit PRESSURE: `SeanRules.PressureBars`, `EruptDistanceScale`, `PressureCoolSeconds`.
                 case "sean": return new Passive("PRESSURE",
                     "Every shove, Lava Ram or Magma Fist that lands adds heat. At full heat your next shove or Lava Ram erupts: 40% farther, with a splash. Heat cools 6 s after a hit.");

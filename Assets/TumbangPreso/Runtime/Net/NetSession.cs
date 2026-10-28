@@ -696,7 +696,15 @@ namespace TumbangPreso.Net
         // appended on the existing reliable message: 20 AFTERIMAGE and 21 LIVE WIRE. The circuit and objective-cooldown
         // messages are gone and the movement window's flag byte is always 0. The two may not meet.
         // 183: Live Wire uses low floor anchors and a jumpable 0.40 m feet-contact limit.
-        public const int ProtocolVersion = 183;
+        // 184 (2026-10-26): Zack's owner refinement. LIVE WIRE stays on the court: its field lifetime is a validation bound,
+        // `FirstScale` is the age it went dark after a trip (dark 5 s, then it rearms) and `Split` means reeled in; "ReqZackReel"
+        // joins the wire. OVERCLOCK is fuel and holding the ultimate channels a zap: "ReqZackZap" up and "ZackZap" down. His
+        // Charge changes the host's stamina rates for his body and his speed scale changes. A 183 peer would sink the wire on
+        // its first trip, ignore the zap and run a different stamina pool: the two may not meet. FULL THROTTLE replaces
+        // AFTERIMAGE on `zack_skill2` (owner pick, 2026-10-26): a predicted self cast (full Momentum, the host refills his
+        // Charge, a 3 s lock carried to a joiner in the timed-kit personal fields). Kind 20 stays reserved for old replays; no
+        // 184 peer casts it.
+        public const int ProtocolVersion = 184;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

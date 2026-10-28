@@ -50,13 +50,13 @@ namespace TumbangPreso.PlayTests
             Assert.True(bolt == null, "The strike remained after its authored duration.");
         }
 
-        private static Net.WorldEffectSnapshot.Field Wire(bool overcharged, bool snapped = false)
+        private static Net.WorldEffectSnapshot.Field Wire(bool overcharged, bool reeled = false)
         {
             Vector3 a = new Vector3(-2, 0, 0), b = new Vector3(2, 0, 0);
             return new Net.WorldEffectSnapshot.Field { Type = Net.WorldEffectSnapshot.Kind.LiveWire, EventId = 7, Owner = 1,
-                Position = a, Forward = Vector3.right, Radius = 4, Duration = ZackRules.LiveWireSeconds,
-                Remaining = ZackRules.LiveWireSeconds, SecondScale = overcharged ? 1 : 0, Split = snapped,
-                FirstScale = snapped ? 2 : 0, Path = new[] { a, b } };
+                Position = a, Forward = Vector3.right, Radius = 4, Duration = ZackRules.LiveWireLifeBound,
+                Remaining = ZackRules.LiveWireLifeBound, SecondScale = overcharged ? 1 : 0, Split = reeled,
+                FirstScale = reeled ? 2 : 0, Path = new[] { a, b } };
         }
 
         private static Net.WorldEffectSnapshot.Field Copy(float length)
@@ -68,11 +68,20 @@ namespace TumbangPreso.PlayTests
         public IEnumerator TheFieldContractRefusesBadWiresAndCopies()
         {
             Assert.IsTrue(Net.WorldEffectSnapshot.Valid(Wire(false)));
-            Assert.IsTrue(Net.WorldEffectSnapshot.Valid(Wire(true, snapped: true)));
+            Assert.IsTrue(Net.WorldEffectSnapshot.Valid(Wire(true, reeled: true)));
             var longWire = Wire(false); longWire.Path = new[] { longWire.Position, longWire.Position + Vector3.right * 7 }; longWire.Radius = 7;
             Assert.IsFalse(Net.WorldEffectSnapshot.Valid(longWire), "A 7 m wire is past the 6 m rule.");
             var lying = Wire(false); lying.Radius = 3;
             Assert.IsFalse(Net.WorldEffectSnapshot.Valid(lying), "The length must match the posts.");
+            // A clip saved under protocol 182/183 holds the old 10 s wire; it is read in its own meaning, never rejected.
+            var old = Wire(false); old.Duration = 10; old.Remaining = 6; old.Split = true; old.FirstScale = 3;
+            Assert.IsFalse(Net.WorldEffectSnapshot.Valid(old), "The old lifetime is not a live wire any more.");
+            var translated = Abilities.ZackLiveWire.FromRecordedV16(old);
+            Assert.IsTrue(Net.WorldEffectSnapshot.Valid(translated));
+            Assert.AreEqual(4, translated.Duration - translated.Remaining, .001f, "Its recorded age is kept.");
+            Assert.IsTrue(translated.Split, "An old snapped wire is drawn leaving.");
+            var stale = Wire(false); stale.FirstScale = -1;
+            Assert.IsFalse(Net.WorldEffectSnapshot.Valid(stale), "A negative dark time is refused.");
             Assert.IsTrue(Net.WorldEffectSnapshot.Valid(Copy(15)));
             Assert.IsTrue(Net.WorldEffectSnapshot.Valid(Copy(4)));
             var fast = Copy(15); fast.Duration = fast.Remaining = 1;
@@ -114,7 +123,7 @@ namespace TumbangPreso.PlayTests
             var stage = new GameObject("ReplayStage");
             try
             {
-                foreach (var field in new[] { Wire(false), Wire(true, snapped: true), Copy(15), Copy(3) })
+                foreach (var field in new[] { Wire(false), Wire(true, reeled: true), Copy(15), Copy(3) })
                 {
                     using (var view = new CameraSystem.RecordedFieldView(stage.transform, field))
                     {
@@ -132,7 +141,7 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest]
-        public IEnumerator LiveWireCurrentFollowsSfxGainAndStopsOnSnap()
+        public IEnumerator LiveWireCurrentFollowsSfxGainAndStopsWhenDark()
         {
             yield return MapRetrievalProbe.Load(SceneFlow.Eskinita, GameMode.HeroStrike);
             Object.FindFirstObjectByType<ReadyGate>().StartLocalCountdown();
@@ -155,8 +164,12 @@ namespace TumbangPreso.PlayTests
                 Settings.SettingsStore.Current.SfxVolume = volume;
                 look.StepTo(1.2f);
                 Assert.Greater(source.volume, 0);
-                look.Snap();
-                Assert.IsFalse(source.isPlaying, "Snapping must stop the live current immediately.");
+                look.Present(true, 0, false, Vector3.up);
+                look.StepTo(1.3f);
+                Assert.IsFalse(source.isPlaying, "A dark wire carries no current: its hum must stop at once.");
+                look.Present(false, 1, false, Vector3.up);
+                look.StepTo(1.4f);
+                Assert.IsTrue(source.isPlaying, "Rearmed, the hum returns.");
             }
             finally { Settings.SettingsStore.Current.SfxVolume = volume; Object.Destroy(root); }
         }
@@ -174,7 +187,7 @@ namespace TumbangPreso.PlayTests
                 {
                     kit.SetRole(defending, null); panel.OpenForCapture(kit);
                     Canvas.ForceUpdateCanvases(); yield return null; Canvas.ForceUpdateCanvases();
-                    string name = defending ? "Zack-inspect-live-wire" : "Zack-inspect-afterimage";
+                    string name = defending ? "Zack-inspect-live-wire" : "Zack-inspect-full-throttle";
                     yield return TumpUiCapture.Capture(name, canvas, 1600, 680, false);
                     var bodies = panel.GetComponentsInChildren<UnityEngine.UI.Text>().Where(t => t.name == "Body").ToArray();
                     Assert.AreEqual(3, bodies.Length);

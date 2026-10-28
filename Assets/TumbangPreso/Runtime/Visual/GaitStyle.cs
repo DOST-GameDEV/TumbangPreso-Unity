@@ -142,6 +142,14 @@ namespace TumbangPreso.Visual
     {
         public string Name;
         public Gait Walk, Run;
+        /// <summary>
+        /// ⚠️ OPTIONAL THIRD GEAR, read only when <see cref="HasDash"/>: the run a body flattens into when it moves well past the
+        /// ordinary sprint speed (Zack at full Momentum or Overclocked, owner 2026-10-26: *"His run should look convincingly
+        /// fast"*). `CharacterAnimator` blends it in by the body's actual speed above its role's sprint, so every peer that sees
+        /// him move fast sees the same lean and stride.
+        /// </summary>
+        public Gait Dash;
+        public bool HasDash;
         /// <summary>What this character does that no curve above can say (a scan of the court, a drifting head). May be null.</summary>
         public GaitQuirk Quirk;
         /// <summary>
@@ -160,9 +168,9 @@ namespace TumbangPreso.Visual
         public float IdleArmSpread, IdleArmForward, IdleElbow;
 
         /// <summary>The metres one full cycle (two steps) covers, for a leg of `reach` metres: the no-slide stride times `Glide`.</summary>
-        public float CycleMetres(float reach, float run)
+        public float CycleMetres(float reach, float run, float dash = 0f)
         {
-            var g = Gait.Lerp(Walk, Run, run);
+            var g = Blend(run, dash);
             float spread = (Mathf.Sin(g.LegForward * Mathf.Deg2Rad) + Mathf.Sin(g.LegBack * Mathf.Deg2Rad)) * Mathf.Cos(g.Stance * Mathf.Deg2Rad);
             return 2f * reach * Mathf.Max(.1f, spread) * Mathf.Max(1f, g.Glide);
         }
@@ -170,9 +178,9 @@ namespace TumbangPreso.Visual
         /// <summary>
         /// The pose at `phase` (0 to 1 over two steps). Plumbing only: every number it multiplies is the character's own.
         /// </summary>
-        public GaitPose Evaluate(float phase, float run, float time, float cycleRate)
+        public GaitPose Evaluate(float phase, float run, float time, float cycleRate, float dash = 0f)
         {
-            var g = Gait.Lerp(Walk, Run, run);
+            var g = Blend(run, dash);
             float tau = 2f * Mathf.PI;
             float s = Mathf.Sin(tau * phase);
             float legs = Shape(s, g.LegSnap);
@@ -212,6 +220,13 @@ namespace TumbangPreso.Visual
             p.HeadYaw = -p.TorsoYaw * g.HeadSteady;
             Quirk?.Invoke(ref p, new GaitMoment { Phase = phase, Run = run, Time = time, CycleRate = cycleRate, Gait = g });
             return p;
+        }
+
+        /// <summary>Walk to run by <paramref name="run"/>, then run to dash by <paramref name="dash"/> (a body without a dash ignores it).</summary>
+        public Gait Blend(float run, float dash)
+        {
+            var g = Gait.Lerp(Walk, Run, run);
+            return HasDash && dash > 0f ? Gait.Lerp(g, Dash, Mathf.Clamp01(dash) * Mathf.Clamp01(run)) : g;
         }
 
         private static float Shape(float x, float power) =>

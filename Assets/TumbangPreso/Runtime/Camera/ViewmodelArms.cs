@@ -246,7 +246,7 @@ namespace TumbangPreso.CameraSystem
                 BeginActionReturn(SlideCarryBlendSeconds);
 
             _carrying = holding;
-            if (_heldSlipper != null) _heldSlipper.gameObject.SetActive(holding);
+            if (_heldSlipper != null) _heldSlipper.gameObject.SetActive(holding && !_zapShoeStowed);
         }
 
         /// <summary>
@@ -1210,7 +1210,7 @@ namespace TumbangPreso.CameraSystem
                   : clip == "ignite" ? IgniteClip
                   : clip == "supernova-slam" ? SupernovaSlamClip
                   : clip == "sprint-electric" || clip == "backtrack-snap" ? SprintElectricClip
-                  : clip == "overcharge" || clip == "afterimage-split" || clip == "overclock-take" ? OverchargeClip
+                  : clip == "overcharge" || clip == "afterimage-split" || clip == "overclock-take" || clip == "throttle-rev" ? OverchargeClip
                   : clip == "summon-lightning" || clip == "livewire-throw" ? SummonLightningClip
                   : clip == "boulder-load" ? BoulderLoadClip
                   : clip == "stomp-heavy" || clip == "stomp" ? StompHeavyClip
@@ -3070,6 +3070,7 @@ namespace TumbangPreso.CameraSystem
             RestoreAirMotion();
             RestoreRunSway();
             RestoreFeatherfall();
+            RestoreZackZap();
             RestorePrayer();
             RestoreHeldProp();
             RestoreSwimming();
@@ -3111,6 +3112,7 @@ namespace TumbangPreso.CameraSystem
                 ApplySwimming(dt);
                 ApplyFeatherfall();
                 ApplyPrayer(dt);
+                ApplyZackZap(dt);
                 ApplyHeldProp();
                 ApplyRunSway(dt);
                 ApplyAirMotion(dt);
@@ -3161,6 +3163,7 @@ namespace TumbangPreso.CameraSystem
             ApplySwimming(dt);
             ApplyFeatherfall();
             ApplyPrayer(dt);
+            ApplyZackZap(dt);
             ApplyHeldProp();
             ApplyRunSway(dt);
             ApplyAirMotion(dt);

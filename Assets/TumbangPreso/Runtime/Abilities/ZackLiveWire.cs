@@ -8,44 +8,77 @@ using UnityEngine;
 namespace TumbangPreso.Abilities
 {
     /// <summary>
-    /// ZACK'S LIVE WIRE (2026-10-25 rework, plan section 2): a sparking wire strung from his feet to the aimed point, 1.5 to
-    /// 6 m. The first attacker to cross it is Zapped and it snaps; strung while Overclocked it is overcharged and Zaps every
-    /// attacker once for its whole 10 s.
+    /// ZACK'S LIVE WIRE (owner refinement, 2026-10-26): a sparking wire strung from his feet to the aimed point, 1.5 to 6 m,
+    /// that STAYS ON THE COURT. An attacker who crosses a lit wire is Zapped and the wire goes dark for
+    /// `ZackRules.LiveWireDarkSeconds`, then rearms; nobody can be stun-locked on it because the victim has that whole dark
+    /// window to step away. Strung while Overclocked it is overcharged: while he stays Overclocked it never goes dark, but
+    /// the attacker it just Zapped has `LiveWireOverchargeGrace` against it. It leaves only when the round ends, when he
+    /// strings a new one, or when he looks at it and holds the skill to reel it in (`MatchRpc.ZackReel`).
     ///
     /// ⚠️ IT HAS NO COLLIDER. Bodies, slippers and the can pass through it; only the host's crossing test
     /// (`ZackRules.Crossed`, feet between two physics steps, under `LiveWireReachAbove`) decides anything, and only the host
     /// Zaps (`CharacterMotor.ApplyZapped`). It is a host-owned dynamic field on the existing reliable message, kind 21.
     ///
-    /// Field layout: `Position` post A, `Path` [A, B], `Forward` flat A to B, `Radius` length, `Duration` 10, `SecondScale`
-    /// 1 overcharged, `Split` snapped, `FirstScale` the age it snapped at (0 while whole).
+    /// Field layout: `Position` post A, `Path` [A, B], `Forward` flat A to B, `Radius` length, `Duration`
+    /// `LiveWireLifeBound` (a validation bound, never reached inside a round), `SecondScale` 1 overcharged, `FirstScale` the
+    /// age it last went dark (0 lit since it was strung), `Split` reeled in.
     /// </summary>
     public sealed class ZackLiveWire : MonoBehaviour
     {
         public static readonly List<ZackLiveWire> Active = new List<ZackLiveWire>();
         private static int _nextId;
 
-        /// <summary>A snapped wire stays this long for its fall, then goes.</summary>
-        public const float SnapSeconds = 0.6f;
+        /// <summary>A reeled wire whips back into his hand over this long, then goes.</summary>
+        public const float ReelSeconds = 0.35f;
 
         private WorldEffectSnapshot.Field _state;
         private ZackLiveWireLook _look;
-        private float _age;
+        private float _age, _reeledAt = -1.0f;
         private int _round;
         private long _epoch;
         private readonly Dictionary<CharacterMotor, Vector3> _previousFeet = new Dictionary<CharacterMotor, Vector3>();
-        private readonly HashSet<int> _zapped = new HashSet<int>();
+        private readonly Dictionary<int, float> _graceUntil = new Dictionary<int, float>();
         private readonly List<HazardVolume> _hazards = new List<HazardVolume>();
 
         public int OwnerSlot => _state.Owner;
-        public bool Snapped => _state.Split;
-        public bool Overcharged => _state.SecondScale > 0.5f;
+        public int EventId => _state.EventId;
+        public bool Reeled => _state.Split;
+        public bool StrungOvercharged => _state.SecondScale > 0.5f;
         public Vector3 PostA => _state.Path[0];
         public Vector3 PostB => _state.Path[1];
-        public float Remaining => Mathf.Max(0.0f, _state.Duration - _age);
-        public bool IsLive => isActiveAndEnabled && !_state.Split && Remaining > 0.02f;
+        public float Age => _age;
+
+        /// <summary>Dark (harmless, unlit) after a normal trip; an overcharged wire with a live Overclock never goes dark.</summary>
+        public bool Dark => !OverchargedNow && ZackRules.LiveWireDark(_state.FirstScale, _age);
+
+        /// <summary>0 to 1 back to lit while dark (1 when lit), for the rearm crawl.</summary>
+        public float Rearm => !Dark ? 1.0f : Mathf.Clamp01((_age - _state.FirstScale) / ZackRules.LiveWireDarkSeconds);
+
+        /// <summary>Overcharged right now: strung while Overclocked and its owner is still Overclocked (every peer knows both).</summary>
+        public bool OverchargedNow => StrungOvercharged && OwnerOverclocked();
+
+        public bool IsLive => isActiveAndEnabled && !_state.Split;
+        public bool IsArmed => IsLive && !Dark;
+
+        private bool OwnerOverclocked()
+        {
+            var owner = GameServices.Round?.BodyAt(_state.Owner);
+            return owner != null && owner.AbilitySystem?.Kit is ZackHeroKit zack && zack.IsOverclocked;
+        }
 
         public WorldEffectSnapshot.Field Capture()
-        { var f = _state; f.Source = gameObject; f.Remaining = Remaining; f.Path = (Vector3[])_state.Path.Clone(); return f; }
+        {
+            var f = _state; f.Source = gameObject; f.Remaining = Mathf.Max(0.0f, _state.Duration - _age);
+            f.Path = (Vector3[])_state.Path.Clone(); return f;
+        }
+
+        /// <summary>His live wire, if he has one strung (not reeling in).</summary>
+        public static ZackLiveWire OwnedBy(int slot)
+        {
+            foreach (var wire in Active)
+                if (wire != null && wire.IsLive && wire._state.Owner == slot) return wire;
+            return null;
+        }
 
         // ------------------------------------------------------------------ placement (owner and host both ask)
 
@@ -85,7 +118,7 @@ namespace TumbangPreso.Abilities
             {
                 Type = WorldEffectSnapshot.Kind.LiveWire, EventId = ++_nextId,
                 Position = a, Forward = flat / length, Radius = length,
-                Duration = ZackRules.LiveWireSeconds, Remaining = ZackRules.LiveWireSeconds,
+                Duration = ZackRules.LiveWireLifeBound, Remaining = ZackRules.LiveWireLifeBound,
                 Owner = motor.PlayerSlot, SecondScale = overcharged ? 1.0f : 0.0f,
                 Path = new[] { a, b }
             };
@@ -95,6 +128,38 @@ namespace TumbangPreso.Abilities
             return wire;
         }
 
+        /// <summary>
+        /// ⚠️ HOST ONLY. Whether this seat may reel this wire in now: it is his, still strung, he can act and stands within the
+        /// reel reach (plus the host's leeway for a pose that crossed the wire late).
+        /// </summary>
+        public static ZackLiveWire HostReelable(CharacterMotor motor, int eventId)
+        {
+            if (motor == null || !(motor.AbilitySystem?.Kit is ZackHeroKit) || !motor.IsDefender || !motor.CanAct()
+                || GameServices.Round?.RoundActive != true) return null;
+            var wire = OwnedBy(motor.PlayerSlot);
+            if (wire == null || wire._state.EventId != eventId) return null;
+            return wire.FlatDistanceTo(motor.transform.position) <= ZackRules.LiveWireReelRange + ZackRules.LiveWireReelLeeway
+                ? wire : null;
+        }
+
+        /// <summary>Flat metres from a point to the wire's segment.</summary>
+        public float FlatDistanceTo(Vector3 p)
+        {
+            Vector3 a = PostA, b = PostB; a.y = b.y = p.y = 0.0f;
+            var ab = b - a; float u = ab.sqrMagnitude > 1e-6f ? Mathf.Clamp01(Vector3.Dot(p - a, ab) / ab.sqrMagnitude) : 0.0f;
+            return Vector3.Distance(p, a + ab * u);
+        }
+
+        /// <summary>⚠️ HOST ONLY. The reel completed: every peer whips the wire back into his hand and retires it.</summary>
+        public void HostReelIn()
+        {
+            if (!NetAuthority.ShouldResolve() || _state.Split) return;
+            _state.Split = true;
+            BeginReel();
+            MatchRpc.Instance?.BroadcastDynamicField(Capture());
+            NetCue.Play("sfx_zack_livewire_taut", (PostA + PostB) * 0.5f);
+        }
+
         // ------------------------------------------------------------------ validation and restore (every peer)
 
         public static bool Valid(WorldEffectSnapshot.Field f)
@@ -102,9 +167,9 @@ namespace TumbangPreso.Abilities
             if (f.Type != WorldEffectSnapshot.Kind.LiveWire || f.EventId <= 0 || f.Owner < 0 || f.Owner >= Balance.PlayerCount
                 || f.Path == null || f.Path.Length != 2
                 || !float.IsFinite(f.Path[0].sqrMagnitude) || !float.IsFinite(f.Path[1].sqrMagnitude)
-                || Mathf.Abs(f.Duration - ZackRules.LiveWireSeconds) > 0.001f
+                || Mathf.Abs(f.Duration - ZackRules.LiveWireLifeBound) > 0.001f
                 || (f.SecondScale != 0.0f && f.SecondScale != 1.0f)
-                || f.FirstScale < 0.0f || f.FirstScale > f.Duration || (!f.Split && f.FirstScale != 0.0f)
+                || !float.IsFinite(f.FirstScale) || f.FirstScale < 0.0f || f.FirstScale > f.Duration
                 || !ZackRules.LiveWireLengthValid(f.Radius)
                 || Mathf.Abs(f.Forward.y) > 0.01f || f.Forward.sqrMagnitude < 0.99f || f.Forward.sqrMagnitude > 1.01f
                 || (f.Path[0] - f.Position).sqrMagnitude > 1e-4f) return false;
@@ -114,6 +179,21 @@ namespace TumbangPreso.Abilities
             return Mathf.Abs(flat.magnitude - f.Radius) < 0.01f && Vector3.Dot(flat.normalized, f.Forward) > 0.999f;
         }
 
+        /// <summary>
+        /// A saved clip from protocol 182 or 183 (clip schema 16) recorded the old 10 s wire that snapped on its first Zap. Read
+        /// it in that meaning: its age is kept against the new lifetime bound, and a snapped wire is drawn leaving (as a reel)
+        /// rather than as a dark wire that the old game never had. Replay only; never a live snapshot.
+        /// </summary>
+        public static WorldEffectSnapshot.Field FromRecordedV16(WorldEffectSnapshot.Field old)
+        {
+            const float oldLife = 10.0f;
+            float age = float.IsFinite(old.Duration) && float.IsFinite(old.Remaining) ? Mathf.Clamp(old.Duration - old.Remaining, 0.0f, oldLife) : 0.0f;
+            old.Duration = ZackRules.LiveWireLifeBound;
+            old.Remaining = ZackRules.LiveWireLifeBound - age;
+            old.FirstScale = 0.0f;
+            return old;
+        }
+
         public static ZackLiveWire Restore(WorldEffectSnapshot.Field state, float elapsed)
         {
             if (!Valid(state)) return null;
@@ -121,10 +201,16 @@ namespace TumbangPreso.Abilities
             foreach (var live in Active)
                 if (live != null && live.isActiveAndEnabled && live._state.EventId == state.EventId)
                 {
-                    bool snap = state.Split && !live._state.Split;
+                    bool reel = state.Split && !live._state.Split;
+                    // An older snapshot never un-darkens a wire this peer already saw trip someone later.
+                    float dark = Mathf.Max(live._state.FirstScale, state.FirstScale);
+                    bool newlyDark = dark > live._state.FirstScale;
                     live._state = state;
-                    live._age = state.Duration - remaining;
-                    if (snap) live.PlaySnap();
+                    live._state.FirstScale = dark;
+                    live._state.Split = live._state.Split || reel;
+                    live._age = Mathf.Max(live._age, state.Duration - remaining);
+                    if (newlyDark) live._look?.Discharge();
+                    if (reel) live.BeginReel();
                     return live;
                 }
             if (remaining <= 0.0f || state.Split) return null;
@@ -138,7 +224,7 @@ namespace TumbangPreso.Abilities
             wire._round = GameServices.Match?.RoundNumber ?? 0;
             wire._epoch = MatchRpc.Instance?.PresentationMatchId ?? 0;
             wire._look = ZackLiveWireLook.Build(go.transform, state);
-            wire._look.StepTo(wire._age);
+            wire.StepLook();
             wire.RegisterHazards();
             Active.Add(wire);
             return wire;
@@ -166,28 +252,40 @@ namespace TumbangPreso.Abilities
                 || (MatchRpc.Instance?.PresentationMatchId ?? 0) != _epoch)
             { Retire(); return; }
             _age += Time.deltaTime;
-            _look?.StepTo(_age);
-            if (_state.Split && _age - _state.FirstScale > SnapSeconds) { Retire(); return; }
-            if (Remaining <= 0.0f) Retire();
+            StepLook();
+            if (_reeledAt >= 0.0f && _age - _reeledAt > ReelSeconds) { Retire(); return; }
+            if (_age >= _state.Duration) Retire();
+        }
+
+        private void StepLook()
+        {
+            if (_look == null) return;
+            var owner = GameServices.Round?.BodyAt(_state.Owner);
+            var hand = owner != null ? owner.transform.position + Vector3.up * 0.9f : (PostA + PostB) * 0.5f;
+            bool aimed = owner != null && owner.AbilitySystem?.Kit is ZackHeroKit zack && zack.ReelAimedEvent == _state.EventId;
+            _look.Present(Dark, Rearm, OverchargedNow, hand, aimed);
+            _look.StepTo(_age);
         }
 
         /// <summary>
         /// ⚠️ HOST ONLY: an attacker's feet going from one side of the segment to the other between two physics steps, within
-        /// its length and under `LiveWireReachAbove`. Taya, tagged and already-zapped-by-this-wire bodies are ignored.
+        /// its length and under `LiveWireReachAbove`. Taya and tagged bodies are ignored; a dark wire does nothing; an
+        /// overcharged one ignores the attacker it Zapped for the grace.
         /// </summary>
         private void FixedUpdate()
         {
             if (!NetAuthority.ShouldResolve() || _state.Split || GameServices.Round == null || !GameServices.Round.RoundActive)
                 return;
             var a = PostA; var b = PostB;
+            bool dark = Dark, overcharged = OverchargedNow;
             foreach (var player in GameServices.Round.Players)
             {
                 if (player == null) continue;
                 var feet = player.transform.position;
                 bool had = _previousFeet.TryGetValue(player, out var before);
                 _previousFeet[player] = feet;
-                if (!had || PresentationClock.BlocksInput || player.IsDefender || player.IsTagged
-                    || _zapped.Contains(player.PlayerSlot)) continue;
+                if (!had || dark || PresentationClock.BlocksInput || player.IsDefender || player.IsTagged) continue;
+                if (_graceUntil.TryGetValue(player.PlayerSlot, out float until) && _age < until) continue;
                 if (!ZackRules.Crossed(a.x, a.z, b.x, b.z, before.x, before.z, feet.x, feet.z, out float along)) continue;
                 var edge = b - a;
                 float sideBefore = edge.x * (before.z - a.z) - edge.z * (before.x - a.x);
@@ -195,27 +293,31 @@ namespace TumbangPreso.Abilities
                 float crossedAt = Mathf.Clamp01(sideBefore / (sideBefore - sideNow));
                 float crossingHeight = Mathf.Lerp(before.y, feet.y, crossedAt) - Mathf.Lerp(a.y, b.y, along);
                 if (crossingHeight > ZackRules.LiveWireReachAbove) continue;
-                _zapped.Add(player.PlayerSlot);
                 player.ApplyZapped();
                 var at = Vector3.Lerp(a, b, along);
                 at.y += ZackRules.LiveWireHeightAt(along);
                 NetCue.Play("sfx_zack_livewire_zap", at);
                 Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.HeroHit, _state.Owner, player.PlayerSlot, at, 1.0f);
-                if (Overcharged) continue;
-                _state.Split = true;
-                _state.FirstScale = _age;
-                PlaySnap();
+                if (overcharged)
+                {
+                    _graceUntil[player.PlayerSlot] = _age + ZackRules.LiveWireOverchargeGrace;
+                    continue;
+                }
+                // A lit normal wire trips one attacker and goes dark; it stays where it is and rearms.
+                _state.FirstScale = Mathf.Max(_age, 0.001f);
+                _look?.Discharge();
                 MatchRpc.Instance?.BroadcastDynamicField(Capture());
-                NetCue.Play("sfx_zack_livewire_snap", at);
                 return;
             }
         }
 
-        private void PlaySnap()
+        private void BeginReel()
         {
+            if (_reeledAt >= 0.0f) return;
+            _reeledAt = _age;
             foreach (var hazard in _hazards) if (hazard != null) Destroy(hazard.gameObject);
             _hazards.Clear();
-            _look?.Snap();
+            _look?.Reel();
         }
 
         private void Retire()

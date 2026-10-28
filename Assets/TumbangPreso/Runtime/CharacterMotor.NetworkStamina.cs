@@ -64,8 +64,10 @@ namespace TumbangPreso
             bool moving = canSteer && (IsFeared || (fresh && _netMoveHeld) || IsPossessionPulling);
             Stamina.StepFatigue(dt);
             // A remote reach refuses sprint just like the locally simulated motor.
+            var kit = AbilitySystem?.Kit;
+            Stamina.Profile = kit?.StaminaProfile ?? Core.StaminaProfile.Shared;
             Stamina.Step(dt, moving, canSteer && !IsConcussed && !IsFeared && !IsVoodooReaching
-                && fresh && _netSprintHeld);
+                && !(kit?.BlocksSprint ?? false) && fresh && _netSprintHeld);
         }
 
         private void ClearNetworkResourceIntent()

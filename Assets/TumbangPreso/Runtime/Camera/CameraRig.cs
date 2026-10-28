@@ -538,6 +538,8 @@ namespace TumbangPreso.CameraSystem
                              && _character.Stamina.IsSprinting;
 
             want += sprinting ? SprintFieldOfViewKick : 0.0f;
+            // Zack's Momentum stages widen his own lens a little more at each stage (smoothed with the sprint's).
+            if (_mode == CameraMode.Fpp && !_emoteView) want += Visual.ZackMomentumLook.LensWiden(_character);
 
             // ⚠️⚠️ SMOOTHED, AND A SNAP HERE IS THE ONE THING THAT WOULD MAKE THIS UNPLEASANT.
             // Sprint can start and stop on consecutive frames when the bar bottoms out or the
