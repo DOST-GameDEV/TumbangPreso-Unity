@@ -99,6 +99,7 @@ namespace TumbangPreso.Core
         // Knockdowns and successful tags each pay one point. The defender also
         // receives one point once at the beginning of their round. No timed
         // trickle, throw income or retrieval income. Ultimate costs are unchanged.
+        public const float UltimateExtraObjectivePoints = 3.0f;
         public const float UltimateChargeLataKnock = 1.0f;
         public const float UltimateChargeTag = 1.0f;
         public const float UltimateChargeDefenderRound = 1.0f;

@@ -44,7 +44,7 @@ namespace TumbangPreso.Abilities
         }
 
         /// <summary>VOODOO DOLL, *"12 Objective Points"*.</summary>
-        public override float UltimateCost => VoodooRules.DollCost;
+        public override float UltimateCost => VoodooRules.DollCost + TumbangPreso.Core.Balance.UltimateExtraObjectivePoints;
 
         /// <summary>
         /// Whom her curse would reach from here: of the players `CharacterMotor.VoodooReachIsValid` lets her start on (in reach,
