@@ -1,3 +1,8 @@
+Owner update, 2026-10-28: new matches offer Standard and Last Tsinelas only.
+MIRROR is retired because it replaced different selected heroes with one weekly
+character. Every hero is unlocked and online characters remain unique. The MIRROR
+wire value and the historical explanation below remain for saved records.
+
 # Formats: the two extra ways to play, and the rules that make them different
 
 **`docs/Design.md` is the balance source of truth for CLASSIC and `Hero_Strike_Balance.md` for

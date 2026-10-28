@@ -704,7 +704,7 @@ namespace TumbangPreso.Net
         // AFTERIMAGE on `zack_skill2` (owner pick, 2026-10-26): a predicted self cast (full Momentum, the host refills his
         // Charge, a 3 s lock carried to a joiner in the timed-kit personal fields). Kind 20 stays reserved for old replays; no
         // 184 peer casts it.
-        public const int ProtocolVersion = 184;
+        public const int ProtocolVersion = 185;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

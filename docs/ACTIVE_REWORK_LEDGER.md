@@ -2,10 +2,11 @@
 
 Updated 2026-10-28. [TODO](TODO.md) is the only active queue.
 
-- LOBBY-UI-1028: desktop rules/chat/layout fixes7c1a7a0ac integrated here.
-  Edit20/20; exact chat/rules Play1/1. Evidence/build/push receipt on PC:
-  Logs/lobby-ui-20261028/fixes/. Main separate; phone work excluded.
-  Desktop visual review, physical pad and real-peer acceptance remain separate.
+- ONLINE-CAST-1028: all-Nemu match/opening came from MIRROR in the replay.
+  Retire MIRROR for new matches; unlock all nine; keep picks unique. Defender
+  walk/run3/6 m/s (20% slower). Protocol185. Core84/84 passed;
+  fresh combined-branch build and actual peers still required.
+  Evidence: Logs/online-selection-20261028/. Preserve owner files.
 - Owner requested wrapping up and handing off unfinished mobile UI work.
   [Resume here](reports/mobile-ui-2026-10-26/HANDOFF.md): ff9 Android candidate is
   built/uploaded, native41/41 and recorded actual touch journeys passed. Newer

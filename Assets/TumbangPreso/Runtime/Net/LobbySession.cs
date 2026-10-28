@@ -978,7 +978,7 @@ namespace TumbangPreso.Net
         {
             if (!_peers.TryGetValue(peerId, out var record)) return;
             // A character another seat holds is refused: this seat keeps the one it had.
-            if (character != record.CharacterPick && !MatchInProgress && UI.SceneFlow.SelectedFormat != MatchFormat.Mirror
+            if (character != record.CharacterPick && !MatchInProgress
                 && CharacterHeldByAnotherSeat(peerId, character))
                 character = record.CharacterPick;
 

@@ -9,8 +9,8 @@ namespace TumbangPreso.Core.Tests
         {
             Assert.Equal(2.5f, Stamina.MovementSpeed(false, false));
             Assert.Equal(5f, Stamina.MovementSpeed(false, true));
-            Assert.Equal(3.75f, Stamina.MovementSpeed(true, false));
-            Assert.Equal(7.5f, Stamina.MovementSpeed(true, true));
+            Assert.Equal(3.75f * .8f, Stamina.MovementSpeed(true, false));
+            Assert.Equal(7.5f * .8f, Stamina.MovementSpeed(true, true));
             foreach (var mode in new[] { GameMode.Classic, GameMode.HeroStrike })
                 for (int i = 0; i < Roster.GetPeople(mode).Count; i++)
                     Assert.Equal(1f, Roster.PersonSpeedScale(i, mode));
