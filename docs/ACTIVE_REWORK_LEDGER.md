@@ -2,12 +2,10 @@
 
 Updated 2026-10-29. [TODO](TODO.md) is the only active queue.
 
-- ONLINE-CAST-1028: mobile+network5e5a0b32c pushed/built. Six maps and impaired LAN
-  checked; final Relay/legacy-MIRROR pair exited0/0 with distinct heroes and no
-  exceptions, ground flags, live recording warnings or saved segment gaps.
-  Unlock gate1/1; first stone recording/playback1/1. Six owner files unchanged.
-  Logs/floating-20261029/. Physical multi-PC/controller acceptance remains.
-  Logs/floating-20261029/. Preserve six owner files; no broad PlayMode.
+- ONLINE-CAST-1028: 73b1f403b pushed/built. Ult victims stand on own floor from the
+  host-frozen pose; GroundY ignores awnings. Payo delayed pairs: Cheska gap 0, Nemu 0.015,
+  Paete tree grounded. Next: victims in Paete/Amihan/Phaister reach, then multi-PC.
+  Logs/ult-terrain-20261029/. Preserve six owner files.
 - Owner requested wrapping up and handing off unfinished mobile UI work.
   [Resume here](reports/mobile-ui-2026-10-26/HANDOFF.md): ff9 Android candidate is
   built/uploaded, native41/41 and recorded actual touch journeys passed. Newer
