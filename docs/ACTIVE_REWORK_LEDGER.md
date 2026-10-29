@@ -2,13 +2,11 @@
 
 Updated 2026-10-29. [TODO](TODO.md) is the only active queue.
 
-- ONLINE-CAST-1028: mobile+network7bc9cf91a pushed/built. Six map pairs, impaired
-  LAN and actual Relay completed with distinct heroes and no runtime exceptions
-  or flagged offsets. Unlock UI gate1/1; protected six files unchanged.
-  Old MIRROR preference migrates to standard in native traces (checker UTF8 read
-  repaired; exit codes unavailable for that run). Dante's first stone load caused
-  a9s recording gap. Hidden shape preparation and standalone playback test1/1.
-  Next: fresh build, final Relay/legacy-preference pair, publish and hand off.
+- ONLINE-CAST-1028: mobile+network5e5a0b32c pushed/built. Six maps and impaired LAN
+  checked; final Relay/legacy-MIRROR pair exited0/0 with distinct heroes and no
+  exceptions, ground flags, live recording warnings or saved segment gaps.
+  Unlock gate1/1; first stone recording/playback1/1. Six owner files unchanged.
+  Logs/floating-20261029/. Physical multi-PC/controller acceptance remains.
   Logs/floating-20261029/. Preserve six owner files; no broad PlayMode.
 - Owner requested wrapping up and handing off unfinished mobile UI work.
   [Resume here](reports/mobile-ui-2026-10-26/HANDOFF.md): ff9 Android candidate is
