@@ -58,6 +58,7 @@ namespace TumbangPreso.Diagnostics
         private float _groundProxiesNext;
         private readonly HashSet<string> _groundShots=new HashSet<string>();
         private readonly List<Slipper> _groundShoes=new List<Slipper>();
+        private readonly List<Transform> _groundConstructs=new List<Transform>();
         private string _groundScene;
         private float _groundShoesNext;
 
@@ -107,7 +108,16 @@ namespace TumbangPreso.Diagnostics
                     if(visual!=null&&visual.Model!=null)row.visible=GroundBounds(visual.Model,out row.boundsMin,out row.boundsMax);
                     frame.actors.Add(row);
                 }
-                if(_groundScene!=frame.scene || Time.realtimeSinceStartup>=_groundShoesNext){_groundScene=frame.scene;_groundShoesNext=Time.realtimeSinceStartup+1;_groundShoes.Clear();_groundShoes.AddRange(FindObjectsByType<Slipper>());}
+                if(_groundScene!=frame.scene || Time.realtimeSinceStartup>=_groundShoesNext){_groundScene=frame.scene;_groundShoesNext=Time.realtimeSinceStartup+1;_groundShoes.Clear();_groundShoes.AddRange(FindObjectsByType<Slipper>());
+                    _groundConstructs.Clear();foreach(var t in FindObjectsByType<Transform>())if(t.name=="PaeteSentryBody"||t.name=="PaetePlantBody"||t.name=="PaeteThornBody")_groundConstructs.Add(t);}
+                // A planted construct stands on the floor under its base, whichever view (live or staged) draws it.
+                foreach(var construct in _groundConstructs)
+                {
+                    if(construct==null||!construct.gameObject.activeInHierarchy)continue;
+                    var row=new GroundProp{kind="construct:"+construct.name+(GroundStaged(construct)?":staged":""),position=construct.position};
+                    row.hasFloor=WorldGround.TryBelow(row.position,.35f,14f,out row.floor);if(!row.hasFloor)row.floor=0;
+                    row.visible=GroundBounds(construct.gameObject,out row.boundsMin,out row.boundsMax);frame.props.Add(row);
+                }
                 foreach(var shoe in _groundShoes)
                 {
                     if(shoe==null||!shoe.gameObject.activeInHierarchy)continue;
@@ -150,6 +160,11 @@ namespace TumbangPreso.Diagnostics
                 if(shot!=null&&_groundShots.Add(shot)&&!_groundCapturing)StartCoroutine(GroundingShot(shot));
             }
             catch(Exception error){File.AppendAllText(Path.Combine(_groundFolder,"error.txt"),error+"\n");_groundWriter?.Dispose();_groundWriter=null;}
+        }
+        private static bool GroundStaged(Transform node)
+        {
+            for(;node!=null;node=node.parent)if(node.name.StartsWith("IntroductionScene-",StringComparison.Ordinal))return true;
+            return false;
         }
         private static bool GroundBounds(GameObject root,out Vector3 min,out Vector3 max)
         {

@@ -40,6 +40,11 @@ def summarize_peer(evidence,exit_code):
             if not prop['kind'].startswith('proxy:') or not prop['hasFloor']:continue
             staged.append({'time':r['time'],'serverTime':r.get('serverTime',0),'copy':prop['kind'][6:],'at':prop['position'],'floor':prop['floor'],
                 'feetOverFloor':prop['position']['y']-prop['floor'],'drawnLowest':prop['boundsMin']['y'] if prop['visible'] else None})
+    constructs=[]
+    for r in rows:
+        for prop in r.get('props',[]):
+            if prop['kind'].startswith('construct:') and prop['hasFloor']:
+                constructs.append({'time':r['time'],'phase':r['phase'],'kind':prop['kind'][10:],'at':prop['position'],'floor':prop['floor'],'baseOverFloor':prop['position']['y']-prop['floor']})
     phases=sorted(set(r['phase'] for r in rows));seen_picks=sorted(set(a['pick'] for r in rows for a in r['actors']))
     suspects=[]
     for r in rows:
@@ -55,6 +60,7 @@ def summarize_peer(evidence,exit_code):
         'distinctRoster':all(len(r['actors'])==4 and len({a['pick'] for a in r['actors']})==4 for r in rows if r['phase']=='play'),
         'reportedFormat':int(reported_format.group(1)) if reported_format else None,
         'scenes':sorted(set(r['scene'] for r in rows)),
+        'constructs':len(constructs),'constructSuspects':[c for c in constructs if abs(c['baseOverFloor'])>.25],
         'stagedCopies':staged,'stagedSuspects':[c for c in staged if abs(c['feetOverFloor'])>.25],
         'terraceStaged':any(r.get('terraceStaged') for r in rows),
         'terraceHeight':max([r.get('terraceHeight',0) for r in rows] or [0]),
@@ -159,8 +165,9 @@ def main():
         if args.cast:
             agreement=staged_agreement(results['host']['stagedCopies'],results['client']['stagedCopies'])
             result['stagedAgreement']=agreement;(out/'result.json').write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8')
-            print(json.dumps({'stagedAgreement':agreement,'stagedSuspects':{r:len(x['stagedSuspects']) for r,x in results.items()}}),flush=True)
-            passed=passed and all(x['stagedCopies'] and not x['stagedSuspects'] for x in results.values()) and agreement['maxStartGap']<.35
+            print(json.dumps({'stagedAgreement':agreement,'stagedSuspects':{r:len(x['stagedSuspects']) for r,x in results.items()},
+                'constructs':{r:[x['constructs'],len(x['constructSuspects'])] for r,x in results.items()}}),flush=True)
+            passed=passed and all(x['stagedCopies'] and not x['stagedSuspects'] and not x['constructSuspects'] for x in results.values()) and agreement['maxStartGap']<.35
         if args.cast:passed=passed and results['host']['ultimateThresholdObserved'] and all('ultimate' in x['phases'] for x in results.values())
         return 0 if passed else 1
     finally:
