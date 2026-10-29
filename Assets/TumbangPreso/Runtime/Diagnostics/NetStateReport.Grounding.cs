@@ -126,9 +126,9 @@ namespace TumbangPreso.Diagnostics
                     if(Time.realtimeSinceStartup>=_groundProxiesNext)
                     {
                         _groundProxiesNext=Time.realtimeSinceStartup+.5f;_groundProxies.Clear();
-                        var stage=GameObject.Find("IntroductionScene-nemu");
-                        if(stage!=null)foreach(var child in stage.GetComponentsInChildren<Transform>())
-                            if(child.name.StartsWith("IntroductionOther-P",StringComparison.Ordinal))_groundProxies.Add(child.gameObject);
+                        foreach(var child in FindObjectsByType<Transform>())
+                            if(child.name.StartsWith("IntroductionOther-P",StringComparison.Ordinal)&&child.parent!=null&&child.parent.name.StartsWith("IntroductionScene-",StringComparison.Ordinal))
+                                _groundProxies.Add(child.gameObject);
                     }
                     foreach(var proxy in _groundProxies)
                     {
@@ -204,7 +204,7 @@ namespace TumbangPreso.Diagnostics
                 File.WriteAllText(Path.Combine(_groundFolder,"terrace-inconclusive.txt"),"No elevated walkable surface found inside the playable bounds.");
             }
             var actor=round.PlayerAt(NetAuthority.LocalSlot);if(actor==null)return;
-            var kit=actor.AbilitySystem?.Kit;if(kit==null||kit.HeroId!="nemu")return;
+            var kit=actor.AbilitySystem?.Kit;if(kit==null||kit.HeroId!=Argument("-tp-grounding-cast"))return;
             if(kit.UltimateCharge<=kit.UltimateCost-3)
             {
                 kit.AddUltimateCharge(kit.UltimateCost-3-kit.UltimateCharge);bool old=kit.IsUltimateReady;
@@ -213,7 +213,7 @@ namespace TumbangPreso.Diagnostics
             }
             else kit.AddUltimateCharge(kit.UltimateCost);
             actor.Intent.Set(Verb.Ultimate,true);actor.Intent.BufferPress(Verb.Ultimate);_groundCast=true;_groundRelease=Time.realtimeSinceStartup+.25f;
-            Debug.Log("[GroundAudit] Named scenario granted ultimate charge and buffered the ordinary Nemu request; threshold="+_groundThreshold);
+            Debug.Log("[GroundAudit] Named scenario granted ultimate charge and buffered the ordinary "+kit.HeroId+" request; threshold="+_groundThreshold);
         }
         private void OnDestroy(){RenderPipelineManager.endCameraRendering-=ObserveGroundingCamera;Camera.onPostRender-=ObserveGroundingBuiltin;_groundWriter?.Dispose();_groundWriter=null;}
     }
