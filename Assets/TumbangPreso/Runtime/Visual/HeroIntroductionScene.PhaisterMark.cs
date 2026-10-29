@@ -76,13 +76,13 @@ namespace TumbangPreso.Visual
             var model = visual.Model.transform;
             var motor = p.transform;
             var yaw = Quaternion.Euler(0f, motor.eulerAngles.y, 0f);
-            var feetWorld = new Vector3(motor.position.x, Slipper.GroundY(motor.position + Vector3.up * .3f), motor.position.z);
+            var feetWorld = new Vector3(motor.position.x, SupportUnder(motor.position, .35f), motor.position.z);
             float top = 2.0f;
             foreach (var r in copy.Renderers) if (r != null) top = Mathf.Max(top, r.bounds.max.y - feetWorld.y);
             var t = new PmTarget
             {
                 Body = copy, Holder = holder, Model = copy.Root.transform,
-                ModelOffset = Quaternion.Inverse(yaw) * (model.position - feetWorld),
+                ModelOffset = Quaternion.Inverse(yaw) * (visual.RestModelPosition - feetWorld),
                 ModelTilt = Quaternion.Inverse(yaw) * model.rotation,
                 Feet = _root.transform.InverseTransformPoint(feetWorld),
                 Yaw0 = motor.eulerAngles.y - _facing.eulerAngles.y,

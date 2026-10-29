@@ -160,6 +160,36 @@ namespace TumbangPreso.Tests
             Assert.That(-pulled.x,Is.InRange(10.5f,12f),"A pull into frame must not leave the victim standing over the gap.");
         }
 
+        private BoxCollider Slab(string name,Vector3 centre,Vector3 size)
+        {
+            var box=Own(name).AddComponent<BoxCollider>();box.transform.position=centre;box.size=size;return box;
+        }
+
+        [Test] public void GroundUnderAnAwningIsTheCourtNotTheAwning()
+        {
+            Slab("Court",_focus+Vector3.down*.1f,new Vector3(20,.2f,20));
+            Slab("Stall awning",_focus+Vector3.up*3.05f,new Vector3(3,.1f,3));
+            var quad=new Mesh{vertices=new[]{new Vector3(-1,0,-1),new Vector3(-1,0,1),new Vector3(1,0,1),new Vector3(1,0,-1)},triangles=new[]{0,1,2,0,2,3}};
+            var tarp=Own("One-sided tarp");tarp.transform.position=_focus+new Vector3(5,2.4f,0);tarp.AddComponent<MeshCollider>().sharedMesh=quad;
+            Physics.SyncTransforms();
+            Assert.AreEqual(_focus.y,Slipper.GroundY(_focus),.001f,"A cast under a stall roof was put on the roof.");
+            Assert.AreEqual(_focus.y,Slipper.GroundY(_focus+new Vector3(5,0,0)),.001f,"A one-sided tarp is still overhead, not a floor.");
+            Assert.AreEqual(_focus.y+3.1f,Slipper.GroundY(_focus+Vector3.up*3.1f),.001f,"Standing on the roof keeps the roof.");
+            Assert.AreEqual(_focus.y,Slipper.GroundY(_focus+Vector3.up*1.2f),.001f,"A jump under the roof comes down to the court.");
+            Object.DestroyImmediate(quad);
+        }
+
+        [Test] public void GroundClimbsOntoATerraceThePointIsBuriedIn()
+        {
+            Slab("Lower court",_focus+Vector3.down*.1f,new Vector3(20,.2f,20));
+            Slab("Terrace",_focus+new Vector3(4,1,0),new Vector3(4,2,4));
+            Slab("Kerb",_focus+new Vector3(-4,.15f,0),new Vector3(2,.3f,2));
+            Physics.SyncTransforms();
+            Assert.AreEqual(_focus.y+2,Slipper.GroundY(_focus+new Vector3(4,0,0)),.001f,"A spot thrown onto a terrace must stand on its top.");
+            Assert.AreEqual(_focus.y+.3f,Slipper.GroundY(_focus+new Vector3(-4,0,0)),.001f,"A kerb is a step up, not overhead.");
+            Assert.AreEqual(_focus.y,Slipper.GroundY(_focus+new Vector3(4,2,0)+new Vector3(3,0,0)),.001f,"Beyond the terrace edge the court below is the floor.");
+        }
+
         [Test] public void ReplicaInterpolationLagIsNotPartOfTheRestModelPosition()
         {
             var body=Own("Replicated body");body.transform.SetPositionAndRotation(_focus,Quaternion.Euler(0,40,0));
