@@ -60,20 +60,20 @@ namespace TumbangPreso.Visual
                     if (copy == null) { ObjectDestroy(holder); continue; }
                     track.Apply(copy, track.Newest);
                     // The copy's root is put back where the live model is from the live feet, as the TAKE does.
+                    // ⚠️ FROM THE BODY'S REST POSE, NEVER A REPLICA'S LAG. A non-host's mesh trails its body by the
+                    // interpolation offset, so copying the live mesh staged each victim somewhere else on each peer.
                     var model = visual.Model.transform; var motor = p.transform;
                     var yaw = Quaternion.Euler(0f, motor.eulerAngles.y, 0f);
-                    float floor = Slipper.GroundY(motor.position + Vector3.up * .3f);
-                    if (_hero == "nemu" && WorldGround.TryBelow(motor.position, .35f, 12f, out var nearbyFloor)) floor = nearbyFloor;
-                    var feet = new Vector3(motor.position.x, floor, motor.position.z);
+                    var feet = new Vector3(motor.position.x, SupportUnder(motor.position, .35f), motor.position.z);
                     holder.transform.SetPositionAndRotation(feet, yaw);
-                    copy.Root.transform.localPosition = Quaternion.Inverse(yaw) * (model.position - feet);
+                    copy.Root.transform.localPosition = Quaternion.Inverse(yaw) * (visual.RestModelPosition - feet);
                     copy.Root.transform.localRotation = Quaternion.Inverse(yaw) * model.rotation;
                     copy.Root.transform.localScale = model.lossyScale;
                     holder.SetActive(true);
                     foreach (var surface in copy.Renderers) surface.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
                     AdoptOther(holder, nearest, farthest);
                 }
-                if (round.Lata != null) { _canAt = _root.transform.InverseTransformPoint(round.Lata.transform.position); _canAt.y = 0f; _hasCan = true; }
+                if (round.Lata != null) { _canAt = StageFloorAt(round.Lata.transform.position, .35f); _hasCan = true; }
             }
             else
             {
@@ -84,20 +84,59 @@ namespace TumbangPreso.Visual
                     standIn.SetActive(true);
                     AdoptOther(standIn, nearest, farthest);
                 }
-                if (FilmCan.HasValue) { _canAt = _root.transform.InverseTransformPoint(FilmCan.Value); _canAt.y = 0f; _hasCan = true; }
+                if (FilmCan.HasValue) { _canAt = StageFloorAt(FilmCan.Value, .35f); _hasCan = true; }
             }
+        }
+
+        // =========================================================================================
+        // ⚠️⚠️ EVERY STAGED BODY STANDS ON THE FLOOR UNDER IT, NOT THE CASTER'S (2026-10-29, owner: floating on uneven maps).
+        //
+        // The stage's origin is the caster's feet. Writing each holder at y 0 drew a victim on a lower terrace hanging in the
+        // air at the caster's height and one on a higher step sunk into it. Every peer has the same map colliders and the same
+        // replicated bodies, so sampling the real support gives every peer the same picture, and the hand-back finds each live
+        // body exactly where its copy stood. A body in the air at capture keeps its height above that floor (the copy's
+        // root offset), so a real jump or flight still reads as one.
+        //
+        // ⚠️ A SPOT PULLED INTO FRAME MUST HAVE A FLOOR. Bringing someone nearer the caster can cross a ledge or open water;
+        // the pull then backs off toward where they really stood until it finds support, and their own spot always has it.
+        // =========================================================================================
+
+        /// <summary>The highest walkable support from <paramref name="rise"/> above <paramref name="world"/> down 12 m, in world Y.</summary>
+        private static float SupportUnder(Vector3 world, float rise)
+        {
+            if (WorldGround.TryBelow(world, rise, 12f, out var floor)) return floor;
+            float fallback = Slipper.GroundY(world + Vector3.up * .3f);
+            return Mathf.Abs(fallback - world.y) < 12f ? fallback : world.y;
+        }
+
+        /// <summary>A world point's spot in scene space, standing on the floor under it.</summary>
+        private Vector3 StageFloorAt(Vector3 world, float rise)
+        {
+            world.y = SupportUnder(world, rise);
+            return _root.transform.InverseTransformPoint(world);
         }
 
         private void AdoptOther(GameObject holder, float nearest, float farthest)
         {
-            var home = holder.transform.localPosition;
-            float floorOffset = _hero == "nemu" ? home.y : 0f;
-            home.y = 0f;
-            float reach = home.magnitude;
+            var stood = holder.transform.localPosition;
+            var flat = new Vector3(stood.x, 0f, stood.z);
+            float actual = flat.magnitude;
             // Never on top of the caster and never out of the frame; which way they stand from the caster is kept.
-            var way = reach > .05f ? home / reach : Quaternion.Euler(0f, 40f + 110f * _others.Count, 0f) * Vector3.forward;
-            reach = Mathf.Clamp(reach, nearest, farthest);
-            home = way * reach;home.y = floorOffset;
+            var way = actual > .05f ? flat / actual : Quaternion.Euler(0f, 40f + 110f * _others.Count, 0f) * Vector3.forward;
+            float framed = Mathf.Clamp(actual, nearest, farthest), reach = actual;
+            var home = stood;
+            if (Mathf.Abs(framed - actual) > .01f)
+            {
+                var stage = _root.transform;
+                for (int step = 0; step < 6; step++)
+                {
+                    float tryReach = Mathf.Lerp(framed, actual, step / 6f);
+                    var at = stage.TransformPoint(way * tryReach + Vector3.up * stood.y);
+                    if (!WorldGround.TryBelow(at, 1.25f, 12f, out var floor)) continue;
+                    at.y = floor; home = stage.InverseTransformPoint(at); reach = tryReach;
+                    break;
+                }
+            }
             holder.transform.localPosition = home;
             _others.Add(new Other { Holder = holder, Renderers = holder.GetComponentsInChildren<Renderer>(true), Home = home, Yaw = holder.transform.localEulerAngles.y, Reach = reach });
         }

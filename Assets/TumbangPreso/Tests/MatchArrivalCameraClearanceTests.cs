@@ -135,6 +135,46 @@ namespace TumbangPreso.Tests
             Assert.AreEqual(5,high.x,.001f);Assert.AreEqual(-5,low.x,.001f);
         }
 
+        [Test] public void EveryUltimateStagesVictimsOnTheirOwnFloorOnUnevenTerrain()
+        {
+            var pad=Own("Caster pad").AddComponent<BoxCollider>();pad.transform.position=new Vector3(_focus.x,-.1f,_focus.z);pad.size=new Vector3(4,.2f,4);
+            var raised=Own("Raised terrace").AddComponent<BoxCollider>();raised.transform.position=new Vector3(_focus.x+5,2.9f,_focus.z);raised.size=new Vector3(4,.2f,4);
+            var far=Own("Far pad across a gap").AddComponent<BoxCollider>();far.transform.position=new Vector3(_focus.x-12,-.1f,_focus.z);far.size=new Vector3(3,.2f,4);
+            var stageRoot=Own("Cheska stage");stageRoot.transform.position=new Vector3(_focus.x,0,_focus.z);
+            Physics.SyncTransforms();
+            var type=typeof(TumbangPreso.Visual.HeroIntroductionScene);var flags=BindingFlags.Instance|BindingFlags.NonPublic;
+            var scene=System.Runtime.Serialization.FormatterServices.GetUninitializedObject(type);
+            type.GetField("_root",flags).SetValue(scene,stageRoot);type.GetField("_hero",flags).SetValue(scene,"cheska");
+            var others=System.Activator.CreateInstance(type.GetField("_others",flags).FieldType);type.GetField("_others",flags).SetValue(scene,others);
+            var adopt=type.GetMethod("AdoptOther",flags);
+            Vector3 Stage(Vector3 local)
+            {
+                var holder=Own("Victim");holder.transform.SetParent(stageRoot.transform,false);holder.transform.localPosition=local;
+                adopt.Invoke(scene,new object[]{holder,3f,9.5f});return holder.transform.localPosition;
+            }
+            var high=Stage(new Vector3(5,3,0));
+            var pulled=Stage(new Vector3(-12,0,0));
+            Assert.AreEqual(3,high.y,.001f,"A victim on a raised terrace was sunk to the caster's floor.");
+            Assert.AreEqual(5,high.x,.001f);
+            Assert.AreEqual(0,pulled.y,.001f);
+            Assert.That(-pulled.x,Is.InRange(10.5f,12f),"A pull into frame must not leave the victim standing over the gap.");
+        }
+
+        [Test] public void ReplicaInterpolationLagIsNotPartOfTheRestModelPosition()
+        {
+            var body=Own("Replicated body");body.transform.SetPositionAndRotation(_focus,Quaternion.Euler(0,40,0));
+            var visual=body.AddComponent<TumbangPreso.Visual.CharacterVisual>();
+            var root=new GameObject("Model root").transform;root.SetParent(body.transform,false);
+            var model=new GameObject("Model");model.transform.SetParent(root,false);model.transform.localPosition=new Vector3(0,.1f,0);
+            var aligned=new Vector3(0,-.05f,0);
+            var type=typeof(TumbangPreso.Visual.CharacterVisual);var flags=BindingFlags.Instance|BindingFlags.NonPublic;
+            type.GetField("_modelRoot",flags).SetValue(visual,root);type.GetField("_instance",flags).SetValue(visual,model);
+            type.GetField("_alignedLocal",flags).SetValue(visual,aligned);type.GetField("_groundContact",flags).SetValue(visual,.01f);
+            root.localPosition=aligned+new Vector3(.6f,.35f,-.4f);
+            Vector3 expected=body.transform.TransformPoint(aligned+Vector3.down*.01f+new Vector3(0,.1f,0));
+            Assert.Less(Vector3.Distance(expected,visual.RestModelPosition),.001f);
+        }
+
         [TestCase(.55f)] [TestCase(.95f)]
         public void ACloseWallCannotLeaveTheCameraBeyondItsCollisionClearance(float distance)
         {
