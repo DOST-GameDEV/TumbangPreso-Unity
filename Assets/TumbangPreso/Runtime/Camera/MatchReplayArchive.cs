@@ -212,7 +212,11 @@ namespace TumbangPreso.CameraSystem
         private void BindProps()
         {
             var round=GameServices.Round;_desiredProps.Clear();bool changed=false;
-            foreach(var shoe in FindObjectsByType<Slipper>(FindObjectsInactive.Include))AddProp(round,shoe.gameObject,RecordedObjectKind.Slipper,shoe.SeatOfOrigin,shoe.SkinIndex,null,PropModel(shoe.gameObject),ref changed);
+            foreach(var shoe in FindObjectsByType<Slipper>(FindObjectsInactive.Include))
+            {
+                if(UI.SceneFlow.SelectedMode==Core.GameMode.HeroStrike)DanteBoulderStone.PrepareWorldShape(shoe);
+                AddProp(round,shoe.gameObject,RecordedObjectKind.Slipper,shoe.SeatOfOrigin,shoe.SkinIndex,null,PropModel(shoe.gameObject),ref changed);
+            }
             if(round.Lata!=null)AddProp(round,round.Lata.gameObject,RecordedObjectKind.Can,-1,round.Lata.SkinIndex,null,PropModel(round.Lata.gameObject),ref changed);
             foreach(var actor in round.Players)
             {

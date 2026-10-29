@@ -12,6 +12,41 @@ namespace TumbangPreso.PlayTests
         [UnitySetUp]public IEnumerator Before()=>PlayModeWorld.Reset();
         [UnityTearDown]public IEnumerator After()=>PlayModeWorld.Reset();
         [UnityTest]
+        public IEnumerator FirstBoulderLoadKeepsReplayTopologyAndStandalonePlayback()
+        {
+            yield return MapRetrievalProbe.Load("Eskinita",Core.GameMode.HeroStrike);
+            Object.FindAnyObjectByType<MatchArrivalPresentation>()?.Cancel();
+            var round=GameServices.Round;round.BeginRound();
+            foreach(var actor in round.Players)
+            {
+                var brain=actor.GetComponent<AIController>();if(brain!=null)brain.enabled=false;
+                actor.Intent.Clear();actor.Intent.Parked=true;
+            }
+            var shoe=round.PlayerAt(3).GetComponent<Carrier>().Held;Assert.IsNotNull(shoe);
+            var archive=Object.FindAnyObjectByType<MatchReplayArchive>();Assert.IsNotNull(archive);
+            yield return new WaitForSeconds(.3f);
+            float start=Time.time;
+            yield return new WaitForSeconds(.35f);
+            Assert.IsTrue(archive.TryCaptureSession(start,Time.time,1,out var before,out string error,true),error);
+            var first=before.Objects.Single(o=>o.Kind==RecordedObjectKind.Slipper&&o.Seat==3);
+            int stone=System.Array.FindIndex(first.Pose.Paths,p=>p=="BoulderStone"||p.EndsWith("/BoulderStone"));
+            Assert.GreaterOrEqual(stone,0,"Prepare the actual runtime stone before its first use.");
+            Assert.IsTrue(first.Pose.Samples.All(s=>!s.Active[stone]),"An unloaded shoe must keep the prepared stone hidden.");
+            Assert.IsTrue(shoe.HostLoadTimedAffinity(SlipperAffinity.Concussed,Core.GeoRules.BoulderLoadSeconds));
+            yield return new WaitForSeconds(.9f);
+            Assert.IsTrue(archive.TryCaptureSession(start,Time.time,2,out var after,out error,true),error);
+            var loaded=after.Objects.Single(o=>o.Kind==RecordedObjectKind.Slipper&&o.Seat==3);
+            CollectionAssert.AreEqual(first.Pose.Paths,loaded.Pose.Paths);
+            Assert.IsTrue(loaded.Pose.Samples.Any(s=>s.Active[stone]),"The recorded load must actually show its stone.");
+            var owner=new GameObject("Boulder recording playback proof");
+            try
+            {
+                using(var view=new RecordedWorldView(owner.transform,after,true))
+                {Assert.IsTrue(view.Ready,view.UnavailableReason);view.Draw(after.End);}
+            }
+            finally{Object.Destroy(owner);}
+        }
+        [UnityTest]
         public IEnumerator DelayedHalftimeCanOpenAnAlreadyRetainedHighlight()=>DelayedHalftime(false);
         [UnityTest]
         public IEnumerator HalftimeWaitsForItsNominatedHighlightBytes()=>DelayedHalftime(true);

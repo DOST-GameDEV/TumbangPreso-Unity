@@ -27,6 +27,31 @@ def restore_window_preferences(before):
         for name,(value,kind) in before.items():winreg.SetValueEx(key,name,0,kind,value)
     if window_preferences()!=before:raise RuntimeError('Window preference restore failed')
 
+def summarize_peer(evidence,exit_code):
+    path=evidence/'frames.jsonl'
+    rows=[json.loads(line) for line in path.read_text().splitlines()] if path.exists() else []
+    player_log=(evidence/'player.log').read_text(encoding='utf-8-sig',errors='replace')
+    state_path=evidence/'state.txt'
+    reported_format=re.search(r'^selected rules\s*: \d+\|(\d+)\|',state_path.read_text(encoding='utf-8-sig') if state_path.exists() else '',re.M)
+    phases=sorted(set(r['phase'] for r in rows));seen_picks=sorted(set(a['pick'] for r in rows for a in r['actors']))
+    suspects=[]
+    for r in rows:
+        if r['phase']!='play':continue
+        for a in r['actors']:
+            offset=a['modelLocal']['y']-a['alignedLocal']['y']
+            if a['visible'] and a['grounded'] and not a['flying'] and not a['tripped'] and not a['possessed'] and offset>.25:
+                suspects.append({'time':r['time'],'slot':a['slot'],'offsetY':offset,'body':a['body'],'visual':a['visual'],'floor':a['floor']})
+    return {'frames':len(rows),'phases':phases,'picks':seen_picks,'suspects':suspects,'exitCode':exit_code,
+        'error':(evidence/'error.txt').read_text(encoding='utf-8-sig') if (evidence/'error.txt').exists() else '',
+        'runtimeExceptions':sorted(set(re.findall(r'^[\w.]+Exception:.*$',player_log,re.M))),
+        'liveRecordingWarnings':sorted(set(re.findall(r'^\[LocalReplay\].*$',player_log.split('[NetReport] wrote',1)[0],re.M))),
+        'distinctRoster':all(len(r['actors'])==4 and len({a['pick'] for a in r['actors']})==4 for r in rows if r['phase']=='play'),
+        'reportedFormat':int(reported_format.group(1)) if reported_format else None,
+        'scenes':sorted(set(r['scene'] for r in rows)),
+        'terraceStaged':any(r.get('terraceStaged') for r in rows),
+        'terraceHeight':max([r.get('terraceHeight',0) for r in rows] or [0]),
+        'ultimateThresholdObserved':any(r.get('ultimateThreshold') for r in rows)}
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--exe',required=True,type=Path)
@@ -36,6 +61,7 @@ def main():
     parser.add_argument('--protocol',required=True,type=int)
     parser.add_argument('--seconds',type=int,default=145)
     parser.add_argument('--cast-nemu',action='store_true')
+    parser.add_argument('--legacy-mirror',action='store_true',help='Start from the retired saved MIRROR preference and require a normal match with distinct heroes')
     parser.add_argument('--online',action='store_true',help='Use the existing game Relay/Lobby path instead of the local LAN route')
     parser.add_argument('--terraces',action='store_true',help='Named host scenario places one bot on a raised map surface before the ordinary Nemu cast')
     parser.add_argument('--allbots',action='store_true',help='Diagnostic spectator route; omit for normal player cameras')
@@ -50,22 +76,24 @@ def main():
     before_hashes={str(p.relative_to(exe.parent)):build_windows.sha(p) for p in build_windows.player_artifacts(exe.parent)}
     with socket.socket(socket.AF_INET,socket.SOCK_DGRAM) as slot:slot.bind(('127.0.0.1',0));port=slot.getsockname()[1]
     profile_prefix='ground-'+dt.datetime.now().strftime('%Y%m%d-%H%M%S')+'-'+uuid.uuid4().hex[:5]
-    prefs=read_input_preferences();windows=window_preferences();children=[];profiles=[];commands=[]
+    prefs=read_input_preferences();windows=window_preferences();children=[];profiles=[];commands=[];codes=[]
     link=PresentationLink(ROOT,out,args);client_port=port;online_code=None
     def save(status):
         (out/'job.json').write_text(json.dumps({'status':status,'map':args.map,'identity':identity,'artifact_sha256':before_hashes,
-            'port':port,'profiles':profiles,'commands':commands,'pids':[p.pid for p in children]},indent=2)+'\n',encoding='utf-8')
+            'port':port,'profiles':profiles,'commands':commands,'pids':[p.pid for p in children],'exitCodes':codes},indent=2)+'\n',encoding='utf-8')
     try:
         for role,pick in [('host',4),('client',3)]:
             name=profile_prefix+'-'+role;profile=player_profile()/'profiles'/hashlib.sha256(name.encode()).hexdigest()
             if profile.exists():raise RuntimeError('Profile collision; preserve it')
             profile.mkdir(parents=True);profiles.append({'name':name,'path':str(profile)})
             settings={'PlayerToken':uuid.uuid4().hex,'PlayerName':'GROUND '+role.upper(),'CharacterPick':pick,'UseCustomCharacter':False,
-                'CustomRulesWire':('1|0|8|90|0|3|3|1|1|0|0|12' if args.online else '1|0|8|90|0|3|3|1|0|0|0|12'),'MatchFormat':0,'MatchDefaultsRevision':1,
+                'CustomRulesWire':f'1|{2 if args.legacy_mirror else 0}|8|90|0|3|3|1|{1 if args.online else 0}|0|0|12',
+                'MatchFormat':2 if args.legacy_mirror else 0,'MatchDefaultsRevision':1,
                 'HubQueueChoice':2,'GraphicsQuality':2,'CinematicCameraMotion':True,'ReducedUiMotion':False,
                 'MasterVolume':0.0,'SfxVolume':0.0,'MusicVolume':0.0,'AnnouncerVolume':0.0,'AmbienceVolume':0.0,'Fullscreen':False}
             (profile/'settings.json').write_text(json.dumps(settings),encoding='utf-8')
             evidence=out/role;evidence.mkdir()
+            (evidence/'initial-settings.json').write_text(json.dumps(settings,indent=2)+'\n',encoding='utf-8')
             command=[str(exe),'-force-d3d11','-screen-fullscreen','0','-screen-width','960','-screen-height','540',
                 '-tp-framecap','60','-tp-profile',name,'-tp-lobby','-tp-lobbyport',str(port if role=='host' else port+1),
                 '-tp-map',args.map,'-tp-autostart','2','-tp-netreport',str(evidence/'state.txt'),
@@ -94,37 +122,17 @@ def main():
         while time.monotonic()<until and any(p.poll() is None for p in children):time.sleep(.5)
         codes=[p.poll() for p in children]
         if any(code is None for code in codes):raise RuntimeError('Native peer timed out')
-        results={}
-        for role in ['host','client']:
-            path=out/role/'frames.jsonl'
-            rows=[json.loads(line) for line in path.read_text().splitlines()] if path.exists() else []
-            player_log=(out/role/'player.log').read_text(errors='replace')
-            phases=sorted(set(r['phase'] for r in rows));seen_picks=sorted(set(a['pick'] for r in rows for a in r['actors']))
-            suspects=[]
-            for r in rows:
-                if r['phase']!='play':continue
-                for a in r['actors']:
-                    offset=a['modelLocal']['y']-a['alignedLocal']['y']
-                    if a['visible'] and a['grounded'] and not a['flying'] and not a['tripped'] and not a['possessed'] and offset>.25:
-                        suspects.append({'time':r['time'],'slot':a['slot'],'offsetY':offset,'body':a['body'],'visual':a['visual'],'floor':a['floor']})
-            results[role]={'frames':len(rows),'phases':phases,'picks':seen_picks,'suspects':suspects,'exitCode':codes[0 if role=='host' else 1],
-                'error':(out/role/'error.txt').read_text() if (out/role/'error.txt').exists() else '',
-                'runtimeExceptions':sorted(set(re.findall(r'^[\w.]+Exception:.*$',player_log,re.M))),
-                'liveRecordingWarnings':sorted(set(re.findall(r'^\[LocalReplay\].*$',player_log.split('[NetReport] wrote',1)[0],re.M))),
-                'distinctRoster':all(len(r['actors'])==4 and len({a['pick'] for a in r['actors']})==4 for r in rows if r['phase']=='play'),
-                'scenes':sorted(set(r['scene'] for r in rows)),
-                'terraceStaged':any(r.get('terraceStaged') for r in rows),
-                'terraceHeight':max([r.get('terraceHeight',0) for r in rows] or [0]),
-                'ultimateThresholdObserved':any(r.get('ultimateThreshold') for r in rows)}
+        save('analyzing')
+        results={role:summarize_peer(out/role,codes[index]) for index,role in enumerate(['host','client'])}
         after_hashes={str(p.relative_to(exe.parent)):build_windows.sha(p) for p in build_windows.player_artifacts(exe.parent)}
         assert before_hashes==after_hashes,'Artifact changed during peer review'
         unchanged=prefs==read_input_preferences()
         result={'scope':'Actual local Windows host/client through visible lobby; no physical-input, WAN or phone claim',
-            'map':args.map,'onlineRelay':args.online,'sharedInputUnchanged':unchanged,'artifactUnchanged':True,'peers':results}
+            'map':args.map,'onlineRelay':args.online,'legacyMirrorPreference':args.legacy_mirror,'sharedInputUnchanged':unchanged,'artifactUnchanged':True,'peers':results}
         (out/'result.json').write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8');save('complete')
         print(json.dumps({r:{k:v for k,v in x.items() if k!='suspects'}|{'suspectCount':len(x['suspects'])} for r,x in results.items()}),flush=True)
         passed=unchanged and all(x['frames'] and 'play' in x['phases'] and x['exitCode']==0 and not x['error']
-            and not x['runtimeExceptions'] and not x['suspects'] and x['distinctRoster'] and args.map in x['scenes'] for x in results.values())
+            and not x['runtimeExceptions'] and not x['suspects'] and x['distinctRoster'] and x['reportedFormat']==0 and args.map in x['scenes'] for x in results.values())
         if args.cast_nemu:passed=passed and results['host']['ultimateThresholdObserved'] and all('ultimate' in x['phases'] for x in results.values())
         return 0 if passed else 1
     finally:

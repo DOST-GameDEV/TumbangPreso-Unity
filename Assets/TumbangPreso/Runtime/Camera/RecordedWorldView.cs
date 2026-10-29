@@ -225,15 +225,28 @@ namespace TumbangPreso.CameraSystem
             }
             catch{Dispose();throw;}
         }
-        private static GameObject CataloguedProp(RecordedObjectTrack track)
+        private GameObject CataloguedProp(RecordedObjectTrack track)
         {
             var book=RosterBook.Load();if(book==null)return null;
             var entries=track.Kind==RecordedObjectKind.Can?book.Cans:book.Slippers;
             foreach(var entry in entries)
                 if(entry!=null&&entry.Model!=null&&MatchReplayArchive.VisualKey(entry.Model)==track.VisualKey)return entry.Model;
+            if(track.Kind==RecordedObjectKind.Slipper&&track.Pose.Paths.Any(p=>p=="BoulderStone"||p.EndsWith("/BoulderStone",StringComparison.Ordinal)))
+            {
+                foreach(var entry in entries)
+                {
+                    if(entry?.Model==null)continue;
+                    var source=Object.Instantiate(entry.Model,_stage.transform,false);source.SetActive(false);
+                    DanteBoulderStone.PrepareRecordedShape(source);
+                    // Accept only the complete recorded art identity. Unknown
+                    // hierarchy changes still fail the existing compatibility gate.
+                    if(MatchReplayArchive.VisualKey(source)==track.VisualKey)return source;
+                    Object.Destroy(source);
+                }
+            }
             return null;
         }
-        private static GameObject CataloguedObject(RecordedObjectTrack track,Core.GameMode mode)
+        private GameObject CataloguedObject(RecordedObjectTrack track,Core.GameMode mode)
         {
             var book=RosterBook.Load();if(book==null)return null;
             if(track.Kind==RecordedObjectKind.Companion)return track.Person==PhaisterDollArt.Id?PhaisterDollArt.LoadArt()?.Model:null;
