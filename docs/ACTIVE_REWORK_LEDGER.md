@@ -1,11 +1,12 @@
 # Current checkpoint
 
-Updated 2026-10-28. [TODO](TODO.md) is the only active queue.
+Updated 2026-10-29. [TODO](TODO.md) is the only active queue.
 
-- ONLINE-CAST-1028: normal Ermita/Banaue actual peers completed opening/Nemu.
-  Measured replica groundedY -0.11m from vertical rest-velocity lead.
-  Candidate follows authoritative groundedY and removes duplicate meshY lag.
-  Next: build, compare pairs, then raised-surface Nemu case and other maps.
+- ONLINE-CAST-1028: mobile+network7bc9cf91a pushed/built. Six map pairs, impaired
+  LAN and actual Relay completed with distinct heroes and no runtime exceptions
+  or flagged offsets. Unlock UI gate1/1; protected six files unchanged.
+  Optional replay topology trace added for a mid-game recording warning.
+  Next: fresh build, one impaired Nemu reproduction, fix proven cause and hand off.
   Logs/floating-20261029/. Preserve six owner files; no broad PlayMode.
 - Owner requested wrapping up and handing off unfinished mobile UI work.
   [Resume here](reports/mobile-ui-2026-10-26/HANDOFF.md): ff9 Android candidate is

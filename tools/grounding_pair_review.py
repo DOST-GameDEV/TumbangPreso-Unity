@@ -98,6 +98,7 @@ def main():
         for role in ['host','client']:
             path=out/role/'frames.jsonl'
             rows=[json.loads(line) for line in path.read_text().splitlines()] if path.exists() else []
+            player_log=(out/role/'player.log').read_text(errors='replace')
             phases=sorted(set(r['phase'] for r in rows));seen_picks=sorted(set(a['pick'] for r in rows for a in r['actors']))
             suspects=[]
             for r in rows:
@@ -108,7 +109,9 @@ def main():
                         suspects.append({'time':r['time'],'slot':a['slot'],'offsetY':offset,'body':a['body'],'visual':a['visual'],'floor':a['floor']})
             results[role]={'frames':len(rows),'phases':phases,'picks':seen_picks,'suspects':suspects,'exitCode':codes[0 if role=='host' else 1],
                 'error':(out/role/'error.txt').read_text() if (out/role/'error.txt').exists() else '',
-                'runtimeExceptions':sorted(set(re.findall(r'^[\w.]+Exception:.*$',(out/role/'player.log').read_text(errors='replace'),re.M))),
+                'runtimeExceptions':sorted(set(re.findall(r'^[\w.]+Exception:.*$',player_log,re.M))),
+                'liveRecordingWarnings':sorted(set(re.findall(r'^\[LocalReplay\].*$',player_log.split('[NetReport] wrote',1)[0],re.M))),
+                'distinctRoster':all(len(r['actors'])==4 and len({a['pick'] for a in r['actors']})==4 for r in rows if r['phase']=='play'),
                 'scenes':sorted(set(r['scene'] for r in rows)),
                 'terraceStaged':any(r.get('terraceStaged') for r in rows),
                 'terraceHeight':max([r.get('terraceHeight',0) for r in rows] or [0]),
@@ -120,7 +123,10 @@ def main():
             'map':args.map,'onlineRelay':args.online,'sharedInputUnchanged':unchanged,'artifactUnchanged':True,'peers':results}
         (out/'result.json').write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8');save('complete')
         print(json.dumps({r:{k:v for k,v in x.items() if k!='suspects'}|{'suspectCount':len(x['suspects'])} for r,x in results.items()}),flush=True)
-        return 0 if unchanged and all(x['frames'] and 'play' in x['phases'] and x['exitCode']==0 and not x['error'] and not x['runtimeExceptions'] and args.map in x['scenes'] for x in results.values()) else 1
+        passed=unchanged and all(x['frames'] and 'play' in x['phases'] and x['exitCode']==0 and not x['error']
+            and not x['runtimeExceptions'] and not x['suspects'] and x['distinctRoster'] and args.map in x['scenes'] for x in results.values())
+        if args.cast_nemu:passed=passed and results['host']['ultimateThresholdObserved'] and all('ultimate' in x['phases'] for x in results.values())
+        return 0 if passed else 1
     finally:
         for process in children:
             if process.poll() is None:process.terminate()

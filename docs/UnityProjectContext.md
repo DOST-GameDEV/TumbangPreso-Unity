@@ -58,4 +58,5 @@ older passing reports do not certify a different build or physical device.
 Never duplicate Core, reorder roster IDs, confer authority on replicas, mutate
 user profiles or discard concurrent edits. Read relevant [working rules](WORKING_RULES.md).
 Paete/Phaister authored work stays protected. `EconomyRules.UnlockedHeroes` owns
-the six current playable heroes, including Rago; nine hero entries exist.
+all nine playable heroes. New matches use one player per hero; legacy MIRROR
+wire values remain reserved for recorded history.

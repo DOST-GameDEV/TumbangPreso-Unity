@@ -13,6 +13,7 @@ namespace TumbangPreso.CameraSystem
     public sealed class MatchReplayArchive : MonoBehaviour
     {
         public const int Capacity=3;
+        private static readonly bool TraceTopology=Array.IndexOf(Environment.GetCommandLineArgs(),"-tp-grounding-report")>=0;
         private sealed class Prop
         {
             public GameObject Source;
@@ -236,8 +237,16 @@ namespace TumbangPreso.CameraSystem
                 // first sample. Start a fresh track and keep the usual unsafe-window
                 // fence rather than labeling the old root-only history complete.
                 if(_props[i].Source==source&&_props[i].Track.MatchesHierarchy(model)){entry=_props[i];break;}
-            if(entry==null){changed=true;entry=new Prop{Source=source,Kind=kind,Seat=seat,Skin=skin,Person=person,
-                Track=new MatchPoseHistory.Track(round.BodyAt(seat)??round.PlayerAt(0),model)};}
+            if(entry==null)
+            {
+                if(TraceTopology&&_props.Count>0)
+                {
+                    var previous=_props.Find(p=>p.Source==source);
+                    Debug.Log($"[GroundAudit] Replay prop track changed at {Time.time:F3}: {kind} seat={seat} source={source.name}; before={previous?.Track.DescribeHierarchy()??"<new>"}; after={string.Join(",",Array.ConvertAll(MatchPoseHistory.StableTransforms(model),t=>t.name))}");
+                }
+                changed=true;entry=new Prop{Source=source,Kind=kind,Seat=seat,Skin=skin,Person=person,
+                    Track=new MatchPoseHistory.Track(round.BodyAt(seat)??round.PlayerAt(0),model)};
+            }
             _desiredProps.Add(entry);
         }
         private void Moment(MatchFlair.Kind kind,int actor,int subject,Vector3 at,float strength)
