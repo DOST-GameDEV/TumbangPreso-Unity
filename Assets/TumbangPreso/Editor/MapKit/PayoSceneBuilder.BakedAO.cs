@@ -118,27 +118,26 @@ namespace TumbangPreso.EditorTools.MapKit
                     bool batched = GameObjectUtility.GetStaticEditorFlags(f.gameObject).HasFlag(StaticEditorFlags.BatchingStatic);
                     if (users[mesh] > 1 && !batched && r.sharedMaterials.Any(m => m.enableInstancing)) { skippedInstanced++; continue; }
                     if (!mesh.isReadable) { skippedUnreadable++; continue; }
-                    bool ours = AssetDatabase.GetAssetPath(mesh) == BakedAOPath;
-                    if (!ours && mesh.HasVertexAttribute(UnityEngine.Rendering.VertexAttribute.TexCoord2)) { skippedUv2++; continue; }
-                    if (!ours && (users[mesh] > 1 || AssetDatabase.Contains(mesh)))
-                    {
-                        mesh = Object.Instantiate(mesh);
-                        mesh.name = f.sharedMesh.name + "_ao";
-                        AssetDatabase.AddObjectToAsset(mesh, container);
-                        f.sharedMesh = mesh;
-                        copies++;
-                    }
+                    if (mesh.HasVertexAttribute(UnityEngine.Rendering.VertexAttribute.TexCoord2)) { skippedUv2++; continue; }
+                    // ⚠️ A STREAM, NOT A COPY (2026-10-30: GitHub refused the push, the 455 mesh copies made this asset 244 MB
+                    // against its 100 MB limit). Each renderer gets a mesh holding ONLY UV2 (4 bytes a vertex: x the light that
+                    // reaches it, y 1 for baked) as its `additionalVertexStreams`; the map keeps its own meshes.
                     var ao = BakeMesh(space, f.transform, mesh, dirs, ref rays, ref hits);
-                    var uv = new List<Vector2>(ao.Length);
-                    foreach (float a in ao) { uv.Add(new Vector2(a, 1f)); shade += 1 - a; }
-                    mesh.SetUVs(2, uv);
-                    if (AssetDatabase.Contains(mesh)) EditorUtility.SetDirty(mesh);
+                    var data = new byte[ao.Length * 4];
+                    for (int v = 0; v < ao.Length; v++) { data[v * 4] = (byte)Mathf.RoundToInt(Mathf.Clamp01(ao[v]) * 255f); data[v * 4 + 1] = 255; shade += 1 - ao[v]; }
+                    var stream = new Mesh { name = f.name + "_ao" };
+                    stream.SetVertexBufferParams(ao.Length, new UnityEngine.Rendering.VertexAttributeDescriptor(UnityEngine.Rendering.VertexAttribute.TexCoord2, UnityEngine.Rendering.VertexAttributeFormat.UNorm8, 4));
+                    stream.SetVertexBufferData(data, 0, 0, data.Length);
+                    stream.UploadMeshData(false);
+                    AssetDatabase.AddObjectToAsset(stream, container);
+                    r.additionalVertexStreams = stream;
+                    copies++;
                     vertices += ao.Length; baked++;
                 }
                 EditorUtility.SetDirty(container);
                 var store = root.GetComponent<PayoBakedAO>();
                 if (store == null) root.gameObject.AddComponent<PayoBakedAO>();
-                string said = $"baked AO: {baked} meshes, {vertices} vertices ({copies} copied into {BakedAOPath}), {rays} rays, {hits} hits, mean shade {(vertices > 0 ? shade / vertices : 0):0.000}; " +
+                string said = $"baked AO: {baked} meshes, {vertices} vertices ({copies} UV2 streams in {BakedAOPath}), {rays} rays, {hits} hits, mean shade {(vertices > 0 ? shade / vertices : 0):0.000}; " +
                               $"left out: {skippedInstanced} instanced, {skippedUv2} with their own UV2, {skippedUnreadable} unreadable; {clock.Elapsed.TotalSeconds:0.0} s";
                 Debug.Log(Tag + said);
                 return said;
