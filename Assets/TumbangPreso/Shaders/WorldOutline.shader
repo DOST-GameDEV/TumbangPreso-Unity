@@ -993,8 +993,11 @@ Shader "TumbangPreso/WorldOutline"
             #include "UnityCG.cginc"
             // The probes a pixel takes: sixteen on the top tier, eight on the tiers below it
             // (owner, 2026-10-04: the joining players' frame rate). Two a ring instead of four.
+            // Balanced (the lite variant) takes FOUR, one a ring (owner, 2026-10-29: "try fewer samples on balanced"; on the
+            // integrated Radeon this pass was most of Balanced's frame). The 4x4 rotation tile and pass 3's blur still
+            // average 64 probes a pixel.
             #ifdef WORLD_AO_LITE
-            #define WORLD_AO_PROBES 8
+            #define WORLD_AO_PROBES 4
             #else
             #define WORLD_AO_PROBES 16
             #endif
