@@ -70,6 +70,7 @@ namespace TumbangPreso.Map
             if (want == _applied) return;
             Restore();
             _applied = want;
+            TrimFarShadows();
             if (want == 0) ApplyLow();
         }
 
@@ -87,6 +88,29 @@ namespace TumbangPreso.Map
 
         private void Hide(Renderer r) { if (r != null && r.enabled) { r.enabled = false; _hidden.Add(r); } }
         private void NoShadow(Renderer r) { if (r != null && r.shadowCastingMode != ShadowCastingMode.Off) { _casters.Add((r, r.shadowCastingMode)); r.shadowCastingMode = ShadowCastingMode.Off; } }
+
+        /// <summary>How far from the court's centre (metres, flat) props and plants keep casting shadows on every tier.</summary>
+        public const float ShadowKeep = 40f;
+
+        // EVERY TIER: plants, trees, houses and props past `ShadowKeep` leave the shadow map (owner, 2026-10-30, on the
+        // shadow passes being most of Payo's triangles: "go with #3 first. props near the main arena still need
+        // shadows"). The court, its stones and the plaza dressing round it keep theirs; the land and terraces keep
+        // theirs (they shade the paddies). Measured by each renderer's bounds, so a far piece of a near group still goes.
+        private void TrimFarShadows()
+        {
+            var root = transform;
+            foreach (var name in new[] { "Dressing", "Market", "Fires", "Plaza", "Life", "Actors" })
+            {
+                var group = root.Find(name);
+                if (group == null) continue;
+                foreach (var r in group.GetComponentsInChildren<Renderer>(true))
+                {
+                    if (r == null || r is ParticleSystemRenderer) continue;
+                    var c = r.bounds.ClosestPoint(Vector3.zero);
+                    if (new Vector2(c.x, c.z).magnitude > ShadowKeep) NoShadow(r);
+                }
+            }
+        }
 
         private void ApplyLow()
         {
