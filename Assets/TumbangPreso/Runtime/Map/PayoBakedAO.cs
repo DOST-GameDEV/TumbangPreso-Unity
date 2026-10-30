@@ -27,6 +27,30 @@ namespace TumbangPreso.Map
         private static readonly bool CommandLine = Array.IndexOf(Environment.GetCommandLineArgs(), "-tp-baked-ao") >= 0;
         private static readonly int GlobalId = Shader.PropertyToID("_TPBakedAO");
 
+        /// <summary>
+        /// THE DETAILED PROPS THE BAKE LEAVES TO THE LIVE PASS (owner, 2026-10-30: "no ao on the creases of the statue face",
+        /// then "continue with these fixes"): the bulul, their carved plinths and the small props near the court, written
+        /// by the builder's bake step. While the bake is active they are handed to `WorldOutline.LiveAOProps`, and the
+        /// screen pass draws its world kernel on their pixels only.
+        /// </summary>
+        [SerializeField] private Renderer[] _liveProps = Array.Empty<Renderer>();
+        /// <summary>The plaza merge's chunk meshes holding such pieces, flagged per vertex in UV3.x (only those pixels count).</summary>
+        [SerializeField] private Renderer[] _livePropsByVertex = Array.Empty<Renderer>();
+        public void SetLiveProps(Renderer[] whole, Renderer[] byVertex)
+        {
+            _liveProps = whole ?? Array.Empty<Renderer>();
+            _livePropsByVertex = byVertex ?? Array.Empty<Renderer>();
+        }
+        public int LivePropCount => _liveProps.Length + _livePropsByVertex.Length;
+
+        private void OnEnable()
+        {
+            foreach (var r in _liveProps)
+                if (r != null && !WorldOutline.LiveAOProps.Contains(r)) WorldOutline.LiveAOProps.Add(r);
+            foreach (var r in _livePropsByVertex)
+                if (r != null && !WorldOutline.LiveAOPropsByVertex.Contains(r)) WorldOutline.LiveAOPropsByVertex.Add(r);
+        }
+
         public static bool Active => Test >= 0 ? Test > 0 : On || CommandLine;
 
         private void Update()
@@ -46,6 +70,8 @@ namespace TumbangPreso.Map
 
         private void OnDisable()
         {
+            foreach (var r in _liveProps) WorldOutline.LiveAOProps.Remove(r);
+            foreach (var r in _livePropsByVertex) WorldOutline.LiveAOPropsByVertex.Remove(r);
             WorldOutline.BakedWorldAO = false;
             Shader.SetGlobalVector(GlobalId, Vector4.zero);
         }

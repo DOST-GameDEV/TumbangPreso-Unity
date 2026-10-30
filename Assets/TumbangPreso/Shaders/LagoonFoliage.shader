@@ -62,7 +62,9 @@ Shader "TumbangPreso/LagoonFoliage"
             UNITY_INITIALIZE_OUTPUT(Input, o);
             o.bakedOrigin = v.texcoord3;
             // No interpolator is left (ForwardBase holds 10): the baked shade rides on the origin marker, w = marker + shade / 4.
-            o.bakedOrigin.w += saturate((1 - v.texcoord2.x) * v.texcoord2.y) * 0.25;
+            // UV2.z = 1 marks THE BAKE's own UV2 (owner, 2026-10-30: "the right side has darker shadows"): a model's native UV2
+            // (the court's floor, the far flora) read as baked shade and tinted whole surfaces violet. Anything else is left alone.
+            o.bakedOrigin.w += saturate((1 - v.texcoord2.x) * v.texcoord2.y * step(0.5, v.texcoord2.z)) * 0.25;
         }
 
         float3 HueShift(float3 c, float shift)

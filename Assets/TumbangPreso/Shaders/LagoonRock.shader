@@ -70,7 +70,9 @@ Shader "TumbangPreso/LagoonRock"
         void vert(inout appdata_full v, out Input o)
         {
             UNITY_INITIALIZE_OUTPUT(Input, o);
-            o.bakedAO = v.texcoord2.xy;
+            // UV2.z = 1 marks THE BAKE's own UV2 (owner, 2026-10-30: "the right side has darker shadows"): a model's native UV2
+            // (the court's floor, the far flora) read as baked shade and tinted whole surfaces violet. Anything else is left alone.
+            o.bakedAO = float2(v.texcoord2.x, v.texcoord2.y * step(0.5, v.texcoord2.z));
             o.bakeUv = v.texcoord1.xy;
             float3 sx = float3(unity_ObjectToWorld[0].x, unity_ObjectToWorld[1].x, unity_ObjectToWorld[2].x);
             float3 sy = float3(unity_ObjectToWorld[0].y, unity_ObjectToWorld[1].y, unity_ObjectToWorld[2].y);

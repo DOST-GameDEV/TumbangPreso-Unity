@@ -48,7 +48,7 @@ namespace TumbangPreso.EditorTools.MapKit
             var plaza = root.Find("Plaza");
             if (plaza == null) return "plaza merge: no Plaza group";
             var glowNames = new HashSet<string>(Glows) { "py_window", "py_inlay" };
-            var buckets = new Dictionary<(string chunk, Material mat, ShadowCastingMode shadow, bool receive, int layer), List<(Mesh mesh, int sub, Matrix4x4 m, Vector3 origin)>>();
+            var buckets = new Dictionary<(string chunk, Material mat, ShadowCastingMode shadow, bool receive, int layer), List<(Mesh mesh, int sub, Matrix4x4 m, Vector3 origin, bool live)>>();
             var done = new List<MeshRenderer>();
             var why = new Dictionary<string, int>();
             void Keep(string w) => why[w] = why.TryGetValue(w, out int n) ? n + 1 : 1;
@@ -72,11 +72,14 @@ namespace TumbangPreso.EditorTools.MapKit
                 if (mats.Any(m => glowNames.Contains(m.name))) { Keep("night glow"); continue; }
                 if (mats.Any(m => m.shader.name != FoliageShader && ShaderReadsTransform(m.shader))) { Keep("shader reads transform"); continue; }
                 Vector3 origin = r.transform.position;
+                // A bulul, a plinth or a small dense prop keeps the live crease AO on the baked map (owner, 2026-10-30: "no ao
+                // on the creases of the statue face"): its vertices carry UV3.x = 1 in the chunk (PayoSceneBuilder.BakedAO.cs).
+                bool live = IsLiveAOPiece(r);
                 for (int i = 0; i < mats.Length; i++)
                 {
                     var key = (PlazaChunk(r.bounds.center), mats[i], r.shadowCastingMode, r.receiveShadows, r.gameObject.layer);
-                    if (!buckets.TryGetValue(key, out var list)) buckets[key] = list = new List<(Mesh, int, Matrix4x4, Vector3)>();
-                    list.Add((mf.sharedMesh, i, toGroup * r.transform.localToWorldMatrix, origin));
+                    if (!buckets.TryGetValue(key, out var list)) buckets[key] = list = new List<(Mesh, int, Matrix4x4, Vector3, bool)>();
+                    list.Add((mf.sharedMesh, i, toGroup * r.transform.localToWorldMatrix, origin, live));
                 }
                 done.Add(r);
             }
@@ -89,7 +92,8 @@ namespace TumbangPreso.EditorTools.MapKit
                 bool foliage = mat.shader.name == FoliageShader;
                 var P = new List<Vector3>(); var N = new List<Vector3>(); var T = new List<Vector4>(); var U = new List<Vector2>(); var C = new List<Color>(); var O = new List<Vector4>(); var I = new List<int>();
                 bool colours = kv.Value.Any(e => e.mesh.colors.Length > 0);
-                foreach (var (mesh, sub, m, origin) in kv.Value)
+                bool flagged = !foliage && kv.Value.Any(e => e.live);
+                foreach (var (mesh, sub, m, origin, live) in kv.Value)
                 {
                     var p = mesh.vertices; var n = mesh.normals; var t = mesh.tangents; var u = mesh.uv; var c = mesh.colors;
                     int b = P.Count;
@@ -104,6 +108,7 @@ namespace TumbangPreso.EditorTools.MapKit
                         U.Add(u.Length > v ? u[v] : Vector2.zero);
                         if (colours) C.Add(c.Length > v ? c[v] : Color.white);
                         if (foliage) O.Add(new Vector4(origin.x, origin.y, origin.z, 1.0f));
+                        else if (flagged) O.Add(new Vector4(live ? 1.0f : 0.0f, 0.0f, 0.0f, 0.0f));
                     }
                     var idx = mesh.GetTriangles(sub);
                     for (int k = 0; k < idx.Length; k += 3)
@@ -119,7 +124,7 @@ namespace TumbangPreso.EditorTools.MapKit
                 merged.indexFormat = P.Count > 65000 ? IndexFormat.UInt32 : IndexFormat.UInt16;
                 merged.SetVertices(P); merged.SetNormals(N); merged.SetTangents(T); merged.SetUVs(0, U);
                 if (colours) merged.SetColors(C);
-                if (foliage) merged.SetUVs(3, O);
+                if (foliage || flagged) merged.SetUVs(3, O);
                 merged.SetTriangles(I, 0);
                 merged.RecalculateBounds();
                 string path = $"{Generated}/{name}.asset";

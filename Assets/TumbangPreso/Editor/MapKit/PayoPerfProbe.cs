@@ -423,8 +423,42 @@ namespace TumbangPreso.EditorTools.MapKit
                         File.WriteAllBytes($"{Folder}/{Label}_{tag}_{(baked > 0 ? "baked" : "screen")}.png", tex.EncodeToPNG());
                         Object.Destroy(tex);
                     }
+                // A CLOSE SHOT OF A BULUL FACE (owner, 2026-10-30: "no ao on the creases of the statue face"): the seated statue
+                // west of the court, from 8 m in front of its face (past the AO's 1.8 to 3.6 m near fade) at 50 degrees.
+                Bounds statue = default; bool found = false;
+                foreach (var r in root.GetComponentsInChildren<MeshRenderer>())
+                {
+                    bool named = false;
+                    for (var t = r.transform; t != null && !named; t = t.parent) named = t.name.IndexOf("bulul_seated", System.StringComparison.OrdinalIgnoreCase) >= 0;
+                    var c = r.bounds.center;
+                    if (!named || c.x > -30f || Mathf.Abs(c.z - 6f) > 8f || r.bounds.size.y < 1f) continue;
+                    if (!found) { statue = r.bounds; found = true; } else statue.Encapsulate(r.bounds);
+                }
+                Say(found ? $"Bulul (seated, west): bounds {statue.center} size {statue.size}" : "Bulul (seated, west): NOT FOUND, no close shot");
+                if (found)
+                {
+                    float fovWas = cam.fieldOfView; cam.fieldOfView = 50f;
+                    var face = new Vector3(statue.max.x - statue.size.x * .25f, statue.min.y + statue.size.y * .8f, statue.center.z);
+                    var at = face + new Vector3(8f, .2f, 0f);
+                    foreach (int baked in new[] { 0, 1 })
+                    {
+                        PayoBakedAO.Test = baked;
+                        cam.transform.SetPositionAndRotation(at, Quaternion.LookRotation((face - at).normalized, Vector3.up));
+                        for (int k = 0; k < 4; k++) yield return null;
+                        var keep = cam.targetTexture;
+                        cam.targetTexture = rt; cam.Render(); cam.targetTexture = keep;
+                        var prev = RenderTexture.active; RenderTexture.active = rt;
+                        var tex = new Texture2D(rt.width, rt.height, TextureFormat.RGB24, false);
+                        tex.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0); tex.Apply();
+                        RenderTexture.active = prev;
+                        File.WriteAllBytes($"{Folder}/{Label}_bulul_{(baked > 0 ? "baked" : "screen")}.png", tex.EncodeToPNG());
+                        Object.Destroy(tex);
+                    }
+                    cam.fieldOfView = fovWas;
+                    Say($"Live-AO props drawn into the mask in the baked bulul shot: {WorldOutline.LiveAOPropDraws}");
+                }
                 rt.Release(); Object.Destroy(rt);
-                Say($"Shots: {Folder}/{Label}_[court|plaza|terraces|corner]_[screen|baked].png, Balanced, day");
+                Say($"Shots: {Folder}/{Label}_[court|plaza|terraces|corner|bulul]_[screen|baked].png, Balanced, day");
                 try
                 {
                     foreach (int tier in new[] { 1, 2, 0 })

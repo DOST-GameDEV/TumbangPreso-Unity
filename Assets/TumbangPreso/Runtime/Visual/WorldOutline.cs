@@ -324,9 +324,25 @@ namespace TumbangPreso.Visual
         public static int AmbientOcclusionSamplesTest;
         /// <summary>A MAP WITH ITS OCCLUSION BAKED (owner, 2026-10-29: asked whether the world AO can be baked, then
         /// "continue" to a Payo bake test). Set each frame by `Map.PayoBakedAO` while its switch is on, false everywhere
-        /// else. True skips passes 2 and 3 (the world's and the cast's screen occlusion): the static world carries its
-        /// occlusion in its vertices, and the contact term and the ground occlusion under moving things stay live.</summary>
+        /// else. While it is true passes 2 and 3 work ONLY under the mask: the cast's crease kernel where the exclusion
+        /// mask (R) covers the cast, and the world's kernel where <see cref="LiveAOProps"/> are drawn (G); every other pixel
+        /// returns clean at once, since the static world carries its occlusion in its vertices.</summary>
         public static bool BakedWorldAO;
+        /// <summary>
+        /// DETAILED PROPS KEEP THE LIVE CREASE AO ON A BAKED MAP (owner, 2026-10-30, of the bake beside the screen AO: "no ao
+        /// on the creases of the statue face", then "continue with these fixes"). A vertex bake is only as fine as the mesh,
+        /// and a bulul's face, a plinth's carving or a small offering is finer than any vertex spacing that keeps the asset
+        /// small. Their renderers are filled in here by `Map.PayoBakedAO` (the bake leaves them out and lists them); the
+        /// mask draw paints the visible ones into the mask's G channel, and pass 2 runs the world kernel on those pixels
+        /// only, the way it ran over the whole frame before the bake. Empty on every other map.
+        /// </summary>
+        public static readonly List<Renderer> LiveAOProps = new List<Renderer>();
+        /// <summary>Merged meshes holding such props among other pieces: only vertices with UV3.x = 1 are painted into G.</summary>
+        public static readonly List<Renderer> LiveAOPropsByVertex = new List<Renderer>();
+        private static readonly int MaskLiveId = Shader.PropertyToID("_WorldOutlineMaskLive");
+        private static readonly int WorldAOMaskedId = Shader.PropertyToID("_WorldAOMasked");
+        /// <summary>How many live-AO props the last mask draw painted (0: nothing of theirs on screen).</summary>
+        public static int LiveAOPropDraws { get; private set; }
         private static bool AmbientOcclusionLite => AmbientOcclusionSamplesTest != 0
             ? AmbientOcclusionSamplesTest <= 8
             : Settings.GraphicsProfiles.Current < Settings.GraphicsProfiles.All.Length - 1;
@@ -817,6 +833,8 @@ namespace TumbangPreso.Visual
             if (FineDepth) tolerance = Mathf.Min(tolerance, MaskToleranceMetres / _camera.farClipPlane);
             _maskMaterial.SetFloat(MaskToleranceId, tolerance);
             _maskBuffer.SetGlobalVector(NearFadeMaskId,Vector4.zero);NearFadeMaskDraws=0;
+            _maskBuffer.SetGlobalFloat(MaskLiveId,0);
+            DrawLiveAOProps();
 
             foreach (var renderer in _excluded)
             {
@@ -939,12 +957,43 @@ namespace TumbangPreso.Visual
         /// dilation whatever resolution it was drawn at, and that boundary sits roughly one tap
         /// radius outside the character, underneath the ink the hull has already drawn there.
         /// </summary>
+        /// <summary>
+        /// Paints the visible <see cref="LiveAOProps"/> into the mask's G channel (owner, 2026-10-30: "no ao on the creases of
+        /// the statue face"; see the list's note). Only while a map's occlusion is baked, and only a renderer some camera
+        /// draws this frame (`isVisible`), so a plaza out of view costs no draw and pass 2 finds no pixel to work on.
+        /// </summary>
+        private void DrawLiveAOProps()
+        {
+            LiveAOPropDraws = 0;
+            if (!BakedWorldAO || LiveAOProps.Count + LiveAOPropsByVertex.Count == 0) return;
+            // 1: the whole renderer; 2: only its vertices flagged in UV3.x (a merged chunk; see the mask pass).
+            for (int mode = 1; mode <= 2; mode++)
+            {
+                _maskBuffer.SetGlobalFloat(MaskLiveId, mode);
+                foreach (var renderer in mode == 1 ? LiveAOProps : LiveAOPropsByVertex)
+                {
+                    if (renderer == null || !renderer.enabled || !renderer.isVisible || !renderer.gameObject.activeInHierarchy) continue;
+                    if (renderer.shadowCastingMode == ShadowCastingMode.ShadowsOnly) continue;
+                    var materials = renderer.sharedMaterials;
+                    int submeshes = materials == null || materials.Length == 0 ? 1 : materials.Length;
+                    for (int i = 0; i < submeshes; i++) _maskBuffer.DrawRenderer(renderer, _maskMaterial, i, MaskPass);
+                    LiveAOPropDraws++;
+                }
+            }
+            _maskBuffer.SetGlobalFloat(MaskLiveId, 0);
+        }
+
         private void EnsureMaskTexture()
         {
             int width = Mathf.Max(1, _camera.pixelWidth);
             int height = Mathf.Max(1, _camera.pixelHeight);
+            // A baked map's mask needs a second channel (G, the live-AO props); every other map keeps its one-channel R8.
+            bool two = BakedWorldAO && LiveAOProps.Count + LiveAOPropsByVertex.Count > 0;
+            var wanted = !two
+                ? (SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.R8) ? RenderTextureFormat.R8 : RenderTextureFormat.ARGB32)
+                : (SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.RG16) ? RenderTextureFormat.RG16 : RenderTextureFormat.ARGB32);
 
-            if (_mask != null && _mask.width == width && _mask.height == height) return;
+            if (_mask != null && _mask.width == width && _mask.height == height && _mask.format == wanted) return;
 
             if (_mask != null)
             {
@@ -956,9 +1005,7 @@ namespace TumbangPreso.Visual
             // value, the occlusion test happens in the fragment against the prepass rather than
             // against an attached depth buffer (see the shader), and a multisampled mask would
             // have to agree with the camera's own sample count, which is somebody else's setting.
-            var format = SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.R8)
-                ? RenderTextureFormat.R8
-                : RenderTextureFormat.ARGB32;
+            var format = wanted;
 
             // ⚠️ This is coverage data, not color. Requesting the default sRGB R8
             // format caused a fallback to four channels on this Windows GPU and
@@ -1118,12 +1165,17 @@ namespace TumbangPreso.Visual
             float castBias=Mathf.Min(.02f,castRadius*.1f);   // was .006 / .02: a smooth slope shaded itself in stripes (owner, 2026-10-05: "weird lining effect too from the ao")
             _material.SetVector("_CharacterAOParams",new Vector4(castShare,castRadius,castBias,0));
             RenderTexture occlusion=null,occlusionBlur=null;
-            float aoStrength=AmbientOcclusionLive && !BakedWorldAO?WorldLookProfile.Current.AmbientOcclusion*WorldLookPresentation.Current.Weight:0;
-            // A map with its world occlusion baked (Payo) still runs this pass for the CAST's creases only (owner,
-            // 2026-10-30: "turn it on by default, keep character crease ao"): the world strength is 0, so the shader
-            // returns after the cast's probes and skips the world's.
-            bool castOnly=aoStrength<=0 && BakedWorldAO && AmbientOcclusionLive && castShare>0;
-            if(aoStrength>0 || castOnly)
+            float aoStrength=AmbientOcclusionLive?WorldLookProfile.Current.AmbientOcclusion*WorldLookPresentation.Current.Weight:0;
+            // A map with its world occlusion baked (Payo) still runs this pass, but only UNDER THE MASK (owner, 2026-10-30:
+            // "turn it on by default, keep character crease ao", then of the statues "no ao on the creases of the statue
+            // face"): the cast's creases where R covers the cast, the world kernel where G covers a live-AO prop, and every
+            // other pixel returns clean at its first read. The strength stays the look's, so the composite applies both
+            // exactly as it does on a live map. ⚠️ It was 0 here before, and the composite's gate (strength above 0)
+            // then dropped the cast's creases it had just drawn.
+            bool underMask=BakedWorldAO && aoStrength>0;
+            _material.SetFloat(WorldAOMaskedId,underMask?1:0);
+            if(underMask && (!maskReady || (castShare<=0 && LiveAOPropDraws==0)))aoStrength=0;   // no mask, or nothing under it to work on
+            if(aoStrength>0)
             {
                 // ⚠️ FULL RESOLUTION. It was half, on the reasoning that occlusion is soft; the
                 // owner then saw its noise, and at half resolution the 4x4 rotation tile the blur

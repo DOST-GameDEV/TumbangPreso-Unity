@@ -883,11 +883,15 @@ Shader "TumbangPreso/WorldOutline"
             float4 _SkyReveal;
             float4 _SkyRevealShape;
             float _NearFadeEyeDrop;   // `NearFade.shader`: how far the first-person eye is below a standing one
+            // 1 while `WorldOutline.LiveAOProps` are drawn (owner, 2026-10-30: "no ao on the creases of the statue face"):
+            // they go to G, the baked map's live-AO channel, and leave R (the exclusion) alone. A global, 0 unless set.
+            float _WorldOutlineMaskLive;
 
             struct appdata_mask
             {
                 float4 vertex : POSITION;
                 float3 normal : NORMAL;
+                float4 live : TEXCOORD3;   // a merged chunk's live-AO flag in x (`_WorldOutlineMaskLive` 2)
                 UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
@@ -898,6 +902,7 @@ Shader "TumbangPreso/WorldOutline"
                 float depth : TEXCOORD1;
                 float3 world : TEXCOORD2;
                 float3 normal : TEXCOORD3;
+                float live : TEXCOORD4;
             };
 
             v2f_mask vert (appdata_mask v)
@@ -913,6 +918,7 @@ Shader "TumbangPreso/WorldOutline"
                 o.depth = -UnityObjectToViewPos(v.vertex).z * _ProjectionParams.w;
                 o.world=mul(unity_ObjectToWorld,v.vertex).xyz;
                 o.normal=UnityObjectToWorldNormal(v.normal);
+                o.live=v.live.x*step(v.live.w,.5);   // w = 1 is LagoonFoliage's origin, never a flag
                 return o;
             }
 
@@ -954,7 +960,10 @@ Shader "TumbangPreso/WorldOutline"
                         *smoothstep(_SkyRevealShape.w,_SkyRevealShape.w+1.2,i.world.y));
                     clip(coverage-.001);
                 }
-                return fixed4(coverage,coverage,coverage,coverage);
+                // R the exclusion (B and A as before); G only for a live-AO prop. Only R is read for the exclusion.
+                if(_WorldOutlineMaskLive>1.5)clip(i.live-.5);   // a merged chunk: its flagged pieces only
+                if(_WorldOutlineMaskLive>.5)return fixed4(0,coverage,0,0);
+                return fixed4(coverage,0,coverage,coverage);
             }
             ENDCG
         }
@@ -1011,6 +1020,9 @@ Shader "TumbangPreso/WorldOutline"
             // A probe's view of the two depths (`WorldOutline.FineDepthView`, never set in play): 1 white where they
             // agree and black where they do not, 2 the fine depth as a ramp a metre wide, 3 the coarse one the same.
             float _FineDepthView;
+            // A baked map (owner, 2026-10-30): 1 works only under the mask, R the cast, G the live-AO props.
+            float _WorldAOMasked;
+            sampler2D _WorldOutlineMask;
             float EyeDepth(float2 uv)
             {
                 float depth;float3 normal;DecodeDepthNormal(tex2Dlod(_CameraDepthNormalsTexture,float4(uv,0,0)),depth,normal);
@@ -1126,10 +1138,20 @@ Shader "TumbangPreso/WorldOutline"
                     return half4(shown,1,shown,1);
                 }
                 #endif
+                // ⚠️ A BAKED MAP WORKS ONLY UNDER THE MASK (owner, 2026-10-30: "keep character crease ao" and "no ao on the
+                // creases of the statue face"). Everything else carries its occlusion in its vertices, so a pixel with
+                // neither the cast (R) nor a live-AO prop (G) returns clean before any depth is read.
+                float2 under=1;
+                if(_WorldAOMasked>.5)
+                {
+                    under=step(.5,tex2Dlod(_WorldOutlineMask,float4(i.uv,0,0)).rg);
+                    if(under.x+under.y<=0)return 1;
+                }
                 float3 n;float3 p=ViewPoint(i.uv,n);
                 if(-p.z>_WorldContactProjection.x*.999)return 1;
                 float cast=1;
-                if(_CharacterAOParams.x>0)cast=CastAO(p,n,i.pos.xy);
+                if(_CharacterAOParams.x>0 && under.x>0)cast=CastAO(p,n,i.pos.xy);
+                if(under.y<=0)return half4(1,cast,1,1);
                 // Baked world occlusion (Payo): only the cast's creases are drawn live (owner, 2026-10-30).
                 if(_WorldAOParams.x<=0)return half4(1,cast,1,1);
                 // ⚠️⚠️ NOTHING NEARER THAN THE NEAR-FADE START IS TRUSTED (`_WorldAOParams.w`,
@@ -1231,6 +1253,7 @@ Shader "TumbangPreso/WorldOutline"
             UNITY_DECLARE_DEPTH_TEXTURE(_CameraDepthTexture);
             #endif
             float4 _MainTex_TexelSize,_WorldContactProjection;
+            float _WorldAOMasked;sampler2D _WorldOutlineMask;   // a baked map: blur only under the mask (see pass 2)
             float EyeDepth(float2 uv)
             {
                 float depth;float3 normal;DecodeDepthNormal(tex2Dlod(_CameraDepthNormalsTexture,float4(uv,0,0)),depth,normal);
@@ -1250,6 +1273,7 @@ Shader "TumbangPreso/WorldOutline"
             {
                 // The 4x4 block that holds all sixteen rotations of pass 2, so the rotation
                 // pattern averages out exactly; depth-aware, so an edge does not smear.
+                if(_WorldAOMasked>.5 && dot(tex2Dlod(_WorldOutlineMask,float4(i.uv,0,0)).rg,1)<.5)return 1;
                 float centre=EyeDepth(i.uv);float2 sum=0;float weight=0;
                 [unroll] for(int y=-2;y<=1;y++)
                 [unroll] for(int x=-2;x<=1;x++)
