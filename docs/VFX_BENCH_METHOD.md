@@ -332,5 +332,38 @@ Also open (2026-10-19):
   Held back: ProjectSettings/QualitySettings.asset (18 platform quality lines deleted, origin unknown), all .mp4, _Recovery,
   UI metas. Protocol 172: rebuild Windows and Android together.
 
+### 10.4 After the mobile+network pull (2026-10-28 and 29)
+
+K was fast-forwarded to origin/mobile+network (9bf9c3829); the working branch is now `QoLUpdates-v2` (tracks origin). The
+reworked kits replaced several looks. Owner: "a lot of our previous work was overridden because of reworked abilities. its pretty
+poorly made so eventually we'll need to do a vfx revamp again".
+
+| Item | State | Switch / file |
+|---|---|---|
+| Zack Quick Circuit z4, Bank Shot b13d, live Overclock look | DELETED with the old Zack kit (e01da9d59). Copies in `approved/zackcircuit_z4`, `approved/zackbank_b13d`, full code at 8c4164b2a | |
+| Rago (sean) kit | Reworked to the lava brawler: LAVA RAM, MOLTEN THROW, MAGMA FIST, MAYON AWAKENS. Stoke c3 and throw s2 survive inside it | |
+| Rago LAVA RAM | r1 in K: c3 refit to the real 8 m charge (it stalled 2 m out before). Owner found it "a bit cartoony"; a `Charge` variant (no ball round his body) is being built | `SeanRamFire.Painted` |
+| Rago MOLTEN THROW | r1 in K: s2 held fire on the held shoe, s2 flight and burst, no stacked blast at the can. Open: the s2 ring still marks the old 1.25 m push the rework removed | `SeanIgnitionVisual.Painted` |
+| Rago MAGMA FIST | Fire fist C APPROVED 2026-10-29 ("c looks good to go"); backed up in `approved/rago_magmafist_firefist_c`; `SeanFireFistLook.Current = C_Core` (KEEP). A deeper-red, see-through `D_Ember` variant is in progress (D only, C bit-identical) | `SeanMagmaPool.Painted`, `SeanFireFistLook.Current` |
+| Nemu first-person Kuro | Sleeve Kuro v2 APPROVED 2026-10-29 ("looks good"); hides in her left cuff, peeks facing the lens; backed up in `approved/nemu_kurosleeve_v2` (KEEP) | `NemuKuroHand.InSleeve` |
+| Cutscenes | Audit vs 8c4164b2a: Rago REPLACED (parol to MAYON AWAKENS v2, 5.0 s); Zack PARTIALLY OVERRIDDEN (6.4 s to 4.5 s via `ZackClock`; the look, the shrug, the wide shot, zap rings, staged jolts and the head strike gone; restorable from `tools/cutscene_rework/intros_backup/zack.txt` plus removing `ZackClock`). The other seven unchanged | |
+| In progress 2026-10-29 | Zack BACKTRACK / FULL THROTTLE / LIVE WIRE look (film `Temp/zack-kit-film.request`); Nemu PEEKER / FETCHER / KEEPER look on the pet ghosts; Rago Ram `Charge` (film `Temp/rago-ram-film.request`) | |
+
+**State at the 2026-10-29 evening handoff** (all in K uncommitted on QoLUpdates-v2; every new look behind its own switch, default ON):
+- LOCKED: Rago LAVA RAM r1 ("keep the r1, lock it in", `approved/rago_lavaram_r1`); MAGMA FIST fire fist C ("c looks good to go", then "no we're locking c", A/B/D removed, re-film diff vs approval 0.003 %, `approved/rago_magmafist_firefist_c`); Nemu sleeve Kuro v2.
+- Rago MOLTEN THROW r1 in game, not signed off; open: the s2 ring still marks the removed 1.25 m push.
+- Zack (zack1/zack2): BACKTRACK silk route + up to 5 afterimages, FULL THROTTLE designed ground ring, LIVE WIRE silk wire. Films r1, r2 sent; no verdict yet. `ZackBacktrackLook/ZackThrottleLook/ZackLiveWireLook.Painted`.
+- Nemu (nemu1/nemu2): pet ghosts ON with cloud-puff arrivals; mouse and bear rebuilt as Kuro-style part rigs with animated faces (`PetGhostRig.Enabled`). Owner: "the ghosts look good, just fix up the color of the bear.. and maybe get rid of the toon outlines for the ghosts" -> nemu3 in progress (lighter cocoa bear from the 10-19 lineup, no ink on pet ghosts). KEEPER owl not rebuilt yet.
+- Yasmin: c1 floors REJECTED ("genuinely look horrible ... flat"; abszero "reads as noise"). Lead reference: Greg Tapper sketch #27 (https://realtimevfx.com/t/greg-tapper-sketch-27-ice/10536), owner: "the closest reference to how i want cheska's vfx in general. the ice we have looks good" (DepthB crystals stay). c3 = ice slab (deep body, swirl cracks, lip, crystal crown) + Absolute Zero wave; floor board A/B/C sent, waiting for his pick (`CheskaFrostKit.SlabVariant`). Frostbite crust + casings fine.
+- Ilyas: WATER WALL rework ON (k1 sent); rafi2 = Baha rebuilt as a rolling wave, Skim wake enlarged, wall emissives (owner: "can the waterwall have some emmissives on it", `RafiWaterVisual.WallGlow`); filming queued.
+- Amihan: FEATHERFALL (bench sample wired to her flight) + AIRBURST live aftermath (10 m safe-edge ribbon); amihan1 filming queued, no reference yet.
+- Basilio: owner "we're merging the armor thing that astra brought + the longhorn cutscene"; agent dante1 drafting (longhorn p11 restored with ASTRA's armour forming in it, design improved, board first).
+- Phaister (display PHAISTER since 09486bafc): kit OPENED by the owner ("add an agent for work on phaister's ability kit"); audit done, full 4-ability kit, presentation weakest in the game; options A look-only / B fix gaps / C full rework; awaiting his pick.
+- Tests that assert old look object names will fail with the new switches on (Cheska expiry/stress/snapshot probes, Zack acceptance/skill probes, RafiExpansionProbe); update only once looks are kept.
+
+Coordinator tools (survive scratch wipes): `Logs/coordinator/` holds `BRIEF_COMMON.md`, `cc_ov.sh` (overlay compile on Unity's
+Library/Bee response files), `install.sh`, `film.sh`, `fpvfilm.sh`. Rago film tool: `Temp/rago-rework-film.request`
+(`ram|ramfull|throw|fist|fistboard|all <tag>`).
+
 Film tool for the quick reworks: `Editor/MapKit/QuickReworkFilm.cs` (request `Temp/quick-rework-film.request`: `ping`,
 `scout`, `<look|all|a,b> <tag>`), stitched by the coordinator's `qrvideo.py`.

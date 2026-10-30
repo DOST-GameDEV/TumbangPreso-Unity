@@ -40,14 +40,14 @@ namespace TumbangPreso.EditorTools
             // for changes by itself: look now, and if that starts a compile, the request waits for the reload.
             AssetDatabase.Refresh();
             if (EditorApplication.isCompiling) return;
-            // One `hero tag` a line: several heroes can be asked for at once.
+            // One `hero tag [WIDTHxHEIGHT]` a line: several heroes (or one hero at several screen shapes) at once.
             string[] lines = File.ReadAllLines(Request);
             File.Delete(Request);
             foreach (string line in lines)
             {
                 string[] words = line.Trim().Split(' ');
                 if (words.Length == 0 || words[0].Length == 0) continue;
-                Run(words[0], words.Length > 1 ? words[1] : "v00");
+                Run(words[0], words.Length > 1 ? words[1] : "v00", words.Length > 2 ? words[2] : null);
             }
         }
 
@@ -57,8 +57,19 @@ namespace TumbangPreso.EditorTools
             foreach (string hero in new[] { "nemu", "dante", "sean", "zack", "cheska", "rafi", "amihan", "phaister", "paete" }) Run(hero, "menu");
         }
 
-        public static void Run(string hero, string tag)
+        /// <param name="size">
+        /// Optional `WIDTHxHEIGHT`, the third word of a request line (`nemu kurosleeve_v1 780x360`). The first-person lens
+        /// keeps its vertical angle, so a wider frame is a phone's: 780x360 is about 19.5:9, 720x360 is 2:1. Default 640x360.
+        /// </param>
+        public static void Run(string hero, string tag, string size = null)
         {
+            int shotWidth = Width, shotHeight = Height;
+            if (!string.IsNullOrEmpty(size))
+            {
+                string[] wh = size.ToLowerInvariant().Split('x');
+                if (wh.Length == 2 && int.TryParse(wh[0], out int w) && int.TryParse(wh[1], out int h) && w >= 64 && h >= 64 && w <= 4096 && h <= 4096)
+                { shotWidth = w; shotHeight = h; }
+            }
             string dir = Path.Combine(OutRoot, hero + "_" + tag);
             if (Directory.Exists(dir)) foreach (string old in Directory.GetFiles(dir)) File.Delete(old);
             Directory.CreateDirectory(dir);
@@ -86,9 +97,9 @@ namespace TumbangPreso.EditorTools
                 var arms = mount.AddComponent<ViewmodelArms>();
                 arms.EnsureBuilt(); arms.SetCharacter(hero); arms.SetHolding(false);
 
-                rt = new RenderTexture(Width, Height, 24, RenderTextureFormat.ARGB32);
+                rt = new RenderTexture(shotWidth, shotHeight, 24, RenderTextureFormat.ARGB32);
                 cam.targetTexture = rt;
-                var shot = new Texture2D(Width, Height, TextureFormat.RGB24, false);
+                var shot = new Texture2D(shotWidth, shotHeight, TextureFormat.RGB24, false);
                 Random.InitState(7);
 
                 // THE SCRIPT. Times in seconds; `beats.txt` names each for the sheet.
@@ -125,7 +136,7 @@ namespace TumbangPreso.EditorTools
                     {
                         cam.Render();
                         var keep = RenderTexture.active; RenderTexture.active = rt;
-                        shot.ReadPixels(new Rect(0, 0, Width, Height), 0, 0); shot.Apply();
+                        shot.ReadPixels(new Rect(0, 0, shotWidth, shotHeight), 0, 0); shot.Apply();
                         RenderTexture.active = keep;
                         File.WriteAllBytes(Path.Combine(dir, "f" + frame.ToString("0000") + ".png"), shot.EncodeToPNG());
                         frame++;

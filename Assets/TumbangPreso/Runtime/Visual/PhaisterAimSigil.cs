@@ -48,13 +48,17 @@ namespace TumbangPreso.Visual
         {
             (0f, 0.70f, 0.55f, 4.4f, 2.3f), (125f, 0.86f, 0.38f, 5.1f, 2.0f), (245f, 0.62f, 0.72f, 3.8f, 2.5f),
         };
-        // OMEN, typed: twelve runes round the 7.5 m ring (seed, size), the same writing order as the live ring (`PhaisterOmen`).
+        // OMEN, typed: twelve runes round the 7.5 m ring (seed, size), the same writing order as the retired OMEN ring.
         private static readonly (int Seed, float Size)[] OmenRunes =
         {
             (61, 1.10f), (62, 0.95f), (63, 1.20f), (64, 1.00f), (65, 1.15f), (66, 0.90f),
             (67, 1.05f), (68, 1.20f), (69, 0.95f), (70, 1.10f), (71, 1.00f), (72, 1.15f),
         };
         private const int Beads = 11;
+        // ⚠️ THE RETIRED OMEN'S OWN NUMBER, KEPT HERE WHEN `PhaisterOmen` WAS DELETED (2026-10-29): how much of the eye disc the
+        // `CosmosEye` shader opens, so this preview matched the eye it promised. Nothing creates `Kind.Omen` any more (her kit
+        // only aims TELEPORT, `Kind.Arrival`); the branch is left for the VFX rework to cut or reuse rather than rewritten here.
+        private const float OmenCosmosOpen = 0.78f;
 
         private Kind _kind;
         private CharacterMotor _caster;
@@ -355,7 +359,7 @@ namespace TumbangPreso.Visual
                 {
                     // Near the size it will open to (a 1.45 m hole, the real one is 2.4), so she reads how big as well as how high.
                     _eye.position = eyeAt;
-                    _eye.localScale = Vector3.one * (1.45f / PhaisterOmen.CosmosOpen) * pulse * live * (1f + 0.3f * flare);
+                    _eye.localScale = Vector3.one * (1.45f / OmenCosmosOpen) * pulse * live * (1f + 0.3f * flare);
                     _eye.gameObject.SetActive(live > 0.02f);
                     if (_eyeMat != null) { _eyeMat.SetFloat("_Open", 0.78f); _eyeMat.SetFloat("_Time0", _age); _eyeMat.SetFloat("_Glitch", 0.75f); }
                 }

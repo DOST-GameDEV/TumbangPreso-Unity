@@ -261,8 +261,6 @@ namespace TumbangPreso.Abilities
                 case "nemu.1.fade":
                     Kit.Skill1?.ScaleLoadout(duration: Gain("nemu.1.fade")); break;
 
-                case "phaister.1.brand":
-                    Kit.Skill1?.ScaleLoadout(telegraphRadius: Cost("phaister.1.brand")); break;
                 case "rafi.1.tightcut":
                     Kit.Skill1?.ScaleLoadout(telegraphRadius: Cost("rafi.1.tightcut")); break;
             }
@@ -284,17 +282,6 @@ namespace TumbangPreso.Abilities
 
                 case "nemu.2.leash":
                     slot2?.ScaleLoadout(duration: Cost("nemu.2.leash")); break;
-
-                // ⚠️ LONG STRIDE IS THE ONE ROW WHOSE COST IS A DIVISION. It goes further (the
-                // gain scales the reach) and takes proportionally LONGER to ramp to the far mark,
-                // so the ramp is divided by the cost rather than multiplied by it. The player
-                // sees both in the live aim beacon before releasing, which is what makes it a
-                // read for the taya rather than a free upgrade.
-                case "phaister.2.stride":
-                    slot2?.ScaleLoadout(telegraphRange: Gain("phaister.2.stride"),
-                                             aimMax: Gain("phaister.2.stride"),
-                                             aimRamp: 1.0f / Cost("phaister.2.stride"));
-                    break;
             }
         }
 
@@ -322,8 +309,6 @@ namespace TumbangPreso.Abilities
                 case "zack.2.discharge": return "sfx_var_zack_discharge";
                 case "nemu.1.fade": return "sfx_var_nemu_fade";
                 case "nemu.2.leash": return "sfx_var_nemu_leash";
-                case "phaister.1.brand": return "sfx_var_phaister_brand";
-                case "phaister.2.stride": return "sfx_var_phaister_stride";
                 case "rafi.1.tightcut": return "sfx_var_rafi_tightcut";
                 case "rafi.2.longwake": return "sfx_var_rafi_longwake";
                 default: return null;
