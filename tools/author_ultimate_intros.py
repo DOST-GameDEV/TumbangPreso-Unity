@@ -703,6 +703,118 @@ HELD["dante"] = lambda: _dante(True)
 HOLD_DRIFT["dante-held"] = HOLD_DRIFT["dante"]
 
 
+# ⚠️ THE LONGHORN CUTSCENE'S LENGTH, AND THE ONE PLACE TO CHANGE IT. Authored on 4.86 s; the owner has not decided whether it may
+# be longer than ASTRA's 3.61. Everything before the slam (4.50 authored) is stretched or squeezed by one factor to fit; the slam
+# to the cut is play's tail (`GeoRules.DriftCutsceneTail` plus the 0.08 to the first band) and never changes. The stage reads the
+# table's length and maps its own clock the same way (`HeroIntroductionScene.DanteLonghorn.cs`, `DlAuthored`), so nothing else
+# needs editing. At 3.61 every beat before the slam runs at 0.72 of its speed: see that file's header for what it costs.
+LONGHORN_SECONDS = 4.86
+_LH_AUTHORED, _LH_SLAM = 4.86, 4.50
+
+
+def _lh_time(a):
+    """An authored time on the cutscene's real clock (see `LONGHORN_SECONDS`)."""
+    k = (LONGHORN_SECONDS - (_LH_AUTHORED - _LH_SLAM)) / _LH_SLAM
+    return a * k if a <= _LH_SLAM else a - _LH_SLAM + _LH_SLAM * k
+
+
+def _dante_longhorn(held):
+    """
+    CONTINENTAL DRIFT, THE LONGHORN (2026-10-29, restaged 2026-10-30 after film l1). The owner: "we're keeping the shields and body
+    armor but we're applying the old long horn cutscene we had. maybe improve the design on that tho", then "basically we're
+    merging the armor thing that astra brought + the longhorn cutscene". Our p11 (`git show d971877ec:tools/author_ultimate_intros.py`)
+    raised the longhorn out of a molten sea under him; ASTRA's v8 (`_dante_drift` above) gathers the earth onto him as MOUNTAIN
+    FORM and ends as the first band rises. This joins them: the mountain wakes 3.6 m behind him, its own stone tears off it and
+    becomes his armour (ASTRA's suit, on its own order), and the two of them bring their fists down together; the cut comes as the
+    first band rises at the players, exactly where ASTRA's did, so play takes over unchanged. He stays on the court in front of it
+    the whole time (owner on l1: "the jump from getting armor to getting on the longhorn is also weird").
+    Beats, AUTHORED on 4.86 s (the stage, `HeroIntroductionScene.DanteLonghorn.cs`, reads the same; `_lh_time` maps them):
+      0.30 THE CALL           both fists driven into the court; cracks run back from them to behind him
+      0.35 THE MOUNTAIN WAKES three heaves; he lifts his head to watch it come up; its eyes light 1.05
+      1.32 THE GIFT           it roars and he stands up into it (1.55); its stone flies onto him a piece at a time: fists
+                              1.62, bracers 1.90, chest 2.12, shoulders 2.34, legs 2.56, the stone horn 2.72, whole 2.90
+      3.00 THE LOAD           both of them raise both fists overhead; held, trembling, from 3.45 (the hang to 4.40)
+      4.50 THE SLAM           four fists in the court at once, its two landing either side of his
+      4.58 THE GROUND RISES   the first band heaves; the cut comes 0.28 later
+    The LAST pose is `stamp`, the same as ASTRA's, so the live cast clip continues from it. Every shot stays on his right (+x).
+    """
+    p = Performance("dante-longhorn-held" if held else "dante-longhorn", LONGHORN_SECONDS)
+    shoe = (20, 42, -8)
+    stand = Pose(torso=(-2, 0, 0), head=(-6, 0, 0), legs=((4, 14), (-4, 14)), left=(18, 30, 0), right=shoe if held else (18, 30, 0))
+    plant = Pose(torso=(44, 0, 0), head=(-20, 0, 0), left=(86, 8, 20), right=(86, 8, 20), legs=((52, 88), (40, 80)))
+    plant_shake = plant.but(torso=(46, 0, 1.5))
+    # ⚠️ Up on his fists to watch it rise (film l1: at the plant's full depth his head stood 0.22 m over the court and a low lens
+    # saw his head alone, "sunk into the court"): chest lifted, head right back, the fists still in the court.
+    plant_up = Pose(torso=(30, 0, 0), head=(-34, 0, 0), left=(74, 10, 20), right=(74, 10, 20), legs=((52, 88), (40, 80)))
+    # ⚠️ STANDING TO TAKE IT (film l2: still knelt while the suit landed, he was a head on the court and the pieces landed on
+    # nothing anyone could see): up, chest open, head back, arms held out and down at his sides, a wide braced stance; every piece
+    # landing knocks through him.
+    receive = Pose(torso=(-8, 0, 0), head=(-24, 0, 0), left=(30, 42, 0), right=(30, 42, 0), legs=((8, 24), (-8, 24)))
+    receive_shake = receive.but(torso=(-4, 0, 2.0), head=(-14, 0, 0))
+    crouch = Pose(torso=(26, 0, 0), head=(-18, 0, 0), left=(48, 24, 26), right=(48, 24, 26), legs=((50, 84), (44, 80)))
+    raised = Pose(torso=(-12, 0, 0), head=(-16, 0, 0), left=(122, 8, -62), right=(122, 8, -62), legs=((14, 14), (-14, 14)))
+    raised_shake = raised.but(torso=(-13, 0, 1.5), left=(126, 8, -64), right=(126, 8, -64))
+    cocked = Pose(torso=(-8, 0, 0), head=(-22, 0, 0), left=(164, 10, -26), right=(164, 10, -26), legs=((16, 16), (-16, 16)))
+    cocked_shake = cocked.but(torso=(-9, 0, 1.5), left=(168, 10, -28), right=(168, 10, -28))
+    stamp = Pose(torso=(28, -10, 0), head=(-8, 6, 0), left=(72, 6, 30), right=(72, 6, 30), legs=((22, 10), (-18, 10)))
+    if held:
+        stamp = stamp.but(right=(30, 42, -8))
+    stamp_shake = stamp.but(torso=(30, -10, 1.5))
+
+    p.key(0, stand)
+    p.key(.16, crouch)
+    p.key(.30, plant, punch=True)
+    p.key(.62, plant_up)
+    p.key(1.00, plant_up.but(torso=(31, 0, 1.0)))
+    p.key(1.25, plant_up)
+    # It roars; he pushes up off his fists and stands into it.
+    p.key(1.36, crouch)
+    p.key(1.55, receive)
+    # Each piece of the suit landing jolts through him (fists, bracers, chest, shoulders, legs, horn on the stage's clock).
+    for at in (1.62, 1.90, 2.12, 2.34, 2.56, 2.72):
+        p.key(at, receive_shake, punch=True).key(at + .1, receive)
+    p.key(2.84, receive)
+    p.key(3.00, raised)
+    p.key(3.45, cocked)
+    for i, at in enumerate((3.95, 4.03, 4.11, 4.19, 4.27)):
+        p.key(at, cocked_shake if i % 2 == 0 else cocked)
+    p.key(4.40, cocked)
+    p.key(4.50, stamp, punch=True)
+    p.key(4.58, stamp_shake, punch=True).key(4.68, stamp)
+    p.hold(4.68, 4.86, stamp)
+
+    # Down onto his knee for the call, up on his fists as it heaves, onto his feet as it roars, onto his toes at the top of the
+    # hang, and down into the slam.
+    p.rise(0, 0).rise(.30, -.2).rise(.62, -.12).rise(1.30, -.12).rise(1.55, 0).rise(4.30, 0).rise(4.40, .06).rise(4.50, -.16).rise(4.86, -.16)
+
+    # The stage frames every shot from his body and the longhorn (`HeroIntroductionScene.DanteLonghorn.cs`); these are the sides.
+    p.shot(0, .35, (1.9, .55, 1.9), (0, .5, .45), 46)
+    p.shot(.35, 1.32, (2.8, 1.3, 4.8), (0, 1.0, -2.0), 58, eye_to=(2.3, 1.05, 4.1), look_to=(0, 2.9, -3.2))
+    p.shot(1.32, 2.95, (2.6, .7, 2.6), (.5, 2.0, -1.8), 62, eye_to=(2.35, .75, 2.25), look_to=(.5, 2.1, -1.9))
+    p.shot(2.95, 4.45, (2.35, .75, 2.25), (.5, 2.1, -1.9), 62, eye_to=(2.2, .4, 3.6), look_to=(0, 2.9, -2.8), fov_to=56)
+    p.shot(4.45, 4.58, (3.1, 1.7, 3.9), (0, 1.1, -.9), 62, eye_to=(2.8, 1.5, 3.5))
+    p.shot(4.58, 4.86, (4.3, 3.4, .3), (0, .4, 4.6), 58, eye_to=(4.0, 3.6, .5), look_to=(0, .4, 6.0))
+    p.locked((3.2, 1.2, 6.2), (0, 2.4, -2.4), 58)
+
+    # Onto the real clock (`LONGHORN_SECONDS`).
+    p.keys = [(round(_lh_time(t), 3), pose) for t, pose in p.keys]
+    p.punches = [round(_lh_time(t), 3) for t in p.punches]
+    p.lift = [(round(_lh_time(t), 3), m) for t, m in p.lift]
+    p.holds = [(round(_lh_time(a), 3), round(_lh_time(b), 3)) for a, b in p.holds]
+    p.shots = [(round(_lh_time(s[0]), 3), round(_lh_time(s[1]), 3)) + tuple(s[2:]) for s in p.shots]
+    return p
+
+
+@performance
+def dante_longhorn():
+    return _dante_longhorn(False)
+
+
+HELD["dante-longhorn"] = lambda: _dante_longhorn(True)
+HOLD_DRIFT["dante-longhorn"] = HOLD_DRIFT["dante"]
+HOLD_DRIFT["dante-longhorn-held"] = HOLD_DRIFT["dante"]
+
+
 def _cheska(held):
     """
     ABSOLUTE ZERO, 3.2 s (plan.md section 6). "Reads the space. Leaves you the harder route."

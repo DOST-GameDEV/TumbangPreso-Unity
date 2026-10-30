@@ -12,6 +12,8 @@ namespace TumbangPreso.Visual
         // =========================================================================================
         private void DanteFrame(int index, float t, ref Vector3 eye, ref Vector3 look, ref float fov)
         {
+            // The longhorn cutscene frames its own shots (`HeroIntroductionScene.DanteLonghorn.cs`) while its switch is on.
+            if (DanteLonghornCut) { LonghornFrame(index, t, ref eye, ref look, ref fov); return; }
             var head = HeadPoint;
             switch (index)
             {

@@ -24,6 +24,12 @@ namespace TumbangPreso.EditorTools.MapKit
     /// ⚠️ ANY HERO (2026-10-08, for the other eight cutscenes' rework): request `introfx <hero> <tag>`. The files are then
     /// named `introfx_<hero>_<tag>_...` and `done_<hero>_<tag>.txt`. A caster with empty hands only: nothing here gives the
     /// stand-in a slipper, so the `<hero>-held` tables are not filmed yet.
+    ///
+    /// ⚠️ ON A MAP (2026-10-30, for Dante's longhorn, which on the plain stage was judged against a grey void): a tag that begins
+    /// `map` stages it on Eskinita's pale court, opened as a PREVIEW scene (the owner's open scene is not touched) and moved so
+    /// the spot the boulder film stands on (`DanteBoulderFilm`) is at the stage's origin, lit by the map's own lighting. A tag
+    /// that begins `mapilalim` or `maplagoon` uses those maps' middles. For Dante the film also writes
+    /// `clear_<hero>_<tag>.txt`: on every frame, how close the longhorn's surface comes to his body.
     /// </summary>
     public static partial class PaeteAbilityFilm
     {
@@ -76,7 +82,13 @@ namespace TumbangPreso.EditorTools.MapKit
             // The parsed tables are cached for the life of the scripts (`UltimatePerformance.Cache`), and nothing here reloads
             // them: without this a film asked for after regenerating a table shoots the one read before.
             typeof(UltimatePerformance).GetMethod("Reset", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)?.Invoke(null, null);
-            var scene = EditorSceneManager.NewPreviewScene();
+            bool onMap = tag.StartsWith("map");
+            string mapPath = tag.StartsWith("mapilalim") ? "Assets/TumbangPreso/Scenes/Maps/IlalimNgTulay.unity"
+                           : tag.StartsWith("maplagoon") ? "Assets/TumbangPreso/Scenes/Maps/LagoonCove.unity" : "Assets/TumbangPreso/Scenes/Maps/Eskinita.unity";
+            var mapSpot = tag.StartsWith("mapilalim") || tag.StartsWith("maplagoon") ? Vector2.zero : new Vector2(-2.5f, -6.0f);
+            var scene = onMap ? EditorSceneManager.OpenPreviewScene(mapPath) : EditorSceneManager.NewPreviewScene();
+            bool mapLit = false;
+            var clearLog = hero == "dante" ? new System.Text.StringBuilder() : null;
             var owned = new List<Object>();
             RenderTexture rt = null;
             // The close looks at his arms (`arms`, below) are filmed twice the size: what is looked for there is small.
@@ -88,16 +100,31 @@ namespace TumbangPreso.EditorTools.MapKit
             {
                 GameObject In(GameObject go) { SceneManager.MoveGameObjectToScene(go, scene); return go; }
 
+                if (onMap)
+                {
+                    // The court under the spot, found in the preview scene's own physics, is moved to the stage's origin.
+                    float road = 0f;
+                    var physics = scene.GetPhysicsScene();
+                    if (physics.IsValid() && physics.Raycast(new Vector3(mapSpot.x, 30f, mapSpot.y), Vector3.down, out var under, 80f, ~0, QueryTriggerInteraction.Ignore)) road = under.point.y;
+                    var shift = new Vector3(-mapSpot.x, -road, -mapSpot.y);
+                    foreach (var root in scene.GetRootGameObjects()) root.transform.position += shift;
+                    mapLit = UnityEditor.Unsupported.SetOverrideLightingSettings(scene);
+                }
                 var cam = In(new GameObject("~IntroCamera")).AddComponent<Camera>();
                 cam.scene = scene; cam.enabled = false;
                 cam.nearClipPlane = 0.05f; cam.farClipPlane = 260f;
-                cam.clearFlags = CameraClearFlags.SolidColor; cam.backgroundColor = new Color(0.40f, 0.46f, 0.56f);
-                var sun = In(new GameObject("~IntroSun")).AddComponent<Light>();
-                sun.type = LightType.Directional; sun.intensity = 1.05f; sun.color = new Color(1f, 0.98f, 0.95f);
-                sun.shadows = LightShadows.Soft; sun.transform.rotation = Quaternion.Euler(48f, -32f, 0f);
+                cam.clearFlags = onMap && RenderSettings.skybox != null ? CameraClearFlags.Skybox : CameraClearFlags.SolidColor;
+                cam.backgroundColor = onMap ? new Color(0.55f, 0.70f, 0.88f) : new Color(0.40f, 0.46f, 0.56f);
+                if (!onMap)
+                {
+                    var sun = In(new GameObject("~IntroSun")).AddComponent<Light>();
+                    sun.type = LightType.Directional; sun.intensity = 1.05f; sun.color = new Color(1f, 0.98f, 0.95f);
+                    sun.shadows = LightShadows.Soft; sun.transform.rotation = Quaternion.Euler(48f, -32f, 0f);
+                }
                 Shader.SetGlobalFloat("_CharacterSmoothShade", ToonSkin.CharacterSmoothShade);
 
                 var ground = In(GameObject.CreatePrimitive(PrimitiveType.Plane));
+                if (onMap) ground.SetActive(false);
                 ground.name = "~IntroGround";
                 Object.DestroyImmediate(ground.GetComponent<Collider>());
                 ground.transform.localScale = new Vector3(10f, 1f, 10f);
@@ -277,6 +304,7 @@ namespace TumbangPreso.EditorTools.MapKit
                             boneLog.AppendLine(FormattableString.Invariant($"{t:F2} s {bone.name} at {bone.position} under {bone.parent?.name}: frame x {v.x * 2 - 1:F2} y {v.y * 2 - 1:F2}, {v.z:F2} m from the lens"));
                         }
                     }
+                    if (clearLog != null) clearLog.AppendLine(FormattableString.Invariant($"{t:F3} {(stage.GetComponentsInChildren<Transform>(true).FirstOrDefault(x => x.name == "Longhorn") is Transform beast ? LonghornClearance(beast, body) : float.NaN):F3}"));
                     cam.Render();
                     var keep = RenderTexture.active; RenderTexture.active = rt;
                     shot.ReadPixels(new Rect(0, 0, width, height), 0, 0); shot.Apply();
@@ -292,6 +320,7 @@ namespace TumbangPreso.EditorTools.MapKit
                 string stripPath = Path.Combine(OutDir, "introfx_" + named + "_strip.png");
                 File.WriteAllBytes(stripPath, strip.EncodeToPNG());
                 File.WriteAllText(Path.Combine(OutDir, "bones_" + named + ".txt"), boneLog.ToString());
+                if (clearLog != null) File.WriteAllText(Path.Combine(OutDir, "clear_" + named + ".txt"), "seconds, metres between the longhorn's surface and his body's box (negative: inside it)\n" + clearLog);
                 File.WriteAllText(donePath, stripPath.Replace('\\', '/') + "\n" + count + " frames, " + seconds.ToString("0.00") + " s, in " + frames.Replace('\\', '/') + "\n");
                 Debug.Log("[PaeteAbilityFilm] introfx " + named + " written to " + OutDir);
             }
@@ -311,8 +340,39 @@ namespace TumbangPreso.EditorTools.MapKit
                 if (clip != null) Object.DestroyImmediate(clip);
                 if (rt != null) { RenderTexture.active = null; rt.Release(); Object.DestroyImmediate(rt); }
                 foreach (var thing in owned) if (thing != null) Object.DestroyImmediate(thing);
+                if (mapLit) UnityEditor.Unsupported.RestoreOverrideLightingSettings();
                 EditorSceneManager.ClosePreviewScene(scene);
             }
+        }
+
+        /// <summary>
+        /// How close the longhorn comes to Dante on this frame: every vertex of every one of its meshes (skipping inactive parts),
+        /// against his body's skinned bounds; the signed distance to that box, negative when a vertex is inside it. Film only.
+        /// </summary>
+        private static float LonghornClearance(Transform beast, GameObject body)
+        {
+            if (!beast.gameObject.activeInHierarchy) return 99f;
+            var box = new Bounds(); bool any = false;
+            foreach (var skin in body.GetComponentsInChildren<SkinnedMeshRenderer>(false))
+            { if (any) box.Encapsulate(skin.bounds); else { box = skin.bounds; any = true; } }
+            if (!any) return float.NaN;
+            float best = 99f;
+            foreach (var filter in beast.GetComponentsInChildren<MeshFilter>(false))
+            {
+                var mesh = filter.sharedMesh;
+                // Its stone only: the light quads riding it (eyes, seams, fist heat) are not surfaces anyone can touch.
+                var surface = filter.GetComponent<Renderer>();
+                if (mesh == null || surface == null || !surface.enabled || (surface.sharedMaterial != null && surface.sharedMaterial.shader.name.Contains("Glow"))) continue;
+                var toWorld = filter.transform.localToWorldMatrix;
+                foreach (var v in mesh.vertices)
+                {
+                    var w = toWorld.MultiplyPoint3x4(v);
+                    var d = new Vector3(Mathf.Max(box.min.x - w.x, w.x - box.max.x), Mathf.Max(box.min.y - w.y, w.y - box.max.y), Mathf.Max(box.min.z - w.z, w.z - box.max.z));
+                    float signed = d.x > 0f || d.y > 0f || d.z > 0f ? new Vector3(Mathf.Max(d.x, 0f), Mathf.Max(d.y, 0f), Mathf.Max(d.z, 0f)).magnitude : Mathf.Max(d.x, Mathf.Max(d.y, d.z));
+                    if (signed < best) best = signed;
+                }
+            }
+            return best;
         }
     }
 }
