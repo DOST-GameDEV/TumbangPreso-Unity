@@ -25,7 +25,7 @@ namespace TumbangPreso.Visual
         private Light _sun;private Color _sunColour;private float _sunIntensity,_sunShadow;private Quaternion _sunRotation;
         private Material _skyAuthored,_skyLook;
         // The look's near sky: real blocky clouds (LIGHT-3), shown only at a non-zero weight.
-        private BlockyClouds _clouds;private float _cloudOpacity=-1;
+        private int _parts;private BlockyClouds _clouds;private float _cloudOpacity=-1;
         // The court's own dark ground, found once every Start has run. See MapLook.GroundLift.
         private readonly List<(Renderer renderer,int index)> _court=new List<(Renderer,int)>();
         private MaterialPropertyBlock _groundBlock;private bool _groundPending=true;
@@ -115,7 +115,7 @@ namespace TumbangPreso.Visual
         private void Update()
         {
             if(_groundPending){_groundPending=false;FindGround();ApplyGround();}
-            if(_weight!=WorldCueProfile.LightingWeight)ApplyScene();
+            if(_weight!=WorldCueProfile.LightingWeight || _parts!=WorldCueProfile.DisabledLookParts)ApplyScene();
         }
         // ⚠️⚠️ FOUND BY SHAPE, NOT BY NAME, AND ONLY FLAT RENDERERS ARE LIFTED. The court floor
         // arrives through generated meshes and kit prefabs, and no material name is shared by
@@ -173,7 +173,9 @@ namespace TumbangPreso.Visual
         }
         private void ApplyScene()
         {
-            if(Look==null)return;_weight=WorldCueProfile.LightingWeight;
+            if(Look==null)return;_weight=WorldCueProfile.LightingWeight;_parts=WorldCueProfile.DisabledLookParts;
+            float full=_weight;
+            _weight=WorldCueProfile.PartOn(WorldCueProfile.PartAmbientFog)?full:0;
             RenderSettings.ambientMode=_weight>0?AmbientMode.Trilight:_ambientMode;
             RenderSettings.ambientSkyColor=Color.Lerp(_sky,Look.Sky,_weight);
             RenderSettings.ambientEquatorColor=Color.Lerp(_equator,Look.Equator,_weight);
@@ -182,6 +184,7 @@ namespace TumbangPreso.Visual
             RenderSettings.fogStartDistance=Mathf.Lerp(_fogStart,Look.FogStart,_weight);
             RenderSettings.fogEndDistance=Mathf.Lerp(_fogEnd,Look.FogEnd,_weight);
             RenderSettings.fogColor=Color.Lerp(_fogColour,Look.Fog,_weight);
+            _weight=WorldCueProfile.PartOn(WorldCueProfile.PartSun)?full:0;
             if(_sun!=null)
             {
                 _sun.color=Color.Lerp(_sunColour,Look.Sun,_weight);
@@ -200,6 +203,7 @@ namespace TumbangPreso.Visual
                     _sun.transform.rotation=Quaternion.LookRotation(lifted,Vector3.up);
                 }
             }
+            _weight=WorldCueProfile.PartOn(WorldCueProfile.PartSky)?full:0;
             if(_skyLook!=null)
             {
                 Blend("_Zenith",Look.Zenith);Blend("_Horizon",Look.Horizon);
@@ -213,8 +217,10 @@ namespace TumbangPreso.Visual
                     _clouds!=null?_weight:0));
                 RenderSettings.skybox=_weight>0?_skyLook:_skyAuthored;
             }
-            if(_clouds!=null)_clouds.SetVisible(_weight>0);
-            ApplyGround();
+            _weight=full;
+            if(_clouds!=null)_clouds.SetVisible(_weight>0 && WorldCueProfile.PartOn(WorldCueProfile.PartClouds));
+            if(WorldCueProfile.PartOn(WorldCueProfile.PartGround))ApplyGround();
+            else{_weight=0;ApplyGround();_weight=full;}
         }
         private void Blend(string id,Color look){if(_skyAuthored.HasProperty(id))_skyLook.SetColor(id,Color.Lerp(_skyAuthored.GetColor(id),look,_weight));}
         private void RestoreScene()
@@ -241,7 +247,7 @@ namespace TumbangPreso.Visual
                 GlassSky=Shader.GetGlobalVector(GlassSkyId),GlassHorizon=Shader.GetGlobalVector(GlassHorizonId),Soft=Shader.GetGlobalVector(SoftId),
                 InkFloor=Shader.GetGlobalFloat(InkFloorId)});
             var profile=WorldLookProfile.Current;
-            Shader.SetGlobalFloat(WeightId,HandlesCamera(camera)?_weight:0);
+            Shader.SetGlobalFloat(WeightId,HandlesCamera(camera)&&WorldCueProfile.PartOn(WorldCueProfile.PartShader)?_weight:0);
             Shader.SetGlobalTexture(RampId,_ramp);
             Shader.SetGlobalVector(ShapeId,new Vector4(profile.BandEdge,profile.UpperRim,profile.FeetShade,profile.MetalHighlight));
             Shader.SetGlobalVector(SoftId,new Vector4(profile.Softness,profile.Wrap,profile.CastInkSelf,profile.CastInkWidth));

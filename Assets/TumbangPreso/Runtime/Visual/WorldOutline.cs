@@ -324,7 +324,7 @@ namespace TumbangPreso.Visual
         public static int AmbientOcclusionSamplesTest;
         private static bool AmbientOcclusionLite => AmbientOcclusionSamplesTest != 0
             ? AmbientOcclusionSamplesTest <= 8
-            : Settings.SettingsStore.Current.GraphicsQuality < Settings.GraphicsProfiles.All.Length - 1;
+            : Settings.GraphicsProfiles.Current < Settings.GraphicsProfiles.All.Length - 1;
         private static readonly int WorldAOId = Shader.PropertyToID("_WorldAO");
         private static readonly int WorldAOParamsId = Shader.PropertyToID("_WorldAOParams");
 
@@ -441,7 +441,12 @@ namespace TumbangPreso.Visual
 
         private bool HasWorldContact => WorldLookPresentation.HandlesCamera(_camera)
             && WorldCueProfile.LightingWeight>0 && WorldLookProfile.Current.EnvironmentContact>0
-            && Settings.SettingsStore.Current.GraphicsQuality>0;
+            && Settings.GraphicsProfiles.Current>0 && WorldCueProfile.PartOn(WorldCueProfile.PartOutlineContact);
+        // ⚠️ THE APPLIED TIER, NOT THE STORED SETTING (owner, 2026-10-29: "are you able to bake in the bright lighting
+        // look/optimize it?"). In a match the two are the same number (every settings path calls `GraphicsProfiles.Apply`
+        // with the stored value), but the graphics probe applies each tier without touching the store, so its "Low" ran
+        // Balanced's full-resolution occlusion and its extra depth pass: that, not the look, was the 40-60 ms the Radeon
+        // measured on Low (Logs/perf-igpu/parts/look-parts.csv).
         /// <summary>
         /// Whether this frame draws ambient occlusion: the contact term's gate (the look owns the
         /// camera, the weight is up, not the Low tier), a perspective camera, since the pass

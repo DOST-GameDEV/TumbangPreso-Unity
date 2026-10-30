@@ -39,12 +39,18 @@ namespace TumbangPreso.Visual
         /// of the look is on". A consumer that read the field alone would keep the bright contact
         /// shadows under a player who picked Classic.
         /// </summary>
-        /// ⚠️ THE LOW GRAPHICS TIER DRAWS EACH MAP'S AUTHORED LIGHTING (owner, 2026-10-29: "its crazy laggy without a gpu").
-        /// Measured on the owner's integrated Radeon (2 RDNA2 units) with `-tp-graphicsreport` at 1920x1080 on Low: the look
-        /// at weight 0 takes Payo from 135 to 69 ms a frame, Kanto 82 to 50, the Arena 63 to 17
-        /// (Logs/perf-igpu/optimized, world-render.csv against world-render-look-off.csv). Balanced and High keep the look.
-        public static float LightingWeight => Settings.GraphicsProfiles.Current <= 0 ? 0f
-            : Mathf.Clamp01(Current.WorldLighting) * Settings.LightingStyles.LookWeight;
+        /// ⚠️ EVERY TIER DRAWS THE LOOK, LOW INCLUDED (owner, 2026-10-29: "are you able to bake in the bright lighting
+        /// look/optimize it?"). Low briefly drew the authored lighting after the probe measured the look at 40-60 ms there;
+        /// that cost was the world occlusion pass the probe's "Low" wrongly ran (see `WorldOutline.HasWorldContact`),
+        /// which a Low player never draws.
+        public static float LightingWeight => Mathf.Clamp01(Current.WorldLighting) * Settings.LightingStyles.LookWeight;
+        /// <summary>A probe's switches, never set by the game (owner, 2026-10-29: "are you able to bake in the bright
+        /// lighting look/optimize it?"): each bit puts one part of the look back to the scene's own while the rest stays
+        /// weighted, so `-tp-look-parts` can say which part costs the frame.</summary>
+        public static int DisabledLookParts;
+        public static bool PartOn(int part) => (DisabledLookParts & part) == 0;
+        public const int PartAmbientFog=1,PartSun=2,PartSky=4,PartClouds=8,PartGround=16,PartShader=32,PartContact=64,PartGrade=128,PartOutlineContact=256;
+        public static readonly string[] PartNames={"ambient_fog","sun","sky","clouds","ground","shader","contact","grade","outline_ao"};
         private static WorldCueProfile _current;
         public static WorldCueProfile Current
         {
