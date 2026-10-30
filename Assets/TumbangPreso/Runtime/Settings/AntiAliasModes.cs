@@ -244,7 +244,7 @@ namespace TumbangPreso.Settings
             RequestedSamples = entry.Samples;
             FxaaActive = entry.Fxaa;
 
-            QualitySettings.antiAliasing = entry.Samples;
+            QualitySettings.antiAliasing = CappedSamples;
 
             // ⚠️⚠️ IN THE EDITOR THAT LINE ABOVE IS A FILE WRITE, AND IT MADE EVERY UNITY RUN
             // LEAVE THE WORKING TREE DIRTY. `QualitySettings.antiAliasing` is the serialized
@@ -271,5 +271,15 @@ namespace TumbangPreso.Settings
         /// to be identical on both sides; an event with no subscribers is free.
         /// </summary>
         public static event System.Action AppliedInEditor;
+
+        /// <summary>The Low graphics tier draws without MSAA whatever this pick asks (owner, 2026-10-29: "its crazy
+        /// laggy without a gpu"); FXAA still follows the pick. Every other tier gets exactly the picked samples.</summary>
+        private static int CappedSamples => GraphicsProfiles.Current == 0 ? 0 : RequestedSamples;
+
+        /// <summary>Re-pushes the sample count after a graphics tier change (`GraphicsProfiles.Apply`).</summary>
+        public static void ApplySamples()
+        {
+            if (QualitySettings.antiAliasing != CappedSamples) QualitySettings.antiAliasing = CappedSamples;
+        }
     }
 }

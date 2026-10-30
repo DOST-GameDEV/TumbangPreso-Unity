@@ -372,7 +372,11 @@ namespace TumbangPreso.Visual
         /// </summary>
         private void RequestDepthNormals(bool want)
         {
-            RequestFineDepth(want && FineDepth);
+            // The Low tier builds the ink's depth-normals from the camera's depth (see `InkFromDepth`), so it asks
+            // for that depth and not for the engine's second full draw of the scene.
+            bool fromDepth = want && InkFromDepth;
+            RequestFineDepth(want && (FineDepth || fromDepth));
+            want &= !fromDepth;
             if (_camera == null || want == _depthNormalsRequested) return;
 
             if (want) _camera.depthTextureMode |= DepthTextureMode.DepthNormals;
@@ -450,15 +454,71 @@ namespace TumbangPreso.Visual
 
         private void LateUpdate() => RequestDepthNormals(Live);
 
+        /// <summary>
+        /// THE LOW TIER SKIPS THE DEPTH-NORMALS PREPASS (owner, 2026-10-29: "its crazy laggy without a gpu. which
+        /// is not optimal. even more so for the payo map"). That prepass draws every opaque renderer a second time,
+        /// about 900 set-passes on Payo by day, and on Low nothing but the ink edge reads it (the occlusion and the
+        /// ground contact are already off there). The camera's depth texture is drawn anyway for the sun's
+        /// screen-space shadows, so `_inkDepthBuffer` turns that into the same encoding (shader pass 4) and publishes
+        /// it under the engine's own name. Perspective cameras only: pass 4 rebuilds points from a perspective ray.
+        /// Every other tier keeps the prepass exactly as it was.
+        /// </summary>
+        private bool InkFromDepth => Settings.GraphicsProfiles.Current == 0 && _camera != null
+            && !_camera.orthographic && !HasWorldContact;
+        private const int InkFromDepthPass = 4;
+        private static readonly int DepthNormalsId = Shader.PropertyToID("_CameraDepthNormalsTexture");
+        private static readonly int InkViewRayId = Shader.PropertyToID("_InkViewRay");
+        private CommandBuffer _inkDepthBuffer;
+        private bool _inkDepthAttached;
+        private RenderTexture _inkDepthNormals;
+
+        /// <summary>Attaches the Low tier's depth-to-normals buffer AHEAD of the exclusion mask, which reads it.</summary>
+        private void PrepareInkFromDepth(bool want)
+        {
+            if (!want)
+            {
+                if (_inkDepthAttached && _camera != null) _camera.RemoveCommandBuffer(CameraEvent.BeforeImageEffectsOpaque, _inkDepthBuffer);
+                _inkDepthAttached = false;
+                return;
+            }
+            int width = Mathf.Max(1, _camera.pixelWidth), height = Mathf.Max(1, _camera.pixelHeight);
+            if (_inkDepthNormals == null || _inkDepthNormals.width != width || _inkDepthNormals.height != height)
+            {
+                if (_inkDepthNormals != null) { _inkDepthNormals.Release(); DestroyImmediate(_inkDepthNormals); }
+                _inkDepthNormals = new RenderTexture(width, height, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Linear)
+                { name = "WorldOutlineInkDepthNormals", filterMode = FilterMode.Point, antiAliasing = 1, hideFlags = HideFlags.HideAndDontSave };
+                _inkDepthNormals.Create();
+            }
+            float tan = Mathf.Tan(_camera.fieldOfView * 0.5f * Mathf.Deg2Rad);
+            _material.SetVector(InkViewRayId, new Vector4(tan * _camera.aspect, tan, 0, 0));
+            if (_inkDepthBuffer == null) _inkDepthBuffer = new CommandBuffer { name = "World Outline Ink Depth-Normals (Low)" };
+            _inkDepthBuffer.Clear();
+            _inkDepthBuffer.Blit((Texture)null, _inkDepthNormals, _material, InkFromDepthPass);
+            _inkDepthBuffer.SetGlobalTexture(DepthNormalsId, _inkDepthNormals);
+            _inkDepthBuffer.SetRenderTarget(BuiltinRenderTextureType.CurrentActive);
+            if (!_inkDepthAttached)
+            {
+                // Command buffers on one event run in the order added, and the mask reads this one's output.
+                bool mask = _bufferAttached;
+                if (mask) DetachBuffer();
+                _camera.AddCommandBuffer(CameraEvent.BeforeImageEffectsOpaque, _inkDepthBuffer);
+                _inkDepthAttached = true;
+                if (mask) { _camera.AddCommandBuffer(CameraEvent.BeforeImageEffectsOpaque, _maskBuffer); _bufferAttached = true; }
+            }
+        }
+
         private void OnDisable()
         {
             RequestDepthNormals(false);
             DetachBuffer();
+            PrepareInkFromDepth(false);
         }
 
         private void OnDestroy()
         {
             DetachBuffer();
+            PrepareInkFromDepth(false);
+            if (_inkDepthNormals != null) { _inkDepthNormals.Release(); DestroyImmediate(_inkDepthNormals); }
 
             if (_material != null) DestroyImmediate(_material);
             if (_maskMaterial != null) DestroyImmediate(_maskMaterial);
@@ -588,7 +648,7 @@ namespace TumbangPreso.Visual
                     for(int i=0;i<materials.Length;i++)
                     {
                         var material=materials[i];
-                        if(material==null||material.shader==null||material.shader.name!=NearFade.ShaderName)continue;
+                        if(material==null||material.shader==null||ShaderNamed(material.shader)!=NearFade.ShaderName)continue;
                         _nearFade.Add(new NearFadeMask{Renderer=renderer,Bounds=renderer.bounds,Stationary=renderer.gameObject.isStatic,
                             Submesh=i,Start=material.GetFloat("_NearFadeStart"),End=material.GetFloat("_NearFadeEnd")});
                     }
@@ -645,6 +705,15 @@ namespace TumbangPreso.Visual
 
         private const string KantoFoliageShaderName = "TumbangPreso/KantoFoliage";
 
+        /// <summary>`Shader.name` builds a new string on every read, and the rescan asks it for each material once a
+        /// second, so the answer is kept per shader (owner, 2026-10-29: "optimizing the game"). Same names, no garbage.</summary>
+        private static readonly Dictionary<Shader, string> ShaderNames = new Dictionary<Shader, string>();
+        private static string ShaderNamed(Shader shader)
+        {
+            if (!ShaderNames.TryGetValue(shader, out string name)) ShaderNames[shader] = name = shader.name;
+            return name;
+        }
+
         private static bool IsToonSurface(Renderer renderer)
         {
             var materials = renderer.sharedMaterials;
@@ -653,14 +722,15 @@ namespace TumbangPreso.Visual
             foreach (var material in materials)
             {
                 if (material == null || material.shader == null) continue;
-                if (material.shader.name == ToonShaderName) return true;
+                string shaderName = ShaderNamed(material.shader);
+                if (shaderName == ToonShaderName) return true;
                 // ⚠️ KANTO'S LEAF CARDS TOO (owner, 2026-09-27: "tree leaves look off in-game",
                 // twice). A canopy is thousands of tiny card-to-card creases in the depth-normals
                 // texture, so the bright look's crease shade, sun-caught bevel and the AO painted
                 // dark blotches and yellow rims all over it. Masked like the cast: foliage keeps
                 // its own shading. Kanto's shader only, so the approved Lagoon Cove look is
                 // unchanged.
-                if (material.shader.name == KantoFoliageShaderName) return true;
+                if (shaderName == KantoFoliageShaderName) return true;
             }
 
             return false;
@@ -700,6 +770,7 @@ namespace TumbangPreso.Visual
             // off at runtime, and clearing on the render callback would fight the frame it is
             // drawing.
             RequestDepthNormals(Live);
+            PrepareInkFromDepth(Live && InkFromDepth && EnsureMaterials());
 
             if (!Live || (_exclusion == Exclusion.Overlap && !HasWorldContact))
             {
@@ -1009,8 +1080,9 @@ namespace TumbangPreso.Visual
             // clamp is repeated here rather than trusted from the `[Range]` attribute, because
             // the attribute constrains the inspector and does not constrain a value that arrives
             // from an older serialised scene or from code.
-            _material.SetFloat(SupersampleId,
-                               Mathf.Clamp(_supersample, MinSupersample, MaxSupersample));
+            // The Low tier takes one edge sample a pixel (8 taps rather than 20 at the default 2x2; owner, 2026-10-29).
+            _material.SetFloat(SupersampleId, Settings.GraphicsProfiles.Current == 0 ? MinSupersample
+                               : Mathf.Clamp(_supersample, MinSupersample, MaxSupersample));
 
             ApplyFade();
             ApplyViewRay();

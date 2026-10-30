@@ -39,7 +39,12 @@ namespace TumbangPreso.Visual
         /// of the look is on". A consumer that read the field alone would keep the bright contact
         /// shadows under a player who picked Classic.
         /// </summary>
-        public static float LightingWeight => Mathf.Clamp01(Current.WorldLighting) * Settings.LightingStyles.LookWeight;
+        /// ⚠️ THE LOW GRAPHICS TIER DRAWS EACH MAP'S AUTHORED LIGHTING (owner, 2026-10-29: "its crazy laggy without a gpu").
+        /// Measured on the owner's integrated Radeon (2 RDNA2 units) with `-tp-graphicsreport` at 1920x1080 on Low: the look
+        /// at weight 0 takes Payo from 135 to 69 ms a frame, Kanto 82 to 50, the Arena 63 to 17
+        /// (Logs/perf-igpu/optimized, world-render.csv against world-render-look-off.csv). Balanced and High keep the look.
+        public static float LightingWeight => Settings.GraphicsProfiles.Current <= 0 ? 0f
+            : Mathf.Clamp01(Current.WorldLighting) * Settings.LightingStyles.LookWeight;
         private static WorldCueProfile _current;
         public static WorldCueProfile Current
         {

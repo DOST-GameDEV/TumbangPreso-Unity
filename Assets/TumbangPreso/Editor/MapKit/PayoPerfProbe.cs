@@ -382,6 +382,48 @@ namespace TumbangPreso.EditorTools.MapKit
                 if (Label.Contains("shotsonly")) { main.Dispose(); loop.Dispose(); render.Dispose(); batches.Dispose(); setpass.Dispose(); draws.Dispose(); tris.Dispose(); casters.Dispose(); yield break; }
             }
 
+            // THE DETAIL LEVELS, SAME PLAY (owner, 2026-10-29: "its crazy laggy without a gpu ... even more so for the payo
+            // map"): a label with "quick" measures three views at the game's field of view (the court eye over the court,
+            // the court eye at the town, 14 m up at the town), full and `PayoDetail` low interleaved, then the same at
+            // night, and stops. Sections 1 to 5 are skipped.
+            if (Label.Contains("quick"))
+            {
+                var driver = root.GetComponent<PayoDetailDriver>();
+                cam.fieldOfView = Settings.GameSettings.ValidFirstPersonFov(Settings.SettingsStore.Current.FirstPersonFov);
+                var townAt = (byPart.TryGetValue("houses", out var hq) ? hq : new List<Renderer>()).Where(r => r != null && new Vector2(r.bounds.center.x, r.bounds.center.z).magnitude < 250f)
+                    .Select(r => r.bounds.center).DefaultIfEmpty(new Vector3(0f, 0f, -150f)).Aggregate(Vector3.zero, (a, b) => a + b);
+                int townN = Mathf.Max(1, (byPart.TryGetValue("houses", out var hq2) ? hq2 : new List<Renderer>()).Count(r => r != null && new Vector2(r.bounds.center.x, r.bounds.center.z).magnitude < 250f));
+                townAt /= townN;
+                Vector3 courtEye = eye, highEye = eye + Vector3.up * 14f;
+                Vector3 toT = townAt - courtEye; toT.y = Mathf.Max(toT.y, -0.15f * toT.magnitude);
+                var qviews = new[] { ("court eye, court", courtEye, new Vector3(0f, -0.25f, 1f)), ("court eye, town", courtEye, toT), ("high, town", highEye, townAt - highEye) };
+                var night = Object.FindFirstObjectByType<PayoNight>();
+                foreach (bool dark in new[] { false, true })
+                {
+                    if (night != null) night.Hold = dark ? 1f : -1f;
+                    for (float t = Time.realtimeSinceStartup; Time.realtimeSinceStartup - t < 1.5f;) yield return null;
+                    Say($"{(dark ? "NIGHT" : "DAY")} at {cam.fieldOfView:0} degrees, pixel light count {QualitySettings.pixelLightCount}, shadows {QualitySettings.shadows} {QualitySettings.shadowDistance:0} m:");
+                    foreach (var (vname, at, dir) in qviews)
+                        foreach (int level in new[] { 1, 0, 1, 0 })
+                        {
+                            PayoDetail.Override = level;
+                            for (int k = 0; k < 3; k++) yield return null;
+                            eye = at;
+                            try { StartView(dir); while (Step(dir)) yield return null; }
+                            finally { PayoDetail.Override = -1; }
+                            string nm = vname + (level == 0 ? " LOW" : " full");
+                            Say(Line(nm.Length > 22 ? nm.Substring(0, 22) : nm, Current) + $" | lights lit {Object.FindObjectsByType<Light>(FindObjectsSortMode.None).Count(l => l.isActiveAndEnabled && l.type != LightType.Directional && l.cullingMask != 0)}");
+                            if (level == 0 && driver != null) Say("      " + driver.Summary);
+                            Flush();
+                        }
+                    Say("");
+                }
+                if (night != null) night.Hold = -1f;
+                main.Dispose(); loop.Dispose(); render.Dispose(); batches.Dispose(); setpass.Dispose(); draws.Dispose(); tris.Dispose(); casters.Dispose();
+                Say($"Done {Time.realtimeSinceStartup - t0:0.0} s into Play.");
+                yield break;
+            }
+
             {
                 Say("1. EVERYTHING ON, from the court eye:");
                 var all = new Sample();

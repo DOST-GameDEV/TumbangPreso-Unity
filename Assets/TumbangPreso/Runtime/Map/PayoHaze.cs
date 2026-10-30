@@ -55,7 +55,7 @@ namespace TumbangPreso.Map
             // At night a moonlit mist, lighter than the dark air, or it vanishes into it (owner, 2026-10-19: "i dont
             // notice the haze and fog much anymore").
             Shader.SetGlobalVector(ColourId, RenderSettings.fogColor.linear * Mathf.Lerp(1f, 2.2f, PayoNight.Factor));
-            float wisps = Mathf.Min(0.85f, Wisps * (Strength > 0f ? most / Strength : 0f));
+            float wisps = Mathf.Min(0.85f, Wisps * PayoDetail.HazeWisps * (Strength > 0f ? most / Strength : 0f));
             Shader.SetGlobalVector(WispId, new Vector4(wisps, WispHigh, WispLow, 1f / Mathf.Max(1f, WispSize)));
             float heading = WindHeading * Mathf.Deg2Rad;
             float drift = DriftHeading * Mathf.Deg2Rad;
@@ -65,7 +65,7 @@ namespace TumbangPreso.Map
             if (sun != null && day > 0f)
             {
                 Vector3 to = -sun.transform.forward;
-                Shader.SetGlobalVector(SunId, new Vector4(to.x, to.y, to.z, Rays * day));
+                Shader.SetGlobalVector(SunId, new Vector4(to.x, to.y, to.z, Rays * PayoDetail.HazeRays * day));
                 Color light = sun.color.linear;
                 Shader.SetGlobalVector(SunColourId, new Vector4(light.r, light.g, light.b, Flare * day));
             }

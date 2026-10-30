@@ -1268,6 +1268,52 @@ Shader "TumbangPreso/WorldOutline"
             }
             ENDCG
         }
+
+        // -------------------------------------------------------------------
+        // PASS 4. THE LOW TIER'S DEPTH-NORMALS, BUILT FROM THE CAMERA'S DEPTH (owner, 2026-10-29: "its crazy laggy
+        // without a gpu ... even more so for the payo map"). The engine's depth-normals prepass draws every opaque
+        // renderer a second time (about 900 set-passes on Payo by day). The camera's own depth texture is already
+        // drawn for the sun's screen-space shadows, so on the Low tier `WorldOutline` skips the prepass and this pass
+        // writes the same encoding from that depth instead: the normal is rebuilt from neighbouring depths, taking
+        // the nearer side so an edge does not bend it. Everything that reads `_CameraDepthNormalsTexture` (the
+        // composite, the exclusion mask) reads it unchanged. Silhouettes keep their ink; creases come out a little
+        // softer than the prepass's true normals, which is the trade the Low tier makes.
+        // -------------------------------------------------------------------
+        Pass
+        {
+            Name "INK_DEPTH_NORMALS_FROM_DEPTH"
+            Cull Off ZWrite Off ZTest Always
+            CGPROGRAM
+            #pragma vertex vert_img
+            #pragma fragment frag
+            #pragma target 3.0
+            #include "UnityCG.cginc"
+            UNITY_DECLARE_DEPTH_TEXTURE(_CameraDepthTexture);
+            float4 _CameraDepthTexture_TexelSize;
+            float4 _InkViewRay;   // xy: tan(fov / 2) times aspect, tan(fov / 2)
+
+            float3 ViewAt(float2 uv)
+            {
+                float e = LinearEyeDepth(SAMPLE_DEPTH_TEXTURE_LOD(_CameraDepthTexture, float4(uv, 0, 0)));
+                return float3((uv * 2 - 1) * _InkViewRay.xy * e, -e);
+            }
+
+            float4 frag(v2f_img i) : SV_Target
+            {
+                float2 uv = i.uv, t = _CameraDepthTexture_TexelSize.xy;
+                float d01 = Linear01Depth(SAMPLE_DEPTH_TEXTURE_LOD(_CameraDepthTexture, float4(uv, 0, 0)));
+                if (d01 >= 0.9999) return EncodeDepthNormal(1.0, float3(0, 0, 1));
+                float3 c = ViewAt(uv);
+                float3 r = ViewAt(uv + float2(t.x, 0)), l = ViewAt(uv - float2(t.x, 0));
+                float3 u = ViewAt(uv + float2(0, t.y)), b = ViewAt(uv - float2(0, t.y));
+                float3 dx = abs(r.z - c.z) < abs(c.z - l.z) ? r - c : c - l;
+                float3 dy = abs(u.z - c.z) < abs(c.z - b.z) ? u - c : c - b;
+                float3 n = normalize(cross(dx, dy));
+                if (n.z < 0) n = -n;
+                return EncodeDepthNormal(min(d01, 0.9998), n);
+            }
+            ENDCG
+        }
     }
 
     Fallback Off
