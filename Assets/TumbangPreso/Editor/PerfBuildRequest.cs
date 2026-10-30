@@ -22,7 +22,13 @@ namespace TumbangPreso.EditorTools
             string output = File.ReadAllText(Request).Trim();
             File.Delete(Request);
             var execute = typeof(GameBuilder).GetMethod("Execute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
-            bool ok = (bool)execute.Invoke(null, new object[] { output, BuildTarget.StandaloneWindows64 });
+            // Frame timing stats on for the perf build only, so `FrameBudgetProbe` reads main, render and GPU times
+            // (owner, 2026-10-30: "i want it so optimized i'm able to run at 300+ fps").
+            bool timing = PlayerSettings.enableFrameTimingStats;
+            PlayerSettings.enableFrameTimingStats = true;
+            bool ok;
+            try { ok = (bool)execute.Invoke(null, new object[] { output, BuildTarget.StandaloneWindows64 }); }
+            finally { PlayerSettings.enableFrameTimingStats = timing; }
             File.WriteAllText(Done, (ok ? "OK " : "FAIL ") + output + "\n");
         }
     }

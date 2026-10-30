@@ -295,7 +295,8 @@ namespace TumbangPreso.EditorTools.MapKit
         internal static string Run(string request)
         {
             var words = request.ToLowerInvariant().Split(new[] { ' ', '\t', '\r', '\n', ',' }, StringSplitOptions.RemoveEmptyEntries);
-            bool build = words.Contains("build"), review = words.Contains("review"), stills = words.Contains("stills"), sheet = words.Contains("sheet");
+            bool build = words.Contains("build"), review = words.Contains("review"), stills = words.Contains("stills"), sheet = words.Contains("sheet"); bool aobake = words.Contains("aobake");   // 2026-10-29 Payo bake test (PayoSceneBuilder.BakedAO.cs)
+            if (aobake) return BakeSavedScene();
             if (!build && !review && !stills && !sheet) throw new InvalidOperationException("unknown request '" + request.Trim() + "' (write build, review, stills LABEL, sheet, probe, measure LABEL, or several of them)");
             var said = new List<string>();
             var warnings = new List<string>();

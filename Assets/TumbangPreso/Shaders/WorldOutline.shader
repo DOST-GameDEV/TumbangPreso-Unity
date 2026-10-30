@@ -1130,6 +1130,8 @@ Shader "TumbangPreso/WorldOutline"
                 if(-p.z>_WorldContactProjection.x*.999)return 1;
                 float cast=1;
                 if(_CharacterAOParams.x>0)cast=CastAO(p,n,i.pos.xy);
+                // Baked world occlusion (Payo): only the cast's creases are drawn live (owner, 2026-10-30).
+                if(_WorldAOParams.x<=0)return half4(1,cast,1,1);
                 // ⚠️⚠️ NOTHING NEARER THAN THE NEAR-FADE START IS TRUSTED (`_WorldAOParams.w`,
                 // `NearFade.FadeStartMetres`, 1.8 m). A NearFade prop close to the camera (a bridge
                 // pillar you stand beside) dissolves in the colour pass so you can see past it, but

@@ -48,6 +48,11 @@ Shader "TumbangPreso/LagoonFoliage"
         half _Glossiness, _Gain, _VertexTint, _PaleOn;
         float4 _PaleRange, _Nudge;
 
+        // 2026-10-29, the owner asked whether the world AO can be baked, then "continue" to a Payo bake test
+        // (Runtime/Map/PayoBakedAO.cs): UV2 x is a static vertex's baked light, y = 1 marks it baked; `_TPBakedAO` is
+        // the cavity shade (rgb) and strength (a), zero unless Payo's switch is on, so every other mesh multiplies by one.
+        float4 _TPBakedAO;
+
         struct Input { float2 uv_MainTex; float4 color : COLOR; float4 bakedOrigin; };
 
         // 2026-10-29, the owner: "go ahead and merge the plaza dressing". A merged mesh (PayoSceneBuilder.PlazaMerge.cs)
@@ -56,6 +61,8 @@ Shader "TumbangPreso/LagoonFoliage"
         {
             UNITY_INITIALIZE_OUTPUT(Input, o);
             o.bakedOrigin = v.texcoord3;
+            // No interpolator is left (ForwardBase holds 10): the baked shade rides on the origin marker, w = marker + shade / 4.
+            o.bakedOrigin.w += saturate((1 - v.texcoord2.x) * v.texcoord2.y) * 0.25;
         }
 
         float3 HueShift(float3 c, float shift)
@@ -82,7 +89,8 @@ Shader "TumbangPreso/LagoonFoliage"
             if (IN.bakedOrigin.w > 0.5) origin = IN.bakedOrigin.xyz;
             float3 h = abs(LagoonHash33(floor(origin * 7.31) + 0.5));
             albedo = HueShift(albedo, lerp(_Nudge.z, _Nudge.w, h.y)) * lerp(_Nudge.x, _Nudge.y, h.x);
-            o.Albedo = saturate(albedo);
+            float shadeAO = (IN.bakedOrigin.w - step(0.5, IN.bakedOrigin.w)) * 4;
+            o.Albedo = saturate(albedo) * lerp(half3(1, 1, 1), _TPBakedAO.rgb, saturate(shadeAO * _TPBakedAO.a));
             o.Alpha = c.a;
             o.Metallic = 0;
             o.Smoothness = _Glossiness;

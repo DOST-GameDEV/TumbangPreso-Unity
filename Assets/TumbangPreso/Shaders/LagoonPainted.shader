@@ -69,8 +69,15 @@ Shader "TumbangPreso/LagoonPainted"
         float4 _GrainRange, _NormalTone;
         float _GrainScale, _GrainFine, _GrainHue;
 
+        // 2026-10-29, the owner asked whether the world AO can be baked, then "continue" to a Payo bake test
+        // (Runtime/Map/PayoBakedAO.cs): UV2 x is a static vertex's baked light, y = 1 marks it baked; `_TPBakedAO` is
+        // the cavity shade (rgb) and strength (a), zero unless Payo's switch is on, so every other mesh multiplies by one.
+        float4 _TPBakedAO;
+        inline half3 TPBakedAO(float2 b) { return lerp(half3(1, 1, 1), _TPBakedAO.rgb, saturate((1 - b.x) * b.y * _TPBakedAO.a)); }
+
         struct Input
         {
+            float2 bakedAO;
             float2 uv_MainTex;
             float4 color : COLOR;
             float3 worldPos;
@@ -78,8 +85,10 @@ Shader "TumbangPreso/LagoonPainted"
             INTERNAL_DATA
         };
 
-        void vert(inout appdata_full v)
+        void vert(inout appdata_full v, out Input o)
         {
+            UNITY_INITIALIZE_OUTPUT(Input, o);
+            o.bakedAO = v.texcoord2.xy;
             if (dot(v.tangent.xyz, v.tangent.xyz) < 1e-4)
             {
                 float3 n = normalize(v.normal);
@@ -134,7 +143,7 @@ Shader "TumbangPreso/LagoonPainted"
                 c.rgb *= 1 - h;
                 emission += _HazeColour.rgb * h;
             }
-            o.Albedo = c.rgb;
+            o.Albedo = c.rgb * TPBakedAO(IN.bakedAO);
             o.Metallic = 0;
             o.Smoothness = _Glossiness;
             o.Emission = emission;

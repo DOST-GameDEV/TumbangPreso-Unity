@@ -322,6 +322,11 @@ namespace TumbangPreso.Visual
         /// <summary>REVIEW ONLY: 16 or 8 forces that many probes whatever the tier; 0 (the game)
         /// lets the tier decide. Like `CharacterAoTest`, never set by the game itself.</summary>
         public static int AmbientOcclusionSamplesTest;
+        /// <summary>A MAP WITH ITS OCCLUSION BAKED (owner, 2026-10-29: asked whether the world AO can be baked, then
+        /// "continue" to a Payo bake test). Set each frame by `Map.PayoBakedAO` while its switch is on, false everywhere
+        /// else. True skips passes 2 and 3 (the world's and the cast's screen occlusion): the static world carries its
+        /// occlusion in its vertices, and the contact term and the ground occlusion under moving things stay live.</summary>
+        public static bool BakedWorldAO;
         private static bool AmbientOcclusionLite => AmbientOcclusionSamplesTest != 0
             ? AmbientOcclusionSamplesTest <= 8
             : Settings.GraphicsProfiles.Current < Settings.GraphicsProfiles.All.Length - 1;
@@ -1113,8 +1118,12 @@ namespace TumbangPreso.Visual
             float castBias=Mathf.Min(.02f,castRadius*.1f);   // was .006 / .02: a smooth slope shaded itself in stripes (owner, 2026-10-05: "weird lining effect too from the ao")
             _material.SetVector("_CharacterAOParams",new Vector4(castShare,castRadius,castBias,0));
             RenderTexture occlusion=null,occlusionBlur=null;
-            float aoStrength=AmbientOcclusionLive?WorldLookProfile.Current.AmbientOcclusion*WorldLookPresentation.Current.Weight:0;
-            if(aoStrength>0)
+            float aoStrength=AmbientOcclusionLive && !BakedWorldAO?WorldLookProfile.Current.AmbientOcclusion*WorldLookPresentation.Current.Weight:0;
+            // A map with its world occlusion baked (Payo) still runs this pass for the CAST's creases only (owner,
+            // 2026-10-30: "turn it on by default, keep character crease ao"): the world strength is 0, so the shader
+            // returns after the cast's probes and skips the world's.
+            bool castOnly=aoStrength<=0 && BakedWorldAO && AmbientOcclusionLive && castShare>0;
+            if(aoStrength>0 || castOnly)
             {
                 // ⚠️ FULL RESOLUTION. It was half, on the reasoning that occlusion is soft; the
                 // owner then saw its noise, and at half resolution the 4x4 rotation tile the blur

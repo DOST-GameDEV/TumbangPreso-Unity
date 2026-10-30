@@ -132,16 +132,25 @@ Shader "TumbangPreso/PayoLand"
         half _Glossiness;
         fixed4 _BaseColour;
 
+        // 2026-10-29, the owner asked whether the world AO can be baked, then "continue" to a Payo bake test
+        // (Runtime/Map/PayoBakedAO.cs): UV2 x is a static vertex's baked light, y = 1 marks it baked; `_TPBakedAO` is
+        // the cavity shade (rgb) and strength (a), zero unless Payo's switch is on, so every other mesh multiplies by one.
+        float4 _TPBakedAO;
+        inline half3 TPBakedAO(float2 b) { return lerp(half3(1, 1, 1), _TPBakedAO.rgb, saturate((1 - b.x) * b.y * _TPBakedAO.a)); }
+
         struct Input
         {
+            float2 bakedAO;
             float3 worldPos;
             float4 color : COLOR;
             float3 worldNormal;
             INTERNAL_DATA
         };
 
-        void vert(inout appdata_full v)
+        void vert(inout appdata_full v, out Input o)
         {
+            UNITY_INITIALIZE_OUTPUT(Input, o);
+            o.bakedAO = v.texcoord2.xy;
             // As LagoonPainted: the .glb carries no TANGENT, and the tangent frame is only used here to hand the bumped
             // world normal back to the surface shader, so any frame round the normal does.
             if (dot(v.tangent.xyz, v.tangent.xyz) < 1e-4)
@@ -636,7 +645,7 @@ Shader "TumbangPreso/PayoLand"
             float3 wB = WorldNormalVector(IN, float3(0, 1, 0));
             o.Normal = normalize(float3(dot(nb, wT), dot(nb, wB), dot(nb, nW)));
 
-            o.Albedo = colour;
+            o.Albedo = colour * TPBakedAO(IN.bakedAO);
             o.Metallic = 0;
             o.Smoothness = gloss;
             o.Emission = emit;

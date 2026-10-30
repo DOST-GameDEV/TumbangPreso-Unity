@@ -386,6 +386,71 @@ namespace TumbangPreso.EditorTools.MapKit
             // map"): a label with "quick" measures three views at the game's field of view (the court eye over the court,
             // the court eye at the town, 14 m up at the town), full and `PayoDetail` low interleaved, then the same at
             // night, and stops. Sections 1 to 5 are skipped.
+            // THE BAKED OCCLUSION, SAME PLAY (owner, 2026-10-29: asked whether the world AO can be baked, then "continue" to a
+            // Payo bake test). A label with "bakedao" shoots the four eyes by day with the screen AO and with the bake
+            // (LABEL_EYE_screen.png / _baked.png, Balanced), then on each tier measures the eyes, screen and baked
+            // interleaved twice, and stops. Needs `aobake` run on the scene first (a PayoBakedAO on the map root).
+            if (Label.Contains("bakedao"))
+            {
+                var night = Object.FindFirstObjectByType<PayoNight>();
+                if (night != null) night.Hold = -1f;
+                bool hasBake = root.GetComponent<PayoBakedAO>() != null;
+                Say($"Bake on the map root: {hasBake}");
+                cam.fieldOfView = Settings.GameSettings.ValidFirstPersonFov(Settings.SettingsStore.Current.FirstPersonFov);
+                int tierWas = Settings.GraphicsProfiles.Current;
+                var eyes = new[]
+                {
+                    ("court", eye, new Vector3(0f, -0.25f, 1f)),
+                    ("plaza", new Vector3(0f, 1.7f, -20f), new Vector3(0f, -5.2f, -25f)),
+                    ("terraces", new Vector3(16f, 11f, -14f), new Vector3(22f, -17f, 24f)),
+                    ("corner", new Vector3(-20f, 1.7f, -2f), new Vector3(-20f, -6.2f, 6f)),
+                };
+                var rt = new RenderTexture(1600, 900, 24, RenderTextureFormat.ARGB32);
+                Settings.GraphicsProfiles.Apply(1);
+                foreach (var (tag, at, dir) in eyes)
+                    foreach (int baked in new[] { 0, 1 })
+                    {
+                        PayoBakedAO.Test = baked;
+                        cam.transform.SetPositionAndRotation(at, Quaternion.LookRotation(dir.normalized, Vector3.up));
+                        for (int k = 0; k < 4; k++) yield return null;
+                        var keep = cam.targetTexture;
+                        cam.targetTexture = rt; cam.Render(); cam.targetTexture = keep;
+                        var prev = RenderTexture.active; RenderTexture.active = rt;
+                        var tex = new Texture2D(rt.width, rt.height, TextureFormat.RGB24, false);
+                        tex.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0); tex.Apply();
+                        RenderTexture.active = prev;
+                        Directory.CreateDirectory(Folder);
+                        File.WriteAllBytes($"{Folder}/{Label}_{tag}_{(baked > 0 ? "baked" : "screen")}.png", tex.EncodeToPNG());
+                        Object.Destroy(tex);
+                    }
+                rt.Release(); Object.Destroy(rt);
+                Say($"Shots: {Folder}/{Label}_[court|plaza|terraces|corner]_[screen|baked].png, Balanced, day");
+                try
+                {
+                    foreach (int tier in new[] { 1, 2, 0 })
+                    {
+                        Settings.GraphicsProfiles.Apply(tier);
+                        for (float t = Time.realtimeSinceStartup; Time.realtimeSinceStartup - t < 1f;) yield return null;
+                        Say($"{Settings.GraphicsProfiles.Of(tier).Label.ToUpperInvariant()} at {cam.fieldOfView:0} degrees, day:");
+                        foreach (var (tag, at, dir) in eyes)
+                            foreach (int baked in new[] { 0, 1, 0, 1 })
+                            {
+                                PayoBakedAO.Test = baked;
+                                for (int k = 0; k < 3; k++) yield return null;
+                                eye = at;
+                                StartView(dir); while (Step(dir)) yield return null;
+                                Say(Line((tag + (baked > 0 ? " BAKED" : " screen")).PadRight(16), Current));
+                                Flush();
+                            }
+                        Say("");
+                    }
+                }
+                finally { PayoBakedAO.Test = -1; Settings.GraphicsProfiles.Apply(tierWas); }
+                main.Dispose(); loop.Dispose(); render.Dispose(); batches.Dispose(); setpass.Dispose(); draws.Dispose(); tris.Dispose(); casters.Dispose();
+                Say($"Done {Time.realtimeSinceStartup - t0:0.0} s into Play.");
+                yield break;
+            }
+
             if (Label.Contains("quick"))
             {
                 var driver = root.GetComponent<PayoDetailDriver>();
