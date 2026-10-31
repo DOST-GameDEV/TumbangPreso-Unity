@@ -340,7 +340,8 @@ namespace TumbangPreso.CameraSystem
             for(int y=-1;y<=1;y++)for(int x=-2;x<=2;x++)
             {
                 var ray=new Ray(eye,turn*new Vector3(x*.3f,y*.24f,1).normalized);
-                foreach(var hit in Physics.RaycastAll(ray,reach,~0,QueryTriggerInteraction.Ignore))if(IsReplayScenery(hit.collider))return true;
+                // The ground under the play is not in the way of it.
+                foreach(var hit in Physics.RaycastAll(ray,reach,~0,QueryTriggerInteraction.Ignore))if(hit.normal.y<.6f&&IsReplayScenery(hit.collider))return true;
                 foreach(var prop in _shotProps)if(prop.box.IntersectRay(ray,out float along)&&along<reach)return true;
             }
             return false;
@@ -358,7 +359,7 @@ namespace TumbangPreso.CameraSystem
                 if(renderer.transform.IsChildOf(_stage.transform)||!renderer.enabled)continue;
                 if(renderer.GetComponentInParent<CharacterMotor>()!=null||renderer.GetComponentInParent<Slipper>()!=null||renderer.GetComponentInParent<Lata>()!=null)continue;
                 var box=renderer.bounds;
-                if(box.extents.magnitude<5&&(box.center-focus).sqrMagnitude<16*16)_shotProps.Add((box,renderer));
+                if(box.extents.magnitude<5&&box.size.y>.25f&&box.max.y>focus.y-.6f&&(box.center-focus).sqrMagnitude<16*16)_shotProps.Add((box,renderer));
             }
             Vector3 face=Vector3.ProjectOnPlane(_shotSubject.Track.Pose.StateAt(_clip.Contact).Rotations[0]*Vector3.forward,Vector3.up).normalized;
             Vector3 start=_shotSubject.Track.Pose.StateAt(_clip.Start).Positions[0]+Vector3.up*.9f;
