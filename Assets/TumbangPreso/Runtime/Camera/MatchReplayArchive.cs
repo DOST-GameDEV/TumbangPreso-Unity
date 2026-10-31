@@ -303,7 +303,8 @@ namespace TumbangPreso.CameraSystem
                 var retained=new Retained(clip,clip.Encode(),pending.Importance);
                 RecordedClip?.Invoke(retained);
                 _clips.Add(retained);_clips.Sort((a,b)=>b.Importance!=a.Importance?b.Importance.CompareTo(a.Importance):b.Clip.Id.CompareTo(a.Clip.Id));
-                if(_clips.Count>Capacity)_clips.RemoveAt(_clips.Count-1);
+                // The newest moment is always kept, whatever its rank: it is the one a spectator on another machine asks to see.
+                if(_clips.Count>Capacity)_clips.RemoveAt(_clips[_clips.Count-1]==retained?_clips.Count-2:_clips.Count-1);
                 LastSkip=null;if(_clips.Contains(retained)){RetainedClip?.Invoke(retained);Net.MatchRpc.Instance?.StageReplay(retained);}
             }
             catch(System.IO.InvalidDataException error){LastSkip=error.Message;}

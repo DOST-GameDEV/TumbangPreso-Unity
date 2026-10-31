@@ -59,7 +59,8 @@ namespace TumbangPreso.CameraSystem
         public const float ApproachPlayback = 1.1f, IntoContactPlayback = .9f, FollowPlayback = .9f;
         public const float ContactPlayback = ApproachPlayback + IntoContactPlayback;
         public const float AnimationDuration = ApproachPlayback + IntoContactPlayback + FollowPlayback;
-        public const float FreezeDuration = 1.1f;
+        // Owner, October 31: "feels awkward af". The dead hold is shorter, and a wipe now opens and closes it.
+        public const float FreezeDuration = .8f;
         public const float FadeDuration = .18f;
         private const float SlowFrom = .35f;
         // A skipped tag replay crossfades back to the live recovery view rather than cutting.
@@ -74,7 +75,7 @@ namespace TumbangPreso.CameraSystem
         private static CatchReconstruction _live;
         /// <summary>True while a tag replay owns this screen; the live court's tag markers step aside for it.</summary>
         public static bool AnyPlaying => _live != null && _live.Playing;
-        private bool _slammed, _shotPlaced, _closeShot, _cutDone;
+        private bool _slammed, _shotPlaced, _closeShot, _cutDone, _exitSwept;
         // ⚠️ SPECTATORS SEE IT TOO (owner, October 22: *"make it seaable ren for spectator"*), as a corner
         // window over the live picture: a watcher has no stun to fill and must not lose the match behind it.
         private bool _spectatorView;
@@ -263,7 +264,7 @@ namespace TumbangPreso.CameraSystem
                 Camera.main.GetComponent<WorldOutline>()?.PrototypeEnabled ?? true;
             int width = Mathf.Clamp(Screen.width, 960, 1920);
             int height = Mathf.Max(540, Mathf.RoundToInt(width * Screen.height / (float)Mathf.Max(1, Screen.width)));
-            _target = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32) { name = "CatchPlaybackFrame" };
+            _target = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32) { name = "CatchPlaybackFrame", antiAliasing = Mathf.Max(2, QualitySettings.antiAliasing) };
             _target.Create(); _camera.targetTexture = _target;
             _canvas = OwnerUiLayout.Canvas(transform, "CatchReconstructionCanvas", 180);
             var focus = _canvas.GetComponent<InputLayer.ScreenFocus>(); if (focus != null) focus.enabled = false;
@@ -289,6 +290,9 @@ namespace TumbangPreso.CameraSystem
             // Its TAGGED plate waits for the touch and slams in on it.
             _overlay = ReplayOverlay.Build(frame, "TAGGED", !_spectatorView);
             _overlay.HoldAnnouncement();
+            // The victim's whole screen jumps back in time, so a wipe says so. A spectator's corner window has no cut to hide.
+            _exitSwept = false;
+            if (!_spectatorView) ReplayStinger.Sweep(transform, HudDraw.Honey);
         }
         private void LateUpdate()
         {
@@ -306,11 +310,15 @@ namespace TumbangPreso.CameraSystem
             bool skip = !_spectatorView && _victim.Intent.Pressed(Verb.Interact);
             if (skip && !_skipHeld && _duration - elapsed > SkipFadeDuration) { _fade = SkipFadeDuration; _duration = elapsed + SkipFadeDuration; }
             _skipHeld = skip;
+            if (!_spectatorView && !_exitSwept && _duration - elapsed <= ReplayStinger.InSeconds)
+            { _exitSwept = true; ReplayStinger.Sweep(transform, HudDraw.Honey, true); }
             float alpha = Mathf.Clamp01((_duration - elapsed) / _fade) * Mathf.Clamp01(elapsed / .12f);
-            _picture.color = new Color(1, 1, 1, alpha);
+            // The hold reads as a freeze frame: the picture dims a little under the TAGGED plate.
+            float dim = _freezeCaptured ? Mathf.Lerp(1, .74f, Mathf.Clamp01((elapsed - AnimationDuration) / .2f)) : 1;
+            _picture.color = new Color(dim, dim, dim, alpha);
             _overlay.Alpha = alpha;
             // The touch: a white flash, the TAGGED plate slamming in, and the shake in `PlaceShotCamera`.
-            if (!_slammed && elapsed >= ContactPlayback) { _slammed = true; _overlay.Slam(); }
+            if (!_slammed && elapsed >= ContactPlayback) { _slammed = true; _overlay.Slam(); GameServices.Audio?.PlayReplayCue("tag", 1f, .85f, 0f); }
             float sinceContact = elapsed - ContactPlayback;
             var look = Settings.SettingsStore.Current;
             float flash = sinceContact < 0 || look.ReducedEffects ? 0
@@ -322,7 +330,7 @@ namespace TumbangPreso.CameraSystem
             if (_freezeCaptured)
             {
                 float push = _spectatorView ? 0 : Mathf.SmoothStep(0, 1, Mathf.Clamp01((elapsed - AnimationDuration) / FreezeDuration));
-                _picture.rectTransform.localScale = Vector3.one * Mathf.Lerp(1, 1.06f, push);
+                _picture.rectTransform.localScale = Vector3.one * Mathf.Lerp(1, 1.1f, push);
                 // Never keep an obstructed shot over the live recovery view once the world has moved on.
                 Vector3 frozenOffset = _camera.transform.position - _shotFocus;
                 if (ShotDistance(_shotFocus, frozenOffset) < frozenOffset.magnitude - .05f) End();

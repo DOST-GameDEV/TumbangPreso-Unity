@@ -39,6 +39,10 @@ namespace TumbangPreso.CameraSystem
         private bool _tracking,_shotPlaced,_shotClose;
         private static bool IsBody(RecordedObjectTrack track)=>track.Kind==RecordedObjectKind.Player||track.Kind==RecordedObjectKind.Companion;
         private Vector3 _followOffset;
+        private ReplayOverlay _overlay;
+        private Image _contactFlash;
+        private bool _contactLanded;
+        private float _contactLandedAt;
         private GameObject _stage;
         private IDisposable _audioMix;
         private Canvas _canvas;
@@ -204,7 +208,7 @@ namespace TumbangPreso.CameraSystem
                 _shotActor=focus;_shotSubject=subject;_shotLens=lensRadius;_tracking=!standalone;
                 _shotSide=eye-centre;_shotSide.y=0;_shotSide=_shotSide.sqrMagnitude>.01f?_shotSide.normalized:side;
                 _target=new RenderTexture(width,height,24,RenderTextureFormat.ARGB32){name="RetainedMatchFrame",
-                    antiAliasing=standalone?Mathf.Max(1,QualitySettings.antiAliasing):1};_target.Create();_camera.targetTexture=_target;
+                    antiAliasing=Mathf.Max(2,QualitySettings.antiAliasing)};_target.Create();_camera.targetTexture=_target;
                 _canvas=OwnerUiLayout.Canvas(owner,"CanonicalReplayCanvas",240);
                 var input=_canvas.GetComponent<InputLayer.ScreenFocus>();if(input!=null)input.enabled=false;
                 var picture=OwnerUiLayout.Rect(_canvas.transform,"RecordedWorldFrame").gameObject.AddComponent<RawImage>();
@@ -219,7 +223,13 @@ namespace TumbangPreso.CameraSystem
                 }
                 // The camcorder frame replaces the old band, credit and can-state footer (owner, 2026-10-22).
                 // Halftime's replay is a shared, host-timed package, so it carries no skip prompt.
-                if(!standalone)ReplayOverlay.Build(_canvas.transform,"HIGHLIGHT",false);
+                // Its plate lands on the contact with a flash, as the tag replay's does, so the slowed moment has a hit in it.
+                if(!standalone)
+                {
+                    _contactFlash=OwnerUiLayout.Rect(_canvas.transform,"RecordedContactFlash").gameObject.AddComponent<Image>();
+                    OwnerUiLayout.Fill(_contactFlash.rectTransform);_contactFlash.raycastTarget=false;_contactFlash.color=new Color(1,1,1,0);
+                    _overlay=ReplayOverlay.Build(_canvas.transform,"HIGHLIGHT",false);_overlay.HoldAnnouncement();
+                }
                 _audioMix=GameServices.Audio?.EnterReplayMix();
                 Ready=true;
             }
@@ -293,6 +303,24 @@ namespace TumbangPreso.CameraSystem
             var look=Quaternion.LookRotation(focus-_camera.transform.position,Vector3.up);
             _camera.transform.rotation=_shotPlaced&&!cut?Quaternion.Slerp(_camera.transform.rotation,look,follow):look;
             _shotPlaced=true;
+            // The lens punches in on the contact and eases back; a short shake sells the hit.
+            float since=time-_clip.Contact;
+            bool calm=Settings.SettingsStore.Current.ReducedUiMotion;
+            _camera.fieldOfView=58*(since<0||calm?1:1-.1f*Mathf.Exp(-since*6));
+            if(since>=0&&!calm)
+            {
+                float shake=1.2f*Mathf.Exp(-since*12);
+                _camera.transform.rotation*=Quaternion.Euler(Mathf.Sin(time*71)*shake,Mathf.Sin(time*53+1.7f)*shake,0);
+            }
+        }
+        private void StepContactBeat(float time)
+        {
+            if(_overlay==null)return;
+            if(!_contactLanded&&time>=_clip.Contact){_contactLanded=true;_contactLandedAt=Time.unscaledTime;_overlay.Slam();}
+            if(_contactFlash==null||!_contactLanded)return;
+            var look=Settings.SettingsStore.Current;
+            float flash=look.ReducedEffects?0:.5f*Mathf.Clamp01(1-(Time.unscaledTime-_contactLandedAt)/.18f)*look.EffectiveFlashIntensity;
+            _contactFlash.color=new Color(1,1,1,flash);
         }
         private static bool Clear(Vector3 centre,Vector3 eye,float lensRadius)
         {
@@ -309,6 +337,7 @@ namespace TumbangPreso.CameraSystem
         {
             if(!Ready)return;
             time=Mathf.Clamp(time,_clip.Start,_clip.End);
+            StepContactBeat(time);
             var can=_items.FirstOrDefault(i=>i.Track.Kind==RecordedObjectKind.Can);
             if(can!=null)
             {

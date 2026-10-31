@@ -7,8 +7,8 @@ namespace TumbangPreso.Core
     /// DISTANCE. A body given speed v and decelerated at Friction travels v²/(2·Friction),
     /// which is v²/60 at the shipping value. Write the DISTANCE you want and solve for the
     /// speed; never hard-code a distance beside a speed, or moving Friction leaves one of
-    /// the two silently wrong. This is why BlockKnockbackSpeed is 4.583 rather than "0.35":
-    /// sqrt(0.35 × 60) is where that number comes from.
+    /// the two silently wrong. This is why BlockKnockbackSpeed is 6 rather than "0.6":
+    /// sqrt(0.6 × 60) is where that number comes from.
     /// </summary>
     public static class Combat
     {

@@ -94,6 +94,75 @@ namespace TumbangPreso.Visual
             Object.Destroy(go, Lifetime * 2.0f);
         }
 
+        /// <summary>A slipper landing on a body: fast streaks in the thrower's colour and one ring that snaps open.</summary>
+        public static void SpawnSlipperHit(Vector3 at, Color accent, bool insideView = false)
+        {
+            var go = new GameObject("~SlipperHit");
+            go.transform.position = at;
+            var ps = go.AddComponent<ParticleSystem>();
+            ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            ps.useAutoRandomSeed = false;
+            ps.randomSeed = 417u;
+            var main = ps.main;
+            main.duration = .3f; main.loop = false; main.playOnAwake = false;
+            main.startLifetime = new ParticleSystem.MinMaxCurve(.14f, .3f);
+            main.startSpeed = new ParticleSystem.MinMaxCurve(3.5f, 8f);
+            main.startSize = new ParticleSystem.MinMaxCurve(.05f, .1f);
+            main.startColor = new ParticleSystem.MinMaxGradient(accent, Color.white);
+            main.gravityModifier = .8f;
+            main.stopAction = ParticleSystemStopAction.Destroy;
+            var emission = ps.emission; emission.rateOverTime = 0;
+            emission.SetBursts(new[] { new ParticleSystem.Burst(0, insideView ? (short)7 : (short)20) });
+            var shape = ps.shape; shape.shapeType = ParticleSystemShapeType.Sphere; shape.radius = .08f;
+            var size = ps.sizeOverLifetime; size.enabled = true;
+            size.size = new ParticleSystem.MinMaxCurve(1, AnimationCurve.EaseInOut(0, 1, 1, 0));
+            var renderer = ps.GetComponent<ParticleSystemRenderer>();
+            // Next to the lens a stretched streak fills the screen, so the victim's own view gets small flat sparks.
+            renderer.renderMode = insideView ? ParticleSystemRenderMode.Billboard : ParticleSystemRenderMode.Stretch;
+            renderer.velocityScale = .035f; renderer.lengthScale = 1.5f;
+            renderer.sharedMaterial = BurstMaterial; renderer.maxParticleSize = insideView ? .012f : .05f;
+            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            renderer.receiveShadows = false;
+            ComfortParticles.Configure(ps);
+            ps.Play(); Object.Destroy(go, .7f);
+            if (!insideView && !Settings.SettingsStore.Current.ReducedEffects) ImpactRing.Spawn(at, accent, BurstMaterial);
+        }
+
+        /// <summary>The ring: a circle facing the viewer that opens fast and thins to nothing.</summary>
+        private sealed class ImpactRing : MonoBehaviour
+        {
+            private const float Life = .2f, From = .15f, To = 1.15f;
+            private const int Points = 40;
+            private LineRenderer _line;
+            private float _age;
+            public static void Spawn(Vector3 at, Color colour, Material material)
+            {
+                var go = new GameObject("~SlipperHitRing");
+                go.transform.position = at;
+                go.AddComponent<VfxRenderTag>();
+                var line = go.AddComponent<LineRenderer>();
+                line.sharedMaterial = material; line.loop = true; line.positionCount = Points; line.useWorldSpace = false;
+                line.alignment = LineAlignment.View; line.startColor = line.endColor = colour;
+                line.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off; line.receiveShadows = false;
+                go.AddComponent<ImpactRing>()._line = line;
+            }
+            private void LateUpdate()
+            {
+                _age += Time.deltaTime;
+                float u = _age / Life;
+                if (u >= 1) { Destroy(gameObject); return; }
+                var view = Camera.main;
+                if (view != null) transform.rotation = view.transform.rotation;
+                float radius = Mathf.Lerp(From, To, 1 - (1 - u) * (1 - u));
+                _line.widthMultiplier = .13f * (1 - u);
+                for (int i = 0; i < Points; i++)
+                {
+                    float a = i * Mathf.PI * 2 / Points;
+                    _line.SetPosition(i, new Vector3(Mathf.Cos(a) * radius, Mathf.Sin(a) * radius, 0));
+                }
+            }
+        }
+
         public static void SpawnTinContact(Vector3 at)
         {
             var go = new GameObject("~TinContact");
