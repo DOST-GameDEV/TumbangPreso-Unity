@@ -18,7 +18,7 @@ namespace TumbangPreso.EditorTools
         private static void Watch()
         {
             if (!File.Exists(Request) || EditorApplication.isPlayingOrWillChangePlaymode || EditorApplication.isCompiling) return;
-            if (File.Exists("Temp/cutscene-film.lock")) return;
+            if (File.Exists("Temp/cutscene-film.lock") && !File.ReadAllText("Temp/cutscene-film.lock").StartsWith("kanto perfbuild")) return;   // our own lock is the one we build under
             string output = File.ReadAllText(Request).Trim();
             File.Delete(Request);
             var execute = typeof(GameBuilder).GetMethod("Execute", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
