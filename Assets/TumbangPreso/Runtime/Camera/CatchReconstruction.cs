@@ -62,6 +62,10 @@ namespace TumbangPreso.CameraSystem
         // Owner, October 31: "feels awkward af". The dead hold is shorter, and a wipe now opens and closes it.
         public const float FreezeDuration = .8f;
         public const float FadeDuration = .18f;
+        // Owner, October 31: "kahit mabilis lang kasi may replay din naman pero atleast make it feel and look like natag sila".
+        // The wipe used to cover the victim's screen on the tag's own frame, before the hit could land. It waits this long.
+        public const float VictimHitBeat = .18f;
+        private bool _sweepWaiting;
         private const float SlowFrom = .35f;
         // A skipped tag replay crossfades back to the live recovery view rather than cutting.
         public const float SkipFadeDuration = .35f;
@@ -179,7 +183,8 @@ namespace TumbangPreso.CameraSystem
             if (_actorCopy == null || _victimCopy == null) { End(); return; }
             _actorTrack = actor; _victimTrack = victimTrack; _victim = victim;
             _spectatorView = Watching; _rig = _spectatorView ? null : rig;
-            _contact = contact; _began = Time.unscaledTime; _duration = Mathf.Min(ReplayDuration, victim.StunLeft - FadeDuration);
+            _contact = contact; _began = Time.unscaledTime + (_spectatorView ? 0 : VictimHitBeat);
+            _duration = Mathf.Min(ReplayDuration, victim.StunLeft - FadeDuration - VictimHitBeat);
             _fade = FadeDuration; _skipHeld = !_spectatorView && victim.Intent.Pressed(Verb.Interact);
             if (_spectatorView) _duration = ReplayDuration;
             _round = GameServices.Match != null ? GameServices.Match.RoundNumber : 0;
@@ -292,7 +297,7 @@ namespace TumbangPreso.CameraSystem
             _overlay.HoldAnnouncement();
             // The victim's whole screen jumps back in time, so a wipe says so. A spectator's corner window has no cut to hide.
             _exitSwept = false;
-            if (!_spectatorView) ReplayStinger.Sweep(transform, HudDraw.Honey);
+            _sweepWaiting = !_spectatorView;
         }
         private void LateUpdate()
         {
@@ -310,6 +315,7 @@ namespace TumbangPreso.CameraSystem
             bool skip = !_spectatorView && _victim.Intent.Pressed(Verb.Interact);
             if (skip && !_skipHeld && _duration - elapsed > SkipFadeDuration) { _fade = SkipFadeDuration; _duration = elapsed + SkipFadeDuration; }
             _skipHeld = skip;
+            if (_sweepWaiting && elapsed >= 0) { _sweepWaiting = false; ReplayStinger.Sweep(transform, HudDraw.Honey); }
             if (!_spectatorView && !_exitSwept && _duration - elapsed <= ReplayStinger.InSeconds)
             { _exitSwept = true; ReplayStinger.Sweep(transform, HudDraw.Honey, true); }
             float alpha = Mathf.Clamp01((_duration - elapsed) / _fade) * Mathf.Clamp01(elapsed / .12f);

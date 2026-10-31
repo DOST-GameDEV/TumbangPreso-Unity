@@ -53,6 +53,8 @@ namespace TumbangPreso.Visual
         // preserved across a slow frame. This never drives the live gesture.
         internal float RecordedTagContactWeight => _tgApplied && _tagContactValid ? _tagRenderedWeight : 0;
         internal int RecordedTagContactSubject => _tgApplied && _tagContactValid ? _tagContactSubject : -1;
+        /// <summary>The point on the victim's body the last accepted tag lands on (`PresentTagContact`).</summary>
+        internal Vector3 AcceptedTagContact => _tagContact;
         private Vector3 _tgRootPositionRest;
         private Quaternion _tgRootRotationRest;
         private Vector3 _tgPalmR, _tgArmScaleRest, _tagContact;
