@@ -1618,6 +1618,9 @@ namespace TumbangPreso.CameraSystem
             _viewPunchFov = fov;
         }
 
+        /// <summary>This view's own hand lands on an accepted tag (`ViewmodelArms.PresentTagTouch`).</summary>
+        public void PresentTagTouch(Vector3 world) => _arms?.PresentTagTouch(world);
+
         private void StepShake()
         {
             float punchLevel = Settings.SettingsStore.Current.EffectiveCameraShake;

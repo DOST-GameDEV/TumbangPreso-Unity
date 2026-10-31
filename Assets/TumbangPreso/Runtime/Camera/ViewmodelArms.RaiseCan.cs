@@ -20,7 +20,7 @@ namespace TumbangPreso.CameraSystem
     /// </summary>
     public sealed partial class ViewmodelArms
     {
-        private float _raiseBlend;
+        private float _raiseBlend, _raiseLastShape;
         private bool _raiseApplied;
         private Vector3 _raiseRightPos, _raiseLeftPos;
         private Quaternion _raiseRightRot, _raiseLeftRot, _raiseRightArm, _raiseLeftArm;
@@ -67,11 +67,29 @@ namespace TumbangPreso.CameraSystem
             _raiseRightArm = _rightArm.localRotation; _raiseLeftArm = _leftArm.localRotation;
             _raiseApplied = true;
 
+            // Owner, October 31: "refine fpp animation of can raise". The hands take hold, the can has weight, and it lands:
+            //  * they come in wide and CLOSE on it through the grip, with a small jolt as they take it;
+            //  * through the lift they draw it in toward the body and lag a little under it;
+            //  * the press drives down harder with a thump in the view, and on letting go they spring open off the can.
+            float close = Mathf.SmoothStep(0, 1, Mathf.InverseLerp(.08f, .28f, p));
+            float rise = Visual.CanRaiseShape.Rise(p);
+            float effort = Mathf.Sin(rise * Mathf.PI);
+            float letGo = ratio > 0 ? 0 : 1 - k;
+            if (ratio > 0)
+            {
+                var rig = GetComponentInParent<CameraRig>();
+                if (_raiseLastShape < .28f && p >= .28f) rig?.ViewPunch(new Vector3(1.4f, 0, 0), -1.5f);
+                if (_raiseLastShape < .9f && p >= .9f) { rig?.ViewPunch(new Vector3(3.2f, 0, -1.6f), -4f); InputLayer.Rumble.Pulse(.3f, .5f, .1f); }
+            }
+            _raiseLastShape = ratio;
+
             Vector3 rightFist, leftFist;
             if (TryCanGrip(out rightFist, out leftFist))
             {
-                // The press: both fists push down on the can as it seats.
-                rightFist += Vector3.down * (.035f * press); leftFist += Vector3.down * (.035f * press);
+                float spread = (1 - close) * .24f + letGo * .3f;
+                Vector3 toBody = new Vector3(0, -.05f * effort, -.14f * rise) + Vector3.up * (letGo * .12f);
+                rightFist += Vector3.right * spread + toBody + Vector3.down * (.09f * press);
+                leftFist += Vector3.left * spread + toBody + Vector3.down * (.09f * press);
             }
             else
             {
