@@ -5,7 +5,7 @@ using UnityEngine;
 namespace TumbangPreso.Map
 {
     /// <summary>
-    /// A MAP'S BAKED WORLD OCCLUSION (Payo, and since 2026-11-01 LagoonCove and IlalimNgTulay: "bake ilalim and lagood"), ORIGINALLY A TEST BEHIND A SWITCH (owner, 2026-10-29: asked whether the world AO can be baked,
+    /// PAYO'S BAKED WORLD OCCLUSION, A TEST BEHIND A SWITCH (owner, 2026-10-29: asked whether the world AO can be baked,
     /// then "continue" to a Payo bake test). The screen-space occlusion in `Visual.WorldOutline` was most of Balanced's and
     /// High's frame on the integrated Radeon (Payo Balanced 152 ms with it, about 90 without). The builder step
     /// (Editor/MapKit/PayoSceneBuilder.BakedAO.cs) writes each static vertex's occlusion into UV2 (x the light that

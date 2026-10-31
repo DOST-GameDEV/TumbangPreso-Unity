@@ -59,41 +59,9 @@ namespace TumbangPreso.EditorTools.MapKit
     {
         /// <summary>Whether `build` bakes it (`aobake` in Temp/payo.request bakes the saved scene).</summary>
         private const bool BakeWorldAOOnBuild = true;   // every build bakes (owner, 2026-10-30: "turn it on by default")
-        private static string BakedAOPath = Root + "/Generated/PayoBakedAO.asset";
+        private const string BakedAOPath = Root + "/Generated/PayoBakedAO.asset";
         /// <summary>The split copies, in a file of their own so neither file nears GitHub's limits (2026-10-30).</summary>
-        private static string BakedAOSplitPath = Root + "/Generated/PayoBakedAOSplit.asset";
-        /// <summary>
-        /// ANOTHER MAP'S BAKE (owner, 2026-11-01: "bake ilalim and lagood"). The same kernel and splitting as Payo, on a saved scene,
-        /// with what those maps need: only near the court, since the live pass fades out by 60 m anyway and a whole map's
-        /// streams would be too big for GitHub; instanced solids baked too (their stream costs them instancing), or
-        /// they would lose their occlusion; moving painted pieces handed to the live pass; and `IlalimPainted`'s bake in UV4.
-        /// ⚠️ Rebuilding such a map's scene drops its bake: run `bake MAP` in Temp/worldao.request again (WorldAOBake.cs).
-        /// </summary>
-        internal static string BakeOtherMap(string map, float reach)
-        {
-            string scenePath = "Assets/TumbangPreso/Scenes/Maps/" + map + ".unity", folder = "Assets/TumbangPreso/Art/BakedAO/" + map;
-            var scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
-            string oldMain = BakedAOPath, oldSplit = BakedAOSplitPath; float oldReach = _aoReach; bool oldOther = _otherMap;
-            Directory.CreateDirectory(folder);
-            BakedAOPath = folder + "/" + map + "BakedAO.asset"; BakedAOSplitPath = folder + "/" + map + "BakedAOSplit.asset"; _aoReach = reach; _otherMap = true;
-            try
-            {
-                var holder = scene.GetRootGameObjects().FirstOrDefault(g => g.name == "BakedAO") ?? new GameObject("BakedAO");
-                var roots = scene.GetRootGameObjects().Where(g => g != holder).ToArray();
-                foreach (var g in roots) g.transform.SetParent(holder.transform, true);
-                string said;
-                try { said = BakeWorldAO(holder.transform, true); }
-                finally { foreach (var g in roots) g.transform.SetParent(null, true); }
-                EditorSceneManager.MarkSceneDirty(scene);
-                if (!EditorSceneManager.SaveScene(scene)) throw new InvalidOperationException("Could not save " + scenePath);
-                AssetDatabase.SaveAssets();
-                return said;
-            }
-            finally { BakedAOPath = oldMain; BakedAOSplitPath = oldSplit; _aoReach = oldReach; _otherMap = oldOther; }
-        }
-        private static float _aoReach = AoReach;
-        private static bool _otherMap;
-        private static int _aoChannel = 2;
+        private const string BakedAOSplitPath = Root + "/Generated/PayoBakedAOSplit.asset";
         // The live kernel's rules (owner, 2026-10-30: "continue with these fixes"; see the class note).
         private const int AoRays = 32;
         private const float AoRadius = 0.6f, AoReach = 320f, AoGain = 1.0f, AoBias = 0.06f, AoLift = 0.02f;
@@ -106,7 +74,7 @@ namespace TumbangPreso.EditorTools.MapKit
         private static readonly Vector3 AoCourt = new Vector3(0f, 2.9f, 0f);
 
         private static readonly HashSet<string> AoShaders = new HashSet<string>
-            { "TumbangPreso/LagoonPainted", "TumbangPreso/PayoLand", "TumbangPreso/LagoonRock", "TumbangPreso/LagoonFoliage", "TumbangPreso/LagoonGround", "TumbangPreso/IlalimPainted" };
+            { "TumbangPreso/LagoonPainted", "TumbangPreso/PayoLand", "TumbangPreso/LagoonRock", "TumbangPreso/LagoonFoliage" };
 
         /// <summary>The builder's one-line hook: bakes when `BakeWorldAOOnBuild` is on, a fresh build's meshes being the importer's own.</summary>
         private static string BakedAOStep(Transform root)
@@ -135,7 +103,7 @@ namespace TumbangPreso.EditorTools.MapKit
             return mats.Length > 0 && mats.All(m => m != null && m.renderQueue <= 2450 && m.shader != null && m.shader.name != PayoBlades.ShaderName);
         }
 
-        private static bool Near(Bounds b) => new Vector2(b.center.x, b.center.z).magnitude - b.extents.magnitude < _aoReach;
+        private static bool Near(Bounds b) => new Vector2(b.center.x, b.center.z).magnitude - b.extents.magnitude < AoReach;
 
         /// <summary>
         /// A DETAILED PROP THAT KEEPS THE LIVE CREASE AO (owner, 2026-10-30: "no ao on the creases of the statue face", then
@@ -204,10 +172,6 @@ namespace TumbangPreso.EditorTools.MapKit
                 long vertices = 0, before = 0, rays = 0, hits = 0, copyVertices = 0;
                 double shade = 0;
                 var live = new List<Renderer>(); var liveByVertex = new List<Renderer>();
-                if (_otherMap)
-                    foreach (var moving in root.GetComponentsInChildren<MeshRenderer>(true))
-                        if (GameObjectUtility.GetStaticEditorFlags(moving.gameObject) == 0 && Near(moving.bounds) && moving.sharedMaterials.Any(q => q != null && q.shader != null && q.shader.name != FoliageShader && AoShaders.Contains(q.shader.name)))
-                            live.Add(moving);
                 var grown = new List<(string name, int added)>();
                 var dark = new List<(MeshFilter f, double mean, Vector3 p, Vector3 n)>();
                 int unshaded = 0; string copyFormat = null;
@@ -224,11 +188,9 @@ namespace TumbangPreso.EditorTools.MapKit
                     if (IsLiveAOPiece(r)) { r.additionalVertexStreams = null; live.Add(r); continue; }
                     var mesh = f.sharedMesh;
                     bool batched = GameObjectUtility.GetStaticEditorFlags(f.gameObject).HasFlag(StaticEditorFlags.BatchingStatic);
-                    bool leafy = r.sharedMaterials.Any(q => q != null && q.shader != null && q.shader.name == FoliageShader);
-                    if (users[mesh] > 1 && !batched && r.sharedMaterials.Any(m => m.enableInstancing) && (!_otherMap || leafy)) { skippedInstanced++; continue; }
+                    if (users[mesh] > 1 && !batched && r.sharedMaterials.Any(m => m.enableInstancing)) { skippedInstanced++; continue; }
                     if (!mesh.isReadable) { skippedUnreadable++; continue; }
-                    _aoChannel = r.sharedMaterials.Any(q => q != null && q.shader != null && q.shader.name == "TumbangPreso/IlalimPainted") ? 4 : 2;
-                    if (_aoChannel == 2 && mesh.HasVertexAttribute(VertexAttribute.TexCoord2)) { skippedUv2++; continue; }
+                    if (mesh.HasVertexAttribute(VertexAttribute.TexCoord2)) { skippedUv2++; continue; }
 
                     var work = new AoMesh(mesh);
                     before += work.P.Count;
@@ -282,7 +244,7 @@ namespace TumbangPreso.EditorTools.MapKit
                         // ⚠️ A STREAM, NOT A COPY (2026-10-30: GitHub refused the push, the 455 mesh copies made this asset 244 MB
                         // against its 100 MB limit). Each renderer gets a mesh holding ONLY UV2 as its `additionalVertexStreams`.
                         var stream = new Mesh { name = f.name + "_ao" };
-                        stream.SetVertexBufferParams(ao.Length, new VertexAttributeDescriptor(VertexAttribute.TexCoord0 + _aoChannel, VertexAttributeFormat.UNorm8, 4));
+                        stream.SetVertexBufferParams(ao.Length, new VertexAttributeDescriptor(VertexAttribute.TexCoord2, VertexAttributeFormat.UNorm8, 4));
                         stream.SetVertexBufferData(data, 0, 0, data.Length);
                         stream.UploadMeshData(false);
                         AssetDatabase.AddObjectToAsset(stream, container);
@@ -633,7 +595,7 @@ namespace TumbangPreso.EditorTools.MapKit
                 var plain = Plain(name);
                 var two = new List<Vector4>(P.Count);
                 for (int v = 0; v < P.Count; v++) two.Add(new Vector4(uv2[v * 4] / 255f, uv2[v * 4 + 1] / 255f, 1, 0));
-                plain.SetUVs(_aoChannel, two);
+                plain.SetUVs(2, two);
                 return plain;
             }
 
@@ -648,12 +610,11 @@ namespace TumbangPreso.EditorTools.MapKit
                 var dims = new int[4];
                 for (int c = 0; c < 4; c++)
                 {
-                    if (c == 2 && _aoChannel == 2) { layout.Add(new VertexAttributeDescriptor(VertexAttribute.TexCoord2, VertexAttributeFormat.UNorm8, 4)); continue; }
+                    if (c == 2) { layout.Add(new VertexAttributeDescriptor(VertexAttribute.TexCoord2, VertexAttributeFormat.UNorm8, 4)); continue; }
                     if (_uv[c] == null || _uv[c].Count != n) continue;
                     dims[c] = _uvDim[c] <= 2 ? 2 : 4;
                     layout.Add(new VertexAttributeDescriptor(VertexAttribute.TexCoord0 + c, VertexAttributeFormat.Float16, dims[c]));
                 }
-                if (_aoChannel == 4) layout.Add(new VertexAttributeDescriptor(VertexAttribute.TexCoord4, VertexAttributeFormat.UNorm8, 4));
                 int stride = 12 + (normals ? 8 : 0) + (tangents ? 8 : 0) + (colours ? 4 : 0) + 4 + dims.Sum(d => d * 2);
                 var bytes = new byte[n * stride];
                 void Half(ref int at, float f) { ushort h = Mathf.FloatToHalf(f); bytes[at++] = (byte)h; bytes[at++] = (byte)(h >> 8); }
@@ -667,13 +628,12 @@ namespace TumbangPreso.EditorTools.MapKit
                     if (colours) { Color32 c32 = _c[v]; bytes[at++] = c32.r; bytes[at++] = c32.g; bytes[at++] = c32.b; bytes[at++] = c32.a; }
                     for (int c = 0; c < 4; c++)
                     {
-                        if (c == 2 && _aoChannel == 2) { for (int k = 0; k < 4; k++) bytes[at++] = uv2[v * 4 + k]; continue; }
+                        if (c == 2) { for (int k = 0; k < 4; k++) bytes[at++] = uv2[v * 4 + k]; continue; }
                         if (dims[c] == 0) continue;
                         var u = _uv[c][v];
                         Half(ref at, u.x); Half(ref at, u.y);
                         if (dims[c] == 4) { Half(ref at, u.z); Half(ref at, u.w); }
                     }
-                    if (_aoChannel == 4) for (int k = 0; k < 4; k++) bytes[at++] = uv2[v * 4 + k];
                 }
                 var mesh = new Mesh { name = name, indexFormat = n > 65000 ? IndexFormat.UInt32 : IndexFormat.UInt16 };
                 mesh.SetVertexBufferParams(n, layout.ToArray());

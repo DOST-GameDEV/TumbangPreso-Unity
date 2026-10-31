@@ -56,15 +56,11 @@ Shader "TumbangPreso/LagoonGround"
         float4 _FieldMinA, _FieldSpanA, _FieldMinB, _FieldSpanB;
         float4 _RockFillTint, _SeabedShallow, _SeabedDeep;
 
-        // World occlusion baked per vertex (owner, 2026-11-01: "bake ilalim and lagood"; Runtime/Map/PayoBakedAO.cs): x the light that
-        // reaches it, y = 1 baked, z = 1 the bake's own mark; `_TPBakedAO` is zero on a map without a bake.
-        float4 _TPBakedAO;
         struct Input
         {
             float3 worldPos;
             float4 fieldsA;   // court_in, grass_in, sand_in, wet_depth (metres)
             float2 fieldsB;   // steep, ring (metres)
-            float2 bakedAO;
         };
 
         void vert(inout appdata_full v, out Input o)
@@ -72,7 +68,6 @@ Shader "TumbangPreso/LagoonGround"
             UNITY_INITIALIZE_OUTPUT(Input, o);
             o.fieldsA = _FieldMinA + v.color * _FieldSpanA;
             o.fieldsB = _FieldMinB.xy + v.texcoord1.xy * _FieldSpanB.xy;
-            o.bakedAO = float2(v.texcoord2.x, v.texcoord2.y * step(0.5, v.texcoord2.z));
             // ⚠️ A synthetic tangent: this surface outputs no normal, but a surface shader still
             // builds a tangent frame, and the .glb carries none.
             float3 n = normalize(v.normal);
@@ -117,7 +112,7 @@ Shader "TumbangPreso/LagoonGround"
             outC = lerp(outC, grass, smoothstep(-0.12, 0.12, grassIn + wob));
             outC = lerp(outC, earth, smoothstep(-0.08, 0.08, courtIn + wob));
 
-            o.Albedo = outC * lerp(half3(1, 1, 1), _TPBakedAO.rgb, saturate((1 - IN.bakedAO.x) * IN.bakedAO.y * _TPBakedAO.a));
+            o.Albedo = outC;
             o.Metallic = 0;
             o.Smoothness = _Glossiness;
         }
