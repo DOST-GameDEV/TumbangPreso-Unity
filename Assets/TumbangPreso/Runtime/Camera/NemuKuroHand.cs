@@ -32,9 +32,43 @@ namespace TumbangPreso.CameraSystem
     /// ⚠️ HE SITS BEYOND THE SLEEVE'S MOUTH, NOT IN IT. From the player's eye the bell hides whatever is under its far
     /// rim, so "in the sleeve" is simply low behind the rim and "out" is above it. `RimHeight` is how far the rim's
     /// top stands above the mouth's middle on the screen's own up; the paws stay on that line while the body moves.
+    ///
+    /// ⚠️⚠️ TWO WAYS TO LIVE IN THE SLEEVE, AND THE QUIET ONE IS WHAT A MATCH PLAYS (`InSleeve`). Owner, 2026-10-13: *"remove
+    /// her fpp ghost dapat its js following her"*, so the perched Kuro above went behind `ViewmodelArms.UnlockedHandPets`
+    /// with the other hand pets. Then, 2026-10-28: *"nemu's kuro was removed from her fpv hand and i wanna bring that back
+    /// but make kuro more subtle (like it hides in nemu's sleeves)"*. So with `InSleeve` he is built hidden (`StepSleeve`):
+    /// he lives INSIDE the cuff and is not drawn at all most of the match. On idle beats he does one small thing and is gone
+    /// again:
+    ///
+    ///   PEEK       the crown of his head and his two floating eyes rise to the rim, he looks at her, glances out and
+    ///              back, blinks, and drops;
+    ///   PAW        only the top of his head shows while one paw curls over the OUTER edge of the cuff, pats it twice
+    ///              and slides back in;
+    ///   TAIL       his body stays down; just the tip of his tail curls up out of the cuff, sways, and sinks;
+    ///   A CAST     tucked for the whole cast, then one quick wide-eyed peek out at what she did, and down.
+    ///
+    /// ⚠️ HE IS NEVER A WHOLE BODY ON THE HAND, and he is fully down whenever she aims, winds up, throws, casts, is in the
+    /// air, is tagged, walks, or holds a slipper (the slipper rides the RIGHT hand and the aim point is the screen's middle;
+    /// he is at the LEFT cuff and never higher than his eyes over its rim). Fully down means his renderers are switched off,
+    /// not merely tucked behind the bell, so no framing at any screen shape can show him through it.
+    /// The perched Kuro stays whole for the unlock: with `UnlockedHandPets` on, `CompanionFor` builds that one instead.
     /// </summary>
     public sealed class NemuKuroHand : ViewmodelArms.HandCompanion
     {
+        /// <summary>
+        /// The quiet sleeve Kuro in Nemu's own first person (owner, 2026-10-28, above). On by default. Off, her hands carry
+        /// nothing and the world's Kuro trails her in her own view too, as it did from 2026-10-13. Separate from
+        /// `ViewmodelArms.UnlockedHandPets`, which still keeps the perched Kuro and the other heroes' pets for an unlock.
+        /// Cosmetic and local: nothing is sent and no rule reads it.
+        /// </summary>
+        // KEEP: owner 2026-10-29, "looks good" (sleeve Kuro v2, faces the lens). Approved look; do not change.
+        public static bool InSleeve = true;
+
+        private readonly bool _sleeve;
+
+        /// <param name="inSleeve">True for the quiet Kuro hidden in the cuff; false for the perched one kept for the unlock.</param>
+        public NemuKuroHand(bool inSleeve = false) { _sleeve = inSleeve; if (inSleeve) _nextAct = 2.5f; }
+
         /// <summary>Kuro's size in the arms' space (his body is 7 cm across as modelled; a sleeve is 0.78 across).</summary>
         public const float KuroScale = 4.4f;
         /// <summary>A paw on the rim, as a share of his body's block.</summary>
@@ -91,7 +125,8 @@ namespace TumbangPreso.CameraSystem
         }
 
         /// <summary>Where he sits on the sleeve, in the world, and how big one of his model's metres is drawn there.</summary>
-        public Vector3 WorldPosition => _arms.transform.TransformPoint(_seat + Vector3.up * (RimHeight + Perched));
+        /// ⚠️ The quiet one leaves from the cuff's mouth (his eyes at the rim), since he is never perched above it.
+        public Vector3 WorldPosition => _arms.transform.TransformPoint(_seat + Vector3.up * (RimHeight + (_sleeve ? Peek : Perched)));
         public float WorldScale => KuroScale * _arms.transform.lossyScale.x;
         /// <summary>The world's Kuro says each frame that he is out (drawn in the world): the sleeve is then empty.</summary>
         public void MarkAway() => _awayFrame = Time.frameCount;
@@ -130,6 +165,15 @@ namespace TumbangPreso.CameraSystem
                 for (int i = 0; i < _wisps.Length; i++) _wisps[i] = new Wisp { Body = Copy(wisp, "Kuro wisp", _root) };
                 foreach (var paw in new[] { _pawL, _pawR }) { paw.localScale = Vector3.one * (KuroScale * PawSize); ToonSkin.Apply(paw.GetComponent<Renderer>(), ToonSkin.PersonOutlineWidth * .25f, palette); }
                 foreach (var w in _wisps) { w.Body.localScale = Vector3.one * KuroScale; ToonSkin.Apply(w.Body.GetComponent<Renderer>(), ToonSkin.PersonOutlineWidth * .25f, palette); w.Body.localScale = Vector3.zero; }
+                if (_sleeve)
+                {
+                    // The quiet one's tail tip is a piece of its own, so it can curl out of the cuff while his body (and the
+                    // tail the model hangs from it) stays down: the same solid tip the wisps are, at his size.
+                    _tailTip = Copy(wisp, "Kuro tail tip", _root);
+                    _tailTip.localScale = Vector3.one * KuroScale;
+                    ToonSkin.Apply(_tailTip.GetComponent<Renderer>(), ToonSkin.PersonOutlineWidth * .25f, palette);
+                    _tailTip.localScale = Vector3.zero;
+                }
             }
             GhostPetCompanion.ApplyAppearance(pet, palette);
 
@@ -151,6 +195,16 @@ namespace TumbangPreso.CameraSystem
             }
             if (_eyeL == null || _eyeR == null) return false;
             _eyeLRest = _eyeL.localScale; _eyeRRest = _eyeR.localScale; _mouthRest = _mouth != null ? _mouth.localScale : Vector3.one;
+            if (_sleeve)
+            {
+                // His face's direction in his own space, while he stands unturned: from the middle of his body to the point
+                // between his eyes, kept level. Read off the model so an import's own turn cannot point him the wrong way.
+                var coreRenderer = core != null ? core.GetComponent<Renderer>() : null;
+                Vector3 middle = coreRenderer != null ? coreRenderer.bounds.center : _body.position;
+                Vector3 face = _kuro.InverseTransformDirection((_eyeL.position + _eyeR.position) * .5f - middle);
+                face.y = 0f;
+                if (face.sqrMagnitude > 1e-8f) _faceAxis = face.normalized;
+            }
 
             foreach (var renderer in _root.GetComponentsInChildren<Renderer>(true))
             {
@@ -159,7 +213,16 @@ namespace TumbangPreso.CameraSystem
                 renderer.gameObject.layer = arms.gameObject.layer;
             }
             foreach (var collider in _root.GetComponentsInChildren<Collider>(true)) collider.enabled = false;
-            _rise.Snap(Perched); _squash.Snap(0f);
+            if (_sleeve)
+            {
+                _bodyRenderers = _kuro.GetComponentsInChildren<Renderer>(true);
+                _pawLRenderer = _pawL != null ? _pawL.GetComponent<Renderer>() : null;
+                _pawRRenderer = _pawR != null ? _pawR.GetComponent<Renderer>() : null;
+                _tipRenderer = _tailTip != null ? _tailTip.GetComponent<Renderer>() : null;
+                _bodyShown = true; ShowBody(false);
+                Show(_pawRRenderer, false);
+            }
+            _rise.Snap(_sleeve ? Hidden : Perched); _squash.Snap(0f);
             SetFace(Face.Plain, true);
             return true;
         }
@@ -248,6 +311,7 @@ namespace TumbangPreso.CameraSystem
             _clock += dt;
             var view = arms.transform;
             MatchTheLiveKuro(arms);
+            if (_sleeve) { StepSleeve(view, mood, dt); return; }
             bool away = Time.frameCount - _awayFrame <= 1;
             if (away != _away)
             {
@@ -257,17 +321,7 @@ namespace TumbangPreso.CameraSystem
                 else { _rise.Snap(Hidden); _rise.Speed = 3.5f; _squash.Speed += 4f; _bulge.Speed += 3f; _cheer = .7f; Puff(_seat, 2, .8f); }
             }
 
-            // WHERE THE SLEEVE IS NOW, in the arms' own space, and the rim's line above it on the view's up.
-            Vector3 mouth = view.InverseTransformPoint(_leftArm.TransformPoint(SleeveMouth));
-            Vector3 along = view.InverseTransformDirection(_leftArm.up);
-            Vector3 seat = mouth + along * Beyond;
-            if (!_seated) { _seat = seat; _seated = true; }
-            // He is carried by the sleeve a beat late: the seat itself is on a spring, so a swung arm leaves him behind
-            // and he catches up past it.
-            Vector3 pull = (seat - _seat) * 260f - _seatSpeed * 17f;
-            _seatSpeed += pull * dt; _seat += _seatSpeed * dt;
-            Vector3 slack = seat - _seat;
-            if (slack.sqrMagnitude > .09f) { _seat = seat - slack.normalized * .3f; }
+            Vector3 seat = TrackSleeve(view, dt);
 
             // ---------------- what has just happened
             if (mood.Grounded != _grounded)
@@ -394,6 +448,268 @@ namespace TumbangPreso.CameraSystem
                 float b = Mathf.Clamp(_bulge.Value, -.12f, .3f);
                 _leftArm.localScale = Vector3.Scale(_armScale, new Vector3(1f + b, 1f - b * .3f, 1f + b));
             }
+        }
+
+        /// <summary>
+        /// WHERE THE SLEEVE IS NOW, in the arms' own space: the point just beyond the left cuff's mouth that both Kuros sit
+        /// on, with the rim's line `RimHeight` above it on the view's up. Returns where the seat is this frame and moves
+        /// `_seat`, which follows it a beat late.
+        /// </summary>
+        private Vector3 TrackSleeve(Transform view, float dt)
+        {
+            Vector3 mouth = view.InverseTransformPoint(_leftArm.TransformPoint(SleeveMouth));
+            Vector3 along = view.InverseTransformDirection(_leftArm.up);
+            Vector3 seat = mouth + along * Beyond;
+            if (!_seated) { _seat = seat; _seated = true; }
+            // He is carried by the sleeve a beat late: the seat itself is on a spring, so a swung arm leaves him behind
+            // and he catches up past it.
+            Vector3 pull = (seat - _seat) * 260f - _seatSpeed * 17f;
+            _seatSpeed += pull * dt; _seat += _seatSpeed * dt;
+            Vector3 slack = seat - _seat;
+            if (slack.sqrMagnitude > .09f) { _seat = seat - slack.normalized * .3f; }
+            return seat;
+        }
+
+        // ------------------------------------------------------------------ the quiet one: hidden in the cuff (`InSleeve`)
+
+        /// <summary>His middle over the rim line when only the crown of his head shows (the eyes are just under the rim).</summary>
+        private const float Crown = -.10f;
+        /// <summary>
+        /// ⚠️ His middle over the rim line in a peek, so BOTH EYES CLEAR THE RIM (owner, 2026-10-29, on the first film:
+        /// *"kuro is kinda facing the wrong way, so its face is getting blocked"*). At `Peek` (0.03) the film showed his eyes
+        /// half behind the cuff's purple rim; at 0.08 (the first cast peek) they were clear with a few pixels to spare. 0.07
+        /// is the smallest of those that clears them, and leaves the lower half of his body inside the cuff. The cast peek
+        /// keeps its small pop above the idle one.
+        /// </summary>
+        private const float SleevePeek = .07f, SleeveCastPeek = .09f;
+        /// <summary>Seconds of each beat, and the wait between idle beats.</summary>
+        private const float PeekSeconds = 2.4f, PawSeconds = 2.0f, TailSeconds = 2.2f, CastPeekSeconds = .85f;
+        private const float BeatGapMin = 5f, BeatGapMax = 9f;
+
+        private enum Beat { None, Peek, Paw, Tail, Cast }
+        private Beat _beat, _lastIdleBeat;
+        private float _beatLeft, _beatLength, _tuckedUntil, _castPeekUntil = -1f;
+        private Transform _tailTip;
+        private Renderer[] _bodyRenderers;
+        private Renderer _pawLRenderer, _pawRRenderer, _tipRenderer;
+        private bool _bodyShown;
+        /// <summary>Which way his face points in his own space (from his body to his eyes, level), measured once in `Build`.</summary>
+        private Vector3 _faceAxis = Vector3.forward;
+        private Camera _lens;
+
+        /// <summary>
+        /// ⚠️⚠️ IN EVERY PEEK HIS FACE POINTS AT THE LENS, measured rather than assumed. The perched Kuro turns 180 degrees and
+        /// trusts that his face is +z and the arms' space is the camera's; the first film of this one showed his face side-on
+        /// to the left with the back of his head to the player, so neither held here. So his face's own direction is
+        /// read off his eyes once (`_faceAxis`), and each frame he is turned so that direction points from where he is to
+        /// the eye of the camera that draws these arms, up kept up. The beat's small glance (`_yaw`, a few degrees toward the
+        /// screen's middle) and the springs' pitch and roll are put on after, about his face's own axes.
+        /// </summary>
+        private Quaternion FacingTheLens(Transform view, Vector3 at)
+        {
+            if (_lens == null) _lens = view.GetComponentInParent<Camera>();
+            Vector3 toEye = _lens != null ? view.InverseTransformPoint(_lens.transform.position) - at : Vector3.back;
+            if (toEye.sqrMagnitude < 1e-6f) toEye = Vector3.back;
+            var facing = Quaternion.LookRotation(toEye.normalized, Vector3.up);
+            // A turn of +x on the screen is toward its middle for a Kuro at the LEFT cuff: his face goes that way when the
+            // turn about up is negative (it points back at the lens, along -z).
+            return Quaternion.AngleAxis(-_yaw.Value, Vector3.up) * facing * Quaternion.Euler(_pitch.Value, 0f, _roll.Value)
+                * Quaternion.Inverse(Quaternion.LookRotation(_faceAxis, Vector3.up));
+        }
+
+        /// <summary>
+        /// One frame of the quiet Kuro. Everything that may show is a few centimetres at the left cuff, and each thing is
+        /// shown only inside its beat; between beats nothing of him is drawn. The same springs as the perched one carry
+        /// him, so a peek overshoots and settles and a duck is a drop, never a tween.
+        /// </summary>
+        private void StepSleeve(Transform view, in ViewmodelArms.HandMood mood, float dt)
+        {
+            // Sent out into the world (the world's Kuro is then drawn leaving this cuff) and home again.
+            bool away = Time.frameCount - _awayFrame <= 1;
+            if (away != _away)
+            {
+                _away = away;
+                if (away) { _bulge.Speed += 4f; Puff(_seat, 1, .8f); EndBeat(false); }
+                else { _rise.Snap(Hidden); _bulge.Speed += 3f; Puff(_seat, 1, .6f); _nextAct = Mathf.Max(_nextAct, _clock + 1.5f); }
+            }
+            TrackSleeve(view, dt);
+
+            // ---------------- what has just happened
+            if (mood.Grounded != _grounded)
+            {
+                // A hard landing is felt, not seen: the cuff swells with him for a moment.
+                if (mood.Grounded) { float hit = Mathf.Clamp01(_fallSpeed / 9f); if (hit > .3f) _bulge.Speed += 6f * hit; }
+                _grounded = mood.Grounded;
+            }
+            _fallSpeed = mood.Grounded ? 0f : Mathf.Max(0f, -mood.VerticalSpeed);
+            bool charging = mood.Carrying && mood.Charge >= 0f;
+            if (_carrying && !mood.Carrying && _charging) _tuckedUntil = _clock + .5f;     // the throw has gone: down a breath longer
+            if (_casting && !mood.Casting) _castPeekUntil = _clock + 1.2f;                // the cast is done: peek when he may
+            if (mood.Tagged && !_wasTagged) _bulge.Speed -= 3f;                           // a flinch inside the sleeve
+            _carrying = mood.Carrying; _charging = charging; _casting = mood.Casting; _wasTagged = mood.Tagged;
+
+            // ---------------- may he show at all?
+            // ⚠️ Down, all of him, whenever she is doing anything with her hands or her body is not her own. `Free` is the
+            // arms' own test (no wind-up, no clip, no skill being aimed, not swimming, climbing, flying or stunned).
+            bool tucked = _away || mood.Casting || charging || mood.Tagged || !mood.Grounded || !mood.Free || _clock < _tuckedUntil;
+            // Idle beats only when she is standing about with empty hands; the cast peek is allowed while walking.
+            bool idle = !tucked && !mood.Carrying && mood.Walk < .3f;
+            if (tucked && _beat != Beat.None) EndBeat(true);
+            else if (_beat != Beat.None && _beat != Beat.Cast && !idle) EndBeat(true);
+            if (!tucked && _clock < _castPeekUntil && _beat != Beat.Cast) { _castPeekUntil = -1f; StartBeat(Beat.Cast); }
+            else if (_beat == Beat.None && idle && _clock >= _nextAct) StartBeat(NextIdleBeat());
+            if (!idle) _nextAct = Mathf.Max(_nextAct, _clock + 1.5f);   // never a beat the instant she stops
+
+            // ---------------- the beat
+            float rise = Hidden, yaw = 0f, roll = 0f, pitch = 0f, paw = 0f, tip = 0f;
+            Face face = Face.Plain;
+            if (_beat != Beat.None)
+            {
+                _beatLeft -= dt;
+                float u = 1f - Mathf.Clamp01(_beatLeft / _beatLength);
+                switch (_beat)
+                {
+                    case Beat.Peek:
+                        // Up to the rim looking at her, a small glance toward the screen's middle and back, and down.
+                        if (u < .86f) rise = SleevePeek + Mathf.Sin(_clock * 2.1f) * .008f;
+                        yaw = u < .34f ? 0f : u < .58f ? 12f : u < .8f ? -6f : 0f;
+                        pitch = u < .34f ? 4f : 0f;
+                        roll = Mathf.Sin(_clock * 1.3f) * 3f;
+                        break;
+                    case Beat.Paw:
+                        // His eyes over the rim, looking at her; one paw comes over the outer edge of the cuff, pats it twice, and goes.
+                        if (u < .9f) rise = SleevePeek;
+                        paw = Window(u, .12f, .82f);
+                        if (u > .7f && u < .9f) face = Face.Happy;
+                        break;
+                    case Beat.Tail:
+                        // He stays down: just the tip of his tail curls up out of the cuff and sways.
+                        tip = Window(u, .08f, .86f);
+                        break;
+                    case Beat.Cast:
+                        // A quick wide-eyed look up at her after what she just did, then down.
+                        if (u < .78f) rise = SleeveCastPeek;
+                        face = Face.Stars;
+                        yaw = u < .5f ? 10f : 0f;
+                        pitch = -6f;
+                        break;
+                }
+                if (_beatLeft <= 0f) EndBeat(false);
+            }
+
+            // ---------------- the springs (the perched one's, so a peek pops past the rim and settles)
+            _rise.Target = rise; _rise.Step(190f, 13f, dt);
+            _squash.Target = 0f; _squash.Step(260f, 12f, dt);
+            _roll.Target = roll; _roll.Step(140f, 10f, dt);
+            _pitch.Target = pitch; _pitch.Step(140f, 12f, dt);
+            _yaw.Target = yaw; _yaw.Step(90f, 12f, dt);
+            _bulge.Target = 0f; _bulge.Step(240f, 13f, dt);
+            SetFace(face);
+
+            // ---------------- put him there; drawn only while some of him is over the rim's back
+            bool show = !_away && (_rise.Value > Hidden + .05f || _rise.Target > Hidden + .01f);
+            ShowBody(show);
+            float height = RimHeight + _rise.Value;
+            Vector3 at = _seat + Vector3.up * height;
+            float stretch = Mathf.Clamp(_squash.Value + Mathf.Clamp(_rise.Speed * .09f, -.25f, .35f), -.45f, .6f);
+            float tall = 1f + stretch, wide = 1f / Mathf.Sqrt(Mathf.Max(.3f, tall));
+            _kuro.localPosition = at;
+            _kuro.localRotation = FacingTheLens(view, at);
+            _kuro.localScale = show ? new Vector3(wide, tall, wide) * KuroScale : Vector3.zero;
+            if (show) { StepEyes(dt, face); StepTail(at, 0f, dt); }
+
+            StepSleevePaw(paw);
+            StepTailTip(tip);
+            StepWisps(dt);
+
+            // The cuff swells as he moves inside it. Undone in `Restore` before anything else poses the arm.
+            if (Mathf.Abs(_bulge.Value) > .002f)
+            {
+                _armScale = _leftArm.localScale; _armScaled = true;
+                float b = Mathf.Clamp(_bulge.Value, -.08f, .18f);
+                _leftArm.localScale = Vector3.Scale(_armScale, new Vector3(1f + b, 1f - b * .3f, 1f + b));
+            }
+        }
+
+        private Beat NextIdleBeat()
+        {
+            // Never the same small thing twice running; the peek comes up a little more often than the others.
+            float r = Random.value;
+            var pick = r < .44f ? Beat.Peek : r < .72f ? Beat.Paw : Beat.Tail;
+            if (pick == _lastIdleBeat) pick = pick == Beat.Peek ? Beat.Paw : pick == Beat.Paw ? Beat.Tail : Beat.Peek;
+            _lastIdleBeat = pick;
+            return pick;
+        }
+
+        private void StartBeat(Beat beat)
+        {
+            _beat = beat;
+            _beatLength = _beatLeft = beat == Beat.Peek ? PeekSeconds : beat == Beat.Paw ? PawSeconds : beat == Beat.Tail ? TailSeconds : CastPeekSeconds;
+            // Coming up out of a cuff is a small effort: the cuff gives a little, and the cast peek pops.
+            _bulge.Speed += 1.4f;
+            if (beat == Beat.Cast) { _rise.Speed += 2.5f; Puff(_seat, 1, .6f); }
+        }
+
+        /// <summary>The beat is over; `duck` when she has called him down mid-beat, which is a quicker drop and a twitch of the cuff.</summary>
+        private void EndBeat(bool duck)
+        {
+            if (_beat == Beat.None) return;
+            _beat = Beat.None;
+            if (duck) { _rise.Speed -= 3f; _bulge.Speed += 1.5f; }
+            _nextAct = _clock + Random.Range(BeatGapMin, BeatGapMax);
+        }
+
+        /// <summary>0 outside `[from, to]` of a beat, eased up to 1 inside it.</summary>
+        private static float Window(float u, float from, float to)
+        {
+            float w = Mathf.Min(Mathf.Clamp01((u - from) / .12f), Mathf.Clamp01((to - u) / .12f));
+            return w * w * (3f - 2f * w);
+        }
+
+        /// <summary>
+        /// One paw over the OUTER side of the cuff (away from the screen's middle): up from behind the rim, curled over it,
+        /// two pats, and back down. `out01` is how far out it is. The other paw is never drawn in the quiet one.
+        /// </summary>
+        private void StepSleevePaw(float out01)
+        {
+            if (_pawL == null) return;
+            bool on = out01 > .02f && !_away;
+            Show(_pawLRenderer, on);
+            if (!on) { _pawL.localScale = Vector3.zero; return; }
+            const float s = -1f;
+            float pat = Mathf.Max(0f, Mathf.Sin((_clock * 2.2f) * Mathf.PI * 2f)) * .018f * out01;
+            Vector3 inside = _seat + new Vector3(s * .13f, RimHeight - .09f, -.03f);
+            Vector3 over = _seat + new Vector3(s * .13f, RimHeight + .035f - pat, -.04f);
+            _pawL.localPosition = Vector3.Lerp(inside, over, out01);
+            _pawL.localRotation = Quaternion.Euler(Mathf.Lerp(30f, 0f, out01), 0f, s * Mathf.Lerp(-20f, 12f, out01));
+            float size = KuroScale * PawSize;
+            _pawL.localScale = new Vector3(size, size * .8f, size * .9f);
+        }
+
+        /// <summary>The tip of his tail curling up out of the inner side of the cuff and swaying, `out01` of the way out.</summary>
+        private void StepTailTip(float out01)
+        {
+            if (_tailTip == null) return;
+            bool on = out01 > .02f && !_away;
+            Show(_tipRenderer, on);
+            if (!on) { _tailTip.localScale = Vector3.zero; return; }
+            float sway = Mathf.Sin(_clock * 4.2f) * out01;
+            _tailTip.localPosition = _seat + new Vector3(.10f + .03f * sway, RimHeight - .06f + .15f * out01, -.02f);
+            _tailTip.localRotation = Quaternion.Euler(0f, 180f, Mathf.Lerp(-10f, -75f, out01) + 14f * sway);
+            _tailTip.localScale = Vector3.one * (KuroScale * .85f);
+        }
+
+        /// <summary>His body's renderers on or off, only when that changes (a flag, not a rebuild).</summary>
+        private void ShowBody(bool on)
+        {
+            if (on == _bodyShown || _bodyRenderers == null) return;
+            _bodyShown = on;
+            foreach (var renderer in _bodyRenderers) if (renderer != null) renderer.forceRenderingOff = !on;
+        }
+
+        private static void Show(Renderer renderer, bool on)
+        {
+            if (renderer != null && renderer.forceRenderingOff == on) renderer.forceRenderingOff = !on;
         }
 
         /// <summary>Nothing is asked of him: he perches, and every few seconds does one small thing of his own.</summary>

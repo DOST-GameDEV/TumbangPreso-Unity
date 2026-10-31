@@ -136,7 +136,7 @@ namespace TumbangPreso.PlayTests
             Action<string, Vector3, float, float> heard = (id, at, pitch, gain) =>
                 cues.AppendLine(FormattableString.Invariant($"{frame / 30.0:F3},{Audio.AudioCues.FileStemFor(id)},{pitch:F3},{gain:F3}"));
             AudioDirector.WorldCuePlayed += heard;
-            bool moved = false, cursed = false, exposed = false, missed = false;
+            bool moved = false, cursed = false, exposed = false;
             Vector3 missFrom = can + new Vector3(3.5f, .12f, 4.5f);
             // Over a caster's right shoulder, far enough back to see her whole arm and what it does in front of her (film v7 put the
             // lens 3 m behind her head at head height, and her back filled the frame).
@@ -187,7 +187,6 @@ namespace TumbangPreso.PlayTests
                     moved |= Vector3.Distance(Flat(her.transform.position), Flat(start)) > 3f;
                     cursed |= victim.IsDisoriented;
                     exposed |= her.IsVulnerable || victim.IsVulnerable;
-                    missed |= t > 11.2f && Object.FindFirstObjectByType<PhaisterManika>() != null;
 
                     // Cameras per skill.
                     if (t < 2.2f) { wide.transform.position = start + new Vector3(5.5f, 2.2f, 2.5f); wide.transform.LookAt(start + new Vector3(0f, 0.9f, 2.5f)); }
@@ -229,7 +228,7 @@ namespace TumbangPreso.PlayTests
                 Object.Destroy(wide.gameObject); Object.Destroy(shoulder.gameObject);
                 hdr.Release(); ldr.Release();
             }
-            File.WriteAllText(Path.Combine(root, "claims.csv"), FormattableString.Invariant($"moved,{moved}\ncursed,{cursed}\nexposed,{exposed}\nmissed_doll_seen,{missed}\n"));
+            File.WriteAllText(Path.Combine(root, "claims.csv"), FormattableString.Invariant($"moved,{moved}\ncursed,{cursed}\nexposed,{exposed}\n"));
             Assert.IsTrue(moved, "VANISHING ACT did not carry her.");
             Assert.IsTrue(cursed, "MANIKA MISCHIEF never Disoriented its target.");
             Assert.IsTrue(exposed, "SPOTLIGHT PIN left nobody Vulnerable.");

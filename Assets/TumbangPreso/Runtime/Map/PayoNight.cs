@@ -127,12 +127,19 @@ namespace TumbangPreso.Map
 #endif
         }
 
+        private float _reapplyAt;
+
         private void LateUpdate()
         {
             float n = Hold >= 0.0f ? Mathf.Clamp01(Hold) : FactorFor(GameServices.Match, HalftimePresentation.Instance);
             Factor = n;
             // By day nothing is written: the look system's own values stand. The frame it turns back to day the day is put back once.
             if (n <= 0.0f && _applied <= 0.0f) return;
+            // A held night (or any unchanged factor) is not rewritten every frame; once a second keeps it pinned
+            // against anything else that touches the render settings (owner, 2026-10-30: "i want it so optimized i'm
+            // able to run at 300+ fps").
+            if (n == _applied && Time.unscaledTime < _reapplyAt) return;
+            _reapplyAt = Time.unscaledTime + 1.0f;
             Apply(n);
         }
 

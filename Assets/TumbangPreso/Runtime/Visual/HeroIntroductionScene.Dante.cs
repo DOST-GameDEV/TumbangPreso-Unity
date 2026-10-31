@@ -106,6 +106,8 @@ namespace TumbangPreso.Visual
 
         private void BuildDante()
         {
+            // The longhorn cutscene (`HeroIntroductionScene.DanteLonghorn.cs`) replaces this one while its switch is on.
+            if (DanteLonghornCut) { BuildLonghorn(); return; }
             float court = Slipper.GroundY(_root.transform.position + Vector3.up * .3f) - _root.transform.position.y;
             _dnCourt = float.IsInfinity(court) || float.IsNaN(court) ? 0f : Mathf.Clamp(court, 0f, .6f);
 
@@ -246,6 +248,7 @@ namespace TumbangPreso.Visual
         /// <summary>The lens feels it: the plant, every wave of stone landing on his fists, the leap, the slam.</summary>
         private Vector3 DanteShake(float t)
         {
+            if (DanteLonghornCut) return LonghornShake(t);
             // THE SLAM is the hardest blow in his kit: twice the old jolt, longer, and an aftershock as the first band heaves.
             float size = DanteKick(t, DnPlant, .09f, .2f) + DanteKick(t, DnLeap, .06f, .2f) + DanteKick(t, DnSlam, .34f, .45f) + DanteKick(t, DnBand0, .1f, .22f);
             // The hang: a fine tremble while he holds the fists wound back.
@@ -260,6 +263,7 @@ namespace TumbangPreso.Visual
         /// hit flares it (the plant, each wave of stone landing, hardest the slam), so the beats land on the whole frame.</summary>
         private void DanteGrade(float t, out float brightness, out float saturation)
         {
+            if (DanteLonghornCut) { LonghornGrade(t, out brightness, out saturation); return; }
             float back = Ease(DnCracks, DnWaves[0] + .2f, t) * (1f - Ease(DnSlam + .1f, DnEnd - .05f, t));
             float beat = Mathf.Max(DnBeat(t, DnSlam, .3f), .4f * DnBeat(t, DnPlant, .25f));
             foreach (var w in DnWaves) beat = Mathf.Max(beat, .3f * DnBeat(t, w + DnFly, .2f));
@@ -275,6 +279,7 @@ namespace TumbangPreso.Visual
         /// mixed back into the picture so the frame lands into the world rather than cutting to it.</summary>
         private void DantePostProcess(RenderTexture frame, Camera camera, float t)
         {
+            if (DanteLonghornCut) { LonghornPostProcess(frame, camera, t); return; }
             if (_reducedEffects || camera == null || t < DnSlam || t >= DnSlam + .1f) return;
             int beat = Mathf.Clamp(Mathf.FloorToInt((t - DnSlam) / .0334f), 0, 2);
             if (_dnImpact == null)
@@ -296,6 +301,7 @@ namespace TumbangPreso.Visual
 
         private void SampleDante(float t)
         {
+            if (DanteLonghornCut) { SampleLonghorn(t); return; }
             // Where his fists meet the court, caught the first time the stage is sampled at the plant and at the slam.
             if (!_dnPlanted && t >= DnPlant && t < DnPlant + .4f)
             {

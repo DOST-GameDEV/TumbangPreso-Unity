@@ -445,7 +445,7 @@ namespace TumbangPreso.Visual
     /// </summary>
     public abstract class FxStudyEffect : IDisposable
     {
-        public static readonly string[] Names = { "trails", "wisp", "wispshells", "smoke", "circle", "lotus", "scorch", "whirlwind", "whirlwindparts", "whirlwindh1", "whirlwindh7", "drift", "rafiwall", "danteboulder", "rafiwallsplit", "danteboulderboard", "dantebastion", "dantebastionb3", "dantebastionb4", "dantebastionb5", "dantebastionb6", "dantebastionb6day", "dantebastionb7", "dantebastionb7day", "dantebastionb8", "dantebastionb8day", "dantebastionboard", "cloud", "cloudline", "clouddark", "cloudburst", "cloudlinedark", "raficurrent", "raficurrentspent" };
+        public static readonly string[] Names = { "trails", "wisp", "wispshells", "smoke", "circle", "lotus", "scorch", "whirlwind", "whirlwindparts", "whirlwindh1", "whirlwindh7", "drift", "rafiwall", "danteboulder", "rafiwallsplit", "danteboulderboard", "dantebastion", "dantebastionb3", "dantebastionb4", "dantebastionb5", "dantebastionb6", "dantebastionb6day", "dantebastionb7", "dantebastionb7day", "dantebastionb8", "dantebastionb8day", "dantebastionboard", "cloud", "cloudline", "clouddark", "cloudburst", "cloudlinedark", "raficurrent", "raficurrentspent", "airburst", "airburstabove", "airburstday", "dantefirewave" };
 
         public readonly Transform Root;
         private readonly List<FxPiece> _pieces = new List<FxPiece>();
@@ -484,6 +484,10 @@ namespace TumbangPreso.Visual
                 // The landing and jump dust of a match (`CloudPuffField`): small puffs of the cloud.
                 case "landpuff": return new FxStudyLandPuff(parent);
                 // Amihan's FEATHERFALL (`FxStudyFeatherfall`): the gust, the hold with its time left, the landing.
+                // Amihan's AIRBURST, recreated from the owner's reference (Petrimaux's Dishonored 2 wind vortex).
+                case "airburst": return new FxStudyAirburst(parent);
+                case "airburstabove": return new FxStudyAirburst(parent, true);
+                case "airburstday": return new FxStudyAirburst(parent, false, true);
                 case "featherfall": return new FxStudyFeatherfall(parent);
                 // The same from close under her, looking up at the time left.
                 case "featherfallbelow": return new FxStudyFeatherfall(parent, -1f, true, true);
@@ -501,6 +505,8 @@ namespace TumbangPreso.Visual
                 // The same wall broken by a slipper 1.6 s in, bursting forward.
                 case "rafiwallsplit": return new FxStudyRafiWall(parent, FxStudyRafiWall.Look.Bench, 1.6f, 1f);
                 // Basilio's BOULDER (`FxStudyDanteBoulder`): the bench's first earth.
+                // The longhorn cutscene's slam wave, fire instead of rings (owner 2026-10-30).
+                case "dantefirewave": return new FxStudyDanteFireWave(parent);
                 case "danteboulder": return new FxStudyDanteBoulder(parent);
                 // The model board of that stone (): a turnaround, not an effect.
                 case "danteboulderboard": return new FxStudyDanteBoulderBoard(parent);

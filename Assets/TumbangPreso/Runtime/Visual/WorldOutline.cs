@@ -322,9 +322,30 @@ namespace TumbangPreso.Visual
         /// <summary>REVIEW ONLY: 16 or 8 forces that many probes whatever the tier; 0 (the game)
         /// lets the tier decide. Like `CharacterAoTest`, never set by the game itself.</summary>
         public static int AmbientOcclusionSamplesTest;
+        /// <summary>A MAP WITH ITS OCCLUSION BAKED (owner, 2026-10-29: asked whether the world AO can be baked, then
+        /// "continue" to a Payo bake test). Set each frame by `Map.PayoBakedAO` while its switch is on, false everywhere
+        /// else. While it is true passes 2 and 3 work ONLY under the mask: the cast's crease kernel where the exclusion
+        /// mask (R) covers the cast, and the world's kernel where <see cref="LiveAOProps"/> are drawn (G); every other pixel
+        /// returns clean at once, since the static world carries its occlusion in its vertices.</summary>
+        public static bool BakedWorldAO;
+        /// <summary>
+        /// DETAILED PROPS KEEP THE LIVE CREASE AO ON A BAKED MAP (owner, 2026-10-30, of the bake beside the screen AO: "no ao
+        /// on the creases of the statue face", then "continue with these fixes"). A vertex bake is only as fine as the mesh,
+        /// and a bulul's face, a plinth's carving or a small offering is finer than any vertex spacing that keeps the asset
+        /// small. Their renderers are filled in here by `Map.PayoBakedAO` (the bake leaves them out and lists them); the
+        /// mask draw paints the visible ones into the mask's G channel, and pass 2 runs the world kernel on those pixels
+        /// only, the way it ran over the whole frame before the bake. Empty on every other map.
+        /// </summary>
+        public static readonly List<Renderer> LiveAOProps = new List<Renderer>();
+        /// <summary>Merged meshes holding such props among other pieces: only vertices with UV3.x = 1 are painted into G.</summary>
+        public static readonly List<Renderer> LiveAOPropsByVertex = new List<Renderer>();
+        private static readonly int MaskLiveId = Shader.PropertyToID("_WorldOutlineMaskLive");
+        private static readonly int WorldAOMaskedId = Shader.PropertyToID("_WorldAOMasked");
+        /// <summary>How many live-AO props the last mask draw painted (0: nothing of theirs on screen).</summary>
+        public static int LiveAOPropDraws { get; private set; }
         private static bool AmbientOcclusionLite => AmbientOcclusionSamplesTest != 0
             ? AmbientOcclusionSamplesTest <= 8
-            : Settings.SettingsStore.Current.GraphicsQuality < Settings.GraphicsProfiles.All.Length - 1;
+            : Settings.GraphicsProfiles.Current < Settings.GraphicsProfiles.All.Length - 1;
         private static readonly int WorldAOId = Shader.PropertyToID("_WorldAO");
         private static readonly int WorldAOParamsId = Shader.PropertyToID("_WorldAOParams");
 
@@ -372,7 +393,11 @@ namespace TumbangPreso.Visual
         /// </summary>
         private void RequestDepthNormals(bool want)
         {
-            RequestFineDepth(want && FineDepth);
+            // The Low tier builds the ink's depth-normals from the camera's depth (see `InkFromDepth`), so it asks
+            // for that depth and not for the engine's second full draw of the scene.
+            bool fromDepth = want && InkFromDepth;
+            RequestFineDepth(want && (FineDepth || fromDepth));
+            want &= !fromDepth;
             if (_camera == null || want == _depthNormalsRequested) return;
 
             if (want) _camera.depthTextureMode |= DepthTextureMode.DepthNormals;
@@ -437,7 +462,12 @@ namespace TumbangPreso.Visual
 
         private bool HasWorldContact => WorldLookPresentation.HandlesCamera(_camera)
             && WorldCueProfile.LightingWeight>0 && WorldLookProfile.Current.EnvironmentContact>0
-            && Settings.SettingsStore.Current.GraphicsQuality>0;
+            && Settings.GraphicsProfiles.Current>0 && WorldCueProfile.PartOn(WorldCueProfile.PartOutlineContact);
+        // ⚠️ THE APPLIED TIER, NOT THE STORED SETTING (owner, 2026-10-29: "are you able to bake in the bright lighting
+        // look/optimize it?"). In a match the two are the same number (every settings path calls `GraphicsProfiles.Apply`
+        // with the stored value), but the graphics probe applies each tier without touching the store, so its "Low" ran
+        // Balanced's full-resolution occlusion and its extra depth pass: that, not the look, was the 40-60 ms the Radeon
+        // measured on Low (Logs/perf-igpu/parts/look-parts.csv).
         /// <summary>
         /// Whether this frame draws ambient occlusion: the contact term's gate (the look owns the
         /// camera, the weight is up, not the Low tier), a perspective camera, since the pass
@@ -450,15 +480,71 @@ namespace TumbangPreso.Visual
 
         private void LateUpdate() => RequestDepthNormals(Live);
 
+        /// <summary>
+        /// THE LOW TIER SKIPS THE DEPTH-NORMALS PREPASS (owner, 2026-10-29: "its crazy laggy without a gpu. which
+        /// is not optimal. even more so for the payo map"). That prepass draws every opaque renderer a second time,
+        /// about 900 set-passes on Payo by day, and on Low nothing but the ink edge reads it (the occlusion and the
+        /// ground contact are already off there). The camera's depth texture is drawn anyway for the sun's
+        /// screen-space shadows, so `_inkDepthBuffer` turns that into the same encoding (shader pass 4) and publishes
+        /// it under the engine's own name. Perspective cameras only: pass 4 rebuilds points from a perspective ray.
+        /// Every other tier keeps the prepass exactly as it was.
+        /// </summary>
+        private bool InkFromDepth => Settings.GraphicsProfiles.Current == 0 && _camera != null
+            && !_camera.orthographic && !HasWorldContact;
+        private const int InkFromDepthPass = 4;
+        private static readonly int DepthNormalsId = Shader.PropertyToID("_CameraDepthNormalsTexture");
+        private static readonly int InkViewRayId = Shader.PropertyToID("_InkViewRay");
+        private CommandBuffer _inkDepthBuffer;
+        private bool _inkDepthAttached;
+        private RenderTexture _inkDepthNormals;
+
+        /// <summary>Attaches the Low tier's depth-to-normals buffer AHEAD of the exclusion mask, which reads it.</summary>
+        private void PrepareInkFromDepth(bool want)
+        {
+            if (!want)
+            {
+                if (_inkDepthAttached && _camera != null) _camera.RemoveCommandBuffer(CameraEvent.BeforeImageEffectsOpaque, _inkDepthBuffer);
+                _inkDepthAttached = false;
+                return;
+            }
+            int width = Mathf.Max(1, _camera.pixelWidth), height = Mathf.Max(1, _camera.pixelHeight);
+            if (_inkDepthNormals == null || _inkDepthNormals.width != width || _inkDepthNormals.height != height)
+            {
+                if (_inkDepthNormals != null) { _inkDepthNormals.Release(); DestroyImmediate(_inkDepthNormals); }
+                _inkDepthNormals = new RenderTexture(width, height, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Linear)
+                { name = "WorldOutlineInkDepthNormals", filterMode = FilterMode.Point, antiAliasing = 1, hideFlags = HideFlags.HideAndDontSave };
+                _inkDepthNormals.Create();
+            }
+            float tan = Mathf.Tan(_camera.fieldOfView * 0.5f * Mathf.Deg2Rad);
+            _material.SetVector(InkViewRayId, new Vector4(tan * _camera.aspect, tan, 0, 0));
+            if (_inkDepthBuffer == null) _inkDepthBuffer = new CommandBuffer { name = "World Outline Ink Depth-Normals (Low)" };
+            _inkDepthBuffer.Clear();
+            _inkDepthBuffer.Blit((Texture)null, _inkDepthNormals, _material, InkFromDepthPass);
+            _inkDepthBuffer.SetGlobalTexture(DepthNormalsId, _inkDepthNormals);
+            _inkDepthBuffer.SetRenderTarget(BuiltinRenderTextureType.CurrentActive);
+            if (!_inkDepthAttached)
+            {
+                // Command buffers on one event run in the order added, and the mask reads this one's output.
+                bool mask = _bufferAttached;
+                if (mask) DetachBuffer();
+                _camera.AddCommandBuffer(CameraEvent.BeforeImageEffectsOpaque, _inkDepthBuffer);
+                _inkDepthAttached = true;
+                if (mask) { _camera.AddCommandBuffer(CameraEvent.BeforeImageEffectsOpaque, _maskBuffer); _bufferAttached = true; }
+            }
+        }
+
         private void OnDisable()
         {
             RequestDepthNormals(false);
             DetachBuffer();
+            PrepareInkFromDepth(false);
         }
 
         private void OnDestroy()
         {
             DetachBuffer();
+            PrepareInkFromDepth(false);
+            if (_inkDepthNormals != null) { _inkDepthNormals.Release(); DestroyImmediate(_inkDepthNormals); }
 
             if (_material != null) DestroyImmediate(_material);
             if (_maskMaterial != null) DestroyImmediate(_maskMaterial);
@@ -588,7 +674,7 @@ namespace TumbangPreso.Visual
                     for(int i=0;i<materials.Length;i++)
                     {
                         var material=materials[i];
-                        if(material==null||material.shader==null||material.shader.name!=NearFade.ShaderName)continue;
+                        if(material==null||material.shader==null||ShaderNamed(material.shader)!=NearFade.ShaderName)continue;
                         _nearFade.Add(new NearFadeMask{Renderer=renderer,Bounds=renderer.bounds,Stationary=renderer.gameObject.isStatic,
                             Submesh=i,Start=material.GetFloat("_NearFadeStart"),End=material.GetFloat("_NearFadeEnd")});
                     }
@@ -645,6 +731,15 @@ namespace TumbangPreso.Visual
 
         private const string KantoFoliageShaderName = "TumbangPreso/KantoFoliage";
 
+        /// <summary>`Shader.name` builds a new string on every read, and the rescan asks it for each material once a
+        /// second, so the answer is kept per shader (owner, 2026-10-29: "optimizing the game"). Same names, no garbage.</summary>
+        private static readonly Dictionary<Shader, string> ShaderNames = new Dictionary<Shader, string>();
+        private static string ShaderNamed(Shader shader)
+        {
+            if (!ShaderNames.TryGetValue(shader, out string name)) ShaderNames[shader] = name = shader.name;
+            return name;
+        }
+
         private static bool IsToonSurface(Renderer renderer)
         {
             var materials = renderer.sharedMaterials;
@@ -653,14 +748,15 @@ namespace TumbangPreso.Visual
             foreach (var material in materials)
             {
                 if (material == null || material.shader == null) continue;
-                if (material.shader.name == ToonShaderName) return true;
+                string shaderName = ShaderNamed(material.shader);
+                if (shaderName == ToonShaderName) return true;
                 // ⚠️ KANTO'S LEAF CARDS TOO (owner, 2026-09-27: "tree leaves look off in-game",
                 // twice). A canopy is thousands of tiny card-to-card creases in the depth-normals
                 // texture, so the bright look's crease shade, sun-caught bevel and the AO painted
                 // dark blotches and yellow rims all over it. Masked like the cast: foliage keeps
                 // its own shading. Kanto's shader only, so the approved Lagoon Cove look is
                 // unchanged.
-                if (material.shader.name == KantoFoliageShaderName) return true;
+                if (shaderName == KantoFoliageShaderName) return true;
             }
 
             return false;
@@ -700,6 +796,7 @@ namespace TumbangPreso.Visual
             // off at runtime, and clearing on the render callback would fight the frame it is
             // drawing.
             RequestDepthNormals(Live);
+            PrepareInkFromDepth(Live && InkFromDepth && EnsureMaterials());
 
             if (!Live || (_exclusion == Exclusion.Overlap && !HasWorldContact))
             {
@@ -736,6 +833,8 @@ namespace TumbangPreso.Visual
             if (FineDepth) tolerance = Mathf.Min(tolerance, MaskToleranceMetres / _camera.farClipPlane);
             _maskMaterial.SetFloat(MaskToleranceId, tolerance);
             _maskBuffer.SetGlobalVector(NearFadeMaskId,Vector4.zero);NearFadeMaskDraws=0;
+            _maskBuffer.SetGlobalFloat(MaskLiveId,0);
+            DrawLiveAOProps();
 
             foreach (var renderer in _excluded)
             {
@@ -858,12 +957,43 @@ namespace TumbangPreso.Visual
         /// dilation whatever resolution it was drawn at, and that boundary sits roughly one tap
         /// radius outside the character, underneath the ink the hull has already drawn there.
         /// </summary>
+        /// <summary>
+        /// Paints the visible <see cref="LiveAOProps"/> into the mask's G channel (owner, 2026-10-30: "no ao on the creases of
+        /// the statue face"; see the list's note). Only while a map's occlusion is baked, and only a renderer some camera
+        /// draws this frame (`isVisible`), so a plaza out of view costs no draw and pass 2 finds no pixel to work on.
+        /// </summary>
+        private void DrawLiveAOProps()
+        {
+            LiveAOPropDraws = 0;
+            if (!BakedWorldAO || LiveAOProps.Count + LiveAOPropsByVertex.Count == 0) return;
+            // 1: the whole renderer; 2: only its vertices flagged in UV3.x (a merged chunk; see the mask pass).
+            for (int mode = 1; mode <= 2; mode++)
+            {
+                _maskBuffer.SetGlobalFloat(MaskLiveId, mode);
+                foreach (var renderer in mode == 1 ? LiveAOProps : LiveAOPropsByVertex)
+                {
+                    if (renderer == null || !renderer.enabled || !renderer.isVisible || !renderer.gameObject.activeInHierarchy) continue;
+                    if (renderer.shadowCastingMode == ShadowCastingMode.ShadowsOnly) continue;
+                    var materials = renderer.sharedMaterials;
+                    int submeshes = materials == null || materials.Length == 0 ? 1 : materials.Length;
+                    for (int i = 0; i < submeshes; i++) _maskBuffer.DrawRenderer(renderer, _maskMaterial, i, MaskPass);
+                    LiveAOPropDraws++;
+                }
+            }
+            _maskBuffer.SetGlobalFloat(MaskLiveId, 0);
+        }
+
         private void EnsureMaskTexture()
         {
             int width = Mathf.Max(1, _camera.pixelWidth);
             int height = Mathf.Max(1, _camera.pixelHeight);
+            // A baked map's mask needs a second channel (G, the live-AO props); every other map keeps its one-channel R8.
+            bool two = BakedWorldAO && LiveAOProps.Count + LiveAOPropsByVertex.Count > 0;
+            var wanted = !two
+                ? (SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.R8) ? RenderTextureFormat.R8 : RenderTextureFormat.ARGB32)
+                : (SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.RG16) ? RenderTextureFormat.RG16 : RenderTextureFormat.ARGB32);
 
-            if (_mask != null && _mask.width == width && _mask.height == height) return;
+            if (_mask != null && _mask.width == width && _mask.height == height && _mask.format == wanted) return;
 
             if (_mask != null)
             {
@@ -875,9 +1005,7 @@ namespace TumbangPreso.Visual
             // value, the occlusion test happens in the fragment against the prepass rather than
             // against an attached depth buffer (see the shader), and a multisampled mask would
             // have to agree with the camera's own sample count, which is somebody else's setting.
-            var format = SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.R8)
-                ? RenderTextureFormat.R8
-                : RenderTextureFormat.ARGB32;
+            var format = wanted;
 
             // ⚠️ This is coverage data, not color. Requesting the default sRGB R8
             // format caused a fallback to four channels on this Windows GPU and
@@ -1009,8 +1137,9 @@ namespace TumbangPreso.Visual
             // clamp is repeated here rather than trusted from the `[Range]` attribute, because
             // the attribute constrains the inspector and does not constrain a value that arrives
             // from an older serialised scene or from code.
-            _material.SetFloat(SupersampleId,
-                               Mathf.Clamp(_supersample, MinSupersample, MaxSupersample));
+            // The Low tier takes one edge sample a pixel (8 taps rather than 20 at the default 2x2; owner, 2026-10-29).
+            _material.SetFloat(SupersampleId, Settings.GraphicsProfiles.Current == 0 ? MinSupersample
+                               : Mathf.Clamp(_supersample, MinSupersample, MaxSupersample));
 
             ApplyFade();
             ApplyViewRay();
@@ -1037,6 +1166,15 @@ namespace TumbangPreso.Visual
             _material.SetVector("_CharacterAOParams",new Vector4(castShare,castRadius,castBias,0));
             RenderTexture occlusion=null,occlusionBlur=null;
             float aoStrength=AmbientOcclusionLive?WorldLookProfile.Current.AmbientOcclusion*WorldLookPresentation.Current.Weight:0;
+            // A map with its world occlusion baked (Payo) still runs this pass, but only UNDER THE MASK (owner, 2026-10-30:
+            // "turn it on by default, keep character crease ao", then of the statues "no ao on the creases of the statue
+            // face"): the cast's creases where R covers the cast, the world kernel where G covers a live-AO prop, and every
+            // other pixel returns clean at its first read. The strength stays the look's, so the composite applies both
+            // exactly as it does on a live map. ⚠️ It was 0 here before, and the composite's gate (strength above 0)
+            // then dropped the cast's creases it had just drawn.
+            bool underMask=BakedWorldAO && aoStrength>0;
+            _material.SetFloat(WorldAOMaskedId,underMask?1:0);
+            if(underMask && (!maskReady || (castShare<=0 && LiveAOPropDraws==0)))aoStrength=0;   // no mask, or nothing under it to work on
             if(aoStrength>0)
             {
                 // ⚠️ FULL RESOLUTION. It was half, on the reasoning that occlusion is soft; the

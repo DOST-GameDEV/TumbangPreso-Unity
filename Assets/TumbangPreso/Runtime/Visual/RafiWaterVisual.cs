@@ -64,10 +64,37 @@ namespace TumbangPreso.Visual
         /// <summary>
         /// ⚠️ ONE SWITCH BETWEEN TWO WATER WALLS. Off, the wall is the folded sheet built below (`BuildWall`, `Wall`), as it
         /// has been. On, it is the falling curtain of the effects study (`RafiWallCurtain`, which stands `FxStudyRafiWall`
-        /// on the court). OFF until the owner has seen the new one filmed on a map. Read when a wall is built, so a wall
-        /// already standing keeps the look it was born with. Look only: the rule, the timing and the wire are untouched.
+        /// on the court). Read when a wall is built, so a wall already standing keeps the look it was born with. Look only:
+        /// the rule, the timing and the wire are untouched.
+        /// ⚠️ ON IN THIS DRAFT (2026-10-29), so the owner can judge it in a match; false gives the folded sheet exactly. Its
+        /// footprint is the rule's: 4 m wide and 1.8 m tall on the cast line, built from `RafiRules`, standing from the gather
+        /// to the moment the rule lets go and only falling after (the court film `rafiwallcourt_c2` measured its pieces'
+        /// boxes to 1.98 m: the lip's lobes and the warp's margin; the sheet's own line tops out at 1.77 m).
         /// </summary>
-        public static bool NewWall = false;
+        public static bool NewWall = true;
+        /// <summary>
+        /// ⚠️ SELF-LIT ACCENTS ON THE NEW WALL. The owner, of the k1 film: "can the waterwall have some emmissives on it". On,
+        /// the new wall wears three lit accents laid over its own pieces (`RafiWallCurtain`: the crest, the lines down the
+        /// sheet, the seam at the ground); off, it is the wall exactly as filmed in k1. Read when a wall is built.
+        /// </summary>
+        public static bool WallGlow = true;
+        /// <summary>
+        /// ⚠️ HOW STRONGLY THE WALL'S BODY GLOWS (0 to 1), read every frame. The owner, of the k3 film: "the wall itself dont
+        /// look like its glowing". With `WallGlow` on, the sheet wears a pale aqua light from within, a soft fringe round
+        /// its edge and an aqua pool on the ground either side (`RafiWallCurtain`); this scales all three. 0 leaves only
+        /// the k3 accents. Look only.
+        /// </summary>
+        public static float WallGlowStrength = 1f;
+        /// <summary>Which look the wall's glow wears (`WallGlowVariant`).</summary>
+        public enum WallGlowLook { K10, K11 }
+        /// <summary>
+        /// ⚠️ K11 IS THE APPROVED LOOK AND THE DEFAULT SINCE 2026-10-30. The owner, of the k10 film: "for now rafi's wall is good to go",
+        /// and "still try making the fixes for the issues you pointed out". K11 is those fixes, opt-in: the middle's light
+        /// broken into streaks and climbing caustic bands instead of a milky patch, a pool with an uneven drifting edge and
+        /// moving caustics, and a fringe strongest at the foot. Shown beside k10 as v11c, the owner: "rafi's wall looks good now. lock
+        /// it in". K10 stays selectable and draws exactly as first approved. Read every frame. Look only.
+        /// </summary>
+        public static WallGlowLook WallGlowVariant = WallGlowLook.K11;
         private RafiWallCurtain _curtain;
         /// <summary>The new wall, when this one was built as it (a film poses its fall and splash through this).</summary>
         public RafiWallCurtain Curtain => _curtain;

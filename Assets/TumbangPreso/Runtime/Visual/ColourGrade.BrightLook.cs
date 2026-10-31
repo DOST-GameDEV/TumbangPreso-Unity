@@ -25,7 +25,7 @@ namespace TumbangPreso.Visual
         private static readonly int BloomIntensityId=Shader.PropertyToID("_BloomIntensity");
         private static readonly int BloomThresholdId=Shader.PropertyToID("_BloomThreshold");
 
-        private float BrightLookWeight=>WorldLookPresentation.HandlesCamera(_camera)?WorldLookPresentation.Current.Weight:0;
+        private float BrightLookWeight=>WorldLookPresentation.HandlesCamera(_camera)&&WorldCueProfile.PartOn(WorldCueProfile.PartGrade)?WorldLookPresentation.Current.Weight:0;
 
         /// <summary>Whether the last graded frame carried the bright look's bloom.</summary>
         public bool BloomLive {get;private set;}

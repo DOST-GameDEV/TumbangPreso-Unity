@@ -373,6 +373,14 @@ namespace TumbangPreso.Settings
         public int GraphicsQuality = GraphicsProfiles.Default;
 
         /// <summary>
+        /// Whether the first-run tier pick has run (owner, 2026-10-29: "its crazy laggy without a gpu"). False in every
+        /// file written before it existed and in a fresh profile; `SettingsStore.Load` then asks
+        /// `GraphicsProfiles.Detect` once, ONLY while `GraphicsQuality` still holds the default, so a Low or High the
+        /// player picked is never touched, and sets this so it never runs again.
+        /// </summary>
+        public bool GraphicsTierDetected;
+
+        /// <summary>
         /// Whether the game waits for the display before showing a frame, as an index into
         /// <see cref="VSyncModes.All"/>.
         ///
@@ -663,6 +671,15 @@ namespace TumbangPreso.Settings
                     ? Display.main.systemHeight
                     : Screen.currentResolution.height;
 
+                // The Low tier draws a fullscreen frame at 70 per cent of the desktop's size and the display
+                // scales it up (`GraphicsProfiles`, owner 2026-10-29: "its crazy laggy without a gpu"); every
+                // other tier keeps the desktop's own resolution.
+                float scale = GraphicsProfiles.Of(GraphicsQuality).RenderScale;
+                if (scale < 1f)
+                {
+                    width = Mathf.Max(640, Mathf.RoundToInt(width * scale));
+                    height = Mathf.Max(360, Mathf.RoundToInt(height * scale));
+                }
                 Screen.SetResolution(width, height, FullScreenMode.FullScreenWindow);
                 return;
             }
@@ -756,6 +773,9 @@ namespace TumbangPreso.Settings
     {
         private static GameSettings _current;
 
+        /// <summary>Whether the settings are already in memory (reading `Current` would load them).</summary>
+        public static bool Loaded => _current != null;
+
         /// <summary>
         /// Raised when the player picks a different landed-highlight colour or switches it off,
         /// so every tsinelas already lying on the arena repaints NOW rather than at its next
@@ -821,6 +841,16 @@ namespace TumbangPreso.Settings
 
             bool mintedIdentity = string.IsNullOrEmpty(_current.PlayerToken);
             _current.Validate();
+
+            // The first-run graphics tier (see `GameSettings.GraphicsTierDetected`). Not on a server or in batch runs,
+            // whose profiles the tests own.
+            if (!_current.GraphicsTierDetected && !Application.isBatchMode)
+            {
+                if (_current.GraphicsQuality == GraphicsProfiles.Default) _current.GraphicsQuality = GraphicsProfiles.Detect();
+                _current.GraphicsTierDetected = true;
+                Debug.Log($"[Settings] first-run graphics tier {GraphicsProfiles.Of(_current.GraphicsQuality).Label} for {SystemInfo.graphicsDeviceName} ({SystemInfo.graphicsMemorySize} MB, {SystemInfo.graphicsDeviceType})");
+                mintedIdentity = true;   // persist it now, as the identity is
+            }
 
             // Validate mints the reconnect identity, but an identity that only lives in RAM
             // changes on every cold launch. Persist it immediately instead of waiting for the
