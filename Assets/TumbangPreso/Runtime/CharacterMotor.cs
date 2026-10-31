@@ -1504,7 +1504,10 @@ namespace TumbangPreso
             float x = p.x, z = p.z;
 
             if (Confinement.IsConfined(RoundActive, _isDefender) && !MayLeaveBoxToTag)
+            {
                 Confinement.ClampToBox(ref x, ref z);
+                if (Mathf.Abs(x - p.x) + Mathf.Abs(z - p.z) > .0005f) UI.TayaGuide.Warn(this, UI.TayaGuide.StayInBox);
+            }
 
             // ⚠️⚠️ AND NOBODY LEAVES THE ARENA AT ALL, ROLE OR NO ROLE. The chalk box above is a
             // RULE and applies to the taya only; this is the WALL and applies to everybody. The

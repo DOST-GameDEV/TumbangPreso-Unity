@@ -406,6 +406,7 @@ namespace TumbangPreso.UI
         // -------------------------------------------------------------------
 
         public void Bind(CharacterMotor local) => _local = local;
+        public CharacterMotor Local => _local;
 
         /// <summary>
         /// "Walk around freely. Press [R] when you're ready to start the round." — the pre-round
@@ -690,6 +691,13 @@ namespace TumbangPreso.UI
             _toast.text = text;
             _toast.enabled = true;
             _toastLeft = duration;
+        }
+
+        /// <summary>A rule just refused this player: the red warning tile, not the toast's grey information strip.</summary>
+        public void ShowRefusal(string sentence)
+        {
+            if (_nativeReadout != null) { _nativeReadout.Refuse(sentence); return; }
+            ShowToast(sentence, 1.8f);
         }
 
         /// <summary>

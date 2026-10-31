@@ -10,6 +10,16 @@ namespace TumbangPreso.Visual
     /// </summary>
     public sealed class ZackOverclockLook : MonoBehaviour
     {
+        /// <summary>
+        /// The bench rework (`ZackOverclockPaint`): a dark plume and arcs off the air beside him, nothing on his body, no copies of
+        /// him, and an ending that plays out. False draws the lines and ghosts below exactly as they were, kept until the owner
+        /// has passed the painted look in play.
+        /// </summary>
+        public static bool Painted = true;
+        private bool _painted, _released;
+        private float _releasedAge;
+        private ZackOverclockPaint _paint;
+
         private const int Arcs = 3, Ghosts = 3, TrailPoints = 10;
         private CharacterMotor _motor;
         private ZackHeroKit _kit;
@@ -20,7 +30,7 @@ namespace TumbangPreso.Visual
         private readonly Vector3[] _feet = new Vector3[TrailPoints];
         private float _nextFoot, _age, _nextGhostTry;
 
-        public static ZackOverclockLook Attach(CharacterMotor motor, ZackHeroKit kit)
+        public static ZackOverclockLook Attach(CharacterMotor motor, ZackHeroKit kit, bool? painted = null)
         {
             if (motor == null) return null;
             // At the origin: the ghost frames write their roots in world space.
@@ -32,6 +42,12 @@ namespace TumbangPreso.Visual
             look._trailInk = ZackFx.Line(go.transform, "FootTrailInk", TrailPoints, 0.12f, ZackFx.Ink, 0.0f);
             look._trail = ZackFx.Line(go.transform, "FootTrail", TrailPoints, 0.06f, ZackFx.Body, 1.3f);
             for (int i = 0; i < TrailPoints; i++) look._feet[i] = motor.transform.position;
+            look._painted = painted ?? Painted;
+            if (look._painted)
+            {
+                foreach (var line in go.GetComponentsInChildren<LineRenderer>(true)) line.enabled = false;
+                look._paint = new ZackOverclockPaint(go.transform);
+            }
             return look;
         }
 
@@ -41,12 +57,15 @@ namespace TumbangPreso.Visual
         public void Release()
         {
             if (this == null) return;
+            // Painted, it plays its own ending and goes when that is done (`LateUpdate`).
+            if (_painted) { if (!_released) { _released = true; _releasedAge = _age; } return; }
             if (_motor != null) ZackFx.Sparks(_motor.transform.position + Vector3.up * 0.9f, 0.5f, 4, _motor.PlayerSlot);
             Destroy(gameObject);
         }
 
         private void LateUpdate()
         {
+            if (_painted) { StepPainted(); return; }
             if (_motor == null || _kit == null || !_kit.IsOverclocked) { Destroy(gameObject); return; }
             _age += Time.deltaTime;
             var at = _motor.transform.position;
@@ -86,6 +105,22 @@ namespace TumbangPreso.Visual
             StepGhosts(firstPerson || reduced || stutter);
         }
 
+        private void StepPainted()
+        {
+            if (_motor == null || _kit == null) { Destroy(gameObject); return; }
+            _age += Time.deltaTime;
+            // The kit can drop the state without a Release (a round's end): that ends it the same way.
+            if (!_released && !_kit.IsOverclocked) { _released = true; _releasedAge = _age; }
+            var at = _motor.transform.position;
+            float left = _released ? 0.0f : _kit.OverclockLeft;
+            _current?.Step(at + Vector3.up * .8f, !_released, left > 0.0f && left < 5 && Mathf.Repeat(_age, .25f) < .07f ? .3f : 1f);
+            _paint.Pose(_age, at, _motor.transform.forward, left, _released, ZackFx.InOwnFirstPerson(_motor), Settings.SettingsStore.Current.ReducedEffects);
+            if (_released && _age - _releasedAge > ZackOverclockPaint.EndSeconds)
+            {
+                if (Application.isPlaying) Destroy(gameObject); else gameObject.SetActive(false);
+            }
+        }
+
         private void StepGhosts(bool hidden)
         {
             for (int i = 0; i < Ghosts; i++)
@@ -104,6 +139,6 @@ namespace TumbangPreso.Visual
             }
         }
 
-        private void OnDestroy() { foreach (var ghost in _ghosts) ghost?.Destroy(); }
+        private void OnDestroy() { foreach (var ghost in _ghosts) ghost?.Destroy(); _paint?.Dispose(); }
     }
 }

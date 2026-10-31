@@ -27,14 +27,17 @@ namespace TumbangPreso.Visual
     /// route and dies on it in a third of a second, so the read is "he went back THAT way".
     ///
     ///   * THE ECHOES (owner, 2026-10-29: "for back track can you try adding a multiple ghost/afterimage effect too"): up to
-    ///     five more of z4's afterimages, spaced evenly along the route at points he really passed through, each turned the
+    ///     six more of z4's afterimages along the route at points he really passed through, each turned the
     ///     way he was running there. Each appears as the rewinding body passes its spot and is eaten from the feet up a
     ///     quarter of a second later, so they ripple along the path behind the pull. They wear the ONE body baked at the
     ///     cast (no new bake, no per-frame mesh work: a frame sets their transforms and property blocks), so all of them hold
     ///     the pose he had when he pressed, not the pose he had at that spot; the past moments are the ones in his real pose.
-    ///     They go from gold, the oldest-run first, to a pale gold near white at the old spot, a third there.
-    ///     COST CAP: at most `MaxEchoes` (5), each two draws (body and cracks) of one baked body; at most about four are on
-    ///     show at once, since each lives 0.32 s and the pull passes them in 0.42 s.
+    ///     SPACING (owner, 2026-11-01: "more dense at the beginning"): bunched at the end he leaves from, opening out toward
+    ///     where he lands. `EchoDenseAtLeave` flips which end is the dense one.
+    ///     LOOK (owner, 2026-11-01: "keep the old ghosts and turn the transparency down instead"): they go from gold, the
+    ///     oldest-run first, to a pale gold near white at the old spot, made fainter only by `EchoFade`. `_Opacity` scales
+    ///     their cover and their added light together, so the painted look holds. The afterimage at the let-go fades with them.
+    ///     COST CAP: at most `MaxEchoes` (6), each two draws (body and cracks) of one baked body; each lives 0.32 s.
     ///
     /// ⚠️ WHERE A REUSED PIECE DOES NOT FIT. z4's streak is a 2 m blade sized to a sidestep; laid over a 15 m rewind it would
     /// be stretched seven times, so it is not used here. The silk's own ageing does that job at any length. b13d's strands,
@@ -54,8 +57,11 @@ namespace TumbangPreso.Visual
         private sealed class Leg { public Part Body, Core; public float D0, D1, Entered = -1f, Left = -1f; public int Index; }
         private readonly List<Leg> _legs = new List<Leg>();
         private readonly Part _strike, _land, _ghost, _cracks;
-        public const int MaxEchoes = 5;
-        private const float EchoSpacing = 1.2f, EchoWhole = 0.06f, EchoGone = 0.32f, EchoOpacity = 0.32f;
+        public const int MaxEchoes = 6;
+        private const float EchoSpacing = 1.2f, EchoWhole = 0.06f, EchoGone = 0.32f, EchoFade = 0.3f, EchoOpacity = 0.32f * EchoFade, EchoCrackOpacity = 0.95f * EchoFade, LetGoOpacity = 0.34f * EchoFade;
+        /// <summary>Which end of the route the echoes bunch at: true where he leaves from (route start), false where he lands.</summary>
+        private static readonly bool EchoDenseAtLeave = true;
+        private const float EchoBunch = 2.2f, EchoFirst = 0.06f, EchoLast = 0.88f, EchoMinGap = 0.7f;
         private static readonly Color PaleGold = new Color(1.00f, 0.95f, 0.78f);
         private Part[] _echoBody = new Part[0], _echoCracks = new Part[0];
         private float[] _echoAt = new float[0], _echoBorn = new float[0];
@@ -129,8 +135,8 @@ namespace TumbangPreso.Visual
             }
         }
 
-        // The echoes: evenly along the route between an eighth and seven eighths of it, never closer than 1.2 m to each other,
-        // each turned from the way he faced at the cast to the way he was running at its spot.
+        // The echoes: bunched at one end of the route (`EchoDenseAtLeave`), never closer than `EchoMinGap` to each other or to
+        // the afterimage at the let-go, each turned from the way he faced at the cast to the way he was running at its spot.
         private void StandEchoes(Mesh mesh, GameObject model)
         {
             if (_length < EchoSpacing * 2f) return;
@@ -140,9 +146,13 @@ namespace TumbangPreso.Visual
             if (cast.sqrMagnitude < 1e-4f) cast = Vector3.forward;
             _echoBody = new Part[count]; _echoCracks = new Part[count];
             _echoAt = new float[count]; _echoBorn = new float[count]; _echoFeet = new Vector3[count];
+            float previous = 0f;
             for (int k = 0; k < count; k++)
             {
-                float share = count == 1 ? 0.5f : Mathf.Lerp(0.12f, 0.88f, k / (count - 1f)), d = share * _length;
+                float t = count == 1 ? 0.5f : k / (count - 1f);
+                float shaped = EchoDenseAtLeave ? Mathf.Pow(t, EchoBunch) : 1f - Mathf.Pow(1f - t, EchoBunch);
+                float d = Mathf.Min(Mathf.Max(Mathf.Lerp(EchoFirst, EchoLast, shaped) * _length, previous + EchoMinGap), _length - 0.2f);
+                previous = d;
                 // He ran toward where he leaves, so his heading at a spot points back along the route toward its start.
                 var heading = At(d - 0.3f) - At(d + 0.3f); heading.y = 0f;
                 if (heading.sqrMagnitude < 1e-4f) heading = cast;
@@ -154,7 +164,6 @@ namespace TumbangPreso.Visual
                 _echoCracks[k] = new Part("echo-cracks-" + k, holder, mesh, ZackKitPaint.Cracks);
                 // Gold where the oldest of the run is, going to a pale gold near white at the old spot. (Broad white reads
                 // as overexposed: the body only gets near it; the cracks carry the white.)
-                float t = count == 1 ? 0.5f : k / (count - 1f);
                 var body = Color.Lerp(ZackKitPaint.Gold, PaleGold, t);
                 _echoBody[k].Colour("_Deep", Color.Lerp(ZackKitPaint.Amber, ZackKitPaint.Gold, t));
                 _echoBody[k].Colour("_Body", body); _echoBody[k].Colour("_Hot", body);
@@ -176,7 +185,7 @@ namespace TumbangPreso.Visual
                 float near = eyes ? Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(1.1f, 1.8f, Vector3.Distance(_echoFeet[k] + Vector3.up * 1.2f, eye))) : 1f;
                 _echoCracks[k].Tile(0.9f, 0.9f, 0.13f + 0.27f * ((Mathf.FloorToInt(age * ZackKitPaint.Strikes) + k) % 4), 0.41f);
                 _echoBody[k].Frame(age, EchoOpacity * enter * near, eaten);
-                _echoCracks[k].Frame(age, 0.95f * enter * near, eaten);
+                _echoCracks[k].Frame(age, EchoCrackOpacity * enter * near, eaten);
             }
         }
 
@@ -232,8 +241,8 @@ namespace TumbangPreso.Visual
             float near = eyes ? Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(1.1f, 1.8f, Vector3.Distance(_from + Vector3.up * 1.2f, eye))) : 1f;
             bool ghost = _ghostShown && cut >= 0f;
             _cracks.Tile(0.9f, 0.9f, 0.13f + 0.27f * (Mathf.FloorToInt(age * ZackKitPaint.Strikes) % 4), 0.41f);
-            _ghost.Frame(age, ghost ? 0.34f * near : 0f, ghostEaten);
-            _cracks.Frame(age, ghost ? 0.95f * near : 0f, ghostEaten);
+            _ghost.Frame(age, ghost ? LetGoOpacity * near : 0f, ghostEaten);
+            _cracks.Frame(age, ghost ? EchoCrackOpacity * near : 0f, ghostEaten);
 
             // THE ECHOES, rippling along the route behind the pull.
             PoseEchoes(age, d, eye, eyes);

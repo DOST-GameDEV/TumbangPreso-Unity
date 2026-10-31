@@ -20,7 +20,7 @@ namespace TumbangPreso.Visual
     // poorly made so eventually we'll need to do a vfx revamp again"). The fourteen line streaks rewritten every frame and
     // the line spark bursts are replaced by the approved Zack pieces in `ZackRewindPaint`: Bank Shot b13d's silk trail laid
     // along the real route, Quick Circuit z4's strikes and afterimage, b13d's GPU spark bursts. The body pull, the lead
-    // hologram and the past moments are this class's own and draw exactly as before either way.
+    // hologram and the past moments are this class's own; since 2026-11-01 they draw only with the line look (`PastCopies`).
     [DefaultExecutionOrder(2500)]
     public sealed class ZackBacktrackLook : MonoBehaviour
     {
@@ -29,6 +29,14 @@ namespace TumbangPreso.Visual
         /// sparks. Read when a rewind begins. TO GO BACK, MAKE THE LINE BELOW `false`.
         /// </summary>
         public static bool Painted = true;
+        /// <summary>
+        /// ⚠️ THE OLD COPIES, OFF. The owner, on the live game (2026-11-01): "the back track is using the old thin highlight
+        /// ghost". The lead hologram and the past moments wear `ZackTemporalMemory`: broken scan wires and a narrow rim, five
+        /// layers of it, closing onto his body through the whole pull. That is the wire scribble `docs/VFX_QUALITY_GATE.md`
+        /// bans. Off, a painted rewind draws only his own body and `ZackRewindPaint`, which is what the owner approved, since
+        /// `Stage` never had these copies. The line look (`Painted` off) keeps them. Read when a rewind begins.
+        /// </summary>
+        public static bool PastCopies = false;
         public const float RevealSeconds = .06f, TravelSeconds = .42f, CatchSeconds = .14f;
         /// <summary>The catch: the body reaches the old spot and the landing cue plays. Matches the 0.46 s pull cue.</summary>
         public const float PullSeconds = RevealSeconds + TravelSeconds;
@@ -120,14 +128,15 @@ namespace TumbangPreso.Visual
                 for(int i=0;i<surfaces.Count;i++){v._wasHidden[i]=surfaces[i].forceRenderingOff;surfaces[i].forceRenderingOff=true;}
             }
             if(!v.RouteFromHistory())v.RouteFromPath(path);
-            if(v._body!=null)
+            bool copies=PastCopies||!v._painted;
+            if(v._body!=null&&copies)
             {
                 // One hologram carries a layered contour trail in its shader, rather than a group of actors.
                 var echo=ZackFx.Echo.Of(motor.PlayerSlot,v.transform);
                 if(echo!=null){v.CopyShoe(echo);echo.Past(.1f);v._moments=new[]{echo};}
             }
             bool calm=Settings.SettingsStore.Current.ReducedEffects;
-            if(v._body!=null)v.ChoosePastMoments(calm?1:MaxPast);
+            if(v._body!=null&&copies)v.ChoosePastMoments(calm?1:MaxPast);
             // His body as it stands at the cast, before the teleport: the painted afterimage is baked from it.
             if(v._painted)v._paint=new ZackRewindPaint(v.transform,v._route,v._routeDistance,motor.GetComponent<CharacterVisual>()?.Model,calm);
             else v.LineStart(calm);

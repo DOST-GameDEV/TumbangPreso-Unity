@@ -24,6 +24,13 @@ namespace TumbangPreso.Visual
     [DefaultExecutionOrder(2600)]
     public sealed class ZackZapLook : MonoBehaviour
     {
+        /// <summary>
+        /// The bench rework (`ZackZapPaint`): the approved bolt, no ink edge, the wide soft ring in place of the thin one. False draws
+        /// the line renderers below exactly as they were, kept until the owner has passed the painted look in play.
+        /// </summary>
+        public static bool Painted = true;
+        private ZackZapPaint _paint;
+
         private const int BoltPoints = 9, RingPoints = 24;
         private CharacterMotor _motor;
         private ZackHeroKit _kit;
@@ -36,8 +43,8 @@ namespace TumbangPreso.Visual
 
         /// <summary>0 to 1 of the two-handed pose on the body this frame (diagnostics and capture traces).</summary>
         public float PoseAmount => _pose;
-        public bool BoltDrawn => _bolt != null && _bolt.enabled;
-        public bool BridgeDrawn => _bridge != null && _bridge.enabled;
+        public bool BoltDrawn => _paint != null ? _paint.BoltDrawn : _bolt != null && _bolt.enabled;
+        public bool BridgeDrawn => _paint != null ? _paint.BridgeDrawn : _bridge != null && _bridge.enabled;
         public Vector3 LeadHand { get; private set; }
         public Vector3 RearHand { get; private set; }
 
@@ -56,6 +63,7 @@ namespace TumbangPreso.Visual
             look._sputter = ZackFx.Line(go.transform, "ZapSputter", 4, 0.02f, ZackFx.Core, 1.6f);
             look._ring = ZackFx.Line(go.transform, "ZapLockRing", RingPoints, 0.035f, ZackFx.Body, 1.4f);
             look._ring.loop = true;
+            if (Painted) look._paint = new ZackZapPaint(go.transform);
             look.HideAll();
             return look;
         }
@@ -65,6 +73,7 @@ namespace TumbangPreso.Visual
         private void HideAll()
         {
             _bridge.enabled = _bridgeB.enabled = _bolt.enabled = _boltInk.enabled = _fork.enabled = _ring.enabled = _sputter.enabled = false;
+            _paint?.Hide();
         }
 
         private void LateUpdate()
@@ -88,6 +97,12 @@ namespace TumbangPreso.Visual
 
             // His own view has two equal feeds into a point ahead of both palms, so neither hand reads as a prop holder.
             var emitter = eyes ? (lead + rear) * .5f + Camera.main.transform.forward * .12f : lead;
+            if (_paint != null)
+            {
+                bool held = rival != null && zapping;
+                _paint.Pose(_age, on, rear, emitter, aimAt, held, _kit.ZapTarget, held ? rival.transform.position : aimAt, _kit.ZapLock01, _kit.ZapGrounded, reduced);
+                return;
+            }
             // The circuit between his hands: always while the key is down.
             _bridge.enabled = true;
             ZackFx.Jag(_bridge, rear, eyes ? emitter : lead, 0.035f, strike * 1.3f);

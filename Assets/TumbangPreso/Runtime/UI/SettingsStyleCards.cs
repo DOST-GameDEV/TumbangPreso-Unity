@@ -81,6 +81,7 @@ namespace TumbangPreso.UI
                 if (entry.Available)
                 {
                     card.gameObject.AddComponent<SettingsControlFocus>();
+                    card.gameObject.AddComponent<Hub.KitPress>().Face = plain;
                     button.onClick.AddListener(() => { MenuSfx.Click(); Show(index); picked(index); });
                 }
             }

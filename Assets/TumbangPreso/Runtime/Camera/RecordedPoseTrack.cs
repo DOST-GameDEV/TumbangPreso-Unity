@@ -43,6 +43,24 @@ namespace TumbangPreso.CameraSystem
         }
         public Sample StateAt(float time)
         {var result=Samples[0];foreach(var sample in Samples){if(sample.Time>time)break;result=sample;}return result;}
+        /// <summary>The root's position on a curve through the samples: 20 keys a second kink visibly once slowed down.</summary>
+        public Vector3 SmoothRoot(float time)
+        {
+            int n=Samples.Length;if(n==0)return Vector3.zero;
+            if(n<2)return Samples[0].Positions[0];
+            int i=0;while(i<n-2&&Samples[i+1].Time<time)i++;
+            Sample a=Samples[Mathf.Max(0,i-1)],b=Samples[i],c=Samples[i+1],d=Samples[Mathf.Min(n-1,i+2)];
+            float span=c.Time-b.Time;
+            float t=span>0?Mathf.Clamp01((time-b.Time)/span):0;
+            // A teleport anywhere near is an edge: leave it to the straight reading in Apply.
+            if(a.Epoch!=b.Epoch||b.Epoch!=c.Epoch||c.Epoch!=d.Epoch||(c.Positions[0]-b.Positions[0]).sqrMagnitude>4)
+                return t>=1?c.Positions[0]:Vector3.Lerp(b.Positions[0],c.Positions[0],b.Epoch!=c.Epoch?0:t);
+            Vector3 p=b.Positions[0],q=c.Positions[0];
+            Vector3 m0=a==b?q-p:(q-a.Positions[0])*(span/Mathf.Max(.001f,c.Time-a.Time));
+            Vector3 m1=c==d?q-p:(d.Positions[0]-p)*(span/Mathf.Max(.001f,d.Time-b.Time));
+            float tt=t*t,ttt=tt*t;
+            return (2*ttt-3*tt+1)*p+(ttt-2*tt+t)*m0+(3*tt-2*ttt)*q+(ttt-tt)*m1;
+        }
         public void Apply(Transform[] bones,float time)
         {
             if(bones==null||bones.Length!=Paths.Length||Samples.Length==0)return;

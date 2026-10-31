@@ -22,6 +22,7 @@ namespace TumbangPreso.UI
             menu._selected=Mathf.Clamp(selected,0,Mathf.Max(0,values.Length-1));menu._choose=choose;
             menu.Button=frame.gameObject.AddComponent<Button>();menu.Button.targetGraphic=frame;
             frame.gameObject.AddComponent<SettingsControlFocus>();
+            frame.gameObject.AddComponent<Hub.KitPress>();
             menu.Button.transition=Selectable.Transition.ColorTint;menu.Button.onClick.AddListener(menu.Open);
             menu._value=OwnerUiLayout.Text(frame.transform,"SelectedValue",values.Length>0?values[menu._selected]:"",30);
             menu._value.color=SettingsPalette.PanelInk;menu._value.font=Hub.HubKnit.SentenceFont(true);OwnerUiLayout.Place(menu._value.rectTransform,34,(height-60)*.5f-3,500,60);

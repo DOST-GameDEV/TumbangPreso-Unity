@@ -8,7 +8,7 @@ namespace TumbangPreso.Visual
     /// her ult can use the floor vfx used in lotus"; of the transparent sheet that followed, "the ice on the floor should have
     /// the same material as the ice wall"; of the flat star at her feet, "ice spikes not snowflake". So the floor is the approved
     /// Glacial Wall DepthB material (`CheskaFrostKit.Look`, shader `CheskaWallBetween`), called as it is, and the centre is the
-    /// bench lotus's own spikes (`FxStudyLotus`, flower alone), standing 3D crystals, called and not repainted.
+    /// bench lotus's own spikes (`FxStudyLotus`, flower alone), standing 3D crystals, in that same DepthB ice (`WearWallIce`).
     ///
     /// ⚠️ THE FLOOR IS PLATES, NOT A SHEET. That shader is solid and raises each piece from a per-vertex foot and life.
     ///   * The leading edge is the outline of floes rising as the front reaches them.
@@ -130,16 +130,68 @@ namespace TumbangPreso.Visual
             _burst = FxStudyLotus.DressBurst(AddFlat("burst", 4, "erode_radial", lying: true, erode: "erode_cloud"));
             _burst.At.localPosition = new Vector3(0f, PlateMax + 0.04f, 0f);
 
-            // ⚠️ THE LOTUS'S OWN CRYSTALS, TWO ADJUSTMENTS ON THESE RENDERERS ONLY. Its depth colour is near navy, tuned on a dark
-            // bench with bloom: on a sunlit court beside this floor the spikes read almost black (c9), so they go to the wall's
-            // own core colour. And half as big again, so they stand over a body at her feet.
+            // ⚠️ THE LOTUS'S ARRANGEMENT AND CLOCK, FROZEN'S ICE. The owner, showing the frozen victim's crystals: "can u make the
+            // lotus spike look more like this". So these renderers alone wear the wall's DepthB material, thicker. The bench
+            // lotus is not touched, and half as big again is still so they stand over a body at her feet.
             _spikes.Root.localScale = Vector3.one * 1.4f;
-            foreach (var r in _spikes.Root.GetComponentsInChildren<Renderer>(true))
+            WearWallIce(_spikes.Root);
+        }
+
+        private const float SpikeGirth = 1.7f;
+        private const int SpikeSeeds = 5;
+        private static readonly Dictionary<(Mesh, int), Mesh> WallIceMeshes = new Dictionary<(Mesh, int), Mesh>();
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ForgetWallIce() => WallIceMeshes.Clear();
+
+        // The wall's shader reads a foot and a life per vertex and its "up" is the mesh's own y (`CheskaFrostKit.Bake`). So each
+        // crystal part draws a copy of its mesh in its holder's space, foot at y 0, past any rise or sink: the pose stays
+        // `PoseFlower`'s transforms, and `IceCrystalKit.Dress` writes the same _Age and _Lit this shader reads. One copy a
+        // mesh and seed, built once a session, so the spikes do not all wear one pattern of cracks.
+        private static void WearWallIce(Transform flower)
+        {
+            int seed = 0;
+            foreach (Transform holder in flower)
             {
-                r.GetPropertyBlock(block);
-                block.SetColor("_Deep", new Color(0.03f, 0.33f, 0.50f));
-                r.SetPropertyBlock(block);
+                int kind = holder.name.EndsWith(IceCrystalKit.Shard) ? CheskaFrostKit.Shard : holder.name.EndsWith(IceCrystalKit.Cluster) ? CheskaFrostKit.Cluster
+                         : holder.name.EndsWith(IceCrystalKit.Stub) ? CheskaFrostKit.Stub : CheskaFrostKit.Spike;
+                var look = CheskaFrostKit.Look(kind);
+                if (look == null) continue;
+                seed++;
+                foreach (var filter in holder.GetComponentsInChildren<MeshFilter>(true))
+                {
+                    var r = filter.GetComponent<MeshRenderer>();
+                    if (r == null || filter.sharedMesh == null || !filter.sharedMesh.isReadable) continue;
+                    Matrix4x4 toHolder = holder.worldToLocalMatrix * filter.transform.localToWorldMatrix;
+                    filter.sharedMesh = WallIceMesh(filter.sharedMesh, toHolder, seed % SpikeSeeds);
+                    filter.transform.SetParent(holder, false);
+                    filter.transform.localPosition = Vector3.zero; filter.transform.localRotation = Quaternion.identity; filter.transform.localScale = Vector3.one;
+                    r.sharedMaterial = look;
+                }
             }
+        }
+
+        private static Mesh WallIceMesh(Mesh from, Matrix4x4 toHolder, int seed)
+        {
+            if (WallIceMeshes.TryGetValue((from, seed), out var made) && made != null) return made;
+            var verts = from.vertices; var norms = from.normals; Matrix4x4 bend = toHolder.inverse.transpose;
+            float tall = 0.05f;
+            for (int i = 0; i < verts.Length; i++)
+            {
+                var p = toHolder.MultiplyPoint3x4(verts[i]);
+                verts[i] = new Vector3(p.x * SpikeGirth, p.y, p.z * SpikeGirth);
+                tall = Mathf.Max(tall, p.y);
+                if (i < norms.Length) { var n = bend.MultiplyVector(norms[i]); norms[i] = new Vector3(n.x / SpikeGirth, n.y, n.z / SpikeGirth).normalized; }
+            }
+            var feet = new Vector4[verts.Length]; var lives = new Vector4[verts.Length];
+            for (int i = 0; i < verts.Length; i++) lives[i] = new Vector4(-1000f, tall, 0f, seed * 7 + 1);
+            made = new Mesh { name = from.name + " (wall ice)", hideFlags = HideFlags.HideAndDontSave, indexFormat = from.indexFormat };
+            made.vertices = verts; made.normals = norms; made.uv = from.uv;
+            made.SetUVs(1, feet); made.SetUVs(2, lives);
+            made.triangles = from.triangles;
+            made.RecalculateBounds();
+            WallIceMeshes[(from, seed)] = made;
+            return made;
         }
 
         private static Material _sheen;

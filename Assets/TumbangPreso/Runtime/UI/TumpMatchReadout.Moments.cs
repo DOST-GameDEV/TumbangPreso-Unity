@@ -162,6 +162,12 @@ namespace TumbangPreso.UI
                 float swing = settings.ReducedUiMotion || age > .3f ? 0 : Mathf.Sin(age * 62f) * 9f * (1 - age / .3f);
                 var at = _warningRoot.anchoredPosition;
                 if (Mathf.Abs(at.x - swing) > .01f) { at.x = swing; _warningRoot.anchoredPosition = at; }
+                // It lands: a quick pop on arrival, then it holds still to be read. The chip lands a beat after the tile.
+                float pop = settings.ReducedUiMotion || age > .2f ? 0 : Mathf.Sin(age / .2f * Mathf.PI) * .12f;
+                _warningRoot.localScale = Vector3.one * (.9f + pop);
+                float chipAge = age - .05f;
+                float chip = settings.ReducedUiMotion ? 1 : chipAge < 0 ? 0 : chipAge > .18f ? 1 : 1 + Mathf.Sin(chipAge / .18f * Mathf.PI) * .35f;
+                _warningChip.rectTransform.localScale = Vector3.one * chip;
             }
             if (toast)
             {

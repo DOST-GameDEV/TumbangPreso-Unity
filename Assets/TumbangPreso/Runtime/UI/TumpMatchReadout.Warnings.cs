@@ -10,7 +10,7 @@ namespace TumbangPreso.UI
     {
         private RectTransform _warningRoot;
         private Text _warningText, _warningReason;
-        private HudCard _warningPlate, _reasonPlate;
+        private HudCard _warningPlate, _reasonPlate, _warningChip;
         private CharacterMotor _warningOwner;
         private string _recentWarning, _warningWords;
         private float _warningUntil, _titleWidth, _reasonWidth, _warningShookAt = -10;
@@ -49,7 +49,20 @@ namespace TumbangPreso.UI
             _warningReason.color=new Color32(255,226,220,255);_warningReason.alignment=TextAnchor.MiddleCenter;
             _warningReason.horizontalOverflow=HorizontalWrapMode.Wrap;_warningReason.verticalOverflow=VerticalWrapMode.Overflow;
             OwnerUiTracking.Apply(_warningReason,WarningTracking,perLine:true);
+            // The warning chip: a shape and a colour of its own, so a refusal does not rest on red alone.
+            _warningChip=OwnerUiLayout.Rect(_warningRoot,"WarningChip").gameObject.AddComponent<HudCard>();
+            _warningChip.Glass(HudDraw.Honey,HudDraw.Lean,3,.4f).raycastTarget=false;_warningChip.FollowContrast=false;
+            var mark=OwnerUiLayout.Text(_warningChip.transform,"WarningMark","!",44,OwnerUiLayout.TypeRole.Display);
+            OwnerUiLayout.Fill(mark.rectTransform);mark.alignment=TextAnchor.MiddleCenter;mark.color=HudDraw.Brown;
+            mark.horizontalOverflow=HorizontalWrapMode.Overflow;mark.verticalOverflow=VerticalWrapMode.Overflow;mark.raycastTarget=false;
             _warningRoot.gameObject.SetActive(false);
+        }
+
+        /// <summary>A rule refused this player just now: shown as any other refusal, and kept up while it repeats.</summary>
+        public void Refuse(string sentence)
+        {
+            if(string.IsNullOrEmpty(sentence))return;
+            _recentWarning=sentence;_warningUntil=Time.unscaledTime+1.6f;
         }
 
         private void LayoutWarning()
@@ -75,6 +88,7 @@ namespace TumbangPreso.UI
                     WarningInset+(WarningInset-titleHeight)*.5f*_warningPlate.Slant,-titleHeight);
             }
             _warningRoot.sizeDelta=new Vector2(width,titleHeight+(reason?reasonHeight+WarningInset:4));
+            OwnerUiLayout.Place(_warningChip.rectTransform,-62,(titleHeight-56)*.5f,56,56);
         }
 
         private static float TrackingWidth(Text text)=>Mathf.Max(0,text.text.Length-1)*WarningTracking;

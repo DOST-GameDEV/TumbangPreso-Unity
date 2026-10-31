@@ -32,7 +32,7 @@ namespace TumbangPreso.Tests
             return new MatchPoseHistory.Copy(root);
         }
         private void Set(string name,object value)=>typeof(CatchReconstruction).GetField(name,Private).SetValue(_view,value);
-        private bool Place()=> (bool)typeof(CatchReconstruction).GetMethod("PlaceShotCamera",Private).Invoke(_view,null);
+        private bool Place()=> (bool)typeof(CatchReconstruction).GetMethod("PlaceShotCamera",Private).Invoke(_view,new object[]{0f});
         [TestCase(1f,16f/9)] [TestCase(6f,16f/9)] [TestCase(10f,16f/9)]
         [TestCase(1f,4f/3)] [TestCase(6f,4f/3)] [TestCase(10f,4f/3)]
         public void RecordedApproachKeepsTheVictimWholeAndProminent(float separation,float aspect)

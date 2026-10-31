@@ -490,7 +490,7 @@ namespace TumbangPreso.Visual
                 victim.GetComponent<CharacterAnimator>()?.PresentCaught(hitDirection);
                 // The host sends the victim home on this same frame, so the body the hand lands on is left behind for
                 // everyone to see caught, knocked back and yanked home (`CaughtAfterimage`).
-                CaughtAfterimage.Play(victim, at, at - taya.transform.position);
+                CaughtAfterimage.Play(victim, at, at - taya.transform.position, taya);
                 victim.GetComponentInChildren<CharacterSquashStretch>()?.Impact(hitDirection, 0.30f);
                 taya.GetComponentInChildren<CharacterSquashStretch>()?
                     .DashStretch(taya.transform.forward, 0.18f);
@@ -537,6 +537,7 @@ namespace TumbangPreso.Visual
             Vector3 touch = taya.GetComponent<CharacterAnimator>() != null
                 ? taya.GetComponent<CharacterAnimator>().AcceptedTagContact : victim.transform.position + Vector3.up;
             rig.PresentTagTouch(touch);
+            ImpactBurst.SpawnAt(touch);
             rig.HoldFrame(.06f);
             Vector3 toward = touch - rig.transform.position;
             Vector3 local = rig.transform.InverseTransformDirection(toward);

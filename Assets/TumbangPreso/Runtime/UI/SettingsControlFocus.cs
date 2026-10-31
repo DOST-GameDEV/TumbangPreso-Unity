@@ -11,9 +11,8 @@ namespace TumbangPreso.UI
     /// 3-unit underline under the control, which is about 1.5 pixels at 960x540 and sat 600 units
     /// from the row's label, so a pad user moving down a list of fifteen switches had to hunt for
     /// which one was live. The row now gets a faint accent band and a 6-unit accent bar at its left
-    /// edge (the Overwatch and Valorant settings pattern: the focused ROW is the unit), and the
-    /// underline stays under the control for the pointer case. Both come and go together, so hover
-    /// and focus read as one language.
+    /// edge (the Overwatch and Valorant settings pattern: the focused ROW is the unit), and hover
+    /// and focus read as one language. The underline is gone (owner, 2026-10-31).
     ///
     /// ⚠️ AND IT IS LOUD. The first draft of this band was the accent at 9 per cent, which on the
     /// warm grey is visible only if you already know it is there. Hi-Fi RUSH's options screen
@@ -25,15 +24,11 @@ namespace TumbangPreso.UI
     /// </summary>
     public sealed class SettingsControlFocus : MonoBehaviour, ISelectHandler, IDeselectHandler, IPointerEnterHandler, IPointerExitHandler
     {
-        private Image _line, _band, _bar;
+        private Image _band, _bar;
         private Text _label;
         private bool _selected, _hover;
         private void Awake()
         {
-            _line = OwnerUiLayout.Rect(transform, "ControlFocus").gameObject.AddComponent<Image>();
-            _line.rectTransform.anchorMin = Vector2.zero; _line.rectTransform.anchorMax = new Vector2(1, 0);
-            _line.rectTransform.offsetMin = new Vector2(10, 0); _line.rectTransform.offsetMax = new Vector2(-10, 3);
-            _line.color = SettingsPalette.PanelAccent; _line.raycastTarget = false;
             var row = RowOf(transform);
             if (row != null)
             {
@@ -65,7 +60,6 @@ namespace TumbangPreso.UI
         private void Refresh()
         {
             bool live = _selected || _hover;
-            if (_line != null) _line.enabled = live;
             if (_band != null) _band.enabled = live;
             if (_label != null) _label.color = live ? SettingsPalette.PanelAccent : SettingsPalette.PanelInk;
         }

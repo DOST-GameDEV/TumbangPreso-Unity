@@ -920,6 +920,7 @@ namespace TumbangPreso.InputLayer
             hit.rectTransform.SetAsFirstSibling(); OwnerUiLayout.Fill(hit.rectTransform); UI.Hub.HubKnit.KitFace(hit, kind);
             hit.raycastTarget = true;
             button.targetGraphic = hit;
+            button.gameObject.AddComponent<UI.Hub.KitPress>().Face = hit;
             var label = button.transform.Find("Label").GetComponent<Text>();
             label.rectTransform.anchorMin = new Vector2(0, .10f); label.fontSize = size; label.color = UI.Hub.HubKnit.InkOf(kind);
         }
