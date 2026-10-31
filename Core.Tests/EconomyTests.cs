@@ -15,6 +15,27 @@ namespace TumbangPreso.Core.Tests
     public sealed class EconomyTests
     {
         [Fact]
+        public void NewMatchesRetireMirrorWithoutChangingLegacyWireValues()
+        {
+            var legacy = CustomGameRules.Parse("1|2|4|90|0|3|3|1|0|0|0|15", GameMode.HeroStrike);
+            Assert.Equal(MatchFormat.Mirror, legacy.Format);
+            Assert.Equal(MatchFormat.Standard, CustomGameRules.NewMatchFormat(legacy.Format));
+            Assert.Equal(4, legacy.Rounds);
+            Assert.Equal(MatchFormat.LastTsinelas, CustomGameRules.NewMatchFormat(MatchFormat.LastTsinelas));
+            Assert.Equal(MatchFormat.Standard, CustomGameRules.NewMatchFormat(MatchFormat.Standard));
+        }
+
+        [Fact]
+        public void FourDifferentHeroChoicesSurviveIncludingTheNewlyUnlockedHeroes()
+        {
+            var people=Roster.HeroPeople;
+            var wanted=new[]{"cheska","zack","rafi","nemu"}.Select(id=>Roster.IndexIn(people,id)).ToArray();
+            var resolved=EconomyRules.UniqueSeatPicks(people,wanted,new[]{true,true,true,true},new[]{0,0,0,0});
+            Assert.Equal(wanted,resolved);
+            Assert.Equal(4,resolved.Distinct().Count());
+        }
+
+        [Fact]
         public void NoTwoSeatsInstallTheSameCharacter()
         {
             // Owner, October 22: "no one can pick same character". Two people share a saved pick; the
@@ -53,10 +74,10 @@ namespace TumbangPreso.Core.Tests
         }
 
         [Fact]
-        public void TheUnlockedHeroesAreExactlyTheOwnersSixAndAPickOfAnyOtherFallsBackToOne()
+        public void EveryRosterHeroIsUnlockedAndKeepsItsSelectedIndex()
         {
-            // Owner, 2026-10-20: nemu, paete, phaister, amihan and dante, on every route; 2026-10-24: "unlock sean na ren".
-            Assert.Equal(new[] { "amihan", "dante", "nemu", "paete", "phaister", "sean" }, EconomyRules.UnlockedHeroes.OrderBy(x => x));
+            // Owner, 2026-10-28: every hero is available without a wallet or profile edit.
+            Assert.Equal(Roster.HeroPeople.Select(h => h.Id).OrderBy(x => x), EconomyRules.UnlockedHeroes.OrderBy(x => x));
             foreach (var id in EconomyRules.UnlockedHeroes) Assert.True(EconomyRules.IsHero(id), id);
 
             var heroes = Roster.HeroPeople;

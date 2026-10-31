@@ -26,7 +26,8 @@ class PresentationLink:
         self.log = (self.out / "link.log").open("w")
         command = [sys.executable, str(self.root / "tools/net_link.py"), "--listen", str(port),
                    "--to", f"127.0.0.1:{host_port}", "--delay", str(a.delay), "--jitter", str(a.jitter),
-                   "--loss", str(a.loss), "--seed", str(a.seed), "--seconds", "115",
+                   "--loss", str(a.loss), "--seed", str(a.seed),
+                   "--seconds", str(max(115, getattr(a, "seconds", 0) + 65)),
                    "--stop-file", str(self.out / "stop-link")]
         self.process = subprocess.Popen(command, cwd=self.root, startupinfo=startup,
                                         stdout=self.log, stderr=subprocess.STDOUT)

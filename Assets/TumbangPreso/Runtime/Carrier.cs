@@ -1057,6 +1057,8 @@ namespace TumbangPreso
         {
             if (Held == null) return;
 
+            ThrowerKick(power, aimPoint - origin);
+
             if (NetAuthority.ShouldRequest())
             {
                 // ⚠️⚠️ THE PICTURE IS PREDICTED AND THE PHYSICS IS NOT, WHICH IS THE WHOLE SPLIT.
@@ -1088,6 +1090,23 @@ namespace TumbangPreso
         /// Release audio arrives through NetCue. Predict only the immediate arm
         /// motion, so the local input responds without duplicating the host sound.
         /// </summary>
+        /// <summary>
+        /// The release, felt by the person who let go (owner, October 31: "throwing slipper doesnt feel that satisfying").
+        /// The arm thrusts, the eye follows it a little and the pad snaps, all growing with the charge. Local and
+        /// presentation only, on the frame of the press, so it never waits for the host and moves no aim.
+        /// </summary>
+        private void ThrowerKick(float power, Vector3 along)
+        {
+            var rig = UnityEngine.Camera.main != null ? UnityEngine.Camera.main.GetComponent<CameraSystem.CameraRig>() : null;
+            if (rig == null || !rig.IsFollowing(_motor)) return;
+            float charge = Mathf.Clamp01(power);
+            rig.ViewmodelKick(Vector3.forward, Mathf.Lerp(2f, 3.6f, charge));
+            if (along.sqrMagnitude > .01f) rig.ImpactPunch(along.normalized, Mathf.Lerp(.08f, .2f, charge));
+            InputLayer.Rumble.Pulse(Mathf.Lerp(.05f, .2f, charge), Mathf.Lerp(.18f, .4f, charge), .07f);
+            // The whole view goes with the arm: it dips into the throw and the lens flares wide as the shoe leaves.
+            rig.ViewPunch(new Vector3(Mathf.Lerp(1.2f, 3f, charge), 0, Mathf.Lerp(-.8f, -2f, charge)), Mathf.Lerp(3f, 8f, charge));
+        }
+
         private void PredictThrowPresentation(Vector3 origin, float spin)
         {
             GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction(Visual.ThrowGesture.Action(spin));

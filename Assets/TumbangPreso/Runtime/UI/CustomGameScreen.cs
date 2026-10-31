@@ -611,7 +611,7 @@ namespace TumbangPreso.UI
         // and the code disagree and nobody can say which is the bug.
         // -------------------------------------------------------------------
 
-        private static int FormatCount => (int)MatchFormat.Mirror + 1;
+        private static int FormatCount => (int)MatchFormat.LastTsinelas + 1;
 
         private static int RoundOptionCount
             => CustomGameRules.MaxRounds - CustomGameRules.MinRounds + 1;

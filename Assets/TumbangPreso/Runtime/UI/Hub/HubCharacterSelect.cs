@@ -291,8 +291,7 @@ namespace TumbangPreso.UI.Hub
         /// </summary>
         private bool TakenByOther(int index)
         {
-            if (Net.NetSession.Instance == null || !Net.NetSession.Instance.IsNetworked
-                || SceneFlow.SelectedFormat == MatchFormat.Mirror) return false;
+            if (Net.NetSession.Instance == null || !Net.NetSession.Instance.IsNetworked) return false;
             var seats = Hub.Host.Seats();
             int mine = -1;
             foreach (var s in seats) if (s.Mine) mine = s.Slot;

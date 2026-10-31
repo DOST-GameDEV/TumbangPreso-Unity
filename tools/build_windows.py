@@ -17,7 +17,23 @@ OUTPUT=BUILDS/'Windows'
 EXE=OUTPUT/'TumbangPreso.exe'
 
 
-def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
+def sha(path):
+    with path.open('rb') as stream:return hashlib.file_digest(stream,'sha256').hexdigest()
+
+def player_artifacts(output):
+    output=Path(output)
+    data=output/'TumbangPreso_Data'
+    serialized=data/'globalgamemanagers'
+    if not serialized.is_file():
+        serialized=data/'data.unity3d'
+        if serialized.is_file():
+            with serialized.open('rb') as stream:magic=stream.read(8)
+            if magic!=b'UnityFS\0':raise RuntimeError('Invalid compressed player data: '+str(serialized))
+    required=[output/'TumbangPreso.exe',output/'UnityPlayer.dll',serialized,
+              data/'Managed/TumbangPreso.Runtime.dll']
+    missing=[str(path) for path in required if not path.is_file() or path.stat().st_size==0]
+    if missing:raise RuntimeError('Incomplete player output: '+', '.join(missing))
+    return required
 def git(*args):return subprocess.check_output(['git',*args],cwd=ROOT,text=True).strip()
 def powershell(source):
     return subprocess.check_output(['powershell','-NoProfile','-Command',source],text=True).strip()
@@ -113,11 +129,9 @@ def main():
         receipt['status']='failed';save();raise SystemExit('Build failed. No old player launched. Inspect '+str(job/'unity.log'))
     identity_path=OUTPUT/'TumbangPreso_Data/StreamingAssets/build-identity.json'
     identity=json.loads(identity_path.read_text(encoding='utf-8-sig'))
-    runtime=OUTPUT/'TumbangPreso_Data/Managed/TumbangPreso.Runtime.dll'
-    required=[EXE,OUTPUT/'UnityPlayer.dll',OUTPUT/'TumbangPreso_Data/globalgamemanagers',runtime]
+    required=player_artifacts(OUTPUT)
     if identity['sha']!=receipt['source_sha'] or identity['target']!='StandaloneWindows64':raise RuntimeError('Wrong source/platform identity')
     if dt.datetime.fromisoformat(identity['builtAt'])<started-dt.timedelta(seconds=2):raise RuntimeError('Stale build stamp')
-    if not all(path.is_file() and path.stat().st_size>0 for path in required):raise RuntimeError('Incomplete player output')
     receipt.update(status='built',identity=identity,artifact_sha256={p.relative_to(OUTPUT).as_posix():sha(p) for p in required});save()
     print('FRESH BUILD VERIFIED: '+json.dumps(identity),flush=True)
     if args.launch:

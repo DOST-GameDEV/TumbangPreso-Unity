@@ -99,6 +99,7 @@ namespace TumbangPreso.Core
         // Knockdowns and successful tags each pay one point. The defender also
         // receives one point once at the beginning of their round. No timed
         // trickle, throw income or retrieval income. Ultimate costs are unchanged.
+        public const float UltimateExtraObjectivePoints = 3.0f;
         public const float UltimateChargeLataKnock = 1.0f;
         public const float UltimateChargeTag = 1.0f;
         public const float UltimateChargeDefenderRound = 1.0f;
@@ -519,7 +520,8 @@ namespace TumbangPreso.Core
         public const float LataRecoilScale = 0.25f;
 
         public const float LataRecoilLiftScale = 0.55f;
-        public const float BlockKnockbackSpeed = 4.583f;
+        // Owner, October 31: a slipper hit should knock you back a bit. 0.6 m, up from 0.35 m, which barely read as a push.
+        public const float BlockKnockbackSpeed = 6.0f;
 
         // -------------------------------------------------------------------
         // THE LATA — lata.gd

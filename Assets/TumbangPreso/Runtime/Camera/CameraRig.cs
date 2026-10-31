@@ -561,7 +561,7 @@ namespace TumbangPreso.CameraSystem
 
             // Zack's Backtrack zoom rides on top of the smoothed lens, unsmoothed: a short sharp widening while his eye
             // is rewound down the route and a punch in on the catch. Kept out of the smoothing so it cannot linger.
-            _rewindKick = _mode == CameraMode.Fpp && !_emoteView ? Visual.ZackBacktrackLook.FovKick(_character) : 0.0f;
+            _rewindKick = _mode == CameraMode.Fpp && !_emoteView ? Visual.ZackBacktrackLook.FovKick(_character) + _viewPunchFov * Settings.SettingsStore.Current.EffectiveCameraShake : 0.0f;
             lens += _rewindKick;
 
             if (!Mathf.Approximately(_camera.fieldOfView, lens)) _camera.fieldOfView = lens;
@@ -1591,7 +1591,9 @@ namespace TumbangPreso.CameraSystem
                 _holdAimAnchor = transform.position - _cosmeticOffset;
                 _holding = true;
                 _holdAnchor = transform.position;
+                _holdTurn = transform.rotation;
             }
+            transform.rotation = _holdTurn;
 
             // ⚠️ RESTORED BEFORE `StepShake`, NEVER AFTER IT. Assigning afterwards would erase
             // the punch and the shake, which is the opposite bug: a hitstop with no impact in it.
@@ -1602,8 +1604,27 @@ namespace TumbangPreso.CameraSystem
             return true;
         }
 
+        // A first-person impact has to move the VIEW: a position offset of a few centimetres is nearly invisible from
+        // inside the head. A sharp turn of the lens and its width, gone in a fifth of a second. Offsets are cosmetic and
+        // decay on real time; nothing writes them into the look angles the player owns.
+        private Quaternion _holdTurn = Quaternion.identity;
+        private Vector3 _viewPunch;
+        private float _viewPunchFov;
+        /// <param name="degrees">Pitch (positive looks down), yaw and roll.</param>
+        /// <param name="fov">Degrees added to the lens: positive throws the view wide, negative zooms in.</param>
+        public void ViewPunch(Vector3 degrees, float fov = 0.0f)
+        {
+            _viewPunch = degrees;
+            _viewPunchFov = fov;
+        }
+
         private void StepShake()
         {
+            float punchLevel = Settings.SettingsStore.Current.EffectiveCameraShake;
+            float fade = Mathf.Exp(-13.0f * Time.unscaledDeltaTime);
+            if (_viewPunch.sqrMagnitude > .0001f) transform.rotation *= Quaternion.Euler(_viewPunch * punchLevel);
+            _viewPunch *= fade;
+            _viewPunchFov *= fade;
             Vector3 eye = transform.position;
             float level = Settings.SettingsStore.Current.EffectiveCameraShake;
             StepGroundRumble();

@@ -176,7 +176,7 @@ namespace TumbangPreso.Abilities
         /// *"i wanted like 10-20 charges required on ult depending on impact"*. `Balance`'s
         /// ultimate economy block carries the rescale and the pacing arithmetic.
         /// </summary>
-        public const float UltimateMax = 20.0f;
+        public const float UltimateMax = 20.0f + TumbangPreso.Core.Balance.UltimateExtraObjectivePoints;
 
         /// <summary>
         /// What THIS hero's ultimate costs, in the same points <see cref="UltimateCharge"/> is

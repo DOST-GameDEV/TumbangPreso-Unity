@@ -25,6 +25,9 @@ namespace TumbangPreso.UI
         public Color Accent = Color.clear;
         public float AccentHeight;
         public bool FollowContrast = true;
+        /// <summary>A canvas has no anti-aliasing, so a thin frame on a leaning plate stair-steps. Above zero, the frame
+        /// fades out over this many units on its outer side, which reads as a smooth edge.</summary>
+        public float SoftEdge;
         /// <summary>Above zero, the ends are cut to points instead of rounded: the clock's hexagon.</summary>
         public float Chamfer;
         /// <summary>Horizontal shear per unit of height: the match bar's leaning plates. Positive leans the top right.</summary>
@@ -130,7 +133,16 @@ namespace TumbangPreso.UI
             }
             HudDraw.RoundedRect(vh, r, Radius, fill, steps);
             if (BorderWidth > 0 && Border.a > 0)
-                HudDraw.RoundedFrame(vh, r, Radius, BorderWidth, _contrast ? Color.white : Border, steps);
+            {
+                var edge = _contrast ? Color.white : Border;
+                for (int i = 2; i >= 1 && SoftEdge > 0; i--)
+                {
+                    float grow = SoftEdge * i * .5f; var fade = edge; fade.a *= i == 2 ? .22f : .55f;
+                    HudDraw.RoundedFrame(vh, new Rect(r.xMin - grow, r.yMin - grow, r.width + grow * 2, r.height + grow * 2),
+                        Radius + grow, SoftEdge * .5f, fade, steps);
+                }
+                HudDraw.RoundedFrame(vh, r, Radius, BorderWidth, edge, steps);
+            }
             if (AccentHeight > 0 && Accent.a > 0)
             {
                 float inset = Mathf.Max(Radius * .7f, 6);

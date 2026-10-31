@@ -1,3 +1,11 @@
+Nemu follow-up: possession drift, tell and surge pull are25% stronger. Her
+introduction preserves each victim's terrain height through the gameplay hand-back.
+
+Owner revision, 2026-10-28: every hero ultimate now requires3 additional objective
+points. Runtime kits add `Balance.UltimateExtraObjectivePoints` to their base
+costs below; charge income is unchanged. Network skill fingerprints include each
+kit's final cost, so peers must use the same updated build.
+
 > Topic reference, reviewed 2026-10-25. Current source and [TODO](TODO.md)
 > govern behavior and assignments. Historical values, proposals and unchecked
 > boxes below are context, not automatic work orders.

@@ -241,9 +241,13 @@ namespace TumbangPreso.Visual
             var feet = _source.transform.position;
             var forward = _source.transform.forward; forward.y = 0f;
             var target = Abilities.PaeteVine.SentryTarget(feet, forward, _aim, round?.Lata);
-            var local = _root.transform.InverseTransformPoint(target); local.y = 0f;
+            var local = _root.transform.InverseTransformPoint(target);
+            // ⚠️ ON THE FLOOR THE LIVE TREE STANDS ON (owner, 2026-10-29: the tree floated). The landing kept only its plan
+            // position, so the staged tree stood at his court height wherever it landed: in the air beside a lower step, inside a
+            // higher one. Its height is kept relative to his court (`_paeteCourt`), which every staged piece adds back.
+            var flat = new Vector3(local.x, 0f, local.z);
             // Never under his own feet (a cast aimed at himself throws it forward).
-            _pvLanding = local.sqrMagnitude > 1f ? local : PaeteLanding;
+            _pvLanding = flat.sqrMagnitude > 1f ? new Vector3(local.x, local.y - _paeteCourt, local.z) : PaeteLanding;
         }
 
         /// <summary>
@@ -504,7 +508,7 @@ namespace TumbangPreso.Visual
 
             // ---------------------------------------------------------------- THE BRUSH STROKE painted along the court at the send.
             var start = new Vector3(PaeteHandsMid.x, 0f, Mathf.Max(.5f, PaeteHandsMid.z) + .3f);
-            var end = new Vector3(_pvLanding.x, 0f, _pvLanding.z - .7f);
+            var end = new Vector3(_pvLanding.x, _pvLanding.y, _pvLanding.z - .7f);
             for (int k = 0; k < _pvSlash.Count; k++)
             {
                 float delay = PvSlashRows[k, 4];
@@ -520,7 +524,7 @@ namespace TumbangPreso.Visual
                     float u = Mathf.Lerp(tail, head, j / (float)Samples);
                     var p = Vector3.Lerp(start, end, u);
                     p.x += PvSlashRows[k, 2] * Mathf.Sin(u * Mathf.PI);
-                    p.y = court + PvSlashRows[k, 0] + .15f * u;
+                    p.y = court + Mathf.Lerp(start.y, end.y, u) + PvSlashRows[k, 0] + .15f * u;
                     _pvLine.Add(p);
                     // A brush: pressed hard at the start, thinning out toward the flick at the end.
                     _pvWidths.Add(PvSlashRows[k, 1] * (.55f + .45f * Mathf.Max(0f, Mathf.Sin(Mathf.Pow(Mathf.Clamp01(u), .6f) * Mathf.PI))) * (1f - .55f * u));
@@ -538,7 +542,7 @@ namespace TumbangPreso.Visual
                 {
                     float radius = 1.5f * GrowthVfx.Pop((s + .05f) / .16f);
                     float strength = (1.3f * Decay(s, .25f) + .6f) * (1f - Ease(.35f, .9f, s)) * leave * (_reducedEffects ? .6f : 1f);
-                    var at = _pvLanding; at.y = court + .09f;
+                    var at = _pvLanding; at.y += court + .09f;
                     PlaceGlow(_pvMarkLanding, at, new Vector3(radius, radius, 1f), Quaternion.Euler(0f, -40f * s, 0f) * Quaternion.Euler(90f, 0f, 0f), strength);
                 }
             }
@@ -585,7 +589,7 @@ namespace TumbangPreso.Visual
                     float pop = GrowthVfx.Pop(Mathf.Max(0f, s) / .14f);
                     float radius = 2.1f * pop + .3f * Mathf.Max(0f, s);
                     float strength = (_reducedEffects ? .5f : 1.5f) * (.45f + .55f * Decay(s, .35f)) * leave;
-                    var foot = _pvLanding; foot.y = court + .1f;
+                    var foot = _pvLanding; foot.y += court + .1f;
                     PlaceGlow(_pvMarkTree, foot, new Vector3(radius, radius, 1f), Quaternion.Euler(0f, 25f * pop + 30f * s, 0f) * Quaternion.Euler(90f, 0f, 0f), strength);
                     for (int e = 0; e < 2; e++)
                     {

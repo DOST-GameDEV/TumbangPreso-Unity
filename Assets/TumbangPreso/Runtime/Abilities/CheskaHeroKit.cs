@@ -32,7 +32,7 @@ namespace TumbangPreso.Abilities
             Ultimate = new AbsoluteZero();
         }
 
-        public override float UltimateCost => CryoRules.AbsoluteZeroCost;
+        public override float UltimateCost => CryoRules.AbsoluteZeroCost + TumbangPreso.Core.Balance.UltimateExtraObjectivePoints;
 
         /// <summary>True during the Frostbite window; every throw in it carries frost.</summary>
         public bool IsFrostbiteLoaded { get; set; }

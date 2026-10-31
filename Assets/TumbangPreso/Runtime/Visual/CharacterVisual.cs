@@ -381,6 +381,23 @@ namespace TumbangPreso.Visual
         /// `CarryAnchor`. Read-only on purpose: <see cref="SetModelRoot"/> is the one writer.
         /// </summary>
         public Transform ModelRoot => _modelRoot;
+        public Vector3 AlignedLocalPosition => _alignedLocal;
+
+        /// <summary>
+        /// Where <see cref="Model"/> stands with no replica interpolation lag: the body's own
+        /// pose plus floor alignment and ground contact, as <see cref="SnapForCinematic"/> would
+        /// place it. Read-only, so a downed tilt or airborne pitch on the live mesh survives.
+        /// </summary>
+        public Vector3 RestModelPosition
+        {
+            get
+            {
+                if (_instance == null) return transform.position;
+                if (_modelRoot == null || _modelRoot == transform) return _instance.transform.position;
+                var rest = transform.TransformPoint(_alignedLocal + transform.InverseTransformVector(Vector3.down * _groundContact));
+                return _instance.transform.position + (rest - _modelRoot.position);
+            }
+        }
 
         /// <summary>`character_visual.gd::HAND_BONE_CANDIDATES`. The right arm first, because
         /// the rig ships `holding-right` and `holding-right-shoot` and nothing for the left.
@@ -699,6 +716,7 @@ namespace TumbangPreso.Visual
         /// whole arena in front of everybody. The Godot side records this as its own rule.
         /// </summary>
         public void SnapRemoteTransform() => SnapRemotePose(true);
+        public void SnapForCinematic() => SnapRemotePose(false);
 
         private void SnapRemotePose(bool reseatGround)
         {
@@ -754,6 +772,9 @@ namespace TumbangPreso.Visual
             float t = 1.0f - Mathf.Exp(-RemoteSmoothRate * dt);
 
             _smoothedWorld = Vector3.Lerp(_smoothedWorld, body, t);
+            if (_motor == null) _motor = GetComponent<CharacterMotor>();
+            // Ground contact follows the replicated body; only airborne height keeps a visual lag.
+            if (_motor != null && _motor.IsGrounded && !_motor.IsFlying) _smoothedWorld.y = body.y;
             _smoothedYawDeg = Mathf.LerpAngle(_smoothedYawDeg, bodyYaw, t);
 
             // ⚠️⚠️ ADDED TO THE FLOOR ALIGNMENT, NEVER WRITTEN OVER IT. 

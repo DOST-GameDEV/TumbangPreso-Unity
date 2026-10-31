@@ -72,6 +72,7 @@ namespace TumbangPreso.CameraSystem
             public bool Broken { get; private set; }
             public float Newest => _count > 0 ? _frames[(_cursor + Samples - 1) % Samples].Time : 0;
             public float Oldest => _count > 0 ? _frames[(_cursor + Samples - _count) % Samples].Time : 0;
+            internal string DescribeHierarchy()=>string.Join(",",System.Array.ConvertAll(_bones,b=>b!=null?b.name:"<destroyed>"));
             internal bool MatchesHierarchy(GameObject source)
             {
                 if(Source!=source||source==null)return false;
