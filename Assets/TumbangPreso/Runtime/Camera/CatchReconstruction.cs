@@ -417,7 +417,7 @@ namespace TumbangPreso.CameraSystem
             Vector3 axis = Vector3.Cross(Vector3.up, _knockAway);
             // A wall behind them takes the shove: they do not go through it.
             root.SetPositionAndRotation(_victimContact + _knockAway * (_knockRoom * e),
-                Quaternion.AngleAxis(CaughtAfterimage.KnockTilt * (_knockRoom / CaughtAfterimage.KnockDistance) * e, axis) * _victimFacing);
+                Quaternion.AngleAxis(CaughtRecoil.Tilt * (_knockRoom / CaughtAfterimage.KnockDistance) * e, axis) * _victimFacing);
             root.position += Vector3.up * CaughtRecoil.Hop(elapsed - ContactPlayback - HitStop);
             _victimRecoil?.Pose(_knockAway, elapsed - ContactPlayback - HitStop);
             float squash = .1f * Mathf.Sin(Mathf.Min(1, v * 2) * Mathf.PI);

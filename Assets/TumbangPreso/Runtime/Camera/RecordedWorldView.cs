@@ -297,8 +297,11 @@ namespace TumbangPreso.CameraSystem
             for(int i=1;i<samples.Length;i++)
                 if(samples[i].Time>=_clip.Contact-.2f&&samples[i].Time<=_clip.Contact+.5f&&samples[i].Epoch!=samples[i-1].Epoch)
                 {_holdAt=Mathf.Min(_clip.Contact,samples[i-1].Time);break;}
-            _shotSubject.Track.Pose.Apply(_shotSubject.Bones,_holdAt);_shotActor.Track.Pose.Apply(_shotActor.Bones,_holdAt);
-            _holdSubject=_shotSubject.Bones[0].position;_holdFacing=_shotSubject.Bones[0].rotation;_holdActor=_shotActor.Bones[0].position;
+            _shotSubject.Track.Pose.Apply(_shotSubject.Bones,_holdAt);
+            _holdSubject=_shotSubject.Bones[0].position;_holdFacing=_shotSubject.Bones[0].rotation;
+            // ⚠️ THE FEET STOP WHEN THE HAND HAS LANDED, NOT WHEN THE TAG WAS ACCEPTED. A running taya's recorded reach was
+            // posed from where they had run to by then: held any earlier, the same arm stops a body's width short.
+            _shotActor.Track.Pose.Apply(_shotActor.Bones,Mathf.Min(_clip.Contact+HandLands,_clip.End));_holdActor=_shotActor.Bones[0].position;
             _knockLine=_holdSubject-_holdActor;_knockLine.y=0;
             _knockLine=_knockLine.sqrMagnitude>.01f?_knockLine.normalized:Vector3.ProjectOnPlane(_holdFacing*Vector3.forward,Vector3.up).normalized;
             _knockRoom=TagBodyBoxes.KnockRoom(_holdSubject,_knockLine,CaughtAfterimage.KnockDistance);
@@ -313,12 +316,13 @@ namespace TumbangPreso.CameraSystem
             float v=Mathf.Clamp01((time-_clip.Contact-.12f)/.4f),e=1-(1-v)*(1-v)*(1-v);
             var root=_shotSubject.Bones[0];
             root.SetPositionAndRotation(_holdSubject+_knockLine*(_knockRoom*e)+Vector3.up*CaughtRecoil.Hop(time-_clip.Contact-.12f),
-                Quaternion.AngleAxis(CaughtAfterimage.KnockTilt*(_knockRoom/CaughtAfterimage.KnockDistance)*e,Vector3.Cross(Vector3.up,_knockLine))*_holdFacing);
+                Quaternion.AngleAxis(CaughtRecoil.Tilt*(_knockRoom/CaughtAfterimage.KnockDistance)*e,Vector3.Cross(Vector3.up,_knockLine))*_holdFacing);
             _recoil.Pose(_knockLine,time-_clip.Contact-.12f);
             // The taya's feet stop at the touch or they walk after the shoved body, and what the record shows of them backs off
             // only as far as these bodies measure. The record already carries the live hand on the touch, so this stays small.
             var actor=_shotActor.Bones[0];
-            actor.position=_holdActor-_knockLine*_actorBack;
+            if(time>=_clip.Contact+HandLands)actor.position=_holdActor;
+            actor.position-=_knockLine*_actorBack;
             float need=TagBodyBoxes.Overlap(_actorBoxes.Read(_knockLine),_subjectBoxes.Read(_knockLine));
             if(need>0)
             {
@@ -326,7 +330,7 @@ namespace TumbangPreso.CameraSystem
                 _actorBack+=back;actor.position-=_knockLine*back;
             }
         }
-        private const float MostHighlightBack=.35f;
+        private const float MostHighlightBack=.35f,HandLands=.12f;
         private bool Foreground(Vector3 eye,Vector3 focus)
         {
             // A collider test alone let leaves and poles fill the frame: they have none. Rays across the frame, out to where the

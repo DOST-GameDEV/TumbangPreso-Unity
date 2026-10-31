@@ -10,6 +10,8 @@ namespace TumbangPreso.Visual
     /// </summary>
     internal sealed class CaughtRecoil
     {
+        /// <summary>How far the whole body tips, degrees: the chest and head add their own, so 26 folded them in half.</summary>
+        public const float Tilt = 14;
         private readonly Transform _torso, _head, _armLeft, _armRight;
         public CaughtRecoil(Transform[] bones)
         {
@@ -33,7 +35,7 @@ namespace TumbangPreso.Visual
         {
             if (seconds <= 0) return;
             Vector3 back = Vector3.Cross(Vector3.up, away);
-            if (_torso != null) _torso.rotation = Quaternion.AngleAxis(12 * Spring(seconds), back) * _torso.rotation;
+            if (_torso != null) _torso.rotation = Quaternion.AngleAxis(6 * Spring(seconds), back) * _torso.rotation;
             // The head lags the chest and goes further.
             if (_head != null) _head.rotation = Quaternion.AngleAxis(-20 * Spring(seconds - .03f), back) * _head.rotation;
             float fling = 38 * Spring(seconds - .015f);
