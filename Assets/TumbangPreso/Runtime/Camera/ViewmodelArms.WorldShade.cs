@@ -21,12 +21,21 @@ namespace TumbangPreso.CameraSystem
     ///
     /// ⚠️ IT IS A TEST OF COLLIDERS, NOT OF THE SHADOW MAP: a thing that casts a shadow and cannot be touched (a cloth
     /// awning with no collider) does not shade the hands. It runs ten times a second, not every frame.
+    ///
+    /// ⚠️ AND SO THE LINE IS ALSO TESTED AGAINST THE BOXES OF THE WORLD'S SOLID SHADOW CASTERS (owner, 2026-11-01: "why are the
+    /// hands not properly shaded? its the same shading across light levels"): Kanto has about 6,400 renderers and 210
+    /// colliders, so its buildings shaded the floor and not the hands. Static, casting, opaque, standing at least
+    /// `CasterHeight` tall and `CasterWidth` wide, and no wider than `CasterSpan`: a box that size fits a building, while a
+    /// merged chunk or a land tile would shade open ground, so those stay left to their colliders. Leaves and posts do not count.
     /// </summary>
     public sealed partial class ViewmodelArms
     {
         /// <summary>How bright a shaded hand is against a lit one (the cast's smooth shading puts a shadowed, sun-facing surface about here).</summary>
         public const float ShadedTone = .66f;
         private const float ShadeEvery = .1f, ShadeBlend = .25f, ShadeReach = 90f;
+        private const float CasterHeight = 3f, CasterWidth = 2f, CasterSpan = 40f;
+        private static readonly List<Bounds> ShadeCasters = new List<Bounds>();
+        private static UnityEngine.SceneManagement.Scene _shadeCastersScene;
         /// <summary>An editor debug switch, never set by the game: true keeps the hands lit (Payo flash hunt, 2026-10-19).</summary>
         public static bool DebugNoWorldShade;
         /// <summary>A map's lift on the hands' brightness, 1 for none. `Map.PayoNight` raises it through the night (owner,
@@ -44,6 +53,31 @@ namespace TumbangPreso.CameraSystem
 
         /// <summary>How far into the world's shade the hands are, 0 in the sun to 1 (diagnostics and probes).</summary>
         public float WorldShade => _shade;
+
+        /// <summary>Whether the line toward the sun crosses a solid caster's box; the boxes are gathered once a map.</summary>
+        private static bool BehindACaster(Vector3 eye, Vector3 toSun)
+        {
+            var scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+            if (scene != _shadeCastersScene)
+            {
+                _shadeCastersScene = scene;
+                ShadeCasters.Clear();
+                foreach (var r in FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None))
+                {
+                    if ((!r.gameObject.isStatic && !r.isPartOfStaticBatch) || r.shadowCastingMode == UnityEngine.Rendering.ShadowCastingMode.Off) continue;   // a player keeps the batch flag, not always the static one
+                    var size = r.bounds.size;
+                    float wide = Mathf.Max(size.x, size.z), narrow = Mathf.Min(size.x, size.z);
+                    if (size.y < CasterHeight || narrow < CasterWidth || wide > CasterSpan) continue;
+                    var material = r.sharedMaterial;
+                    if (material == null || material.renderQueue > 2400) continue;   // leaves and glass
+                    ShadeCasters.Add(r.bounds);
+                }
+            }
+            var ray = new Ray(eye, toSun);
+            for (int i = 0; i < ShadeCasters.Count; i++)
+                if (ShadeCasters[i].IntersectRay(ray, out float distance) && distance < ShadeReach && !ShadeCasters[i].Contains(eye)) return true;
+            return false;
+        }
 
         private void StepWorldShade(float dt)
         {
@@ -89,6 +123,7 @@ namespace TumbangPreso.CameraSystem
                         if (collider == null || collider.attachedRigidbody != null || collider.GetComponentInParent<CharacterMotor>() != null) continue;
                         shaded = true;
                     }
+                    if (!shaded) shaded = BehindACaster(eye, toSun);
                 }
                 _shadeTarget = shaded && !DebugNoWorldShade ? 1f : 0f;
             }

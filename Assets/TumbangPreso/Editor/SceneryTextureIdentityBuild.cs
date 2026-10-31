@@ -40,6 +40,10 @@ namespace TumbangPreso.EditorTools
                         "Assets/TumbangPreso/Art/Arena/Materials/"+key+".mat"),textures);
                 }
             }
+            // Everything the Arena's own materials paint with: the scene's drones and marks wear these once it has dressed
+            // them, and a texture left off this list threw on every frame of a match (`arena_stage_props`, 2026-10-31).
+            foreach(var guid in AssetDatabase.FindAssets("t:Material",new[]{"Assets/TumbangPreso/Art/Arena/Materials"}))
+                CollectTextures(AssetDatabase.LoadAssetAtPath<Material>(AssetDatabase.GUIDToAssetPath(guid)),textures);
             textures.Remove(Texture2D.whiteTexture);textures.Remove(Texture2D.blackTexture);
             textures.Remove(Texture2D.grayTexture);textures.Remove(Texture2D.normalTexture);
             var book=AssetDatabase.LoadAssetAtPath<SceneryTextureIdentities>(AssetPath);

@@ -12,7 +12,211 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 170b529f7dd44a3fab64a4d738adf881, type: 3}
   m_Name: SceneryTextureIdentities
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.CameraSystem.SceneryTextureIdentities
-  Entries: []
+  Entries:
+  - Texture: {fileID: 2800000, guid: 0a9e37e80a06249478b1448fcdc4e410, type: 3}
+    Hash: fde2cec35474721a2d842efda9852639
+  - Texture: {fileID: 2800000, guid: 4d3122b57eb33b1419d19e39df37dae0, type: 3}
+    Hash: 2a9b3f9f4291e4d0dfadac7faf10946b
+  - Texture: {fileID: 2800000, guid: f359165eab57c674ebbc34d7728c85dd, type: 3}
+    Hash: 654bbc4a089d3ea8cd33a20f893a80be
+  - Texture: {fileID: 2800000, guid: 2f3868ea807021649ae787b26f3d9f14, type: 3}
+    Hash: 8eefae5c8816fa575e0b1a5a218c08ae
+  - Texture: {fileID: 2800000, guid: efc3abc11167092488aec20d141f4bf5, type: 3}
+    Hash: a4b3426f2216d5ba207bff13cc71827e
+  - Texture: {fileID: 2800000, guid: dea842554dd07a94482cde4c850a6249, type: 3}
+    Hash: 3527c21ec4ddea02200b9d4d0da46d21
+  - Texture: {fileID: 2800000, guid: 05dcd15ba3b14b74ab45d9e8ed2b302f, type: 3}
+    Hash: a2f439080084ab9a62e9886469c63969
+  - Texture: {fileID: 2800000, guid: fa6258ffcbd4e474282fe2842c567cd3, type: 3}
+    Hash: 5e378169aecf457a318f819ceb8efa5f
+  - Texture: {fileID: 2800000, guid: e3b91110d72e56241a1dacc76b79d843, type: 3}
+    Hash: e93e288adcb43fa1b806a2bc22e6ccf7
+  - Texture: {fileID: 2800000, guid: 45f35c0c7fbe2b54bb715300e79212d5, type: 3}
+    Hash: 329f9a65433074d7e406d53b50f21ffd
+  - Texture: {fileID: 2800000, guid: 51b02e637f1cee14f84adc7101b06752, type: 3}
+    Hash: efcdde9a9da664bf67e80ebee9adcf7a
+  - Texture: {fileID: 2800000, guid: cac5bc0013fe4a04381de34fe36b6dcb, type: 3}
+    Hash: 0dab3dfd2f923b5bfe2af9bcf275447b
+  - Texture: {fileID: 2800000, guid: 77d3cf87d0e02fc43a0aef858e1e1abd, type: 3}
+    Hash: ca80907a4b6df9c0ef4febe8e6df963f
+  - Texture: {fileID: 2800000, guid: 2511d8d64b04aa54b8e6ad13f5f7bfcc, type: 3}
+    Hash: 6d30dcf73523671edeb84cbd74317564
+  - Texture: {fileID: 2800000, guid: 13407b3f2cddf6d4f97056d2e0cb2a0c, type: 3}
+    Hash: 78ac1c7182c7e5789706ac3783c5927f
+  - Texture: {fileID: 2800000, guid: 6a96a6ecd13d80e468a4d446681b0cef, type: 3}
+    Hash: 5b67fbc442ebd607db0bd234b1dd24c3
+  - Texture: {fileID: 2800000, guid: 2a96081023725714da5f87d76bd6d006, type: 3}
+    Hash: abba0dec7c765a0dc621afaf6a136745
+  - Texture: {fileID: 2800000, guid: f3899bae5e1f6194785f070f757cfe6a, type: 3}
+    Hash: b5d9a5f2c78d4ec8ddb7e99701ac7b63
+  - Texture: {fileID: 2800000, guid: f24fdc01394c53e43b222c5676e90f01, type: 3}
+    Hash: 613d514ce5a32e5475a3e2ca561b3e11
+  - Texture: {fileID: 2800000, guid: d10b20bef6b45004f9cf5dade8b10252, type: 3}
+    Hash: e42fe905f31129be553ed842b60dd26e
+  - Texture: {fileID: 2800000, guid: 7002c604e1fbe84438a5058adc8e23bf, type: 3}
+    Hash: 2ce4fb1bb3344afb2711a19e27d54b82
+  - Texture: {fileID: 2800000, guid: 785346c4bffa71740affed58954480f7, type: 3}
+    Hash: dcb59d5c44fe4488fd3b27ee81161633
+  - Texture: {fileID: 2800000, guid: eaec9ca9a0287cb4eb1c05101e4663c6, type: 3}
+    Hash: ce399bf2fac22a2f84f4f8b74599ffed
+  - Texture: {fileID: 2800000, guid: d69c63cc030c4d2429c5f102f630f163, type: 3}
+    Hash: 4aef84c9da101f9aafd7aad4e8763196
+  - Texture: {fileID: 2800000, guid: fe3b63280f85b7846ae1f1e2d874b7d5, type: 3}
+    Hash: 5b0ca21ea8e71d7e5ae44b53ca2bf670
+  - Texture: {fileID: 2800000, guid: 706c3941090f5c84987a0f9231a9ac11, type: 3}
+    Hash: 00f3760b48385b5a98158dcde32c3da8
+  - Texture: {fileID: 2800000, guid: 97b482e1e40cfee4e8ab2bf9b9cfae2a, type: 3}
+    Hash: e41ce01bb118f68dc57fac8dee91e9a0
+  - Texture: {fileID: 2800000, guid: 36e092f9c56e0784eb095494657af20a, type: 3}
+    Hash: e7f13b4566808a78e346747155a4b1a7
+  - Texture: {fileID: 2800000, guid: f209503476b4fa34cbd532722187d8e8, type: 3}
+    Hash: 48710ea437b432078807698a898f94e7
+  - Texture: {fileID: 2800000, guid: 9fafb8a7f131a9b45bc24655f2864588, type: 3}
+    Hash: 2fd455d52c04803cafdc1cca2e551a4c
+  - Texture: {fileID: 2800000, guid: 266193874d4367948b76abed26f76b3a, type: 3}
+    Hash: 2843bcf5d109cb4a925d07a0dccaf8b3
+  - Texture: {fileID: 2800000, guid: 4ad16ed555323474597b631b3aa61f2c, type: 3}
+    Hash: 6ced753d48b6f28685695b73328bd5ab
+  - Texture: {fileID: 2800000, guid: 51a22282ae1eb444aa5cd46c510bdd73, type: 3}
+    Hash: 859e889ea5c404f20ccd83468e693047
+  - Texture: {fileID: 2800000, guid: 3fca58ffd0222c54c8ee0d4b6778a83f, type: 3}
+    Hash: 8b3b163b91d0384cdc2281fd6299fb49
+  - Texture: {fileID: 2800000, guid: a201db562dbfd884a9b3fadd4c8ee800, type: 3}
+    Hash: 76218d5021d5f18f90c8c9bd8b52bac3
+  - Texture: {fileID: 2800000, guid: af50d22a17d9bd0408005bb0f5ccc8e1, type: 3}
+    Hash: d1c9868e975705643bd63bf0cdf08429
+  - Texture: {fileID: 2800000, guid: b3e2ee3ca7f023949aadddb95de22ecc, type: 3}
+    Hash: d2993ebe4c51342e0ccca966b4aff4e1
+  - Texture: {fileID: 2800000, guid: 4ab7dc73e9dea9846bd6ecb996a92bfa, type: 3}
+    Hash: f98d24ce141d5becea2a074728e47b9d
+  - Texture: {fileID: 2800000, guid: 760f1d53a2ecfe143bec7bf5e1a02101, type: 3}
+    Hash: 84dcf6329f764664c81a0b2917932498
+  - Texture: {fileID: 2800000, guid: 4807a91c19df81748a21664f35f98aba, type: 3}
+    Hash: f3631fa86b452749ff873a444e381d41
+  - Texture: {fileID: 2800000, guid: 40bab1a039555e347b585eba0b95ba0b, type: 3}
+    Hash: c0c669c8f697f7975727cd6334f27f8c
+  - Texture: {fileID: 2800000, guid: b6ae2853f3d1bd848bb1b0d8166b905a, type: 3}
+    Hash: 2324161bc90d8bda3e59609d23da94a3
+  - Texture: {fileID: 2800000, guid: 7af2d549a78041e41a6bc12f4e2c030c, type: 3}
+    Hash: 354379243a87c217ffff4b673c52364c
+  - Texture: {fileID: 2800000, guid: 816ada4dcf9067542843333175724b53, type: 3}
+    Hash: b4836837d7b372810d6c94744f7716d4
+  - Texture: {fileID: 2800000, guid: 404fe24898b015948b765109f1d33b2d, type: 3}
+    Hash: c26a46bf3258910e7cd997ecb1b6828f
+  - Texture: {fileID: 2800000, guid: 0f05ca4382740724cab4fdc6581326fc, type: 3}
+    Hash: 37bbb278a7074ddd1dd87fcf4bc8ecc1
+  - Texture: {fileID: 2800000, guid: edc3715d0f4ad364eaab5d9aa2f04f1c, type: 3}
+    Hash: 99da6ded9d2ef2b01e7021506e1f25ce
+  - Texture: {fileID: 2800000, guid: 097e68633fa4fe54ca4993e6a14851c9, type: 3}
+    Hash: 10a01142bb22ae05404a2d8bd3fb4074
+  - Texture: {fileID: 2800000, guid: 2f107f1dfe9b78543ad33847e66110f4, type: 3}
+    Hash: 096f7498182f1dd085829962f8c632f6
+  - Texture: {fileID: 2800000, guid: b3d5f502d190b3a4d82310209a978f0f, type: 3}
+    Hash: 0cd73a1524cde11b2aeb6a49fde54aa7
+  - Texture: {fileID: 2800000, guid: 92ff354af913b184aa51de85fede23be, type: 3}
+    Hash: e1d8889baf2e846cc0e9f69e656fa67c
+  - Texture: {fileID: 2800000, guid: 97532438a626f9748a796e23234e0a62, type: 3}
+    Hash: 00c57d1547df16a5b6b6721384e5330e
+  - Texture: {fileID: 2800000, guid: f896d8bffce3cdd4bb130a3083680aa7, type: 3}
+    Hash: 67581a3900aa624c268e168a33e0e4d9
+  - Texture: {fileID: 2800000, guid: f31b08ea6fa910d42852b4393c372a65, type: 3}
+    Hash: 9eeab1aa5611b0495cbb12a826329502
+  - Texture: {fileID: 2800000, guid: d7dd67f0532f82f4aac5f9533b9c8729, type: 3}
+    Hash: 8ab90e3faa15664a5831b17ad67b74dd
+  - Texture: {fileID: 2800000, guid: 0c0f98e8ddc0e3b4ab8dee12fcc00345, type: 3}
+    Hash: 11463f0e483abde1e9d92b44c91489ce
+  - Texture: {fileID: 2800000, guid: 70721cd16e1804245ac0f0be3a0f1902, type: 3}
+    Hash: ba78c3b230a657505611d11ec4ae60df
+  - Texture: {fileID: 2800000, guid: e632d8da6e0744646b94b656fa861d93, type: 3}
+    Hash: 94274f617fd87902fd8b17a9736b4606
+  - Texture: {fileID: 2800000, guid: eda6445faf369504aa6312c741c0383a, type: 3}
+    Hash: 0eac62a786a37b459a17717c15ab2f9e
+  - Texture: {fileID: 2800000, guid: a6bd21abee6e4514d94a9954360d66df, type: 3}
+    Hash: b3111691aeaa1592d8b6b2d682a53e1d
+  - Texture: {fileID: 2800000, guid: fef259828d929bc40be0d1844665b09c, type: 3}
+    Hash: dcea859cfc78af4cbf1b8ac474729ee5
+  - Texture: {fileID: 2800000, guid: f23da267ecc13de42a22481bc6740ef0, type: 3}
+    Hash: 911b23578483088627c0d27a94492c5b
+  - Texture: {fileID: 2800000, guid: e4a776ab12a5c244a9be024d35fad6ef, type: 3}
+    Hash: a21f48e9682bdc99fee8ad1c16cf982e
+  - Texture: {fileID: 2800000, guid: 92d49c2f0e45bf249921516da91af65b, type: 3}
+    Hash: 68db23f83b4962f91aaba52134845145
+  - Texture: {fileID: 2800000, guid: 7c27388ff9299d244937e7616a2ebb61, type: 3}
+    Hash: 3ab5d4127ec83d86c9698cb1a53e0315
+  - Texture: {fileID: 2800000, guid: d1b6e316625d30c4da094e0a7f7a365d, type: 3}
+    Hash: 241ec8853954603a3e4a3dea3ac199a7
+  - Texture: {fileID: 2800000, guid: 604123149e76d8349bdd79312b9be45c, type: 3}
+    Hash: 5be6b1dc44840d82ab2e163c5206802a
+  - Texture: {fileID: 2800000, guid: 3720fa7f9e64b1844a40198c838e6764, type: 3}
+    Hash: f664de0fa8dafd5faec452e3a279719f
+  - Texture: {fileID: 2800000, guid: cc8319907c58d914dbe88fc42cf65dc6, type: 3}
+    Hash: 6c928e2599f775873f4037bed0b2a2b6
+  - Texture: {fileID: 2800000, guid: 1a26ad2ba23d945448d2851dfb0fcfc0, type: 3}
+    Hash: e685d35fff10acbc94a7841e15c662af
+  - Texture: {fileID: 2800000, guid: d5aa9d4890bfa2c459a0aefa17fbbda6, type: 3}
+    Hash: 6029f289b388b5c7d194385a499d7572
+  - Texture: {fileID: 2800000, guid: 387f24e25ef05164ab58339e809bfa18, type: 3}
+    Hash: b00cffd2b31a0114d0105ba0ca1f7c80
+  - Texture: {fileID: 2800000, guid: 0edeaea4343775f479d6533590b96a94, type: 3}
+    Hash: 7dc157f08013c3affa23e78bf4f83a14
+  - Texture: {fileID: 2800000, guid: 61ac47471e7f67540b5b5d23bcf24f60, type: 3}
+    Hash: 9dbed2e22cdf181691fb901306fb0849
+  - Texture: {fileID: 2800000, guid: 0800feecae42d4240ade85ac6254d52c, type: 3}
+    Hash: a0e76ddc20e0e4f4b8439eab59b06748
+  - Texture: {fileID: 2800000, guid: 9bfaaa2a6b2d6c24998bafbc1727d081, type: 3}
+    Hash: 4310881520545fb2a52b8095aada326d
+  - Texture: {fileID: 2800000, guid: 96883b2f05de50c4cb8eae8d367fcd0a, type: 3}
+    Hash: b5af522d75a7a624a27b0677ba931605
+  - Texture: {fileID: 2800000, guid: 78162e6b8de2eca46ad3690d1619a24b, type: 3}
+    Hash: c08a6997868b696f94ab072238a567c0
+  - Texture: {fileID: 2800000, guid: 3c675ee6c8404784f90bd5bc056ada5c, type: 3}
+    Hash: bc4b9a117e142ac5c3856fdad6654ccf
+  - Texture: {fileID: 2800000, guid: 58d3dfb6b1d4ebe4f9787b22c1746117, type: 3}
+    Hash: b1a00dc3151ab4801f774980ff0693bd
+  - Texture: {fileID: 2800000, guid: 798940f2a4ac6304b8ae4fcda09f27cf, type: 3}
+    Hash: 061308d5a150ec483e3ec3641f8dad17
+  - Texture: {fileID: 2800000, guid: b2d3aed097b9980448a36c6d1f9adb86, type: 3}
+    Hash: baa69fbbf81517801c497083a8ade8a5
+  - Texture: {fileID: 2800000, guid: 26da3fb7b4be53d419dcf7d9526518c7, type: 3}
+    Hash: 49bff8fc36664fc733005b3d815f9208
+  - Texture: {fileID: 2800000, guid: dfb91ac4da899ab42a09a84ee7fbe03f, type: 3}
+    Hash: 0f4ab72fd3a6eab2c4d8504a2a4ecaae
+  - Texture: {fileID: 2800000, guid: f006e32fb7a78d64aac901ab2e9a49c0, type: 3}
+    Hash: 8fd6969cad8aee3a7283feaf47b9b8db
+  - Texture: {fileID: 2800000, guid: f1be5b76612ed3f45a7429658e433997, type: 3}
+    Hash: e39da3ef5b3c5f30fe1f9b170a2c4b97
+  - Texture: {fileID: 2800000, guid: 287c6d57217968143a25a2ebbb0c22d8, type: 3}
+    Hash: 93bc3f55cbadce61f26508873eaa2768
+  - Texture: {fileID: 2800000, guid: 3690647999ad4ab46b85f118b2cf9274, type: 3}
+    Hash: dcebd4ee8ac35dc47e3da6aad9c91503
+  - Texture: {fileID: 2800000, guid: 4ce62182cb721a546a3abb0c52ecb5ac, type: 3}
+    Hash: ef3c39723fa38e63b52c8cba7c3fa769
+  - Texture: {fileID: 2800000, guid: 6975b920b1b22774bb641a9c98bec28e, type: 3}
+    Hash: 65cd0547ec551f9a2cea34e656cfb0b5
+  - Texture: {fileID: 2800000, guid: 0a83265c58bc6da43b5cffbd88f73f57, type: 3}
+    Hash: fe03d73d381db1661c71ba5b150e634e
+  - Texture: {fileID: 2800000, guid: 3b19e019e94314a4984f9d738091ed98, type: 3}
+    Hash: 5a666248cc729a916704e9ba518bf34a
+  - Texture: {fileID: 2800000, guid: 85b2387704d4fe74c9af74caddc2c614, type: 3}
+    Hash: 0d4ada2d73f9d389faa23bf2f43a58f2
+  - Texture: {fileID: 2800000, guid: a42b21cf52f95104cb326772ccea38ff, type: 3}
+    Hash: 503912b0a8a4fec4bba511682fe59dcc
+  - Texture: {fileID: 2800000, guid: 9ae43c2c5a69e89428ed79701bdb475c, type: 3}
+    Hash: 0b2a1fb852972daa30031646dfa7a43c
+  - Texture: {fileID: 2800000, guid: 8690323f9627ff7419da955df35e3548, type: 3}
+    Hash: 3f47b12bcabf23371fa8cc7c0e6c5f63
+  - Texture: {fileID: 2800000, guid: 7ebbb22d770cabe4399efd0eeee2c3b3, type: 3}
+    Hash: d287611ec2c8072cb7d50e5b049160e8
+  - Texture: {fileID: 2800000, guid: b7f33ab84f832aa4f9db1fd6532cbcae, type: 3}
+    Hash: fefd07c4b4daa5a32bfda19ae169f1f9
+  - Texture: {fileID: 2800000, guid: 247f448f08eb07b4794b4e7fbf0864cd, type: 3}
+    Hash: 023a4ef9cb9c06f56e0b1fdf5b21eca6
+  - Texture: {fileID: 2800000, guid: a0f3603db1cc9334fb6bb52a68c9ec42, type: 3}
+    Hash: 3e67146124cf34ff677d3ad4a23dd132
+  - Texture: {fileID: 2800000, guid: 0959cba23a19b51438332d3bb1d9c28b, type: 3}
+    Hash: 9a02da7dd63f6e1455ce63c6090d3d4a
+  - Texture: {fileID: 2800000, guid: 710897aba07e1c9489029e013c1e8f7d, type: 3}
+    Hash: fc16f9d3e2d1111d276461f0c56539fb
   WhiteHash: 06f1823c819835032fb367776dd33816
   BlackHash: 42a284fb2547d1067b345d5858d8bcfc
   GrayHash: b9373118c30f4ea6d643a7f87a47ba17
