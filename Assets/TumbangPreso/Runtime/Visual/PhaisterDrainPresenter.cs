@@ -76,13 +76,17 @@ namespace TumbangPreso.Visual
 
         private CharacterMotor _body;
         private PhaisterDrainLook _drain;
+        private PhaisterPassiveLook _passive;
         private CharacterMotor _victim;
         private bool _running;
         private Timeline _clock;
         private ViewmodelArms _arms;
         private float _armsSearch;
         private float _crown, _markAge;
-        private Vector3 _lastAt, _moving, _herAt;
+        private Vector3 _lastAt, _moving;
+        private ViewmodelArms _ownArms;
+        private float _ownSearch;
+        private bool _passiveOn;
 
         /// <summary>True while this look draws her DRAIN reach, in place of `VoodooSoulDraw`'s ghost and motes.</summary>
         public static bool DrawsReach(CharacterMotor caster)
@@ -104,8 +108,9 @@ namespace TumbangPreso.Visual
                 _lastAt = transform.position;
             }
             bool on = PhaisterLook.Direction != PhaisterLook.Style.Current && _body.isActiveAndEnabled;
-            if (!on) { _running = false; _drain?.Hide(); return; }
+            if (!on) { _running = false; _drain?.Hide(); _passive?.Hide(); return; }
             StepDrain(dt);
+            StepPassive(dt);
         }
 
         private void StepDrain(float dt)
@@ -154,8 +159,42 @@ namespace TumbangPreso.Visual
             return false;
         }
 
-        private void OnDisable() { _running = false; _drain?.Hide(); }
+        private void StepPassive(float dt)
+        {
+            bool dragged = _body.VoodooMark != VoodooMarkKind.None;
+            CharacterMotor markedByMe = null;
+            var round = GameServices.Round;
+            if (round != null)
+                foreach (var p in round.Players)
+                    if (p != null && p != _body && p.VoodooMark != VoodooMarkKind.None && p.VoodooMarkSource == _body.PlayerSlot) { markedByMe = p; break; }
+            if (_passive == null)
+            {
+                if (!dragged && markedByMe == null) return;
+                _passive = new PhaisterPassiveLook(null);
+            }
+            bool any = dragged || markedByMe != null;
+            if (any && !_passiveOn) _passive.BindLegs(PhaisterLook.ModelOf(transform));
+            _passiveOn = any;
+            _markAge = dragged ? _body.VoodooMarkAge : markedByMe != null ? markedByMe.VoodooMarkAge : _markAge + dt;
+            _passive.PoseVictim(_markAge, transform.position, transform.forward, _moving, dragged, dragged && OwnBody(dt), dt);
+            _passive.PoseHaste(markedByMe != null ? markedByMe.VoodooMarkAge : _markAge, transform.position, markedByMe != null ? markedByMe.transform.position : transform.position, _moving, transform.forward, markedByMe != null, dt);
+        }
 
-        private void OnDestroy() { _drain?.Free(); }
+        /// <summary>Whether this screen looks out of this body: `OwnEyes`, for the marked body rather than Drain's target.</summary>
+        private bool OwnBody(float dt)
+        {
+            if (_ownArms != null && _ownArms.isActiveAndEnabled && _ownArms.BoundCharacter == _body) return true;
+            _ownArms = null;
+            _ownSearch -= dt;
+            if (_ownSearch > 0f) return false;
+            _ownSearch = 0.5f;
+            foreach (var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))
+                if (arms != null && arms.isActiveAndEnabled && arms.BoundCharacter == _body) { _ownArms = arms; return true; }
+            return false;
+        }
+
+        private void OnDisable() { _running = false; _drain?.Hide(); _passive?.Hide(); }
+
+        private void OnDestroy() { _drain?.Free(); _passive?.Free(); }
     }
 }

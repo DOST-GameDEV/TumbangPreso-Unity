@@ -70,7 +70,7 @@ namespace TumbangPreso.EditorTools.MapKit
         private const float Base = 100f;
         private static readonly string[] Abilities = { "teleport", "hex" };
         private static readonly string[] ColumnNames = { "TODAY", "A moonlit moths", "B sleepy cosmos" };
-        private static readonly string[] Shaders = { "PhaisterMoths", "PhaisterGhost", "PhaisterCosmos" };
+        private static readonly string[] Shaders = { "PhaisterMoths", "PhaisterGhost", "PhaisterCosmos", "PhaisterPassiveMoths" };
         private const BindingFlags Any = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
 
         private struct View
@@ -357,6 +357,7 @@ namespace TumbangPreso.EditorTools.MapKit
                 case "hex": BuildHex(s, p, false); return;
                 case "hexrun": BuildHex(s, p, true); return;
                 case "drain": BuildDrain(s, p); return;
+                case "passive": BuildPassive(s, p); return;
             }
             throw new ArgumentException("No such ability: " + p.Name + " (teleport, hex or all)");
         }
@@ -423,12 +424,12 @@ namespace TumbangPreso.EditorTools.MapKit
             };
         }
 
-        // ---------------------------------------------------------------- DRAIN (`PhaisterDrainLook`)
+        // ---------------------------------------------------------------- DRAIN AND THE PASSIVE (`PhaisterDrainLook`, `PhaisterPassiveLook`)
 
         /// <summary>
         /// STAGED like the rest of this film: still poses. The left column is driven through `PhaisterDrainPresenter.Timeline`, the
         /// clock a match runs, from scripted replicated values two frames late, and its victim's-eyes row draws what the victim's
-        /// own screen draws. Middle: the same with the reach broken at 1.2 s. The right column is empty (the bodies stand and the look is
+        /// own screen draws. Middle: the same with the reach broken at 1.2 s. Right: the passive (the bodies stand and the look is
         /// told they run, so the gap opening between runners is not shown). The report runs the clock through each ending.
         /// </summary>
         private static void BuildDrain(Stage s, Plan p)
@@ -449,6 +450,9 @@ namespace TumbangPreso.EditorTools.MapKit
             for (int c = 0; c < 3; c++) { roots[c] = s.In(new GameObject("~PhaisterKit-drain-" + c), p); p.Cols[c].Add(roots[c]); }
             var whole = new PhaisterDrainLook(roots[0].transform);
             var broke = new PhaisterDrainLook(roots[1].transform);
+            var drag = new PhaisterPassiveLook(roots[2].transform);
+            var haste = new PhaisterPassiveLook(roots[2].transform);
+            float last = -1f;
             s.Report.AppendLine("  STAGED: her reach starts at 0 s on a victim " + (V - S).magnitude.ToString("0.0") + " m away; marked at 2 s; drained at 3.5 s; refill at 6 s.");
             p.Pose = t => { };
             p.PoseColumn = (c, t) => { };
@@ -459,6 +463,13 @@ namespace TumbangPreso.EditorTools.MapKit
                 bool own = (camT.position - ownEye).sqrMagnitude < 0.01f;
                 if (c == 0) whole.Pose(ClockAt(t), -1f, head, hand, camT.position, own);
                 else if (c == 1) { if (t < 3.2f) broke.Pose(t, 1.2f, head, hand, camT.position, own); else broke.Hide(); }
+                else
+                {
+                    float dt = Mathf.Clamp(t - last, 1f / 240f, 0.05f); last = t;
+                    bool on = t < 5.0f;
+                    drag.PoseVictim(t, V, -fwd, Vector3.zero, on, own, dt);
+                    haste.PoseHaste(t, S, V, fwd * 5.5f, fwd, on, dt);
+                }
             };
             p.CostAt = new[] { 1.5f, 3.0f, 3.52f, 3.60f, 3.80f, 4.20f, 4.50f, 5.5f };
             p.Segments.Add((-0.10f, 6.55f));
@@ -518,6 +529,113 @@ namespace TumbangPreso.EditorTools.MapKit
             for (float t = 0f; t < 0.5f; t += Dt) d.Step(new PhaisterDrainPresenter.Known { ReachSucceeded = true, Marked = true, MarkAge = t }, Dt);
             for (float t = 0f; t < 0.6f; t += Dt) d.Step(new PhaisterDrainPresenter.Known { ReachSucceeded = true }, Dt);
             yield return Say("mark cleansed after 0.5 s", d.BrokeAt >= 0f, "brokeAt " + d.BrokeAt.ToString("0.00"));
+        }
+
+        // ---------------------------------------------------------------- THE PASSIVE, RUNNING (`PhaisterPassiveLook`)
+
+        /// <summary>
+        /// STAGED: bodies are posed by the `sprint` and `idle` clips and slid along their paths; no match runs. Both run circles at
+        /// the rule's own speeds, so the wake is seen curving. Columns: running | standing | running with Hex and Drain on the
+        /// victim at once, to see that neither is buried. A mark lands at 0.8 s and ends at 5 s. Row two is the victim's own screen.
+        /// </summary>
+        private static void BuildPassive(Stage s, Plan p)
+        {
+            Vector3 up = Vector3.up;
+            Vector3 C = s.Ground(0f, 1f);
+            const float MarkAt = 0.8f, MarkEnd = 5f, Speed = 4.5f, RHer = 2.8f, RThem = 4.4f, Step = 1f / 60f;
+            float themShare = VoodooRules.PassiveSpeedScale(false), herShare = VoodooRules.PassiveSpeedScale(true);
+            var hers = new GameObject[Columns]; var thems = new GameObject[Columns];
+            var herModels = new Transform[Columns]; var themModels = new Transform[Columns];
+            var herLook = new PhaisterPassiveLook[Columns]; var themLook = new PhaisterPassiveLook[Columns]; var ownLook = new PhaisterPassiveLook[Columns];
+            var ownRoots = new GameObject[Columns]; var themRoots = new GameObject[Columns];
+            var themNow = new Vector3[Columns]; var herNow = new Vector3[Columns]; var themWay = new Vector3[Columns];
+            for (int c = 0; c < Columns; c++)
+            {
+                hers[c] = s.Person(p, "phaister", C, 0f, out herModels[c]);
+                thems[c] = s.Person(p, "zack", C, 0f, out themModels[c]);
+                p.Cols[c].Add(hers[c]); p.Cols[c].Add(thems[c]);
+                var root = s.In(new GameObject("~PhaisterKit-passive-" + c), p); p.Cols[c].Add(root);
+                themRoots[c] = s.In(new GameObject("~PhaisterKit-passive-them-" + c), p); p.Cols[c].Add(themRoots[c]);
+                ownRoots[c] = s.In(new GameObject("~PhaisterKit-passive-own-" + c), p); p.Cols[c].Add(ownRoots[c]);
+                herLook[c] = new PhaisterPassiveLook(root.transform);
+                themLook[c] = new PhaisterPassiveLook(themRoots[c].transform);
+                ownLook[c] = new PhaisterPassiveLook(ownRoots[c].transform);
+                herLook[c].BindLegs(herModels[c]); themLook[c].BindLegs(themModels[c]); ownLook[c].BindLegs(themModels[c]);
+            }
+            AnimationClip sprint = null, idle = null;
+            var art = RosterBook.Load()?.FindPersonArt("zack");
+            if (art != null && art.Model != null)
+                foreach (var sub in AssetDatabase.LoadAllAssetsAtPath(AssetDatabase.GetAssetPath(art.Model)))
+                    if (sub is AnimationClip clip) { if (clip.name == "sprint") sprint = clip; else if (clip.name == "idle") idle = clip; }
+            s.Report.AppendLine("  STAGED: clips sampled and bodies slid along circles. sprint clip: " + (sprint != null ? sprint.length.ToString("0.00") + " s" : "NOT FOUND"));
+            var drainRoot = s.In(new GameObject("~PhaisterKit-passive-drain"), p); p.Cols[2].Add(drainRoot);
+            var hexRoot = s.In(new GameObject("~PhaisterKit-passive-hex"), p); p.Cols[2].Add(hexRoot);
+            var drain = new PhaisterDrainLook(drainRoot.transform);
+            var hex = new PhaisterHexSigil(hexRoot.transform);
+            hex.Bind(themModels[2]);
+            float Ran(float t, float share) { float during = Mathf.Clamp(t - MarkAt, 0f, MarkEnd - MarkAt); return Speed * (Mathf.Max(t, 0f) - during) + Speed * share * during; }
+            Vector3 Around(float dist, float radius, float offset, out Vector3 way)
+            {
+                float a = dist / radius + offset;
+                way = new Vector3(-Mathf.Sin(a), 0f, Mathf.Cos(a));
+                return s.Ground(C.x + Mathf.Cos(a) * radius, C.z + Mathf.Sin(a) * radius);
+            }
+            p.PoseColumn = (c, t) =>
+            {
+                bool running = c != 1, on = t >= MarkAt && t < MarkEnd;
+                Vector3 herAt, themAt, herW, themW;
+                if (running)
+                {
+                    herAt = Around(Ran(t, herShare), RHer, 3.6f, out herW);
+                    themAt = Around(Ran(t, themShare), RThem, 2.9f, out themW);
+                }
+                else
+                {
+                    herAt = s.Ground(C.x - 2.2f, C.z - 1.6f); themAt = s.Ground(C.x + 1.4f, C.z + 1.8f);
+                    herW = themAt - herAt; herW.y = 0f; herW.Normalize(); themW = -herW;
+                }
+                hers[c].transform.SetPositionAndRotation(herAt, Quaternion.LookRotation(herW));
+                thems[c].transform.SetPositionAndRotation(themAt, Quaternion.LookRotation(themW));
+                var pose = running ? sprint : idle;
+                if (pose != null)
+                {
+                    float clipAt = Mathf.Repeat(Mathf.Max(t, 0f), pose.length);
+                    if (herModels[c] != null) pose.SampleAnimation(herModels[c].gameObject, clipAt);
+                    if (themModels[c] != null) pose.SampleAnimation(themModels[c].gameObject, Mathf.Repeat(clipAt + 0.21f, pose.length));
+                }
+                float mark = Mathf.Max(0f, t - MarkAt);
+                Vector3 themMove = running ? themW * Speed * (on ? themShare : 1f) : Vector3.zero, herMove = running ? herW * Speed * (on ? herShare : 1f) : Vector3.zero;
+                themLook[c].PoseVictim(mark, themAt, themW, themMove, on, false, Step);
+                ownLook[c].PoseVictim(mark, themAt, themW, themMove, on, true, Step);
+                herLook[c].PoseHaste(mark, herAt, themAt, herMove, herW, on, Step);
+                if (c != 2) hex.DarkenBody();
+                themNow[c] = themAt; herNow[c] = herAt; themWay[c] = themW;
+            };
+            p.Face = (c, t, camT) =>
+            {
+                bool own = (camT.position - (themNow[c] + up * 1.45f - themWay[c] * 0.1f)).sqrMagnitude < 0.01f;
+                ownRoots[c].SetActive(own); themRoots[c].SetActive(!own);
+                if (c != 2) return;
+                if (t < MarkAt) { drain.Hide(); hex.Hide(); return; }
+                float m = t - MarkAt;
+                Vector3 hand = herNow[c] + up * 1.15f + (themNow[c] - herNow[c]).normalized * 0.38f;
+                drain.Pose(m * 1.2f, -1f, themNow[c] + up * 2.0f, hand, camT.position, own);
+                FxStudyPhaisterHex.Timeline(m, false, out float re, out float mk, out float st, out float he, out float fr);
+                hex.Pose(re, mk, st, he, fr, themNow[c], 1.35f, hand, t + 100f, camT.position, own);
+            };
+            p.CostAt = new[] { 2.5f };
+            p.Segments.Add((0f, 6.2f));
+            // Reads the column being drawn: `Shoot` calls Eye for each column in turn, after that column's PoseColumn.
+            int shooting = 0;
+            var pose0 = p.PoseColumn;
+            p.PoseColumn = (c, t) => { shooting = c; pose0(c, t); };
+            p.Views = new[]
+            {
+                new View("another player, 7 m off", () => C + new Vector3(-7.5f, 1.45f, -2.5f), () => C + up * 0.7f, 62f),
+                new View("victim's own screen", () => themNow[shooting] + up * 1.45f - themWay[shooting] * 0.1f, () => themNow[shooting] + up * 1.3f + themWay[shooting] * 5f, 75f, thems[0], thems[1], thems[2]),
+                new View("side", () => C + new Vector3(7.5f, 3.0f, -6f), () => C + up * 0.6f, 45f),
+                new View("above", () => C + new Vector3(0f, 11f, -5f), () => C, 50f),
+            };
         }
 
         // ---------------------------------------------------------------- HEX

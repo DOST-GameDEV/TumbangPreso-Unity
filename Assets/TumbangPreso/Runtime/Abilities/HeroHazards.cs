@@ -4243,7 +4243,8 @@ namespace TumbangPreso.Abilities
             {
                 go.transform.position = victim.position;
                 go.transform.rotation = victim.rotation;
-                CheskaIceVisuals.BuildRestraint(go.transform);
+                if (CheskaFrozenLook.Enabled) CheskaFrozenLook.Build(go.transform);
+                else CheskaIceVisuals.BuildRestraint(go.transform);
                 var comp = go.AddComponent<IceCubePrisonComponent>();
                 comp.Duration = duration;
                 comp.Victim = victim;
@@ -4283,7 +4284,8 @@ namespace TumbangPreso.Abilities
                 _shattered=true;
                 try
                 {
-                    CheskaIceVisuals.Shatter(transform.position,false);
+                    // The reworked casing cracks and sinks on its own after this object goes; the old shards break apart.
+                    if (!CheskaFrozenLook.Release(transform)) CheskaIceVisuals.Shatter(transform.position,false);
                     // This status picture now exists on every peer, including joiners.
                     GameServices.Audio?.PlayAtVaried("sfx_ice_shatter",transform.position,.98f,1.04f,.45f);
                 }

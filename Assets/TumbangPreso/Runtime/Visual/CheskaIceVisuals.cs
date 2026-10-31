@@ -23,6 +23,8 @@ namespace TumbangPreso.Visual
                 CheskaGlacialWallLook.Warm(Core.CryoRules.GlacialWallArcLength, Core.CryoRules.GlacialWallArcRadius);
                 yield return null;
             }
+            // Her Frozen casing in the same ice (`CheskaFrostKit`) bakes its crystals here too, ahead of the first freeze.
+            if (CheskaFrozenLook.Enabled) { CheskaFrozenLook.Warm(); yield return null; }
         }
 
         private static IEnumerator WarmMesh(string name)

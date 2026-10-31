@@ -445,7 +445,7 @@ namespace TumbangPreso.Visual
     /// </summary>
     public abstract class FxStudyEffect : IDisposable
     {
-        public static readonly string[] Names = { "phaistersky", "phaisterskyday", "phaisterskyunder", "phaisterdoll", "phaisterdollday", "trails", "wisp", "wispshells", "smoke", "circle", "lotus", "lotusfrost", "scorch", "whirlwind", "whirlwindparts", "whirlwindh1", "whirlwindh7", "drift", "rafiwall", "danteboulder", "rafiwallsplit", "danteboulderboard", "dantebastion", "dantebastionb3", "dantebastionb4", "dantebastionb5", "dantebastionb6", "dantebastionb6day", "dantebastionb7", "dantebastionb7day", "dantebastionb8", "dantebastionb8day", "dantebastionboard", "cloud", "cloudline", "clouddark", "cloudburst", "cloudlinedark", "raficurrent", "raficurrentspent", "airburst", "airburstabove", "airburstday", "rafibaha", "rafibahaside", "rafibahaback", "dantefirewave", "phaistera", "phaisterb", "phaisterhexa", "phaisterhexb", "phaisterdrain", "phaisterdrainday", "phaisterdrainabove", "phaisterdrainbreak", "rafibahapeak", "rafibahaday" };
+        public static readonly string[] Names = { "phaistersky", "phaisterskyday", "phaisterskyunder", "phaisterdoll", "phaisterdollday", "trails", "wisp", "wispshells", "smoke", "circle", "lotus", "lotusfrost", "scorch", "whirlwind", "whirlwindparts", "whirlwindh1", "whirlwindh7", "drift", "rafiwall", "danteboulder", "rafiwallsplit", "danteboulderboard", "dantebastion", "dantebastionb3", "dantebastionb4", "dantebastionb5", "dantebastionb6", "dantebastionb6day", "dantebastionb7", "dantebastionb7day", "dantebastionb8", "dantebastionb8day", "dantebastionboard", "cloud", "cloudline", "clouddark", "cloudburst", "cloudlinedark", "raficurrent", "raficurrentspent", "airburst", "airburstabove", "airburstday", "rafibaha", "rafibahaside", "rafibahaback", "dantefirewave", "phaistera", "phaisterb", "phaisterhexa", "phaisterhexb", "phaisterdrain", "phaisterdrainday", "phaisterdrainabove", "phaisterdrainbreak", "phaisterpassive", "phaisterpassivestill", "rafibahapeak", "rafibahaday" };
 
         public readonly Transform Root;
         private readonly List<FxPiece> _pieces = new List<FxPiece>();
@@ -545,11 +545,13 @@ namespace TumbangPreso.Visual
                 case "phaistera": return new FxStudyPhaisterTeleport(parent, PhaisterLook.Style.A);
                 case "phaisterb": return new FxStudyPhaisterTeleport(parent, PhaisterLook.Style.B);
                 case "phaisterhexa": return new FxStudyPhaisterHex(parent, PhaisterLook.Style.A);
-                // CURSE: DRAIN (`FxStudyPhaisterDrain`).
+                // CURSE: DRAIN and her passive (`FxStudyPhaisterDrain`).
                 case "phaisterdrain": return new FxStudyPhaisterDrain(parent, FxStudyPhaisterDrain.Variant.Bench);
                 case "phaisterdrainday": return new FxStudyPhaisterDrain(parent, FxStudyPhaisterDrain.Variant.Day);
                 case "phaisterdrainabove": return new FxStudyPhaisterDrain(parent, FxStudyPhaisterDrain.Variant.Above);
                 case "phaisterdrainbreak": return new FxStudyPhaisterDrain(parent, FxStudyPhaisterDrain.Variant.Break);
+                case "phaisterpassive": return new FxStudyPhaisterPassive(parent);
+                case "phaisterpassivestill": return new FxStudyPhaisterPassive(parent, true);
                 case "phaisterhexb": return new FxStudyPhaisterHex(parent, PhaisterLook.Style.B);
                 case "rafibahapeak": return new FxStudyRafiBaha(parent, FxStudyRafiBaha.View.Peak);
                 case "rafibahaday": return new FxStudyRafiBaha(parent, FxStudyRafiBaha.View.Day);
