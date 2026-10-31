@@ -88,6 +88,19 @@ namespace TumbangPreso.CameraSystem
         /// <summary>True while a tag replay owns this screen; the live court's tag markers step aside for it.</summary>
         public static bool AnyPlaying => _live != null && _live.Playing;
         private bool _slammed, _shotPlaced, _exitSwept;
+        // The final say on two bodies that would otherwise intersect: how far each has been moved off the line so far.
+        private TagBodyBoxes _actorBoxes, _victimBoxes;
+        private float _actorApart, _victimApart;
+        private Transform _actorHand, _actorArm;
+        private Vector3 _actorArmRest;
+        private const float ApproachGraze = .3f, TouchLead = .1f, PeakLead = .2f;
+        // Slowed down, a graze of a centimetre or two stays on screen.
+        private const float ReplayMargin = .025f;
+        private bool _touchRead, _hasTouch;
+        private int _armAxis;
+        private float _armSpan;
+        private Vector3 _touch;
+        private float _armGive = CharacterAnimator.ArmGive;
         // The one lens direction of this replay, chosen at the start (`ChooseShot`).
         private Vector3 _shotDirection, _contactLens, _knockAway;
         private float _shotReach = 1;
@@ -217,15 +230,29 @@ namespace TumbangPreso.CameraSystem
             _actorContact = _actorCopy.Root.transform.position; _victimContact = _victimCopy.Root.transform.position;
             _victimFacing = _victimCopy.Root.transform.rotation;
             CopyHeldItem(victimTrack, _victimCopy);
-            // The lens is square to the pair as they will be when the hand lands: a running taya is still carried on by then.
-            Vector3 landing = _actorContact;
-            if (actor.TryRootAt(contact - HandArrives, out Vector3 earlier, out _)) landing += _actorContact - earlier;
-            Vector3 forward = _victimContact - landing; forward.y = 0;
-            if (forward.sqrMagnitude < .01f) forward = _victimContact - _actorContact;
-            forward.y = 0;
+            // The lens and the shove use the true line at the tag. Guessing where a running taya would land flipped it when
+            // they were close and fast, which shoved the victim back into them and filmed the pair end on. They now stay on
+            // their own side of this line (`KeepBodiesApart`), so it is still the line when the hand lands.
+            Vector3 forward = _victimContact - _actorContact; forward.y = 0;
             if (forward.sqrMagnitude < .01f) forward = _victimFacing * Vector3.forward;
             forward.Normalize();
             _knockAway = forward;
+            _actorBoxes = new TagBodyBoxes(_actorCopy.Renderers, true); _victimBoxes = new TagBodyBoxes(_victimCopy.Renderers, false);
+            _actorApart = _victimApart = 0; _touchRead = _hasTouch = false; _armGive = CharacterAnimator.ArmGive;
+            var actorVisual = actor.Actor != null ? actor.Actor.GetComponent<CharacterVisual>() : null;
+            _actorHand = actorVisual != null && actorVisual.HandAnchor != null ? actor.CopiedBone(_actorCopy, actorVisual.HandAnchor) : null;
+            _actorArm = null;
+            foreach (var bone in _actorCopy.Bones) if (bone.name == "arm-right") { _actorArm = bone; break; }
+            if (_actorHand != null && _actorArm != null && !_actorHand.IsChildOf(_actorArm)) _actorArm = null;
+            if (_actorArm != null)
+            {
+                actor.Apply(_actorCopy, _clipStart); _actorArmRest = _actorArm.localScale;
+                actor.Apply(_actorCopy, contact);
+                // What this arm spans unstretched, read once at the tag: during the approach it is bent or swinging.
+                Vector3 palm = _actorArm.InverseTransformPoint(_actorHand.position);
+                _armAxis = Mathf.Abs(palm.x) >= Mathf.Abs(palm.y) && Mathf.Abs(palm.x) >= Mathf.Abs(palm.z) ? 0 : Mathf.Abs(palm.y) >= Mathf.Abs(palm.z) ? 1 : 2;
+                _armSpan = Vector3.Distance(_actorArm.position, _actorHand.position) * _actorArmRest[_armAxis] / Mathf.Max(.0001f, _actorArm.localScale[_armAxis]);
+            }
             // A cramped contact gets the normal recovery view rather than a camera pushed into a face.
             if (!ChooseShot(forward, actor, victimTrack)) { End(); return; }
             _flashBlock = new MaterialPropertyBlock();
@@ -286,6 +313,84 @@ namespace TumbangPreso.CameraSystem
             {
                 if (renderer == null) continue;
                 renderer.GetPropertyBlock(_flashBlock); _flashBlock.SetFloat("_FlashAmount", flash); renderer.SetPropertyBlock(_flashBlock);
+            }
+        }
+        // ⚠️ THE RECORDED BONES ARE NOT THE LAST WORD. A running taya's motor keeps going while the victim's pose stands at the
+        // touch, 20 samples a second can jump a fast close, and the live spacing only runs once the tag is accepted. Whatever
+        // the recording says, the two real bodies do not intersect on this screen. The taya backs along the line and never
+        // comes forward again, or they would follow the shoved body. If a wall is behind them the victim takes the rest.
+        private void KeepBodiesApart(float recordedTime)
+        {
+            var actor = _actorCopy.Root.transform; var victim = _victimCopy.Root.transform;
+            Vector3 hand = _actorHand != null ? _actorHand.position : Vector3.zero;
+            actor.position -= _knockAway * _actorApart;
+            victim.position += _knockAway * _victimApart;
+            float need = TagBodyBoxes.Overlap(_actorBoxes.Read(_knockAway), _victimBoxes.Read(_knockAway));
+            if (need > 0) need += ReplayMargin;
+            // Before the touch a pair may have crossed, or one may have been sent across the map inside this clip: nothing
+            // from then may hold them apart at the touch. A graze is eased for its own frame and forgotten.
+            if (recordedTime < _contact - TouchLead)
+            {
+                if (need > 0 && need < ApproachGraze) actor.position -= _knockAway * TagBodyBoxes.Room(actor.position, -_knockAway, need);
+                return;
+            }
+            ReadTouch();
+            if (need > 0 && _actorArm != null && _actorHand != null && _hasTouch)
+            {
+                // The hand wins at the limit, as it does live (`StandClearOfCaughtBody`).
+                Vector3 touchNow = _touch + _knockAway * _victimApart;
+                need = Mathf.Min(need, Mathf.Max(0, _armSpan * _armGive - Vector3.Distance(_actorArm.position, touchNow)));
+            }
+            if (need > 0)
+            {
+                float back = TagBodyBoxes.Room(actor.position, -_knockAway, need);
+                _actorApart += back; actor.position -= _knockAway * back;
+                _victimApart += need - back; victim.position += _knockAway * (need - back);
+            }
+            if (_actorArm == null || _actorHand == null) return;
+            // ⚠️ THE HAND FINISHES ON THE TOUCH, WHATEVER WAS SAMPLED. 20 samples a second, fewer on a slow frame, can catch the
+            // arm in mid swing or stop short of the moment it landed, and the bodies may just have been moved apart. The arm
+            // aims and gives for what is left, within what the live pose was allowed for this pair.
+            float touching = Mathf.InverseLerp(_contact - TouchLead, _contact, recordedTime);
+            if (touching <= 0) return;
+            Vector3 target = (_hasTouch ? _touch : hand) + _knockAway * _victimApart, palm = _actorArm.InverseTransformPoint(_actorHand.position);
+            float length = Vector3.Distance(_actorArm.position, _actorHand.position), wanted = Vector3.Distance(_actorArm.position, target);
+            if (length > .001f && wanted > length)
+            {
+                Vector3 scale = _actorArm.localScale;
+                int axis = Mathf.Abs(palm.x) >= Mathf.Abs(palm.y) && Mathf.Abs(palm.x) >= Mathf.Abs(palm.z) ? 0 : Mathf.Abs(palm.y) >= Mathf.Abs(palm.z) ? 1 : 2;
+                float most = _actorArmRest[axis] * _armGive;
+                scale[axis] = Mathf.Min(Mathf.Max(scale[axis], most), scale[axis] * Mathf.Lerp(1, wanted / length, touching));
+                _actorArm.localScale = scale;
+            }
+            Vector3 from = _actorHand.position - _actorArm.position, to = target - _actorArm.position;
+            if (from.sqrMagnitude > .0001f && to.sqrMagnitude > .0001f)
+                _actorArm.rotation = Quaternion.Slerp(_actorArm.rotation, Quaternion.FromToRotation(from, to) * _actorArm.rotation, touching);
+        }
+        private void ReadTouch()
+        {
+            if (_touchRead) return;
+            _touchRead = true;
+            var animator = _actorTrack.Actor != null ? _actorTrack.Actor.GetComponent<CharacterAnimator>() : null;
+            if (animator == null) return;
+            _armGive = animator.TagArmGive;
+            Vector3 touch = animator.AcceptedTagContact, flat = touch - _victimContact; flat.y = 0;
+            if (flat.sqrMagnitude < 2.25f) { _touch = touch; _hasTouch = true; }
+        }
+        // A body somebody froze or zapped is shown frozen or zapped, as the halftime view does (`RecordedWorldView`). The catch's
+        // own coat stays off: it is the tag's result, and the white body it painted over the replay was an owner bug (October 5).
+        private void ShowRecordedStun(MatchPoseHistory.Copy copy, RecordedPoseTrack clip, float time)
+        {
+            var state = clip.StateAt(time);
+            bool ability = state.HasCoat && state.Element != StunElement.None;
+            var coat = StunCoat.For(state.Element);
+            foreach (var renderer in copy.Renderers)
+            {
+                if (renderer == null) continue;
+                renderer.GetPropertyBlock(_flashBlock);
+                _flashBlock.SetFloat("_FrostAmount", ability ? state.Frost : 0);
+                if (ability) { _flashBlock.SetColor("_FrostColor", coat.Body); _flashBlock.SetColor("_FrostRimColor", coat.Rim); }
+                renderer.SetPropertyBlock(_flashBlock);
             }
         }
         private void CopyHeldItem(MatchPoseHistory.Track track, MatchPoseHistory.Copy copy)
@@ -415,11 +520,12 @@ namespace TumbangPreso.CameraSystem
             if (!_followthroughCaptured && _actorTrack.Newest >= _clipEnd && _victimTrack.Newest >= _clipEnd)
             {
                 _followthroughCaptured = true;
+                // The tag is accepted about when the reach peaks and its event can arrive just after, so look a little before it.
                 // A late sample may already show the hand coming home. Hold
                 // the strongest actual accepted-contact pose, never that return
                 // or a synthetic interpolation between touch and recovery.
                 float available = Mathf.Min(_actorTrack.Newest, _victimTrack.Newest);
-                _clipEnd = _actorTrack.TryTagContactFrame(_contact, available, _victim.PlayerSlot, _impact, out float peak)
+                _clipEnd = _actorTrack.TryTagContactFrame(_contact - PeakLead, available, _victim.PlayerSlot, _impact, out float peak)
                     ? peak : Mathf.Min(_impact, available);
                 _impact = _clipEnd;
                 if (!RetainClip(_clipEnd))
@@ -434,6 +540,9 @@ namespace TumbangPreso.CameraSystem
             _actorCopy.Root.transform.position = _actorClip.SmoothRoot(Mathf.Min(recordedTime, _impact));
             _victimCopy.Root.transform.position = _victimClip.SmoothRoot(Mathf.Min(recordedTime, _contact));
             if (elapsed >= ContactPlayback) PoseCaughtBody(elapsed);
+            ShowRecordedStun(_actorCopy, _actorClip, recordedTime);
+            ShowRecordedStun(_victimCopy, _victimClip, Mathf.Min(recordedTime, _contact));
+            KeepBodiesApart(recordedTime);
             // Scenery on the way: keep the lens where it stands, or start at the touch's own clear lens, and pan.
             if (!PlaceShotCamera(elapsed)) HoldLens(elapsed);
             try
@@ -624,6 +733,7 @@ namespace TumbangPreso.CameraSystem
             _actorCopy = _victimCopy = null; _actorTrack = _victimTrack = null; _victim = null;
             _actorClip = _victimClip = null; _followthroughCaptured = _freezeCaptured = false;
             _shotDirection = Vector3.zero; _shotReach = 1;
+            _actorBoxes = _victimBoxes = null; _actorHand = _actorArm = null;
             _copiedItems = null; _hidden.Clear(); _previous.Clear(); _seen.Clear(); _scratch.Clear();
             _hiddenCanvases.Clear(); _canvasPrevious.Clear(); _canvasScratch.Clear();
         }

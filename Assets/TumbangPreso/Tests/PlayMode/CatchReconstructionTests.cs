@@ -666,6 +666,203 @@ namespace TumbangPreso.PlayTests
             }
         }
 
+        // Owner, October 31: "the freaking characters phase thruu each other". Both really run under their own motors, as in play.
+        [UnityTest] public IEnumerator RunningTagBodiesNeverIntersect() => CheckRunningTag(null, null, false);
+        [UnityTest] public IEnumerator RunningTagBodiesNeverIntersect_DanteOnNemu() => CheckRunningTag("dante", "nemu", false, limit: .05f); // Measured .035: the tightest pair, where the hand wins at the limit.
+        [UnityTest] public IEnumerator RunningTagBodiesNeverIntersect_NemuOnDante() => CheckRunningTag("nemu", "dante", false);
+        // The widest shape in the cast: the hand wins at the limit, so a little brim may remain. Measured, not assumed.
+        [UnityTest] public IEnumerator RunningTagWidestPairStaysWithinItsLimit_PhaisterOnRafi() => CheckRunningTag("phaister", "rafi", false, limit: .3f);
+        [UnityTest] public IEnumerator DashTagBodiesNeverIntersect() => CheckRunningTag(null, null, true);
+        [UnityTest] public IEnumerator RunningTagBodiesNeverIntersect_OnAuthoredMap() => CheckRunningTag(null, null, false, map: true);
+        [UnityTest] public IEnumerator TagWithAWallBehindTheTayaKeepsBodiesApartAndOutOfTheWall() => CheckRunningTag(null, null, false, wall: true);
+        [UnityTest] public IEnumerator JumpingTagBodiesNeverIntersect() => CheckRunningTag(null, null, false, air: true, limit: .1f); // Measured .074: the hand wins at the limit in the air.
+
+        private IEnumerator CheckRunningTag(string actorArt, string victimArt, bool dash, bool map = false, bool wall = false, bool air = false, float limit = .03f)
+        {
+            if (map) yield return Open(); else yield return OpenIsolatedCatchWorld();
+            var round = GameServices.Round;
+            var actor = round.PlayerAt(0); var victim = round.PlayerAt(1);
+            if (actorArt != null)
+            {
+                var book = RosterBook.Load();
+                var a = book.FindPersonArt(actorArt); var b = book.FindPersonArt(victimArt);
+                actor.GetComponent<CharacterVisual>().ApplyModel(a.Model, a.Tint, a.Clips, a.Palette, a.PetModel);
+                victim.GetComponent<CharacterVisual>().ApplyModel(b.Model, b.Tint, b.Clips, b.Palette, b.PetModel);
+                yield return null;
+            }
+            for (int i = 2; i < 4; i++) round.PlayerAt(i).Teleport(new Vector3(-12, 0, i * 2));
+            float behind = dash ? 1.7f : 1.1f;
+            float startZ = -Confinement.Radius + behind + .2f; // Inside the taya's box: they are confined to it, as in play.
+            float startX = map ? -4 : 0, startY = map ? .12f : .02f;
+            bool standing = wall || air;
+            if (standing) { startZ = 0; behind = 1; }
+            victim.Teleport(new Vector3(startX, startY, startZ)); victim.transform.forward = Vector3.forward;
+            actor.Teleport(new Vector3(startX, startY, startZ - behind)); actor.transform.forward = Vector3.forward;
+            float wallFace = startZ - behind - .45f;
+            GameObject wallBlock = null;
+            if (wall)
+            {
+                wallBlock = GameObject.CreatePrimitive(PrimitiveType.Cube); wallBlock.name = "Wall behind the taya";
+                wallBlock.transform.position = new Vector3(startX, 1.5f, wallFace - 1); wallBlock.transform.localScale = new Vector3(8, 3, 2);
+            }
+            // Nothing from before these two were placed may sit inside the replay's clip.
+            yield return new WaitForSeconds(standing ? CatchReconstruction.LeadSeconds + .2f : .7f);
+            var settings = Settings.SettingsStore.Current;
+            bool reduced = settings.ReducedUiMotion, cinematic = settings.CinematicCameraMotion;
+            settings.ReducedUiMotion = false; settings.CinematicCameraMotion = true;
+            string name = (wall ? "wall-" : air ? "air-" : map ? "map-" : dash ? "dash-" : "run-") + (actorArt ?? "default") + "-to-" + (victimArt ?? "default");
+            string directory = "Logs/tag-running/" + name;
+            System.IO.Directory.CreateDirectory(directory);
+            var view = Object.FindAnyObjectByType<CatchReconstruction>();
+            var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            object Field(string field) => typeof(CatchReconstruction).GetField(field, flags).GetValue(view);
+            var log = new System.Collections.Generic.List<string> { "elapsed,replayOverlap,replayParts,liveOverlap,liveParts,handGap,tayaRoot,victimRoot" };
+            try
+            {
+                float started = actor.transform.position.z, until = Time.realtimeSinceStartup + (standing ? 0 : 1.1f);
+                while (Time.realtimeSinceStartup < until)
+                {
+                    actor.Intent.Move = Vector2.up;
+                    // The victim is a runner being caught: it holds the taya off at tagging distance, never pulling clear.
+                    victim.Intent.Move = victim.transform.position.z - actor.transform.position.z < behind ? Vector2.up : Vector2.zero;
+                    yield return null;
+                }
+                Vector3 to = victim.transform.position - actor.transform.position; to.y = 0;
+                Debug.Log("[RunningTag] " + name + " separation=" + to.magnitude + " taya=" + actor.transform.position + " victim=" + victim.transform.position + " started=" + started + " grounded=" + actor.IsGrounded);
+                if (!standing) Assert.That(actor.transform.position.z, Is.GreaterThan(started + 1), "The taya must really be running.");
+                if (air)
+                {
+                    actor.Intent.Set(Verb.Jump, true);
+                    float jumpBy = Time.realtimeSinceStartup + .5f;
+                    while (actor.IsGrounded && Time.realtimeSinceStartup < jumpBy) yield return null;
+                    actor.Intent.Set(Verb.Jump, false);
+                    Assert.IsFalse(actor.IsGrounded, "The taya must really be in the air.");
+                }
+                actor.transform.forward = to.normalized;
+                var verbs = actor.GetComponent<CombatVerbs>();
+                if (dash) typeof(CombatVerbs).GetMethod("ReleaseLunge", flags).Invoke(verbs, new object[] { 1f });
+                else Assert.IsTrue(verbs.HostResolvePunch(actor.transform.position, actor.transform.forward));
+                float wait = Time.unscaledTime + 1.5f;
+                while (!view.Playing && Time.unscaledTime < wait) { actor.Intent.Move = Vector2.up; yield return null; }
+                Assert.IsTrue(view.Playing, "The tag must start its replay.");
+                float began = (float)Field("_began"), runUntil = Time.unscaledTime + .25f, next = 0;
+                var copy = (MatchPoseHistory.Copy)Field("_actorCopy"); var victimCopy = (MatchPoseHistory.Copy)Field("_victimCopy");
+                var target = (RenderTexture)Field("_target");
+                var hand = Object.FindAnyObjectByType<MatchPoseHistory>().ForSeat(0).CopiedBone(copy, actor.GetComponent<CharacterVisual>().HandAnchor);
+                float worstReplay = 0, worstLive = 0, touchGap = float.MaxValue; string worstParts = "", worstLiveParts = "";
+                int frames = 0;
+                EndOfFrameBodies sampler = null;
+                var liveActor = actor.GetComponent<CharacterVisual>().Model.GetComponentsInChildren<Renderer>(false);
+                var image = new Texture2D(target.width, target.height, TextureFormat.RGB24, false);
+                while (view.Playing)
+                {
+                    if (Time.unscaledTime < runUntil) actor.Intent.Move = Vector2.up; else actor.Intent.Clear();
+                    yield return null;
+                    if (!view.Playing) break;
+                    float elapsed = Time.unscaledTime - began;
+                    if (elapsed < .05f) continue; // The copies are placed by the replay's own first frame.
+                    // Measured at the end of the last frame, as drawn: mid-frame the live bones have not been posed yet.
+                    if (sampler == null) sampler = new GameObject("Tag body sampler").AddComponent<EndOfFrameBodies>();
+                    sampler.Actor = copy.Renderers; sampler.Victim = victimCopy.Renderers; sampler.LiveActor = liveActor;
+                    sampler.Caught = CaughtAfterimage.For(victim.PlayerSlot);
+                    float replay = sampler.Replay, live = sampler.Live; string parts = sampler.ReplayParts, liveParts = sampler.LiveParts;
+                    var bounds = victimCopy.Renderers[0].bounds;
+                    foreach (var renderer in victimCopy.Renderers) bounds.Encapsulate(renderer.bounds);
+                    float gap = Vector3.Distance(hand.position, bounds.ClosestPoint(hand.position));
+                    if (elapsed >= CatchReconstruction.ContactPlayback && elapsed <= CatchReconstruction.ContactPlayback + CatchReconstruction.HitStop)
+                        touchGap = Mathf.Min(touchGap, gap);
+                    if (wall) Assert.That(copy.Root.transform.position.z, Is.GreaterThan(wallFace), "The taya must not back through the wall.");
+                    if (replay > worstReplay) { worstReplay = replay; worstParts = parts + " at " + elapsed; }
+                    if (live > worstLive) { worstLive = live; worstLiveParts = liveParts + " at " + elapsed; }
+                    log.Add(System.FormattableString.Invariant($"{elapsed:F3},{replay:F3},{parts},{live:F3},{liveParts},{gap:F3},{copy.Root.transform.position.z:F3},{victimCopy.Root.transform.position.z:F3}"));
+                    if (elapsed >= next)
+                    {
+                        next = elapsed + .12f;
+                        var previous = RenderTexture.active; RenderTexture.active = target;
+                        image.ReadPixels(new Rect(0, 0, target.width, target.height), 0, 0); image.Apply(); RenderTexture.active = previous;
+                        System.IO.File.WriteAllBytes(directory + "/frame-" + (frames++).ToString("D3") + "-" + elapsed.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) + ".png", image.EncodeToPNG());
+                    }
+                }
+                Object.Destroy(image);
+                System.IO.File.WriteAllLines(directory + "/bodies.csv", log);
+                string values = name + " worstReplay=" + worstReplay + " (" + worstParts + ") worstLive=" + worstLive + " (" + worstLiveParts + ") touchGap=" + touchGap;
+                System.IO.File.WriteAllText(directory + "/measurements.txt", values); Debug.Log("[RunningTag] " + values);
+                Assert.That(worstReplay, Is.LessThan(limit), "Replay bodies intersect: " + values);
+                Assert.That(worstLive, Is.LessThan(limit), "Live bodies intersect: " + values);
+                Assert.That(touchGap, Is.LessThan(.08f), "The hand must still land: " + values);
+            }
+            finally
+            {
+                System.IO.File.WriteAllLines(directory + "/bodies.csv", log);
+                view.End();
+                if (wallBlock != null) Object.Destroy(wallBlock);
+                settings.ReducedUiMotion = reduced; settings.CinematicCameraMotion = cinematic;
+            }
+        }
+
+        [DefaultExecutionOrder(32000)]
+        private sealed class EndOfFrameBodies : MonoBehaviour
+        {
+            public Renderer[] Actor, Victim, LiveActor; public GameObject Caught;
+            public float Replay, Live; public string ReplayParts = "", LiveParts = "";
+            private void LateUpdate()
+            {
+                if (Actor == null || Actor.Length == 0 || Actor[0] == null) return;
+                Replay = BodyOverlap(Actor, Victim, out ReplayParts);
+                Live = 0; LiveParts = "";
+                // Once yanked home it is a thin streak leaving, no longer a body standing there.
+                var image = Caught != null ? Caught.GetComponent<CaughtAfterimage>() : null;
+                bool yanked = image != null && (bool)typeof(CaughtAfterimage).GetField("_yanked", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).GetValue(image);
+                if (Caught != null && !yanked) Live = BodyOverlap(LiveActor, Caught.GetComponentsInChildren<Renderer>(), out LiveParts);
+            }
+        }
+
+        /// <summary>
+        /// How deep the two bodies' real skinned parts go into each other: each bone's baked vertices as world boxes, one per
+        /// 12 cm layer of height so a hat brim is not a solid block down to the chin, the worst pair's smallest overlap on any
+        /// axis. The tagger's reaching arm is meant to touch, so it does not count.
+        /// </summary>
+        private static float BodyOverlap(Renderer[] actor, Renderer[] victim, out string parts)
+        {
+            var a = PartBoxes(actor, true); var b = PartBoxes(victim, false);
+            float worst = 0; parts = "";
+            foreach (var one in a)
+                foreach (var other in b)
+                {
+                    Vector3 low = Vector3.Max(one.Value.min, other.Value.min), high = Vector3.Min(one.Value.max, other.Value.max);
+                    float depth = Mathf.Min(high.x - low.x, high.y - low.y, high.z - low.z);
+                    if (depth > worst) { worst = depth; parts = one.Key + "/" + other.Key; }
+                }
+            return worst;
+        }
+
+        private static System.Collections.Generic.Dictionary<string, Bounds> PartBoxes(Renderer[] renderers, bool skipReach)
+        {
+            var result = new System.Collections.Generic.Dictionary<string, Bounds>();
+            var mesh = new Mesh();
+            try
+            {
+                foreach (var renderer in renderers)
+                {
+                    if (!(renderer is SkinnedMeshRenderer skin) || !skin.enabled || skin.sharedMesh == null || !skin.sharedMesh.isReadable) continue;
+                    skin.BakeMesh(mesh, true);
+                    var points = mesh.vertices; var weights = skin.sharedMesh.boneWeights; var bones = skin.bones;
+                    for (int i = 0; i < points.Length && i < weights.Length; i++)
+                    {
+                        var bone = bones[weights[i].boneIndex0]; if (bone == null) continue;
+                        string name = bone.name;
+                        if (skipReach && (name == "arm-right" || name == "forearm-right" || name.StartsWith("hand"))) continue;
+                        Vector3 world = skin.transform.TransformPoint(points[i]);
+                        string key = name + "#" + Mathf.FloorToInt(world.y / .12f);
+                        if (result.TryGetValue(key, out var box)) { box.Encapsulate(world); result[key] = box; }
+                        else result[key] = new Bounds(world, Vector3.zero);
+                    }
+                }
+            }
+            finally { Object.Destroy(mesh); }
+            return result;
+        }
+
         private static void AssertCurrentClipScale(CharacterMotor actor, MatchPoseHistory.Track track, Transform sourceBone)
         {
             var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;

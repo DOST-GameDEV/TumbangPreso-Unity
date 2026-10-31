@@ -5,8 +5,8 @@ Updated 2026-10-31. [TODO](TODO.md) is the only active queue.
 - FEEL-1031, on main: replay wipes, spectator 3D replay, break card, impact, 0.6 m knockback,
   SFX. Film: run_ui_player_review.py --feel-only. Next: owner review.
 - TAG-FEEL-1031, on main: one tag live and in replay (spacing, reach, shared shove), FPP swing, replay impact on hand
-  arrival, taya warnings on the red tile, moment families, feed icons. Open: running tag stacks in the replay
-  (Logs/feel-film/4e), arm spin in tag replay. Next: owner review.
+  arrival, taya warnings on the red tile, moment families, feed icons. Open: arm spin in tag replay. Next: owner review.
+- TAG-PHASE-1031, fix/tag-bodies-phasing, uncommitted: TagBodyBoxes spacing. Next: owner look.
 - ONLINE-CAST-1028: 73b1f403b pushed/built. Ult victims stand on own floor from the
   host-frozen pose; GroundY ignores awnings. Payo delayed pairs: Cheska gap 0, Nemu 0.015,
   Paete tree grounded. Next: victims in Paete/Amihan/Phaister reach, then multi-PC.

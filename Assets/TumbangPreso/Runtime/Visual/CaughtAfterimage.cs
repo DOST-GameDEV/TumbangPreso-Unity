@@ -18,6 +18,8 @@ namespace TumbangPreso.Visual
     /// Presentation only, on every peer from the replicated tag: a renderer copy with no collider or script, hidden
     /// from replays (`VfxRenderTag`), gone in under a second. Reduced motion keeps the hold and drops the flourish.
     /// </summary>
+    // After the animators and the squash and stretch, so the taya's body it stays clear of is the one about to be drawn.
+    [DefaultExecutionOrder(30000)]
     public sealed class CaughtAfterimage : MonoBehaviour
     {
         public const float HoldSeconds = CharacterAnimator.CaughtHoldSeconds, KnockSeconds = .24f, YankSeconds = .16f, StreakSeconds = .34f;
@@ -37,6 +39,9 @@ namespace TumbangPreso.Visual
         private float _born, _height;
         private bool _yanked, _calm, _ownEyes;
         private Vector3 _yankFrom;
+        // The taya is a real player and may run straight on. The caught body cannot stop them, so it is carried ahead of them.
+        private TagBodyBoxes _tayaBoxes, _ownBoxes;
+        private float _carried;
         private LineRenderer _streak;
         private Material _streakMaterial;
         private MaterialPropertyBlock _block;
@@ -44,7 +49,7 @@ namespace TumbangPreso.Visual
         /// <summary>The afterimage standing in for <paramref name="slot"/>'s caught body, or null. For tests.</summary>
         public static GameObject For(int slot) => Live.TryGetValue(slot, out var image) && image != null ? image.gameObject : null;
 
-        public static void Play(CharacterMotor victim, Vector3 at, Vector3 push)
+        public static void Play(CharacterMotor victim, Vector3 at, Vector3 push, CharacterMotor taya = null)
         {
             if (victim == null || SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null) return;
             var history = Object.FindAnyObjectByType<MatchPoseHistory>();
@@ -72,6 +77,12 @@ namespace TumbangPreso.Visual
             var capsule = victim.GetComponent<CharacterController>();
             image._height = capsule != null ? capsule.height : 1.6f;
             image._born = Time.unscaledTime;
+            var tayaBody = taya != null ? taya.GetComponentInChildren<Animator>() : null;
+            if (tayaBody != null)
+            {
+                image._tayaBoxes = new TagBodyBoxes(tayaBody.GetComponentsInChildren<SkinnedMeshRenderer>(false), true);
+                image._ownBoxes = new TagBodyBoxes(copy.Renderers, false);
+            }
             image._calm = Settings.SettingsStore.Current.ReducedUiMotion;
             image._block = new MaterialPropertyBlock();
             // Hidden from the tag and halftime replays, which draw their own recorded bodies.
@@ -87,6 +98,17 @@ namespace TumbangPreso.Visual
 
         private void LateUpdate()
         {
+            PoseBody();
+            if (_copy == null || _copy.Root == null || _tayaBoxes == null || _ownBoxes == null || _yanked) return;
+            var root = _copy.Root.transform;
+            root.position += _push * _carried;
+            float more = TagBodyBoxes.Overlap(_tayaBoxes.Read(_push), _ownBoxes.Read(_push));
+            more = TagBodyBoxes.Room(root.position, _push, more);
+            if (more > 0) { _carried += more; root.position += _push * more; }
+        }
+
+        private void PoseBody()
+        {
             var round = GameServices.Round;
             if (_copy == null || _copy.Root == null || round == null || !round.RoundActive) { Destroy(gameObject); return; }
             float t = Time.unscaledTime - _born;
@@ -100,6 +122,7 @@ namespace TumbangPreso.Visual
             if (_calm)
             {
                 // Reduced motion: the body holds the touch, then is simply gone, with the arrival puff at home.
+                root.position = _feet;
                 if (t >= HoldSeconds + .1f) { Arrive(); Destroy(gameObject); }
                 return;
             }
@@ -125,7 +148,7 @@ namespace TumbangPreso.Visual
             }
             if (!_yanked)
             {
-                _yanked = true; _yankFrom = root.position + Vector3.up * _height * .55f;
+                _yanked = true; _yankFrom = root.position + _push * _carried + Vector3.up * _height * .55f;
                 ImpactBurst.SpawnAt(root.position + Vector3.up * .1f);
             }
             float y = (t - yankAt) / YankSeconds;
@@ -137,7 +160,7 @@ namespace TumbangPreso.Visual
                 if (axis.sqrMagnitude < .0001f) axis = Vector3.right;
                 root.rotation = Quaternion.AngleAxis(KnockTilt * (1 - upright), axis.normalized) * _rest;
                 root.localScale = new Vector3(_restScale.x * Mathf.Lerp(1, .06f, e), _restScale.y * Mathf.Lerp(1, 1.45f, e), _restScale.z * Mathf.Lerp(1, .06f, e));
-                root.position = _feet + _push * KnockDistance + Vector3.up * (.35f * e);
+                root.position = _feet + _push * (KnockDistance + _carried) + Vector3.up * (.35f * e);
                 Flash(.6f * e);
             }
             else foreach (var renderer in _copy.Renderers) if (renderer != null) renderer.forceRenderingOff = true;

@@ -45,7 +45,7 @@ namespace TumbangPreso.Visual
         private Transform _tgRoot, _tgTorso, _tgHead, _tgArmR, _tgArmL, _tgForeR, _tgForeL, _tgLegR, _tgLegL;
         private Vector3 _tgAlongR = Vector3.right, _tgAlongL = Vector3.left;
         private Vector3 _tgForeAlongL = Vector3.left;
-        private bool _tgResolved, _tgApplied;
+        private bool _tgResolved, _tgApplied, _tagPeakShown;
         private TagSoleVertex[] _tgSoleL, _tgSoleR;
         private float _tagRenderedWeight;
         private int _tagContactSubject = -1;
@@ -75,7 +75,7 @@ namespace TumbangPreso.Visual
             // used to restart from nothing, so mashing popped the arm back and forth.
             bool again = _tagAction == action && _tagTime >= 0 && action == "punch";
             float armWas = again ? Envelope(_tagTime, .12f, .22f, TagPunchSeconds) : 0;
-            _tagAction = action;
+            _tagAction = action; _tagPeakShown = false;
             _tagTime = armWas >= 1 ? .12f : .12f * (1 - Mathf.Pow(1 - armWas, 1f / 3));
             _tagContactValid = _tagContactPending && Time.unscaledTime <= _tagContactUntil;
             _tagContactPending = false; _tagStartedAt = Time.unscaledTime;
@@ -97,7 +97,7 @@ namespace TumbangPreso.Visual
             _tgApplied = false;
         }
 
-        private void ClearTagBody() { ClearTagFeel(); RestoreTagBody(); _tgRoot = _tgTorso = _tgHead = _tgArmR = _tgArmL = _tgForeR = _tgForeL = _tgLegR = _tgLegL = null; _tgSoleL = _tgSoleR = null; _tagSkinContact = false; _tagSkinVictim = null; _tagSkinA = _tagSkinB = _tagSkinC = default; _tgResolved = false; _tagTime = -1; _tagContactValid = _tagContactPending = false; _tagStartedAt = -100f; }
+        private void ClearTagBody() { ClearTagFeel(); RestoreTagBody(); _tgRoot = _tgTorso = _tgHead = _tgArmR = _tgArmL = _tgForeR = _tgForeL = _tgLegR = _tgLegL = null; _tgSoleL = _tgSoleR = null; _tgOwnBoxes = null; _tagVictimSpans = null; _tagSkinContact = false; _tagSkinVictim = null; _tagSkinA = _tagSkinB = _tagSkinC = default; _tgResolved = false; _tagTime = -1; _tagContactValid = _tagContactPending = false; _tagStartedAt = -100f; }
 
         // The already accepted, replicated tag supplies the contact. Misses keep
         // the ordinary reach; this cannot award a hit or move either live motor.
@@ -108,12 +108,29 @@ namespace TumbangPreso.Visual
                 || float.IsInfinity(at.x) || float.IsInfinity(at.y) || float.IsInfinity(at.z)) return;
             var capsule = victim.GetComponent<CharacterController>();
             _tagContactSubject = victim.PlayerSlot;
-            _tagVictimHeight = capsule != null ? capsule.height : 1.6f;
             var torso = victim.GetComponent<CharacterVisual>()?.TorsoBone;
             float height = torso != null ? torso.position.y - victim.transform.position.y + .12f
                 : capsule != null ? capsule.center.y : .8f;
             Vector3 toward = transform.position - at; toward.y = 0;
+            // The one line these two are spaced along, and the victim's body as it stood on it, wherever the host has
+            // sent the real one since. A taya carried on past the touch still measures against these.
+            _tagAlong = toward.sqrMagnitude > .001f ? -toward.normalized : Vector3.ProjectOnPlane(transform.forward, Vector3.up).normalized;
+            var receiver = victim.GetComponent<CharacterAnimator>();
+            _tagVictimSpans = receiver != null && receiver._animator != null
+                ? (TagBodyBoxes.Span[])new TagBodyBoxes(receiver._animator.GetComponentsInChildren<SkinnedMeshRenderer>(false), false).Read(_tagAlong, at - victim.transform.position).Clone()
+                : null;
+            // ⚠️ THE HAND LANDS ON WHAT STICKS OUT TOWARD IT. These heads are wider than these arms are long: two heads kept
+            // apart leave the torso out of any arm's reach, so aim at the body's own front, and the nearest skin to that is a
+            // chin, a shoulder or a chest, whichever this pair's shapes offer.
             float radius = capsule != null ? capsule.radius * .70f : .28f;
+            // And at the height of the hand's own shoulder, within the body it is touching: a big taya pats a small head and a
+            // small taya reaches a big one's belly, not an arm stretched up or down to a chest neither can reach.
+            float top = height;
+            if (_tagVictimSpans != null)
+                foreach (var span in _tagVictimSpans)
+                    if (span.Far >= span.Near) { radius = Mathf.Max(radius, Vector3.Dot(at, _tagAlong) - span.Near); top = Mathf.Max(top, span.MaxUp - at.y); }
+            var ownTorso = GetComponent<CharacterVisual>()?.TorsoBone;
+            if (ownTorso != null) height = Mathf.Min(ownTorso.position.y - _motor.transform.position.y + .12f, top - .05f);
             _tagContact = at + Vector3.up * Mathf.Clamp(height, .3f, 1.2f)
                 + (toward.sqrMagnitude > .001f ? toward.normalized * radius : Vector3.zero);
             SampleTagSkin(victim, at);
@@ -128,30 +145,51 @@ namespace TumbangPreso.Visual
 
         // Owner, October 31: "the body of both characters go inside each other", "may characters na smaller and bigger". The
         // step above closes to the length of a short arm, which puts two wide heads through each other. It backs off by what
-        // this pair's own heads need (they scale with height), as far as the arm can still reach, and the hand wins if it
-        // cannot do both. These arms are shorter than these heads are wide, so the arm stretches for the touch, like the cartoon
-        // it is, up to `ArmGive` (the owner approved this over the old 10% limit, October 31). Presentation only: no motor moves.
-        private const float HeadWidthOfHeight = .3f, ArmGive = 1.6f;
-        private float _tagVictimHeight = 1.6f;
+        // this pair's own measured bodies need (`TagBodyBoxes`), short of any wall behind it, and the hand follows. These arms
+        // are shorter than these heads are wide, so the arm stretches for the touch, like the cartoon it is, up to `ArmGive`
+        // (the owner approved this over the old 10% limit, October 31). Presentation only: no motor moves.
+        internal const float ArmGive = 1.6f;
+        // A much taller or much smaller taya reaches across a head or hair as wide as its arm is long: the one case 1.6 cannot
+        // cover with the bodies apart. The extra is in proportion to the height difference, so an even pair never sees it.
+        private const float MostArmGive = 2f;
+        internal float TagArmGive { get; private set; } = ArmGive;
+        private const float MostBack = 1.5f;
+        private Vector3 _tagAlong = Vector3.forward;
+        private TagBodyBoxes.Span[] _tagVictimSpans;
+        private TagBodyBoxes _tgOwnBoxes;
         private void StandClearOfCaughtBody(float weight)
         {
-            var own = _motor != null ? _motor.GetComponent<CharacterController>() : null;
-            float radius = own != null ? own.radius * .70f : .28f;
-            float needed = HeadWidthOfHeight * ((own != null ? own.height : 1.6f) + _tagVictimHeight) - radius;
-            Vector3 toTouch = Vector3.ProjectOnPlane(_tagContact - _tgTorso.position, transform.up);
-            float have = toTouch.magnitude, reach = Vector3.Distance(_tgArmR.position, _tgArmR.TransformPoint(_tgPalmR));
-            if (have > .001f && have < needed)
+            float reach = Vector3.Distance(_tgArmR.position, _tgArmR.TransformPoint(_tgPalmR)), armGive = ArmGive;
+            if (_tagVictimSpans != null)
             {
-                float spare = reach * ArmGive - Vector3.Distance(_tgArmR.position, _tagContact);
-                // A running taya is still carried on past the touch. The drawn body keeps its distance from the touch, not the motor.
-                float back = Mathf.Min(needed - have, 1.5f);
-                if (back > 0) { _tgRoot.position -= toTouch / have * (back * weight); ReachAcceptedContact(weight); }
+                if (_tgOwnBoxes == null) _tgOwnBoxes = new TagBodyBoxes(_animator.GetComponentsInChildren<SkinnedMeshRenderer>(false), true);
+                var own = _tgOwnBoxes.Read(_tagAlong);
+                float back = Mathf.Min(TagBodyBoxes.Overlap(own, _tagVictimSpans), MostBack);
+                float ownTop = float.MinValue, theirTop = float.MinValue, ownFoot = float.MaxValue, theirFoot = float.MaxValue;
+                foreach (var span in own) if (span.Far >= span.Near) { ownTop = Mathf.Max(ownTop, span.MaxUp); ownFoot = Mathf.Min(ownFoot, span.MinUp); }
+                foreach (var span in _tagVictimSpans) if (span.Far >= span.Near) { theirTop = Mathf.Max(theirTop, span.MaxUp); theirFoot = Mathf.Min(theirFoot, span.MinUp); }
+                if (theirTop > theirFoot && ownTop > ownFoot)
+                {
+                    float ratio = (ownTop - ownFoot) / (theirTop - theirFoot);
+                    armGive = Mathf.Clamp(ArmGive * Mathf.Max(ratio, 1 / ratio), ArmGive, MostArmGive);
+                }
+                // ⚠️ THE HAND WINS AT THE LIMIT. A brim or a mane can be wider than any arm: backing all the way out would be a
+                // tag that touches nobody, so the body only backs as far as the arm can still land. Even pairs never reach this.
+                back = Mathf.Min(back, Mathf.Max(0, reach * armGive - Vector3.Distance(_tgArmR.position, _tagContact)));
+                // Full strength long before the hand arrives: this is a limit, not a part of the gesture's arc.
+                back *= Mathf.Clamp01(weight * 3);
+                if (back > .0005f)
+                {
+                    _tgRoot.position -= _tagAlong * TagBodyBoxes.Room(_tgRoot.position, -_tagAlong, back);
+                    ReachAcceptedContact(weight);
+                }
             }
             float short_ = Vector3.Distance(_tgArmR.position, _tagContact) / Mathf.Max(.01f, reach);
             // Scaling skews the aim under a squashed body: each way out finishes on a fresh aim at the touch.
             if (short_ <= 1) { ReachAcceptedContact(weight); return; }
             Vector3 along = _tgPalmR, size = Vector3.one;
-            float give = 1 + (Mathf.Min(short_, ArmGive) - 1) * weight;
+            TagArmGive = armGive;
+            float give = 1 + (Mathf.Min(short_, armGive) - 1) * weight;
             if (Mathf.Abs(along.x) >= Mathf.Abs(along.y) && Mathf.Abs(along.x) >= Mathf.Abs(along.z)) size.x = give;
             else if (Mathf.Abs(along.y) >= Mathf.Abs(along.z)) size.y = give; else size.z = give;
             _tgArmR.localScale = Vector3.Scale(_tgArmR.localScale, size);
@@ -193,9 +231,10 @@ namespace TumbangPreso.Visual
                 end = CameraSystem.ViewmodelArms.TouchEnd;
             }
             // A slow frame must not skip the only visible touch. Show its peak
-            // once if this step crossed the entire contact window; the real
-            // gesture clock still advances and recovers on the following frame.
-            bool skippedTouch = previousTime < reachTime && _tagTime > holdTime;
+            // once, on the first frame at or past the reach, however far past;
+            // the real gesture clock still advances and recovers on the next.
+            bool skippedTouch = !_tagPeakShown && _tagTime >= reachTime;
+            if (_tagTime >= reachTime) _tagPeakShown = true;
             if ((_tagTime >= end && !skippedTouch) || (_motor != null && (_motor.IsStunned || _motor.IsTripped))) { _tagTime = -1; return; }
             if (!_tgResolved)
             {
@@ -237,8 +276,9 @@ namespace TumbangPreso.Visual
             float commitment = 1f;
             if (_tagContactValid)
             {
-                Vector3 toContact = _tagContact - transform.position; toContact.y = 0;
-                commitment = Mathf.InverseLerp(.65f, 1.35f, toContact.magnitude);
+                // Measured to the victim, less a body's depth: the touch itself now sits out on their front (`PresentTagContact`).
+                Vector3 toContact = _tagSkinAt - transform.position; toContact.y = 0;
+                commitment = Mathf.InverseLerp(.65f, 1.35f, toContact.magnitude - .245f);
             }
             // The body throws a little past the pose as the hand lands, then settles into it.
             // An ACCEPTED tag stops on the body: overshooting it drives the hand into the victim's skin, and the tag
@@ -305,6 +345,10 @@ namespace TumbangPreso.Visual
             PlantTagSoles();
             // The reaching hand: straight out at the target, chest height for the jab, low and long for the dive.
             var reach = lunge ? new Vector3(.08f, -.25f, .97f) : new Vector3(.05f, .02f, 1f);
+            // The off arm swings back for balance. Posed first: the spacing below measures it.
+            PointArm(_tgArmL, _tgAlongL, new Vector3(-.35f * side, -.75f, -.55f), w * .9f, 0);
+            // Keep the incoming bent off elbow while retaining settled-palm contact and planted soles.
+            if (_tgForeL != null) PointArm(_tgForeL, _tgForeAlongL, new Vector3(-.42f * side, -.62f, .66f), w * .9f, 0);
             if (_tagContactValid)
             {
                 ReachAcceptedContact(w);
@@ -334,14 +378,11 @@ namespace TumbangPreso.Visual
                         _tgRoot.position += miss * w;
                         ReachAcceptedContact(w);
                     }
-                    StandClearOfCaughtBody(w);
                 }
+                // In the air too: a jumping taya's head goes through a victim's just the same.
+                if (_tgRoot != null) StandClearOfCaughtBody(w);
             }
             else PointArm(_tgArmR, _tgAlongR, new Vector3(reach.x * side, reach.y, reach.z), w, 0);
-            // The off arm swings back for balance.
-            PointArm(_tgArmL, _tgAlongL, new Vector3(-.35f * side, -.75f, -.55f), w * .9f, 0);
-            // Keep the incoming bent off elbow while retaining settled-palm contact and planted soles.
-            if (_tgForeL != null) PointArm(_tgForeL, _tgForeAlongL, new Vector3(-.42f * side, -.62f, .66f), w * .9f, 0);
         }
         private readonly struct TagSoleVertex
         {
