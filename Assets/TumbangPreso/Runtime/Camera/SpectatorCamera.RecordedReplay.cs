@@ -37,10 +37,13 @@ namespace TumbangPreso.CameraSystem
             _boundArchive = null;
         }
 
+        /// <summary>For a capture: play the picture ring even when a recorded clip exists.</summary>
+        public static bool ProbeUsePictureRing;
+
         private bool TryStartRecordedReplay()
         {
             var match = GameServices.Match;
-            if (_freshClip == null || match == null || Time.unscaledTime - _freshClipAt > RecordedClipFreshSeconds
+            if (ProbeUsePictureRing || _freshClip == null || match == null || Time.unscaledTime - _freshClipAt > RecordedClipFreshSeconds
                 || _freshClip.MatchId != match.PresentationMatchId || _freshClip.Round != match.RoundNumber) return false;
             RecordedWorldView view = null;
             try

@@ -123,6 +123,10 @@ namespace TumbangPreso.Diagnostics
             yield return new WaitUntil(()=>Time.realtimeSinceStartup>give||moment>0&&Time.realtimeSinceStartup-moment>1.6f);
             Visual.MatchFlair.Presented-=seen;
             yield return FeelClip("6-spectator-replay",9.5f,()=>FeelSpectatorReplay(spectator));
+            yield return new WaitForSecondsRealtime(1.5f);
+            SpectatorCamera.ProbeUsePictureRing=true;
+            yield return FeelClip("7-spectator-fallback",9.5f,()=>FeelSpectatorReplay(spectator));
+            SpectatorCamera.ProbeUsePictureRing=false;
             Stage("feel film complete");
         }
         private static IEnumerator FeelThrowAt(CharacterMotor who,Vector3 aim)

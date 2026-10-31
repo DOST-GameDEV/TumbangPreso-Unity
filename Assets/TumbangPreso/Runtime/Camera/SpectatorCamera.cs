@@ -271,9 +271,9 @@ namespace TumbangPreso.CameraSystem
         // -------------------------------------------------------------------
 
         private const float ReplaySampleInterval = 0.10f;
-        private const int ReplayFrameCapacity = 100;
-        private const int ReplayWidth = 640;
-        private const int ReplayHeight = 360;
+        private const int ReplayFrameCapacity = 80;
+        private const int ReplayWidth = 752;
+        private const int ReplayHeight = 424;
 
         /// <summary>
         /// How many readbacks may be in flight at once.
@@ -1160,8 +1160,10 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         private void CaptureSynchronously(RenderTexture source, ReplayFrame frame)
         {
+            // LINEAR, like the RGB565 path above. An sRGB scratch hands back gamma-encoded bytes, and the RGB565
+            // frame they land in is read as linear, so the picture was brightened twice (owner: replay "SO BLURRY", pale).
             var scratch = RenderTexture.GetTemporary(ReplayWidth, ReplayHeight, 0,
-                                                      RenderTextureFormat.ARGB32);
+                                                      RenderTextureFormat.ARGB32, RenderTextureReadWrite.Linear);
             var previous = RenderTexture.active;
 
             try
@@ -1174,7 +1176,7 @@ namespace TumbangPreso.CameraSystem
                 // a managed pixel array or doubling every retained frame.
                 if (_synchronousReadback == null)
                     _synchronousReadback = new Texture2D(ReplayWidth, ReplayHeight,
-                        TextureFormat.RGBA32, mipChain: false) { name = "ReplayReadbackStaging" };
+                        TextureFormat.RGBA32, mipChain: false, linear: true) { name = "ReplayReadbackStaging" };
                 _synchronousReadback.ReadPixels(new Rect(0, 0, ReplayWidth, ReplayHeight), 0, 0, false);
                 var pixels = _synchronousReadback.GetRawTextureData<Color32>();
                 var packed = frame.Image.GetRawTextureData<ushort>();
