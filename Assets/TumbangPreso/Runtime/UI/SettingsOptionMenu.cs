@@ -17,17 +17,17 @@ namespace TumbangPreso.UI
         {
             float height = Application.isMobilePlatform || InputLayer.TouchHud.ForceVisible ? InputLayer.TouchMetrics.MinTargetUnits : 78;
             var frame=OwnerUiLayout.Rect(parent,name).gameObject.AddComponent<Image>();
-            OwnerUiLayout.Place(frame.rectTransform,0,0,533,height); frame.color=SettingsPalette.Control;
+            OwnerUiLayout.Place(frame.rectTransform,0,0,SettingsWorkspaceRows.ControlWidth,height); Hub.HubKnit.KitFace(frame,Hub.Knit.BootField); frame.raycastTarget=true;
             var menu=frame.gameObject.AddComponent<SettingsOptionMenu>();menu._options=values;
             menu._selected=Mathf.Clamp(selected,0,Mathf.Max(0,values.Length-1));menu._choose=choose;
             menu.Button=frame.gameObject.AddComponent<Button>();menu.Button.targetGraphic=frame;
             frame.gameObject.AddComponent<SettingsControlFocus>();
             menu.Button.transition=Selectable.Transition.ColorTint;menu.Button.onClick.AddListener(menu.Open);
-            menu._value=OwnerUiLayout.Text(frame.transform,"SelectedValue",values.Length>0?values[menu._selected]:"",29);
-            menu._value.color=SettingsPalette.Ink;OwnerUiLayout.Place(menu._value.rectTransform,25,(height-60)*.5f,428,60);
-            var mark=OwnerUiGlyph.Create(frame.transform,"Expand",OwnerUiGlyph.Mark.Back,SettingsPalette.Ink);
+            menu._value=OwnerUiLayout.Text(frame.transform,"SelectedValue",values.Length>0?values[menu._selected]:"",30);
+            menu._value.color=SettingsPalette.PanelInk;menu._value.font=Hub.HubKnit.SentenceFont(true);OwnerUiLayout.Place(menu._value.rectTransform,34,(height-60)*.5f-3,500,60);
+            var mark=OwnerUiGlyph.Create(frame.transform,"Expand",OwnerUiGlyph.Mark.Back,SettingsPalette.PanelAccent);
             OwnerUiLayout.Place(mark.rectTransform,477,27,25,25);
-            mark.rectTransform.pivot=new Vector2(.5f,.5f);mark.rectTransform.anchoredPosition=new Vector2(489.5f,-height*.5f);
+            mark.rectTransform.pivot=new Vector2(.5f,.5f);mark.rectTransform.anchoredPosition=new Vector2(570f,-height*.48f);
             mark.rectTransform.localRotation=Quaternion.Euler(0,0,90);
             return menu;
         }

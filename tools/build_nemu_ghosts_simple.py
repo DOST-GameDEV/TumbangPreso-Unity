@@ -743,7 +743,10 @@ def export_final():
         print("PETGHOST mouse HeadCentre (0, %.3f, 0) HeadHalfDepth %.3f Eyes (+-%.3f, %.3f, %.3f) TailTop %.3f"
               % (info["face_y"], info["front_z"], info["eye"][0], info["eye"][1], info["eye"][2] + 0.01, info["lift"]))
         # SKITTER: the cocoa bear.
-        JOBS = dict(keep); JOBS["skitter"] = BEARS["cocoa_game"]
+        # Owner 2026-10-29 on the k2 film: "isnt the bear a more lighter brown? ... fix up the color of the bear". The game is
+        # back on the approved lineup's light cocoa (lineup_v12_cocoa.png, sampled #D8AE92 off its atlas); `cocoa_game` stays
+        # in the table as the record of the darker try.
+        JOBS = dict(keep); JOBS["skitter"] = BEARS["cocoa"]
         build_animal("skitter", "bear", suffix="_final")
         bear = LAST["model"]; info = dict(LAST)
         pl, lat = part_local(bear, "arm-l"); pr, rat = part_local(bear, "arm-r")

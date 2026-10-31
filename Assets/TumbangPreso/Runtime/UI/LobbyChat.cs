@@ -487,13 +487,23 @@ namespace TumbangPreso.UI
             if (Typing)
             {
                 if (InputLayer.MenuNav.CancelPressed) Close();
+                // Left empty, it puts itself away.
+                else if (_field.text.Length > 0) _chatOpenedAt = Time.unscaledTime;
+                else if (Time.unscaledTime - _chatOpenedAt > IdleChatSeconds) Close();
                 return;
             }
+
+            // A click takes the keyboard off the field without telling anybody, and the empty bar used to stay on the
+            // screen for the rest of the match (owner, October 31: "wtf is this enter to talk"). Focus lands a frame late.
+            if (_fieldRow != null && _fieldRow.activeSelf && Time.unscaledTime - _chatOpenedAt > .15f) Close();
 
             if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) Open();
 
             Fade();
         }
+
+        private const float IdleChatSeconds = 4f;
+        private float _chatOpenedAt = -100f;
 
         private void Open()
         {
@@ -502,6 +512,7 @@ namespace TumbangPreso.UI
             _fieldRow.SetActive(true);
             _field.text = "";
             _field.ActivateInputField();
+            _chatOpenedAt = Time.unscaledTime;
         }
 
         private void Close()

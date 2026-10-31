@@ -81,7 +81,7 @@ namespace TumbangPreso.Abilities
             _loadedSlipper = null; _joiningSkimSettled = false; _backwashRemaining=0;
         }
 
-        public override float UltimateCost => RafiRules.BahaCost;
+        public override float UltimateCost => RafiRules.BahaCost + TumbangPreso.Core.Balance.UltimateExtraObjectivePoints;
 
         public RafiHeroKit() : base("rafi", "ILYAS")
         {

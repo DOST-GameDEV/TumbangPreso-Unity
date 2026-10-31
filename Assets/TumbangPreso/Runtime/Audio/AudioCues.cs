@@ -28,7 +28,7 @@ namespace TumbangPreso.Audio
                 { "can_knockdown",  "lata_knockdown" },
                 { "reset_complete", "reset_channel_complete" },
                 { "pickup",         "grab" },
-                { "throw_release",  "throw_whoosh" },
+                { "throw_release",  "slipper_throw" },
                 { "court_escape",   "throw_whoosh" },
                 { "court_skid",     "slide_scrape" },
             };
@@ -400,7 +400,7 @@ namespace TumbangPreso.Audio
             "sfx_arena_pa_chime", "sfx_arena_pa_organ", "sfx_arena_pa_horn", "sfx_arena_pa_fanfare",
 
             // The shove has a dedicated cloth/rubber cue; body contact retains its alias.
-            "hit_body", "bump_swing",
+            "hit_body", "bump_swing", "slipper_hit", "replay_wipe",
 
             // The slipper.
             "throw_whoosh", "throw_charge", "slipper_land", "slipper_bounce", "grab",

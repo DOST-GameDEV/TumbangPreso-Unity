@@ -47,6 +47,24 @@ namespace TumbangPreso.Tests
             .GetMethod("AiCharacterIndex", BindingFlags.Instance | BindingFlags.NonPublic)
             .Invoke(_installer, new object[] { slot });
 
+        [Test] public void AReplicaUsesTheSendersGroundHeightInsteadOfLeadingItsRestingDownwardVelocity()
+        {
+            _peer.IsHost=false;_peer.LocalSlot=1;
+            var motor=_root.AddComponent<CharacterMotor>();motor.transform.position=new Vector3(0,3,0);
+            var type=typeof(CharacterMotor);var flags=BindingFlags.Instance|BindingFlags.NonPublic;
+            type.GetField("_networkTargetKnown",flags).SetValue(motor,true);
+            type.GetField("_networkTargetPosition",flags).SetValue(motor,new Vector3(0,5,0));
+            type.GetField("_networkTargetVelocity",flags).SetValue(motor,new Vector3(0,-2,0));
+            type.GetField("_networkGrounded",flags).SetValue(motor,true);
+            type.GetMethod("StepNetworkReplica",flags).Invoke(motor,new object[]{.02f});
+            Assert.AreEqual(5,motor.transform.position.y,.0001f);
+            type.GetField("_networkGrounded",flags).SetValue(motor,false);
+            type.GetField("_networkTargetVelocity",flags).SetValue(motor,new Vector3(0,6,0));
+            motor.transform.position=new Vector3(0,3,0);
+            type.GetMethod("StepNetworkReplica",flags).Invoke(motor,new object[]{.02f});
+            Assert.That(motor.transform.position.y,Is.GreaterThan(3).And.LessThan(5),"Airborne movement must retain its interpolation.");
+        }
+
         [TestCase(GameMode.Classic), TestCase(GameMode.HeroStrike)]
         public void HostAndClientChooseTheSameEmptySeatDespiteDifferentLocalPicks(GameMode mode)
         {

@@ -44,6 +44,7 @@ def main():
     parser.add_argument('--performance-binary',action='store_true',help='Opt into binary Profiler traces with a 512 MiB sampled stopping budget; requires --performance-only and --review-hero.')
     parser.add_argument('--menu-only',action='store_true',help='Only qualify the changed startup/login/main-menu surfaces.')
     parser.add_argument('--recovery-only',action='store_true',help='Only qualify the menu-to-recovery input boundary.')
+    parser.add_argument('--feel-only',action='store_true',help='Film the throw, can, slipper hit, tag, halftime and spectator replay feel pass.')
     parser.add_argument('--halftime-only',action='store_true',help='Capture full native halftime replay, standings and return in both modes.')
     parser.add_argument('--hero-replays',action='store_true',help='Add retained real-exchange replay captures to the selected live ultimate route.')
     parser.add_argument('--live-ultimates-only',action='store_true',help='Capture selected actual shared ultimate phases and live execution in the native player.')
@@ -96,6 +97,7 @@ def main():
     if args.performance_binary:command.append('-tp-performance-binary')
     if args.menu_only:command.append('-tp-menu-review-only')
     if args.recovery_only:command.append('-tp-recovery-review-only')
+    if args.feel_only:command.append('-tp-feel-only')
     if args.halftime_only:command.append('-tp-halftime-only')
     if args.hero_replays:command+=['-tp-live-ultimates-only','-tp-hero-replays']
     elif args.live_ultimates_only:command.append('-tp-live-ultimates-only')

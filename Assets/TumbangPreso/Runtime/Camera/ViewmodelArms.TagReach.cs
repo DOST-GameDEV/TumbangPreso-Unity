@@ -40,24 +40,61 @@ namespace TumbangPreso.CameraSystem
             _tagApplied = false;
         }
 
+        // Owner, October 31: "getting tagged and actually tagging doesnt look or feel like tagging", "it looks like ur js
+        // moving ur hand". The reach went to a fixed point whoever was there, and snapped home on its own clock. An accepted
+        // tag now takes the hand: it lands ON the caught body wherever that is on screen, stays on it through the caught
+        // body's held touch (`CaughtAfterimage.HoldSeconds`), then shoves through as that body is knocked off it.
+        public const float TouchReach = .05f, TouchHold = .30f, TouchEnd = .52f;
+        private const float TouchShove = .16f;
+        private Vector3 _touchWorld;
+        private float _touchAt = -100f;
+
+        /// <summary>The replicated tag landed at this world point. Presentation only, on the tagger's own screen.</summary>
+        public void PresentTagTouch(Vector3 world) { _touchWorld = world; _touchAt = Time.unscaledTime; }
+
+        /// <summary>Where the fist is drawn over the touch, kept at reaching depth: on the eye's line to it, so only its place on screen moves.</summary>
+        private Vector3 TouchFist(float depth, Vector3 otherwise)
+        {
+            Vector3 point = DrawnFromWorld(_touchWorld);
+            var eyeCamera = _viewCamera;
+            if (eyeCamera == null) return otherwise;
+            Vector3 eye = DrawnFromWorld(eyeCamera.transform.position);
+            float forward = point.z - eye.z;
+            if (forward < .05f) return otherwise;
+            Vector3 fist = eye + (point - eye) * ((depth - eye.z) / forward);
+            // Kept in frame and in the arm's own reach when the body is at the edge of the view.
+            return new Vector3(Mathf.Clamp(fist.x, -.35f, .55f), Mathf.Clamp(fist.y, -.6f, .35f), depth);
+        }
+
         private void ApplyTagReach()
         {
-            if (_rightPivot == null || _leftPivot == null || _rightArm == null || _clip == null) return;
+            if (_rightPivot == null || _leftPivot == null || _rightArm == null) return;
             bool punch = ReferenceEquals(_clip, PunchClip), lunge = ReferenceEquals(_clip, LungeClip);
-            if (!punch && !lunge) return;
+            float touchTime = Time.unscaledTime - _touchAt;
+            bool touching = touchTime >= 0 && touchTime < TouchEnd;
+            if (!punch && !lunge && !touching) return;
             if (Settings.SettingsStore.Current.ReducedUiMotion) return;
             float t = _clipTime;
             // Jab: out in 0.09 s, a beat at full stretch, home by 0.34 s. Dash: out in 0.10 s, held while it can land.
-            float w = lunge ? Reach(t, .10f, Core.Balance.LungeActiveTime, .62f) : Reach(t, .09f, .17f, .34f);
+            float w = lunge ? Reach(t, .10f, Core.Balance.LungeActiveTime, .62f) : punch ? Reach(t, .09f, .17f, .34f) : 0;
+            Vector3 fist = lunge ? LungeFist : JabFist;
+            if (touching)
+            {
+                // A late confirmation (a client's tag arrives after its reach) still goes out and lands.
+                w = Mathf.Max(w, Reach(touchTime, TouchReach, TouchHold, TouchEnd));
+                float shove = Mathf.SmoothStep(0, 1, Mathf.InverseLerp(CaughtHold, TouchHold, touchTime));
+                fist = Vector3.Lerp(fist, TouchFist(fist.z + TouchShove * shove, fist), Mathf.Clamp01(touchTime / TouchReach));
+            }
             if (w <= .001f) return;
             _tagRightPos = _rightPivot.localPosition; _tagRightRot = _rightPivot.localRotation; _tagRightArm = _rightArm.localRotation;
             _tagLeftPos = _leftPivot.localPosition;
             _tagApplied = true;
 
-            AimForearm(_rightPivot, _rightArm, _rightRest, lunge ? LungeFist : JabFist, RightShoulder, w);
+            AimForearm(_rightPivot, _rightArm, _rightRest, fist, RightShoulder, w);
             // The off hand drops back and out of the way, as a body does to throw its weight behind the reach.
             _leftPivot.localPosition += new Vector3(.04f, -.12f, -.10f) * w;
         }
+        private const float CaughtHold = Visual.CharacterAnimator.CaughtHoldSeconds;
 
         /// <summary>
         /// Lays a forearm (its pivot is the elbow, the mesh runs <see cref="ArmLength"/> up its +Y) so the fist sits on

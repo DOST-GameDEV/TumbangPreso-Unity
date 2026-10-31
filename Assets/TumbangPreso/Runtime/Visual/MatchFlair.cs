@@ -202,7 +202,7 @@ namespace TumbangPreso.Visual
                     break;
 
                 case Kind.Block:
-                    PlayBlock(Seat(subject), at, strength);
+                    PlayBlock(actor, Seat(subject), at, strength);
                     break;
 
                 case Kind.BankShot:
@@ -313,10 +313,25 @@ namespace TumbangPreso.Visual
         private static void PlayCanConfirmation(CharacterMotor scorer, Vector3 at)
         {
             var rig = Camera.main != null ? Camera.main.GetComponent<CameraSystem.CameraRig>() : null;
-            if (scorer == null || rig == null || !rig.IsFollowing(scorer)) return;
+            if (rig == null) return;
+            // Anyone standing near the can feels it go over, fading to nothing at nine metres.
+            if (scorer == null || !rig.IsFollowing(scorer))
+            {
+                float near = 1.0f - Mathf.Clamp01(Vector3.Distance(rig.transform.position, at) / 9.0f);
+                if (near > 0.0f) rig.Shake(.3f * near, .16f);
+                return;
+            }
             UI.Hud.TriggerHitmarker(UI.UiTheme.Offense);
             Vector3 towardCan = at - scorer.transform.position;
-            rig.ImpactPunch(towardCan.sqrMagnitude > .01f ? towardCan.normalized : scorer.transform.forward, .22f);
+            // The scorer's own payoff (owner, October 31: "hitting the can doesnt feel that satisfying"): the view hangs
+            // for a few frames, punches toward the can and the frame's edges split. A camera hold on this screen only,
+            // not `Hitstop`: the match, and the retrieval run that starts now, never stop.
+            rig.HoldFrame(.065f);
+            rig.ImpactPunch(towardCan.sqrMagnitude > .01f ? towardCan.normalized : scorer.transform.forward, .7f);
+            // The lens snaps in on the hit, and the tin is heard in your own head however far away the can is.
+            rig.ViewPunch(new Vector3(-3.5f, 0, 2.5f), -7f);
+            GameServices.Audio?.PlayReplayCue("can_knockdown", 1f, .75f, 0f);
+            rig.GetComponent<ColourGrade>()?.PulseChromatic(.3f, .24f);
         }
 
         private static void RecordHighlight(Kind kind, int actor, int subject, Vector3 at,
@@ -483,9 +498,11 @@ namespace TumbangPreso.Visual
                 if (rig != null && rig.IsFollowing(victim))
                 {
                     Vector3 impact = hitDirection;
-                    rig.ImpactPunch(impact.sqrMagnitude > 0.01f ? impact.normalized : Vector3.back,
+                    if (rig.IsLocalFpp) LandTagOnVictim(rig, taya, victim, at);
+                    else rig.ImpactPunch(impact.sqrMagnitude > 0.01f ? impact.normalized : Vector3.back,
                                     1.0f);
                 }
+                else if (rig != null && rig.IsLocalFpp && rig.IsFollowing(taya)) LandTagOnTagger(rig, taya, victim);
             }
 
 
@@ -496,17 +513,75 @@ namespace TumbangPreso.Visual
             GameServices.HeroVoice?.OnTagged(taya, victim);
         }
 
-        private static void PlayBlock(CharacterMotor blocker, Vector3 at, float alongSpeed)
+        // Owner, October 31: "make it feel and look like natag sila", "its implemented well in getting hit by slipper". The
+        // slipper's recipe, harder: the view is thrown away from where the hand came from and flares in the taya's colour.
+        // The view also stays a moment where you were caught, on the taya closing in, before you are sent home and the replay
+        // wipes in (`CatchReconstruction.VictimHitBeat`). Your look angles are untouched and the match never stops for it.
+        private static void LandTagOnVictim(CameraSystem.CameraRig rig, CharacterMotor taya, CharacterMotor victim, Vector3 at)
         {
+            Vector3 fromHand = taya.transform.position - at;
+            // `HitFeel` measures from the body, and the host may already have sent that body home.
+            HitFeel.Land(victim, HitFeel.Weight.Knockdown, UI.PlayerIdentity.Colour(taya.PlayerSlot), victim.transform.position + fromHand);
+            Vector3 local = rig.transform.InverseTransformDirection(fromHand);
+            float side = Mathf.Clamp(local.x / Mathf.Max(.2f, Mathf.Abs(local.z)), -1f, 1f);
+            // Caught from the front the head goes back; caught from behind it goes forward.
+            rig.ViewPunch(new Vector3(local.z >= 0f ? -9f : 9f, -side * 9f, side >= 0f ? 8f : -8f), 11f);
+            if (!Settings.SettingsStore.Current.ReducedUiMotion) rig.HoldFrame(CameraSystem.CatchReconstruction.VictimHitBeat);
+            GameServices.Audio?.PlayReplayCue("tag", 1f, 1f, 0f);
+        }
+
+        // Your hand got them: it lands on the body (`ViewmodelArms.PresentTagTouch`), the view hangs for a few frames and
+        // drives in toward the touch. A camera hold on this screen only, as on a can hit: the match never stops for it.
+        private static void LandTagOnTagger(CameraSystem.CameraRig rig, CharacterMotor taya, CharacterMotor victim)
+        {
+            Vector3 touch = taya.GetComponent<CharacterAnimator>() != null
+                ? taya.GetComponent<CharacterAnimator>().AcceptedTagContact : victim.transform.position + Vector3.up;
+            rig.PresentTagTouch(touch);
+            rig.HoldFrame(.06f);
+            Vector3 toward = touch - rig.transform.position;
+            Vector3 local = rig.transform.InverseTransformDirection(toward);
+            float side = Mathf.Clamp(local.x / Mathf.Max(.2f, Mathf.Abs(local.z)), -1f, 1f);
+            rig.ImpactPunch(toward.sqrMagnitude > .01f ? toward.normalized : taya.transform.forward, .35f);
+            rig.ViewPunch(new Vector3(3f, side * 3f, side >= 0f ? -3.5f : 3.5f), -8f);
+            InputLayer.Rumble.Pulse(.35f, .6f, .12f);
+            UI.Hud.TriggerHitmarker(UI.UiTheme.Defense);
+            GameServices.Audio?.PlayReplayCue("tag", 1f, .8f, 0f);
+        }
+
+        private static void PlayBlock(int thrower, CharacterMotor blocker, Vector3 at, float alongSpeed)
+        {
+            var rig = Camera.main != null ? Camera.main.GetComponent<CameraSystem.CameraRig>() : null;
             if (blocker != null)
             {
                 blocker.GetComponentInChildren<CharacterVisual>()?.FlashHit();
                 blocker.GetComponentInChildren<CharacterSquashStretch>()?
-                    .Impact((at - blocker.transform.position).normalized * alongSpeed, 0.22f);
+                    .Impact((at - blocker.transform.position).normalized * alongSpeed, 0.4f);
 
+                // Owner, October 31: "di masyado ramdam if a slipper hits u". Taken on your own screen it now has the
+                // hit frame, a punch from where it came, an edge flash in the thrower's colour and a thump. In first
+                // person a popup would spawn inside the head, so only those watching the body get the word.
+                HitFeel.Land(blocker, HitFeel.Weight.Solid,
+                             thrower >= 0 ? UI.PlayerIdentity.Colour(thrower) : UI.HudDraw.Alarm, at);
+                if (rig != null && rig.IsFollowing(blocker))
+                {
+                    InputLayer.Rumble.Pulse(.4f, .55f, .14f);
+                    // In first person your body is not drawn: the view is jolted away from the hit and tilts, the lens
+                    // flares, and PAK is right in your head.
+                    Vector3 local = rig.transform.InverseTransformPoint(at);
+                    float side = local.sqrMagnitude > .01f ? Mathf.Clamp(local.x / Mathf.Max(.2f, Mathf.Abs(local.z)), -1f, 1f) : 0f;
+                    rig.ViewPunch(new Vector3(-7f, -side * 6f, side >= 0f ? 6f : -6f), 9f);
+                    GameServices.Audio?.PlayReplayCue("slipper_hit", 1f, 1f, 0f);
+                }
+                else ComicPopup.Spawn(blocker.transform.position + Vector3.up * 1.2f, "PAK!", UI.UiTheme.Highlight, 1.0f);
             }
 
-            ImpactBurst.SpawnAt(blocker != null ? blocker.transform.position : at);
+            // The thrower is told it connected.
+            var throwerBody = Seat(thrower);
+            if (throwerBody != null && throwerBody != blocker && rig != null && rig.IsFollowing(throwerBody))
+                UI.Hud.TriggerHitmarker(UI.UiTheme.Highlight);
+
+            ImpactBurst.SpawnSlipperHit(at, thrower >= 0 ? UI.PlayerIdentity.Colour(thrower) : UI.UiTheme.Impact,
+                                        rig != null && blocker != null && rig.IsFollowing(blocker));
         }
 
         private static void PlayZap(CharacterMotor jolted, Vector3 at)

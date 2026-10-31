@@ -12,16 +12,16 @@ namespace TumbangPreso.UI.Hub
         public override Selectable FirstFocus => _no;
         public override void Build()
         {
-            var panel = HubCards.KnitPanel(Root, this, "SWITCH SEATS?", "", new Vector2(760, 420));
-            var message = HubKit.Text(panel, "Request", Offer.RequesterName + " wants to switch seats with you.\n"
+            var panel = HubKnit.Modal(Root, "SWITCH SEATS?", 860, 440);
+            var message = HubKnit.Words(panel, "Request", Offer.RequesterName + " wants to switch seats with you.\n"
                 + "You move from P" + (Offer.ToSeat + 1) + " to P" + (Offer.FromSeat + 1) + ".",
-                HubStyle.Body, false, HubKnit.Cream, TextAnchor.MiddleCenter);
+                30, HubKnit.KitInk, TextAnchor.MiddleCenter, false);
             message.supportRichText = false;
-            HubKit.Place(message.rectTransform, HubKit.Centre, new Vector2(0, 0), new Vector2(650, 120));
-            var yes = HubKnit.Button(panel, "AcceptSeatSwap", "YES", Knit.Gold, () => Answer(true), HubStyle.Title, HubGlyph.Mark.None, primary: true);
-            HubKit.Place((RectTransform)yes.transform, HubKit.BottomLeft, new Vector2(44, 36), new Vector2(320, 88));
-            _no = HubKnit.Button(panel, "DeclineSeatSwap", "NO", Knit.Orange, () => Answer(false), HubStyle.Title);
-            HubKit.Place((RectTransform)_no.transform, HubKit.BottomRight, new Vector2(-44, 36), new Vector2(320, 88));
+            HubKnit.In(message.rectTransform, 50, 146, 760, 100);
+            var yes = HubKnit.Button(panel, "AcceptSeatSwap", "YES", Knit.Go, () => Answer(true), 50, HubGlyph.Mark.None, primary: true);
+            HubKnit.In((RectTransform)yes.transform, 70, 286, 340, 112);
+            _no = HubKnit.Button(panel, "DeclineSeatSwap", "NO", Knit.Danger, () => Answer(false), 50);
+            HubKnit.In((RectTransform)_no.transform, 450, 286, 340, 112);
         }
         private void Answer(bool accept)
         {

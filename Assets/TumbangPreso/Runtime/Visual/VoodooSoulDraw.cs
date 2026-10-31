@@ -255,6 +255,12 @@ namespace TumbangPreso.Visual
 
         private void StepDraw(float dt)
         {
+            // DRAIN's reach is the candle's stream and moths under her new look (`PhaisterDrainLook`); the doll still comes up.
+            if (PhaisterDrainPresenter.DrawsReach(_body))
+            {
+                _victim = _body.VoodooReachTarget; _kind = _body.VoodooReachKind; _wasReaching = false;
+                return;
+            }
             bool reaching = _body.IsVoodooReaching && _body.isActiveAndEnabled;
             if (reaching && (!_wasReaching || _victim != _body.VoodooReachTarget || _kind != _body.VoodooReachKind))
             {

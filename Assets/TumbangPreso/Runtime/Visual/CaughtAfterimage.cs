@@ -32,7 +32,7 @@ namespace TumbangPreso.Visual
         private Quaternion _rest;
         private Vector3 _restScale;
         private float _born, _height;
-        private bool _yanked, _calm;
+        private bool _yanked, _calm, _ownEyes;
         private Vector3 _yankFrom;
         private LineRenderer _streak;
         private Material _streakMaterial;
@@ -74,7 +74,10 @@ namespace TumbangPreso.Visual
             // Hidden from the tag and halftime replays, which draw their own recorded bodies.
             VfxRenderTag.Attach(stage);
             stage.SetActive(true);
-            foreach (var renderer in copy.Renderers) if (renderer != null) renderer.forceRenderingOff = false;
+            // The victim's own view stays at the caught spot for a moment (`MatchFlair.LandTagOnVictim`): inside this copy's head.
+            var rig = Camera.main != null ? Camera.main.GetComponent<CameraRig>() : null;
+            image._ownEyes = rig != null && rig.IsLocalFpp && rig.IsFollowing(victim);
+            foreach (var renderer in copy.Renderers) if (renderer != null) renderer.forceRenderingOff = image._ownEyes;
             Live[victim.PlayerSlot] = image;
             Played++;
         }
@@ -84,6 +87,11 @@ namespace TumbangPreso.Visual
             var round = GameServices.Round;
             if (_copy == null || _copy.Root == null || round == null || !round.RoundActive) { Destroy(gameObject); return; }
             float t = Time.unscaledTime - _born;
+            if (_ownEyes && t >= CatchReconstruction.VictimHitBeat + .02f)
+            {
+                _ownEyes = false;
+                foreach (var renderer in _copy.Renderers) if (renderer != null) renderer.forceRenderingOff = false;
+            }
             var root = _copy.Root.transform;
             float knockAt = HoldSeconds, yankAt = HoldSeconds + KnockSeconds;
             if (_calm)

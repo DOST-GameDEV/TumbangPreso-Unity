@@ -56,6 +56,7 @@ namespace TumbangPreso.Visual
             _capsule = GetComponent<CharacterController>();
             _block = new MaterialPropertyBlock();
             if (GetComponent<VoodooSoulDraw>() == null) gameObject.AddComponent<VoodooSoulDraw>();
+            if (GetComponent<PhaisterDrainPresenter>() == null) gameObject.AddComponent<PhaisterDrainPresenter>();
         }
 
         private void LateUpdate()
@@ -83,7 +84,7 @@ namespace TumbangPreso.Visual
         private LineRenderer _band;
         private void StepBand()
         {
-            bool show = _body.IsHexed && _body.isActiveAndEnabled && FirstPersonArms(_body) == null;
+            bool show = _body.IsHexed && _body.isActiveAndEnabled && FirstPersonArms(_body) == null && PhaisterLook.Direction == PhaisterLook.Style.Current;
             if (!show) { SetEnabled(_band, false); return; }
             if (_band == null) _band = MakeLine("VoodooHexBand", 2);
             var view = Camera.main;
@@ -100,9 +101,61 @@ namespace TumbangPreso.Visual
             _band.enabled = true;
         }
 
+        /// <summary>
+        /// ⚠️ THE REBUILT HEX (`PhaisterHexSigil`) READS ONLY WHAT IS REPLICATED, so every peer and a rejoiner draws it: who is
+        /// reaching at this body, this body's mark and its age, and whether it is HEXED. The stab and the fray are nothing on the
+        /// wire: they are how the mark ended, read on the frame it ends (HEXED came on, or it ran out its full life).
+        /// </summary>
+        private void StepSigil()
+        {
+            if (PhaisterLook.Direction == PhaisterLook.Style.Current || !_body.isActiveAndEnabled)
+            {
+                _hexSigil?.Hide(); _sigilWasMarked = false; _sigilEndedAt = -1f; return;
+            }
+            float reach = -1f, mark = _body.VoodooMark == VoodooMarkKind.Hex ? _body.VoodooMarkAge : -1f, stab = -1f, hexed = -1f, fray = -1f;
+            Vector3 hand = transform.position;
+            var round = GameServices.Round;
+            if (mark < 0f && round != null)
+                foreach (var p in round.Players)
+                    if (p != null && p != _body && p.IsVoodooReaching && p.VoodooReachKind == VoodooMarkKind.Hex && p.VoodooReachTarget == _body.PlayerSlot)
+                    {
+                        reach = p.VoodooReachElapsed;
+                        Vector3 to = transform.position - p.transform.position; to.y = 0f;
+                        hand = p.transform.position + Vector3.up * 1.0f + (to.sqrMagnitude > 0.01f ? to.normalized : p.transform.forward) * 0.45f;
+                        break;
+                    }
+            if (mark >= 0f) { _sigilWasMarked = true; _sigilLastAge = mark; _sigilEndedAt = -1f; _sigilStabbed = false; }
+            else if (_sigilWasMarked)
+            {
+                _sigilWasMarked = false;
+                _sigilStabbed = _body.IsHexed;
+                // A mark that ended early any other way (the round, a cleanse) simply goes.
+                _sigilEndedAt = _sigilStabbed || _sigilLastAge >= VoodooRules.HexMarkLifeSeconds - 0.25f ? Time.time : -1f;
+            }
+            if (_sigilEndedAt >= 0f)
+            {
+                float since = Time.time - _sigilEndedAt;
+                if (_sigilStabbed) stab = since; else fray = since;
+            }
+            if (_body.IsHexed) hexed = StatusRules.HexedSeconds - _body.HexedLeft;
+            bool live = reach >= 0f || mark >= 0f || hexed >= 0f || (stab >= 0f && stab < PhaisterHexSigil.StabSeconds) || (fray >= 0f && fray < PhaisterHexSigil.FraySeconds + PhaisterHexSigil.SmokeOut);
+            if (!live) { _hexSigil?.Hide(); _sigilEndedAt = -1f; return; }
+            if (_hexSigil == null) _hexSigil = new PhaisterHexSigil(transform);
+            _hexSigil.Bind(PhaisterLook.ModelOf(transform));
+            var view = Camera.main;
+            _hexSigil.Pose(reach, mark, stab, hexed, fray, transform.position, BodyMarkHeight, hand, Time.time, view != null ? view.transform.position : (Vector3?)null, FirstPersonArms(_body) != null);
+        }
+
+        // The cast's bodies are big-headed: what the sigil treats as the body's height, so its 0.6 falls on the torso.
+        private const float BodyMarkHeight = 1.35f;
+        private PhaisterHexSigil _hexSigil;
+        private bool _sigilWasMarked, _sigilStabbed;
+        private float _sigilLastAge, _sigilEndedAt = -1f;
+
         private void StepMark(float dt)
         {
             StepBand();
+            StepSigil();
             var kind = _body.VoodooMark;
             if (kind == VoodooMarkKind.None || !_body.isActiveAndEnabled)
             {
@@ -121,7 +174,12 @@ namespace TumbangPreso.Visual
             Vector3 up = view != null ? view.transform.up : Vector3.up;
             Vector3 toward = view != null ? -view.transform.forward : transform.forward;
 
-            if (kind == VoodooMarkKind.Drain)
+            if (kind == VoodooMarkKind.Drain && PhaisterDrainPresenter.DrawsMark)
+            {
+                // The candle and its moths draw this mark (`PhaisterDrainLook`).
+                SetEnabled(_mark, false); SetEnabled(_stitchA, false); SetEnabled(_stitchB, false);
+            }
+            else if (kind == VoodooMarkKind.Drain)
             {
                 // A twisted knot: a (2,3) torus knot, turning, tightening as the 1.5 s run out.
                 float left = Mathf.Clamp01(1.0f - _body.VoodooMarkAge / VoodooRules.DrainDelaySeconds);
@@ -141,42 +199,59 @@ namespace TumbangPreso.Visual
                 _mark.enabled = true;
                 SetEnabled(_stitchA, false); SetEnabled(_stitchB, false);
             }
+            else if (PhaisterLook.Direction != PhaisterLook.Style.Current)
+            {
+                // ⚠️ The owner's pending pick (`PhaisterLook`, 2026-10-29): the same mark age and armed flag, another look.
+                SetEnabled(_mark, false); SetEnabled(_stitchA, false); SetEnabled(_stitchB, false);
+                return;
+            }
             else
             {
-                // A button with a stitch through it, filling with light as the fuse burns and throbbing once armed.
-                float fuse = Mathf.Clamp01(_body.VoodooMarkAge / VoodooRules.HexArmSeconds);
-                bool armed = _body.VoodooHexArmed;
-                float throb = armed ? 0.5f + 0.5f * Mathf.Sin(Time.time * 7.0f) : 0.0f;
-                float r = 0.24f * grow * (1.0f + 0.08f * throb);
-                _mark.positionCount = 48;
-                for (int i = 0; i < 48; i++)
-                {
-                    float a = i / 47.0f * Mathf.PI * 2.0f;
-                    _mark.SetPosition(i, centre + (right * Mathf.Cos(a) + up * Mathf.Sin(a)) * r);
-                }
-                _mark.widthMultiplier = 0.09f;
-                float light = armed ? 0.85f + 0.15f * throb : Mathf.Lerp(0.15f, 0.8f, fuse);
-                Paint(_mark, HexHue, 1.0f, light, stitches: 1.0f);
-                _mark.enabled = true;
-
                 if (_stitchA == null) _stitchA = MakeLine("VoodooMarkStitchA", 2);
                 if (_stitchB == null) _stitchB = MakeLine("VoodooMarkStitchB", 2);
-                float s = r * 0.62f;
-                _stitchA.SetPosition(0, centre + (-right + up) * s); _stitchA.SetPosition(1, centre + (right - up) * s);
-                _stitchB.SetPosition(0, centre + (right + up) * s); _stitchB.SetPosition(1, centre + (-right - up) * s);
-                _stitchA.widthMultiplier = _stitchB.widthMultiplier = 0.07f;
-                Paint(_stitchA, HexHue, 1.0f, light, stitches: 0.0f);
-                Paint(_stitchB, HexHue, 1.0f, light, stitches: 0.0f);
-                _stitchA.enabled = _stitchB.enabled = true;
+                PoseHexLines(_mark, _stitchA, _stitchB, _block, centre, right, up, grow,
+                    Mathf.Clamp01(_body.VoodooMarkAge / VoodooRules.HexArmSeconds), _body.VoodooHexArmed, Time.time);
             }
+        }
+
+        /// <summary>
+        /// Today's HEX mark (`PhaisterLook.Style.Current`), lifted out unchanged so the kit film can draw the same lines beside
+        /// the new looks: a button with a stitch through it, filling with light as the fuse burns and throbbing once armed.
+        /// </summary>
+        public static void PoseHexLines(LineRenderer mark, LineRenderer stitchA, LineRenderer stitchB, MaterialPropertyBlock block,
+                                        Vector3 centre, Vector3 right, Vector3 up, float grow, float fuse, bool armed, float time)
+        {
+            float throb = armed ? 0.5f + 0.5f * Mathf.Sin(time * 7.0f) : 0.0f;
+            float r = 0.24f * grow * (1.0f + 0.08f * throb);
+            mark.positionCount = 48;
+            for (int i = 0; i < 48; i++)
+            {
+                float a = i / 47.0f * Mathf.PI * 2.0f;
+                mark.SetPosition(i, centre + (right * Mathf.Cos(a) + up * Mathf.Sin(a)) * r);
+            }
+            mark.widthMultiplier = 0.09f;
+            float light = armed ? 0.85f + 0.15f * throb : Mathf.Lerp(0.15f, 0.8f, fuse);
+            Paint(mark, block, HexHue, 1.0f, light, stitches: 1.0f);
+            mark.enabled = true;
+
+            float s = r * 0.62f;
+            stitchA.SetPosition(0, centre + (-right + up) * s); stitchA.SetPosition(1, centre + (right - up) * s);
+            stitchB.SetPosition(0, centre + (right + up) * s); stitchB.SetPosition(1, centre + (-right - up) * s);
+            stitchA.widthMultiplier = stitchB.widthMultiplier = 0.07f;
+            Paint(stitchA, block, HexHue, 1.0f, light, stitches: 0.0f);
+            Paint(stitchB, block, HexHue, 1.0f, light, stitches: 0.0f);
+            stitchA.enabled = stitchB.enabled = true;
         }
 
         // ------------------------------------------------------------------ plumbing
 
-        private LineRenderer MakeLine(string name, int points)
+        private LineRenderer MakeLine(string name, int points) => NewThread(transform, name, points);
+
+        /// <summary>A thread line as this presenter draws them (public for the kit film's side-by-side of today's look).</summary>
+        public static LineRenderer NewThread(Transform parent, string name, int points)
         {
             var go = new GameObject(name);
-            go.transform.SetParent(transform, false);
+            go.transform.SetParent(parent, false);
             var line = go.AddComponent<LineRenderer>();
             line.useWorldSpace = true;
             line.positionCount = points;
@@ -192,13 +267,16 @@ namespace TumbangPreso.Visual
         }
 
         private void Paint(LineRenderer line, Color hue, float alpha, float tight, float stitches)
+            => Paint(line, _block, hue, alpha, tight, stitches);
+
+        private static void Paint(LineRenderer line, MaterialPropertyBlock block, Color hue, float alpha, float tight, float stitches)
         {
             var c = new Color(hue.r, hue.g, hue.b, Mathf.Clamp01(alpha));
             line.startColor = c; line.endColor = c;
-            line.GetPropertyBlock(_block);
-            _block.SetFloat("_Tight", Mathf.Clamp01(tight));
-            _block.SetFloat("_StitchOn", stitches);
-            line.SetPropertyBlock(_block);
+            line.GetPropertyBlock(block);
+            block.SetFloat("_Tight", Mathf.Clamp01(tight));
+            block.SetFloat("_StitchOn", stitches);
+            line.SetPropertyBlock(block);
         }
 
         private static void SetEnabled(LineRenderer line, bool on)
@@ -210,6 +288,10 @@ namespace TumbangPreso.Visual
         {
             _markShown = VoodooMarkKind.None;
             SetEnabled(_mark, false); SetEnabled(_stitchA, false); SetEnabled(_stitchB, false); SetEnabled(_band, false);
+            _hexSigil?.Hide();
+            _sigilWasMarked = false; _sigilEndedAt = -1f;
         }
+
+        private void OnDestroy() => _hexSigil?.Free();
     }
 }

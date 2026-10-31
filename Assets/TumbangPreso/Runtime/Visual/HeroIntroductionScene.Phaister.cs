@@ -86,6 +86,7 @@ namespace TumbangPreso.Visual
         private Transform _phMonster;
         private float _phCourtY, _phMonsterFoot, _phMonsterHeight = 2.2f;
         private Transform _phMTorso, _phMHead, _phMArmL, _phMArmR, _phMLegL, _phMLegR;
+        private Transform _phMHandL, _phMHandR;
         private Vector3 _phMPalmL, _phMPalmR;
         private readonly Vector3[] _phStringPoints = new Vector3[10];
 
@@ -197,12 +198,10 @@ namespace TumbangPreso.Visual
                 _phMArmL = FindDeep(_phMonster, "arm-left"); _phMArmR = FindDeep(_phMonster, "arm-right");
                 _phMLegL = FindDeep(_phMonster, "leg-left"); _phMLegR = FindDeep(_phMonster, "leg-right");
                 var skinned = monster.GetComponentInChildren<SkinnedMeshRenderer>();
-                if (skinned != null)
-                    for (int i = 0; i < skinned.bones.Length; i++)
-                    {
-                        if (skinned.bones[i] == _phMArmL) CharacterVisual.PalmCentre(skinned, i, out _phMPalmL);
-                        if (skinned.bones[i] == _phMArmR) CharacterVisual.PalmCentre(skinned, i, out _phMPalmR);
-                    }
+                // The bones its HANDS are on (`CharacterVisual.HandBone`): the v06 doll has elbows, so the far end of `arm-<side>` is the elbow
+                // and a palm measured there tied its wires to the elbows.
+                if (CharacterVisual.HandBone(skinned, "left", out int handL, out _phMPalmL)) _phMHandL = skinned.bones[handL];
+                if (CharacterVisual.HandBone(skinned, "right", out int handR, out _phMPalmR)) _phMHandR = skinned.bones[handR];
             }
             BuildPhaisterStage();
         }
@@ -819,8 +818,8 @@ namespace TumbangPreso.Visual
             // THE DROP, snapping taut at THE PUPPET.
             Vector3 bodyUp = body * Vector3.up;
             Vector3 crown = _phMHead != null ? _root.transform.InverseTransformPoint(_phMHead.position) + bodyUp * .55f : feet + bodyUp * _phMonsterHeight;
-            Vector3 left = _phMArmL != null ? _root.transform.InverseTransformPoint(_phMArmL.TransformPoint(_phMPalmL)) : feet + new Vector3(-.6f, 1.4f, 0f);
-            Vector3 right = _phMArmR != null ? _root.transform.InverseTransformPoint(_phMArmR.TransformPoint(_phMPalmR)) : feet + new Vector3(.6f, 1.4f, 0f);
+            Vector3 left = _phMHandL != null ? _root.transform.InverseTransformPoint(_phMHandL.TransformPoint(_phMPalmL)) : feet + new Vector3(-.6f, 1.4f, 0f);
+            Vector3 right = _phMHandR != null ? _root.transform.InverseTransformPoint(_phMHandR.TransformPoint(_phMPalmR)) : feet + new Vector3(.6f, 1.4f, 0f);
             Vector3 back = _phMTorso != null ? _root.transform.InverseTransformPoint(_phMTorso.position) + bodyUp * .3f : feet + bodyUp * 1.1f;
             var ends = new[] { crown, left, right, back };
             float slack = t < PhDropAt ? 0f : (1f - Ease(PhPuppetAt - .02f, PhPuppetAt + .06f, t)) * Ease(PhDropAt, PhDropAt + .08f, t);

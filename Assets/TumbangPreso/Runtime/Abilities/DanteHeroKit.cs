@@ -151,7 +151,7 @@ namespace TumbangPreso.Abilities
             Ultimate = new Earthquake(this);
         }
 
-        public override float UltimateCost => GeoRules.EarthquakeCost;
+        public override float UltimateCost => GeoRules.EarthquakeCost + TumbangPreso.Core.Balance.UltimateExtraObjectivePoints;
 
         // ================================================================== SHIELD (signature)
 

@@ -13,8 +13,18 @@ namespace TumbangPreso.PlayTests
 {
     public sealed class BrandSettingsTests
     {
-        [UnitySetUp] public IEnumerator Before() => PlayModeWorld.Reset();
-        [UnityTearDown] public IEnumerator After() => PlayModeWorld.Reset();
+        private bool _reduced;
+        [UnitySetUp] public IEnumerator Before()
+        {
+            _reduced = Settings.SettingsStore.Current.ReducedUiMotion;
+            yield return PlayModeWorld.Reset();
+        }
+        // This fixture saves the setting on purpose, and the map vote fixtures read it later in the same process.
+        [UnityTearDown] public IEnumerator After()
+        {
+            yield return PlayModeWorld.Reset();
+            Settings.SettingsStore.Current.ReducedUiMotion = _reduced;
+        }
 
         /// <summary>
         /// ⚠⚠ THIS FIXTURE WAS TESTING THE DORMANT HALF OF `ConvertedSettingsPanel`.
@@ -43,7 +53,7 @@ namespace TumbangPreso.PlayTests
                         .Where(control => control.isActiveAndEnabled && !control.name.StartsWith("SettingsSection")
                                           && control.name != "TumpSettingsBack"),
                     TumpSettingsView.Sections[i] + " has no controls of its own.");
-                Assert.AreEqual(TumpSettingsView.Sections[i],
+                Assert.AreEqual(TumpSettingsView.Sections[i].ToUpperInvariant(),
                     canvas.GetComponentsInChildren<Text>().First(t => t.name == "Heading").text);
                 yield return UiRuntimeShots.Capture("Settings-v5-" + TumpSettingsView.Sections[i], 1920, 1080);
             }
@@ -86,18 +96,17 @@ namespace TumbangPreso.PlayTests
             Press(Find("SaveAndBack"));
             yield return null;
             Assert.IsTrue(Settings.SettingsStore.Current.ReducedUiMotion);
-            // ⚠⚠ THE SUBJECT OF THIS ASSERTION IS THE TITLE'S OWN MOTION AND THAT MOVED TWICE.
-            // `IllustratedBackdrop` belongs to `HomeScreen`, which `ConvertedMainMenu` stopped
-            // building when the owner-painted street landed, so this line was reading a null for
-            // some time. The title's motion is now her weather: the road dust and the leaves off
-            // her tree, both of which draw nothing at all with the setting on.
+            // ⚠⚠ THE SUBJECT OF THIS ASSERTION IS THE TITLE'S OWN MOTION AND THAT MOVED AGAIN.
+            // The title stopped building its caption when it became the automatic Home-loading
+            // surface, so `OwnerMenuPrompt` no longer exists there. What still animates is the
+            // painting's arrival fade, which holds at full with the setting on, and neither her
+            // road dust nor the leaves off her tree may come back.
             Object.FindFirstObjectByType<TumpHomeView>()?.Resume();
-            yield return new WaitForSecondsRealtime(.3f);
-            Canvas.ForceUpdateCanvases();
-            var prompt=Object.FindFirstObjectByType<OwnerMenuPrompt>();
-            Assert.IsNotNull(prompt);
-            Assert.AreEqual(1f,prompt.GetComponent<Text>().color.a,.001f,
-                "Reduced UI motion keeps the title hint steady.");
+            yield return null;
+            var painting=Object.FindFirstObjectByType<HomeCourtScene>();
+            Assert.IsNotNull(painting);
+            Assert.AreEqual(1f,painting.GetComponent<RawImage>().color.a,.001f,
+                "Reduced UI motion keeps the title painting steady.");
             Assert.IsNull(Object.FindFirstObjectByType<OwnerRoadDust>());
             Assert.IsNull(Object.FindFirstObjectByType<OwnerMenuLeaves>());
             var roundtrip = JsonUtility.FromJson<Settings.GameSettings>(JsonUtility.ToJson(Settings.SettingsStore.Current));
@@ -140,6 +149,8 @@ namespace TumbangPreso.PlayTests
         /// </summary>
         private static void OpenSettingsPanel()
         {
+            // The title loads MatchSetup by itself after MinimumLoadingViewSeconds.
+            Object.FindFirstObjectByType<ConvertedMainMenu>()?.StopAllCoroutines();
             Object.FindFirstObjectByType<TumpHomeView>()?.Suspend();
 
             // ⚠⚠ `GameObject.Find` ONLY SEES ACTIVE OBJECTS AND THIS ONE IS BUILT SWITCHED OFF.

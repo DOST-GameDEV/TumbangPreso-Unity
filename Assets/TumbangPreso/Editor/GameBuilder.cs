@@ -1139,8 +1139,8 @@ namespace TumbangPreso.EditorTools
                 target = target,
                 // Lossless chunk compression avoids shipping multi-gigabyte raw scene
                 // data. Keep authored meshes/textures and gameplay contracts identical.
-                options = (target == BuildTarget.Android || target == BuildTarget.StandaloneWindows64
-                    ? BuildOptions.CompressWithLz4HC : BuildOptions.None)
+                options = (target == BuildTarget.Android ? BuildOptions.CompressWithLz4HC
+                    : target == BuildTarget.StandaloneWindows64 ? BuildOptions.CompressWithLz4 : BuildOptions.None)
                     | (ForceDevelopment || Environment.GetCommandLineArgs().Any(arg =>
                     string.Equals(arg, "-developmentBuild", StringComparison.OrdinalIgnoreCase))
                     ? BuildOptions.Development | BuildOptions.ConnectWithProfiler

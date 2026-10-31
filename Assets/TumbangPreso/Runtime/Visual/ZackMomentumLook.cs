@@ -34,6 +34,18 @@ namespace TumbangPreso.Visual
     /// </summary>
     public sealed class ZackMomentumLook : MonoBehaviour
     {
+        /// <summary>
+        /// ⚠️ THE JETS ON HIS BODY, OFF. The owner, playing: *"full throttle adds this weird small torch flame/nitro effect to the
+        /// arms and body of zack. need to get rid of those"*. Full Throttle fills Momentum at once, so its cast is the moment he
+        /// sees stage 3 arrive, and stage 3 hangs three families of short gold lines on his body: the four SPEED STREAKS out of
+        /// the backs of his shoulders and hips (thick where they leave him, tapering to nothing a metre behind: an exhaust), the
+        /// LIGHTNING STREAMERS (the same taper, out of his hips and shoulders, from stage 2), and the BODY ARCS (shoulder to
+        /// opposite hip). Seen on him they read as burners, not as speed. Off, none of the three is drawn at any stage; the
+        /// heel sparks, the heel ribbons, the rings, the smear and the strobes, all at his feet or of his whole body, are
+        /// unchanged. TO BRING THEM BACK, MAKE THIS `true`.
+        /// </summary>
+        public static bool BodyJets = false;
+
         private const int RibbonPoints = 10, Ghosts = 3, Streaks = 4, EyeStreaks = 6, RingPoints = 20;
         private const int RouteKeep = 48, Streamers = 3, StreamerPoints = 6, BodyArcs = 2;
         private static readonly System.Collections.Generic.Dictionary<int, ZackMomentumLook> Live =
@@ -248,7 +260,7 @@ namespace TumbangPreso.Visual
             for (int i = 0; i < Streaks; i++)
             {
                 var streak = _streaks[i];
-                streak.enabled = full && Mathf.Repeat(_age * 9.0f + i * 0.37f, 1.0f) < 0.6f;
+                streak.enabled = BodyJets && full && Mathf.Repeat(_age * 9.0f + i * 0.37f, 1.0f) < 0.6f;
                 if (!streak.enabled) continue;
                 float height = i < 2 ? 0.95f : 0.5f, offset = (i % 2 == 0 ? 1 : -1) * (i < 2 ? 0.26f : 0.2f);
                 var from = at + Vector3.up * height + side * offset + back * 0.15f;
@@ -321,7 +333,7 @@ namespace TumbangPreso.Visual
         /// </summary>
         private void StepStreamers(int step, bool eyes, bool reduced, float dt)
         {
-            int live = eyes || step < 2 || _routeCount < 4 ? 0 : reduced ? 1 : step >= 3 ? Streamers : 2;
+            int live = !BodyJets || eyes || step < 2 || _routeCount < 4 ? 0 : reduced ? 1 : step >= 3 ? Streamers : 2;
             var right = _motor.transform.right; right.y = 0.0f;
             var now = _motor.transform.position;
             for (int i = 0; i < Streamers; i++)
@@ -373,7 +385,7 @@ namespace TumbangPreso.Visual
             for (int i = 0; i < BodyArcs; i++)
             {
                 var arc = _bodyArcs[i];
-                bool lit = step >= 3 && !eyes && !reduced && Mathf.Repeat(_age * 11.0f + i * 0.45f, 1.0f) < 0.45f;
+                bool lit = BodyJets && step >= 3 && !eyes && !reduced && Mathf.Repeat(_age * 11.0f + i * 0.45f, 1.0f) < 0.45f;
                 arc.enabled = lit;
                 if (!lit) continue;
                 float s = i == 0 ? 1.0f : -1.0f;

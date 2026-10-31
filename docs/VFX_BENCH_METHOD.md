@@ -367,3 +367,38 @@ Library/Bee response files), `install.sh`, `film.sh`, `fpvfilm.sh`. Rago film to
 
 Film tool for the quick reworks: `Editor/MapKit/QuickReworkFilm.cs` (request `Temp/quick-rework-film.request`: `ping`,
 `scout`, `<look|all|a,b> <tag>`), stitched by the coordinator's `qrvideo.py`.
+
+### State at the 2026-10-31 handoff (supersedes the 2026-10-29 evening block)
+
+Pushed on QoLUpdates-v2: e28a9f3fe and 992d53fa0. Everything else below is uncommitted in this worktree. Commit or push only when the owner asks; he approves a staged list by item, so stage explicit paths and partial blobs, verify the exported index compiles and passes Core tests, then commit.
+
+What the owner taught this round (all in `Logs/coordinator/BRIEF_SELFFILM.md`, read by every effect agent):
+- "its clear you didnt iterate on this", "you have to be more critical", "the most polished and creative version". Agents install, film and review their own rounds: three concepts, five or more faults per round, at least three rounds. Fix weak work instead of sending it with a caveat.
+- Bench first, always: "render vfx outside of a game, i need the vfx solely". Banned on sight: flat striped ribbons, hard rings, cotton-ball puffs, outlines, "the same cartoony sticker vfx".
+- Reuse approved pieces before inventing. Smoke and dust are the approved `FxCloud` (the F12 demo). Baha should use the Water Wall's water ("why didnt you try using the same process used for the water wall"). Yasmin's floor uses the Glacial Wall's ice.
+- A rule shape overrides a reference's pose. Airburst is a radius, so it lies flat and blasts outward. Read the ability before reading the picture.
+- Light bending is one shared piece: `Resources/Shaders/FxRefract.cginc`, grab `_FxRefractGrab`, LOD 300 bends, LOD 100 does not, C# drops `maximumLOD` on phones and the Lean tier. GPU cost is not measured yet.
+
+Locked, with backups in `tools/cutscene_rework/approved/`:
+| Look | Backup | State |
+|---|---|---|
+| Rafi Water Wall K11 (v11c, default), K10 kept | `rafi_wall_k11`, `rafi_wall_k10` | pushed |
+| Rago Lava Ram r1, fire fist C; Nemu sleeve Kuro v2 | `rago_lavaram_r1`, `rago_magmafist_firefist_c`, `nemu_kurosleeve_v2` | pushed |
+| Dante longhorn cutscene maplh15, 4.86 s, protocol 185; slam fire wave b5 with b7 haze | `dante_longhorn_maplh15`, `dante_firewave_b5` | pushed |
+| Amihan Airburst bench r20 | `amihan_airburst_r20` | pushed, bench only, no court hook |
+| Phaister teleport direction A, moths (bats were tried and dropped) | `phaister_tp_a_moths` | uncommitted, behind `PhaisterLook.Direction` (default Current), no game hook |
+
+Open, uncommitted, awaiting the owner:
+- Phaister HEX: rebuilt to his note "maybe put the magic circle on the ground and the sigil on the torso", after "dull and un-magic like" on sig4 and sig8 (references in `Logs/coordinator/refs/hex`, main ref5). Installed, film tag g1 not yet reviewed. Own fictional sigil, `tools/paint_phaister_sigil.py` in the agent's draft (not installed). Her Drain, Doll, sky circle and passive looks are not started.
+- Baha: b12 rejected, "its too noisy. i need it looking exactly like the reference" (`Logs/coordinator/refs/baha`). Being rebuilt to measured shares of the reference. `RafiBahaFlood.BahaV2` stays false.
+- Yasmin Absolute Zero: c5f then "the ice on the floor should have the same material as the ice wall". c6 in progress on the locked Glacial Wall material. `CheskaAbsoluteZeroLook.LotusFloor` true.
+- Zack: walking Backtrack ghost replaced by a ground mark (`ZackBacktrackEcho.MarkInsteadOfBody`), body flames off (`ZackThrottlePaint.LockArcs`, `ZackMomentumLook.BodyJets`). Film sent, no verdict. The Momentum removal was only read, not filmed. He has not answered whether Momentum and Overclock (still ASTRA's looks) get the bench rework.
+- No verdict yet: Zack r2 Backtrack, Full Throttle, Live Wire; Nemu k3; Ilyas Skim; Molten Throw and its s2 ring; Zack cutscene trim; Yasmin Cold Feet, Frostbite, Frozen. Featherfall's look needs a reference; the shortening-trail fix is in `FxStudyFeatherfall.cs`, and the rejected painted Featherfall and Airburst files are switched off (`Painted = false`) and can be deleted.
+- Airburst needs a court hook once he asks. Unity's EditMode and PlayMode tests have not run on any of this.
+
+Update, 2026-10-31 10:00. All uncommitted, none played in a match, tests not run, GPU cost unmeasured, each awaiting the owner:
+- Phaister (all behind `PhaisterLook.Direction`, default Current): Hex g11, circle on ground and sigil on torso. Its fog is painted, not FxCloud, because solid cloud balls read as blueberries; `PhaisterHexSigil.CloudFog` restores the FxCloud version. Doll and sky circle r8 (`phaisterdollcourt_r8`). Drain r7 "moth to a flame" and passive shadow drag (`phaisterkit_drain_r7`), passive weakest. Teleport films now differ from c1 by about 1,200 to 2,000 pixels, and repeat films of one state differ by 1,100 to 1,200, so this is noise of unexplained origin on the ghost; the moth files are byte-identical except `PhaisterLook.cs` helpers.
+- Baha c13 / k19: `RafiBahaBody` replaces `RafiBahaWave`, `BahaV2=true`, its own water, not the wall's. Mid blue 10.3 against the reference's 19.2.
+- Yasmin Absolute Zero c8b: wall material floes sized from the live map, lotus hidden on her own screen.
+
+Sharing K: the kanto map session uses the same editor and lock. Claim `Temp/cutscene-film.lock` only by exclusive create (noclobber) with a pid, as `Logs/coordinator/film.sh` and `install.sh` do. Never delete a kanto lock; ask it. A session must not rewrite `film.sh` while a film may be running (bash reads it live; it broke one run). `FxStudyKit.cs` is shared: re-read K's copy right before each install and add only your lines, it was overwritten three times this round. Agents must keep `.backup` until a round is approved. Filming stops when the editor is closed (no `K/Temp`) and when agents hit the usage limit; check `Logs/paete-ability-film` times rather than assuming.

@@ -97,8 +97,7 @@ namespace TumbangPreso.UI
             _ownerMatchPage.gameObject.SetActive(!_roomOpen);_ownerRoomPage.gameObject.SetActive(_roomOpen);
             if (_slateRules)
             {
-                Hub.HubKnit.Recolour((RectTransform)_ownerMatchTab.transform, _roomOpen ? Hub.Knit.Maroon : Hub.Knit.Gold);
-                Hub.HubKnit.Recolour((RectTransform)_ownerRoomTab.transform, _roomOpen ? Hub.Knit.Gold : Hub.Knit.Maroon);
+                Hub.HubKnit.ChooseTab(_slateTabs, _roomOpen ? 1 : 0);
             }
             else
             {

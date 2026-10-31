@@ -276,7 +276,7 @@ namespace TumbangPreso.Abilities
         }
 
         /// <summary>15 charges, as Supernova was: the bomb can knock the lata over by itself.</summary>
-        public override float UltimateCost => SeanRules.UltimateCost;
+        public override float UltimateCost => SeanRules.UltimateCost + TumbangPreso.Core.Balance.UltimateExtraObjectivePoints;
 
         /// <summary>The bodies a RAM or a fist may hit: everyone else in the round who is on the court and not already tagged.</summary>
         internal static IEnumerable<CharacterMotor> Rivals(CharacterMotor me)

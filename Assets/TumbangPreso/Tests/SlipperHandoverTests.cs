@@ -90,7 +90,7 @@ namespace TumbangPreso.Tests
             roof.transform.position=new Vector3(0,8.5f,0);roof.AddComponent<BoxCollider>().size=new Vector3(4,1,4);
             _players[1].transform.position=new Vector3(0,3.6f,0);_shoes[0].OwnerSlot=1;
             Physics.SyncTransforms();
-            Assert.AreEqual(9,Slipper.GroundY(_players[1].transform.position),.01f,"Fixture must expose the broad overhead query.");
+            Assert.AreEqual(3.5f,Slipper.GroundY(_players[1].transform.position),.01f,"The broad ground query must answer the support under the holder, not the guideway over it.");
             // Exercise displacement after an explicit ownership reassignment.
             _shoes[0].OwnerSlot=1;
             Assert.IsTrue(_shoes[0].HostForceEquip(_players[1]));

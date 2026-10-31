@@ -6,14 +6,14 @@ namespace TumbangPreso.UI
     public sealed partial class PausePanel
     {
         private Text _statePill;
-        private HudCard _statePlate;
+        private RectTransform _statePlate;
 
         protected override Canvas CreateCanvas()
         {
             var canvas = OwnerUiLayout.Canvas(transform, "OwnerPauseCanvas", 500);
             var dim = OwnerUiLayout.Rect(canvas.transform, "MatchDim").gameObject.AddComponent<Image>();
             OwnerUiLayout.Fill(dim.rectTransform);
-            dim.color = new Color(.08f, .04f, .02f, .45f);
+            dim.color = new Color(.157f, .031f, .055f, .35f);
             return canvas;
         }
 
@@ -33,34 +33,36 @@ namespace TumbangPreso.UI
         {
             if (PracticeRange.Requested && PracticeRange.Instance != null) { BuildTrainingRange(); return; }
             var design = OwnerUiLayout.DesignArea(Canvas.transform, "LiveMenuComposition");
-            var holder = OwnerUiLayout.Rect(design, "LiveMenuColumn"); OwnerUiLayout.Place(holder, 96, 196, 620, 700);
+            var holder = OwnerUiLayout.Rect(design, "LiveMenuColumn"); OwnerUiLayout.Place(holder, 72, 160, 696, 772);
             // ⚠️ THE CARD IS HOME'S WINE KNIT (owner 2026-10-28), the same deep plate as the room's chat
             // drawer, so the match menu and its leave question belong to the room family. An invisible
             // image keeps the card's job of catching every press that lands on it.
             var catcher = holder.gameObject.AddComponent<Image>(); catcher.color = Color.clear; catcher.raycastTarget = true;
-            var plate = Hub.HubKnit.Plate(holder, "Knit", Hub.Knit.Wine); OwnerUiLayout.Fill(plate); plate.SetAsFirstSibling();
+            var plate = Hub.HubKnit.Plate(holder, "Knit", Hub.Knit.Panel); OwnerUiLayout.Fill(plate); plate.SetAsFirstSibling();
 
-            _statePlate = OwnerUiLayout.Rect(holder, "PauseState").gameObject.AddComponent<HudCard>();
-            OwnerUiLayout.Place(_statePlate.rectTransform, 44, 44, 150, 44);
-            _statePlate.Toy(HudDraw.Honey, HudDraw.HoneySide, 4, 9, .3f).raycastTarget = false; _statePlate.Sheen = false; _statePlate.FollowContrast = false;
-            _statePill = OwnerUiLayout.Text(_statePlate.transform, "PauseStateLabel", "", 28, OwnerUiLayout.TypeRole.Reading);
+            _statePlate = Hub.HubKnit.Plate(holder, "PauseState", Hub.Knit.PillGo);
+            OwnerUiLayout.Place(_statePlate, 50, 46, 185, 58);
+            _statePill = OwnerUiLayout.Text(_statePlate, "PauseStateLabel", "", 28, OwnerUiLayout.TypeRole.Display);
+            _statePill.font = Hub.HubStyle.DisplayFont;
             OwnerUiLayout.Fill(_statePill.rectTransform); _statePill.alignment = TextAnchor.MiddleCenter;
+            _statePill.rectTransform.anchorMin = new Vector2(0, .06f);
             _statePill.horizontalOverflow = HorizontalWrapMode.Overflow;
 
-            _title = OwnerUiLayout.Text(holder, "PauseTitle", "Match Menu", 66, OwnerUiLayout.TypeRole.Display);
-            OwnerUiLayout.Place(_title.rectTransform, 44, 100, 540, 92); _title.color = Hub.HubKnit.Honey;
+            _title = OwnerUiLayout.Text(holder, "PauseTitle", "MATCH MENU", 66, OwnerUiLayout.TypeRole.Display);
+            _title.font = Hub.HubStyle.DisplayFont;
+            OwnerUiLayout.Place(_title.rectTransform, 52, 136, 600, 92); _title.color = Hub.HubKnit.KitMaroon;
             _title.horizontalOverflow = HorizontalWrapMode.Overflow; _title.verticalOverflow = VerticalWrapMode.Overflow;
-            var notice = OwnerUiLayout.Text(holder, "LiveNotice", "The match keeps playing while this menu is open.", 32);
-            _notice = notice; notice.color = new Color(Hub.HubKnit.Cream.r, Hub.HubKnit.Cream.g, Hub.HubKnit.Cream.b, .8f);
-            OwnerUiLayout.Place(notice.rectTransform, 46, 194, 530, 84);
+            var notice = OwnerUiLayout.Text(holder, "LiveNotice", "The match keeps playing while this menu is open.", 30);
+            _notice = notice; notice.color = Hub.HubKnit.KitInk; notice.font = Hub.HubKnit.SentenceFont(false);
+            OwnerUiLayout.Place(notice.rectTransform, 54, 222, 600, 84);
             notice.verticalOverflow = VerticalWrapMode.Overflow;
 
             _menuChoices = OwnerUiLayout.Rect(holder, "MenuChoices"); OwnerUiLayout.Fill(_menuChoices);
             _menuChoicesGroup = _menuChoices.gameObject.AddComponent<CanvasGroup>();
             notice.transform.SetParent(_menuChoices, true);
-            _resume = Action(_menuChoices, "ResumeMatch", "Resume", MatchMenuButton.Kind.Primary, () => Resume(), 318, 104, 50);
-            Action(_menuChoices, "PauseSettings", "Settings", MatchMenuButton.Kind.Ordinary, OpenSettings, 446, 88, 40);
-            Action(_menuChoices, "LeaveMatch", "Leave match", MatchMenuButton.Kind.Destructive, AskToLeave, 572, 80, 36);
+            _resume = Action(_menuChoices, "ResumeMatch", "Resume", MatchMenuButton.Kind.Primary, () => Resume(), 318, 124, 50);
+            Action(_menuChoices, "PauseSettings", "Settings", MatchMenuButton.Kind.Ordinary, OpenSettings, 470, 116, 40);
+            Action(_menuChoices, "LeaveMatch", "Leave match", MatchMenuButton.Kind.Destructive, AskToLeave, 618, 108, 36);
 
             // ⚠️ THE LEAVE QUESTION LIVES IN THE SAME CARD (2026-10-28 room and menu pass). It says
             // what leaving does for this player, names both answers, and focuses STAY. LEAVE MATCH
@@ -69,11 +71,11 @@ namespace TumbangPreso.UI
             _leaveChoices = OwnerUiLayout.Rect(holder, "LeaveConfirm"); OwnerUiLayout.Fill(_leaveChoices);
             _leaveChoicesGroup = _leaveChoices.gameObject.AddComponent<CanvasGroup>();
             _leaveLine = OwnerUiLayout.Text(_leaveChoices, "LeaveConsequence", "", 32);
-            _leaveLine.color = Hub.HubKnit.Cream;
-            OwnerUiLayout.Place(_leaveLine.rectTransform, 46, 194, 530, 110);
+            _leaveLine.color = Hub.HubKnit.KitInk; _leaveLine.font = Hub.HubKnit.SentenceFont(false);
+            OwnerUiLayout.Place(_leaveLine.rectTransform, 54, 222, 600, 110);
             _leaveLine.verticalOverflow = VerticalWrapMode.Overflow;
-            Action(_leaveChoices, "ConfirmLeaveMatch", "Leave match", MatchMenuButton.Kind.Destructive, SceneFlow.LeaveMatchToMainMenu, 330, 88, 38);
-            _stay = Action(_leaveChoices, "StayInMatch", "Stay", MatchMenuButton.Kind.Primary, HideLeaveQuestion, 446, 104, 50);
+            Action(_leaveChoices, "ConfirmLeaveMatch", "Leave match", MatchMenuButton.Kind.Destructive, SceneFlow.LeaveMatchToMainMenu, 360, 108, 38);
+            _stay = Action(_leaveChoices, "StayInMatch", "Stay", MatchMenuButton.Kind.Primary, HideLeaveQuestion, 500, 124, 50);
             _leaveChoices.gameObject.SetActive(false);
             _menuCard = holder;
             _menuRest = holder.anchoredPosition;
@@ -82,7 +84,7 @@ namespace TumbangPreso.UI
             MatchMenuButton Action(RectTransform parent, string name, string words, MatchMenuButton.Kind kind, System.Action press, float y, float height, int size)
             {
                 var button = MatchMenuButton.Create(parent, name, words, kind, press, size);
-                OwnerUiLayout.Place((RectTransform)button.transform, 46, y, 528, height);
+                OwnerUiLayout.Place((RectTransform)button.transform, 48, y, 600, height);
                 return button;
             }
         }
@@ -109,7 +111,7 @@ namespace TumbangPreso.UI
             _leaveLine.text = !networked ? "This match ends here and its progress is lost."
                 : NetAuthority.IsHost ? "You're hosting. Leaving ends the match for everyone in it."
                 : "The match keeps going without you.";
-            if (_title != null) _title.text = "Leave the match?";
+            if (_title != null) _title.text = "LEAVE THE MATCH?";
             _menuChoices.gameObject.SetActive(false);
             _leaveChoices.gameObject.SetActive(true);
             _swap = Settings.SettingsStore.Current.ReducedUiMotion ? 1 : 0;
@@ -123,7 +125,7 @@ namespace TumbangPreso.UI
             _leaveChoices.gameObject.SetActive(false);
             _menuChoices.gameObject.SetActive(true);
             if (_title != null)
-                _title.text = PracticeRange.Active ? "Training" : GameLaunch.Spectator ? "Broadcast Menu" : "Match Menu";
+                _title.text = PracticeRange.Active ? "TRAINING" : GameLaunch.Spectator ? "BROADCAST MENU" : "MATCH MENU";
             _swap = Settings.SettingsStore.Current.ReducedUiMotion ? 1 : 0;
             Select(_resume);
         }
@@ -173,13 +175,13 @@ namespace TumbangPreso.UI
         {
             if (_statePlate == null) return;
             bool ended = GameServices.Match?.HasCompleted == true;
-            string words = ended ? "Ended" : _pausedOffline ? "Paused" : "Live";
+            string words = ended ? "ENDED" : _pausedOffline ? "PAUSED" : "LIVE";
             _statePill.text = words;
-            _statePlate.color = ended ? HudDraw.CreamSide : _pausedOffline ? HudDraw.Honey : HudDraw.Alarm;
-            _statePlate.Side = ended ? HudDraw.BrownMuted : _pausedOffline ? HudDraw.HoneySide : HudDraw.AlarmSide; _statePlate.SetVerticesDirty();
-            _statePill.color = ended || _pausedOffline ? HudDraw.Brown : Color.white;
-            var size = _statePlate.rectTransform.sizeDelta; size.x = _statePill.preferredWidth + 40;
-            _statePlate.rectTransform.sizeDelta = size;
+            var kind = ended ? Hub.Knit.PillPlain : _pausedOffline ? Hub.Knit.PillGo : Hub.Knit.PillDanger;
+            Hub.HubKnit.Recolour(_statePlate, kind);
+            _statePill.color = Hub.HubKnit.InkOf(kind);
+            var size = _statePlate.sizeDelta; size.x = _statePill.preferredWidth + 70;
+            _statePlate.sizeDelta = size;
         }
     }
 }

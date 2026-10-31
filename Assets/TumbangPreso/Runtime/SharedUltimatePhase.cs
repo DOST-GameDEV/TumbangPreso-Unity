@@ -194,6 +194,25 @@ namespace TumbangPreso
             }
             _scene = SceneManager.GetActiveScene(); _actorsReady=true; ClearActions(); return true;
         }
+        /// <summary>
+        /// ⚠️⚠️ EVERY PEER STAGES THE CUTSCENE FROM WHERE THE HOST FROZE THE COURT (2026-10-29, measured on a delayed link).
+        /// The phase reaches a client a round trip after the host holds the world, and the client's own predicted body kept
+        /// running for that time: its staged copy stood 3.2 m from the host's, and the hand-back snapped it back. The host
+        /// sends each settled body's frozen pose with its authoritative teleport (a new movement epoch, so moves still in flight
+        /// are refused) on the same ordered channel just before the phase, so the copies are built from the host's world.
+        /// A body mid-climb, carried or aloft keeps its own replicated state and is left to its snapshots.
+        /// </summary>
+        private void PinCohortBodies()
+        {
+            var round = GameServices.Round; var rpc = Net.MatchRpc.Instance;
+            if (round == null || rpc == null || !NetAuthority.IsNetworked || !NetAuthority.ShouldResolve()) return;
+            foreach (var actor in round.Players)
+            {
+                if (actor == null || !actor.gameObject.activeInHierarchy || actor.IsEdgeRecovering || actor.IsCarried || actor.IsAloft) continue;
+                rpc.BroadcastTeleport(actor.PlayerSlot, actor.transform.position, actor.transform.eulerAngles.y);
+            }
+        }
+
         private void ClearActions()
         {
             var round = GameServices.Round; if (round == null) return;
@@ -233,6 +252,7 @@ namespace TumbangPreso
             if (!_sealed)
             {
                 _sealed = true; ClearActions();
+                PinCohortBodies();
                 Net.MatchRpc.Instance?.BroadcastUltimatePhase(this);
             }
             if (!_actorsReady) PrepareActors();

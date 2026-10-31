@@ -45,8 +45,8 @@ namespace TumbangPreso.Visual
     /// bounds (its long way is the toe, its thin way is up; they were carved round a shoe 0.44 m long), so they fit the
     /// shoe in the world and the differently sized copy in the hand without either being told about the other.
     ///
-    /// ⚠️ IT MAKES ITS ROCKS THE FIRST TIME A SHOE IS LOADED, NOT WHEN THE SHOE IS MADE: most shoes in a match never
-    /// are. One renderer a rock on one shared material; what differs between two stones (how hot, how far eaten) goes
+    /// Recording prepares the hidden rocks before its first pose, so loading a shoe cannot change a recorded skeleton.
+    /// One renderer a rock on one shared material; what differs between two stones (how hot, how far eaten) goes
     /// through a property block. Nothing is allocated while it plays. Its objects are the shoe's children and go with
     /// it; `OnDestroy` frees them when this is removed on its own.
     /// </summary>
@@ -101,6 +101,23 @@ namespace TumbangPreso.Visual
             if (stone == null) stone = shoe.gameObject.AddComponent<DanteBoulderStone>();
             stone._world = true;
             stone._shoe = shoe;
+        }
+
+        public static void PrepareWorldShape(Slipper shoe)
+        {
+            if(shoe==null)return;
+            TrackWorld(shoe);
+            var stone=shoe.GetComponent<DanteBoulderStone>();
+            if(stone._anchor==null&&stone.Fit())stone.Show(false);
+        }
+
+        // Only called on an owned inactive rendering template, never a live shoe.
+        public static void PrepareRecordedShape(GameObject root)
+        {
+            var target=root.GetComponentInChildren<MeshFilter>(true);if(target==null)return;
+            var stone=target.gameObject.AddComponent<DanteBoulderStone>();
+            stone.enabled=false;stone._world=true;stone._target=target;
+            if(stone.Fit())stone.Show(false);
         }
 
         public static void MatchOwner(MeshFilter target, Slipper shoe)
@@ -221,10 +238,10 @@ namespace TumbangPreso.Visual
             if (_anchor != null && _anchor.gameObject.activeSelf != on) _anchor.gameObject.SetActive(on);
         }
 
-        // Finds the shoe's mesh, makes the rocks the first time they are wanted, and seats them on the mesh's own bounds.
+        // Finds the shoe's mesh and seats the rocks on the mesh's own bounds.
         private bool Fit()
         {
-            if (_target == null && _world) _target = _shoe.GetComponentInChildren<MeshFilter>();
+            if (_target == null && _world) _target = _shoe.GetComponentInChildren<MeshFilter>(true);
             if (_target == null || _target.sharedMesh == null) return false;
             if (_anchor == null && !Make()) return false;
             if (_anchor.parent != _target.transform) _anchor.SetParent(_target.transform, false);

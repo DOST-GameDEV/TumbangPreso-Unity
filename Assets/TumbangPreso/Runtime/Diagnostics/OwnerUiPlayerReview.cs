@@ -576,6 +576,8 @@ namespace TumbangPreso.Diagnostics
             {yield return OrdinarySkillsOnly();yield break;}
             if(Environment.GetCommandLineArgs().Contains("-tp-whole-matches"))
             {yield return WholeMatchesOnly();yield break;}
+            if(Environment.GetCommandLineArgs().Contains("-tp-feel-only"))
+            {yield return FeelOnly();yield break;}
             if(Environment.GetCommandLineArgs().Contains("-tp-halftime-only"))
             {yield return HalftimeOnly();yield break;}
             if(Environment.GetCommandLineArgs().Contains("-tp-live-ultimates-only"))

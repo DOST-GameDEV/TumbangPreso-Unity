@@ -58,6 +58,17 @@ namespace TumbangPreso.Abilities
         private Vector3 _velocity, _lastPosition;
         private readonly Vector3[] _trail = new Vector3[6];
         private float _trailClock;
+        // The painted look (`NemuGhostLook`): what this copy has already shown, the barrel roll's weight, and the beat counters
+        // of its trail and its offer. All from state every peer's copy has, so nothing is sent.
+        private bool _fxSeen, _fxCarrying, _fxLeaving;
+        private float _weave, _wakeClock, _offerClock;
+        private int _wakeBeat, _offerBeat;
+        // ⚠️ THE BEAR AS A GHOST, IN PARTS AND IN MOTION (owner 2026-10-29: *"bear ghost also doesnt look too ghosty.. looks more
+        // like a regular pet tbh"*, *"looks/acts"*). `PetGhostRig` is its body (head, wisp tail, face) hung under `_body`, whose
+        // own mesh is then hidden; its arms are still `_arms`, still posed at the rule's hand points. `BearGlide` is how it
+        // flies its path instead of scurrying along it. Both drawing only.
+        private PetGhostRig _rig;
+        private readonly BearGlide _glide = new BearGlide();
 
         /// <summary>Pops a Skitter out beside Nemu (one per Nemu: her last one is let go).</summary>
         public static NemuSkitter Summon(Vector3 at, Vector3 facing, int ownerSlot)
@@ -77,6 +88,11 @@ namespace TumbangPreso.Abilities
             for (int side = 0; side < 2; side++)
                 skitter._arms[side] = new NemuGhostBody(skitter._body.Transform, side == 0 ? "SkitterArmL" : "SkitterArmR", NemuGhostModels.SkitterArm(side), rim);
             skitter._fx = new NemuSmokeBatch(go.transform, "SkitterFx", 6, 40, 1);
+            if (PetGhostRig.On)
+            {
+                skitter._rig = PetGhostRig.Build(skitter._body.Transform, PetGhostRig.Pet.Bear, rim);
+                if (skitter._rig != null) skitter._body.MeshHidden = true;
+            }
             return skitter;
         }
 
@@ -172,10 +188,13 @@ namespace TumbangPreso.Abilities
             float pop = p >= 1f ? 1f : 1f + Mathf.Sin(p * Mathf.PI * 1.25f) * (1f - p) * .6f - (1f - p) * (1f - p);
             pop = Mathf.Max(0f, pop);
             float fade = 1f, rise = 0f, spin = 0f, leaveU = 0f;
+            // Painted, NOTHING POPS: it unfolds out of a cocoa puff (`NemuGhostLook.Unfold`) instead of growing from a point.
+            bool painted = NemuGhostLook.On;
+            if (painted) { pop = NemuGhostLook.Unfold(_age); fade = NemuGhostLook.UnfoldFade(_age); }
             if (_leaving)
             {
                 leaveU = Mathf.Clamp01((_age - _leftAt) / LeaveSeconds);
-                fade = 1f - leaveU * leaveU; rise = 1.4f * leaveU * leaveU;
+                fade = (painted ? NemuGhostLook.UnfoldFade(_age) : 1f) * (1f - leaveU * leaveU); rise = 1.4f * leaveU * leaveU;
                 spin = _delivered ? 540f * leaveU * leaveU : 0f;
                 if (leaveU >= 1f) { Destroy(gameObject); return; }
             }
@@ -184,6 +203,11 @@ namespace TumbangPreso.Abilities
             float run = Mathf.Clamp01(_speed / 3f);
             float stride = _age * (9f + _speed * 2.5f);
             float hop = Mathf.Abs(Mathf.Sin(stride));
+            // ⚠️ A GHOST DOES NOT SCURRY. With the rig it floats: a slow smooth hover in place of the hops (the same 0 to 0.09 m
+            // the hops had, so the hold point the host writes to the slipper stays in the range it always had), its paws paddling
+            // slowly instead of pumping.
+            bool ghost = _rig != null;
+            if (ghost) { stride = _age * 4f; hop = .5f + .5f * Mathf.Sin(_age * 4f); }
             // WAITING: little eager bounces in place, "here, take it".
             float eager = _offer * (1f - run) * Mathf.Abs(Mathf.Sin(_age * 6f));
             _bob = Mathf.Lerp(.03f * Mathf.Sin(_age * 3f), .09f * hop, run) + .05f * eager;
@@ -191,7 +215,7 @@ namespace TumbangPreso.Abilities
                 foreach (var shoe in BotSlipperInventory.All)
                     if (shoe != null && shoe.OwnerSlot == OwnerSlot && shoe.State == SlipperState.Loose)
                     { Position = shoe.transform.position - Vector3.up * _bob - _facing * (NemuGhostModels.SkitterHands + OfferLift); break; }
-            float squash = Mathf.Lerp(.04f * Mathf.Sin(_age * 3f), (hop - .5f) * .22f, run);
+            float squash = ghost ? .03f * Mathf.Sin(_age * 3f) : Mathf.Lerp(.04f * Mathf.Sin(_age * 3f), (hop - .5f) * .22f, run);
             // THE GRAB: a hard squash and a green flash.
             float g = Mathf.Clamp01((_age - _grabAt) / GrabSeconds);
             float grabPulse = g < 1f ? Mathf.Sin(g * Mathf.PI) * (1f - g) : 0f;
@@ -199,10 +223,23 @@ namespace TumbangPreso.Abilities
             squash += (eager - .5f * _offer * (1f - run)) * .14f;
             var scale = new Vector3(1f - squash * .5f, 1f + squash, 1f - squash * .5f) * (Scale * pop * Mathf.Lerp(1f, .4f, leaveU));
             float lean = Mathf.Clamp(_speed * 5f, 0f, 22f) - (_carrying ? 8f : 0f);
+            float bank = Mathf.Sin(stride * .5f) * 7f * run;
+            if (ghost)
+            {
+                // Its glide: high and lagging behind its point on the way out, swooping down onto the slipper, leaning into the
+                // path and banking into the turns (`BearGlide`). Carrying, it is on its point: its paws hold the slipper.
+                float free = !_carrying && !ReachFor.HasValue && !_leaving ? 1f : 0f;
+                _glide.Step(Position, Quaternion.LookRotation(Flat(_facing * Vector3.forward)), free, GoalDistance(), dt);
+                lean = _glide.Lean - (_carrying ? 6f : 0f);
+                bank = _glide.Bank;
+                // It flickers for a moment as it whips round.
+                fade *= 1f - .45f * _glide.Flicker * (.5f + .5f * Mathf.Sin(_age * 70f));
+            }
             Quaternion facing = _facing * Quaternion.AngleAxis(spin, Vector3.up) * Quaternion.AngleAxis(lean, Vector3.right)
-                * Quaternion.AngleAxis(Mathf.Sin(stride * .5f) * 7f * run, Vector3.forward);
+                * Quaternion.AngleAxis(bank, Vector3.forward);
             float flash = Mathf.Max(grabPulse * 1.2f, (1f - p) * .8f);
             Vector3 at = Position + Vector3.up * (_bob + rise);
+            if (ghost) at += _glide.Offset;
             if (PetGhostModels.PetGhosts && _body != null)
             {
                 // The pet bear circles round its point while it is free (never while it reaches, carries or leaves: then it is
@@ -212,10 +249,94 @@ namespace TumbangPreso.Abilities
                 if (g < 1f) facing *= Quaternion.AngleAxis(360f * g * g * (3f - 2f * g), Vector3.up);
                 _body.Trail = _flight.TrailLocal;
             }
+            if (painted && _body != null && !ghost)
+            {
+                // ⚠️ THE BARREL ROLL ALONG ITS DASH (`NemuGhostLook.BearWeave`): drawing only, eased onto its line before it
+                // reaches the slipper, and never while it carries (its paws must stay on the slipper the host moves).
+                float target = !_carrying && !_leaving ? 1f : 0f;
+                _weave = Mathf.MoveTowards(_weave, target, dt * (target > _weave ? 3f : 8f));
+                if (_weave > .001f)
+                {
+                    Quaternion heading = Quaternion.LookRotation(Flat(_facing * Vector3.forward));
+                    at += NemuGhostLook.BearWeave(_age, run * _weave, GoalDistance(), heading, out float roll);
+                    facing *= Quaternion.AngleAxis(roll, Vector3.forward);
+                }
+            }
+            if (painted) flash = Mathf.Min(flash, grabPulse * .6f);
             _body?.Pose(at, facing, scale, fade, _age, .08f + _speed * .015f, Mathf.Clamp01(flash));
+            if (ghost)
+            {
+                var phase = _leaving ? PetGhostActing.BearPhase.Leaving : _offer > .5f ? PetGhostActing.BearPhase.Offering
+                    : _carrying ? PetGhostActing.BearPhase.Carrying : ReachFor.HasValue ? PetGhostActing.BearPhase.Reaching
+                    : PetGhostActing.BearPhase.Outbound;
+                var her = GameServices.Round?.PlayerAt(OwnerSlot);
+                Vector3? herEyes = her != null ? her.transform.position + Vector3.up * 1.25f : (Vector3?)null;
+                _rig.LookAt = phase == PetGhostActing.BearPhase.Outbound || phase == PetGhostActing.BearPhase.Reaching ? SlipperAt() : herEyes;
+                // Snatched, it floats back up off its paws over 0.7 s.
+                float risen = 1f - Mathf.SmoothStep(0f, 1f, (_age - _grabAt) / .7f);
+                PetGhostActing.Bear(_rig, phase, _age, _carrying ? risen : 0f);
+                _rig.Pose(_age, dt, fade, Mathf.Clamp01(flash));
+            }
 
             PoseArms(fade, flash, run, stride);
+            if (painted) { PaintedMoments(at, run, dt); _fx?.Begin(); _fx?.End(_age); return; }
             DrawFx(at, fade, p, g, leaveU);
+        }
+
+        /// <summary>Her loose slipper, for its eyes on the way out (every peer has it).</summary>
+        private Vector3? SlipperAt()
+        {
+            if (ReachFor.HasValue) return ReachFor;
+            foreach (var shoe in BotSlipperInventory.All)
+                if (shoe != null && shoe.OwnerSlot == OwnerSlot && shoe.State == SlipperState.Loose) return shoe.transform.position;
+            return null;
+        }
+
+        private static Vector3 Flat(Vector3 v) { v.y = 0f; return v.sqrMagnitude > 1e-6f ? v.normalized : Vector3.forward; }
+
+        /// <summary>How far it still has to go to her loose slipper (flat), for the roll to ease out before it reaches it.
+        /// Read off the slipper itself, so the host and every peer agree without being told.</summary>
+        private float GoalDistance()
+        {
+            if (ReachFor.HasValue) return 0f;
+            foreach (var shoe in BotSlipperInventory.All)
+                if (shoe != null && shoe.OwnerSlot == OwnerSlot && shoe.State == SlipperState.Loose)
+                {
+                    Vector3 d = shoe.transform.position - Position; d.y = 0f;
+                    return d.magnitude;
+                }
+            return 0f;
+        }
+
+        /// <summary>
+        /// ⚠️ PAINTED, ITS DOTS ARE NOT DRAWN; THESE PUFFS ARE (`NemuGhostLook`). Out of a puff as it is summoned; small cream puffs
+        /// dropped behind it as it runs (each stays where it fell); a burst in its paws at the grab; a slow small puff while
+        /// it holds the slipper out; gone into a puff as it leaves. ASTRA's eyes, aura, dot trail, drips, grip glow, offer ring,
+        /// reach glow, summon ring, grab sparks and leaving streak were additive glows that wash out in daylight.
+        /// A moment this copy first sees late (a rejoiner) is not played.
+        /// </summary>
+        private void PaintedMoments(Vector3 at, float run, float dt)
+        {
+            if (!_fxSeen)
+            {
+                _fxSeen = true; _fxCarrying = _carrying; _fxLeaving = _leaving;
+                if (_age < .25f) NemuGhostLook.Arrive(NemuGhostLook.Pet.Bear, Position - Vector3.up * .3f);
+            }
+            if (_carrying && !_fxCarrying && _age - _grabAt < .25f) NemuGhostLook.Grab(HoldPoint);
+            _fxCarrying = _carrying;
+            if (_leaving && !_fxLeaving && _age - _leftAt < .25f) NemuGhostLook.Depart(NemuGhostLook.Pet.Bear, at + Vector3.up * .22f);
+            _fxLeaving = _leaving;
+            if (_leaving) return;
+            // Its trail: a puff every ninth of a second while it really runs, dropped low behind it.
+            _wakeClock += dt;
+            if (run > .45f && _wakeClock >= .11f)
+            {
+                _wakeClock = 0f;
+                NemuGhostLook.Wake(at + Vector3.up * .12f - Flat(_facing * Vector3.forward) * .16f, _wakeBeat++);
+            }
+            // Holding it out to her: a slow puff at the slipper.
+            _offerClock += dt;
+            if (_offer > .5f && _offerClock >= .9f) { _offerClock = 0f; NemuGhostLook.Offer(HoldPoint, _offerBeat++); }
         }
 
         private void PoseArms(float fade, float flash, float run, float stride)
@@ -238,6 +359,10 @@ namespace TumbangPreso.Abilities
                     float snatch = Mathf.Sin(_age * 22f + side * Mathf.PI);
                     hand = target + Vector3.right * sign * (.08f + .04f * snatch) + Vector3.up * (.05f + .03f * snatch);
                 }
+                else if (_rig != null && _leaving)
+                    // Going: a little wave goodbye with one paw, the other tucked.
+                    hand = side == 1 ? shoulder + new Vector3(.10f + .05f * Mathf.Sin(_age * 16f), .20f, .06f)
+                                     : shoulder + new Vector3(-.05f, -.10f, .10f);
                 else
                     // Flailing as it scurries: arms out in front, pumping in turn; idle, they hang and flex.
                     hand = shoulder + new Vector3(sign * .07f, -.12f - .05f * Mathf.Sin(stride + side * Mathf.PI) * run,

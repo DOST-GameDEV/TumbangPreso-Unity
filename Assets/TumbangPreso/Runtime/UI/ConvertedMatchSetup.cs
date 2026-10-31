@@ -211,7 +211,6 @@ namespace TumbangPreso.UI
         private static MatchFormat FormatAt(int index)
         {
             if (index <= 0) return MatchFormat.Standard;
-            if (index >= FormatOptionCount - 1) return MatchFormat.Mirror;
             return MatchFormat.LastTsinelas;
         }
 
@@ -238,7 +237,7 @@ namespace TumbangPreso.UI
         /// ⚠️ MIRROR IS COMPLETE AND SHIPS: `MatchInstaller` overrides every seat's character
         /// from `CustomGameRules.MirrorIndex`, so picking it changes the four people who walk out.
         /// </summary>
-        private const int FormatOptionCount = 3;
+        private const int FormatOptionCount = 2;
 
         private int _format;
 

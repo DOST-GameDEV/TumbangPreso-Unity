@@ -397,6 +397,10 @@ namespace TumbangPreso.Core
         /// before anybody has touched it. `MatchRules.RoundCountFor` and `Balance.RoundTime`
         /// are the source; this file copies neither and asks both.
         /// </summary>
+        // MIRROR's wire value remains readable for history. New matches preserve distinct picks.
+        public static MatchFormat NewMatchFormat(MatchFormat format) =>
+            format == MatchFormat.LastTsinelas ? MatchFormat.LastTsinelas : MatchFormat.Standard;
+
         public static CustomRules Defaults(GameMode mode) => new CustomRules
         {
             Mode = mode,

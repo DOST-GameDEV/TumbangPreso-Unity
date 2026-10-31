@@ -60,7 +60,7 @@ namespace TumbangPreso.Abilities
             _receivedPull?.BindVisual(_receivedVine,false);
             return true;
         }
-        public override float UltimateCost => PaeteRules.SentryCost;
+        public override float UltimateCost => PaeteRules.SentryCost + TumbangPreso.Core.Balance.UltimateExtraObjectivePoints;
 
         public void RebindWorldEffects(CharacterMotor motor)
         {

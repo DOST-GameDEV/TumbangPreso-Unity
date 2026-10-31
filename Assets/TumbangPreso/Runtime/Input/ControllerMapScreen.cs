@@ -531,6 +531,7 @@ namespace TumbangPreso.InputLayer
             var ground = OwnerUiLayout.Rect(root,"Ground").gameObject.AddComponent<Image>();
             ground.color=SettingsPalette.Background;ground.raycastTarget=true;
             MenuKit.Stretch(ground.rectTransform);
+            UI.Hub.HubKnit.Ground(root, "GroundWeave");
 
             BuildHeader(root);
             BuildDiagram(root);
@@ -542,12 +543,10 @@ namespace TumbangPreso.InputLayer
 
         private void BuildHeader(RectTransform root)
         {
-            var title=OwnerUiLayout.Text(root,"ControllerHeading","CONTROLLER MAP",56,OwnerUiLayout.TypeRole.Display);
-            title.alignment=TextAnchor.MiddleCenter;title.color=SettingsPalette.Ink;
-            MenuKit.Place(title.rectTransform,new Vector2(.5f,1),new Vector2(0,-66),new Vector2(1100,100));
-            var hint=OwnerUiLayout.Text(root,"ControllerHint","Choose a control to change its binding.",29);
-            hint.alignment=TextAnchor.MiddleCenter;hint.color=SettingsPalette.Muted;
-            MenuKit.Place(hint.rectTransform,new Vector2(.5f,1),new Vector2(0,-140),new Vector2(1300,44));
+            var title=UI.Hub.HubKnit.Display(root,"ControllerHeading","CONTROLLER MAP",86,UI.Hub.HubKnit.KitWhite,TextAnchor.MiddleLeft,7);
+            UI.Hub.HubKit.Place(title.rectTransform,UI.Hub.HubKit.TopLeft,new Vector2(200,-36),new Vector2(900,100));
+            var hint=UI.Hub.HubKnit.Words(root,"ControllerHint","Choose a control to change its binding.",34,UI.Hub.HubKnit.KitWhite,TextAnchor.MiddleLeft,true,3);
+            UI.Hub.HubKit.Place(hint.rectTransform,UI.Hub.HubKit.TopLeft,new Vector2(60,-132),new Vector2(1000,48));
         }
 
         private RectTransform _diagram;
@@ -748,9 +747,13 @@ namespace TumbangPreso.InputLayer
             float textLeft = sprite != null ? PaperKit.Pad + GlyphSize + 10.0f : PaperKit.Pad;
 
             var label = OwnerUiLayout.Text(go.transform,"Job",name,28);
-            label.color=SettingsPalette.Ink;
+            label.color=SettingsPalette.PanelInk;label.font=UI.Hub.HubKnit.SentenceFont(true);
             label.name = "Job";
             label.raycastTarget = false;
+            // 28 is the reading floor at 960x540, so a long action wraps. Two tightened lines fit
+            // RowHeight, but vertical truncation still drops the second, so let it draw.
+            label.lineSpacing = .85f;
+            label.verticalOverflow = VerticalWrapMode.Overflow;
 
             var lrt = label.rectTransform;
             lrt.anchorMin = new Vector2(0.0f, 0.0f);
@@ -872,7 +875,7 @@ namespace TumbangPreso.InputLayer
         private void BuildFooter(RectTransform root)
         {
             _status = OwnerUiLayout.Text(root,"ControllerStatus","",29);
-            _status.alignment=TextAnchor.MiddleCenter;_status.color=SettingsPalette.Ink;
+            _status.alignment=TextAnchor.MiddleCenter;_status.color=UI.Hub.HubKnit.KitWhite;_status.font=UI.Hub.HubKnit.SentenceFont(true);UI.Hub.KitEdge.On(_status,3);
             MenuKit.Place(_status.rectTransform, new Vector2(0.5f, 0.0f),
                           new Vector2(0.0f, 138.0f), new Vector2(1460.0f, 44.0f));
 
@@ -881,12 +884,12 @@ namespace TumbangPreso.InputLayer
             // find it, and the honest reason is one sentence long. `Rebinding.BlurbFor` puts the
             // same sentence over the same rows in the settings list.
             var note=OwnerUiLayout.Text(root,"SpectatorHint","Spectator controls: Settings / Controls.",28);
-            note.alignment=TextAnchor.MiddleCenter;note.color=SettingsPalette.Muted;
-            MenuKit.Place(note.rectTransform,new Vector2(.5f,0),new Vector2(0,96),new Vector2(1500,38));
+            note.alignment=TextAnchor.MiddleCenter;note.color=UI.Hub.HubKnit.KitWhite;note.font=UI.Hub.HubKnit.SentenceFont(true);UI.Hub.KitEdge.On(note,3);
+            MenuKit.Place(note.rectTransform,new Vector2(.5f,0),new Vector2(0,96),new Vector2(1500,44));
 
             var reset = FooterAction(root,"Reset","RESET ALL");
-            MenuKit.Place((RectTransform)reset.transform, new Vector2(0.5f, 0.0f),
-                          new Vector2(-220.0f, 40.0f), new Vector2(320.0f, 60.0f));
+            UI.Hub.HubKit.Place((RectTransform)reset.transform, UI.Hub.HubKit.TopRight, new Vector2(-430, -40), new Vector2(330, 100));
+            FooterFace(reset, UI.Hub.Knit.Yellow, 40);
 
             reset.onClick.AddListener(() =>
             {
@@ -901,10 +904,24 @@ namespace TumbangPreso.InputLayer
             });
 
             var done = FooterAction(root,"Done","DONE");
-            MenuKit.Place((RectTransform)done.transform, new Vector2(0.5f, 0.0f),
-                          new Vector2(220.0f, 40.0f), new Vector2(320.0f, 60.0f));
-
+            UI.Hub.HubKit.Place((RectTransform)done.transform, UI.Hub.HubKit.TopRight, new Vector2(-60, -40), new Vector2(340, 100));
+            FooterFace(done, UI.Hub.Knit.Go, 46);
             done.onClick.AddListener(() => { MenuSfx.Back(); Close(); });
+
+            var back = UI.Hub.HubKnit.Button(root, "ControllerBack", null, UI.Hub.Knit.Danger, () => { MenuSfx.Back(); Close(); }, 34, UI.Hub.HubGlyph.Mark.Left);
+            UI.Hub.HubKit.Place((RectTransform)back.transform, UI.Hub.HubKit.TopLeft, new Vector2(60, -40), new Vector2(120, 100));
+        }
+
+        /// <summary>A header action in the boot kit: the painted button in place of the drawn callout.</summary>
+        private static void FooterFace(Button button, UI.Hub.Knit kind, int size)
+        {
+            button.GetComponent<ControllerCalloutFace>().enabled = false;
+            var hit = OwnerUiLayout.Rect(button.transform, "KitFace").gameObject.AddComponent<Image>();
+            hit.rectTransform.SetAsFirstSibling(); OwnerUiLayout.Fill(hit.rectTransform); UI.Hub.HubKnit.KitFace(hit, kind);
+            hit.raycastTarget = true;
+            button.targetGraphic = hit;
+            var label = button.transform.Find("Label").GetComponent<Text>();
+            label.rectTransform.anchorMin = new Vector2(0, .10f); label.fontSize = size; label.color = UI.Hub.HubKnit.InkOf(kind);
         }
 
         // -------------------------------------------------------------------------------------
@@ -941,7 +958,7 @@ namespace TumbangPreso.InputLayer
                 {
                     callout.Action = action;
                     callout.Label.text = Rebinding.LabelFor(action);
-                    callout.Label.color = SettingsPalette.Ink;
+                    callout.Label.color = SettingsPalette.PanelInk;
                     Pressable(callout, true);
                     continue;
                 }
@@ -956,7 +973,7 @@ namespace TumbangPreso.InputLayer
                     // press instead of starting a rebind that cannot finish.
                     callout.Action = null;
                     callout.Label.text = job;
-                    callout.Label.color = SettingsPalette.Muted;
+                    callout.Label.color = SettingsPalette.PanelHead;
                     Pressable(callout, false);
                     continue;
                 }
@@ -966,7 +983,7 @@ namespace TumbangPreso.InputLayer
                 // the button is free, which is a fact worth knowing on a screen about bindings.
                 callout.Action = null;
                 callout.Label.text = "-";
-                callout.Label.color = SettingsPalette.Muted;
+                callout.Label.color = SettingsPalette.PanelHead;
                 Pressable(callout, false);
             }
 

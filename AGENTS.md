@@ -59,8 +59,9 @@ Do not load historical TODO bodies or all reports to start a session.
 
 - Four players, one rotating taya; retrieval is the tension. Classic and Hero Strike
   both ship, normally eight rounds. No Street Hype.
-- Stable IDs differ from displayed names. Read `Roster` and `EconomyRules.UnlockedHeroes`;
-  Rago (`sean`) was unlocked on October 24. Do not restore the old five-hero lock.
+- Stable IDs differ from displayed names. Preserve `Roster` order. Owner, October 28:
+  all nine heroes are unlocked and each character belongs to one player per match.
+  MIRROR is retired from new matches; its wire value stays reserved for history.
 - Paete and Phaister's finalized kits/art stay protected. Demonstrated bug fixes,
   authorized shared changes and newer explicit owner instructions still apply.
   Current authored models and motion supersede older prototype restoration plans.
