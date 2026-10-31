@@ -1044,9 +1044,12 @@ namespace TumbangPreso.CameraSystem
             });
         }
 
+        /// <summary>Benchmark only (`-tp-no-replay`): an A/B for the uneven frames (owner, 2026-10-31).</summary>
+        internal static bool BenchNoReplayCapture;
+
         private void RecordReplayFrame()
         {
-            if (_broadcastPaused) return;
+            if (_broadcastPaused || BenchNoReplayCapture) return;
 
             _replayRecordAccum += Time.unscaledDeltaTime;
             if (_replayRecordAccum < ReplaySampleInterval) return;
