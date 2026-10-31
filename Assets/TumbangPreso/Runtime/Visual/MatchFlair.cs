@@ -537,6 +537,7 @@ namespace TumbangPreso.Visual
             Vector3 touch = taya.GetComponent<CharacterAnimator>() != null
                 ? taya.GetComponent<CharacterAnimator>().AcceptedTagContact : victim.transform.position + Vector3.up;
             rig.PresentTagTouch(touch);
+            ImpactBurst.SpawnAt(touch);
             rig.HoldFrame(.06f);
             Vector3 toward = touch - rig.transform.position;
             Vector3 local = rig.transform.InverseTransformDirection(toward);

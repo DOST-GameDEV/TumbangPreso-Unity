@@ -21,6 +21,9 @@ namespace TumbangPreso.Visual
     public sealed class CaughtAfterimage : MonoBehaviour
     {
         public const float HoldSeconds = CharacterAnimator.CaughtHoldSeconds, KnockSeconds = .24f, YankSeconds = .16f, StreakSeconds = .34f;
+        // The one shove, here and in the tag replay (`CatchReconstruction`), so the two can never disagree. The flash stays
+        // low enough that the hand landing on this body can still be seen against it.
+        public const float KnockDistance = .32f, KnockTilt = 26f, KnockFlash = .45f;
         public static int Played { get; private set; }
         private static readonly System.Collections.Generic.Dictionary<int, CaughtAfterimage> Live =
             new System.Collections.Generic.Dictionary<int, CaughtAfterimage>();
@@ -114,10 +117,10 @@ namespace TumbangPreso.Visual
                 float u = (t - knockAt) / KnockSeconds, e = 1 - (1 - u) * (1 - u);
                 Vector3 axis = Vector3.Cross(Vector3.up, _push);
                 if (axis.sqrMagnitude < .0001f) axis = root.right;
-                root.SetPositionAndRotation(_feet + _push * (.32f * e), Quaternion.AngleAxis(26f * e, axis.normalized) * _rest);
+                root.SetPositionAndRotation(_feet + _push * (KnockDistance * e), Quaternion.AngleAxis(KnockTilt * e, axis.normalized) * _rest);
                 float squash = .12f * Mathf.Sin(u * Mathf.PI);
                 root.localScale = new Vector3(_restScale.x * (1 + squash * .5f), _restScale.y * (1 - squash), _restScale.z * (1 + squash * .5f));
-                Flash(.85f * (1 - u));
+                Flash(KnockFlash * (1 - u));
                 return;
             }
             if (!_yanked)
@@ -132,9 +135,9 @@ namespace TumbangPreso.Visual
                 float e = y * y, upright = 1 - (1 - y) * (1 - y);
                 Vector3 axis = Vector3.Cross(Vector3.up, _push);
                 if (axis.sqrMagnitude < .0001f) axis = Vector3.right;
-                root.rotation = Quaternion.AngleAxis(26f * (1 - upright), axis.normalized) * _rest;
+                root.rotation = Quaternion.AngleAxis(KnockTilt * (1 - upright), axis.normalized) * _rest;
                 root.localScale = new Vector3(_restScale.x * Mathf.Lerp(1, .06f, e), _restScale.y * Mathf.Lerp(1, 1.45f, e), _restScale.z * Mathf.Lerp(1, .06f, e));
-                root.position = _feet + _push * .32f + Vector3.up * (.35f * e);
+                root.position = _feet + _push * KnockDistance + Vector3.up * (.35f * e);
                 Flash(.6f * e);
             }
             else foreach (var renderer in _copy.Renderers) if (renderer != null) renderer.forceRenderingOff = true;

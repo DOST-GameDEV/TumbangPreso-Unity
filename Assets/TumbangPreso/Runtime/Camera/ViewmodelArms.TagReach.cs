@@ -21,7 +21,7 @@ namespace TumbangPreso.CameraSystem
     public sealed partial class ViewmodelArms
     {
         private bool _tagApplied;
-        private Vector3 _tagRightPos, _tagLeftPos;
+        private Vector3 _tagRightPos, _tagLeftPos, _tagRightScale;
         private Quaternion _tagRightRot, _tagRightArm;
 
         /// <summary>Where the jab's fist lands, in the view model's space: just right of and under the crosshair.</summary>
@@ -30,11 +30,17 @@ namespace TumbangPreso.CameraSystem
         public static readonly Vector3 LungeFist = new Vector3(.04f, -.08f, 1.26f);
         /// <summary>Where the right forearm comes from (off the bottom right of the screen), for the line it is laid along.</summary>
         private static readonly Vector3 RightShoulder = new Vector3(.46f, -.86f, -.05f);
+        // Owner, October 31: "panget ng tag sa fpp", "make it look like actual tagging". Laid along the old shoulder line the
+        // forearm pointed straight into the screen: a big sleeve end-on, the hand hidden behind it, an elbow rather than a
+        // hand. This line comes across from the right, so the forearm lies diagonally with the hand clear in front of it.
+        private static readonly Vector3 SwingShoulder = new Vector3(.98f, -.74f, .26f);
+        // The swing arrives from out to the side, on an arc.
+        private static readonly Vector3 SwingFrom = new Vector3(.34f, -.18f, -.12f);
 
         private void RestoreTagReach()
         {
             if (!_tagApplied) return;
-            if (_rightPivot != null) { _rightPivot.localPosition = _tagRightPos; _rightPivot.localRotation = _tagRightRot; }
+            if (_rightPivot != null) { _rightPivot.localPosition = _tagRightPos; _rightPivot.localRotation = _tagRightRot; _rightPivot.localScale = _tagRightScale; }
             if (_rightArm != null) _rightArm.localRotation = _tagRightArm;
             if (_leftPivot != null) _leftPivot.localPosition = _tagLeftPos;
             _tagApplied = false;
@@ -44,7 +50,7 @@ namespace TumbangPreso.CameraSystem
         // moving ur hand". The reach went to a fixed point whoever was there, and snapped home on its own clock. An accepted
         // tag now takes the hand: it lands ON the caught body wherever that is on screen, stays on it through the caught
         // body's held touch (`CaughtAfterimage.HoldSeconds`), then shoves through as that body is knocked off it.
-        public const float TouchReach = .05f, TouchHold = .30f, TouchEnd = .52f;
+        public const float TouchReach = .09f, TouchHold = .30f, TouchEnd = .52f;
         private const float TouchShove = .16f;
         private Vector3 _touchWorld;
         private float _touchAt = -100f;
@@ -87,10 +93,18 @@ namespace TumbangPreso.CameraSystem
             }
             if (w <= .001f) return;
             _tagRightPos = _rightPivot.localPosition; _tagRightRot = _rightPivot.localRotation; _tagRightArm = _rightArm.localRotation;
+            _tagRightScale = _rightPivot.localScale;
             _tagLeftPos = _leftPivot.localPosition;
             _tagApplied = true;
 
-            AimForearm(_rightPivot, _rightArm, _rightRest, fist, RightShoulder, w);
+            // Long and thin on the way in; on the touch the hand lands flat and wide, and eases back while it is held there.
+            float travel = Mathf.Clamp01((touching ? touchTime / TouchReach : t / (lunge ? .10f : .09f)));
+            fist += SwingFrom * ((1 - travel) * (1 - travel));
+            float reachStretch = (1 - travel) * .12f;
+            float flat = touching && touchTime >= TouchReach ? Mathf.Exp(-(touchTime - TouchReach) * 11f) : 0;
+            _rightPivot.localScale = Vector3.Scale(_tagRightScale, new Vector3(
+                1 + (.24f * flat - .07f * reachStretch / .12f) * w, 1 + (reachStretch - .15f * flat) * w, 1 + .18f * flat * w));
+            AimForearm(_rightPivot, _rightArm, _rightRest, fist, SwingShoulder, w);
             // The off hand drops back and out of the way, as a body does to throw its weight behind the reach.
             _leftPivot.localPosition += new Vector3(.04f, -.12f, -.10f) * w;
         }

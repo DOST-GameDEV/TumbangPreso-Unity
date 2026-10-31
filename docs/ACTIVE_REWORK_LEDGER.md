@@ -4,8 +4,9 @@ Updated 2026-10-31. [TODO](TODO.md) is the only active queue.
 
 - FEEL-1031, on main: replay wipes, spectator 3D replay, break card, impact, 0.6 m knockback,
   SFX. Film: run_ui_player_review.py --feel-only. Next: owner review.
-- FPP-TAG-1031, on main: FPP tag, can raise, chat bar. Open: replay test failure
-  and arm spin in tag replay. Next: owner review.
+- TAG-FEEL-1031, on main: one tag live and in replay (spacing, reach, shared shove), FPP swing, replay impact on hand
+  arrival, taya warnings on the red tile, moment families, feed icons. Open: running tag stacks in the replay
+  (Logs/feel-film/4e), arm spin in tag replay. Next: owner review.
 - ONLINE-CAST-1028: 73b1f403b pushed/built. Ult victims stand on own floor from the
   host-frozen pose; GroundY ignores awnings. Payo delayed pairs: Cheska gap 0, Nemu 0.015,
   Paete tree grounded. Next: victims in Paete/Amihan/Phaister reach, then multi-PC.
@@ -17,9 +18,6 @@ Updated 2026-10-31. [TODO](TODO.md) is the only active queue.
   those patches. Emulator/native jobs are stopped.
 - Keep `mobile+network` separate from main; current main is included.
   Preserve owner metadata/settings and stage only explicit owned paths.
-- Cleanup aaf96e52e1 integrated BugFix47487eda7; BugFix is deleted. Removed
-  107.2 MiB proven-unused assets and shortened entry docs97.62%.
-  [Receipt](reports/repository-cleanup-2026-10-25.md).
 - Desktop spectator is on main: grouped live controls, calmer camera, actual
   player eyes/hands/lens,21 bodies/six maps/private cues.
   [Evidence](reports/spectator-2026-10-25/README.md).

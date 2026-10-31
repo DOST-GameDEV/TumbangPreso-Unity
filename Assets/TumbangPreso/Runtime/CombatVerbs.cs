@@ -322,6 +322,7 @@ namespace TumbangPreso
 
             _punchCooldown = _punchCooldownTotal = Balance.PunchCooldown;
             _punchPressSpent = true;
+            WarnWhyNoTag(Balance.PunchRange);
 
             // Same rule as the shove: the jab reads on the swing, in both views, and it asks for
             // its own view kick rather than relying on the fallback the new `punch` clip has now
@@ -389,6 +390,7 @@ namespace TumbangPreso
         private void ReleaseLunge(float power)
         {
             _lungeCooldown = Combat.LungeCooldownFor(power);
+            WarnWhyNoTag(Balance.PunchRange * 2);
 
             // ⚠️ THE SAME TWO-SITE PAIRING THE SHOVE ABOVE EXPLAINS. This is the host's own
             // body and the solo game; `HostResolveLunge` is a client's, resolved on the host.
@@ -674,6 +676,33 @@ namespace TumbangPreso
         }
 
         // -------------------------------------------------------------------
+
+        /// <summary>
+        /// The taya swung at somebody the touch cannot land on: say why, on their own screen (`TayaGuide`). Only for
+        /// the nearest attacker actually in front of them, and silent if a legal target is there too.
+        /// </summary>
+        private void WarnWhyNoTag(float range)
+        {
+            var round = GameServices.Round;
+            if (round == null || !_motor.IsDefender) return;
+            Vector3 facing = transform.forward; facing.y = 0.0f; facing.Normalize();
+            string why = null;
+            float nearest = float.MaxValue;
+            foreach (var p in round.Bodies)
+            {
+                if (p == null || p == _motor || p.IsDefender) continue;
+                Vector3 to = p.transform.position - transform.position; to.y = 0.0f;
+                float d = to.magnitude;
+                if (d > range || d < .001f || !Combat.InCone(d, Vector3.Angle(facing, to / d), range, Balance.PunchArcDeg)) continue;
+                if (round.CanBeTaggedNow(p)) return;
+                if (d >= nearest) continue;
+                nearest = d;
+                why = UI.TayaGuide.WhyNoTag(round.Lata != null && round.Lata.IsUpright,
+                    p.IsAloft || (p.AbilitySystem != null && p.AbilitySystem.IsImmuneToTags),
+                    p.IsVulnerable, p.HoldingSlipper, p.IsInsideBox());
+            }
+            UI.TayaGuide.Warn(_motor, why);
+        }
 
         private CharacterMotor FindInCone(float range, float halfAngleDeg, bool requireTaggable)
             => FindInCone(transform.position, transform.forward, range, halfAngleDeg, requireTaggable);

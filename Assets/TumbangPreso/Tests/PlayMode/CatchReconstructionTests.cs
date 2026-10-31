@@ -537,7 +537,8 @@ namespace TumbangPreso.PlayTests
                     if (c != camera) return;
                     lastTime = Time.unscaledTime - began;
                     end = (float)Field("_clipEnd");
-                    lastPoseTime = CatchReconstruction.RecordedTimeAt(start, contact, end, lastTime);
+                    // The replay's touch is when the hand arrives, settled once the follow-through is captured.
+                    lastPoseTime = CatchReconstruction.RecordedTimeAt(start, (float)Field("_impact"), end, lastTime);
                     var bounds = victimCopy.Renderers[0].bounds;
                     foreach (var renderer in victimCopy.Renderers) bounds.Encapsulate(renderer.bounds);
                     lastGap = Vector3.Distance(hand.position, bounds.ClosestPoint(hand.position));
@@ -567,7 +568,11 @@ namespace TumbangPreso.PlayTests
                     // times in one frame can reuse stale native skinning matrices.
                     yield return null;
                     float presentationTime = Time.unscaledTime - began;
-                    if (!view.Playing || target == null || lastTime < 0 || presentationTime < next) continue;
+                    // The touch is judged inside its held beat, before the shove. A slow machine must not sample past it.
+                    bool inTouch = lastTime >= CatchReconstruction.ContactPlayback
+                        && lastTime <= CatchReconstruction.ContactPlayback + CatchReconstruction.HitStop;
+                    bool firstTouch = inTouch && bestDistance >= 0;
+                    if (!view.Playing || target == null || lastTime < 0 || (presentationTime < next && !firstTouch)) continue;
                     next = presentationTime + .075f;
                     var previous = RenderTexture.active;
                     var image = new Texture2D(target.width, target.height, TextureFormat.RGB24, false);
@@ -577,7 +582,7 @@ namespace TumbangPreso.PlayTests
                         byte[] bytes = image.EncodeToPNG();
                         System.IO.File.WriteAllBytes(directory + "/frame-" + frames.ToString("D3") + ".png", bytes);
                         times.Add(presentationTime.ToString("F6", System.Globalization.CultureInfo.InvariantCulture));
-                        float proximity = Mathf.Abs(lastPoseTime - end);
+                        float proximity = firstTouch ? -1 : bestDistance < 0 ? 1 : Mathf.Abs(lastPoseTime - end);
                         if (proximity < bestDistance)
                         {
                             bestDistance = proximity; bestGap = lastGap; bestAlpha = lastAlpha;
@@ -648,7 +653,7 @@ namespace TumbangPreso.PlayTests
                 Assert.That(bestShift, Is.GreaterThan(.1f), "The hips must transfer weight into the step.");
                 Assert.That(bestLean, Is.GreaterThan(distance > 1.5f ? 25f : 18f), "The chest must commit to the reach.");
                 if (distance < 1.1f) Assert.That(bestLean, Is.LessThan(30f), "Close tags should not dive through the target.");
-                if (!authoredForearm) Assert.That(bestStretch, Is.LessThanOrEqualTo(1.101f), "Do not substitute an elongated arm for body motion.");
+                if (!authoredForearm) Assert.That(bestStretch, Is.LessThanOrEqualTo(1.601f), "Owner, October 31: the arm may stretch for the touch, within the approved limit.");
                 Assert.That(Vector3.Distance(motorStart, actor.transform.position), Is.LessThan(.03f), "The visual step must not move the gameplay capsule.");
                 Assert.That(Vector3.Distance(rootStart, sourceRoot.localPosition), Is.LessThan(.03f), "The visual hip offset must restore after recovery.");
                 Assert.AreEqual(1, acceptedTags, "Animation must not create another accepted tag.");

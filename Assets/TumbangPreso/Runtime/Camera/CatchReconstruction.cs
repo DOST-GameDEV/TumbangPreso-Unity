@@ -25,7 +25,11 @@ namespace TumbangPreso.CameraSystem
         private Canvas _canvas;
         private RawImage _picture;
         private ReplayOverlay _overlay;
-        private float _contact, _began, _duration, _fade = FadeDuration;
+        // ⚠️ THE TOUCH IS WHEN THE HAND ARRIVES (owner, October 31: "tag in ur replays ... dont connect"). `_contact` is the
+        // frame the tag was accepted, about a tenth of a second before the recorded hand lands. The flash, TAGGED and the
+        // shove all waited on it, so they went off with the arm still travelling. They wait on `_impact` now.
+        private float _contact, _impact, _began, _duration, _fade = FadeDuration;
+        private const float HandArrives = .1f;
         private bool _skipHeld;
         private float _shotSide;
         private Vector3 _shotFocus;
@@ -56,11 +60,15 @@ namespace TumbangPreso.CameraSystem
         // seconds in all, inside the five-second stun: 1.6 s of approach shown in 1.1 s, the last 0.35 s
         // before the touch stretched over 0.9 s, the follow-through over 0.9 s, and a 1.1 s hold.
         public const float LeadSeconds = 1.6f;
-        public const float ApproachPlayback = 1.1f, IntoContactPlayback = .9f, FollowPlayback = .9f;
+        // Owner, October 31: "looks so bad and clunky", "sometimes it looks really awkward / fake". The touch used to
+        // arrive at zero speed and the follow-through then crept at a fifth of life. It now lands while still moving
+        // (`TouchSpeed`), stops dead for a beat (`HitStop`), and the victim is knocked off the hand.
+        public const float ApproachPlayback = 1.1f, IntoContactPlayback = .7f, HitStop = .18f, FollowPlayback = .4f;
         public const float ContactPlayback = ApproachPlayback + IntoContactPlayback;
-        public const float AnimationDuration = ApproachPlayback + IntoContactPlayback + FollowPlayback;
+        public const float AnimationDuration = ContactPlayback + HitStop + FollowPlayback;
+        private const float TouchSpeed = .3f;
         // Owner, October 31: "feels awkward af". The dead hold is shorter, and a wipe now opens and closes it.
-        public const float FreezeDuration = .8f;
+        public const float FreezeDuration = .5f;
         public const float FadeDuration = .18f;
         // Owner, October 31: "kahit mabilis lang kasi may replay din naman pero atleast make it feel and look like natag sila".
         // The wipe used to cover the victim's screen on the tag's own frame, before the hit could land. It waits this long.
@@ -73,13 +81,18 @@ namespace TumbangPreso.CameraSystem
         // Keep the recorded hand at its settled tag reach, before retraction. The replay's held frame is
         // this moment, so it must still show the touch: the victim's recoil and the taya's GOT YOU wait
         // for it (`CharacterAnimator.CaughtHoldSeconds`, `TagWinDelay`).
-        private const float Followthrough = .18f;
+        private const float Followthrough = .3f;
         private const float ShotFov = 58;
         public bool Playing => _stage != null;
         private static CatchReconstruction _live;
         /// <summary>True while a tag replay owns this screen; the live court's tag markers step aside for it.</summary>
         public static bool AnyPlaying => _live != null && _live.Playing;
-        private bool _slammed, _shotPlaced, _closeShot, _cutDone, _exitSwept;
+        private bool _slammed, _shotPlaced, _exitSwept;
+        // The one lens direction of this replay, chosen at the start (`ChooseShot`).
+        private Vector3 _shotDirection, _contactLens, _knockAway;
+        private float _shotReach = 1;
+        private MaterialPropertyBlock _flashBlock;
+        private const float WideReach = 2.9f, CloseReach = 2.15f, PushInSeconds = .55f;
         // ⚠️ SPECTATORS SEE IT TOO (owner, October 22: *"make it seaable ren for spectator"*), as a corner
         // window over the live picture: a watcher has no stun to fill and must not lose the match behind it.
         private bool _spectatorView;
@@ -99,11 +112,16 @@ namespace TumbangPreso.CameraSystem
             if (elapsed <= ApproachPlayback) return Mathf.Lerp(start, slow, Mathf.Max(0, elapsed) / ApproachPlayback);
             if (elapsed <= ContactPlayback)
             {
-                float u = (elapsed - ApproachPlayback) / IntoContactPlayback;
-                return Mathf.Lerp(slow, contact, 1 - (1 - u) * (1 - u) * (1 - u));
+                // A curve that leaves at the approach's speed and arrives still moving at `TouchSpeed`.
+                float span = contact - slow;
+                if (span <= .0001f) return contact;
+                float u = (elapsed - ApproachPlayback) / IntoContactPlayback, uu = u * u, uuu = uu * u;
+                float leave = Mathf.Min(3, (slow - start) / ApproachPlayback * IntoContactPlayback / span);
+                float arrive = Mathf.Min(3, TouchSpeed * IntoContactPlayback / span);
+                return slow + span * Mathf.Clamp01((uuu - 2 * uu + u) * leave + (3 * uu - 2 * uuu) + (uuu - uu) * arrive);
             }
-            float v = Mathf.Clamp01((elapsed - ContactPlayback) / FollowPlayback);
-            return Mathf.Lerp(contact, Mathf.Max(contact, end), Mathf.SmoothStep(0, 1, v));
+            float v = Mathf.Clamp01((elapsed - ContactPlayback - HitStop) / FollowPlayback);
+            return Mathf.Lerp(contact, Mathf.Max(contact, end), 1 - (1 - v) * (1 - v));
         }
         public float Remaining => Playing ? Mathf.Max(0, _duration - (Time.unscaledTime - _began)) : 0;
 
@@ -183,7 +201,7 @@ namespace TumbangPreso.CameraSystem
             if (_actorCopy == null || _victimCopy == null) { End(); return; }
             _actorTrack = actor; _victimTrack = victimTrack; _victim = victim;
             _spectatorView = Watching; _rig = _spectatorView ? null : rig;
-            _contact = contact; _began = Time.unscaledTime + (_spectatorView ? 0 : VictimHitBeat);
+            _contact = contact; _impact = contact + HandArrives; _began = Time.unscaledTime + (_spectatorView ? 0 : VictimHitBeat);
             _duration = Mathf.Min(ReplayDuration, victim.StunLeft - FadeDuration - VictimHitBeat);
             _fade = FadeDuration; _skipHeld = !_spectatorView && victim.Intent.Pressed(Verb.Interact);
             if (_spectatorView) _duration = ReplayDuration;
@@ -199,26 +217,76 @@ namespace TumbangPreso.CameraSystem
             _actorContact = _actorCopy.Root.transform.position; _victimContact = _victimCopy.Root.transform.position;
             _victimFacing = _victimCopy.Root.transform.rotation;
             CopyHeldItem(victimTrack, _victimCopy);
-            Vector3 forward = _victimContact - _actorContact; forward.y = 0;
+            // The lens is square to the pair as they will be when the hand lands: a running taya is still carried on by then.
+            Vector3 landing = _actorContact;
+            if (actor.TryRootAt(contact - HandArrives, out Vector3 earlier, out _)) landing += _actorContact - earlier;
+            Vector3 forward = _victimContact - landing; forward.y = 0;
+            if (forward.sqrMagnitude < .01f) forward = _victimContact - _actorContact;
+            forward.y = 0;
             if (forward.sqrMagnitude < .01f) forward = _victimFacing * Vector3.forward;
             forward.Normalize();
-            Vector3 focus = (_actorContact + _victimContact) * .5f + Vector3.up * .9f;
-            float right = ShotDistance(focus, ShotOffset(forward, 1));
-            float left = ShotDistance(focus, ShotOffset(forward, -1));
-            _shotSide = left > right + .2f ? -1 : 1;
-            // A cramped contact gets the normal recovery view rather than a camera
-            // pushed into a face. Pick once so moving contacts cannot flip the shot.
-            if (Mathf.Max(left, right) < 1.65f) { End(); return; }
-            // ⚠️ THE CUT (owner, October 22: *"minsan ang engot ng angles or hindi ramdam"*). The approach is the
-            // side two-shot; at the touch it cuts in tight to a three-quarter profile of the pair, swung toward the
-            // victim's face, so the reaching arm, the touch and both reactions read (`CloseOffset`). Only when that
-            // lens is clear: otherwise the side shot carries it all.
-            Vector3 victimCentre = _victimContact + Vector3.up * .95f;
-            Vector3 front = CloseOffset(forward, _victimFacing * Vector3.forward, _shotSide);
-            _closeShot = ShotDistance(victimCentre, front) >= front.magnitude - .05f;
-            _cutDone = false;
+            _knockAway = forward;
+            // A cramped contact gets the normal recovery view rather than a camera pushed into a face.
+            if (!ChooseShot(forward, actor, victimTrack)) { End(); return; }
+            _flashBlock = new MaterialPropertyBlock();
             _stage.SetActive(true);
             BuildView();
+        }
+        // ⚠️ ONE ANGLE, CHOSEN ONCE (owner, October 31: "sometimes its a really bad angle"). The lens used to take its
+        // direction from the pair every frame, which swings wildly as two close bodies pass, and picked its side only
+        // by which had more room, so it could film the backs of both heads. Every candidate here is scored on what it
+        // shows at the touch, and on staying clear of scenery over the approach, and the winner holds to the end.
+        private bool ChooseShot(Vector3 line, MatchPoseHistory.Track actor, MatchPoseHistory.Track victim)
+        {
+            Vector3 victimFace = Flat(_victimFacing * Vector3.forward), actorFace = Flat(_actorCopy.Root.transform.forward);
+            Vector3 focus = (_actorContact + _victimContact) * .5f + Vector3.up * .9f;
+            float best = float.MinValue, bestClear = 0; Vector3 bestDirection = default;
+            float[] swings = { 0, 20, -20, 35, -35, 55, -55 };
+            for (int side = -1; side <= 1; side += 2)
+                foreach (float swing in swings)
+                {
+                    Vector3 direction = Quaternion.AngleAxis(swing, Vector3.up) * (Vector3.Cross(Vector3.up, line) * side);
+                    Vector3 lens = direction * WideReach + Vector3.up * .55f;
+                    float clear = ShotDistance(focus, lens);
+                    // Off the perpendicular one body stacks on the other: the hardest penalty after a blocked lens.
+                    float score = 1.4f * Vector3.Dot(direction, victimFace) + .7f * Vector3.Dot(direction, actorFace)
+                        - 2.4f * Mathf.Abs(Vector3.Dot(direction, line));
+                    if (clear < lens.magnitude - .05f) score -= 6 + (lens.magnitude - clear);
+                    // The can is drawn live and is no collider to this lens: right under it, it fills the foreground.
+                    var can = GameServices.Round != null ? GameServices.Round.Lata : null;
+                    if (can != null && Vector3.Distance(can.transform.position, focus + lens) < 2.2f) score -= 2;
+                    float[] moments = { _clipStart, (_clipStart + _contact) * .5f };
+                    foreach (float moment in moments)
+                        if (victim.TryRootAt(moment, out Vector3 root, out _) &&
+                            ShotDistance(root + Vector3.up * .95f, lens) < lens.magnitude - .05f) score -= .9f;
+                    if (score > best) { best = score; bestDirection = direction; bestClear = clear; }
+                }
+            float reach = Mathf.Sqrt(WideReach * WideReach + .55f * .55f);
+            if (bestClear < 1.65f) return false;
+            _shotDirection = bestDirection;
+            _shotReach = Mathf.Min(1, bestClear / reach);
+            _shotSide = Vector3.Dot(Vector3.Cross(Vector3.up, line), bestDirection) >= 0 ? 1 : -1;
+            _contactLens = focus + (bestDirection * WideReach + Vector3.up * .55f) * _shotReach;
+            return true;
+        }
+        private static Vector3 Flat(Vector3 v) { v.y = 0; return v.sqrMagnitude > .0001f ? v.normalized : Vector3.zero; }
+        // The caught body is knocked off the hand and tips about its feet, as it does live (`CaughtAfterimage`), rather
+        // than standing pinned in whatever stride the tag found it.
+        private void PoseCaughtBody(float elapsed)
+        {
+            float v = Mathf.Clamp01((elapsed - ContactPlayback - HitStop) / FollowPlayback), e = 1 - (1 - v) * (1 - v) * (1 - v);
+            var root = _victimCopy.Root.transform;
+            Vector3 axis = Vector3.Cross(Vector3.up, _knockAway);
+            root.SetPositionAndRotation(_victimContact + _knockAway * (CaughtAfterimage.KnockDistance * e),
+                Quaternion.AngleAxis(CaughtAfterimage.KnockTilt * e, axis) * _victimFacing);
+            float squash = .1f * Mathf.Sin(Mathf.Min(1, v * 2) * Mathf.PI);
+            root.localScale = Vector3.Scale(root.localScale, new Vector3(1 + squash * .5f, 1 - squash, 1 + squash * .5f));
+            float flash = elapsed < ContactPlayback ? 0 : CaughtAfterimage.KnockFlash * (1 - Mathf.Clamp01(v * 2.5f));
+            foreach (var renderer in _victimCopy.Renderers)
+            {
+                if (renderer == null) continue;
+                renderer.GetPropertyBlock(_flashBlock); _flashBlock.SetFloat("_FlashAmount", flash); renderer.SetPropertyBlock(_flashBlock);
+            }
         }
         private void CopyHeldItem(MatchPoseHistory.Track track, MatchPoseHistory.Copy copy)
         {
@@ -328,7 +396,7 @@ namespace TumbangPreso.CameraSystem
             float sinceContact = elapsed - ContactPlayback;
             var look = Settings.SettingsStore.Current;
             float flash = sinceContact < 0 || look.ReducedEffects ? 0
-                : .55f * Mathf.Clamp01(1 - sinceContact / .16f) * look.EffectiveFlashIntensity;
+                : .1f * Mathf.Clamp01(1 - sinceContact / .12f) * look.EffectiveFlashIntensity;
             _flash.color = new Color(1, 1, 1, flash * alpha);
             // THE HOLD IS THE CAPTURED IMAGE, NOTHING LIVE RENDERS INTO IT, and the live match never pauses behind it.
             // Its push-in is the frozen picture itself easing larger, not the camera rendering again. A spectator's
@@ -351,21 +419,23 @@ namespace TumbangPreso.CameraSystem
                 // the strongest actual accepted-contact pose, never that return
                 // or a synthetic interpolation between touch and recovery.
                 float available = Mathf.Min(_actorTrack.Newest, _victimTrack.Newest);
-                _clipEnd = _actorTrack.TryTagContactFrame(_contact, available, _victim.PlayerSlot, _contact + Followthrough, out float peak)
-                    ? peak : available;
+                _clipEnd = _actorTrack.TryTagContactFrame(_contact, available, _victim.PlayerSlot, _impact, out float peak)
+                    ? peak : Mathf.Min(_impact, available);
+                _impact = _clipEnd;
                 if (!RetainClip(_clipEnd))
                     _clipEnd = Mathf.Min(_actorClip.End, _victimClip.End);
             }
             // The approach, the slowed touch and its follow-through; past them the last frame is held live.
-            float recordedTime = RecordedTimeAt(_clipStart, _contact, _clipEnd, elapsed);
-            _actorClip.Apply(_actorCopy.Bones, recordedTime); _victimClip.Apply(_victimCopy.Bones, recordedTime);
-            if (recordedTime >= _contact)
-            {
-                // Keep only the penalized victim at contact. The tagger's real
-                // step and hand follow-through must remain in the recorded pose.
-                _victimCopy.Root.transform.SetPositionAndRotation(_victimContact, _victimFacing);
-            }
-            if (!PlaceShotCamera(elapsed)) { End(); return; }
+            float recordedTime = RecordedTimeAt(_clipStart, _impact, _clipEnd, elapsed);
+            // The victim's recorded recoil folds their head into the tagger's chest, by a different amount every time.
+            // Their pose holds at the touch and `PoseCaughtBody` plays the one shove.
+            _actorClip.Apply(_actorCopy.Bones, recordedTime); _victimClip.Apply(_victimCopy.Bones, Mathf.Min(recordedTime, _contact));
+            // The tagger's arm follows through, but their feet stop at the touch or they walk after the shoved body.
+            _actorCopy.Root.transform.position = _actorClip.SmoothRoot(Mathf.Min(recordedTime, _impact));
+            _victimCopy.Root.transform.position = _victimClip.SmoothRoot(Mathf.Min(recordedTime, _contact));
+            if (elapsed >= ContactPlayback) PoseCaughtBody(elapsed);
+            // Scenery on the way: keep the lens where it stands, or start at the touch's own clear lens, and pan.
+            if (!PlaceShotCamera(elapsed)) HoldLens(elapsed);
             try
             {
                 RenderOnlyCopies();
@@ -387,13 +457,15 @@ namespace TumbangPreso.CameraSystem
             Vector3 towardTagger = actorBounds.center - victimBounds.center;
             Vector3 focus = victimBounds.center + Vector3.ClampMagnitude(towardTagger * .18f, .65f);
             Vector3 offset = ShotOffset(forward, _shotSide);
-            if (_closeShot && elapsed >= ContactPlayback - .06f)
+            if (_shotDirection != Vector3.zero)
             {
-                // A hard cut, not a glide: the lens jumps once to the reaction shot.
-                if (!_cutDone) { _cutDone = true; _shotPlaced = false; }
-                offset = CloseOffset(forward, _victimFacing * Vector3.forward, _shotSide);
+                // A glide in to the touch on the one chosen line. It was a hard cut, of too few degrees to read as
+                // anything but a jump of the whole street behind the players.
+                float near = Mathf.SmoothStep(0, 1, Mathf.InverseLerp(ContactPlayback - PushInSeconds, ContactPlayback, elapsed));
+                offset = (_shotDirection * Mathf.Lerp(WideReach, CloseReach, near) + Vector3.up * Mathf.Lerp(.55f, .22f, near)) * _shotReach;
                 // The touch is the subject: between the hand and the victim's chest, so both faces and the reach read.
-                focus = victimBounds.center + Vector3.up * .08f + Vector3.ClampMagnitude(towardTagger * .32f, .55f);
+                Vector3 closeFocus = victimBounds.center + Vector3.up * .08f + Vector3.ClampMagnitude(towardTagger * .32f, .55f);
+                focus = Vector3.Lerp(focus, closeFocus, near);
             }
             Quaternion rotation = Quaternion.LookRotation(-offset.normalized, Vector3.up);
             float desired = Mathf.Max(offset.magnitude, RequiredFrameDistance(victimBounds, focus, rotation));
@@ -401,26 +473,36 @@ namespace TumbangPreso.CameraSystem
             // distant speck. Close contact naturally gives a clear two-shot.
             float paired = Mathf.Max(desired, RequiredFrameDistance(actorBounds, focus, rotation));
             float prominent = victimBounds.size.y / (2 * Mathf.Tan(ShotFov * .5f * Mathf.Deg2Rad) * paired);
-            if (prominent >= .26f) desired = paired;
+            desired = Mathf.Lerp(desired, paired, Mathf.InverseLerp(.2f, .3f, prominent));
             float distance = ShotDistance(focus, offset.normalized * desired);
-            // A close shot that something has come in front of falls back to the side shot, never ends the replay.
-            if (distance < desired - .05f && _cutDone && _closeShot) { _closeShot = false; _shotPlaced = false; return PlaceShotCamera(elapsed); }
             if (distance < desired - .05f) return false;
             Vector3 position = focus + offset.normalized * distance;
             // Smoothed rather than re-solved each frame, so the framing glides instead of pumping.
-            float follow = _shotPlaced ? 1 - Mathf.Exp(-14 * Time.unscaledDeltaTime) : 1;
+            float follow = _shotPlaced ? 1 - Mathf.Exp(-10 * Time.unscaledDeltaTime) : 1;
             _camera.transform.position = Vector3.Lerp(_camera.transform.position, position, follow);
             _shotFocus = _shotPlaced ? Vector3.Lerp(_shotFocus, focus, follow) : focus;
             _shotPlaced = true;
+            AimLens(elapsed, rotation);
+            return true;
+        }
+        private void HoldLens(float elapsed)
+        {
+            Vector3 focus = RecordedBounds(_victimCopy).center;
+            if (!_shotPlaced) { _camera.transform.position = _contactLens; _shotFocus = focus; _shotPlaced = true; }
+            float follow = 1 - Mathf.Exp(-10 * Time.unscaledDeltaTime);
+            _shotFocus = Vector3.Lerp(_shotFocus, focus, follow);
+            AimLens(elapsed, _camera.transform.rotation);
+        }
+        private void AimLens(float elapsed, Quaternion rotation)
+        {
             float since = elapsed - ContactPlayback;
             bool calm = Settings.SettingsStore.Current.ReducedUiMotion;
-            float shake = since < 0 || calm ? 0 : 1.1f * Mathf.Exp(-since * 11);
+            float shake = since < 0 || calm ? 0 : .5f * Mathf.Exp(-since * 11);
             // The lens punches in on the touch, a few degrees narrower, and eases back out over the follow-through.
-            _camera.fieldOfView = ShotFov * (since < 0 || calm ? 1 : 1 - .09f * Mathf.Exp(-since * 5.5f));
+            _camera.fieldOfView = ShotFov * (since < 0 || calm ? 1 : 1 - .04f * Mathf.Exp(-since * 5.5f));
             Vector3 aim = _shotFocus - _camera.transform.position;
             _camera.transform.rotation = (aim.sqrMagnitude > .0001f ? Quaternion.LookRotation(aim, Vector3.up) : rotation)
                 * Quaternion.Euler(Mathf.Sin(elapsed * 71) * shake, Mathf.Sin(elapsed * 53 + 1.7f) * shake, 0);
-            return true;
         }
         private static Bounds RecordedBounds(MatchPoseHistory.Copy copy)
         {
@@ -462,26 +544,6 @@ namespace TumbangPreso.CameraSystem
         private static Vector3 ShotOffset(Vector3 forward, float side)
             => Vector3.Cross(Vector3.up, forward) * (2.9f * side) + forward * .85f + Vector3.up * .55f;
 
-        /// <summary>
-        /// The touch in profile: square to the line from the taya to the victim, swung a little toward
-        /// the victim's face, just under eye height. Both bodies, the reaching arm and the victim's reaction read; the
-        /// old front shot put the taya straight behind the victim, hidden.
-        /// </summary>
-        private static Vector3 CloseOffset(Vector3 line, Vector3 victimForward, float side)
-        {
-            line.y = 0; victimForward.y = 0;
-            if (line.sqrMagnitude < .01f) line = victimForward;
-            if (line.sqrMagnitude < .01f) line = Vector3.forward;
-            line.Normalize();
-            if (victimForward.sqrMagnitude < .01f) victimForward = line;
-            victimForward.Normalize();
-            Vector3 across = Vector3.Cross(Vector3.up, line) * side;
-            // Toward whichever end of the line the victim faces, so it is their face we see, never their back.
-            float toward = Vector3.Dot(victimForward, line) >= 0 ? 1 : -1;
-            // Nearly square to the pair: at the touch they stand a third of a metre apart, and anything much off
-            // the perpendicular stacks one body on the other (Logs/tag-contact-silhouettes, Basilio on Nemu).
-            return across * 2.15f + line * (toward * .45f) + Vector3.up * .22f;
-        }
         private float ShotDistance(Vector3 focus, Vector3 offset)
         {
             float distance = offset.magnitude;
@@ -560,7 +622,8 @@ namespace TumbangPreso.CameraSystem
             if (_stage != null) Destroy(_stage);
             _stage = null; _canvas = null; _target = null; _camera = null; _picture = null; _overlay = null; _flash = null;
             _actorCopy = _victimCopy = null; _actorTrack = _victimTrack = null; _victim = null;
-            _actorClip = _victimClip = null; _followthroughCaptured = _freezeCaptured = false; _closeShot = _cutDone = false;
+            _actorClip = _victimClip = null; _followthroughCaptured = _freezeCaptured = false;
+            _shotDirection = Vector3.zero; _shotReach = 1;
             _copiedItems = null; _hidden.Clear(); _previous.Clear(); _seen.Clear(); _scratch.Clear();
             _hiddenCanvases.Clear(); _canvasPrevious.Clear(); _canvasScratch.Clear();
         }
