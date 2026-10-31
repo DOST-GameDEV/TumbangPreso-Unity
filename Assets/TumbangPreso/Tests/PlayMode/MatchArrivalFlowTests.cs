@@ -309,6 +309,7 @@ namespace TumbangPreso.PlayTests
             var cacheField = typeof(WalletStore).GetField("_cache", flags);
             Assert.IsNotNull(relayField); Assert.IsNotNull(queryField); Assert.IsNotNull(cacheField);
             object oldRelay = relayField.GetValue(net), oldQuery = queryField.GetValue(net);
+            int lockedSlot = System.Array.IndexOf(EconomyRules.UnlockedHeroes, "zack");
             object oldCache = cacheField.GetValue(wallet);
             try
             {
@@ -318,6 +319,8 @@ namespace TumbangPreso.PlayTests
                 queryField.SetValue(net, null); // A LAN transport, with no hosted UGS query to update.
                 relayField.SetValue(net, true);
                 Assert.IsTrue(WalletStore.OnlineRoute);
+                // Every hero is unlocked today, so this case locks one to keep the locked presentation covered.
+                EconomyRules.UnlockedHeroes[lockedSlot] = "";
                 Assert.IsTrue(HubOwnership.OwnsHero("dante"));
                 Assert.IsFalse(HubOwnership.OwnsHero("zack"));
 
@@ -327,10 +330,10 @@ namespace TumbangPreso.PlayTests
                 var portraits = selector.GetComponentsInChildren<HubButton>(true);
                 var owned = portraits.Single(b => b.name == "Portrait0");
                 var unowned = portraits.Single(b => b.name == "Portrait3");
-                var ownedFace = owned.GetComponentsInChildren<Image>().Single(i => i.name == "Face");
-                var unownedFace = unowned.GetComponentsInChildren<Image>().Single(i => i.name == "Face");
-                Assert.IsFalse(owned.Hatched); Assert.AreEqual(Color.white, ownedFace.color);
-                Assert.IsTrue(unowned.Hatched); Assert.IsTrue(unowned.IsInteractable());
+                var ownedFace = owned.GetComponentsInChildren<Image>().Last(i => i.name == "Face"); // The plate is also Face; the picture sits on it.
+                var unownedFace = unowned.GetComponentsInChildren<Image>().Last(i => i.name == "Face"); // The plate is also Face; the picture sits on it.
+                Assert.AreEqual(Color.white, ownedFace.color);
+                Assert.IsTrue(unowned.IsInteractable());
                 Assert.AreEqual(0.62f, unownedFace.color.r, 0.001f);
                 Assert.AreEqual(0.62f, unownedFace.color.g, 0.001f);
                 Assert.AreEqual(0.62f, unownedFace.color.b, 0.001f);
@@ -350,6 +353,7 @@ namespace TumbangPreso.PlayTests
             }
             finally
             {
+                EconomyRules.UnlockedHeroes[lockedSlot] = "zack";
                 relayField.SetValue(net, oldRelay);
                 queryField.SetValue(net, oldQuery);
                 cacheField.SetValue(wallet, oldCache);

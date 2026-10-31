@@ -364,7 +364,7 @@ namespace TumbangPreso.UI.Hub
             _tagline.gameObject.SetActive(!hero);
             _tagline.text = hero ? "" : parts.Length > 1 ? parts[1] : tagline;
             _tagline.fontSize = HubStyle.Size(32);
-            _tagline.rectTransform.sizeDelta = new Vector2(480, Mathf.Ceil(_tagline.preferredHeight) + 4);
+            _tagline.rectTransform.sizeDelta = new Vector2(480, Mathf.Ceil(_tagline.preferredHeight) + 12); // Line metrics round up at other canvas scales.
 
             var art = RosterBook.Load().PersonArt(_pick, Mode);
             if (art != null) _preview.Show(art.Model, art.Clips, art.Palette, art.PetModel);
