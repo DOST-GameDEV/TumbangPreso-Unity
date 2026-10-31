@@ -32,11 +32,13 @@ try:
   (out/'job.json').write_text(json.dumps({'exe':str(exe),'port':port,'commands':commands,'pids':[x.pid for x in processes]},indent=2))
   if index==0:time.sleep(7)
   elif index==1:
-   deadline=time.monotonic()+15
+   deadline=time.monotonic()+60
    while time.monotonic()<deadline:
     log=out/'scorer.log'
     if log.exists() and 'LocalSlot=1' in log.read_text(errors='replace'):break
+    if processes[-1].poll() is not None:raise RuntimeError('Scorer exited before its actual seat admission')
     time.sleep(.25)
+   else:raise RuntimeError('Scorer did not receive seat1; do not launch a competing peer before it')
  if a.late_join:
   deadline=time.monotonic()+50
   while time.monotonic()<deadline:
@@ -88,26 +90,47 @@ for seat,name in enumerate(['host','scorer','observer']):
  if any(int(r['starts0']) or int(r['starts1']) for r in stable):errors.append(name+': live effects started before shared release')
  last=rows[-1]
  if int(last['starts0'])!=1 or int(last['starts1'])!=1 or int(last['starts2'])!=0:errors.append(name+': lost/duplicated effect or accepted late cast')
- if abs(float(last['initialWarning'])-1.55)>.01:errors.append(name+': playable Phaister warning was shortened')
+ # Current VOODOO DOLL activates instantly after its shared introduction and
+ # persists as registered companion bodies. RitualBuildSeconds belongs to its
+ # construction visual, not a playable HeroAbility windup. Keep the old CSV
+ # column for history; qualify the actual bodies and their own shoes instead.
+ dolls=[r for r in rows if all(int(r.get(k,'0')) for k in ('doll0','doll1','shoe0','shoe1'))]
+ if not a.disconnect_caster and len(dolls)<10:errors.append(name+': current companion bodies or shoes were not restored')
  baseline=float(rows[0]['charge2'])
  if baseline<=0 or any(abs(float(r['charge2'])-baseline)>.001 for r in rows):errors.append(name+': refused caster changed its actual initial meter')
  if abs(float(last['requested'])-.5)>.001:errors.append(name+': stale phase changed requested speed')
  if a.disconnect_caster and int(last.get('bot1','0'))!=1:errors.append(name+': departed caster did not receive bot handover')
- measured[name]={'rows':len(rows),'holdSeconds':float(active[-1]['server'])-float(active[0]['server']),'clockDrift':drift,'frozenClock':float(stable[0]['clock']),'cohort':max(int(r['count']) for r in active),'initialWarning':float(last['initialWarning']),'starts':[int(last['starts0']),int(last['starts1']),int(last['starts2'])]}
+ measured[name]={'rows':len(rows),'holdSeconds':float(active[-1]['server'])-float(active[0]['server']),'clockDrift':drift,'frozenClock':float(stable[0]['clock']),'cohort':max(int(r['count']) for r in active),'legacyInitialWarning':float(last['initialWarning']),'dollAndShoeSamples':len(dolls),'starts':[int(last['starts0']),int(last['starts1']),int(last['starts2'])]}
 clocks=[m['frozenClock'] for m in measured.values() if 'frozenClock' in m]
 if len(clocks)>=2 and max(clocks)-min(clocks)>.01:errors.append('peers disagree about the canonical frozen round clock')
 if a.late_join:
  path=out/'late.csv';rows=list(csv.DictReader(path.open())) if path.exists() else []
  if len(rows)<20 or any(int(r['local'])!=3 for r in rows):errors.append('late peer did not join the actual running match')
- elif not any(int(r.get('activeUlt1','0')) for r in rows):errors.append('late peer did not receive the current live ultimate state')
+ dolls=[r for r in rows if all(int(r.get(k,'0')) for k in ('doll0','doll1','shoe0','shoe1'))]
+ if len(dolls)<10:errors.append('late peer did not restore the current companion bodies and shoes')
  active=[r for r in rows if int(r['phase'])]
  if active and float(active[-1]['server'])-float(active[0]['server'])>2.9:errors.append('late peer restarted an entire expired phase')
  if rows and float(rows[-1]['scale'])==0:errors.append('late peer remained frozen')
- measured['late']={'rows':len(rows),'phaseSamples':len(active),'liveUltimateSamples':sum(int(r.get('activeUlt1','0')) for r in rows)}
+ if rows and not active and any(int(rows[-1][k]) for k in ('starts0','starts1')):errors.append('late persistent-state restore recast a finished introduction')
+ measured['late']={'rows':len(rows),'phaseSamples':len(active),'dollAndShoeSamples':len(dolls)}
+host_rows=list(csv.DictReader((out/'host.csv').open())) if (out/'host.csv').exists() else []
+for name in ['scorer','observer']+(['late'] if a.late_join else []):
+ records=list(csv.DictReader((out/(name+'.csv')).open())) if (out/(name+'.csv')).exists() else []
+ matched=[]
+ for row in records:
+  if not int(row.get('doll0','0')) or not int(row.get('doll1','0')):continue
+  candidates=[r for r in host_rows if int(r.get('doll0','0')) and int(r.get('doll1','0')) and abs(float(r['server'])-float(row['server']))<.2]
+  if not candidates:continue
+  reference=min(candidates,key=lambda r:abs(float(r['server'])-float(row['server'])))
+  matched.append(max(sum((float(row[f'doll{i}{axis}'])-float(reference[f'doll{i}{axis}']))**2 for axis in ('x','z'))**.5 for i in (0,1)))
+ if not a.disconnect_caster and len(matched)<10:errors.append(name+': insufficient time-matched companion positions')
+ if matched and max(matched)>.75:errors.append(name+': companion positions diverged from the host')
+ measured.setdefault(name,{})['matchedBodyPositions']=len(matched)
+ measured[name]['maxBodyPositionError']=max(matched,default=0)
 if a.old_exe:
  old_log=(out/'old.log').read_text(errors='replace') if (out/'old.log').exists() else ''
  if 'version mismatch' not in old_log.lower():errors.append('old protocol client refusal not witnessed')
 if not unchanged:errors.append('shared input preferences changed')
-result={'passed':not errors,'errors':errors,'measured':measured,'disconnectCaster':a.disconnect_caster,'lateJoin':a.late_join,'link':{'delayMs':a.delay,'jitterMs':a.jitter,'loss':a.loss,'seed':a.seed},'sharedInputUnchanged':unchanged,'scope':'Three original Windows peers with optional actual fourth join or accepted-caster departure; enabled fixture flags define coverage. Remote ultimate request, shared cohort/clock, costs, full warning, denied late cast and duplicate/stale phase. Link settings and packet-count log specify simulated conditions; no WAN claim.'}
+result={'passed':not errors,'errors':errors,'measured':measured,'disconnectCaster':a.disconnect_caster,'lateJoin':a.late_join,'link':{'delayMs':a.delay,'jitterMs':a.jitter,'loss':a.loss,'seed':a.seed},'sharedInputUnchanged':unchanged,'scope':'Three original Windows peers with optional fourth arrival or accepted-caster departure. Current VOODOO DOLL: shared cohort/clock, costs, registered companion bodies/shoes, time-matched positions, late restore without recast, denied late cast and duplicate/stale phase. Legacy windup column is historical; no authored kit changes. Not WAN or natural play.'}
 (out/'result.json').write_text(json.dumps(result,indent=2));print(json.dumps(result),flush=True)
 raise SystemExit(0 if result['passed'] else 1)

@@ -1,0 +1,21 @@
+{
+  "source": "0d8bee6baca72bd8985b05f58376389e65025203",
+  "scope": "Ordinary lobby/UI round with Windows gallery host and Android human seat1; read-only report, no parked input/view/throw fixture.",
+  "observed": [
+    "Host chose gallery and started from the actual lobby.",
+    "Android passed character selection and map arrival.",
+    "Actual stick gesture moved the phone player; held ability swipe changed view and accepted one skill.",
+    "Host and phone reports both count one skill in human seat1; HUD changed throw to lunge as role rotated."
+  ],
+  "limits": [
+    "Throw was refused for being inside the danger zone; not accepted throw proof.",
+    "BotsEnabled was OFF; not normal bot-play acceptance.",
+    "Host report timer ended first; Android report was written after host loss. Continuous travelled totals differ and are not a position-match assertion.",
+    "No natural Windows watched-FPP capture: app ended before the attempted shortcut."
+  ],
+  "hostReportSha256": "a1243b1858e1cad12f519333f1873a47ecdac433392eb860356204cf07420a74",
+  "androidReportSha256": "cbb7bfe5331d3c3de09080d730041cd811da37e5309bb8f96d8d7c1fd4d5733e",
+  "hostHumanSkillCasts": 1,
+  "androidHumanSkillCasts": 1,
+  "androidHumanTravelledMeters": 26.2
+}

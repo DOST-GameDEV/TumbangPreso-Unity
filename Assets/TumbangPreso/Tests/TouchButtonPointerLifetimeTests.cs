@@ -44,6 +44,23 @@ namespace TumbangPreso.Tests
         {
             Assert.IsFalse(_button.IsHeld); Assert.IsFalse(TouchInput.Pressed(Verb.SpecialAbility));
         }
+        [Test] public void HeldThrowCanAimWithItsCapturedThumbAndForeignDragsCannotStealIt()
+        {
+            var first=Pointer(101);first.delta=Vector2.right*30;var other=Pointer(202);other.delta=Vector2.up*80;
+            _button.OnPointerDown(first);_button.OnDrag(other);Assert.AreEqual(Vector2.zero,TouchInput.LookDelta);
+            _button.OnDrag(first);Held();Assert.Greater(TouchInput.LookDelta.x,0);
+            var amount=TouchInput.LookDelta;_button.OnPointerUp(other);Assert.AreEqual(amount,TouchInput.LookDelta);Held();
+            _button.OnPointerUp(first);Released();Assert.AreEqual(Vector2.zero,TouchInput.LookDelta);
+        }
+        [Test] public void LookAreaAndAimedButtonHaveOneSharedLookOwner()
+        {
+            var area=_root.AddComponent<TouchLookArea>();var first=Pointer(101);first.delta=Vector2.right*30;
+            var held=Pointer(202);held.delta=Vector2.up*80;
+            area.OnPointerDown(first);_button.OnPointerDown(held);_button.OnDrag(held);Assert.AreEqual(Vector2.zero,TouchInput.LookDelta);
+            area.OnDrag(first);Assert.Greater(TouchInput.LookDelta.x,0);Assert.AreEqual(0,TouchInput.LookDelta.y);
+            area.OnPointerUp(first);_button.OnDrag(held);Assert.Greater(TouchInput.LookDelta.y,0);Held();
+            TouchInput.ReleaseAll();_button.OnDrag(held);Assert.AreEqual(Vector2.zero,TouchInput.LookDelta);Released();
+        }
         [Test] public void LiftingTheSecondPointerDoesNotReleaseTheFirstPointer()
         {
             var first = Pointer(101); var second = Pointer(202);

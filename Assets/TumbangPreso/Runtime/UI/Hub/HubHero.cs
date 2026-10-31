@@ -261,7 +261,8 @@ namespace TumbangPreso.UI.Hub
                 float glyph = four ? 78 : 92;
                 HubKit.Place(symbol.rectTransform, HubKit.Top, new Vector2(0, four ? -8 : -12), new Vector2(glyph, glyph));
                 // A role kit's middle tiles name their role; the key is the same for both.
-                string caption = four && !screenSlots[i].IsUltimate && i > 0 ? screenSlots[i].Label : Hud.KeyLabelFor(screenSlots[i].Action);
+                bool touch = Application.isMobilePlatform || InputLayer.TouchHud.ForceVisible;
+                string caption = touch || (four && !screenSlots[i].IsUltimate && i > 0) ? screenSlots[i].Label : Hud.KeyLabelFor(screenSlots[i].Action);
                 var key = HubKit.Text(tile.Body, "Key", caption, HubStyle.Floor, true, HubKit.InkOn(HubStyle.Honey), TextAnchor.MiddleCenter);
                 float keyWidth = tileWidth - (four ? 16 : 14);
                 HubKit.Place(key.rectTransform, HubKit.Bottom, new Vector2(0, four ? 4 : 8),
@@ -351,8 +352,9 @@ namespace TumbangPreso.UI.Hub
             var shownSlots = kit.ScreenSlots;
             var shown = shownSlots[Mathf.Clamp(Slot, 0, shownSlots.Length - 1)];
             var ability = shown.Ability;
-            var panel = HubCards.Panel(Root, this, ability.Name.ToUpperInvariant(),
-                                       shown.Label + "   ·   " + Hud.KeyLabelFor(shown.Action), new Vector2(1180, 640));
+            string caption = Application.isMobilePlatform || InputLayer.TouchHud.ForceVisible
+                ? shown.Label : shown.Label + "   ·   " + Hud.KeyLabelFor(shown.Action);
+            var panel = HubCards.Panel(Root, this, ability.Name.ToUpperInvariant(), caption, new Vector2(1180, 640));
 
             var tile = HubKit.Shape(panel, "GlyphTile", shown.IsUltimate ? HubStyle.Golden : HubStyle.Honey, false, 341, 6, 26);
             HubKit.Place(tile.rectTransform, HubKit.TopLeft, new Vector2(48, -190), new Vector2(260, 260));

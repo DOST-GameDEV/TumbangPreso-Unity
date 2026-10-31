@@ -8,7 +8,7 @@ namespace TumbangPreso.InputLayer
     {
         private void BuildNative()
         {
-            _canvas=OwnerUiLayout.Canvas(transform,"OwnerTouchCanvas",300);var root=(RectTransform)_canvas.transform;
+            _canvas=OwnerUiLayout.Canvas(transform,"OwnerTouchCanvas",300);var root=_touchRoot=UiSafeArea.Content(_canvas,"TouchSafeArea");
             _lookArea=OwnerUiLayout.Rect(root,"LookArea");_lookArea.anchorMin=new Vector2(.45f,0);_lookArea.anchorMax=Vector2.one;
             _lookArea.offsetMin=_lookArea.offsetMax=Vector2.zero;
             _lookArea.gameObject.AddComponent<Image>().color=Color.clear;_lookArea.gameObject.AddComponent<TouchLookArea>();
@@ -43,6 +43,7 @@ namespace TumbangPreso.InputLayer
             var paper=OwnerUiLayout.Rect(sandbox.transform,"SandboxPaper").gameObject.AddComponent<OwnerUiPaper>();
             OwnerUiLayout.Fill(paper.rectTransform);paper.raycastTarget=false;paper.transform.SetAsFirstSibling();
             _sandboxRoot=sandbox.gameObject;_sandboxLabel=sandbox.GetComponentInChildren<Text>();
+            BuildPlayerUtilities(root);
             ApplyModeVisibility();ApplyLayout();RefreshSandbox();
         }
         private static void Inset(RectTransform rect,float pixels)

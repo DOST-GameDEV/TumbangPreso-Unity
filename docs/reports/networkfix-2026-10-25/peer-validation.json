@@ -1,0 +1,755 @@
+{
+  "scope": "Controlled actual Windows peers on one PC; no WAN/Relay/Android or natural-play claim.",
+  "cases": {
+    "networkfix-outage-rejoin-1025-02": {
+      "result": {
+        "passed": true,
+        "errors": [],
+        "case": "outage-rejoin",
+        "dedicated": false,
+        "runtimeSha256": "5764006e7d728dd9581c554607afcc7603da9c816942274f200c64d06299b86a",
+        "link": {
+          "forwarded": 2051,
+          "dropped": 3875,
+          "outageDrops": 3875
+        },
+        "scope": "Three controlled real Windows peers on one PC. Actual UDP shaping and durable-profile restart where selected; not WAN/Relay/Android or human playtesting.",
+        "stages": []
+      },
+      "files": {
+        "client.finish": "756f43315d9a17c8702902e78ec9cdd23895a52d50ee3d19f8419d0d0bdd8f8c",
+        "client.joined": "b10657715a9fe1c67648af241cfe4816a93ca75490639db426373be4c87f1e3c",
+        "client.log": "4026e4d6ed28e2d364ac360d154ab59a833cca176d6839735e0fb6c5fb88423a",
+        "client.lost": "790917f552eaeb81d2b0ef6375f729cb6c62a8b65e57694041dad0eb831da358",
+        "client.lost.png": "08b1ed0f7fa886447b823b90fee5cc86d031a6ee699d185e83adb6c49c70d325",
+        "client.ready": "f1cfa2bb852531f04f32d52f0a72eff36b2d9a6d525d7e9b3a116a5da66f5e1a",
+        "client.result": "8c7d0bc6de3559232f6b32669d1b77685e1795125f38a06853bdb4fb88cc61d5",
+        "client.same-process-rejoined.json": "f1cfa2bb852531f04f32d52f0a72eff36b2d9a6d525d7e9b3a116a5da66f5e1a",
+        "client.state": "ca882bd5e3100a84324e2a0510fb2e872b51f6ca66f646e2cbfd53effb2582a3",
+        "client.trace": "f0045342293cabbeb6355a1891c7c0f6c661128f4188d311038f81b6e0348692",
+        "host.finish": "756f43315d9a17c8702902e78ec9cdd23895a52d50ee3d19f8419d0d0bdd8f8c",
+        "host.log": "c57c502fc5b66983e3d8cb2feaeeec5e34e8732c4655dce67c6a8535362c326e",
+        "host.ready": "334a93fe904d058abbb265cfc843317f6ebe32f3ed8cf6270c14ad7c839887e2",
+        "host.result": "2c24983083f4d2a7c7e6d143db23a8228fcec46e8da56aec463bda653c8e0fd8",
+        "host.state": "d4728d35e190ac8d0a34069d04164bb97c0adb22cfcaf31a010d4792b8641f4d",
+        "host.trace": "cb3e1246471e9b997f14080bc9ff3c54a37bb99402af45b2eb97bf9def1eade7",
+        "initial.json": "e9bc20469e4538016734a4e85f7b9b6670accf16067e1eebde98d8e0370f65d9",
+        "job.json": "b963ea12e652b5b7c7909143817c16b38408bf62da71a2e66ecb67efd5197f02",
+        "observer.finish": "756f43315d9a17c8702902e78ec9cdd23895a52d50ee3d19f8419d0d0bdd8f8c",
+        "observer.joined": "1567ed9bda383ab9a571d3609266e87889e2cd43d408e4fab102bea71a5e1bc1",
+        "observer.log": "9f628ce52d9330011a6dffc0ea6dbd3abbfa601917c8be4b19d77e06cd18d382",
+        "observer.lost": "8ac5b3382b257b94f423687fbef7e87e2d99fb73d3244cfd277a469cda80be92",
+        "observer.lost.png": "789e2221288986c46f0e877bdc8c0104bcf554d786528503844c4df5c5919c05",
+        "observer.ready": "27e2d9136f8df248e48317b95b1937b726b1b11f4edabb2a5485f1c6436a4ac8",
+        "observer.result": "9b4abebe58ad228feb30e2467032f8a71b628b9a38d17a4301a82bc4ae202c05",
+        "observer.same-process-rejoined.json": "27e2d9136f8df248e48317b95b1937b726b1b11f4edabb2a5485f1c6436a4ac8",
+        "observer.state": "181e58d80c0216851311c5a9f5e72cab6ecb1af6fd8c5ebb57df41fc6e86c1b8",
+        "observer.trace": "cc754075b217ebc828d2168b034e7bd35f3aad22e77f2973859128cb61c35d3c",
+        "result.json": "de4a7546c0f2781653e3c3c1fc4147bf941790ef07f0f3ca6a9e9c0cdeaedfb9"
+      }
+    },
+    "networkfix-dedicated-shutdown-1025-03": {
+      "result": {
+        "passed": true,
+        "errors": [],
+        "case": "host-shutdown",
+        "dedicated": true,
+        "runtimeSha256": "5764006e7d728dd9581c554607afcc7603da9c816942274f200c64d06299b86a",
+        "link": null,
+        "scope": "Three controlled real Windows peers on one PC. Actual UDP shaping and durable-profile restart where selected; not WAN/Relay/Android or human playtesting.",
+        "stages": []
+      },
+      "files": {
+        "client.finish": "756f43315d9a17c8702902e78ec9cdd23895a52d50ee3d19f8419d0d0bdd8f8c",
+        "client.log": "5affa967dac2b9bd861d9822d121b61a9c34bfac5f4b43151ab568a2ffd5af94",
+        "client.lost": "71f4536608663865dfe7ad0b5d65161f5f243454778b581ec768b496e0be00eb",
+        "client.lost.png": "bb845e6341aa2c27fe2a84c17aeb90a03a1f0dc29204f6db1966c01eeb25b935",
+        "client.ready": "297ff05445b522247ef095b1d920fcd6153828e226bed9d568decb9e23fcc2b8",
+        "client.result": "0877e6a7c910020d4b4d0505f25c1bef43550d640e19ee0dd798f2c3f670ad12",
+        "client.state": "5f00ce701505659dc5ece54422df363eed7e704407294e5267eef112abd6db57",
+        "client.trace": "cf017041477626dac2dc3f6266af701b2eca054f0178e4a61ede55d905e94990",
+        "host.finish": "756f43315d9a17c8702902e78ec9cdd23895a52d50ee3d19f8419d0d0bdd8f8c",
+        "host.log": "16c182fc18c22c5d78c8cfdf5df1a41cf70f88000be6b09e1442577608f24ddf",
+        "host.lost": "5568209b7f3ddae46a6e767178758469c1a773c11577ef010022821bb2ba25c7",
+        "host.lost.png": "e39fb45e0b780c043c96b187660a8f59f21db90ff78e56f99eed1795deafd18c",
+        "host.ready": "c06265b691ff7a88837eb8491b0df7f7b4a439aa5353d636fbd2c7b6b173b745",
+        "host.result": "11498a4f36414cafdfefefd9b89b8b92f478bd45eed562345a3b5958b9790da8",
+        "host.shutdown-started": "65e053a427ef75a9c152726f5dc5fc8c9f1f6624d476936696f5c8e1189a2552",
+        "host.state": "568b67d9d972bc3842e859c7130b29dd379c74b8e61ba8afccc98cbda102f3b8",
+        "host.trace": "7910f47f3b1254b447a623661e0bf6a3667dec38be05a69903f30e1c088a3b77",
+        "initial.json": "29dc350e279da456325a94b442d6e0984290d9d325bfed3a598fe92e10b22b66",
+        "job.json": "ed9d4da1de748c8f76e127f85c04029e267467d4364dd36d6417453b6529d8ee",
+        "observer.finish": "756f43315d9a17c8702902e78ec9cdd23895a52d50ee3d19f8419d0d0bdd8f8c",
+        "observer.log": "7aeef7f35be8efae559bf20c432cb52c11f8edea75714a4acb466af97dd6f14b",
+        "observer.lost": "e68733a7f3218fb3dbc83f27b14b9b33d9123aaf1912ca50293eb9b3ea4379b3",
+        "observer.lost.png": "e7138a42c9999b276cb998c790f4f128f24f3c728725fc019138cc411e90af93",
+        "observer.ready": "43933062027003d503a2d3bfc79e262d2c31eef9419b6b5a3e9930c1befab719",
+        "observer.result": "4513d12bd85bd6a855ec3b5a42cea2b2d911123cca78694db31c166fcce338a2",
+        "observer.state": "d3dd3d1e0e9becc00a06a02a2fe94c4104fd868a430b22b4c814d07669903f20",
+        "observer.trace": "65a1bdf7719881b53e7755354bab18dfb3b3b44f9573b7dc4dd895058fb588e5",
+        "result.json": "6e48b669349b09e0bb2ea5da916b1260d762bc9a2fd85ba15e9247e9281dd01a"
+      }
+    },
+    "networkfix-link-rejoin-1025-05": {
+      "result": {
+        "passed": true,
+        "errors": [],
+        "case": "link-rejoin",
+        "dedicated": false,
+        "runtimeSha256": "5764006e7d728dd9581c554607afcc7603da9c816942274f200c64d06299b86a",
+        "link": {
+          "forwarded": 12501,
+          "dropped": 2040,
+          "outageDrops": 1985
+        },
+        "scope": "Three controlled real Windows peers on one PC. Actual UDP shaping and durable-profile restart where selected; not WAN/Relay/Android or human playtesting.",
+        "stages": [
+          {
+            "name": "mild",
+            "samples": 44,
+            "tiers": [
+              "Healthy",
+              "Mild"
+            ],
+            "rttMinMs": 65,
+            "rttMaxMs": 363,
+            "maxReceiveSilenceSeconds": 0.29670480000000055,
+            "lastTier": "Mild"
+          },
+          {
+            "name": "severe",
+            "samples": 48,
+            "tiers": [
+              "Mild",
+              "Severe"
+            ],
+            "rttMinMs": 331,
+            "rttMaxMs": 696,
+            "maxReceiveSilenceSeconds": 0.10785169999999766,
+            "lastTier": "Severe"
+          },
+          {
+            "name": "recovered",
+            "samples": 48,
+            "tiers": [
+              "Healthy",
+              "Severe"
+            ],
+            "rttMinMs": 52,
+            "rttMaxMs": 642,
+            "maxReceiveSilenceSeconds": 0.07534810000001357,
+            "lastTier": "Healthy"
+          },
+          {
+            "name": "five-second-outage",
+            "samples": 24,
+            "tiers": [
+              "Healthy",
+              "Mild",
+              "Severe"
+            ],
+            "rttMinMs": 63,
+            "rttMaxMs": 63,
+            "maxReceiveSilenceSeconds": 5.020283399999997,
+            "lastTier": "Severe"
+          },
+          {
+            "name": "outage-recovered",
+            "samples": 36,
+            "tiers": [
+              "Healthy",
+              "Severe"
+            ],
+            "rttMinMs": 31,
+            "rttMaxMs": 99,
+            "maxReceiveSilenceSeconds": 0.04047749999999439,
+            "lastTier": "Healthy"
+          }
+        ]
+      },
+      "files": {
+        "client.log": "86d6a13c2e76a8a8adf53147448ec9edea536b872ab73de072edd3ae9ce180a9",
+        "client.png": "d924f40722cde8ce71481141b04a93a83898191e318bba145c92b471f61f2a11",
+        "client.ready": "7c28fe54d8368230f82d9328307a87ace763b7a99c581b69a24d89f3bd372921",
+        "client.state": "7afc4c635e8f62de1ec54597c1f7ef86bcec022c83154c908eba739232ad6392",
+        "client.trace": "a6196cdc13b66fed4ef7016c5cbb88f3164e9eeb460aedbe5f5dbfa65322cf96",
+        "departure-notice.png": "c41ec337a8e9f8e486fe675e37783fb0a2c898434a555b50ef6d41e77514d9c4",
+        "host.finish": "756f43315d9a17c8702902e78ec9cdd23895a52d50ee3d19f8419d0d0bdd8f8c",
+        "host.log": "deec174fa32561bee9f6b9b84417d7d703ca9adf639a2ecd7c37378f03378b8e",
+        "host.ready": "ddfb06dce7e88247639876749938d5f256f6cbaa498460f5b96a248409a4babc",
+        "host.result": "d7510f7049157bd10f31a6e7a2cbcc85cf79e48efa86d24ee676b8e9a61d6332",
+        "host.state": "4d9d743573475be6a349c6e75c3c5c8a78d4669607807e879bac70defe03af3b",
+        "host.trace": "01fa3ae56f9a471d1aa7ca168d0f80a8256ada246c35cb218ccc3a3131d08d49",
+        "initial.json": "efd08e79ab6e24785aadb24a3468c2cb91f7f11f9a7e2f133bbffd28e445ce31",
+        "job.json": "cca8345d78539a7bfa7fef8be808f3bf77f7940d87bff3598025a7323cb44bd3",
+        "mild.png": "2e1490436309ad00da5e01c67fa1c13c8ef70b6fa67c55c75d1c9aa51e0ed513",
+        "observer.finish": "756f43315d9a17c8702902e78ec9cdd23895a52d50ee3d19f8419d0d0bdd8f8c",
+        "observer.log": "a642c578b2645ca4904804fa624026ba0ffc759da025b634e7360720765fd85f",
+        "observer.pause-requested": "2f3d0bd97e6a6fd37247f952672f212556beab36039a8e9a19f89ffa507b909a",
+        "observer.png": "c41ec337a8e9f8e486fe675e37783fb0a2c898434a555b50ef6d41e77514d9c4",
+        "observer.ready": "fa82d75f6a517ab26a2abad802e5ed69813236da1d1c44d4ee505d1b66b0eb64",
+        "observer.result": "83736f9a7e9d3eb42702fcc74db997433787ff577a857a48ee82f5cab6dce0bd",
+        "observer.state": "3950d9ad627089b8f809464c7ab0db153701e57a05a729e59cf23f733d7c1ea1",
+        "observer.trace": "5c976dc104f99137c4770d294286ded6719507f06ce8f482cb59e4ec5ffac5fa",
+        "rejoined.finish": "756f43315d9a17c8702902e78ec9cdd23895a52d50ee3d19f8419d0d0bdd8f8c",
+        "rejoined.log": "f9cacbdcb447315934d19a4e5a74ccaee5a97ec11b8969835fb99dfa2434a93a",
+        "rejoined.ready": "28515a73514a4d172c39444808e4960f7ec742e778519a92e315ef0a75a73fa7",
+        "rejoined.result": "03035cd119ca69a7033592cbf777099f4112ae76e68d4dd04949828eec2e4de3",
+        "rejoined.state": "052292bd91c3ad91feaa98da02920e35ba4f45e1cdc787b70fa7627bc2efe08c",
+        "rejoined.trace": "25b69276d091557a22145f4e1ae7d9007f4a46b83b8ca70326f51e3987b05fc7",
+        "result.json": "37a52b8759e0879bc7e9045dc25e1eb433b30a53461c6b554c5595c16d1a9b5a",
+        "severe.png": "d924f40722cde8ce71481141b04a93a83898191e318bba145c92b471f61f2a11"
+      }
+    },
+    "networkfix-dedicated-link-1026-02": {
+      "result": {
+        "passed": true,
+        "errors": [],
+        "case": "link-rejoin",
+        "dedicated": true,
+        "runtimeSha256": "0eae6435017c65b86ec3be45101eaae0a0c9bd702237e33f377f479a65d43886",
+        "link": {
+          "forwarded": 14595,
+          "dropped": 2763,
+          "outageDrops": 2690
+        },
+        "scope": "Three controlled real Windows peers on one PC. Actual UDP shaping and durable-profile restart where selected; not WAN/Relay/Android or human playtesting.",
+        "stages": [
+          {
+            "name": "mild",
+            "samples": 44,
+            "tiers": [
+              "Healthy",
+              "Mild"
+            ],
+            "rttMinMs": 64,
+            "rttMaxMs": 340,
+            "maxReceiveSilenceSeconds": 0.13914110000000335,
+            "lastTier": "Mild"
+          },
+          {
+            "name": "severe",
+            "samples": 48,
+            "tiers": [
+              "Mild",
+              "Severe"
+            ],
+            "rttMinMs": 326,
+            "rttMaxMs": 704,
+            "maxReceiveSilenceSeconds": 0.08157340000001057,
+            "lastTier": "Severe"
+          },
+          {
+            "name": "recovered",
+            "samples": 48,
+            "tiers": [
+              "Healthy",
+              "Severe"
+            ],
+            "rttMinMs": 31,
+            "rttMaxMs": 663,
+            "maxReceiveSilenceSeconds": 0.0374787000000083,
+            "lastTier": "Healthy"
+          },
+          {
+            "name": "five-second-outage",
+            "samples": 24,
+            "tiers": [
+              "Healthy",
+              "Mild",
+              "Severe"
+            ],
+            "rttMinMs": 65,
+            "rttMaxMs": 65,
+            "maxReceiveSilenceSeconds": 4.998067500000019,
+            "lastTier": "Severe"
+          },
+          {
+            "name": "outage-recovered",
+            "samples": 36,
+            "tiers": [
+              "Healthy",
+              "Severe"
+            ],
+            "rttMinMs": 32,
+            "rttMaxMs": 65,
+            "maxReceiveSilenceSeconds": 0.03791339999997945,
+            "lastTier": "Healthy"
+          }
+        ]
+      },
+      "files": {
+        "client.log": "b11f4f6e062087510056c44417212b799d18b4f2ca75c04b67c4f7e9f4bfd9b9",
+        "client.png": "f534d666cfbc29065f029a60d334d62163b06d6ed6a045dfacfec4de5678b727",
+        "client.ready": "5e7ac16ad138d097d4b7a13d95f3b8599f661ea6bfb4db083620e2258c76267c",
+        "client.state": "ccd68d35baa244116b1a3f81f0b095ac86d0e363279e4dd97aadcb859b8abd3d",
+        "client.trace": "fab420e404fd6d3b8a4869006b62316579f75034198c143c8fa2fb546beed1e9",
+        "departure-notice.png": "93434aef722cf9ddca142f240eef7df9685a7b3639e76799c8f985059ad2f167",
+        "host.finish": "756f43315d9a17c8702902e78ec9cdd23895a52d50ee3d19f8419d0d0bdd8f8c",
+        "host.log": "944e1573a3674da7a2be3124275abd4f9a708c2d64d985f35176ae85ee2f8d70",
+        "host.pause-requested": "b1ff521f6facbdc5df32c546af7798792a037a6e3e516d23eaeefbc53301a66f",
+        "host.png": "93434aef722cf9ddca142f240eef7df9685a7b3639e76799c8f985059ad2f167",
+        "host.ready": "2978c61911764804faedf39af45b5486fe731f740ac5a1cdef804b5187ba8261",
+        "host.result": "533f4effd73d5fad4c20dd4b347848e7d20627f0e713210b5d9848f6d227cafb",
+        "host.state": "8d3f2ab32f942ebb2d9fc9322a3420d0bf1da51167731ef2ff4d8ae6fa4d8267",
+        "host.trace": "be143ae7307244c615b3c65c3720e3e9180d8af8186954c5b3d2e68ab986c60b",
+        "initial.json": "6abb6ccb49465d63e963578d53b8c17856390df834f05b76f9c20e15eb4dc36c",
+        "job.json": "8fae7dbda947e83217d04d9a43f5bda2e2ad8769ebc1d229c19a344b46720c91",
+        "mild.png": "057e58206c7518d06c6cae3838963c932859ffeadf9abd54855e6fba2bc8761d",
+        "observer.finish": "756f43315d9a17c8702902e78ec9cdd23895a52d50ee3d19f8419d0d0bdd8f8c",
+        "observer.log": "02adfb16a9f1e89e1f7e28f56e162a4164d94e92443d4807f1eb90ed94e5427e",
+        "observer.ready": "6f76f890886865c69d1122e497da01614f35d2cd579fbdd99bf2c2d4ab052b75",
+        "observer.result": "16270ec4e91728be9c3fb275a4f8096a21a12a12b1e0f637bc9eb9580075e392",
+        "observer.state": "ec6813ae2ec0e6f69567c23bbebaf2715198da76b45af1dd7d1620c166172f90",
+        "observer.trace": "dcb1272783a392fbf8fa74d3a8e38609343ecb6c66dabbcc17c9e45cc8e75688",
+        "rejoined.finish": "756f43315d9a17c8702902e78ec9cdd23895a52d50ee3d19f8419d0d0bdd8f8c",
+        "rejoined.log": "8d26f92309d26e56ff0b0b2c0e2bdac2b5140fc8a030a52f71fc0e3660036e1a",
+        "rejoined.ready": "ee15627bfe8d01327bdc74ca4c948bfe0608e0e5958f36c1d9313cfda338e96a",
+        "rejoined.result": "64d1a82aac3543e9fb651a3c1af73cd10490151457e1061582eb0b0dc3f55374",
+        "rejoined.state": "7b0d703b79b4629964d0ca448e1d8ef7c7d7b66b38cd8577b392fb641bd24ca8",
+        "rejoined.trace": "a1ce3b7458d30307469449c57c8764e88e3e0eac6a2d983d3e899840ea14f5c0",
+        "result.json": "51093da4a6b86910826bf9a76bcdd4e981a88b208b28200569a2b049666d004e",
+        "severe.png": "f534d666cfbc29065f029a60d334d62163b06d6ed6a045dfacfec4de5678b727"
+      }
+    },
+    "networkfix-throw-1026-01": {
+      "result": {
+        "ok": true,
+        "errors": [],
+        "measurements": {
+          "warmup_foreign_pickup": false,
+          "warmup_disarmed_before_whistle": false,
+          "host": {
+            "straight": {
+              "samples": 15,
+              "visible_matching_samples": 15
+            },
+            "negative": {
+              "samples": 95,
+              "visible_matching_samples": 95
+            },
+            "positive": {
+              "samples": 126,
+              "visible_matching_samples": 126
+            },
+            "release_samples": 108,
+            "unexpected_post_release_holding": 0
+          },
+          "owner": {
+            "straight": {
+              "samples": 15,
+              "visible_matching_samples": 15
+            },
+            "negative": {
+              "samples": 96,
+              "visible_matching_samples": 96
+            },
+            "positive": {
+              "samples": 130,
+              "visible_matching_samples": 130
+            },
+            "release_samples": 110,
+            "unexpected_post_release_holding": 0
+          },
+          "observer": {
+            "straight": {
+              "samples": 15,
+              "visible_matching_samples": 15
+            },
+            "negative": {
+              "samples": 25,
+              "visible_matching_samples": 25
+            },
+            "positive": {
+              "samples": 106,
+              "visible_matching_samples": 106
+            },
+            "release_samples": 112,
+            "unexpected_post_release_holding": 0
+          },
+          "rejoined_active_samples": 120
+        },
+        "mode": "hero",
+        "delay_one_way_ms": 75.0,
+        "exe_sha256": "fedb275966771506f040ea2fb01dc909c4f3aaa31f9362059e64442a5fc2b40d",
+        "runtime_sha256": "0eae6435017c65b86ec3be45101eaae0a0c9bd702237e33f377f479a65d43886"
+      },
+      "files": {
+        "host.csv": "711a53dea143c143fd7050aba84c37b670ce215104ab20e7d9356a1ddef718b0",
+        "host.log": "c5aa5d9cec549787020623154ded56bb0fc66494846666ae7961af65b2772164",
+        "link.log": "e89329c1e3ac72678ea877bad98ad3495ee2d6f434006dc0db81d4c28911037e",
+        "observer.csv": "8c89a2e5b3efa2afd72a9b851baa7b1d1482631cb135c815397f68c980b0727e",
+        "observer.log": "f5fb906b20e534788218e0717b073273a9779a5d0dbb9e2e5a26d7912109a93e",
+        "owner.csv": "999ca2d901a2418f007f4c74588f113694da1b6d3aec87d6d3886e19f68788da",
+        "owner.log": "c6cdc0cdd44730a9f3fa4b491a68ef16c96da82387b25b8dc6dae0ac03192f4a",
+        "rejoined.csv": "53aef4b93503680a0917cf29d98e907efb3be5dfddd3ba942a87acfcac03468a",
+        "rejoined.log": "4ce3d3a86fb6802b07ee25d28c833f30c965ddc8d6d35443ea36899e7ad953c0",
+        "result.json": "e8e09dd7c3aa1661634a7466302b7bcfeb81172ddda19cf6fea26ceeb4fa8686"
+      }
+    },
+    "networkfix-recall-1026-01": {
+      "result": {
+        "passed": true,
+        "errors": [],
+        "measured": {
+          "host": {
+            "passed": true,
+            "spectator": false,
+            "error": "",
+            "mode": "HeroStrike",
+            "local": 0,
+            "expected": 0,
+            "changedPixels": 0,
+            "width": 1280,
+            "height": 720,
+            "epoch": 639285422926815676,
+            "owners": [
+              1,
+              2,
+              3
+            ],
+            "drawing": [
+              false,
+              false,
+              false
+            ],
+            "shaded": [
+              false,
+              false,
+              false
+            ],
+            "positions": [
+              -1.5,
+              0.0010000000474974513,
+              -1.0,
+              1.5,
+              0.0010000000474974513,
+              -1.0,
+              0.0,
+              0.0010000000474974513,
+              1.5
+            ],
+            "changedFraction": 0.0,
+            "scope": "Actual local peers and ordinary ownership; standardized world-camera A/B, not a human or WAN review."
+          },
+          "owner": {
+            "passed": true,
+            "spectator": false,
+            "error": "",
+            "mode": "HeroStrike",
+            "local": 1,
+            "expected": 1,
+            "changedPixels": 3955,
+            "width": 1280,
+            "height": 720,
+            "epoch": 639285422926815676,
+            "owners": [
+              1,
+              2,
+              3
+            ],
+            "drawing": [
+              true,
+              false,
+              false
+            ],
+            "shaded": [
+              true,
+              false,
+              false
+            ],
+            "positions": [
+              -1.5,
+              0.0010000000474974513,
+              -1.0,
+              1.5,
+              0.0010000000474974513,
+              -1.0,
+              0.0,
+              0.0010000000474974513,
+              1.5
+            ],
+            "changedFraction": 0.004291449673473835,
+            "scope": "Actual local peers and ordinary ownership; standardized world-camera A/B, not a human or WAN review."
+          },
+          "other": {
+            "passed": true,
+            "spectator": false,
+            "error": "",
+            "mode": "HeroStrike",
+            "local": 2,
+            "expected": 2,
+            "changedPixels": 3992,
+            "width": 1280,
+            "height": 720,
+            "epoch": 639285422926815676,
+            "owners": [
+              1,
+              2,
+              3
+            ],
+            "drawing": [
+              false,
+              true,
+              false
+            ],
+            "shaded": [
+              false,
+              true,
+              false
+            ],
+            "positions": [
+              -1.5,
+              0.0010000000474974513,
+              -1.0,
+              1.5,
+              0.0010000000474974513,
+              -1.0,
+              0.0,
+              0.0010000000474974513,
+              1.5
+            ],
+            "changedFraction": 0.004331597127020359,
+            "scope": "Actual local peers and ordinary ownership; standardized world-camera A/B, not a human or WAN review."
+          },
+          "fourth": {
+            "passed": true,
+            "spectator": false,
+            "error": "",
+            "mode": "HeroStrike",
+            "local": 3,
+            "expected": 3,
+            "changedPixels": 1960,
+            "width": 1280,
+            "height": 720,
+            "epoch": 639285422926815676,
+            "owners": [
+              1,
+              2,
+              3
+            ],
+            "drawing": [
+              false,
+              false,
+              true
+            ],
+            "shaded": [
+              false,
+              false,
+              true
+            ],
+            "positions": [
+              -1.5,
+              0.0010000000474974513,
+              -1.0,
+              1.5,
+              0.0010000000474974513,
+              -1.0,
+              0.0,
+              0.0010000000474974513,
+              1.5
+            ],
+            "changedFraction": 0.0021267361007630825,
+            "scope": "Actual local peers and ordinary ownership; standardized world-camera A/B, not a human or WAN review."
+          },
+          "spectator": {
+            "passed": true,
+            "spectator": true,
+            "error": "",
+            "mode": "HeroStrike",
+            "local": -1,
+            "expected": -1,
+            "changedPixels": 0,
+            "width": 1280,
+            "height": 720,
+            "epoch": 639285422926815676,
+            "owners": [
+              1,
+              2,
+              3
+            ],
+            "drawing": [
+              false,
+              false,
+              false
+            ],
+            "shaded": [
+              false,
+              false,
+              false
+            ],
+            "positions": [
+              -1.5,
+              0.0010000000474974513,
+              -1.0,
+              1.5,
+              0.0010000000474974513,
+              -1.0,
+              0.0,
+              0.0010000000474974513,
+              1.5
+            ],
+            "changedFraction": 0.0,
+            "scope": "Actual local peers and ordinary ownership; standardized world-camera A/B, not a human or WAN review."
+          }
+        },
+        "sharedInputUnchanged": true,
+        "existingFilesRestored": 0,
+        "runtimeSha256": "0eae6435017c65b86ec3be45101eaae0a0c9bd702237e33f377f479a65d43886",
+        "scope": "Four playing Windows peers plus an actual fifth-join spectator, transport/ownership and standardized world-camera A/B. Not physical/WAN or human visual approval."
+      },
+      "files": {
+        "fourth-beam-off.png": "8675980805821f9dbfda3b973b30e27ae26cd92fb079390905b566d5f34d5959",
+        "fourth-beam-on.png": "a89088abed619489bb5f6e64e8cc5ad105115285b7f7ff01e27e3f5be0a2d8f9",
+        "fourth.json": "8159cd2f04c9a223f83aefba3dcc648d2bd26ac3f248ff0c1b6b19f8bbd2c26c",
+        "fourth.log": "23b349138a6c41cfdfa2ad6056aac84658cca8ec9eba993a8d446e01b209a58e",
+        "host-beam-off.png": "e5f02d8596573ca540389dd10fc7cd4075aa6fb4ea73a97b70ed8ebe5c9c2f1d",
+        "host-beam-on.png": "e5f02d8596573ca540389dd10fc7cd4075aa6fb4ea73a97b70ed8ebe5c9c2f1d",
+        "host.json": "ff50c9321aaab01b6ce4be455a0591cfd546b2b4ea25823020a4c64f8787b2f3",
+        "host.log": "f180115d9de2266645fb683a3b549037982b30f1624b68632a954fe48bedc644",
+        "job.json": "301dcc5c9fe1a86b18e118132ae89ef41eb928f7fe644d78f561b29a8839d1c2",
+        "other-beam-off.png": "97c3481b08d43d092d531c116946f65dc078be5b77e825b67fa7c0355c7d5bce",
+        "other-beam-on.png": "5ec65db6a50f9955f49af3cdd76d2433b8516f88612eb494a153f998690fd2c8",
+        "other.json": "a7300dd14bd26e1e2efb2a470d46364d56e3adc9eb0edd5ebbef797284723204",
+        "other.log": "80ada393bb6ac1c6a07b3c32e7623a00737abc7a6feab8f1e103463020a15bd7",
+        "owner-beam-off.png": "6cb6e5cd2e859b8ebb5afbdaf6214886b769f05e315f031cf2dc4bb32fce7eaa",
+        "owner-beam-on.png": "3d90d4c8996103875de5d55c0191e367fa6a401747a07345bb63a4a82a150f5a",
+        "owner.json": "038ae67085cd67782b288a8f06468fa99a16c670b83ed34469783969374e2d1f",
+        "owner.log": "64f20a495114b489373d9426de593a0515f7a19dc5c207b20472faa9cb7ffd62",
+        "result.json": "ff9afd79cda4330a08e9f52510dd39d974361251ff4dc087ff9f7189fd548330",
+        "spectator-beam-off.png": "dedc9931ce2f7462aa1c0beb1861659bbb52386261c6e5cc0bf9504e4607ce5b",
+        "spectator-beam-on.png": "dedc9931ce2f7462aa1c0beb1861659bbb52386261c6e5cc0bf9504e4607ce5b",
+        "spectator.json": "2d272dd1b63ce3f76d4874ed4321a200e1a782100f6d8367496182e85c2c514f",
+        "spectator.log": "6c4b7604684656eb9fe0861a485e24f7e7857e172840b3c2fdfc05f1fb0ccd59"
+      }
+    },
+    "networkfix-ultimate-1026-03": {
+      "result": {
+        "passed": true,
+        "errors": [],
+        "measured": {
+          "host": {
+            "rows": 234,
+            "holdSeconds": 5.9669000000000025,
+            "clockDrift": 0.0,
+            "frozenClock": 83.981,
+            "cohort": 2,
+            "legacyInitialWarning": 0.0,
+            "dollAndShoeSamples": 94,
+            "starts": [
+              1,
+              1,
+              0
+            ]
+          },
+          "scorer": {
+            "rows": 233,
+            "holdSeconds": 5.795000000000002,
+            "clockDrift": 0.0,
+            "frozenClock": 83.981,
+            "cohort": 2,
+            "legacyInitialWarning": 0.0,
+            "dollAndShoeSamples": 88,
+            "starts": [
+              1,
+              1,
+              0
+            ],
+            "matchedBodyPositions": 88,
+            "maxBodyPositionError": 0.0
+          },
+          "observer": {
+            "rows": 238,
+            "holdSeconds": 5.804699999999997,
+            "clockDrift": 0.0,
+            "frozenClock": 83.981,
+            "cohort": 2,
+            "legacyInitialWarning": 0.0,
+            "dollAndShoeSamples": 90,
+            "starts": [
+              1,
+              1,
+              0
+            ],
+            "matchedBodyPositions": 90,
+            "maxBodyPositionError": 0.0
+          },
+          "late": {
+            "rows": 43,
+            "phaseSamples": 0,
+            "dollAndShoeSamples": 32,
+            "matchedBodyPositions": 32,
+            "maxBodyPositionError": 0.0
+          }
+        },
+        "disconnectCaster": false,
+        "lateJoin": true,
+        "link": {
+          "delayMs": 0,
+          "jitterMs": 0,
+          "loss": 0,
+          "seed": 52009
+        },
+        "sharedInputUnchanged": true,
+        "scope": "Three original Windows peers with optional fourth arrival or accepted-caster departure. Current VOODOO DOLL: shared cohort/clock, costs, registered companion bodies/shoes, time-matched positions, late restore without recast, denied late cast and duplicate/stale phase. Legacy windup column is historical; no authored kit changes. Not WAN or natural play."
+      },
+      "files": {
+        "host.csv": "94659b6d666ae924cb51b3b84306eada57b0566e81758d6f1a268a2e1ae6057b",
+        "host.csv.done": "b46e5638022c48e372095c358ddb881203288c3ae11c3672898573436fe80231",
+        "host.log": "161a5812367a831f1c4593eb39a1e97edb738b2db6c2b610175186ad9c730831",
+        "job.json": "1863d10298fee6d493296def7fe78252805fa6084adf2c211490bd45a38054fc",
+        "late-job.json": "07407d56414f160715c552b0193b900ec8427f0c7c296ad9a686b7805aebe3b9",
+        "late.csv": "9beec5617eee6d484f0bfcbadac15f66170ccfe6332f493affb44c54964dd62c",
+        "late.csv.done": "b46e5638022c48e372095c358ddb881203288c3ae11c3672898573436fe80231",
+        "late.csv.ready": "05294e5b379f7034112aeaa52b3d37f81fc2d4a220d6c4453e4764bae87c7a07",
+        "late.log": "c2f91e1729bc7cb1f475ec6204880eff932d76a3e689a67eedc500a9a2a3d686",
+        "observer.csv": "7feef70d3dfc79745e6f70674cd0ec07e8d91c0db21e395e9329898bee83d34e",
+        "observer.csv.done": "b46e5638022c48e372095c358ddb881203288c3ae11c3672898573436fe80231",
+        "observer.log": "1d9b4fb94d8f58ae1a6ad29c0af1c992bf5ca0a7282fd96c99509659352ac3a2",
+        "result.json": "78359cf5f4e97a78e6766207bf08a2f21ab5ee437d81d4e1db833ce314087278",
+        "scorer.csv": "f2a9ecd1bfc22a8733cbd171cf7e32b1e78db105cd8a7dd5bf82587b375f606e",
+        "scorer.csv.done": "b46e5638022c48e372095c358ddb881203288c3ae11c3672898573436fe80231",
+        "scorer.log": "5551a9ab47b7530920dd79edb9ed01eddc665d89b4669f94ea0ac6431078ad72"
+      }
+    },
+    "networkfix-round-1026-02": {
+      "result": {
+        "passed": true,
+        "errors": [],
+        "measurements": {
+          "host": {
+            "samples": 621,
+            "buffer_samples": 33,
+            "round2_samples": 74,
+            "invalid_warmup_samples": 0,
+            "intermission_events": 1.0
+          },
+          "client": {
+            "samples": 550,
+            "buffer_samples": 34,
+            "round2_samples": 44,
+            "invalid_warmup_samples": 0,
+            "intermission_events": 0.0
+          }
+        },
+        "shared_input_unchanged": true,
+        "runtime_sha256": "fecf6717e8232692c979fbc219504cb2b12b65be2e289dd4f45f140bc012a362",
+        "mode": "hero",
+        "one_way_delay_ms": 150,
+        "retired_pids": [
+          22364,
+          31592,
+          31684
+        ]
+      },
+      "files": {
+        "client.csv": "5a6da1670dec56d03e3b4dca2bea2a00436983d6dd4d623fa30e2259868b988e",
+        "client.log": "c0a80cc1bd7e09276c78155d8f95a13d4e47798a3a0906d2c2a5a3f20ea2006e",
+        "host.csv": "f9befa67d114be62d160eb6247a1a58df2a0b69994d94defd06cfeaa137e2fca",
+        "host.log": "ab58b79034969c2800d92ac586aba51a7d6eb26e1f3e5888891e190a53fc26f6",
+        "link.log": "61e0803529f7c8b01534f9e573023fc4d866ff2c2ba901a807bbfdb3de47aad6",
+        "result.json": "613ac790f1a71d404864ed7d7863ffeda424d9abf4151ad47ba1591a68c0e37f"
+      }
+    }
+  }
+}

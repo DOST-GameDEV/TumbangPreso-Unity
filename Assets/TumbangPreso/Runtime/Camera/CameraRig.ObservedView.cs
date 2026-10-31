@@ -13,7 +13,8 @@ namespace TumbangPreso.CameraSystem
             state = new Net.SpectatorViewState {
                 Match = ObservedPlayerView.MatchIdentity, Round = GameServices.Match?.RoundNumber ?? 0,
                 Slot = _character.PlayerSlot, Epoch = _character.MovementEpoch, Sequence = (uint)UnityEngine.Mathf.Max(1, UnityEngine.Time.frameCount),
-                Eye = _camera.transform.position, Rotation = _camera.transform.rotation, Fov = _camera.fieldOfView,
+                Eye = _camera.transform.position, Rotation = _camera.transform.rotation, Fov = _camera.fieldOfView, Aspect = _camera.aspect,
+                NearClip = _camera.nearClipPlane, FarClip = _camera.farClipPlane,
                 EyeDrop = UnityEngine.Mathf.Clamp(UnityEngine.Shader.GetGlobalFloat(Visual.NearFade.EyeDropId), 0, 10),
                 Flags = (byte)((first ? Net.SpectatorViewState.FirstPerson : 0) | (hands ? Net.SpectatorViewState.HandsVisible : 0)),
                 HandsSeat = hands ? _viewmodel.localPosition : ViewmodelSeat,

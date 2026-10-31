@@ -8,6 +8,7 @@ namespace TumbangPreso.CameraSystem
     public sealed partial class SpectatorCamera
     {
         private InputAction _speedCycle, _zoomCycle;
+        private static bool HasClockOperatorRole => GameLaunch.Spectator || NetAuthority.IsSeatlessReferee;
         public bool HasCameraMark => _hasBookmark;
         public bool WatchingFirstPerson => _pov && _follow != null;
         public string ViewLabel => ClockLabel + CameraLabel;
@@ -26,7 +27,7 @@ namespace TumbangPreso.CameraSystem
                 case ViewCommand.Pause:
                     if (NetAuthority.IsNetworked)
                     {
-                        if (!GameLaunch.Spectator) return false;
+                        if (!HasClockOperatorRole) return false;
                         _broadcastPaused = PresentationClock.RequestedScale > 0f;
                         Net.MatchRpc.Instance?.RequestTimeScaleServerRpc(_broadcastPaused ? 0f : _selectedTimeScale);
                     }
@@ -51,7 +52,7 @@ namespace TumbangPreso.CameraSystem
                     SyncAnglesFromTransform();
                     return true;
                 case ViewCommand.Speed:
-                    if (NetAuthority.IsNetworked && !GameLaunch.Spectator) return false;
+                    if (NetAuthority.IsNetworked && !HasClockOperatorRole) return false;
                     float scale = _selectedTimeScale < .3f ? .5f : _selectedTimeScale < .75f ? 1f : .25f;
                     if (NetAuthority.IsNetworked) RequestBroadcastScale(scale); else SetBroadcastScale(scale);
                     return true;
@@ -104,7 +105,7 @@ namespace TumbangPreso.CameraSystem
             if (Fired(_replayKey) || ConsumeProbeReplayRequest()) ExecuteOperatorCommand(ViewCommand.Replay);
             if (Fired(_speedCycle)) ExecuteOperatorCommand(ViewCommand.Speed);
             if (Fired(_zoomCycle)) ExecuteOperatorCommand(ViewCommand.Zoom);
-            if (NetAuthority.IsNetworked && !GameLaunch.Spectator) return;
+            if (NetAuthority.IsNetworked && !HasClockOperatorRole) return;
             if (Key(kb?.digit1Key)) SelectOperatorSpeed(.25f);
             if (Key(kb?.digit2Key)) SelectOperatorSpeed(.5f);
             if (Key(kb?.digit3Key)) SelectOperatorSpeed(1f);

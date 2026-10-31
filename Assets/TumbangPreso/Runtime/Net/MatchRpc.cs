@@ -2547,7 +2547,7 @@ namespace TumbangPreso.Net
         public void SyncUnitTransformClientRpc(int slot, Vector3 pos, float yaw, Vector3 velocity)
             =>SendUnitPose(slot,pos,yaw,velocity,false);
 
-        private const int UnitPoseFixedBytes = 210; // Through BlindedLeft, before the variable tails.
+        private const int UnitPoseFixedBytes = 214; // Through SearedLeft, before the variable tails.
 
         private void SendUnitPose(int slot,Vector3 pos,float yaw,Vector3 velocity,bool reliable,ulong? onlyClient = null,
                                   bool ownerCorrection = true)
@@ -4289,6 +4289,14 @@ namespace TumbangPreso.Net
                 return;
             }
 
+            // Normalize an old saved MIRROR room before reliable rules and start delivery.
+            if (UI.SceneFlow.SelectedFormat != CustomGameRules.NewMatchFormat(UI.SceneFlow.SelectedFormat))
+            {
+                var rules = UI.SceneFlow.SelectedRules.Clone();
+                rules.Format = CustomGameRules.NewMatchFormat(rules.Format);
+                UI.SceneFlow.AdoptRemoteRules(rules);
+                SelectRulesServerRpc(CustomGameRules.ToWire(rules));
+            }
             PreparePresentationMatch();
             lobby?.StartMatch();
             _lobbyReady.Clear();
@@ -4615,6 +4623,7 @@ namespace TumbangPreso.Net
             // BOUND ON THE HOST, NOT A SUGGESTION TO IT ... each one is clamped on the way in and
             // again on the way out of the wire."* This is the way out.
             var clamped = Core.CustomGameRules.Parse(wire, UI.SceneFlow.SelectedMode);
+            clamped.Format = Core.CustomGameRules.NewMatchFormat(clamped.Format);
             string safe = Core.CustomGameRules.ToWire(clamped);
 
             if (_nm != null && _nm.CustomMessagingManager != null)
@@ -6197,8 +6206,6 @@ namespace TumbangPreso.Net
                     if (!MatchIsUnderway() && peerRecord.CharacterPick >= 0)
                     {
                         int pick = peerRecord.CharacterPick;
-                        if (UI.SceneFlow.SelectedFormat == MatchFormat.Mirror)
-                            pick = EconomyRules.UnlockedMirrorPick(Roster.GetPeople(UI.SceneFlow.SelectedMode), DateTime.UtcNow);
                         // The arena can build this seat as a bot before Identify
                         // arrives. Apply its chosen roster through the existing
                         // art/kit/skin route before the first round freezes it.

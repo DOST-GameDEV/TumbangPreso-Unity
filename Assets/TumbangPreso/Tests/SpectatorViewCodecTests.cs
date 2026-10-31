@@ -26,6 +26,56 @@ namespace TumbangPreso.Tests
                 Style = 6, Colour = new Color32(53, 17, 214, 255) };
             return view;
         }
+        [TestCase(SpectatorViewState.LegacyVersion)] [TestCase(SpectatorViewState.CurrentVersion)]
+        public void NegotiatedCodecKeepsLegacySizeAndOnlyCurrentCarriesAspect(byte version)
+        {
+            var state=Valid();state.Private=FullPrivate();state.Action=new FixedString64Bytes(new string('a',61));
+            state.Aim=new FixedString64Bytes(new string('b',61));state.Aspect=20f/9;state.NearClip=.05f;state.FarClip=240;
+            using var writer=new FastBufferWriter(SpectatorViewState.MaxWireBytes+SpectatorViewState.LensBytes,Allocator.Temp);
+            state.Write(writer,version);
+            Assert.AreEqual(SpectatorViewState.MaxWireBytes+(version==3?SpectatorViewState.LensBytes:0),writer.Length);
+            var reader=new FastBufferReader(writer,Allocator.Temp);
+            try
+            {
+                Assert.IsTrue(SpectatorViewState.TryRead(ref reader,out var decoded,version));
+                Assert.AreEqual(version==3?state.Aspect:0,decoded.Aspect);Assert.AreEqual(9,decoded.Private.Phantoms.Length);
+                Assert.AreEqual(version==3?state.NearClip:0,decoded.NearClip);Assert.AreEqual(version==3?state.FarClip:0,decoded.FarClip);
+                Assert.IsTrue(decoded.Private.Marker.Present);Assert.AreEqual(state.Action,decoded.Action);
+            }
+            finally { reader.Dispose(); }
+        }
+        [Test] public void CurrentLensPacketRejectsEveryPrefixExtraBytesAndWrongNegotiatedVersion()
+        {
+            var state=Valid();state.Private=FullPrivate();state.Aspect=16f/9;
+            using var writer=new FastBufferWriter(SpectatorViewState.MaxWireBytes+SpectatorViewState.LensBytes+1,Allocator.Temp);state.Write(writer,3);
+            byte[] bytes=writer.ToArray();
+            for(int length=0;length<bytes.Length;length++)
+            {
+                var prefix=new byte[length];System.Array.Copy(bytes,prefix,length);var reader=new FastBufferReader(prefix,Allocator.Temp);
+                try { Assert.IsFalse(SpectatorViewState.TryRead(ref reader,out _,3),"Accepted truncated lens packet "+length); }
+                finally { reader.Dispose(); }
+            }
+            var legacy=new FastBufferReader(writer,Allocator.Temp);
+            try { Assert.IsFalse(SpectatorViewState.TryRead(ref legacy,out _,2)); } finally { legacy.Dispose(); }
+            writer.WriteValueSafe((byte)0);var extra=new FastBufferReader(writer,Allocator.Temp);
+            try { Assert.IsFalse(SpectatorViewState.TryRead(ref extra,out _,3)); } finally { extra.Dispose(); }
+        }
+        [TestCase(float.NaN)] [TestCase(float.PositiveInfinity)] [TestCase(-1f)] [TestCase(.1f)] [TestCase(6f)]
+        public void MalformedLensCannotInstallAnOtherwiseValidView(float aspect)
+        {
+            var state=Valid();state.Aspect=aspect;
+            using var writer=new FastBufferWriter(SpectatorViewState.MaxWireBytes+SpectatorViewState.LensBytes,Allocator.Temp);state.Write(writer,3);
+            var reader=new FastBufferReader(writer,Allocator.Temp);
+            try { Assert.IsFalse(SpectatorViewState.TryRead(ref reader,out _,3)); } finally { reader.Dispose(); }
+        }
+        [TestCase(.5f,.1f)] [TestCase(float.NaN,240f)] [TestCase(.05f,float.PositiveInfinity)] [TestCase(0f,240f)]
+        public void InvalidClipPlanesRejectTheCompleteCurrentPacket(float near,float far)
+        {
+            var state=Valid();state.Aspect=16f/9;state.NearClip=near;state.FarClip=far;
+            using var writer=new FastBufferWriter(SpectatorViewState.MaxWireBytes+SpectatorViewState.LensBytes,Allocator.Temp);state.Write(writer,3);
+            var reader=new FastBufferReader(writer,Allocator.Temp);
+            try { Assert.IsFalse(SpectatorViewState.TryRead(ref reader,out _,3)); } finally { reader.Dispose(); }
+        }
         [Test] public void EyeLookLensAndHandStateSurviveTheActualWriterReader()
         {
             var expected = Valid(); var writer = new FastBufferWriter(SpectatorViewState.MaxWireBytes, Allocator.Temp);

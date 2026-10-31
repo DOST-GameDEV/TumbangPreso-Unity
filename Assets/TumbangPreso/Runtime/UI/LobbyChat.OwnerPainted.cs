@@ -24,11 +24,12 @@ namespace TumbangPreso.UI
         public void PlaceLobbyColumn()
         {
             if(_rect==null || _inMatch)return;
-            // Keep the chat in the lobby's centered room columns on every canvas width.
-            _rect.anchorMin=_rect.anchorMax=new Vector2(.5f,0);
-            _rect.pivot=Vector2.zero;
-            _rect.anchoredPosition=new Vector2(Hub.HubLobby.RoomChatLeft,Hub.HubLobby.RoomColumnBottom);
-            _rect.sizeDelta=new Vector2(Hub.HubLobby.RoomChatWidth,_lobbyColumn?Hub.HubLobby.RoomColumnHeight:_rect.sizeDelta.y);
+            // The wine drawer stands at the right of the room, from the players' heading down to the
+            // floor, centred on the canvas like the cards it sits beside.
+            _rect.anchorMin=_rect.anchorMax=new Vector2(.5f,.5f);
+            _rect.pivot=new Vector2(0,1);
+            _rect.anchoredPosition=new Vector2(Hub.HubLobby.RoomChatLeft,Hub.HubLobby.CardsTop+120);
+            _rect.sizeDelta=new Vector2(Hub.HubLobby.RoomChatWidth,_lobbyColumn?DrawerHeight:_rect.sizeDelta.y);
         }
         private void ConstructNative()
         {

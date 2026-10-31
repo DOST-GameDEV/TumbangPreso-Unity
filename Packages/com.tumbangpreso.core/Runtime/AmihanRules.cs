@@ -34,6 +34,12 @@ namespace TumbangPreso.Core
         public const float QuickDashPushDistance = 1.2f;
 
         public static float QuickDashHoldSeconds => CarryRules.SecondsFor(QuickDashDistance, QuickDashSpeed);
+        // Fold shared hit timing once in double precision. Runtime float arithmetic
+        // produced adjacent float bits on Mono/IL2CPP and rejected crossplay peers.
+        private const double QuickDashTailSeconds = (double)QuickDashSpeed / (2d * Balance.Friction);
+        private const double QuickDashExactHold = (double)QuickDashDistance / QuickDashSpeed - QuickDashTailSeconds;
+        public const float QuickDashHitSeconds = (float)((QuickDashExactHold > 0 ? QuickDashExactHold : 0d)
+            + QuickDashTailSeconds + .05d);
         public static float QuickDashPushSpeed => CarryRules.ImpulseFor(QuickDashPushDistance);
 
         // ------------------------------------------------------------------ UPDRAFT (attacking role)

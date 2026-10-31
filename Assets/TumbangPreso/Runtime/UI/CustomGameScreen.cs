@@ -173,6 +173,13 @@ namespace TumbangPreso.UI
         {
             if (_root == null) return;
             _root.SetActive(false);
+            // Closing restores pointer and pad access now, including when the hub tick ran first.
+            var hub = Hub.TumpHub.Current;
+            if (hub != null && !hub.Host.OverlayOpen)
+            {
+                hub.Canvas.enabled = true;
+                hub.RefreshFocus();
+            }
         }
 
         // -------------------------------------------------------------------
@@ -604,7 +611,7 @@ namespace TumbangPreso.UI
         // and the code disagree and nobody can say which is the bug.
         // -------------------------------------------------------------------
 
-        private static int FormatCount => (int)MatchFormat.Mirror + 1;
+        private static int FormatCount => (int)MatchFormat.LastTsinelas + 1;
 
         private static int RoundOptionCount
             => CustomGameRules.MaxRounds - CustomGameRules.MinRounds + 1;

@@ -13,7 +13,7 @@ Each picture: a square sticker in a warm logo colour, soft sunburst rays one ste
 the head fills the upper two thirds, and a same-hue shade at the bottom so the bust sits IN
 the tile rather than pasted on it. No blue (CLAUDE.md 6.4).
 
-Output: Resources/UI/avatars/avatar_<id>.png, 256 px. Existing ids are left in place, so a
+Output: Resources/UI/avatars/avatar_<id>.png, 512 px (256 until the 2026-10-28 sharpness pass). Existing ids are left in place, so a
 saved choice still loads its old picture until the player picks again.
 
 Run: python tools/build_avatars.py [--sheet review.png]
@@ -29,7 +29,7 @@ from PIL import Image, ImageDraw, ImageFilter
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PORTRAITS = os.path.join(ROOT, "Assets", "TumbangPreso", "Resources", "UI", "portraits")
 OUT = os.path.join(ROOT, "Assets", "TumbangPreso", "Resources", "UI", "avatars")
-SIZE = 256
+SIZE = 512
 W = 768
 
 
@@ -92,9 +92,9 @@ def bust(pid):
     top, bottom, left, right = ys.min(), ys.max(), xs.min(), xs.max()
     width = right - left
     # the head is the top of the silhouette; frame a square from just above it
-    side = int(max(width * 1.02, (bottom - top) * 0.92))
+    side = int(max(width * 1.22, (bottom - top) * 1.0))
     cx = (left + right) / 2
-    box = (int(cx - side / 2), int(top - side * 0.12), int(cx + side / 2), int(top - side * 0.12 + side))
+    box = (int(cx - side / 2), int(top - side * 0.08), int(cx + side / 2), int(top - side * 0.08 + side))
     return p.crop(box)
 
 

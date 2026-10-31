@@ -31,8 +31,9 @@ Do not load historical TODO bodies or all reports to start a session.
 
 - `main` is the integration branch. The owner authorized merging `BugFix`, deleting
   it after verified integration, and publishing spectator refinements to `main`.
-- Network changes belong on `NETWORKFIX`, created from merged `main`. Keep that
-  branch separate until the owner requests its integration.
+- The owner combined network and mobile work on `mobile+network` (formerly
+  `NETWORKFIX`/`MOBILEFIX`). Keep that branch separate from main until integration
+  is requested. Mobile follows the verified network work.
 - Fetch and inspect before publication. Never reset, clean, force-push or discard
   unrelated changes. Delete a branch only after checking ancestry and worktrees.
 - Stage explicit owned paths. Commit with `git commit -F`; author M4tyu633.
@@ -58,8 +59,9 @@ Do not load historical TODO bodies or all reports to start a session.
 
 - Four players, one rotating taya; retrieval is the tension. Classic and Hero Strike
   both ship, normally eight rounds. No Street Hype.
-- Stable IDs differ from displayed names. Read `Roster` and `EconomyRules.UnlockedHeroes`;
-  Rago (`sean`) was unlocked on October 24. Do not restore the old five-hero lock.
+- Stable IDs differ from displayed names. Preserve `Roster` order. Owner, October 28:
+  all nine heroes are unlocked and each character belongs to one player per match.
+  MIRROR is retired from new matches; its wire value stays reserved for history.
 - Paete and Phaister's finalized kits/art stay protected. Demonstrated bug fixes,
   authorized shared changes and newer explicit owner instructions still apply.
   Current authored models and motion supersede older prototype restoration plans.
@@ -70,6 +72,9 @@ Do not load historical TODO bodies or all reports to start a session.
 
 ## Validation and continuity
 
+- **NO FULL OR BROAD PLAYMODE RUNS, EVER (owner 2026-10-28).** Run only the exact
+  affected test by full name, once per coherent change. No class-wide or suite-wide
+  PlayMode filters, and no reruns to chase cosmetic clips; prefer EditMode captures.
 - Use focused meaningful checks, then integration checks for a coherent candidate.
   Reuse unchanged evidence; never weaken tests or infer runtime success from compile.
 - [TESTING](docs/TESTING.md) owns commands and evidence rules. One heavy Unity job

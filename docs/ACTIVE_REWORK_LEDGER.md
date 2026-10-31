@@ -1,36 +1,34 @@
 # Current checkpoint
 
-Updated 2026-10-28. Owner scope: [TODO](TODO.md).
+Updated 2026-10-29. [TODO](TODO.md) is the only active queue.
 
-- LOBBY-UI-1028: main 95e4b6b28, mobile+network 642504339; room EditMode
-  27/27. Next: owner review, room PlayMode tests, real joined peer.
-- Zack refinement follows main `6ab16b867`: short Momentum streamers, tapered
-  ribbons, correct gold/ink layering and two empty zap hands with prop return.
-  Final native film passed 1/1 across 12 takes; final focused zap capture passed
-  1/1. Five Unity starts and five bundled-Mono listener probes completed; the old
-  startup crash was not reproduced.
-  Evidence: `Logs/zack-refine-20261026/`. Protocol 184, clip schema 17 unchanged.
-  [Refinement](reports/zack-kit-2026-10-25/refinement-2026-10-26.md).
-  Next: owner picture review, Wiki/voice text, rejected SFX and real peers.
-  Five owner files stay excluded; no Unity job remains after validation.
-- Cleanup `aaf96e52e1` integrated BugFix `47487eda7`; old BugFix deleted and
-  NETWORKFIX starts there. Preserve owner metadata and ProjectSettings dirt.
+- ONLINE-CAST-1028: 73b1f403b pushed/built. Ult victims stand on own floor from the
+  host-frozen pose; GroundY ignores awnings. Payo delayed pairs: Cheska gap 0, Nemu 0.015,
+  Paete tree grounded. Next: victims in Paete/Amihan/Phaister reach, then multi-PC.
+  Logs/ult-terrain-20261029/. Preserve six owner files.
+- Owner requested wrapping up and handing off unfinished mobile UI work.
+  [Resume here](reports/mobile-ui-2026-10-26/HANDOFF.md): ff9 Android candidate is
+  built/uploaded, native41/41 and recorded actual touch journeys passed. Newer
+  source has6/7 focused checks, picker clipping still fails, and no APK contains
+  those patches. Emulator/native jobs are stopped.
+- Keep `mobile+network` separate from main; current main is included.
+  Preserve owner metadata/settings and stage only explicit owned paths.
+- Cleanup aaf96e52e1 integrated BugFix47487eda7; BugFix is deleted. Removed
+  107.2 MiB proven-unused assets and shortened entry docs97.62%.
   [Receipt](reports/repository-cleanup-2026-10-25.md).
-- Spectator desktop controls and pacing are implemented. Actual player eye,
-  rotation, FOV and hand state passed local and three Windows-process checks;
-  167 received views, 163 distinct host-matched relay serials and unsubscribe
-  stopped publication. [Evidence](reports/spectator-2026-10-25/view-candidate.md).
-- Body/effect framing measures actual models and lenses, keeps quiet-frame
-  players and checks covered-court fallbacks. All 21 bodies and six maps have
-  [native checks](reports/spectator-2026-10-25/framing.md).
-- World/HUD filters, audio and ghost cues follow actual watched views, with
-  [native lifecycle evidence](reports/spectator-2026-10-25/perception.md).
-  Private hallucinations/held markers now passed native and real three-process
-  checks: 159 owner-to-host and 156 host-to-observer packet matches, nine render
-  roots and unsubscribe cleanup. [Receipt](reports/spectator-2026-10-25/private-candidate.md).
-  Next: regular skill/live events alongside NETWORKFIX. Current peer proof is
-  controlled on one PC, not natural/WAN/separate-machine/Android.
-- General reliability stays on NETWORKFIX; the mobile refresh follows it.
+- Desktop spectator is on main: grouped live controls, calmer camera, actual
+  player eyes/hands/lens,21 bodies/six maps/private cues.
+  [Evidence](reports/spectator-2026-10-25/README.md).
+- Network/mobile code0d8 passed recorded Windows/Android view transfer, same-seat
+  outage/background reconnect, manual spectator pause/card, host-loss stop,
+  six map scenes and Classic HUD. Core841/841 and focused native groups passed.
+  Old broad failures and emulator RTT-recovery limits stay explicit.
+  [Evidence/build hashes](reports/mobile-2026-10-26/README.md).
+- Zack's approved electrical-outline Backtrack308fb345f and hand-zigzag removal
+  remain intact. SFX listening review is still open; rejected sounds were not
+  installed. [Evidence](reports/zack-kit-2026-10-25/refinement-validation.md).
 
-Keep jobs and exact commands in task-local receipts while running. Older
-[checkpoints](archive/cleanup-2026-10-25/docs/ACTIVE_REWORK_LEDGER.md) are history.
+ARM translation does not qualify physical phone performance/thermals, separate
+Wi-Fi machines or WAN/Relay. Lossless Android packing is about71% smaller.
+Unrelated future sessions do not automatically owe mobile updates.
+[Earlier checkpoints](archive/cleanup-2026-10-25/docs/ACTIVE_REWORK_LEDGER.md) are history.

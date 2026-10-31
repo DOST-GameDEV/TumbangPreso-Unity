@@ -61,7 +61,11 @@ namespace TumbangPreso
             // of component Update order. The underlying live menu must not close it.
             if (HalftimePresentation.Playing || UI.ScreenTakeover.EscapeIsSpoken || UI.LobbyChat.AnyTyping) return;
             if (!Requested()) return;
-
+            ToggleFromUi();
+        }
+        public void ToggleFromUi()
+        {
+            if (HalftimePresentation.Playing || UI.ScreenTakeover.EscapeIsSpoken || UI.LobbyChat.AnyTyping) return;
             var open = GetComponentInChildren<UI.PausePanel>(includeInactive: false);
             if (open != null) { open.Close(); return; }
 

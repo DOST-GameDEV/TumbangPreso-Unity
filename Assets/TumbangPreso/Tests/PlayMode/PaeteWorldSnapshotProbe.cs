@@ -41,6 +41,7 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(3,captured.Count,"The joining snapshot omits one of Paete's plant, thorns or sentry.");
             float sentryAge=Object.FindFirstObjectByType<PaeteSentry>().Age;
 
+            float restoredAt=Time.time;
             Assert.True(WorldEffectSnapshot.Apply(captured,.25f));
             yield return null;
             var restored=WorldEffectSnapshot.Capture();
@@ -54,10 +55,12 @@ namespace TumbangPreso.PlayTests
             }
             // The plant's shot clock carries over (nine seconds less what the snapshot was late by), not a fresh reload.
             var plant=restored.Single(field=>field.Type==WorldEffectSnapshot.Kind.Plant);
-            Assert.That(plant.FirstScale,Is.InRange(8.6f,8.85f),"The seedling's next shot restarted or skipped on restore.");
+            float frameAge=Time.time-restoredAt;
+            var originalPlant=captured.Single(field=>field.Type==WorldEffectSnapshot.Kind.Plant);
+            Assert.AreEqual(originalPlant.FirstScale-.25f-frameAge,plant.FirstScale,.025f,"The seedling's next shot restarted or skipped on restore.");
             // ⚠️ THE SENTRY IS AT THE SAME AGE, NOT 0.45 S BEHIND (it was, before this probe).
             var sentry=Object.FindFirstObjectByType<PaeteSentry>();
-            Assert.AreEqual(sentryAge+.25f,sentry.Age,.1f,"A rejoiner's guardian runs on a different clock from everybody else's.");
+            Assert.AreEqual(sentryAge+.25f+frameAge,sentry.Age,.025f,"A rejoiner's guardian runs on a different clock from everybody else's.");
             // And it does not race its roots under the court a second time: that happened once, at the cast.
             Assert.IsEmpty(Object.FindObjectsByType<PaeteRootRidge>(FindObjectsSortMode.None),"A restored guardian sent its roots again.");
 

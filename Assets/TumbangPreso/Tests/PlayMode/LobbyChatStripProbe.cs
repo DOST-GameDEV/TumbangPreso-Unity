@@ -136,21 +136,30 @@ namespace TumbangPreso.PlayTests
             Canvas.ForceUpdateCanvases();
             yield return null;
 
-            // ---- what the room's chat column is actually showing ---------------------------
-            // ⚠️ SINCE 2026-10-28 THE LOBBY COLUMN IS THE WHOLE LOG (`LobbyChat.Lobby.cs`), not a
-            // two-row strip with a separate history sheet. The question this probe exists for is
-            // unchanged: are the newest lines DRAWN, not merely assigned.
-            var transcript = chat.GetComponentsInChildren<Text>(includeInactive: true)
-                .FirstOrDefault(t => t.name == "FullTranscript");
-            Assert.IsNotNull(transcript, "The room's chat column has no transcript.");
+            // ---- what the room's chat drawer is actually showing ----------------------------
+            // ⚠️ SINCE THE KNIT REBUILD (owner 2026-10-28) THE DRAWER IS ONE BUBBLE PER LINE
+            // (`LobbyChat.Lobby.cs`), not one transcript. The question this probe exists for is
+            // unchanged: are the newest lines DRAWN, whole, not merely assigned.
+            chat.SetPresented(true);
+            for (int i = 0; i < 3; i++) yield return null;
+            Canvas.ForceUpdateCanvases();
+            var words = chat.GetComponentsInChildren<Text>(includeInactive: true)
+                .Where(t => t.name == "Words" && t.transform.parent != null && t.transform.parent.name == "Shape").ToList();
+            Assert.AreEqual(Lines.Length, words.Count, "Every received line needs its own bubble.");
             foreach (string line in Lines)
-                StringAssert.Contains(line.Substring(line.IndexOf(":  ", System.StringComparison.Ordinal) + 3), transcript.text,
-                    "A received line is missing from the room's log.");
-            float have = transcript.rectTransform.rect.height, need = transcript.preferredHeight;
-            Debug.Log($"[ChatStrip] transcript rect={have:F1} needs={need:F1} visible={transcript.cachedTextGenerator.characterCountVisible}");
-            Assert.LessOrEqual(need, have + 0.5f, "The log's text is taller than its own rect, so legacy Text clips it.");
-            Assert.GreaterOrEqual(transcript.cachedTextGenerator.characterCountVisible, transcript.text.Replace("\n", "").TrimEnd().Length - 4,
-                "Part of the log is generated but not drawn.");
+            {
+                string what = line.Substring(line.IndexOf(":  ", System.StringComparison.Ordinal) + 3);
+                var bubble = words.FirstOrDefault(t => t.text == what);
+                Assert.IsNotNull(bubble, "A received line has no bubble: " + what);
+                float have = bubble.rectTransform.rect.height, need = bubble.preferredHeight;
+                Debug.Log($"[ChatStrip] bubble rect={have:F1} needs={need:F1} visible={bubble.cachedTextGenerator.characterCountVisible}");
+                Assert.LessOrEqual(need, have + 0.5f, "A bubble's text is taller than its own rect, so legacy Text clips it.");
+                // Generated against the bubble's own rect, as the canvas draws it: every character must fit.
+                var generator = new TextGenerator();
+                generator.Populate(bubble.text, bubble.GetGenerationSettings(bubble.rectTransform.rect.size));
+                Assert.GreaterOrEqual(generator.characterCountVisible, what.Length - 1,
+                    "Part of a bubble is generated but not drawn.");
+            }
 
             Object.Destroy(canvasGo);
             yield return null;

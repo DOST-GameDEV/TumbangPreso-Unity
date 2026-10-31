@@ -21,6 +21,9 @@ namespace TumbangPreso.Diagnostics
         private int[] _starts=new int[4];
         private bool _disconnected;
         private float _initialWarning;
+        private float _lateBodiesAt = -1;
+        private string _tracePath;
+        private bool _finished;
         private long _savedMatch,_savedPhase;
         private int _savedRound;
         private double _savedBegan;
@@ -43,9 +46,10 @@ namespace TumbangPreso.Diagnostics
             string path=Arg("-tp-ulttrace");if(path==null)return;
             var go=new GameObject("~NetUltimatePhaseProbe");DontDestroyOnLoad(go);var probe=go.AddComponent<NetUltimatePhaseProbe>();
             probe._started=Time.realtimeSinceStartup;
+            probe._tracePath=Path.GetFullPath(path);
             Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(path)));
             probe._trace=new StreamWriter(path){AutoFlush=true};
-            probe._trace.WriteLine("real,server,local,round,clock,phase,id,count,scale,requested,charge0,charge1,charge2,starts0,starts1,starts2,warning1,initialWarning,hero1,bot1,activeUlt1");
+            probe._trace.WriteLine("real,server,local,round,clock,phase,id,count,scale,requested,charge0,charge1,charge2,starts0,starts1,starts2,warning1,initialWarning,hero1,bot1,activeUlt1,doll0,doll1,shoe0,shoe1,doll0x,doll0z,doll1x,doll1z");
         }
         private void OnEnable()=>HeroAbilitySystem.UltimateStarted+=Started;
         private void OnDisable(){HeroAbilitySystem.UltimateStarted-=Started;_trace?.Dispose();_trace=null;}
@@ -53,6 +57,7 @@ namespace TumbangPreso.Diagnostics
         {_starts[actor.PlayerSlot]++;if(actor.PlayerSlot==1)_initialWarning=ability.WindupRemaining;}
         private void Update()
         {
+            if(_finished)return;
             if(Time.realtimeSinceStartup-_started>60){Application.Quit();return;}
             var round=GameServices.Round;var match=GameServices.Match;
             if(!NetAuthority.IsNetworked||!int.TryParse(Arg("-tp-ultseat"),out int local)||NetAuthority.LocalSlot!=local)return;
@@ -103,6 +108,7 @@ namespace TumbangPreso.Diagnostics
                 if(local==1&&!_disconnected&&Arg("-tp-ult-disconnect")=="caster"&&age>.7)
                 {
                     _disconnected=true;Debug.Log("[UltimateProbe] accepted caster disconnecting during shared hold");_trace?.Flush();
+                    File.WriteAllText(_tracePath+".done","Accepted caster disconnected during the hold");
                     NetSession.Instance.Stop();Application.Quit();return;
                 }
                 if(local==2&&!_lateRequest&&age>.6)
@@ -118,12 +124,35 @@ namespace TumbangPreso.Diagnostics
                 _oldResent=true;
                 if(NetAuthority.IsHost){MatchRpc.Instance.HostSetTimeScale(.5f);SendOldPhase();}
             }
-            if(_firstPhase>=0&&SharedUltimatePhase.Now-_firstPhase>(Arg("-tp-ult-latejoin")=="1"?20:7)){Application.Quit();return;}
-            if(local==3&&Time.realtimeSinceStartup-_started>18){Application.Quit();return;}
+            var doll0=round.BodyAt(CompanionSeats.For(0))?.GetComponent<VoodooDollBody>();
+            var doll1=round.BodyAt(CompanionSeats.For(1))?.GetComponent<VoodooDollBody>();
+            bool dollsReady=doll0?.Body!=null&&doll1?.Body!=null&&doll0.Shoe!=null&&doll1.Shoe!=null;
+            if(local==3&&dollsReady)
+            {
+                if(_lateBodiesAt<0)_lateBodiesAt=Time.realtimeSinceStartup;
+                if(Time.realtimeSinceStartup-_lateBodiesAt>1)File.WriteAllText(_tracePath+".ready","Current companion bodies and shoes received");
+                if(Time.realtimeSinceStartup-_lateBodiesAt>2){FinishReview();return;}
+            }
+            bool needsLate=Arg("-tp-ult-latejoin")=="1";
+            if(local!=3&&_firstPhase>=0&&SharedUltimatePhase.Now-_firstPhase>(needsLate?12:7))
+            {
+                string folder=Path.GetDirectoryName(_tracePath);
+                bool lateReady=!needsLate||File.Exists(Path.Combine(folder,"late.csv.done"));
+                bool observerDone=File.Exists(Path.Combine(folder,"observer.csv.done"));
+                bool scorerDone=File.Exists(Path.Combine(folder,"scorer.csv.done"))||_disconnected;
+                if(lateReady&&(local==2||(local==1&&observerDone)||(local==0&&observerDone&&scorerDone)))
+                {FinishReview();return;}
+            }
             if(_trace==null||Time.realtimeSinceStartup<_next)return;_next=Time.realtimeSinceStartup+.035f;
             float Charge(int seat)=>round.PlayerAt(seat)?.AbilitySystem?.Kit?.UltimateCharge??-1;
             var remote=round.PlayerAt(1)?.AbilitySystem;
-            _trace.WriteLine(FormattableString.Invariant($"{Time.realtimeSinceStartup-_started:F4},{SharedUltimatePhase.Now:F4},{local},{match.RoundNumber},{round.TimeLeft:F4},{(phase!=null&&phase.Active?1:0)},{phase?.PhaseId??0},{phase?.Commits.Count??0},{Time.timeScale:F3},{PresentationClock.RequestedScale:F3},{Charge(0):F3},{Charge(1):F3},{Charge(2):F3},{_starts[0]},{_starts[1]},{_starts[2]},{remote?.Kit?.Ultimate?.WindupRemaining??0:F4},{_initialWarning:F4},{remote?.HeroId},{(round.PlayerAt(1)?.IsBot==true?1:0)},{(remote?.Kit?.Ultimate?.IsActive==true?1:0)}"));
+            Vector3 p0=doll0?.Body!=null?doll0.Body.transform.position:Vector3.zero;
+            Vector3 p1=doll1?.Body!=null?doll1.Body.transform.position:Vector3.zero;
+            _trace.WriteLine(FormattableString.Invariant($"{Time.realtimeSinceStartup-_started:F4},{SharedUltimatePhase.Now:F4},{local},{match.RoundNumber},{round.TimeLeft:F4},{(phase!=null&&phase.Active?1:0)},{phase?.PhaseId??0},{phase?.Commits.Count??0},{Time.timeScale:F3},{PresentationClock.RequestedScale:F3},{Charge(0):F3},{Charge(1):F3},{Charge(2):F3},{_starts[0]},{_starts[1]},{_starts[2]},{remote?.Kit?.Ultimate?.WindupRemaining??0:F4},{_initialWarning:F4},{remote?.HeroId},{(round.PlayerAt(1)?.IsBot==true?1:0)},{(remote?.Kit?.Ultimate?.IsActive==true?1:0)},{(doll0?.Body!=null?1:0)},{(doll1?.Body!=null?1:0)},{(doll0?.Shoe!=null?1:0)},{(doll1?.Shoe!=null?1:0)},{p0.x:F4},{p0.z:F4},{p1.x:F4},{p1.z:F4}"));
+        }
+        private void FinishReview()
+        {
+            _trace?.Flush(); File.WriteAllText(_tracePath+".done","Fixture receipt complete"); _finished=true; Application.Quit();
         }
         private void SendOldPhase()
         {

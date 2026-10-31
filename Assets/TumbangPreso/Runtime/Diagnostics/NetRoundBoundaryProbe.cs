@@ -33,7 +33,7 @@ namespace TumbangPreso.Diagnostics
             path = Path.GetFullPath(path);
             Directory.CreateDirectory(Path.GetDirectoryName(path));
             probe._writer = new StreamWriter(path) { AutoFlush = true };
-            probe._writer.WriteLine("wall,networked,host,slot,round,active,warmup,inProgress,left,cycle,intermissions,pid");
+            probe._writer.WriteLine("wall,networked,host,slot,round,active,warmup,inProgress,left,cycle,intermissions,pid,admitted");
             probe._started = Time.realtimeSinceStartup;
         }
 
@@ -66,7 +66,8 @@ namespace TumbangPreso.Diagnostics
                         NetAuthority.IsNetworked ? 1 : 0, NetAuthority.IsHost ? 1 : 0,
                         NetAuthority.LocalSlot, match.RoundNumber, round.RoundActive ? 1 : 0,
                         match.IsWarmupBuffer ? 1 : 0, match.MatchInProgress ? 1 : 0,
-                        round.TimeLeft, _cycle, _intermissions, System.Diagnostics.Process.GetCurrentProcess().Id };
+                        round.TimeLeft, _cycle, _intermissions, System.Diagnostics.Process.GetCurrentProcess().Id,
+                        NetSession.Instance?.IsAdmitted==true?1:0 };
                     _writer.WriteLine(string.Join(",", row.Select(v => Convert.ToString(v, CultureInfo.InvariantCulture))));
                 }
                 if (NetAuthority.IsNetworked && match.RoundNumber >= 2 && round.RoundActive &&
@@ -92,7 +93,8 @@ namespace TumbangPreso.Diagnostics
                 var map = UI.SceneFlow.SelectedMap;
                 int port = int.Parse(Argument("-tp-round-rejoin-port") ?? "8965", CultureInfo.InvariantCulture);
                 Debug.Log("[RoundBoundary] restarting client transport and reloading arena");
-                if (!await NetSession.Instance.StartClientAsync("127.0.0.1", port))
+                if (!await NetSession.Instance.StartClientAsync("127.0.0.1", port) ||
+                    !await NetSession.Instance.WaitForConnectionAsync())
                     throw new InvalidOperationException("Round-boundary rejoin was refused");
                 _cycle = 2;
                 UI.SceneFlow.Go(map);

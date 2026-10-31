@@ -6,6 +6,8 @@ namespace TumbangPreso.UI
     public sealed partial class TumpSettingsView
     {
         private Text _unsaved;
+        private bool _touchLayout;
+        private SettingsOptionMenu _deviceMenu;
         private bool? _saveDirty;
         private void RefreshSave(bool dirty)
         {
@@ -26,6 +28,7 @@ namespace TumbangPreso.UI
         }
         private void Build(Transform owner)
         {
+            _touchLayout = Application.isMobilePlatform || InputLayer.TouchHud.ForceVisible;
             _canvas = OwnerUiLayout.Canvas(owner, "OwnerSettingsCanvas", 800);
             var background = OwnerUiLayout.Rect(_canvas.transform, "SettingsColourField").gameObject.AddComponent<Image>();
             OwnerUiLayout.Fill(background.rectTransform); background.color = SettingsPalette.Background; background.raycastTarget = false;
@@ -33,15 +36,20 @@ namespace TumbangPreso.UI
             panel.rectTransform.anchorMin = new Vector2(.5f, 0); panel.rectTransform.anchorMax = Vector2.one;
             panel.rectTransform.offsetMin = new Vector2(-450, 0); panel.rectTransform.offsetMax = Vector2.zero;
             panel.color = SettingsPalette.Surface; panel.raycastTarget = false;
-            var root = OwnerUiLayout.DesignArea(_canvas.transform, "SettingsComposition");
+            if (_touchLayout) OwnerUiLayout.Fill(panel.rectTransform);
+            var safe = UiSafeArea.Content(_canvas, "SettingsSafeArea");
+            var root = OwnerUiLayout.DesignArea(safe, "SettingsComposition");
+            safe.GetComponent<UiSafeArea>().KeepDesignInside(root);
             var back = SettingsWorkspaceRows.Action(root, "TumpSettingsBack", "BACK", Back, 190);
             OwnerUiLayout.Place((RectTransform)back.transform, 61, 25, 190, 78);
+            if (_touchLayout) OwnerUiLayout.Place((RectTransform)back.transform, 60, 26, 150, InputLayer.TouchMetrics.MinTargetUnits);
             back.GetComponentInChildren<Text>().text="";
             var backIcon=OwnerUiGlyph.Create(back.transform,"BackIcon",OwnerUiGlyph.Mark.Back,Color.white);
             OwnerUiLayout.Place(backIcon.rectTransform,30,14,58,45);back.targetGraphic=backIcon;
             var title = OwnerUiLayout.Text(root, "SettingsTitle", "Settings", 72, OwnerUiLayout.TypeRole.Display);
             title.verticalOverflow = VerticalWrapMode.Overflow;
             OwnerUiLayout.Place(title.rectTransform, 80, 130, 410, 130); title.color = SettingsPalette.Ink;
+            if (_touchLayout) OwnerUiLayout.Place(title.rectTransform, 240, 20, 950, 144);
             for (int i = 0; i < Sections.Length; i++)
             {
                 int index = i;
@@ -54,6 +62,20 @@ namespace TumbangPreso.UI
                 var mark = OwnerUiLayout.Rect(tab.transform, "SelectedSection").gameObject.AddComponent<Image>();
                 OwnerUiLayout.Place(mark.rectTransform, 18, 75, 286, 5); mark.color = SettingsPalette.Accent; mark.raycastTarget = false;
                 _tabs.Add(tab);
+                if (_touchLayout)
+                {
+                    OwnerUiLayout.Place((RectTransform)tab.transform, 60 + i * 362, 182, 350, InputLayer.TouchMetrics.MinTargetUnits);
+                    OwnerUiLayout.Fill(label.rectTransform);
+                    label.alignment = TextAnchor.MiddleCenter;
+                    OwnerUiLayout.Fill(tabFace.rectTransform);
+                    OwnerUiLayout.Place(mark.rectTransform, 30, 136, 290, 5);
+                }
+            }
+            if (_touchLayout)
+            {
+                _deviceMenu = SettingsOptionMenu.Create(root, "InputDeviceValue", new[] { "Keyboard & mouse", "Controller", "Touch" },
+                    (int)_device, v => { _device = (InputLayer.InputDeviceKind)v; ShowSection(0); });
+                OwnerUiLayout.Place((RectTransform)_deviceMenu.transform, 1327, 26, 533, InputLayer.TouchMetrics.MinTargetUnits);
             }
             // Keep credits reachable without adding a fifth door to the owner's
             // supplied four-button title composition.
@@ -65,15 +87,18 @@ namespace TumbangPreso.UI
                 view.Open(transform,Resume);
             },407);
             OwnerUiLayout.Place((RectTransform)credits.transform,71,870,407,70);
+            if (_touchLayout) OwnerUiLayout.Place((RectTransform)credits.transform, 60, 916, 300, InputLayer.TouchMetrics.MinTargetUnits);
             credits.GetComponentInChildren<Text>().font = InGameTypography.Resolve(OwnerUiTheme.Current.Display, true, credits.GetComponentInChildren<Text>());
             _heading = OwnerUiLayout.Text(root, "Heading", "", 62, OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(_heading.rectTransform, 572, 104, 1238, 113); _heading.color = SettingsPalette.Ink;
-            _list = OwnerScrollColumn.Build(root, "SettingsList", new Rect(577, 255, 1240, 633), out var scroll);
+            _heading.enabled = !_touchLayout;
+            _list = OwnerScrollColumn.Build(root, "SettingsList", _touchLayout ? new Rect(60, 350, 1800, 546) : new Rect(577, 255, 1240, 633), out var scroll);
             _list.GetComponent<VerticalLayoutGroup>().padding.bottom = 26;
             var scrollbar = scroll.verticalScrollbar; if (scrollbar != null)
             { foreach (var image in scrollbar.GetComponentsInChildren<Image>()) image.color = image.name == "Handle" ? SettingsPalette.Muted : SettingsPalette.Control; }
             _status = OwnerUiLayout.Text(root, "SettingsStatus", "", 28);
             OwnerUiLayout.Place(_status.rectTransform, 578, 913, 737, 115); _status.color = SettingsPalette.Muted;
+            if (_touchLayout) OwnerUiLayout.Place(_status.rectTransform, 390, 916, 700, 144);
             // ⚠️ SAVE IS A BUTTON THAT LOOKS LIKE ONE. It was floating words in the corner, grey when
             // clean, the same object as a label. It is now a filled accent slab while there is
             // something to save and a quiet outlined one when not, and an UNSAVED marker sits beside
@@ -81,6 +106,7 @@ namespace TumbangPreso.UI
             // changes when you're ready" that used to explain it is gone: the button says it.
             _save = SettingsWorkspaceRows.Action(root, "TumpSaveSettings", "SAVE CHANGES", () => _session.Save(), 474);
             OwnerUiLayout.Place((RectTransform)_save.transform, 1361, 954, 474, 82);
+            if (_touchLayout) OwnerUiLayout.Place((RectTransform)_save.transform, 1360, 916, 500, InputLayer.TouchMetrics.MinTargetUnits);
             var saveFace = OwnerUiLayout.Rect(_save.transform, "SaveFace").gameObject.AddComponent<HudCard>();
             saveFace.rectTransform.SetAsFirstSibling(); OwnerUiLayout.Fill(saveFace.rectTransform); saveFace.raycastTarget = false;
             saveFace.Toy(SettingsPalette.Control, SettingsPalette.Background, 2, 14, .35f); saveFace.FollowContrast = false;
@@ -88,6 +114,7 @@ namespace TumbangPreso.UI
             saveLabel.alignment = TextAnchor.MiddleCenter;
             _unsaved = OwnerUiLayout.Text(root, "UnsavedMarker", "UNSAVED", 28, OwnerUiLayout.TypeRole.Reading);
             OwnerUiLayout.Place(_unsaved.rectTransform, 1120, 970, 220, 50); _unsaved.alignment = TextAnchor.MiddleRight;
+            if (_touchLayout) OwnerUiLayout.Place(_unsaved.rectTransform, 1110, 958, 220, 60);
             _unsaved.color = SettingsPalette.Accent; _unsaved.raycastTarget = false;
         }
     }

@@ -23,7 +23,8 @@ namespace TumbangPreso.UI.Hub
 
         public override void Build()
         {
-            float rowH = 76, gap = 10;
+            bool touch = Application.isMobilePlatform || InputLayer.TouchHud.ForceVisible;
+            float rowH = touch ? InputLayer.TouchMetrics.MinTargetUnits : 76, gap = touch ? 20 : 10;
             // ⚠️ MATCH RULES is the old preparation board's rules sheet and bot difficulty, re-homed:
             // PRACTICE starts at once from GAMEMODE SELECT, so its rules have to be reachable from
             // somewhere a player goes first. A custom room's host reaches the same sheet from RULES.
@@ -42,32 +43,38 @@ namespace TumbangPreso.UI.Hub
                 () => { Hub.Host.LeaveRoom(); SceneFlow.Go(SceneFlow.MainMenu); },
             };
 
-            float height = 150 + names.Length * (rowH + gap) + 40 + rowH + 40;
-            var panel = HubKit.Place(HubKit.Rect(Root, "Panel"), HubKit.TopRight,
-                                     new Vector2(-HubKit.Margin + 6, -HubKit.Margin + 6), new Vector2(520, height));
+            float height = touch ? 900 : 150 + names.Length * (rowH + gap) + 40 + rowH + 40;
+            var panel = HubKit.Place(HubKit.Rect(Root, "Panel"), touch ? HubKit.Centre : HubKit.TopRight,
+                touch ? Vector2.zero : new Vector2(-HubKit.Margin + 6, -HubKit.Margin + 6),
+                new Vector2(touch ? 1620 : 520, height));
             var plate = HubKit.Shape(panel, "Plate", HubStyle.Night, false, 131, 6, 30);
             HubKit.Stretch(plate.rectTransform);
             plate.ShadowOffset = new Vector2(10, -12);
 
             var close = HubKit.IconButton(panel, "CloseButton", HubGlyph.Mark.Close, HubStyle.DeepRed, () => Hub.Back(), 132);
-            HubKit.Place((RectTransform)close.transform, HubKit.TopRight, new Vector2(-24, -24), new Vector2(84, 84));
+            HubKit.Place((RectTransform)close.transform, HubKit.TopRight, new Vector2(-24, -24), Vector2.one * (touch ? InputLayer.TouchMetrics.MinTargetUnits : 84));
             var prompt = HubKit.BackPrompt(close.transform);
             HubKit.Place((RectTransform)prompt.transform, HubKit.BottomLeft, new Vector2(-16, -16), new Vector2(40, 40));
             var heading = HubKit.Text(panel, "Heading", "MENU", HubStyle.Display, true, HubBoard.Colour("#E1D2B7"), TextAnchor.MiddleLeft);
-            HubKit.Place(heading.rectTransform, HubKit.TopLeft, new Vector2(34, -24), new Vector2(340, 96));
+            HubKit.Place(heading.rectTransform, HubKit.TopLeft, new Vector2(touch ? 48 : 34, -24), new Vector2(touch ? 1260 : 340, 96));
 
             for (int i = 0; i < names.Length; i++)
             {
                 var row = HubKit.Button(panel, "Menu" + names[i].Replace(" ", ""), names[i], HubStyle.Honey, actions[i],
                                         HubStyle.Label, 140 + i, marks[i]);
-                HubKit.Place((RectTransform)row.transform, HubKit.TopLeft, new Vector2(34, -(140 + i * (rowH + gap))), new Vector2(452, rowH));
+                float x = touch ? 48 + (i % 2) * 774 : 34;
+                float y = touch ? 164 + (i / 2) * (rowH + gap) : 140 + i * (rowH + gap);
+                HubKit.Place((RectTransform)row.transform, HubKit.TopLeft, new Vector2(x, -y), new Vector2(touch ? 750 : 452, rowH));
                 HubKit.LabelOf(row).alignment = TextAnchor.MiddleLeft;
                 HubSlap.On(row.transform, 0.02f * i, 0);
             }
 
-            var quit = HubKit.Button(panel, "MenuQuitGame", "QUIT GAME", HubStyle.DeepRed, SceneFlow.Quit, HubStyle.Label, 150, HubGlyph.Mark.Close);
-            HubKit.Place((RectTransform)quit.transform, HubKit.BottomLeft, new Vector2(34, 36), new Vector2(452, rowH));
-            HubKit.LabelOf(quit).alignment = TextAnchor.MiddleLeft;
+            if (!touch)
+            {
+                var quit = HubKit.Button(panel, "MenuQuitGame", "QUIT GAME", HubStyle.DeepRed, SceneFlow.Quit, HubStyle.Label, 150, HubGlyph.Mark.Close);
+                HubKit.Place((RectTransform)quit.transform, HubKit.BottomLeft, new Vector2(34, 36), new Vector2(452, rowH));
+                HubKit.LabelOf(quit).alignment = TextAnchor.MiddleLeft;
+            }
             HubSlap.On(panel, 0, 0);
         }
     }

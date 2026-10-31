@@ -1,0 +1,60 @@
+{
+  "status": "WIP handoff; not release-qualified",
+  "apk_source": "ff9aafafdc887145ea895e500328ab333e8b555a",
+  "source_sha256": {
+    "Assets/TumbangPreso/Runtime/Camera/SpectatorCamera.cs": "915915bb70fe6284e890cea1333e459df95f8d21721da47605cc4a9f4496f6f4",
+    "Assets/TumbangPreso/Runtime/GuidedTraining.cs": "69aac711ae004bcbf60847c227b179a760d9e45cddbcf764d1521e1fec92e86f",
+    "Assets/TumbangPreso/Runtime/Input/TouchHud.PlayerUtilities.cs": "c927e6d0375534224fdce13113b03d6117daf70f953beeddbcc1d2a7188fc779",
+    "Assets/TumbangPreso/Runtime/Input/TouchHud.cs": "04c4121009eb1120eb87619d84c3edf09bc13da1a690f0bb0239ad10b9b6e660",
+    "Assets/TumbangPreso/Runtime/PlayerInputReader.cs": "ea04ca6fc2f03a7bbe0e794db2ad77872c2f82cdc10883c1e3ded65a11f7a2c2",
+    "Assets/TumbangPreso/Runtime/UI/PowerReferenceReadingLayout.cs": "064a06e8ce5345fcbe32d46b33115a13331ac92db6ce12d6355d085dad87991e",
+    "Assets/TumbangPreso/Runtime/UI/SettingsOptionMenu.cs": "fb255d093f17f0aae54a539da016c7df8929450269391cc2e9c66bfdce44be92",
+    "Assets/TumbangPreso/Runtime/UI/SettingsReadingLayout.cs": "f3052a1b086649810c565a6314910dfb68fdb80fe6117d88b908880ccceeb0f0",
+    "Assets/TumbangPreso/Runtime/UI/TumpPowerReadout.OwnerPainted.cs": "32e4862359b920874162ba9dd354227b65c5fa9ef2f2a4bad1fb8e76560b931c",
+    "Assets/TumbangPreso/Tests/PlayMode/MobileInputViewportTests.cs": "9127735d36caac728782f58cf68b3a86382b1b8eed3b8ead03267f3c622153b7"
+  },
+  "native": {
+    "xml": "Logs/mobile-ui-1026/native09-handoff.xml",
+    "sha256": "06e9ce4d26a37ecfd6d08a15e55880afcfe7c1c896ccbbe9e2ea8eaee88ec956",
+    "passed": 6,
+    "failed": 1,
+    "cases": [
+      {
+        "name": "TumbangPreso.PlayTests.MobileInputViewportTests.PhonePlayerInfoCurveAndMenuReachTheirLiveConsumers",
+        "result": "Passed",
+        "failure": ""
+      },
+      {
+        "name": "TumbangPreso.PlayTests.MobileInputViewportTests.PhoneSettingsExposeArrangeWithoutScrollingAndKeepNestedReturnPaths",
+        "result": "Failed",
+        "failure": "  Option0 is clipped above the picker.\n  Expected: less than or equal to 241.0f\n  But was:  311.999939f\n"
+      },
+      {
+        "name": "TumbangPreso.PlayTests.SpectatorTouchConsumerTests.InactiveTouchDataDoesNotTakeOverOrRotateTheView",
+        "result": "Passed",
+        "failure": ""
+      },
+      {
+        "name": "TumbangPreso.PlayTests.SpectatorTouchConsumerTests.ThumbMovementMovesTheFreeFlightTarget",
+        "result": "Passed",
+        "failure": ""
+      },
+      {
+        "name": "TumbangPreso.PlayTests.SpectatorTouchConsumerTests.ThumbMovementTakesOverTheAutomaticCamera",
+        "result": "Passed",
+        "failure": ""
+      },
+      {
+        "name": "TumbangPreso.PlayTests.SpectatorTouchConsumerTests.TouchDragRotatesOnceAndDoesNotRepeatWithoutAnotherDrag",
+        "result": "Passed",
+        "failure": ""
+      },
+      {
+        "name": "TumbangPreso.PlayTests.SpectatorTouchConsumerTests.TouchDragTakesOverTheAutomaticCamera",
+        "result": "Passed",
+        "failure": ""
+      }
+    ]
+  },
+  "android": "No APK includes these newer patches. Rebuild and retest required."
+}

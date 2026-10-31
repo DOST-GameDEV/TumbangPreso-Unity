@@ -23,6 +23,9 @@ namespace TumbangPreso.UI
         public enum Kind { Ordinary, Primary, Destructive }
 
         public HudCard Face, Ring;
+        public RectTransform Knit;
+
+        private static Hub.Knit KnitOf(Kind role) => role == Kind.Primary ? Hub.Knit.Gold : role == Kind.Destructive ? Hub.Knit.Red : Hub.Knit.Orange;
         public Text Label;
         public RectTransform Body;
         public Kind Role;
@@ -48,6 +51,15 @@ namespace TumbangPreso.UI
             button.Face = OwnerUiLayout.Rect(button.Body, "Face").gameObject.AddComponent<HudCard>();
             OwnerUiLayout.Fill(button.Face.rectTransform);
             button.Face.Toy(HudDraw.Cream, HudDraw.CreamSide, Depth, Bevel, .42f).raycastTarget = false;
+            // ⚠️ HOME'S KNIT (owner 2026-10-28: the match menu and its leave question join the room
+            // family). The knit piece by role: RESUME and STAY in PLAY's lime, leaving in the menu red,
+            // the rest on TASK's orange tile. The drawn face stays as the press's depth reference only.
+            var knit = Hub.HubKnit.Plate(button.Body, "Knit", KnitOf(role));
+            OwnerUiLayout.Fill(knit);
+            knit.SetSiblingIndex(1);
+            button.Knit = knit;
+            button.Face.enabled = false;
+            button.Ring.Border = Hub.HubKnit.Rim;
             button.Label = OwnerUiLayout.Text(button.Body, "Label", words, size, OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Fill(button.Label.rectTransform);
             button.Label.rectTransform.offsetMin = new Vector2(24, 2); button.Label.rectTransform.offsetMax = new Vector2(-24, -2);
@@ -100,8 +112,9 @@ namespace TumbangPreso.UI
             bool live = IsInteractable();
             Color fill = Role == Kind.Primary ? HudDraw.Honey : Role == Kind.Destructive ? HudDraw.Alarm : HudDraw.Cream;
             Color side = Role == Kind.Primary ? HudDraw.HoneySide : Role == Kind.Destructive ? HudDraw.AlarmSide : HudDraw.CreamSide;
-            Color ink = Role == Kind.Destructive ? Color.white : HudDraw.Brown;
+            Color ink = Hub.HubKnit.InkOf(KnitOf(Role));
             if (!live) { fill = Color.Lerp(fill, HudDraw.CreamSide, .55f); ink.a = .5f; }
+            if (Knit != null) foreach (var image in Knit.GetComponentsInChildren<Image>()) image.color = new Color(1, 1, 1, live ? 1 : .5f);
             Face.color = fill; Face.Side = side; Face.Depth = live ? Depth : 2; Face.SetVerticesDirty();
             if (Label != null) Label.color = ink;
         }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Reflection;
+using System.Linq;
 using NUnit.Framework;
 using TumbangPreso.CameraSystem;
 using UnityEngine;
@@ -22,6 +23,9 @@ namespace TumbangPreso.PlayTests
         private sealed class Solo : INetProvider
         { public bool IsHost => true; public bool IsNetworked => false; public int LocalSlot => 1;
           public int LocalPeerId => 1; public bool IsSeatlessReferee => false; }
+        private sealed class RemoteWatcher : INetProvider
+        { public bool IsHost => false; public bool IsNetworked => true; public int LocalSlot => -1;
+          public int LocalPeerId => 2; public bool IsSeatlessReferee => false; }
         [UnitySetUp] public IEnumerator Before()
         {
             yield return PlayModeWorld.Reset(); _previous = NetAuthority.Provider; NetAuthority.Provider = new Solo();
@@ -52,6 +56,63 @@ namespace TumbangPreso.PlayTests
         {
             ObservedPlayerView.Capture(_rig, _actor);
             typeof(SpectatorCamera).GetMethod("LateUpdate", Hidden).Invoke(_watcher, null);
+        }
+        [Test] public void ARecoveredRemoteViewReturnsDirectlyToTheOwnersEyes()
+        {
+            var router=new GameObject("Recovered view scope");
+            try
+            {
+                var rpc=router.AddComponent<Net.MatchRpc>();
+                typeof(Net.MatchRpc).GetProperty("PresentationMatchId").SetValue(rpc,100L);
+                NetAuthority.Provider=new RemoteWatcher();GameLaunch.Spectator=true;_rig.SetActive(false);
+                var state=new Net.SpectatorViewState {Match=100,Round=1,Slot=1,Epoch=_actor.MovementEpoch,Sequence=1,
+                    Eye=_actor.transform.position+Vector3.up,Rotation=Quaternion.Euler(10,120,0),Fov=91,
+                    HandsRotation=Quaternion.identity,Flags=Net.SpectatorViewState.FirstPerson};
+                var late=typeof(SpectatorCamera).GetMethod("LateUpdate",Hidden);
+                Assert.IsTrue(ObservedPlayerView.InstallRemote(state,_actor));late.Invoke(_watcher,null);
+                Assert.IsTrue(_watcher.IsWatchingEyes(_actor));
+                ObservedPlayerView.ClearRemote();late.Invoke(_watcher,null);
+                Assert.IsFalse(_watcher.IsWatchingEyes(_actor));
+                Assert.Greater(Vector3.Distance(state.Eye,_watcher.transform.position),1);
+                state.Sequence++;Assert.IsTrue(ObservedPlayerView.InstallRemote(state,_actor));late.Invoke(_watcher,null);
+                Assert.IsTrue(_watcher.IsWatchingEyes(_actor));
+                Assert.Less(Vector3.Distance(state.Eye,_watcher.transform.position),.0001f);
+                Assert.Less(Quaternion.Angle(state.Rotation,_watcher.transform.rotation),.001f);
+            }
+            finally { Object.DestroyImmediate(router);ObservedPlayerView.ClearRemote(); }
+        }
+        [TestCase(16f/9,20f/9)] [TestCase(20f/9,16f/9)] [TestCase(4f/3,20f/9)]
+        public void ObservedViewportPreservesTheOwnersFrustum(float source,float output)
+        {
+            var fit=SpectatorCamera.FitObservedViewport(source,output);
+            Assert.AreEqual(source,output*fit.width/fit.height,.0001f);
+            Assert.AreEqual(.5f,fit.center.x,.0001f);Assert.AreEqual(.5f,fit.center.y,.0001f);
+            Assert.LessOrEqual(fit.width,1);Assert.LessOrEqual(fit.height,1);
+        }
+        [Test] public void RealOwnerLensIsMatchedAndFreeFlightRestoresTheFullViewport()
+        {
+            var camera=_watcher.GetComponent<Camera>();
+            var output=new RenderTexture(1600,720,16);var previous=camera.targetTexture;
+            Assert.IsTrue(_watcher.ExecuteViewCommand(SpectatorCamera.ViewCommand.FreeFlight));
+            typeof(SpectatorCamera).GetMethod("LateUpdate",Hidden).Invoke(_watcher,null);
+            float near=camera.nearClipPlane,far=camera.farClipPlane;
+            Assert.IsTrue(_watcher.TryWatchPlayer(1));
+            try
+            {
+                camera.targetTexture=output;_rig.Camera.aspect=4f/3;CopyFinalView();
+                Assert.AreEqual(4f/3,camera.aspect,.0001f);Assert.AreEqual(1,_watcher.ObservedViewport.height,.0001f);
+                Assert.AreEqual(_rig.Camera.nearClipPlane,camera.nearClipPlane,.00001f);Assert.AreEqual(_rig.Camera.farClipPlane,camera.farClipPlane,.001f);
+                Assert.Less(_watcher.ObservedViewport.width,1);
+                var point=_rig.Camera.transform.TransformPoint(new Vector3(1,.5f,10));
+                Assert.Less(Vector3.Distance(_rig.Camera.WorldToViewportPoint(point),camera.WorldToViewportPoint(point)),.0001f);
+                var bars=Object.FindObjectsByType<Canvas>().Single(c=>c.name=="ObservedLensBars");Assert.IsTrue(bars.enabled);
+                Assert.IsTrue(_watcher.ExecuteViewCommand(SpectatorCamera.ViewCommand.FreeFlight));
+                typeof(SpectatorCamera).GetMethod("LateUpdate",Hidden).Invoke(_watcher,null);
+                Assert.AreEqual(new Rect(0,0,1,1),camera.rect);Assert.IsFalse(bars.enabled);
+                Assert.AreEqual(1600f/720,camera.aspect,.0001f);
+                Assert.AreEqual(near,camera.nearClipPlane,.00001f);Assert.AreEqual(far,camera.farClipPlane,.001f);
+            }
+            finally { camera.targetTexture=previous;Object.DestroyImmediate(output); }
         }
         [Test] public void FollowNextUsesSeatOrderAfterADirectPovSelection()
         {

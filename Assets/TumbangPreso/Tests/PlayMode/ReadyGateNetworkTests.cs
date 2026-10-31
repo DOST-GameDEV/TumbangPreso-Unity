@@ -309,7 +309,9 @@ namespace TumbangPreso.PlayTests
                 Assert.IsFalse(gate.CountingDown); Assert.AreEqual(0, ticks.Count);
                 Deliver(rpc, "OnBeginCountdownMsg", 0, 123);
                 Deliver(rpc, "OnBeginCountdownMsg", 0, 123);
-                Assert.IsTrue(gate.CountingDown); Assert.AreEqual(1, ticks.Count);
+                Assert.IsTrue(gate.CountingDown); Assert.AreEqual(0, ticks.Count, "The HUD reveal precedes the first countdown tick.");
+                yield return new WaitForSecondsRealtime(ReadyGate.HudRevealSeconds + .05f);
+                Assert.AreEqual(1, ticks.Count);
                 float deadline = Time.realtimeSinceStartup + 6;
                 while (gate.CountingDown && Time.realtimeSinceStartup < deadline) yield return null;
                 Assert.IsFalse(gate.CountingDown); Assert.AreEqual(1, starts); CollectionAssert.AreEqual(new[] { "3", "2", "1", "GO!" }, ticks);

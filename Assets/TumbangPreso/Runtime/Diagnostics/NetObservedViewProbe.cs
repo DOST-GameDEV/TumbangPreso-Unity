@@ -24,10 +24,15 @@ namespace TumbangPreso.Diagnostics
             public bool watched, unsubscribed;
             public int maxPhantoms, maxHexShoes, maxFakePlayers, maxFakeShoes, markerSamples, beaconSamples, renderedPhantoms, renderedMarkerSamples;
             public bool privateRequested, privateReleased;
+            public int viewVersion;
+            public int displayWidth, displayHeight;
+            public int legacyPeers, currentPeers;
+            public float sourceAspect, maxProjectionAspectError, maxClipError, minViewportWidth = 1, minViewportHeight = 1;
         }
         private string _role, _path;
         private StreamWriter _csv;
         private float _started, _liveAt = -1, _sampleAt, _seatAt, _nextGesture;
+        private float _watchSeconds = 20, _finishSeconds = 29, _timeoutSeconds = 160;
         private CameraRig _ownerRig;
         private SpectatorCamera _observer;
         private ReadyGate _readyGate;
@@ -57,19 +62,23 @@ namespace TumbangPreso.Diagnostics
             string path = Arg("-tp-viewtrace"); if (path == null) return;
             var root = new GameObject("~NetObservedViewProbe"); DontDestroyOnLoad(root);
             var probe = root.AddComponent<NetObservedViewProbe>();
+            ConfigurePeerWindow();
             probe._path = Path.GetFullPath(path); probe._role = Arg("-tp-viewrole") ?? "host";
             probe._receipt.role = probe._role; probe._started = Time.realtimeSinceStartup;
+            if (int.TryParse(Arg("-tp-view-seconds"), out int seconds))
+            { probe._watchSeconds = Mathf.Clamp(seconds, 20, 60); probe._finishSeconds = probe._watchSeconds + 9; }
+            if (int.TryParse(Arg("-tp-view-timeout"), out int timeout)) probe._timeoutSeconds = Mathf.Clamp(timeout, 160, 360);
             probe._private = Array.IndexOf(Environment.GetCommandLineArgs(), "-tp-viewprivate") >= 0;
             probe._receipt.privateRequested = probe._private;
             Directory.CreateDirectory(Path.GetDirectoryName(probe._path));
             probe._csv = new StreamWriter(probe._path) { AutoFlush = true };
-            probe._csv.WriteLine("time,role,match,round,slot,epoch,serial,sent,eye_x,eye_y,eye_z,pitch,yaw,roll,fov,action,aim,published,received,relayed,applied_error,phantoms,marker,private");
+            probe._csv.WriteLine("time,role,match,round,slot,epoch,serial,sent,eye_x,eye_y,eye_z,pitch,yaw,roll,fov,action,aim,published,received,relayed,applied_error,phantoms,marker,private,aspect,viewport_width,viewport_height");
             root.AddComponent<NetObservedViewDriver>().Owner = probe;
         }
         private void Update()
         {
             if (_finished) return;
-            if (_liveAt >= 0 && Time.realtimeSinceStartup - _liveAt > 29)
+            if (_liveAt >= 0 && Time.realtimeSinceStartup - _liveAt > _finishSeconds)
             {
                 // End the observer first, then its owner, then the host. Simultaneous
                 // timers let host shutdown interrupt a client's final receipt.
@@ -79,7 +88,7 @@ namespace TumbangPreso.Diagnostics
                 if (_role == "observer" || (_role == "owner" && observerDone) || (_role == "host" && observerDone && ownerDone))
                 { Finish(null); return; }
             }
-            if (Time.realtimeSinceStartup - _started > 160) { Finish("No complete live view before deadline."); return; }
+            if (Time.realtimeSinceStartup - _started > _timeoutSeconds) { Finish("No complete live view before deadline."); return; }
             if (_liveAt >= 0 && _role != "host" && NetworkManager.Singleton?.IsConnectedClient != true)
             { Finish("Peer link ended before fixture completion."); return; }
             var rpc = MatchRpc.Instance; var net = NetSession.Instance;
@@ -121,7 +130,7 @@ namespace TumbangPreso.Diagnostics
                 if (_observer == null) _observer = FindAnyObjectByType<SpectatorCamera>();
                 UI.Hud.Instance?.SetSpectatorControlsVisible(false); // Keep this fixture's world capture unobstructed.
                 if (_observer != null && !_unsubscribed && _observer.FollowedPlayer?.PlayerSlot != 1) _observer.TryWatchPlayer(1);
-                if (_observer != null && _liveAt >= 0 && Time.realtimeSinceStartup - _liveAt > 20 && !_unsubscribed)
+                if (_observer != null && _liveAt >= 0 && Time.realtimeSinceStartup - _liveAt > _watchSeconds && !_unsubscribed)
                 { _observer.ExecuteViewCommand(SpectatorCamera.ViewCommand.FreeFlight); _unsubscribed = true; _receipt.unsubscribed = true; }
                 if (_unsubscribed && _observer != null && _observer.PrivatePhantomCount == 0 && !_observer.PrivateMarkerVisible)
                     _receipt.privateReleased = true;
@@ -171,10 +180,23 @@ namespace TumbangPreso.Diagnostics
             else has = ObservedPlayerView.TryGet(actor, out state, out _);
             if (!has || (_role == "observer" && _unsubscribed)) return;
             _receipt.samples++; _receipt.local = NetAuthority.LocalSlot; _receipt.match = state.Match;
+            _receipt.displayWidth = Screen.width; _receipt.displayHeight = Screen.height;
             _receipt.published = rpc.SpectatorViewsPublished; _receipt.received = rpc.SpectatorViewsReceived; _receipt.relayed = rpc.SpectatorViewsRelayed;
             _receipt.minFov = Mathf.Min(_receipt.minFov, state.Fov); _receipt.maxFov = Mathf.Max(_receipt.maxFov, state.Fov);
             float error = _role == "observer" && _observer != null ? Vector3.Distance(state.Eye, _observer.transform.position) : 0;
             _receipt.maxEyeError = Mathf.Max(_receipt.maxEyeError, error); _receipt.sentAt = state.SentAt;
+            _receipt.viewVersion = rpc.SpectatorViewWireVersion; _receipt.sourceAspect = state.Aspect;
+            _receipt.legacyPeers = Mathf.Max(_receipt.legacyPeers, rpc.SpectatorViewPeersAtVersion(2));
+            _receipt.currentPeers = Mathf.Max(_receipt.currentPeers, rpc.SpectatorViewPeersAtVersion(3));
+            if (_role == "observer" && _observer != null && state.Aspect > 0)
+            {
+                var lens = _observer.GetComponent<Camera>();
+                _receipt.maxProjectionAspectError = Mathf.Max(_receipt.maxProjectionAspectError, Mathf.Abs(lens.aspect - state.Aspect));
+                if (state.NearClip > 0) _receipt.maxClipError = Mathf.Max(_receipt.maxClipError,
+                    Mathf.Max(Mathf.Abs(lens.nearClipPlane - state.NearClip), Mathf.Abs(lens.farClipPlane - state.FarClip)));
+                _receipt.minViewportWidth = Mathf.Min(_receipt.minViewportWidth, _observer.ObservedViewport.width);
+                _receipt.minViewportHeight = Mathf.Min(_receipt.minViewportHeight, _observer.ObservedViewport.height);
+            }
             _receipt.watched |= _role == "observer" && _observer != null && _observer.IsWatchingEyes(actor);
             int hex = 0, players = 0, shoes = 0;
             foreach (var phantom in state.Private.Phantoms)
@@ -207,7 +229,18 @@ namespace TumbangPreso.Diagnostics
             _csv.WriteLine(string.Join(",", F(Time.unscaledTime), _role, state.Match, state.Round, state.Slot, state.Epoch,
                 state.Sequence, F(state.SentAt), F(state.Eye.x), F(state.Eye.y), F(state.Eye.z), F(e.x), F(e.y), F(e.z), F(state.Fov),
                 state.Action.ToString(), state.Aim.ToString(), rpc.SpectatorViewsPublished, rpc.SpectatorViewsReceived, rpc.SpectatorViewsRelayed,
-                F(error), state.Private.Phantoms.Length, state.Private.Marker.Present ? 1 : 0, privateData));
+                F(error), state.Private.Phantoms.Length, state.Private.Marker.Present ? 1 : 0, privateData, F(state.Aspect),
+                F(_observer != null ? _observer.ObservedViewport.width : 1), F(_observer != null ? _observer.ObservedViewport.height : 1)));
+        }
+        internal static void ConfigurePeerWindow()
+        {
+            if (Application.isMobilePlatform) return;
+            if (!int.TryParse(Arg("-screen-width"), out int width) || !int.TryParse(Arg("-screen-height"), out int height)
+                || width < 320 || height < 180) return;
+            // These explicit peer fixtures run after saved display preferences load.
+            // Honor their requested surface, and record the delivered one in receipts.
+            _ = Settings.SettingsStore.Current;
+            Screen.SetResolution(width, height, FullScreenMode.Windowed);
         }
         private void Finish(string error)
         {

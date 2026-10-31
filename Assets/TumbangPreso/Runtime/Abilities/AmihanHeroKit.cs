@@ -29,7 +29,7 @@ namespace TumbangPreso.Abilities
     /// </summary>
     public sealed class AmihanHeroKit : HeroKit
     {
-        public override float UltimateCost => AmihanRules.StormSurgeCost;
+        public override float UltimateCost => AmihanRules.StormSurgeCost + TumbangPreso.Core.Balance.UltimateExtraObjectivePoints;
 
         public AmihanHeroKit() : base("amihan", "AMIHAN")
         {
@@ -100,8 +100,6 @@ namespace TumbangPreso.Abilities
             private readonly System.Collections.Generic.HashSet<int> _hit = new System.Collections.Generic.HashSet<int>();
 
             /// <summary>How long the dash hits for: the held carry plus the slide out of it.</summary>
-            private static float HitWindow => AmihanRules.QuickDashHoldSeconds
-                + AmihanRules.QuickDashSpeed / (2.0f * Balance.Friction) + 0.05f;
 
             public QuickDash(AmihanHeroKit kit)
                 : base("amihan_skill1", "DRIFT",
@@ -112,7 +110,7 @@ namespace TumbangPreso.Abilities
                        castCue: "sfx_cast_amihan_dash")
             {
                 _kit=kit;
-                Duration = HitWindow;
+                Duration = AmihanRules.QuickDashHitSeconds;
             }
 
             public override bool CanActivate(AbilityContext ctx)

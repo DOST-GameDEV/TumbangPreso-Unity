@@ -217,6 +217,23 @@ namespace TumbangPreso.InputLayer
         private readonly List<TouchButton> _buttons = new List<TouchButton>();
         private TouchStick _stick;
         private RectTransform _lookArea;
+        private RectTransform _touchRoot;
+        private bool _backgrounded, _touchFocused = true;
+        private Rect _touchSafeArea;
+        private ScreenOrientation _touchOrientation;
+        private Vector2 _touchPixels;
+        private bool _touchSurfaceKnown;
+
+        private void CancelTouches()
+        {
+            if (!ReferenceEquals(Instance, this)) return;
+            foreach (var button in _buttons) if (button != null) button.SetHeld(false);
+            _stick?.SetValue(Vector2.zero);
+            if (_lookArea != null) _lookArea.GetComponent<TouchLookArea>()?.Cancel();
+            TouchInput.ReleaseAll();
+        }
+        private void OnApplicationPause(bool paused) { _backgrounded = paused; if (paused) CancelTouches(); }
+        private void OnApplicationFocus(bool focused) { _touchFocused = focused; if (!focused) CancelTouches(); }
 
         /// <summary>Every control this layer built, for the probe to measure.</summary>
         public IReadOnlyList<TouchButton> Buttons => _buttons;
@@ -255,6 +272,9 @@ namespace TumbangPreso.InputLayer
         {
             Instance = this;
             Build();
+            foreach (var button in _buttons) button.BindHudOwner(this);
+            _stick?.BindHudOwner(this);
+            if (_lookArea != null) _lookArea.GetComponent<TouchLookArea>()?.BindHudOwner(this);
             _openingUi = _canvas.gameObject.AddComponent<CanvasGroup>();
             _openingUi.alpha = ReadyGate.HudAlpha;
         }
@@ -409,7 +429,8 @@ namespace TumbangPreso.InputLayer
         {
             if (_sandboxRoot == null) return;
 
-            bool allowed = PracticeSandbox.Allowed && !SpectatorMode;
+            bool allowed = PracticeSandbox.Allowed && !SpectatorMode && !GameLaunch.GuidedTutorial
+                && !TouchButton.Customising && !TouchInput.Pressed(Verb.SpecialAbility);
             if (_sandboxRoot.activeSelf != allowed) _sandboxRoot.SetActive(allowed);
 
             if (!allowed || _sandboxLabel == null) return;
@@ -577,7 +598,8 @@ namespace TumbangPreso.InputLayer
         {
             if (_canvas == null) return;
 
-            var canvasRect = ((RectTransform)_canvas.transform).rect;
+            var bounds = _touchRoot != null ? _touchRoot : (RectTransform)_canvas.transform;
+            var canvasRect = bounds.rect;
 
             // ⚠️⚠️ A CANVAS WITH NO SIZE YET CLAMPS EVERYTHING ONTO THE ORIGIN, AND THAT SHIPPED
             // FOR EXACTLY ONE PROBE RUN. `ApplyLayout` is called at the end of `Build`, before
@@ -591,7 +613,7 @@ namespace TumbangPreso.InputLayer
             Vector2 half = rt.sizeDelta * 0.5f;
 
             // The control's centre in canvas-local space, whatever corner it is anchored to.
-            Vector3 local = ((RectTransform)_canvas.transform)
+            Vector3 local = bounds
                 .InverseTransformPoint(rt.TransformPoint(rt.rect.center));
 
             float clampedX = Mathf.Clamp(local.x, canvasRect.xMin + half.x, canvasRect.xMax - half.x);
@@ -605,7 +627,8 @@ namespace TumbangPreso.InputLayer
         private bool VisibleInMode(VerbInput entry)
             => TouchButton.Customising || (!SpectatorMode &&
                ((entry.Zone != TouchZone.SkillRail && entry.Verb != Verb.Interact)
-               || SceneFlow.SelectedMode == Core.GameMode.HeroStrike));
+               || SceneFlow.SelectedMode == Core.GameMode.HeroStrike
+               || (GameLaunch.GuidedTutorial && entry.Verb == Verb.Interact)));
 
         // ⚠️ AND WHILE A STREET CHARACTER OFFERS SOMETHING (`StreetInteractions`, the Ilalim
         // rebuild's beggar), in Classic too: the offer is taken with INTERACT on every device, so a
@@ -687,10 +710,18 @@ namespace TumbangPreso.InputLayer
         /// layer with no match running, and both say so explicitly.
         /// </summary>
         public bool ShouldBeOnScreen
-            => !ReadyGate.HidesHud && (ForceVisible || (SpectatorMode ? SpectatorCanOperate : (_local != null && !_local.Intent.Parked)));
+            => !_backgrounded && _touchFocused && !ReadyGate.HidesHud && (ForceVisible || (SpectatorMode ? SpectatorCanOperate : (_local != null && !_local.Intent.Parked)));
 
         private void Update()
         {
+            if (!ReferenceEquals(Instance, this)) return;
+            var pixels = _canvas != null ? _canvas.pixelRect.size : Vector2.zero;
+            if (_touchSafeArea != Screen.safeArea || _touchOrientation != Screen.orientation || _touchPixels != pixels)
+            {
+                _touchSafeArea = Screen.safeArea; _touchOrientation = Screen.orientation; _touchPixels = pixels;
+                if (_touchSurfaceKnown) CancelTouches();
+                _touchSurfaceKnown = true;
+            }
             RefreshSpectatorControls();
             if (_openingUi != null)
             {
@@ -703,7 +734,10 @@ namespace TumbangPreso.InputLayer
             // sprinting when they close it. Turning the Canvas off stops it drawing and stops it
             // raycasting, and leaves the held table alone.
             if (_canvas != null && _canvas.enabled != ShouldBeOnScreen)
+            {
+                if (!ShouldBeOnScreen) CancelTouches();
                 _canvas.enabled = ShouldBeOnScreen;
+            }
 
             // ⚠️⚠️ THE HINT IS CONSUMED HERE AND CLEARED, WHICH IS WHAT MAKES IT SELF-EXPIRING.
             // `Hud` sets it on the frames a prompt about that verb is on screen and never has to
@@ -715,6 +749,7 @@ namespace TumbangPreso.InputLayer
             // frames of a networked match, which is the one state it must never show.
             RefreshSandbox();
             RefreshStreetInteract();
+            RefreshPlayerUtilities();
 
             Verb? hint = _hintVerb;
             _hintVerb = null;
@@ -748,7 +783,7 @@ namespace TumbangPreso.InputLayer
             // when a phone is rotated or a window is resized.
             if (_canvas == null) return;
 
-            var size = ((RectTransform)_canvas.transform).rect.size;
+            var size = (_touchRoot != null ? _touchRoot : (RectTransform)_canvas.transform).rect.size;
 
             if ((size - _lastCanvasSize).sqrMagnitude < 0.01f) return;
 

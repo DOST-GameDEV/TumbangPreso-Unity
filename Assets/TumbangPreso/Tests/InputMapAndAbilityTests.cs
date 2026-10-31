@@ -44,6 +44,14 @@ namespace TumbangPreso.Tests
                 AbilityNetworking.Validate(new NetworkingProbeKit(first, ultimate)));
 
         [Test]
+        public void DriftDeclaresThePortableCoreDurationForStrictCrossplayCompatibility()
+        {
+            float duration = new AmihanHeroKit().Skill1.Duration;
+            Assert.AreEqual(0x3ed07507, System.BitConverter.SingleToInt32Bits(duration));
+            Assert.AreEqual(AmihanRules.QuickDashHitSeconds, duration);
+        }
+
+        [Test]
         public void SkillCompatibilityIgnoresCosmeticsLiveTimersAndCurrentRole()
         {
             var first = new NetworkingProbeKit(AbilityNetworkMode.Predicted, AbilityNetworkMode.SharedUltimate,

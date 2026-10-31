@@ -1305,10 +1305,19 @@ namespace TumbangPreso
             // exactly as the LAN is and neither is favoured.
             const float NetworkSmoothTime = 0.055f;
 
-            Vector3 target = _networkTargetPosition + _networkTargetVelocity * NetworkSmoothTime;
+            Vector3 lead = _networkTargetVelocity * NetworkSmoothTime;
+            if (_networkGrounded) lead.y = 0f;
+            Vector3 target = _networkTargetPosition + lead;
             Vector3 position = Vector3.SmoothDamp(transform.position, target,
                                                    ref _networkSmoothVelocity, NetworkSmoothTime,
                                                    40.0f, dt);
+            // A grounded sender already supplied the support height. Its resting downward
+            // velocity is collision pressure, not a trajectory to extrapolate through the floor.
+            if (_networkGrounded)
+            {
+                position.y = _networkTargetPosition.y;
+                _networkSmoothVelocity.y = 0f;
+            }
             float yaw = Mathf.SmoothDampAngle(transform.eulerAngles.y, _networkTargetYaw,
                                               ref _networkYawVelocity, 0.045f,
                                               1080.0f, dt);

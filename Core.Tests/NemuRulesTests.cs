@@ -76,11 +76,11 @@ namespace TumbangPreso.Core.Tests
         }
 
         [Fact]
-        public void HandsOffYouDriftAtFortyTwoPercentAndASurgeWalksYou()
+        public void HandsOffDriftIsTwentyFivePercentStrongerAndSurgeStillUsesWalkSpeed()
         {
             NemuRules.Pull(MidDrift, 0, 0f, 1f, out float px, out float pz);
             NemuRules.Contest(0f, 0f, px, pz, 1f, out float wx, out float wz);
-            Assert.Equal(NemuRules.DriftPull, Length(wx, wz), 3);
+            Assert.Equal(.42f * 1.25f, Length(wx, wz), 3);
             Assert.True(wz > 0.35f, "it pulls toward the lure");
 
             float surge = NemuRules.SurgeStart(0, 1) + 0.3f;

@@ -19,11 +19,13 @@ namespace TumbangPreso.Tests
         private NetworkManager _network;
         private PlayerAccount _account, _previousAccount;
         private string _settings;
+        private string _previousOverride;
         [Serializable] private sealed class Hello { public string AccountPlayerId; public string Token; }
 
         [SetUp] public void Before()
         {
             _settings = JsonUtility.ToJson(SettingsStore.Current);
+            _previousOverride=(string)typeof(NetIdentity).GetField("_overrideTokenForTesting",BindingFlags.Static|BindingFlags.NonPublic).GetValue(null);
             SettingsStore.Current.AccountPlayerId = "cached-profile-id";
             _previousAccount = GameServices.Account;
             _root = new GameObject("Dormant identity serialization"); _root.SetActive(false);
@@ -40,6 +42,7 @@ namespace TumbangPreso.Tests
             typeof(GameServices).GetProperty("Account").SetValue(null, _previousAccount);
             Object.DestroyImmediate(_root);
             JsonUtility.FromJsonOverwrite(_settings, SettingsStore.Current);
+            NetIdentity.OverrideForTesting(_previousOverride);
         }
 
         private Hello Serialize(bool relay, bool signedIn)
@@ -63,6 +66,32 @@ namespace TumbangPreso.Tests
 
         [Test] public void SignedRelayKeepsItsAccountIdentity()
         { Assert.AreEqual(_account.PlayerId, Serialize(true, true).AccountPlayerId); }
+
+        [TestCase(false)] [TestCase(true)]
+        public void LanRejoinKeepsItsSeatWhenOnlineIdentityFinishesLoading(bool guest)
+        {
+            typeof(PlayerAccount).GetProperty("IsGuest").SetValue(_account,guest);
+            NetIdentity.OverrideForTesting("early-online-identity");
+            var first=Serialize(false,false);
+            var room=new LobbySession();room.Admit(0,"host","Host");
+            Assert.AreEqual(1,room.Admit(1,first.Token,"Phone").Seat);
+            room.StartMatch();room.Depart(1);
+            NetIdentity.OverrideForTesting("late-online-identity");
+            typeof(PlayerAccount).GetProperty("IsGuest").SetValue(_account,false);
+            var returning=Serialize(false,true);
+            Assert.AreEqual(first.Token,returning.Token);
+            Assert.AreEqual(NetIdentity.LocalToken,returning.Token);
+            Assert.AreEqual(MidMatchRuling.Reclaim,room.RuleOnArrival(returning.Token));
+            Assert.AreEqual(1,room.Admit(2,returning.Token,"Phone").Seat);
+        }
+
+        [Test] public void RelayStillUsesItsOnlineConnectionIdentity()
+        {
+            NetIdentity.OverrideForTesting("verified-relay-identity");
+            var hello=Serialize(true,true);
+            Assert.AreEqual(_account.ConnectionToken,hello.Token);
+            Assert.AreNotEqual(NetIdentity.LocalToken,hello.Token);
+        }
 
         [Test] public void RepeatedIntroductionRetainsIdentityWithoutGrantingHandleTrust()
         {

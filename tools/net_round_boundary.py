@@ -25,7 +25,7 @@ def evaluate(folder):
         with (folder / (name + ".csv")).open(newline="") as source:
             traces[name] = [{k: float(v) for k, v in row.items()} for row in csv.DictReader(source)]
         rows = traces[name]
-        live = [r for r in rows if r["networked"] and r["inProgress"] and r["round"] > 0]
+        live = [r for r in rows if r["networked"] and r["admitted"] and r["inProgress"] and r["round"] > 0]
         buffer = [r for r in live if r["round"] == 1 and not r["active"] and r["warmup"]]
         next_round = [r for r in live if r["round"] == 2 and r["active"] and not r["warmup"]]
         invalid = [r for r in live if r["active"] and r["warmup"]]

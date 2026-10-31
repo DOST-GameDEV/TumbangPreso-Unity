@@ -1,0 +1,24 @@
+{
+  "windowsSource": "55ca93ade9d5f7b67b79ef4016fca9f82df17eaa",
+  "androidDiagnosticSource": "95d3cb94b9e41e3ae04c3a3a41d83f3b0aa8f42a",
+  "field": "amihan.signature.duration",
+  "windows": {
+    "value": 0.40714284777641296,
+    "bits": "0x3ed07507"
+  },
+  "android": {
+    "value": 0.40714287757873535,
+    "bits": "0x3ed07508"
+  },
+  "metadataBytes": 2713,
+  "windowsEditorSha256": "EC8FCA4EA9CA362A3F0F0C43E055749B5D8D0461D298F5AA76A35267A47A517D",
+  "androidSha256": "29E420AB89136B2407186D6C51EF5694A302290D1FFC4986C103751D6A06535A",
+  "evidence": "Android logger clipped three 1024-character Base64 chunks. Missing reference tails were accepted only after the reconstructed full payload SHA256 exactly matched the hash emitted by Android. All other decoded metadata fields and all nine introduction asset hashes match. Fixed builds use512-character chunks for complete direct capture.",
+  "fixSource": "035e921e6415cba3b0ff6440998d32aee212ef0c",
+  "fix": "Compile-time double-precision derivation of the shared Core DRIFT hit duration, then one float cast. Existing Windows canonical bits retained; fingerprint algorithm, strict guard and gameplay protocol183 retained.",
+  "tests": {
+    "corePassed": 841,
+    "nativeCompatibilityPassed": 4
+  },
+  "actualFixedAndroidPeerResult": "Direct complete512-character metadata capture exactly matches2713 reference bytes/hash EC8FCA4E; actual Windows-to-Android v3 observer case current03 passed."
+}

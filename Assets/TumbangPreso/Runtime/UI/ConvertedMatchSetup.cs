@@ -211,7 +211,6 @@ namespace TumbangPreso.UI
         private static MatchFormat FormatAt(int index)
         {
             if (index <= 0) return MatchFormat.Standard;
-            if (index >= FormatOptionCount - 1) return MatchFormat.Mirror;
             return MatchFormat.LastTsinelas;
         }
 
@@ -238,7 +237,7 @@ namespace TumbangPreso.UI
         /// ⚠️ MIRROR IS COMPLETE AND SHIPS: `MatchInstaller` overrides every seat's character
         /// from `CustomGameRules.MirrorIndex`, so picking it changes the four people who walk out.
         /// </summary>
-        private const int FormatOptionCount = 3;
+        private const int FormatOptionCount = 2;
 
         private int _format;
 
@@ -2263,7 +2262,7 @@ namespace TumbangPreso.UI
             // who did nothing but change their slipper. `docs/TODO.md` § 88.1c.
             var account = GameServices.Account;
             MatchRpc.Instance?.IdentifyServerRpc(
-                account?.ConnectionToken ?? NetIdentity.Token,
+                NetSession.Instance?.LocalConnectionToken ?? account?.ConnectionToken ?? NetIdentity.Token,
                 account?.LobbyName ?? s.PlayerName,
                 account != null && account.IsSignedIn ? account.PlayerId : "",
                 account?.HandleProof ?? "",
@@ -2786,7 +2785,9 @@ namespace TumbangPreso.UI
         /// </summary>
         private void HandleClientDisconnected(string reason)
         {
-            if (NetAuthority.IsHost) return;
+            // Offline fallback is considered a host elsewhere. Here only a live
+            // listen server may ignore a client's room-loss notification.
+            if (NetSession.Instance?.IsNetworked == true && NetSession.Instance.IsHost) return;
 
             string detail = !string.IsNullOrWhiteSpace(reason)
                 ? reason

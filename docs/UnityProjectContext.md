@@ -50,12 +50,13 @@ Python/.NET and the installed matching Unity Editor support validation.
 No connected Unity MCP was available during this audit; the manifest's pipeline
 package alone does not establish a connected tool. Use [TESTING](TESTING.md) and
 [setup](WORKSTATION_SETUP.md), fresh XML and actual graphics/peers where required.
-Current-source LAN/Relay/reconnect and spectator acceptance are active work;
-older passing reports do not certify the present build.
+Platform and peer qualification belongs in the current TODO and dated reports;
+older passing reports do not certify a different build or physical device.
 
 ## Constraints
 
 Never duplicate Core, reorder roster IDs, confer authority on replicas, mutate
 user profiles or discard concurrent edits. Read relevant [working rules](WORKING_RULES.md).
 Paete/Phaister authored work stays protected. `EconomyRules.UnlockedHeroes` owns
-the six current playable heroes, including Rago; nine hero entries exist.
+all nine playable heroes. New matches use one player per hero; legacy MIRROR
+wire values remain reserved for recorded history.

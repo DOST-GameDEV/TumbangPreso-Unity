@@ -217,7 +217,7 @@ namespace TumbangPreso
         private void Update()
         {
             if (!_ready || _local == null || Panel.AnyOpen || UI.Hub.HubLoading.Visible) return;
-            _hud?.SetInspecting(_abilityInfo != null && _abilityInfo.IsPressed());
+            _hud?.SetInspecting(InspectingAbilities || (Hud.OnTouch && !_local.IsDefender && InputLayer.TouchInput.Pressed(Verb.SpecialAbility)));
             StepTrainingWorld();
 
             var keyboard = Keyboard.current;
@@ -256,9 +256,13 @@ namespace TumbangPreso
             EvaluateLesson();
         }
 
+        private bool InspectingAbilities => InputLayer.TouchInput.ScreenHeld("AbilityInfo") || (_abilityInfo != null && _abilityInfo.IsPressed());
         private void EvaluateLesson()
         {
             float dt = Time.unscaledDeltaTime;
+
+            var taught = VerbTaughtBy(_lesson);
+            if (Hud.OnTouch && taught.HasValue) InputLayer.TouchHud.Emphasise(taught.Value);
 
             switch (_lesson)
             {
@@ -349,7 +353,7 @@ namespace TumbangPreso
                     break;
 
                 case Lesson.AbilityInfo:
-                    if (_abilityInfo != null && _abilityInfo.IsPressed())
+                    if (InspectingAbilities)
                     {
                         _metric += dt;
                         SetProgress(_metric / 2.5f);
@@ -942,7 +946,7 @@ namespace TumbangPreso
                     title = "READY UP"; body = "Every match needs you to ready up before it starts.";
                     action = Key("ReadyUp") + " READY UP"; break;
                 case Lesson.Look:
-                    title = "LOOK AROUND"; body = "Use the mouse to look around.";
+                    title = "LOOK AROUND"; body = Hud.OnTouch ? "Drag the clear right side to look around." : "Use the mouse to look around.";
                     action = LookPrompt() + " LOOK AROUND"; break;
                 case Lesson.Move:
                     title = "MOVE AROUND";
@@ -970,7 +974,8 @@ namespace TumbangPreso
                     break;
                 case Lesson.Pektus:
                     PrepareAttackerThrow(); title = "CURVE THROW";
-                    body = "Scroll the mouse wheel to curve the throw. Use this to make the throw harder to block.";
+                    body = Hud.OnTouch ? "Hold THROW, then use CURVE LEFT or CURVE RIGHT before releasing the throw."
+                        : "Scroll the mouse wheel to curve the throw. Use this to make the throw harder to block.";
                     action = CurvePrompt(); break;
                 case Lesson.ThrowAndRetrieve:
                     PrepareAttackerThrow(); title = "THROW AND RETRIEVE";
@@ -1227,12 +1232,14 @@ namespace TumbangPreso
         /// be taught.
         /// </summary>
         private static string CurvePrompt()
-            => Key("CurveLeft") + " " + Key("CurveRight") + " CURVE";
+            => Hud.OnTouch ? "HOLD [THROW] + [CURVE]" : Key("CurveLeft") + " " + Key("CurveRight") + " CURVE";
 
         private static string Key(string action)
         {
             if (Hud.OnTouch)
             {
+                if (action == "ReadyUp") return "[" + InputLayer.InputCatalogue.For(Verb.Interact).TouchLabel + "]";
+                if (action == "AbilityInfo") return "[INFO]";
                 var verb = InputLayer.InputCatalogue.VerbForAction(action);
                 if (verb.HasValue)
                     return "[" + InputLayer.InputCatalogue.For(verb.Value).TouchLabel + "]";
@@ -1840,9 +1847,9 @@ namespace TumbangPreso
             if (_fill != null) _fill.transform.parent.gameObject.SetActive(lesson < total);
             if (_pips.Count > 0 && _pips[0] != null) _pips[0].transform.parent.gameObject.SetActive(lesson < total);
             if(_ownerSkipLabel!=null)
-            { _ownerSkipLabel.text="SKIP LESSON"; _ownerSkipLabel.transform.parent.gameObject.SetActive(lesson<total); }
+            { _ownerSkipLabel.text=_phoneControls ? "SKIP" : "SKIP LESSON"; _ownerSkipLabel.transform.parent.gameObject.SetActive(lesson<total); }
             _body.text = body;
-            if (_ownerQuit != null) _ownerQuit.anchoredPosition = new Vector2(lesson >= total ? 0 : 320, _ownerQuit.anchoredPosition.y);
+            if (_ownerQuit != null && !_phoneControls) _ownerQuit.anchoredPosition = new Vector2(lesson >= total ? 0 : 320, _ownerQuit.anchoredPosition.y);
             _hasLessonAction = !string.IsNullOrEmpty(action);
             if (_keyRow != null) _keyRow.gameObject.SetActive(_hasLessonAction && !_inspecting);
 

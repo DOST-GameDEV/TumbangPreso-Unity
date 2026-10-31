@@ -58,26 +58,16 @@ namespace TumbangPreso.UI.Hub
             // "ScreenTitle", not "Heading": a board screen's own heading (HERO's hero name) keeps that name.
             var title = HubKit.Text(root, "ScreenTitle", words, HubStyle.Display, true, HubBoard.Colour("#E1D2B7"), TextAnchor.MiddleCenter);
             title.horizontalOverflow = HorizontalWrapMode.Overflow;
-            if (string.IsNullOrEmpty(second))
+            float width = Mathf.Clamp(title.preferredWidth + 96, 220, 900);
+            HubKit.Place(plate.rectTransform, HubKit.TopLeft, new Vector2(x, -HubKit.Margin), new Vector2(width, BarHeight));
+            HubKit.Place(title.rectTransform, HubKit.TopLeft, new Vector2(x, -HubKit.Margin - 4), new Vector2(width, BarHeight - 8));
+            HubKit.Fit(title, width - 60);
+            if (!string.IsNullOrEmpty(second))
             {
-                float width = Mathf.Clamp(title.preferredWidth + 96, 220, 900);
-                HubKit.Place(plate.rectTransform, HubKit.TopLeft, new Vector2(x, -HubKit.Margin), new Vector2(width, BarHeight));
-                HubKit.Place(title.rectTransform, HubKit.TopLeft, new Vector2(x, -HubKit.Margin - 4), new Vector2(width, BarHeight - 8));
-                HubKit.Fit(title, width - 60);
-                return title;
+                var sub = HubKit.Text(root, "SubTitle", second, HubStyle.Label, true, HubBoard.Colour("#FCD39F"), TextAnchor.MiddleLeft);
+                HubKit.Place(sub.rectTransform, HubKit.TopLeft,
+                             new Vector2(x + 8, -HubKit.Margin - BarHeight - 12), new Vector2(700, 50));
             }
-            // ⚠️ THE SECOND WORD RIDES ON THE SAME PLATE (owner 2026-10-28, "ito restyle"): GAMEMODE
-            // with SELECT beside it in the plate's golden, smaller, one title. Hung under the plate
-            // on its own it read as a stray caption floating over the ground.
-            var sub = HubKit.Text(root, "SubTitle", second, HubStyle.Title, true, HubStyle.Golden, TextAnchor.MiddleLeft);
-            sub.horizontalOverflow = HorizontalWrapMode.Overflow;
-            float main = title.preferredWidth, rest = sub.preferredWidth;
-            float plateWidth = Mathf.Min(main + 22 + rest + 96, 1000);
-            HubKit.Place(plate.rectTransform, HubKit.TopLeft, new Vector2(x, -HubKit.Margin), new Vector2(plateWidth, BarHeight));
-            title.alignment = TextAnchor.MiddleLeft;
-            HubKit.Place(title.rectTransform, HubKit.TopLeft, new Vector2(x + 48, -HubKit.Margin - 4), new Vector2(main + 8, BarHeight - 8));
-            // Set a little low so the small word shares the big word's baseline, not its middle.
-            HubKit.Place(sub.rectTransform, HubKit.TopLeft, new Vector2(x + 48 + main + 22, -HubKit.Margin - 14), new Vector2(rest + 8, BarHeight - 16));
             return title;
         }
 
@@ -182,7 +172,11 @@ namespace TumbangPreso.UI.Hub
                 words.sizeDelta = field.sizeDelta * 2f;
                 chip._amount.alignment = TextAnchor.MiddleCenter;
                 var baseline = chip._amount.GetComponent<BoardBaseline>();
-                if (baseline != null) UnityEngine.Object.Destroy(baseline);
+                if (baseline != null)
+                {
+                    if (Application.isPlaying) UnityEngine.Object.Destroy(baseline);
+                    else UnityEngine.Object.DestroyImmediate(baseline);
+                }
             }
 
             var plus = HubBoard.Sticker(root, "EarnButton", new Vector2(0, 1), "plus_button", () => hub.Push<HubTasks>(), out var plusFace, out var plusGroup);

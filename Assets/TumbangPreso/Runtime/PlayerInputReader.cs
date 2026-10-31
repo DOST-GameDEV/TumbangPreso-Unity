@@ -497,10 +497,11 @@ namespace TumbangPreso
             // Pektus (curve spin), independent of WASD movement, only while the throw charges.
             // ⚠️ THROUGH THE MAP, SO THE PANEL CAN REBIND THEM. See `_curveLeft`: a press edge is
             // one step (a wheel notch is nothing but an edge), a held key keeps turning.
+            float touchCurve = InputLayer.TouchInput.ReadCurve(CurveStep, CurveRate, Time.deltaTime);
             if (intent.Pressed(Verb.SpecialAbility))
             {
                 _currentPektusSpin = Mathf.Clamp(_currentPektusSpin
-                    - CurveInput(_curveLeft) + CurveInput(_curveRight), -1.0f, 1.0f);
+                    - CurveInput(_curveLeft) + CurveInput(_curveRight) + touchCurve, -1.0f, 1.0f);
             }
             else
             {
@@ -562,7 +563,10 @@ namespace TumbangPreso
             }
             // The mouse, in the raw units every sensitivity number in this game is written
             // against. Legacy axes are live because `activeInputHandler` is Both.
-            var delta = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
+            // Android also emulates a legacy mouse from touch. Reading that mouse
+            // turns a second button finger into an unowned camera swipe.
+            bool touch = InputLayer.TouchInput.Active && InputLayer.LastInputDevice.Current == InputLayer.InputDeviceKind.Touch;
+            var delta = touch ? Vector2.zero : new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
 
             if (_look != null)
             {
@@ -653,6 +657,8 @@ namespace TumbangPreso
             else if ((UI.Hud.Instance != null && UI.Hud.Instance.ReadyWindowOpen) || BufferSkipVote.Showing) held = true;
             return held;
         }
+
+        private void OnApplicationPause(bool paused) => OnApplicationFocus(!paused);
 
         private void OnApplicationFocus(bool focused)
         {

@@ -875,7 +875,7 @@ namespace TumbangPreso.CameraSystem
             }
             // Only relative mouse look needs a locked cursor. The existing Update
             // overlay gate keeps pad look out of menus, too.
-            if (Cursor.lockState == CursorLockMode.Locked)
+            if (Cursor.lockState == CursorLockMode.Locked && !(InputLayer.TouchInput.Active && InputLayer.LastInputDevice.Current == InputLayer.InputDeviceKind.Touch))
                 delta += new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
             if (delta.sqrMagnitude <= 0) return;
 
@@ -1574,9 +1574,12 @@ namespace TumbangPreso.CameraSystem
                 // *"what is on screen that the player does not need RIGHT NOW"*. Both facts are
                 // one sentence and the sentence is short.
                 _replayExitLabel.text = OnTouchDevice
-                    ? "LIVE PLAY CONTINUES  ·  TAP TO RETURN"
+                    ? "LIVE PLAY CONTINUES"
                     : "LIVE PLAY CONTINUES  ·  " + BoundKey("SpectatorReplay")
                       + " OR ESC TO RETURN";
+                bool touchSurface = InputLayer.TouchHud.ShouldShow;
+                _replayExitLabel.alignment = touchSurface ? TextAnchor.MiddleLeft : TextAnchor.MiddleRight;
+                _replayExitLabel.rectTransform.offsetMax = new Vector2(touchSurface ? -374 : -24, 60);
             }
         }
 
@@ -1837,7 +1840,7 @@ namespace TumbangPreso.CameraSystem
             exitGo.transform.SetParent(panelGo.transform, false);
             _replayExitLabel = exitGo.AddComponent<Text>();
             _replayExitLabel.font = UI.InGameTypography.Resolve(UI.OwnerUiTheme.Current.Reading, false, _replayExitLabel);
-            _replayExitLabel.fontSize = 26;
+            _replayExitLabel.fontSize = 28;
             _replayExitLabel.alignment = TextAnchor.MiddleRight;
             _replayExitLabel.color = UI.OwnerUiTheme.Current.Pale;
             _replayExitLabel.raycastTarget = false;
@@ -1887,6 +1890,7 @@ namespace TumbangPreso.CameraSystem
             fillRt.offsetMin = Vector2.zero;
             fillRt.offsetMax = Vector2.zero;
 
+            BuildTouchReplayReturn();
             _replayCanvas.enabled = false;
         }
 
@@ -2296,7 +2300,7 @@ namespace TumbangPreso.CameraSystem
             if (InputLayer.TouchInput.Active && (InputLayer.TouchInput.Move.sqrMagnitude > .0001f
                 || InputLayer.TouchInput.LookDelta.sqrMagnitude > .0001f)) return true;
             if (SpectatorStickLook().sqrMagnitude > 0) return true;
-            if (Cursor.lockState == CursorLockMode.Locked)
+            if (Cursor.lockState == CursorLockMode.Locked && !(InputLayer.TouchInput.Active && InputLayer.LastInputDevice.Current == InputLayer.InputDeviceKind.Touch))
             {
                 float dx = Mathf.Abs(Input.GetAxisRaw("Mouse X"));
                 float dy = Mathf.Abs(Input.GetAxisRaw("Mouse Y"));

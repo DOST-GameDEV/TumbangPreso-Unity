@@ -31,7 +31,7 @@ namespace TumbangPreso.Net
     /// "do I decide this, or do I ask?" through that seam, so making multiplayer real is a
     /// matter of installing this provider rather than editing every verb.
     /// </summary>
-    public sealed class NetSession : MonoBehaviour, INetProvider
+    public sealed partial class NetSession : MonoBehaviour, INetProvider
     {
         /// <summary>
         /// UX-1.6's custom room settings, written by the HOST form before a host starts.
@@ -157,6 +157,12 @@ namespace TumbangPreso.Net
         /// software. `LobbySession.MatchFullMessage` is written the same way for the same reason.
         /// </summary>
         public const string HostLeftMessage = "The host left the game.";
+
+        // LAN must work before online sign-in and keep the same saved identity
+        // after it completes. Account/handle verification remains a separate claim.
+        public string LocalConnectionToken => IsRelay
+            ? GameServices.Account?.ConnectionToken ?? NetIdentity.Token
+            : NetIdentity.LocalToken;
 
         public static event Action<string> ClientDisconnected;
 
@@ -698,7 +704,7 @@ namespace TumbangPreso.Net
         // AFTERIMAGE on `zack_skill2` (owner pick, 2026-10-26): a predicted self cast (full Momentum, the host refills his
         // Charge, a 3 s lock carried to a joiner in the timed-kit personal fields). Kind 20 stays reserved for old replays; no
         // 184 peer casts it.
-        public const int ProtocolVersion = 184;
+        public const int ProtocolVersion = 185;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or
@@ -777,6 +783,7 @@ namespace TumbangPreso.Net
 
             _utp = GetComponent<UnityTransport>();
             if (_utp == null) _utp = gameObject.AddComponent<UnityTransport>();
+            _utp.OnTransportEvent += ObserveLinkTraffic;
 
             ConfigureManager();
 
@@ -818,14 +825,21 @@ namespace TumbangPreso.Net
         }
 
         private bool _stopWasRequested;
+        private bool _serverWasRunning;
         private void OnTransportFailure() => Debug.LogWarning(
             $"[NetLifecycle] transport-failure server={_nm?.IsServer} relay={IsRelay} requestedStop={_stopWasRequested}");
         private void OnServerStopped(bool wasHost)
         {
             Debug.Log($"[NetLifecycle] server-stopped wasHost={wasHost} requestedStop={_stopWasRequested}");
+            bool lostServer = _serverWasRunning && !_stopWasRequested;
+            _serverWasRunning = false;
             if (_stopWasRequested) return;
             _beacon?.StopAll();
             if (Query != null) _ = Query.DeleteHostedLobbyAsync();
+            // A seatless server has no local client-disconnect callback. It must
+            // retire through the same authority latch and Home route as its peers.
+            if (!lostServer || MatchAbandon.AuthorityRevoked) return;
+            EndTransportPresentation(); ResetJoinedRoom(); PublishRoomLoss(null);
         }
 
         /// <summary>
@@ -838,6 +852,7 @@ namespace TumbangPreso.Net
         /// </summary>
         private void RebuildManager()
         {
+            ResetQualityProbe();
             Debug.LogWarning("[Net] rebuilding the NetworkManager after a failed start.");
             if (_nm != null)
             {
@@ -858,6 +873,8 @@ namespace TumbangPreso.Net
 
         private void OnDestroy()
         {
+            ResetQualityProbe();
+            if (_utp != null) _utp.OnTransportEvent -= ObserveLinkTraffic;
             Lobby.JoinCodeChanged -= OnClientTitleCodeChanged;
             if (_nm != null)
             {
@@ -1055,6 +1072,7 @@ namespace TumbangPreso.Net
             }
 
             bool ok = StartNetcode(() => dedicated ? _nm.StartServer() : _nm.StartHost(), "hosting");
+            _serverWasRunning = ok;
 
             // ⚠️ ALL FOUR START PATHS REGISTER THE SEAT HANDLER, and this one was the last that
             // did not. A listen host is its own client, so `SendSeatAssignment` applies its seat
@@ -1139,6 +1157,16 @@ namespace TumbangPreso.Net
 
         private float _linkSampleLeft;
         private LinkState _lastReportedLink = LinkState.Unknown;
+        private double _lastLinkTrafficAt = -1;
+        // A client has one authority connection. RTT can retain its old good value
+        // throughout an outage, so also observe actual transport data arriving.
+        public double LinkSilenceSeconds => _nm != null && !_nm.IsServer && _nm.IsConnectedClient && _lastLinkTrafficAt >= 0
+            ? Math.Max(0, Time.realtimeSinceStartupAsDouble - _lastLinkTrafficAt) : -1;
+        private void ObserveLinkTraffic(NetworkEvent kind, ulong transportId, ArraySegment<byte> payload, float receivedAt)
+        {
+            if (kind == NetworkEvent.Connect || kind == NetworkEvent.Data)
+                _lastLinkTrafficAt = Time.realtimeSinceStartupAsDouble;
+        }
 
         /// <summary>
         /// ⚠️ THE HOST REPORTS ITS WORST PEER, NOT AN AVERAGE. A host with three good clients and
@@ -1170,13 +1198,13 @@ namespace TumbangPreso.Net
                     // meaningless, so it is skipped rather than measured as a perfect link.
                     if (client == _nm.LocalClientId) continue;
 
-                    long rtt = (long)_utp.GetCurrentRtt(client);
+                    long rtt = MeasuredPeerRtt(client, (long)_utp.GetCurrentRtt(client));
                     if (rtt > worst) worst = rtt;
                 }
             }
             else
             {
-                worst = (long)_utp.GetCurrentRtt(NetworkManager.ServerClientId);
+                worst = MeasuredPeerRtt(NetworkManager.ServerClientId, (long)_utp.GetCurrentRtt(NetworkManager.ServerClientId));
             }
 
             LinkRttMs = worst;
@@ -1188,12 +1216,17 @@ namespace TumbangPreso.Net
                  : worst >= BadRttMs ? LinkState.Bad
                  : worst >= PoorRttMs ? LinkState.Poor
                  : LinkState.Good;
+            if (LinkSilenceSeconds >= 4) Link = LinkState.Bad;
+            else if (LinkSilenceSeconds >= 2 && Link < LinkState.Poor) Link = LinkState.Poor;
+            double probeAge = WorstQualityReplyAge();
+            if (probeAge >= 5.5) Link = LinkState.Bad;
+            else if (probeAge >= 3.5 && Link < LinkState.Poor) Link = LinkState.Poor;
 
             if (Link == _lastReportedLink) return;
 
             _lastReportedLink = Link;
             Debug.Log($"[Link] {Link} at {LinkRttMs} ms round trip " +
-                      $"({(_nm.IsServer ? "host, worst peer" : "client")}).");
+                      $"({(_nm.IsServer ? "host, worst peer" : "client")}; receive silence {LinkSilenceSeconds:F1}s).");
         }
 
         private void Update()
@@ -1212,6 +1245,7 @@ namespace TumbangPreso.Net
             // ⚠️ BEFORE THE SERVER-ONLY RETURN BELOW, AND THAT IS THE WHOLE POINT. A client is
             // the peer that suffers a bad link and the one whose player needs telling, so
             // sampling only on the host would measure the machine least likely to be the problem.
+            UpdateQualityProbe();
             SampleLink();
 
 #if MULTIPLAY_SDK
@@ -1459,6 +1493,7 @@ namespace TumbangPreso.Net
                 ConfigureClientHello();
 
                 bool ok = StartNetcode(() => _nm.StartHost(), "relay hosting");
+                _serverWasRunning = ok;
 
                 // ⚠️ THE RELAY HOST REGISTERS THE SEAT HANDLER TOO, exactly as `StartHost` does.
                 // A listen host is also its own client, so the message can reach it, and the two
@@ -1843,20 +1878,22 @@ namespace TumbangPreso.Net
         /// </summary>
         private void ConfigureTimeouts()
         {
-            // ⚠️⚠️ 8000, DOWN FROM 30000, AND THIRTY SECONDS IS NOT A TIMEOUT ANYBODY CAN PLAY
-            // THROUGH. This is the silence timer: how long a peer keeps believing in a machine it
-            // has stopped hearing from. `Stop` now sends a real `DisconnectClient` so an orderly
-            // exit is instant and never reaches this at all, but the case this covers is the one
-            // that cannot say goodbye — alt-F4, a pulled cable, a laptop lid. Half a minute of
-            // four people standing in a match whose host is gone is most of a round.
-            //
-            // ⚠️ AND IT IS NOT SET SHORTER THAN THAT, because it is also what a real network
-            // hiccup is measured against. The VPS is 48 ms from Manila and the LAN is under 2;
-            // eight seconds of complete silence on either is a machine that has gone, not a
-            // machine that is late.
-            _utp.DisconnectTimeoutMS = 8000;
+            _serverWasRunning = false;
+            ResetQualityProbe();
+            _lastLinkTrafficAt = -1;
+            _linkSampleLeft = 0;
+            // Cold mobile scene activation can span two frames totaling about10 s.
+            // Allow12 s of complete silence before retiring its transport. Orderly
+            // host exits still send HostLeftMessage immediately; the quality badge
+            // warns about missing traffic earlier. Never disable loss detection.
+            _utp.DisconnectTimeoutMS = 12000;
             _utp.ConnectTimeoutMS = 2000;
             _utp.MaxConnectAttempts = 12;
+            // NGO defaults to128 packet slots, below Transport's512 default.
+            // Cold Android scene activation can fill that queue before the next
+            // frame, dropping fresh traffic. Keep a bounded burst buffer without
+            // weakening packet/session validation.
+            _utp.MaxPacketQueueSize = 512;
 
             // ⚠️ EVERY START PATH AND `Stop` REACH THIS METHOD, which is what makes it the one
             // place a new session can forget the last one's ending. A latch that survived into a
@@ -1972,7 +2009,7 @@ namespace TumbangPreso.Net
             {
                 Protocol = ProtocolVersion,
                 SkillContract = SkillContractFingerprint.Current,
-                Token = account?.ConnectionToken ?? NetIdentity.Token,
+                Token = LocalConnectionToken,
                 Name = LocalLobbyName(),
 
                 // ⚠️ WHATEVER IS CACHED, AND NEVER A NETWORK CALL FROM HERE. This runs inside
@@ -2168,9 +2205,9 @@ namespace TumbangPreso.Net
             var hello = DecodeHello(request.Payload);
             bool protocolMatches = hello != null && hello.Protocol == ProtocolVersion;
             bool skillsMatch = protocolMatches && SkillContractFingerprint.Matches(hello.SkillContract);
-            bool hasCapacity = _nm == null ||
+            bool hasCapacity = (_nm == null || Lobby.HasConnectedToken(hello?.Token) ||
                                Math.Max(_nm.ConnectedClientsIds.Count, _helloByClient.Count)
-                               < LobbySession.MaxConnections;
+                               < LobbySession.MaxConnections) && Lobby.HasRoomForAnother(hello?.Token);
 
             // ⚠️⚠️ THE BLOCK LIST IS ENFORCED HERE, AND THIS IS THE ONLY PLACE IN THE GAME IT
             // CAN DO ANYTHING TODAY. `FUTURE.md` § 6 asks for *"blocking, which must survive
@@ -2379,7 +2416,7 @@ namespace TumbangPreso.Net
                     int slipperPick = s.SlipperPick >= 0 ? s.SlipperPick : 0;
                     var identity = GameServices.Account;
                     MatchRpc.Instance?.IdentifyServerRpc(
-                        identity?.ConnectionToken ?? NetIdentity.Token,
+                        LocalConnectionToken,
                         LocalLobbyName(),
                         identity != null && identity.IsSignedIn ? identity.PlayerId : "",
                         identity?.HandleProof ?? "",
@@ -2399,7 +2436,7 @@ namespace TumbangPreso.Net
             {
                 hello = new ConnectionHello
                 {
-                    Token = GameServices.Account?.ConnectionToken ?? NetIdentity.Token,
+                    Token = LocalConnectionToken,
                     Name = LocalLobbyName(),
 
                     // ⚠️ THE HOST NEVER SENDS ITSELF A HELLO, so this is the only path on which
@@ -2478,6 +2515,7 @@ namespace TumbangPreso.Net
 
         private void OnClientDisconnected(ulong clientId)
         {
+            _qualityTrips.Remove(clientId); _qualityEchoAt.Remove(clientId);
             Debug.Log($"[NetDisconnect] peer={clientId} local={_nm?.LocalClientId} server={_nm?.IsServer} connected={_nm?.IsConnectedClient}");
             if (IsHost && clientId != _nm.LocalClientId)
             {
@@ -2520,12 +2558,7 @@ namespace TumbangPreso.Net
             _localShutdown = false;
             _everConnected = false;
 
-            LocalSlot = 0;
-            _seatApplied = false;
-            IsRelay = false;
-            RelayJoinCode = null;
-            _helloByClient.Clear();
-            Lobby.Reset();
+            ResetJoinedRoom();
 
             // ⚠️ A CONNECTION THAT NEVER COMPLETED IS NOT A DISCONNECTION. The join screen is
             // already showing the attempt and reports its own failure; navigating from here as
@@ -2536,11 +2569,19 @@ namespace TumbangPreso.Net
             // `MatchRpc.HandleClientDisconnected` is a subscriber and it starts a scene load; a
             // latch armed after that has already lost the frames in which this peer was standing
             // in an arena answering `IsHost == true`. `docs/TODO.md` § 143.9.
+            PublishRoomLoss(reason);
+            return;
+        }
+        private void ResetJoinedRoom()
+        {
+            LocalSlot = 0; _seatApplied = false; IsRelay = false; RelayJoinCode = null;
+            _helloByClient.Clear(); Lobby.Reset();
+        }
+        private void PublishRoomLoss(string reason)
+        {
             MatchAbandon.Note(reason, wasLocal: false);
-
             LastDisconnectReason = PlayerFacingDisconnectReason(reason);
             ClientDisconnected?.Invoke(LastDisconnectReason);
-            return;
         }
 
         /// <summary>
@@ -2566,7 +2607,7 @@ namespace TumbangPreso.Net
         private static string PlayerFacingDisconnectReason(string raw)
         {
             var cause = Core.SessionEndRules.Classify(raw, wasLocal: false);
-            if (cause == Core.SessionEndCause.HostLost && MatchAbandon.MatchWasCompleted)
+            if (cause == Core.SessionEndCause.HostLost)
                 return MatchAbandon.PlayerLine;
 
             // ⚠️ THE HOST'S OWN SENTENCE STILL WINS WHERE IT IS ONE. `ApproveConnection` writes

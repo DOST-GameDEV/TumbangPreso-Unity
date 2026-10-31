@@ -58,6 +58,7 @@ namespace TumbangPreso.UI
                 _tabs[i].colors=colours;
             }
             _heading.text=Sections[_tab];
+            if (_deviceMenu != null) _deviceMenu.gameObject.SetActive(_tab == 0);
             switch(_tab){case 0:Controls();break;case 1:Audio();break;case 2:Graphics();break;case 3:Player();break;case 4:Accessibility();break;}
             _list.GetComponentInParent<ScrollRect>().verticalNormalizedPosition=1;
             PrepareSettingsRows();Changed("");_canvas.GetComponent<ScreenFocus>().Rebuild();
@@ -118,10 +119,12 @@ namespace TumbangPreso.UI
                 v=>{s.AntiAliasMode=v;AntiAliasModes.Apply(v);});
             // Read every frame by `Visual.WorldOutline`, so the pick shows at once and needs no Apply.
             Choice("CharacterShading","Character shading",GameSettings.CharacterShadingLabels,s.CharacterShading,v=>s.CharacterShading=v);
-            Toggle("Fullscreen","Fullscreen",s.Fullscreen,v=>s.Fullscreen=v,s.ApplyDisplay);
+            if (!Application.isMobilePlatform)
+                Toggle("Fullscreen","Fullscreen",s.Fullscreen,v=>s.Fullscreen=v,s.ApplyDisplay);
             Header("PERFORMANCE");
-            Choice("VSync","Vertical sync",VSyncModes.All.Select(p=>p.Label).ToArray(),s.VSyncMode,
-                v=>{s.VSyncMode=v;VSyncModes.Apply(v);FrameRateOptions.Apply(s.FrameRateLimit);UpdateFrameCapState();});
+            if (!Application.isMobilePlatform)
+                Choice("VSync","Vertical sync",VSyncModes.All.Select(p=>p.Label).ToArray(),s.VSyncMode,
+                    v=>{s.VSyncMode=v;VSyncModes.Apply(v);FrameRateOptions.Apply(s.FrameRateLimit);UpdateFrameCapState();});
             _ownerFrameCap=SettingsOptionMenu.Create(Row("FrameRate","Frame rate limit"),"FrameRateValue",
                 FrameRateOptions.All.Select(FrameRateOptions.Label).ToArray(),Array.IndexOf(FrameRateOptions.All,s.FrameRateLimit),
                 v=>{s.FrameRateLimit=FrameRateOptions.All[v];FrameRateOptions.Apply(s.FrameRateLimit);_session.Preview();});
@@ -131,16 +134,17 @@ namespace TumbangPreso.UI
         private void UpdateFrameCapState()
         {
             if(_ownerFrameCap==null || _frameReason==null)return;
-            bool sync=VSyncModes.Of(SettingsStore.Current.VSyncMode).Count>0;
+            bool sync=FrameRateOptions.ControlledByDisplay;
             int launch=FrameRateOptions.ReadOperatorLimit(Environment.GetCommandLineArgs());
             _ownerFrameCap.Button.interactable=!sync && launch<=0;
             _frameReason.text=launch>0?"Launch settings control the frame rate: "+launch+" FPS.":
+                Application.isMobilePlatform?"Device default aims for up to 60 FPS. Lower limits can reduce heat and battery use.":
                 sync?"Turn vertical sync off to use your saved frame rate limit.":"Your saved limit applies while vertical sync is off.";
         }
         private void Player()
         {
             var s=SettingsStore.Current;
-            Header("PROFILE");
+            if (!_touchLayout) Header("PROFILE");
             var name=SettingsWorkspaceRows.Entry(Row("PlayerName","Player name"),"PlayerNameField","PLAYER NAME");
             name.SetTextWithoutNotify(s.PlayerName);name.gameObject.AddComponent<SettingsControlFocus>();name.characterLimit=Core.Balance.PlayerNameMax;
             name.onValueChanged.AddListener(v=>{s.PlayerName=v;_session.Preview();});
@@ -183,12 +187,21 @@ namespace TumbangPreso.UI
         }
         private void Controls()
         {
-            Header("DEVICE");
-            Choice("InputDevice","Input device",new[]{"Keyboard & mouse","Controller","Touch"},(int)_device,
-                v=>{_device=(InputDeviceKind)v;ShowSection(0);});
+            if (!_touchLayout)
+            {
+                Header("DEVICE");
+                Choice("InputDevice","Input device",new[]{"Keyboard & mouse","Controller","Touch"},(int)_device,
+                    v=>{_device=(InputDeviceKind)v;ShowSection(0);});
+            }
             if(_device==InputDeviceKind.Touch)
             {
-                ActionRow("TouchLayout","Touch controls","ARRANGE",()=>{Suspend();_touch?.Invoke();});return;
+                var s=SettingsStore.Current;
+                SettingsWorkspaceRows.Slider(Row("TouchSensitivity","Swipe sensitivity"),"TouchSensitivityValue",s.MouseSensitivity,.1f,5,
+                    v=>{s.MouseSensitivity=v;_session.Preview();},v=>v.ToString("0.0")+"×");
+                Toggle("TouchInvertY","Invert vertical swipe",s.InvertY,v=>s.InvertY=v);
+                ActionRow("TouchLayout","Touch controls","ARRANGE",()=>{Suspend();_touch?.Invoke();});
+                Note("Drag the clear right side to look. Hold and drag THROW or a targeted skill to aim with the same thumb.");
+                return;
             }
             var controller=ActionRow("ControllerMap","Controller map","OPEN",()=>
             { _device=InputDeviceKind.Gamepad;Suspend();_controller?.Invoke(); });
@@ -229,7 +242,7 @@ namespace TumbangPreso.UI
             var dim=root.gameObject.AddComponent<Image>();dim.color=new Color(0,0,0,.72f);
             var paper=OwnerUiLayout.Rect(root,"DecisionPaper").gameObject.AddComponent<Image>();paper.color=SettingsPalette.Surface;
             paper.rectTransform.anchorMin=paper.rectTransform.anchorMax=paper.rectTransform.pivot=new Vector2(.5f,.5f);
-            paper.rectTransform.sizeDelta=new Vector2(950,604);paper.raycastTarget=true;
+            paper.rectTransform.sizeDelta=new Vector2(950,_touchLayout ? 760 : 604);paper.raycastTarget=true;
             var title=OwnerUiLayout.Text(paper.transform,"DecisionHeading","KEEP YOUR CHANGES?",50,OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(title.rectTransform,65,51,828,108);title.alignment=TextAnchor.MiddleCenter;title.color=SettingsPalette.Ink;
             // ⚠️ THREE BUTTONS THAT LOOK LIKE BUTTONS AND RANK THEMSELVES (2026-09-23 UI review). The
@@ -238,12 +251,15 @@ namespace TumbangPreso.UI
             // the filled accent (the one primary), DISCARD and KEEP EDITING are outlined.
             var save=SettingsWorkspaceRows.Action(paper.transform,"SaveAndBack","SAVE & BACK",()=>{_session.Save();_decision.SetActive(false);Back();},560);
             OwnerUiLayout.Place((RectTransform)save.transform,195,200,560,96);
+            if (_touchLayout) OwnerUiLayout.Place((RectTransform)save.transform,195,190,560,InputLayer.TouchMetrics.MinTargetUnits);
             SettingsWorkspaceRows.Slab(save,true);
             var discard=SettingsWorkspaceRows.Action(paper.transform,"DiscardAndBack","DISCARD CHANGES",()=>{_session.Discard();_decision.SetActive(false);Back();},560);
             OwnerUiLayout.Place((RectTransform)discard.transform,195,326,560,88);
+            if (_touchLayout) OwnerUiLayout.Place((RectTransform)discard.transform,195,360,560,InputLayer.TouchMetrics.MinTargetUnits);
             SettingsWorkspaceRows.Slab(discard,false);
             var keep=SettingsWorkspaceRows.Action(paper.transform,"KeepEditing","KEEP EDITING",CloseDecision,560);
             OwnerUiLayout.Place((RectTransform)keep.transform,195,444,560,88);
+            if (_touchLayout) OwnerUiLayout.Place((RectTransform)keep.transform,195,530,560,InputLayer.TouchMetrics.MinTargetUnits);
             SettingsWorkspaceRows.Slab(keep,false);
             ScreenFocus.Install(root.gameObject).Rebuild();
         }

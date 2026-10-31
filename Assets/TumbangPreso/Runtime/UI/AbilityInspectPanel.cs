@@ -587,6 +587,7 @@ namespace TumbangPreso.UI
 
         private bool HoldPressed()
         {
+            if (InputLayer.TouchInput.ScreenHeld("AbilityInfo")) return true;
             if (_hold == null)
             {
                 var asset = Resources.Load<InputActionAsset>("TumbangPreso");
