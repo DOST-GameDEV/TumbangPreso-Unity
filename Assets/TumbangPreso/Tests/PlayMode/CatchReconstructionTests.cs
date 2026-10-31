@@ -697,7 +697,10 @@ namespace TumbangPreso.PlayTests
             for (int i = 2; i < 4; i++) round.PlayerAt(i).Teleport(new Vector3(-12, 0, i * 2));
             float behind = dash ? 1.7f : 1.1f;
             float startZ = -Confinement.Radius + behind + .2f; // Inside the taya's box: they are confined to it, as in play.
-            float startX = map ? -4 : 0, startY = map ? .12f : .02f;
+            // On a real map, in front of its own can: fixed coordinates can be mid-air on another map's ground.
+            Vector3 mapCan = map ? round.Lata.transform.position : Vector3.zero;
+            float startX = map ? mapCan.x : 0, startY = map ? mapCan.y + .12f : .02f;
+            if (map) startZ = mapCan.z - Confinement.Radius + behind + .2f;
             bool standing = wall || air || wallBehindVictim || step || doubleCatch || stunned;
             if (standing) { startZ = 0; behind = 1; }
             GameObject stepBlock = null;
@@ -737,6 +740,7 @@ namespace TumbangPreso.PlayTests
             var log = new System.Collections.Generic.List<string> { "elapsed,replayOverlap,replayParts,liveOverlap,liveParts,handGap,tayaRoot,victimRoot" };
             try
             {
+                if (map) yield return new WaitForSecondsRealtime(4); // A heavy map's first seconds run far too few frames to chase in.
                 float started = actor.transform.position.z, until = Time.realtimeSinceStartup + (standing ? 0 : 1.1f);
                 while (Time.realtimeSinceStartup < until)
                 {
