@@ -46,6 +46,14 @@ namespace TumbangPreso.Visual
         /// </summary>
         public static bool BodyJets = false;
 
+        /// <summary>
+        /// The bench rework (`ZackMomentumPaint`): gears counted in silk strands, a kick at every shift, nothing on his body. False
+        /// draws the line renderers below exactly as they were, kept until the owner has passed the painted look in play.
+        /// </summary>
+        public static bool Painted = true;
+        private bool _painted;
+        private ZackMomentumPaint _paint;
+
         private const int RibbonPoints = 10, Ghosts = 3, Streaks = 4, EyeStreaks = 6, RingPoints = 20;
         private const int RouteKeep = 48, Streamers = 3, StreamerPoints = 6, BodyArcs = 2;
         private static readonly System.Collections.Generic.Dictionary<int, ZackMomentumLook> Live =
@@ -84,7 +92,7 @@ namespace TumbangPreso.Visual
             => motor != null && Live.TryGetValue(motor.PlayerSlot, out var look) && look != null && look._motor == motor
                && !Settings.SettingsStore.Current.ReducedEffects ? look._lens : 0.0f;
 
-        public static ZackMomentumLook Attach(CharacterMotor motor, ZackHeroKit kit)
+        public static ZackMomentumLook Attach(CharacterMotor motor, ZackHeroKit kit, bool? painted = null)
         {
             if (motor == null) return null;
             var go = new GameObject("ZackMomentum-P" + (motor.PlayerSlot + 1));
@@ -129,6 +137,13 @@ namespace TumbangPreso.Visual
             look._boomRing.enabled = false;
             foreach (var arc in look._bodyArcs) arc.enabled = false;
             Live[motor.PlayerSlot] = look;
+            look._painted = painted ?? Painted;
+            if (look._painted)
+            {
+                // The old look's lines stay built for the switch and stay dark; only his own first person's streaks still light.
+                foreach (var line in go.GetComponentsInChildren<LineRenderer>(true)) line.enabled = false;
+                look._paint = new ZackMomentumPaint(go.transform);
+            }
             return look;
         }
 
@@ -159,6 +174,7 @@ namespace TumbangPreso.Visual
             var at = _motor.transform.position;
             bool reduced = Settings.SettingsStore.Current.ReducedEffects;
             bool eyes = ZackFx.InOwnFirstPerson(_motor);
+            if (_painted) { StepPainted(step, at, eyes, reduced, dt); return; }
             if (step == 0 && _step >= 2) ZackFx.Sparks(at + Vector3.up * 0.15f, 0.3f, reduced ? 2 : 4, _motor.PlayerSlot);
             if (step > _step)
             {
@@ -267,6 +283,29 @@ namespace TumbangPreso.Visual
                 streak.SetPosition(0, from);
                 streak.SetPosition(1, from + back * (0.7f + 0.3f * Mathf.Abs(Mathf.Sin(_age * 7 + i))));
             }
+            StepEyeStreaks(eyes && step >= 2 && !reduced, step);
+        }
+
+        /// <summary>The painted look's frame: the stage cues that are not drawing (the sound, the stretch, his lens) stay here.</summary>
+        private void StepPainted(int step, Vector3 at, bool eyes, bool reduced, float dt)
+        {
+            if (step == 3 && _step < 3)
+            {
+                GameServices.Audio?.PlayAt("sfx_zack_momentum_full", at);
+                if (!eyes)
+                {
+                    var flat = _motor.transform.forward; flat.y = 0.0f;
+                    _motor.GetComponent<CharacterSquashStretch>()?.DashStretch(flat, 0.22f);
+                }
+                else if (!reduced)
+                {
+                    var rig = UnityEngine.Camera.main != null ? UnityEngine.Camera.main.GetComponent<CameraRig>() : null;
+                    if (rig != null) DamageVignette.Flash(rig, ZackFx.Body, 0.25f);
+                }
+            }
+            _step = step;
+            _lens = Mathf.MoveTowards(_lens, step * 1.6f, dt * 12.0f);
+            _paint.Pose(_age, step, at, _motor.transform.forward, eyes, reduced);
             StepEyeStreaks(eyes && step >= 2 && !reduced, step);
         }
 
@@ -455,6 +494,7 @@ namespace TumbangPreso.Visual
         {
             foreach (var ghost in _ghosts) ghost?.Destroy();
             _smear?.Destroy();
+            _paint?.Dispose();
             if (_motor != null && Live.TryGetValue(_motor.PlayerSlot, out var look) && look == this) Live.Remove(_motor.PlayerSlot);
         }
     }

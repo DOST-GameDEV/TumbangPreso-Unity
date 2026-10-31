@@ -76,7 +76,7 @@ namespace TumbangPreso.EditorTools.MapKit
         }
     }
 
-    internal static class ZackKitFilm
+    internal static partial class ZackKitFilm
     {
         internal const string OutDir = "Logs/paete-ability-film";
         private const string Map = "Assets/TumbangPreso/Scenes/Maps/Eskinita.unity";
@@ -352,6 +352,9 @@ namespace TumbangPreso.EditorTools.MapKit
                 case "wirerearm": BuildWire(s, p, WireShow.Rearm); break;
                 case "wirereel": BuildWire(s, p, WireShow.Reel); break;
                 case "wireover": BuildWire(s, p, WireShow.Overcharged); break;
+                case "momentum": BuildMomentum(s, p); break;
+                case "overclock": BuildOverclock(s, p, false); break;
+                case "overclockend": BuildOverclock(s, p, true); break;
                 default: throw new ArgumentException("no such ability: " + p.Name + " (" + string.Join(", ", Abilities) + ")");
             }
         }
