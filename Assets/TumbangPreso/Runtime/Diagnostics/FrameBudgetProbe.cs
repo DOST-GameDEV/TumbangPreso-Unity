@@ -35,6 +35,9 @@ namespace TumbangPreso.Diagnostics
     ///                      showing through walls (owner, 2026-10-31);
     ///   -tp-view-fps       holds the eye at the first player and times eight headings, a picture of each (owner, 2026-10-31:
     ///                      "im only getting 100 fps on payo when looking at the city");
+    ///   -tp-spectator      the old all-bots run, through the spectator camera. ⚠️ THE DEFAULT IS NOW A SEATED PLAYER, AS THE GAME
+    ///                      IS PLAYED: the all-bots run draws a wide free camera and runs the replay capture, which a
+    ///                      player's camera never does, so its numbers and its uneven frames were not a player's (2026-11-01);
     ///   -tp-size WxH       holds the window at that size; the saved settings otherwise replace the command line's.
     /// ⚠️ THE ARRIVAL FILM IS NOT THE ROUND: it held the screen for 8 to 24 s of the earlier runs, so the warm-up now starts
     /// once it has ended (`MatchArrivalPresentation.Active`), and every row states the size it really drew.
@@ -434,7 +437,8 @@ namespace TumbangPreso.Diagnostics
                 SceneFlow.Networked = false;
                 SceneFlow.PinSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));
                 SceneFlow.SelectedMode = GameMode.HeroStrike;
-                GameLaunch.AllBots = true; GameLaunch.Spectator = false;
+                bool watching = Array.IndexOf(Environment.GetCommandLineArgs(), "-tp-spectator") >= 0;
+                GameLaunch.AllBots = watching; GameLaunch.Spectator = false; if (!watching) GameLaunch.SoloSeat = 1;
                 yield return SceneManager.LoadSceneAsync(map);
 
                 float waited = 0;
@@ -457,6 +461,8 @@ namespace TumbangPreso.Diagnostics
 
                 var row = new Row();
                 yield return Record(row, map);
+                TumbangPreso.CameraSystem.SpectatorCamera.BenchCompareTo = Path.Combine(_output, map);
+                for (float t = 0; t < .4f; t += Time.unscaledDeltaTime) yield return null;
                 string line = map + "," + Screen.width + "," + Screen.height + "," + row.Describe();
                 csv.AppendLine(line);
                 File.WriteAllText(Path.Combine(_output, "frame-budget.csv"), csv.ToString());
