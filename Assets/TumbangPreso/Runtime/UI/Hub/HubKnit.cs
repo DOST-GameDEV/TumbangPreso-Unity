@@ -27,15 +27,18 @@ namespace TumbangPreso.UI.Hub
     /// ⚠️ ORANGE IS TASK'S TILE, NOT ITEM'S. On HOME the HERO and ITEM tiles are the same yellow;
     /// only TASK is orange. The first cut used ITEM and the "orange" cards came out gold.
     /// </summary>
-    public enum Knit { Gold, Orange, Teal, Lime, Maroon, Red, Peach, Wine }
+    public enum Knit { Gold, Orange, Teal, Lime, Maroon, Red, Peach, Wine,
+                       // The boot kit (`HubKnit.Boot.cs`).
+                       Go, Yellow, Danger, Plain, PillGo, PillYellow, PillDanger, PillPlain, Track, BootField, Panel, Card, CardOn, Well }
 
-    public static class HubKnit
+    public static partial class HubKnit
     {
         private struct Cut
         {
             public string Face, Slab; public Vector4 FaceBorder, SlabBorder;
             public Vector2 SlabMin, SlabMax;   // slab offsets from the face rect, canvas units
             public Vector2 Depth; public Color Ink;
+            public bool Kit, Tiled; public float Density, SourceHeight;   // boot kit pieces: see `HubKnit.Boot.cs`
         }
 
         // ⚠️ THE INKS ARE HOME'S OWN LETTERING (`board.json` labels): brown on HERO, wine on TASK,
@@ -47,6 +50,7 @@ namespace TumbangPreso.UI.Hub
 
         private static Cut CutOf(Knit k)
         {
+            if (BootCut(k, out var boot)) return boot;
             switch (k)
             {
                 case Knit.Gold:   return Tile("tile_hero", GoldInk);
@@ -114,6 +118,7 @@ namespace TumbangPreso.UI.Hub
                 var g = glyph.rectTransform;
                 g.anchorMin = g.anchorMax = g.pivot = alone ? new Vector2(0.5f, 0.5f) : new Vector2(0, 0.5f);
                 g.anchoredPosition = alone ? Vector2.zero : new Vector2(24, 0);
+                if (CutOf(k).Kit) { g.anchorMin = g.anchorMax = new Vector2(alone ? .5f : 0, .55f); g.pivot = new Vector2(alone ? .5f : 0, .5f); }
                 g.sizeDelta = new Vector2(42, 42);
             }
             if (words != null)
@@ -123,6 +128,8 @@ namespace TumbangPreso.UI.Hub
                 label.rectTransform.offsetMin = new Vector2(icon != HubGlyph.Mark.None ? 74 : 18, 4);
                 label.rectTransform.offsetMax = new Vector2(-18, -4);
                 label.horizontalOverflow = HorizontalWrapMode.Overflow;
+                // The painted face has a highlight lip on top: its centre is 45% down the rect.
+                if (CutOf(k).Kit) { label.rectTransform.anchorMin = new Vector2(0, .10f); label.rectTransform.offsetMin = new Vector2(label.rectTransform.offsetMin.x, 0); label.rectTransform.offsetMax = new Vector2(-18, 0); }
             }
             // ⚠️ THE ONE PRIMARY IS HOME'S GOLD TILE, NOT PLAY'S LIME (owner 2026-10-28: the lime READY
             // "is ugly"). It breathes and sparks like PLAY, lettered in a deeper brown than HOME's
@@ -170,7 +177,7 @@ namespace TumbangPreso.UI.Hub
             var cut = CutOf(k);
             var face = piece.Find("Face")?.GetComponent<Image>();
             var slab = piece.Find("Slab")?.GetComponent<Image>();
-            if (face != null) { Fill(face, cut.Face, cut.FaceBorder, true); Grain(face.rectTransform, k); }
+            if (face != null) { FillFace(face, cut); Grain(face.rectTransform, k); }
             if (slab != null)
             {
                 slab.enabled = cut.Slab != null;
@@ -215,7 +222,7 @@ namespace TumbangPreso.UI.Hub
             if (cut.Slab != null) Fill(slab, cut.Slab, cut.SlabBorder, false); else slab.enabled = false;
             var face = HubKit.Stretch(HubKit.Rect(rect, "Face")).gameObject.AddComponent<Image>();
             face.raycastTarget = false;
-            Fill(face, cut.Face, cut.FaceBorder, true);
+            FillFace(face, cut);
             Grain(face.rectTransform, k);
             return face.rectTransform;
         }
@@ -276,6 +283,15 @@ namespace TumbangPreso.UI.Hub
         {
             string key = name + border;
             if (Cuts.TryGetValue(key, out var cached) && cached != null) return cached;
+            if (name.StartsWith("UI/"))
+            {
+                var texture = Resources.Load<Texture2D>(name);
+                if (texture == null) return null;
+                var whole = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100, 0, SpriteMeshType.FullRect, border);
+                whole.name = name + "_kit";
+                Cuts[key] = whole;
+                return whole;
+            }
             var art = HubBoard.Art(name);
             if (art == null) return null;
             Margin.TryGetValue(name, out var m);
@@ -296,6 +312,21 @@ namespace TumbangPreso.UI.Hub
             image.pixelsPerUnitMultiplier = 2f;
         }
 
+        private static void FillFace(Image image, Cut cut)
+        {
+            Fill(image, cut.Face, cut.FaceBorder, !cut.Kit || cut.Tiled);
+            if (!cut.Kit) return;
+            image.pixelsPerUnitMultiplier = cut.Density > 0 ? cut.Density : 1;
+            var slice = image.GetComponent<KitSlice>();
+            if (cut.SourceHeight > 0)
+            {
+                if (slice == null) slice = image.gameObject.AddComponent<KitSlice>();
+                slice.SourceHeight = cut.SourceHeight;
+                slice.Apply();
+            }
+            else if (slice != null) slice.SourceHeight = 0;
+        }
+
         // ⚠️⚠️ THE FOCUS RIM HUGS THE WHOLE PIECE, FACE AND SLAB (owner's first screenshots: a gold
         // octagon around START). Two plates behind the slab, cut from the piece's own rounded face so
         // they follow its corners: a wine line, then a honey rim outside it, pulsing like HOME's. HOME's
@@ -312,7 +343,7 @@ namespace TumbangPreso.UI.Hub
             {
                 var image = HubKit.Stretch(HubKit.Rect(rect, i == 0 ? "RimGlow" : "RimLine")).gameObject.AddComponent<Image>();
                 image.raycastTarget = false;
-                Fill(image, sprite, border, false);
+                if (cut.Kit) FillFace(image, cut); else Fill(image, sprite, border, false);
                 image.color = i == 0 ? new Color(Rim.r, Rim.g, Rim.b, 0) : new Color(0.23f, 0.03f, 0.06f, 0);
                 image.enabled = false;
             }
@@ -394,21 +425,23 @@ namespace TumbangPreso.UI.Hub
         public static InputField Field(Transform parent, string name, string value, string placeholder, int limit, int step = HubStyle.Label)
         {
             var root = HubKit.Rect(parent, name);
-            var face = Dress(root, Knit.Peach);
+            var face = Dress(root, Knit.BootField);
             var hitImage = face.GetComponent<Image>();
             hitImage.raycastTarget = true;
             var area = HubKit.Stretch(HubKit.Rect(root, "TextArea"));
-            var text = HubKit.Text(area, "Text", "", step, true, WineInk, TextAnchor.MiddleLeft);
+            var text = HubKit.Text(area, "Text", "", step, true, KitInk, TextAnchor.MiddleLeft);
             HubKit.Stretch(text.rectTransform);
-            text.rectTransform.offsetMin = new Vector2(30, 6); text.rectTransform.offsetMax = new Vector2(-30, -6);
+            text.rectTransform.anchorMin = new Vector2(0, .04f);
+            text.rectTransform.offsetMin = new Vector2(36, 0); text.rectTransform.offsetMax = new Vector2(-36, 0);
             text.supportRichText = false; text.alignByGeometry = false; text.horizontalOverflow = HorizontalWrapMode.Overflow;
-            var hint = HubKit.Text(area, "Placeholder", placeholder, HubStyle.Body, false, new Color(WineInk.r, WineInk.g, WineInk.b, 0.5f), TextAnchor.MiddleLeft);
+            var hint = Words(area, "Placeholder", placeholder, HubStyle.Body, KitTanDark, TextAnchor.MiddleLeft, false);
             HubKit.Stretch(hint.rectTransform);
-            hint.rectTransform.offsetMin = new Vector2(30, 6); hint.rectTransform.offsetMax = new Vector2(-30, -6);
+            hint.rectTransform.anchorMin = new Vector2(0, .04f);
+            hint.rectTransform.offsetMin = new Vector2(36, 0); hint.rectTransform.offsetMax = new Vector2(-36, 0);
             var field = root.gameObject.AddComponent<InputField>();
             field.targetGraphic = hitImage;
             field.textComponent = text; field.placeholder = hint; field.characterLimit = limit;
-            field.caretColor = WineInk; field.caretWidth = 3;
+            field.caretColor = KitInk; field.caretWidth = 3;
             field.selectionColor = new Color(0.91f, 0.45f, 0.18f, 0.45f);
             field.transition = Selectable.Transition.ColorTint;
             var colours = field.colors;

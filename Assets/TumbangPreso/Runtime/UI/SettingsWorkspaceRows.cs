@@ -7,62 +7,88 @@ namespace TumbangPreso.UI
     // A settings-only control family. Account artwork and shared hub/touch rows stay separate.
     public static class SettingsWorkspaceRows
     {
+        public const float ControlWidth = 620;
+
         public static RectTransform Row(Transform parent, string name, string label)
         {
             var root = OwnerUiLayout.Rect(parent, name); root.gameObject.AddComponent<LayoutElement>().preferredHeight = 104;
-            var text = OwnerUiLayout.Text(root, "Label", label, 31, OwnerUiLayout.TypeRole.Reading);
-            OwnerUiLayout.Place(text.rectTransform, 3, 9, 585, 78); text.color = SettingsPalette.Ink;
+            var text = OwnerUiLayout.Text(root, "Label", label, 38, OwnerUiLayout.TypeRole.Reading);
+            OwnerUiLayout.Place(text.rectTransform, 3, 9, 540, 78); text.color = SettingsPalette.PanelInk; text.font = Hub.HubKnit.SentenceFont(true);
             var line = OwnerUiLayout.Rect(root, "RowRule").gameObject.AddComponent<Image>();
             line.rectTransform.anchorMin = new Vector2(0, 0); line.rectTransform.anchorMax = new Vector2(1, 0);
-            line.rectTransform.offsetMin = new Vector2(0, 0); line.rectTransform.offsetMax = new Vector2(-15, 1);
-            line.color = new Color(1, 1, 1, .12f); line.raycastTarget = false;
+            line.rectTransform.offsetMin = new Vector2(0, 0); line.rectTransform.offsetMax = new Vector2(-15, 4);
+            line.color = SettingsPalette.Rule; line.raycastTarget = false;
             var control = OwnerUiLayout.Rect(root, "Control");
             control.anchorMin = control.anchorMax = control.pivot = new Vector2(1, .5f);
-            control.anchoredPosition = new Vector2(-20, 0); control.sizeDelta = new Vector2(533, 78);
+            control.anchoredPosition = new Vector2(-60, 0); control.sizeDelta = new Vector2(ControlWidth, 78);
             return control;
         }
         public static void Toggle(Transform parent, string name, bool current, Action<bool> changed)
         {
-            var root = OwnerUiLayout.Rect(parent, name); OwnerUiLayout.Place(root, 0, 0, 533, 78);
+            // OFF / ON on the tab track. ON is the lime pill on the right; OFF a cream pill on the left,
+            // so lime always means on.
+            var root = OwnerUiLayout.Rect(parent, name); OwnerUiLayout.Place(root, 0, -1, 240, 80);
             var hit = root.gameObject.AddComponent<Image>(); hit.color = Color.clear;
             var toggle = root.gameObject.AddComponent<Toggle>(); toggle.targetGraphic = hit; toggle.transition = Selectable.Transition.None;
             root.gameObject.AddComponent<SettingsControlFocus>();
-            var face = OwnerUiLayout.Rect(root, "Switch").gameObject.AddComponent<SettingsSwitchFace>();
-            OwnerUiLayout.Place(face.rectTransform, 14, 17, 95, 44); face.On = current; face.raycastTarget = false;
-            var text = OwnerUiLayout.Text(root, "Value", current ? "ON" : "OFF", 30, OwnerUiLayout.TypeRole.Display);
-            OwnerUiLayout.Place(text.rectTransform, 134, 4, 350, 68); text.color = SettingsPalette.Ink; toggle.SetIsOnWithoutNotify(current);
-            toggle.onValueChanged.AddListener(on => { face.On = on; face.SetVerticesDirty(); text.text = on ? "ON" : "OFF"; MenuSfx.Click(); changed(on); });
+            var track = OwnerUiLayout.Rect(root, "Track").gameObject.AddComponent<Image>();
+            OwnerUiLayout.Fill(track.rectTransform); Hub.HubKnit.KitFace(track, Hub.Knit.Track);
+            var pill = OwnerUiLayout.Rect(root, "Switch").gameObject.AddComponent<Image>();
+            var off = Word(root, "OffWord", "OFF", 20);
+            var on = Word(root, "OnWord", "ON", 120);
+            var text = OwnerUiLayout.Text(root, "Value", current ? "ON" : "OFF", 28, OwnerUiLayout.TypeRole.Display);
+            text.enabled = false;
+            void Show(bool value)
+            {
+                Hub.HubKnit.KitFace(pill, value ? Hub.Knit.PillGo : Hub.Knit.PillPlain);
+                OwnerUiLayout.Place(pill.rectTransform, value ? 120 : 20, 4, 100, 59);
+                pill.GetComponent<Hub.KitSlice>().Apply();
+                on.color = value ? Hub.HubKnit.GreenInk : Hub.HubKnit.KitSoftRed;
+                off.color = value ? Hub.HubKnit.KitSoftRed : Hub.HubKnit.KitMaroon;
+                text.text = value ? "ON" : "OFF";
+            }
+            Show(current);
+            toggle.SetIsOnWithoutNotify(current);
+            toggle.onValueChanged.AddListener(value => { Show(value); MenuSfx.Click(); changed(value); });
+            Text Word(Transform owner, string id, string words, float x)
+            {
+                var word = OwnerUiLayout.Text(owner, id, words, 28, OwnerUiLayout.TypeRole.Display);
+                OwnerUiLayout.Place(word.rectTransform, x, 4, 100, 54); word.alignment = TextAnchor.MiddleCenter;
+                return word;
+            }
         }
         public static Slider Slider(Transform parent, string name, float value, float minimum, float maximum, Action<float> changed, Func<float, string> show)
         {
-            var root = OwnerUiLayout.Rect(parent, name); OwnerUiLayout.Place(root, 0, 0, 533, 78);
+            var root = OwnerUiLayout.Rect(parent, name); OwnerUiLayout.Place(root, 0, 0, ControlWidth, 78);
             var hit = root.gameObject.AddComponent<Image>(); hit.color = Color.clear;
             var slider = root.gameObject.AddComponent<Slider>(); slider.minValue = minimum; slider.maxValue = maximum;
             root.gameObject.AddComponent<SettingsControlFocus>();
             var track = OwnerUiLayout.Rect(root, "Track").gameObject.AddComponent<Image>();
-            OwnerUiLayout.Place(track.rectTransform, 17, 31, 360, 14); track.color = SettingsPalette.Background; track.raycastTarget = false;
-            var fill = OwnerUiLayout.Rect(track.transform, "Fill").gameObject.AddComponent<Image>();
-            OwnerUiLayout.Fill(fill.rectTransform); fill.color = SettingsPalette.Accent; fill.raycastTarget = false; slider.fillRect = fill.rectTransform;
-            var handles = OwnerUiLayout.Rect(root, "HandleArea"); OwnerUiLayout.Place(handles, 17, 17, 360, 44);
-            var handle = OwnerUiLayout.Rect(handles, "Handle").gameObject.AddComponent<SettingsSwitchFace>(); handle.KnobOnly = true;
-            handle.rectTransform.sizeDelta = new Vector2(34, -10); handle.raycastTarget = false;
+            OwnerUiLayout.Place(track.rectTransform, 0, 10, 500, 58); Hub.HubKnit.KitFace(track, Hub.Knit.Track);
+            var fillArea = OwnerUiLayout.Rect(root, "FillArea"); OwnerUiLayout.Place(fillArea, 18, 18, 464, 36);
+            var fill = OwnerUiLayout.Rect(fillArea, "Fill").gameObject.AddComponent<Image>();
+            OwnerUiLayout.Fill(fill.rectTransform); Hub.HubKnit.KitFace(fill, Hub.Knit.PillGo); slider.fillRect = fill.rectTransform;
+            var handles = OwnerUiLayout.Rect(root, "HandleArea"); OwnerUiLayout.Place(handles, 18, 0, 464, 78);
+            var handle = OwnerUiLayout.Rect(handles, "Handle").gameObject.AddComponent<Image>();
+            handle.sprite = Hub.HubKnit.Knob(); handle.preserveAspect = true;
+            handle.rectTransform.sizeDelta = new Vector2(64, 0); handle.raycastTarget = false;
             slider.handleRect = handle.rectTransform; slider.targetGraphic = handle; slider.transition = Selectable.Transition.None;
-            var text = OwnerUiLayout.Text(root, "Value", show(value), 30, OwnerUiLayout.TypeRole.Display);
-            OwnerUiLayout.Place(text.rectTransform, 406, 4, 120, 68); text.alignment = TextAnchor.MiddleCenter; text.color = SettingsPalette.Ink;
+            var text = OwnerUiLayout.Text(root, "Value", show(value), 36, OwnerUiLayout.TypeRole.Display);
+            OwnerUiLayout.Place(text.rectTransform, 508, 4, 112, 70); text.alignment = TextAnchor.MiddleCenter; text.color = SettingsPalette.PanelAccent;
             slider.SetValueWithoutNotify(value); slider.onValueChanged.AddListener(v => { text.text = show(v); changed(v); }); return slider;
         }
         public static InputField Entry(Transform parent, string name, string placeholder)
         {
             var root = OwnerUiLayout.Rect(parent, name).gameObject.AddComponent<Image>();
-            OwnerUiLayout.Place(root.rectTransform, 0, 0, 533, 78); root.color = SettingsPalette.Control;
-            var field = root.gameObject.AddComponent<InputField>(); field.targetGraphic = root; field.lineType = InputField.LineType.SingleLine; field.customCaretColor = true; field.caretColor = SettingsPalette.Ink;
-            var typed = OwnerUiLayout.Text(root.transform, "EnteredText", "", 31); typed.color = SettingsPalette.Ink;
-            OwnerUiLayout.Place(typed.rectTransform, 21, 4, 491, 70); typed.horizontalOverflow = HorizontalWrapMode.Overflow; field.textComponent = typed;
-            var hint = OwnerUiLayout.Text(root.transform, "Placeholder", placeholder, 28); hint.color = SettingsPalette.Ink;
-            OwnerUiLayout.Place(hint.rectTransform, 21, 4, 491, 70); field.placeholder = hint;
+            OwnerUiLayout.Place(root.rectTransform, 0, 0, ControlWidth, 78); Hub.HubKnit.KitFace(root, Hub.Knit.BootField); root.raycastTarget = true;
+            var field = root.gameObject.AddComponent<InputField>(); field.targetGraphic = root; field.lineType = InputField.LineType.SingleLine; field.customCaretColor = true; field.caretColor = SettingsPalette.PanelInk;
+            var typed = OwnerUiLayout.Text(root.transform, "EnteredText", "", 30); typed.color = SettingsPalette.PanelInk; typed.font = Hub.HubKnit.SentenceFont(true);
+            OwnerUiLayout.Place(typed.rectTransform, 34, 2, 552, 70); typed.horizontalOverflow = HorizontalWrapMode.Overflow; field.textComponent = typed;
+            var hint = OwnerUiLayout.Text(root.transform, "Placeholder", placeholder, 28); hint.color = SettingsPalette.PanelHead; hint.font = Hub.HubKnit.SentenceFont(false);
+            OwnerUiLayout.Place(hint.rectTransform, 34, 2, 552, 70); field.placeholder = hint;
             return field;
         }
-        public static Button Action(Transform parent, string name, string words, System.Action action, float width = 533)
+        public static Button Action(Transform parent, string name, string words, System.Action action, float width = ControlWidth)
         {
             var root = OwnerUiLayout.Rect(parent, name); OwnerUiLayout.Place(root, 0, 0, width, 78);
             var hit = root.gameObject.AddComponent<Image>(); hit.color = Color.clear;
@@ -89,17 +115,11 @@ namespace TumbangPreso.UI
         public static void Chip(Button button, bool keycap)
         {
             var label = button.GetComponentInChildren<Text>();
-            // UI revamp 2026-10-06: a keycap is a real cream toy key on a tan side; a command is the
-            // same toy tile with a honey face, so both look pressable at a glance.
-            var face = OwnerUiLayout.Rect(button.transform, "ChipFace").gameObject.AddComponent<HudCard>();
-            face.rectTransform.SetAsFirstSibling(); face.raycastTarget = false; face.FollowContrast = false;
-            if (keycap) face.Toy(HudDraw.Cream, HudDraw.CreamSide, 6, 10, .35f);
-            else face.Toy(HudDraw.Honey, HudDraw.HoneySide, 6, 12, .35f);
+            // A keycap is a quiet cream button; a command the yellow one. Both are the boot's button.
+            var face = OwnerUiLayout.Rect(button.transform, "ChipFace").gameObject.AddComponent<Image>();
+            face.rectTransform.SetAsFirstSibling(); Hub.HubKnit.KitFace(face, keycap ? Hub.Knit.Plain : Hub.Knit.Yellow);
             label.alignment = TextAnchor.MiddleCenter; label.font = InGameTypography.Resolve(OwnerUiTheme.Current.Display, true, label);
-            var colours = button.colors;
-            colours.normalColor = HudDraw.Brown; colours.highlightedColor = colours.selectedColor = new Color32(176, 70, 14, 255);
-            colours.pressedColor = HudDraw.BrownSide; colours.disabledColor = new Color32(128, 94, 70, 160);
-            button.colors = colours;
+            Inks(button, Hub.HubKnit.InkOf(keycap ? Hub.Knit.Plain : Hub.Knit.Yellow));
             FitChip(button);
         }
 
@@ -108,17 +128,34 @@ namespace TumbangPreso.UI
         public static void Slab(Button button, bool primary)
         {
             var label = button.GetComponentInChildren<Text>();
-            var face = OwnerUiLayout.Rect(button.transform, "SlabFace").gameObject.AddComponent<HudCard>();
-            face.rectTransform.SetAsFirstSibling(); OwnerUiLayout.Fill(face.rectTransform); face.raycastTarget = false; face.FollowContrast = false;
-            if (primary) face.Toy(HudDraw.Honey, HudDraw.HoneySide, 7, 14, .38f);
-            else face.Toy(HudDraw.Cream, HudDraw.CreamSide, 7, 14, .38f);
+            var kind = primary ? Hub.Knit.Go : Hub.Knit.Plain;
+            var face = OwnerUiLayout.Rect(button.transform, "SlabFace").gameObject.AddComponent<Image>();
+            face.rectTransform.SetAsFirstSibling(); OwnerUiLayout.Fill(face.rectTransform); Hub.HubKnit.KitFace(face, kind);
             label.alignment = TextAnchor.MiddleCenter; label.font = InGameTypography.Resolve(OwnerUiTheme.Current.Display, true, label);
-            OwnerUiLayout.Fill(label.rectTransform);
-            var colours = button.colors;
-            colours.normalColor = HudDraw.Brown; colours.highlightedColor = colours.selectedColor = new Color32(176, 70, 14, 255);
-            colours.pressedColor = HudDraw.BrownSide;
-            button.colors = colours;
+            OwnerUiLayout.Fill(label.rectTransform); label.rectTransform.anchorMin = new Vector2(0, .10f); label.fontSize = 38;
+            Inks(button, Hub.HubKnit.InkOf(kind));
             button.gameObject.AddComponent<SettingsControlFocus>();
+        }
+
+        /// <summary>Gives a bare text action a kit button's face, place and ink.</summary>
+        public static void KitAction(Button button, Hub.Knit kind, float x, float y, float w, float h, int size)
+        {
+            OwnerUiLayout.Place((RectTransform)button.transform, x, y, w, h);
+            var face = OwnerUiLayout.Rect(button.transform, "KitFace").gameObject.AddComponent<Image>();
+            face.rectTransform.SetAsFirstSibling(); OwnerUiLayout.Fill(face.rectTransform); Hub.HubKnit.KitFace(face, kind);
+            var label = button.GetComponentInChildren<Text>();
+            OwnerUiLayout.Fill(label.rectTransform); label.rectTransform.anchorMin = new Vector2(0, .10f);
+            label.alignment = TextAnchor.MiddleCenter; label.fontSize = size; label.color = Hub.HubKnit.InkOf(kind);
+        }
+
+        /// <summary>A kit button's label stays its button's own dark ink; focus only deepens it.</summary>
+        public static void Inks(Button button, Color ink)
+        {
+            var colours = button.colors;
+            colours.normalColor = colours.pressedColor = ink;
+            colours.highlightedColor = colours.selectedColor = Color.Lerp(ink, Color.black, .25f);
+            colours.disabledColor = new Color(ink.r, ink.g, ink.b, .45f);
+            button.colors = colours;
         }
 
         public static void FitChip(Button button)
@@ -126,11 +163,11 @@ namespace TumbangPreso.UI
             var face = button.transform.Find("ChipFace") as RectTransform;
             var label = button.GetComponentInChildren<Text>();
             if (face == null || label == null) return;
-            float width = Mathf.Clamp(label.preferredWidth + 60, 120, 533);
+            float width = Mathf.Clamp(label.preferredWidth + 96, 140, ControlWidth);
             face.anchorMin = face.anchorMax = face.pivot = new Vector2(0, .5f);
-            face.anchoredPosition = new Vector2(4, 0); face.sizeDelta = new Vector2(width, 64);
+            face.anchoredPosition = new Vector2(0, 0); face.sizeDelta = new Vector2(width, 76);
             label.rectTransform.anchorMin = label.rectTransform.anchorMax = label.rectTransform.pivot = new Vector2(0, .5f);
-            label.rectTransform.anchoredPosition = new Vector2(4, 2); label.rectTransform.sizeDelta = new Vector2(width, 60);
+            label.rectTransform.anchoredPosition = new Vector2(0, 4); label.rectTransform.sizeDelta = new Vector2(width, 60);
         }
 
         /// <summary>
@@ -140,16 +177,9 @@ namespace TumbangPreso.UI
         /// </summary>
         public static Text Header(Transform list, string words)
         {
-            var text = OwnerUiLayout.Text(list, "GroupHeader", words, 28, OwnerUiLayout.TypeRole.Reading);
-            text.color = SettingsPalette.Accent; text.alignment = TextAnchor.LowerLeft; text.raycastTarget = false;
-            var box = text.gameObject.AddComponent<LayoutElement>(); box.preferredHeight = 74; box.minHeight = 74;
-            // A short accent rule under the words: the eye jumps from header to header down a long
-            // tab (Hi-Fi RUSH's red group strips, research finding 2) instead of reading the header
-            // as one more row label.
-            var rule = OwnerUiLayout.Rect(text.transform, "GroupRule").gameObject.AddComponent<Image>();
-            rule.rectTransform.anchorMin = rule.rectTransform.anchorMax = rule.rectTransform.pivot = Vector2.zero;
-            rule.rectTransform.anchoredPosition = new Vector2(0, -10); rule.rectTransform.sizeDelta = new Vector2(72, 4);
-            rule.color = SettingsPalette.Accent; rule.raycastTarget = false;
+            var text = OwnerUiLayout.Text(list, "GroupHeader", words, 30, OwnerUiLayout.TypeRole.Display);
+            text.color = SettingsPalette.PanelHead; text.alignment = TextAnchor.LowerLeft; text.raycastTarget = false;
+            var box = text.gameObject.AddComponent<LayoutElement>(); box.preferredHeight = 60; box.minHeight = 60;
             return text;
         }
     }

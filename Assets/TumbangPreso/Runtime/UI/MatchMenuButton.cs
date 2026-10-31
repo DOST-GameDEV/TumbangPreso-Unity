@@ -25,7 +25,7 @@ namespace TumbangPreso.UI
         public HudCard Face, Ring;
         public RectTransform Knit;
 
-        private static Hub.Knit KnitOf(Kind role) => role == Kind.Primary ? Hub.Knit.Gold : role == Kind.Destructive ? Hub.Knit.Red : Hub.Knit.Orange;
+        private static Hub.Knit KnitOf(Kind role) => role == Kind.Primary ? Hub.Knit.Go : role == Kind.Destructive ? Hub.Knit.Danger : Hub.Knit.Yellow;
         public Text Label;
         public RectTransform Body;
         public Kind Role;
@@ -60,9 +60,10 @@ namespace TumbangPreso.UI
             button.Knit = knit;
             button.Face.enabled = false;
             button.Ring.Border = Hub.HubKnit.Rim;
-            button.Label = OwnerUiLayout.Text(button.Body, "Label", words, size, OwnerUiLayout.TypeRole.Display);
+            button.Label = OwnerUiLayout.Text(button.Body, "Label", words.ToUpperInvariant(), size, OwnerUiLayout.TypeRole.Display);
+            button.Label.font = Hub.HubStyle.DisplayFont;
             OwnerUiLayout.Fill(button.Label.rectTransform);
-            button.Label.rectTransform.offsetMin = new Vector2(24, 2); button.Label.rectTransform.offsetMax = new Vector2(-24, -2);
+            button.Label.rectTransform.anchorMin = new Vector2(0, .10f); button.Label.rectTransform.offsetMin = new Vector2(24, 0); button.Label.rectTransform.offsetMax = new Vector2(-24, 0);
             button.Label.alignment = TextAnchor.MiddleCenter; button.Label.horizontalOverflow = HorizontalWrapMode.Wrap;
             button.Label.verticalOverflow = VerticalWrapMode.Overflow;
             if (onClick != null) button.onClick.AddListener(() => onClick());

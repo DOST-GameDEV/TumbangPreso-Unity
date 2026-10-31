@@ -1,6 +1,9 @@
 # Current checkpoint
 
-Updated 2026-10-28. [TODO](TODO.md) is the only active queue.
+Updated 2026-10-30. [TODO](TODO.md) is the only active queue.
+
+- UI-REVAMP-1029, `claude/ui-revamp`, uncommitted: Settings, Room and match menu restyled in game; pending owner review. [Method](UI_REVAMP.md).
+  next, those and the match menu in game. [Method](UI_REVAMP.md).
 
 - LOBBY-UI-1028: desktop rules/chat/layout fixes7c1a7a0ac integrated here.
   Edit20/20; exact chat/rules Play1/1. Evidence/build/push receipt on PC:
@@ -15,9 +18,6 @@ Updated 2026-10-28. [TODO](TODO.md) is the only active queue.
   final build and publication. Final fetch found newmain43c158b86 (Zack polish),
   not integrated; earlier078f98e87 is included. Preserve
   original local metadata/settings and stage explicit owned files only.
-- Cleanup aaf96e52e1 integrated BugFix47487eda7; BugFix is deleted. Removed
-  107.2 MiB proven-unused assets and shortened entry docs97.62%.
-  [Receipt](reports/repository-cleanup-2026-10-25.md).
 - Desktop spectator is on main: grouped live controls, calmer camera, actual
   player eyes/hands/lens,21 bodies/six maps/private cues.
   [Evidence](reports/spectator-2026-10-25/README.md).

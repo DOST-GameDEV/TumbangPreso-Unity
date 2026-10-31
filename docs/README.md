@@ -11,7 +11,7 @@ Do not read every report or historical queue at session start.
 | Network, reconnect, remote skills | [Networking](NETWORKING.md), [skill contract](SKILL_NETWORK_CONTRACT.md) | NetSession, LobbySession, MatchRpc partials |
 | Tests, build, new machine | [Testing](TESTING.md), [setup](WORKSTATION_SETUP.md) | ProjectVersion, guard, test fixtures, GameBuilder |
 | Loading and performance | [Loading](LOADING_AND_PERFORMANCE.md) | Current boot/cache owners; profile before changing |
-| UI, input, typography | [UI method](UI_DESIGN_METHOD.md), [owner artwork](OWNER_UI_AUTHORING.md), [fonts](FONT_USAGE.md) | Current screen/theme, InputCatalogue, ScreenInputCatalogue |
+| UI, input, typography | [UI method](UI_DESIGN_METHOD.md), [owner artwork](OWNER_UI_AUTHORING.md), [fonts](FONT_USAGE.md), [revamp artboards](UI_REVAMP.md) | Current screen/theme, InputCatalogue, ScreenInputCatalogue |
 | Character art and motion | [Character method](CHARACTER_MODEL_METHOD.md), [art direction](Art_Direction.md), [clothing](CAST_CLOTHING_STYLE.md) | Per-character source, current rig, authored clips |
 | Skills, VFX, SFX, ultimates | [Hero method](HERO_KIT_METHOD.md), [VFX method](VFX_BENCH_METHOD.md), network contract | HeroAbilitySystem, kit, shared presentation; `.claude/skills/tump-sfx/SKILL.md` for audio |
 | Map films and previews | [Films](MAP_FILM_METHOD.md), [recording](MAP_PREVIEW_RECORDING.md) | MapFilm, MapPreviewVideo, source receipts |
