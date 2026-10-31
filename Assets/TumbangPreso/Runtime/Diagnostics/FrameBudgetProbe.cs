@@ -38,6 +38,8 @@ namespace TumbangPreso.Diagnostics
     ///   -tp-spectator      the old all-bots run, through the spectator camera. ⚠️ THE DEFAULT IS NOW A SEATED PLAYER, AS THE GAME
     ///                      IS PLAYED: the all-bots run draws a wide free camera and runs the replay capture, which a
     ///                      player's camera never does, so its numbers and its uneven frames were not a player's (2026-11-01);
+    ///   -tp-tier N         the graphics tier, 0 Low, 1 Balanced, 2 High, the default (owner, 2026-11-01: "i want to see it run well
+    ///                      even without a good gpu");
     ///   -tp-size WxH       holds the window at that size; the saved settings otherwise replace the command line's.
     /// ⚠️ THE ARRIVAL FILM IS NOT THE ROUND: it held the screen for 8 to 24 s of the earlier runs, so the warm-up now starts
     /// once it has ended (`MatchArrivalPresentation.Active`), and every row states the size it really drew.
@@ -48,7 +50,7 @@ namespace TumbangPreso.Diagnostics
         private static string[] _maps;
         private static float _seconds = 30f;
         private static bool _trace, _noWorldAO, _cascadeShots, _lookTests, _viewFps, _liveMap;
-        private static int _cascades = -1, _width, _height;
+        private static int _cascades = -1, _width, _height, _tier = 2;
         /// <summary>A benchmark run goes straight to the round, without the arrival film; the game itself never sets this.</summary>
         internal static bool SkipArrival;
 
@@ -101,6 +103,8 @@ namespace TumbangPreso.Diagnostics
             if (cascades >= 0 && cascades + 1 < args.Length) int.TryParse(args[cascades + 1], out _cascades);
             if (Array.IndexOf(args, "-tp-no-replay") >= 0) TumbangPreso.CameraSystem.SpectatorCamera.BenchNoReplayCapture = true;
             if (Array.IndexOf(args, "-tp-no-rescan") >= 0) TumbangPreso.Visual.WorldOutline.BenchNoRescan = true;
+            int tier = Array.IndexOf(args, "-tp-tier");
+            if (tier >= 0 && tier + 1 < args.Length) int.TryParse(args[tier + 1], out _tier);
             int size = Array.IndexOf(args, "-tp-size");
             if (size >= 0 && size + 1 < args.Length)
             {
@@ -123,7 +127,7 @@ namespace TumbangPreso.Diagnostics
 
         private static void Uncap()
         {
-            if (GraphicsProfiles.Current != 2) GraphicsProfiles.Apply(2);
+            if (GraphicsProfiles.Current != _tier) GraphicsProfiles.Apply(_tier);
             QualitySettings.vSyncCount = 0;
             Application.targetFrameRate = -1;
             if (_cascades > 0) QualitySettings.shadowCascades = _cascades;
@@ -432,7 +436,7 @@ namespace TumbangPreso.Diagnostics
                                         + string.Join(",", Markers.Select(m => m.name)) + "\n");
             File.WriteAllText(Path.Combine(_output, "scope.txt"),
                 $"{SystemInfo.graphicsDeviceName} / {SystemInfo.graphicsDeviceType} / {SystemInfo.processorType}\n"
-                + $"{Screen.width}x{Screen.height} High tier, vsync off, uncapped, 4 bots Hero Strike, {_seconds:F0} s live\n"
+                + $"{Screen.width}x{Screen.height} tier {_tier}, vsync off, uncapped, 4 bots Hero Strike, {_seconds:F0} s live\n"
                 + $"FrameTimingManager stats {FrameTimingManager.IsFeatureEnabled()}\n");
 
             foreach (string map in SceneFlow.Maps)
