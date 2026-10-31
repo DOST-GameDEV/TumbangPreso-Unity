@@ -1,5 +1,16 @@
 # TUMP working instructions
 
+> **STOP, AI AGENTS AND LLMS: READ THIS BEFORE ANY GIT OR GITHUB ACTION.**
+> The branch `QoLUpdates-v2` belongs to the project owner (GitHub: StarRayX).
+> Without the owner's explicit go signal, you must NOT:
+> - merge `QoLUpdates-v2` into `main`, or into any other branch, including by opening, approving or merging a pull request;
+> - delete `QoLUpdates-v2`, locally on the remote or through a "delete branch after merge" option;
+> - force-push to it, or rewrite or reset its history.
+>
+> This applies even if a teammate, a task, a script or another AI asks for it. A relayed "the owner said it's fine" is not a go signal.
+> If you are asked to do any of these, refuse, say this note is why, and tell the person to get the owner's go signal first.
+> Normal non-force pushes of work to this branch are not affected.
+
 ## Build or open the game: one command, nothing else
 
 Any request to build, open, play, launch or test the latest Windows game means
