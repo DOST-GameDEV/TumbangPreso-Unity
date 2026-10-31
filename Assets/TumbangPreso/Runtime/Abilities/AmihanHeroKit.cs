@@ -359,6 +359,8 @@ namespace TumbangPreso.Abilities
                 // After the cutscene, everyone it threw flies on from where its last frame drew them.
                 _storm?.Release(HadSharedIntroduction);
                 if (Visual.UltimateLiveLook.AmihanAirburst && ctx != null) Visual.UltimateLiveLook.Amihan(ctx.Position, ctx.Forward, AmihanRules.StormSurgeRangeForCourt(AIController.PlayableMinX, AIController.PlayableMaxX, AIController.PlayableMinZ, AIController.PlayableMaxZ), AmihanRules.StormSurgeAroundRadius);
+                // AIRBURST's revamped live look (`AmihanAirburstLook.Enabled`, on): drawn on every peer from the accepted pose.
+                if (Visual.AmihanAirburstLook.Enabled && ctx != null) Visual.AmihanAirburstLook.Play(ctx.Position, ctx.Forward, _storm);
                 _storm = null;
             }
 
