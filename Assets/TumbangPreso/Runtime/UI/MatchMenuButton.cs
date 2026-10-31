@@ -14,7 +14,7 @@ namespace TumbangPreso.UI
     /// EventSystem and `MenuNav`, exactly like the controls it replaces; only the drawing moved.
     ///
     /// Ordinary choices are cream with a tan side, the one primary choice is honey, a
-    /// destructive one is the refusal red. Focus is a thick brown bevelled ring with the tile
+    /// destructive one is the refusal red. Focus brightens the tile (`KitPress`) with the tile
     /// lifted; press sinks the face into its side; disabled flattens and fades. Reduced UI
     /// Motion keeps every state and drops the movement.
     /// </summary>
@@ -59,7 +59,10 @@ namespace TumbangPreso.UI
             knit.SetSiblingIndex(1);
             button.Knit = knit;
             button.Face.enabled = false;
-            button.Ring.Border = Hub.HubKnit.Rim;
+            button.Body.pivot = new Vector2(.5f, .5f);
+            var feel = root.gameObject.AddComponent<Hub.KitPress>();
+            feel.Face = Hub.HubKnit.FaceOf(knit).GetComponent<Image>(); feel.Visual = button.Body; feel.Sound = false;
+            button.Ring.enabled = false;   // no box outline (owner, 2026-10-31); `KitPress` shows focus
             button.Label = OwnerUiLayout.Text(button.Body, "Label", words.ToUpperInvariant(), size, OwnerUiLayout.TypeRole.Display);
             button.Label.font = Hub.HubStyle.DisplayFont;
             OwnerUiLayout.Fill(button.Label.rectTransform);

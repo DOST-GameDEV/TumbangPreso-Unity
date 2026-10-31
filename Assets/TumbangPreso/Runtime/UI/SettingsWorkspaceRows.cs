@@ -31,6 +31,7 @@ namespace TumbangPreso.UI
             var hit = root.gameObject.AddComponent<Image>(); hit.color = Color.clear;
             var toggle = root.gameObject.AddComponent<Toggle>(); toggle.targetGraphic = hit; toggle.transition = Selectable.Transition.None;
             root.gameObject.AddComponent<SettingsControlFocus>();
+            root.gameObject.AddComponent<Hub.KitPress>();
             var track = OwnerUiLayout.Rect(root, "Track").gameObject.AddComponent<Image>();
             OwnerUiLayout.Fill(track.rectTransform); Hub.HubKnit.KitFace(track, Hub.Knit.Track);
             var pill = OwnerUiLayout.Rect(root, "Switch").gameObject.AddComponent<Image>();
@@ -45,6 +46,9 @@ namespace TumbangPreso.UI
                 pill.GetComponent<Hub.KitSlice>().Apply();
                 on.color = value ? Hub.HubKnit.GreenInk : Hub.HubKnit.KitSoftRed;
                 off.color = value ? Hub.HubKnit.KitSoftRed : Hub.HubKnit.KitMaroon;
+                // The word on the raised pill sits higher than the bare one, centred on the track.
+                OwnerUiLayout.Place(on.rectTransform, 120, value ? 4 : 10, 100, 54);
+                OwnerUiLayout.Place(off.rectTransform, 20, value ? 10 : 4, 100, 54);
                 text.text = value ? "ON" : "OFF";
             }
             Show(current);
@@ -72,6 +76,7 @@ namespace TumbangPreso.UI
             var handle = OwnerUiLayout.Rect(handles, "Handle").gameObject.AddComponent<Image>();
             handle.sprite = Hub.HubKnit.Knob(); handle.preserveAspect = true;
             handle.rectTransform.sizeDelta = new Vector2(64, 0); handle.raycastTarget = false;
+            var knob = root.gameObject.AddComponent<Hub.KitPress>(); knob.Face = handle; knob.Visual = handle.rectTransform;
             slider.handleRect = handle.rectTransform; slider.targetGraphic = handle; slider.transition = Selectable.Transition.None;
             var text = OwnerUiLayout.Text(root, "Value", show(value), 36, OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(text.rectTransform, 508, 4, 112, 70); text.alignment = TextAnchor.MiddleCenter; text.color = SettingsPalette.PanelAccent;
@@ -86,6 +91,7 @@ namespace TumbangPreso.UI
             OwnerUiLayout.Place(typed.rectTransform, 34, 2, 552, 70); typed.horizontalOverflow = HorizontalWrapMode.Overflow; field.textComponent = typed;
             var hint = OwnerUiLayout.Text(root.transform, "Placeholder", placeholder, 28); hint.color = SettingsPalette.PanelHead; hint.font = Hub.HubKnit.SentenceFont(false);
             OwnerUiLayout.Place(hint.rectTransform, 34, 2, 552, 70); field.placeholder = hint;
+            root.gameObject.AddComponent<Hub.KitPress>().Motion = false;
             return field;
         }
         public static Button Action(Transform parent, string name, string words, System.Action action, float width = ControlWidth)
@@ -99,6 +105,7 @@ namespace TumbangPreso.UI
             colours.highlightedColor = colours.selectedColor = SettingsPalette.Accent;
             colours.disabledColor = SettingsPalette.Muted; colours.pressedColor = SettingsPalette.Pressed;
             button.colors = colours; button.onClick.AddListener(() => { MenuSfx.Click(); action(); });
+            root.gameObject.AddComponent<Hub.KitPress>();
             return button;
         }
 
@@ -146,6 +153,7 @@ namespace TumbangPreso.UI
             var label = button.GetComponentInChildren<Text>();
             OwnerUiLayout.Fill(label.rectTransform); label.rectTransform.anchorMin = new Vector2(0, .10f);
             label.alignment = TextAnchor.MiddleCenter; label.fontSize = size; label.color = Hub.HubKnit.InkOf(kind);
+            button.gameObject.AddComponent<Hub.KitPress>();
         }
 
         /// <summary>A kit button's label stays its button's own dark ink; focus only deepens it.</summary>

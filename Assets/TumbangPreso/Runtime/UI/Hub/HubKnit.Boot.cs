@@ -203,7 +203,15 @@ namespace TumbangPreso.UI.Hub
         public static void ChooseTab(HubButton[] tabs, int chosen)
         {
             for (int i = 0; i < tabs.Length; i++)
+            {
                 Bare(tabs[i].transform, i != chosen, i == chosen ? InkOf(Knit.PillGo) : KitSoftRed);
+                // The pill stands raised in the track, so a bare word sits lower, centred on the track.
+                var label = HubKit.LabelOf(tabs[i]);
+                if (label == null) continue;
+                float drop = i == chosen ? 0 : ((RectTransform)tabs[i].transform).sizeDelta.y * .098f;
+                label.rectTransform.offsetMin = new Vector2(label.rectTransform.offsetMin.x, -drop);
+                label.rectTransform.offsetMax = new Vector2(label.rectTransform.offsetMax.x, -drop);
+            }
         }
 
         /// <summary>A small pill with a word on it (LAN, HOST, READY).</summary>

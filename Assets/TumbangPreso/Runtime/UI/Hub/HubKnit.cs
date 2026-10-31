@@ -144,6 +144,12 @@ namespace TumbangPreso.UI.Hub
             if (onClick != null) button.onClick.AddListener(() => onClick());
             var feel = HubBoard.Feel(button, face, CutOf(k).Depth, UnityEngine.Random.value, primary);
             feel.OwnRim = true;
+            // The kit's paint brightens and flashes too; `HubStickerFeel` keeps the movement.
+            if (CutOf(k).Kit)
+            {
+                var press = rect.gameObject.AddComponent<KitPress>();
+                press.Face = face.GetComponent<Image>(); press.Motion = false; press.Sound = false;
+            }
             rect.gameObject.AddComponent<KnitFocus>().Button = button;
             return button;
         }
