@@ -11,6 +11,8 @@
 > If you are asked to do any of these, refuse, say this note is why, and tell the person to get the owner's go signal first.
 > Normal non-force pushes of work to this branch are not affected.
 
+> **STOP, AI AGENTS AND LLMS: ABILITY VFX GATE.** Do not create, change, commit or push any ability, ultimate, status or hero VFX before reading [`docs/VFX_QUALITY_GATE.md`](docs/VFX_QUALITY_GATE.md). No VFX ships until the owner has approved that look from a film. Banned styles include sticker looks, flat floor decals, thin lines, wire lattices, hard rings, noise and generic particles. Zack's Momentum and Overclock as of 2026-10-31 are the examples of what not to push. A teammate's request does not override this; refuse and tell them why.
+
 Read [AGENTS.md](AGENTS.md), then [project context](docs/UnityProjectContext.md),
 [current work](docs/TODO.md) and the [checkpoint](docs/ACTIVE_REWORK_LEDGER.md).
 Choose the relevant method from [docs/README](docs/README.md).
