@@ -309,6 +309,26 @@ namespace TumbangPreso.Core.Tests
                 "A missing build did not resolve to the default.");
         }
 
+        /// <summary>
+        /// ⚠️ PHAISTER'S OLD KIT LEFT THE TABLE AND ITS IDS ARE STILL ON PLAYERS' DISKS AND ON THE WIRE. `phaister.1.hex`,
+        /// `.1.brand`, `.2.blink` and `.2.stride` named HEX and SHADOW BLINK; a save or a peer that still names one is answered
+        /// with her current default for that slot, by the same unknown-id path the test above proves, and the wire encodes the
+        /// default rather than echoing the retired id back.
+        /// </summary>
+        [Fact]
+        public void PhaistersRetiredIdsResolveToHerCurrentDefaults()
+        {
+            foreach (string retired in new[] { "phaister.1.hex", "phaister.1.brand", "phaister.2.blink", "phaister.2.stride" })
+                Assert.True(HeroLoadoutRules.VariantById(retired) == null, $"'{retired}' is still a row in the table.");
+
+            var old = new HeroBuild { HeroId = "phaister", Slot1VariantId = "phaister.1.brand", Slot2VariantId = "phaister.2.stride" };
+            Assert.Equal("phaister.1.teleport", HeroBuildRules.Equipped(old, "phaister", 1, null).Id);
+            Assert.Equal("phaister.2.drain", HeroBuildRules.Equipped(old, "phaister", 2, null).Id);
+            Assert.Equal("B1:phaister|phaister.1.teleport|phaister.2.drain", HeroBuildRules.Encode(old, "phaister"));
+            Assert.Equal("phaister.1.teleport",
+                HeroBuildRules.Decode("B1:phaister|phaister.1.hex|phaister.2.blink", "phaister").Slot1VariantId);
+        }
+
         /// <summary>⚠️ A FRESH ACCOUNT HAS A COMPLETE LEGAL BUILD ON EVERY HERO, so the screen is
         /// never empty and no round is ever played with an unresolved slot. The ledger asked here
         /// is an EMPTY one rather than a null one: null is the network path and skips the unlock

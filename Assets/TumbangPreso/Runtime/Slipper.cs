@@ -2007,7 +2007,7 @@ namespace TumbangPreso
             // `tools/audit_audio_reach.py` could not see this class of fault at all, because it
             // looks for a gate at the same brace depth and this one is two frames up the stack.
             // See `docs/TODO.md` § 83.12.
-            NetCue.PlayImpact("hit_body", "guard_block", transform.position, 0.72f);
+            NetCue.PlayImpact("slipper_hit", "guard_block", transform.position, 0.72f);
 
             float speed = Combat.BlockKnockbackSpeed(_skinIndex, blocker.CharacterIndex, blocker.Mode);
             Vector3 along = _velocity;
@@ -2086,6 +2086,42 @@ namespace TumbangPreso
             => FindGroundY(at, 6.0f);
 
         private static readonly RaycastHit[] GroundHits = new RaycastHit[64];
+        private static readonly RaycastHit[] CeilingHits = new RaycastHit[16];
+
+        /// <summary>A kerb or step above the asked height is still the floor there; anything taller needs solid under it.</summary>
+        internal const float GroundStep = .6f;
+
+        /// <summary>True when air separates <paramref name="floor"/> from the next surface up: a roof's underside is met.</summary>
+        private static bool OpenAbove(Vector3 at, float floor, float ceiling, Collider ceilingCollider)
+        {
+            float span = ceiling - floor - .03f;
+            if (span <= 0f) return false;
+            // A one-sided awning mesh faces the sky; from under it only its back face is there to meet.
+            bool backfaces = Physics.queriesHitBackfaces; Physics.queriesHitBackfaces = true;
+            int count;
+            try { count = Physics.RaycastNonAlloc(new Vector3(at.x, floor + .02f, at.z), Vector3.up, CeilingHits, span, ~0, QueryTriggerInteraction.Ignore); }
+            finally { Physics.queriesHitBackfaces = backfaces; }
+            for (int i = 0; i < count; i++)
+            {
+                var collider = CeilingHits[i].collider;
+                if (collider == null || collider.GetComponentInParent<Slipper>() != null || collider.GetComponentInParent<Lata>() != null) continue;
+                return true;
+            }
+            // A sheet has no underside of its own: its one face is both. Only a closed mesh shows a face looking DOWN
+            // from inside it, so a sheet with none is a tarp over open air, not ground the floor is buried under.
+            if (ceilingCollider is MeshCollider mesh && !mesh.convex)
+            {
+                Physics.queriesHitBackfaces = true;
+                try
+                {
+                    var from = new Vector3(at.x, ceiling - .02f, at.z);
+                    if (!mesh.Raycast(new Ray(from, Vector3.down), out var inside, ceiling - floor - .01f)) return true;
+                    return inside.normal.y > -.3f;
+                }
+                finally { Physics.queriesHitBackfaces = backfaces; }
+            }
+            return false;
+        }
 
         internal static float FindGroundY(Vector3 at, float scanAbove)
         {
@@ -2098,7 +2134,12 @@ namespace TumbangPreso
             if (count == hits.Length)
             { hits = Physics.RaycastAll(from, Vector3.down, 40, ~0, QueryTriggerInteraction.Ignore); count = hits.Length; }
 
-            float best = float.NegativeInfinity;
+            // ⚠️⚠️ THE SUPPORT AT THIS HEIGHT, NOT THE HIGHEST THING OVER IT (owner, 2026-10-29: Paete's tree and other
+            // casts floating). Taking the top hit put anything placed under an awning, stall roof or tarp ON that roof.
+            // A surface up to a step above the asked height still counts; a taller one wins only when the lower floor is
+            // buried under solid ground (a terrace side), never when there is air between them (a roof overhead).
+            float reach = at.y + GroundStep, below = float.NegativeInfinity, above = float.PositiveInfinity;
+            int aboveIndex = -1;
 
             for (int i = 0; i < count; i++)
             {
@@ -2113,10 +2154,28 @@ namespace TumbangPreso
                 if (hit.collider.GetComponentInParent<Slipper>() != null) continue;
                 if (hit.collider.GetComponentInParent<Lata>() != null) continue;
 
-                if (hit.point.y > best) best = hit.point.y;
+                float y = hit.point.y;
+                if (y <= reach) { if (y > below) below = y; }
+                else if (y < above) { above = y; aboveIndex = i; }
+            }
+            float best = below;
+            // Climb only through solid: an upward ray from the lower floor meets the underside of a roof, but starts
+            // inside a terrace and meets nothing before its top. Each climb takes the next surface up.
+            while (aboveIndex >= 0 && (float.IsNegativeInfinity(best) || !OpenAbove(at, best, above, hits[aboveIndex].collider)))
+            {
+                best = above; float next = float.PositiveInfinity; int nextIndex = -1;
+                for (int i = 0; i < count; i++)
+                {
+                    var hit = hits[i]; float y = hit.point.y;
+                    if (y <= best + .01f || y >= next) continue;
+                    if (hit.collider.GetComponentInParent<CharacterMotor>() != null || hit.collider.GetComponentInParent<Slipper>() != null
+                        || hit.collider.GetComponentInParent<Lata>() != null) continue;
+                    next = y; nextIndex = i;
+                }
+                above = next; aboveIndex = nextIndex;
             }
 
-            if(RooftopPool.TrySurface(at,out float water))best=Mathf.Max(best,water);
+            if(RooftopPool.TrySurface(at,out float water) && water<=Mathf.Max(reach,best+.01f))best=Mathf.Max(best,water);
             return float.IsNegativeInfinity(best) ? 0.0f : best;
         }
 

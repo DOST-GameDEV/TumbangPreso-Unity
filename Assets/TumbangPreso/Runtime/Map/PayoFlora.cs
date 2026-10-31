@@ -282,6 +282,9 @@ namespace TumbangPreso.Map
             // The LODGroups' rule turned into distances: a plant's screen share falls with distance over tan(fov / 2).
             float fov = camera.orthographic ? 60.0f : Mathf.Clamp(camera.fieldOfView, 1.0f, 179.0f);
             float scale = QualitySettings.lodBias * Mathf.Tan(30.0f * Mathf.Deg2Rad) / Mathf.Tan(fov * 0.5f * Mathf.Deg2Rad);
+            // PAYO LOW (owner, 2026-10-29: "its crazy laggy without a gpu"): shorter reach, and every other plant past `ThinFar`.
+            scale *= PayoDetail.FloraReach;
+            float thin = PayoDetail.ThinFar, thin2 = thin * thin;
 
             // SHADOWS. A plant can darken what the camera sees if its shadow can reach the shadow distance round the eye:
             // it stands toward the sun, no farther off to the side than that distance, and no farther ahead than the
@@ -324,6 +327,7 @@ namespace TumbangPreso.Map
                     float d2 = rel.sqrMagnitude;
                     float cull = p.Cull * scale;
                     if (d2 > cull * cull) continue;
+                    if (thin > 0.0f && (i & 1) == 1 && d2 > thin2) continue;
                     int m = Mathf.Clamp(p.Model, 0, Models.Length - 1);
                     float extent = Models[m].Size * Mathf.Max(p.Scale, 0.01f);
                     bool caster = EveryCaster && sun != null;

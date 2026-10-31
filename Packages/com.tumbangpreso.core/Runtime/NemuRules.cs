@@ -73,9 +73,9 @@ namespace TumbangPreso.Core
         /// so hands-off you are walked at full speed and pushing straight against it at full grip you are HELD, drifting
         /// 5 % of a walk its way: never thrown, never stopped from acting.
         /// </summary>
-        public const float DriftPull = 0.42f;
-        public const float TellPull = 0.20f;
-        public const float SurgePull = 1.05f;
+        public const float DriftPull = 0.525f;
+        public const float TellPull = 0.25f;
+        public const float SurgePull = 1.3125f;
         public const float TellSeconds = 0.5f;
         public const float SurgeSeconds = 0.75f;
         /// <summary>How quickly a surge reaches full strength and lets go.</summary>

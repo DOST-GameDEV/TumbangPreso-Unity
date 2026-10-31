@@ -33,7 +33,7 @@ namespace TumbangPreso.UI
             _line = OwnerUiLayout.Rect(transform, "ControlFocus").gameObject.AddComponent<Image>();
             _line.rectTransform.anchorMin = Vector2.zero; _line.rectTransform.anchorMax = new Vector2(1, 0);
             _line.rectTransform.offsetMin = new Vector2(10, 0); _line.rectTransform.offsetMax = new Vector2(-10, 3);
-            _line.color = SettingsPalette.Accent; _line.raycastTarget = false;
+            _line.color = SettingsPalette.PanelAccent; _line.raycastTarget = false;
             var row = RowOf(transform);
             if (row != null)
             {
@@ -45,7 +45,7 @@ namespace TumbangPreso.UI
                 _bar = OwnerUiLayout.Rect(_band.transform, "RowFocusBar").gameObject.AddComponent<Image>();
                 _bar.rectTransform.anchorMin = Vector2.zero; _bar.rectTransform.anchorMax = new Vector2(0, 1);
                 _bar.rectTransform.offsetMin = new Vector2(0, 8); _bar.rectTransform.offsetMax = new Vector2(8, -8);
-                _bar.color = SettingsPalette.Accent; _bar.raycastTarget = false;
+                _bar.color = SettingsPalette.PanelAccent; _bar.raycastTarget = false;
                 _label = row.Find("Label")?.GetComponent<Text>();
             }
             Refresh();
@@ -67,7 +67,7 @@ namespace TumbangPreso.UI
             bool live = _selected || _hover;
             if (_line != null) _line.enabled = live;
             if (_band != null) _band.enabled = live;
-            if (_label != null) _label.color = live ? SettingsPalette.Accent : SettingsPalette.Ink;
+            if (_label != null) _label.color = live ? SettingsPalette.PanelAccent : SettingsPalette.PanelInk;
         }
     }
 }

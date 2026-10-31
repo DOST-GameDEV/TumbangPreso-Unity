@@ -56,6 +56,23 @@ namespace TumbangPreso.Abilities
         private const float GiantScale = 2.3f;
         private Renderer _puddleEdge, _puddleHeart;
         private Renderer[] _giantSurfaces;
+        // ⚠️ THE PAINTED LOOK (`SeanMagmaPool.Painted`, read once at the cast): the pool and the crown of lava drops in place of
+        // the two splats, the Ignition blast and the ten CPU spheres. The giant fist, its timing and everything the host
+        // decides are the same either way.
+        private bool _painted, _staged;
+        private SeanMagmaPool _pool;
+        // r3 (owner 2026-10-29: "rework the fist tbh, polish it", then "a more fieryy design, like its not a solid opaque fist,
+        // but u can make it out to be a fist still"): a fist of FIRE (`SeanFireFistLook`), in place of v5's bright opaque
+        // glove. Same size, pitch, rise and sink. The variant is the board's (`SeanFireFistLook.Current` in a match).
+        private SeanFireFistLook _fire;
+        private SeanFireFistLook.Variant _variant = SeanFireFistLook.Current;
+        private float _life;
+        /// <summary>How long the fist takes to cool and sink, and how long the cooled glass then takes to be shed.</summary>
+        internal const float CoolSeconds = .45f, ShedSeconds = .35f;
+        /// <summary>r2's glass takes longer to break, and the last drop thrown needs this long to land and sink (a look only:
+        /// the rule's warning, hit, hold and cool are untouched; the fist is gone from the court at the same moment).</summary>
+        internal const float PaintedShedSeconds = .5f;
+        private float Shed => _painted ? PaintedShedSeconds : ShedSeconds;
         private MaterialPropertyBlock _tint;
         private static readonly int ColourId = Shader.PropertyToID("_Color");
         // What the palette is multiplied by once it has cooled: dark, a little warm, so it reads as glass and not a hole.
@@ -72,6 +89,7 @@ namespace TumbangPreso.Abilities
             fist._travel = way.sqrMagnitude > .0001f ? way.normalized : (owner != null ? owner.transform.forward : Vector3.forward);
             fist._punchAt = spot; fist._punchAt.y = Slipper.FindGroundY(spot + Vector3.up, spot.y + 1f);
             go.transform.SetPositionAndRotation(fist._punchAt, Quaternion.LookRotation(fist._travel, Vector3.up));
+            fist._painted = SeanMagmaPool.Painted;
             fist.BuildPuddle();
             fist._mark = SeanGroundMark.Spawn(fist._punchAt, SeanRules.FistPunchRadius, SeanGroundMark.Mode.Fill,
                 SeanRules.FistWarnSeconds, SeanImpact.Accent);
@@ -79,8 +97,35 @@ namespace TumbangPreso.Abilities
             return fist;
         }
 
+        /// <summary>
+        /// For a film outside Play: the fist at `spot` (its ground already), cast from `from`, in the look `painted` asks for
+        /// whatever the switch says, under `parent`. Nobody owns it: it decides nothing, plays no sound and lays no ring
+        /// (the ring is the same in both looks). The film moves it on with <see cref="Step"/>.
+        /// </summary>
+        public static SeanMagmaFist Stage(Vector3 spot, Vector3 from, bool painted, Transform parent,
+            SeanFireFistLook.Variant? variant = null)
+        {
+            var go = new GameObject(painted ? "SeanMagmaFist-new" : "SeanMagmaFist-old");
+            if (parent != null) go.transform.SetParent(parent, true);
+            var fist = go.AddComponent<SeanMagmaFist>();
+            fist._staged = true; fist._painted = painted;
+            if (variant.HasValue) fist._variant = variant.Value;
+            Vector3 way = spot - from; way.y = 0;
+            fist._travel = way.sqrMagnitude > .0001f ? way.normalized : Vector3.forward;
+            fist._punchAt = spot;
+            go.transform.SetPositionAndRotation(spot, Quaternion.LookRotation(fist._travel, Vector3.up));
+            fist.BuildPuddle();
+            return fist;
+        }
+
         private void BuildPuddle()
         {
+            if (_painted)
+            {
+                _pool = SeanMagmaPool.Make(transform);
+                if (_pool != null) return;
+                _painted = false;  // its shader is missing: the first-pass puddle, as before
+            }
             // A lumpy splat of lava (the bomb pool's outline) with a hotter heart inside it, both unit-across under one holder
             // that the warning spreads. (It was a flat cylinder: from a player's eyes, a red plate.)
             var puddle = new GameObject("Puddle").transform;
@@ -108,17 +153,31 @@ namespace TumbangPreso.Abilities
 
         private void Update()
         {
-            if (PresentationClock.Held) return;
-            float dt = Time.deltaTime;
+            if (_staged || PresentationClock.Held) return;
+            Step(Time.deltaTime);
+        }
+
+        /// <summary>One step of the fist's life: the match's `Update`, and a film's frame outside Play.</summary>
+        public void Step(float dt)
+        {
+            _life += dt;
             if (_punchAge >= 0) { StepPunch(dt); return; }
-            if (_owner == null) { Object.Destroy(gameObject); return; }
+            if (_owner == null && !_staged) { Object.Destroy(gameObject); return; }
 
             // The warning: the puddle spreads to its full width and bubbles, then the fist comes.
             _age += dt;
             float open = Mathf.SmoothStep(0, 1, _age / (SeanRules.FistWarnSeconds * .6f));
             float across = SeanRules.FistPunchRadius * 2.2f * open * (1 + .05f * Mathf.Sin(_age * 30f));
             if (_puddle != null) _puddle.localScale = new Vector3(across, 1f, across);
+            _pool?.Pose(_life, open, -1f, 0f, 0f);
             if (_age >= SeanRules.FistWarnSeconds) Punch();
+        }
+
+        // A film steps this outside Play, where `Destroy` is refused.
+        private static void Kill(Object thing)
+        {
+            if (thing == null) return;
+            if (Application.isPlaying) Object.Destroy(thing); else Object.DestroyImmediate(thing);
         }
 
         /// <summary>The warning is over: a giant fist punches up out of the puddle.</summary>
@@ -128,7 +187,8 @@ namespace TumbangPreso.Abilities
             var giant = new GameObject("GiantFist").transform;
             giant.SetParent(transform, false);
             // The modelled giant fist (`giant_fist` v5, rising +Y out of the puddle); the first-pass blocks if it is missing.
-            if (SeanProp.Spawn("giant_fist", giant) == null)
+            if (_painted) _fire = SeanFireFistLook.Spawn(giant, _variant);
+            if (_fire == null && SeanProp.Spawn("giant_fist", giant) == null)
             {
                 Block("Forearm", giant, new Vector3(.9f, 1.3f, .9f), new Vector3(0, .65f, 0), LavaEdge);
                 Block("Fist", giant, new Vector3(1.15f, .7f, 1.1f), new Vector3(0, 1.6f, 0), LavaCore);
@@ -142,12 +202,19 @@ namespace TumbangPreso.Abilities
             _giant = giant;
             _giantSurfaces = giant.GetComponentsInChildren<Renderer>();
 
-            NetCue.Play("sfx_explosion_heavy", _punchAt);
+            if (!_staged)
+            {
+                NetCue.Play("sfx_explosion_heavy", _punchAt);
+                SeanGroundMark.Spawn(_punchAt, SeanRules.FistPunchRadius, SeanGroundMark.Mode.Flash, .35f, SeanImpact.Accent);
+            }
             // The burst stays LOW and at the arm's foot, and the ring marks the reach: the arm coming up IS the picture. (It
             // was a fire dome the puddle's full width, a translucent orange blob over the arm as it came out; film v10.)
-            SeanGroundMark.Spawn(_punchAt, SeanRules.FistPunchRadius, SeanGroundMark.Mode.Flash, .35f, SeanImpact.Accent);
-            HeroHazards.CreateExplosionVisual(_punchAt + Vector3.up * .15f, .55f, "", HeroHazards.ExplosionStyle.Ignition);
-            Spray();
+            // Painted, the pool's heave and its crown of drops are the burst (`SeanMagmaPool`), drawn by the pool's own shader.
+            if (!_painted)
+            {
+                HeroHazards.CreateExplosionVisual(_punchAt + Vector3.up * .15f, .55f, "", HeroHazards.ExplosionStyle.Ignition);
+                Spray();
+            }
             if (_mark != null) { _mark.Stop(); _mark = null; }
             _resolved = false;
         }
@@ -238,8 +305,12 @@ namespace TumbangPreso.Abilities
             if (_giant != null && _giant.localScale != size) _giant.localScale = Vector3.MoveTowards(_giant.localScale, size, dt * 4f * GiantScale);
             _punchAge += dt;
             StepGobs(dt);
-            if (!_resolved && _punchAge >= SeanRules.FistHitDelay) { _resolved = true; HostResolvePunch(); PresentContact(); }
-            float rise = SeanRules.FistRiseSeconds, hold = SeanRules.FistHoldSeconds, cool = .45f;
+            if (!_resolved && _punchAge >= SeanRules.FistHitDelay)
+            {
+                _resolved = true;
+                if (!_staged) { HostResolvePunch(); PresentContact(); }
+            }
+            float rise = SeanRules.FistRiseSeconds, hold = SeanRules.FistHoldSeconds, cool = CoolSeconds;
             if (_giant != null)
             {
                 float up = _punchAge < rise ? Mathf.SmoothStep(0, 1.12f, _punchAge / rise)
@@ -252,7 +323,14 @@ namespace TumbangPreso.Abilities
             // It cools to black glass as it sinks back into the puddle, and MELTS as it goes: wider and lower, lava settling
             // into the pool it came from rather than a solid sliding down a hole.
             float k = Mathf.Clamp01((_punchAge - rise - hold) / cool);
-            if (k > 0)
+            if (_fire != null)
+            {
+                // r3's life, from the rule's own beats: it roars up out of the pool as a column of fire that resolves into the
+                // fist as it reaches full height; through the cool it tears apart from the top into tongues as it sinks back
+                // into the pool. Straight down, no melt (that is v5's lava settling, not fire).
+                _fire.Pose(_life, Mathf.Clamp01((_punchAge - .04f) / .2f), Mathf.SmoothStep(0, 1, k));
+            }
+            else if (k > 0)
             {
                 Cool(k);
                 float melt = Mathf.SmoothStep(0, 1, k);
@@ -260,7 +338,9 @@ namespace TumbangPreso.Abilities
             }
             float across = SeanRules.FistPunchRadius * 2.2f * (1 - .3f * k);
             if (_puddle != null) _puddle.localScale = new Vector3(across, 1f, across);
-            if (_punchAge > rise + hold + cool + .35f) Object.Destroy(gameObject);
+            // The pool cools with the fist (the same `k`), then its glass is shed over the last third of a second.
+            _pool?.Pose(_life, 1f, _punchAge, k, Mathf.Clamp01((_punchAge - rise - hold - cool) / Shed));
+            if (_punchAge > rise + hold + cool + Shed) Kill(gameObject);
         }
 
         /// <summary>
@@ -300,7 +380,7 @@ namespace TumbangPreso.Abilities
                 var out_ = new Vector3(Mathf.Cos(around), 0, Mathf.Sin(around));
                 var gob = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 gob.name = "LavaGob";
-                Object.Destroy(gob.GetComponent<Collider>());
+                Kill(gob.GetComponent<Collider>());
                 gob.transform.SetParent(transform, true);
                 gob.transform.position = _punchAt + out_ * (.45f + .25f * (float)random.NextDouble()) + Vector3.up * .3f;
                 gob.transform.localScale = Vector3.one * (.13f + .12f * (float)random.NextDouble());
@@ -317,7 +397,7 @@ namespace TumbangPreso.Abilities
                 var g = _gobs[i];
                 if (g.Body == null) { _gobs.RemoveAt(i); continue; }
                 g.Life -= dt;
-                if (g.Life <= 0) { Object.Destroy(g.Body.gameObject); _gobs.RemoveAt(i); continue; }
+                if (g.Life <= 0) { Kill(g.Body.gameObject); _gobs.RemoveAt(i); continue; }
                 if (!g.Landed)
                 {
                     g.Velocity += Physics.gravity * dt;

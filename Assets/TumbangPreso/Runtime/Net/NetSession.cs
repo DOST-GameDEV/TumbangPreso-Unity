@@ -704,7 +704,10 @@ namespace TumbangPreso.Net
         // AFTERIMAGE on `zack_skill2` (owner pick, 2026-10-26): a predicted self cast (full Momentum, the host refills his
         // Charge, a 3 s lock carried to a joiner in the timed-kit personal fields). Kind 20 stays reserved for old replays; no
         // 184 peer casts it.
-        public const int ProtocolVersion = 184;
+        // 185 (2026-10-30): Basilio's longhorn cutscene (owner: "lock in dante's", then "bump network"). His ultimate's
+        // introduction is 4.86 s where it was 3.61 s, and that length is shared phase timing carried in
+        // `SkillContractFingerprint`. A 184 peer would run the shorter cutscene against a 185 host's clock: the two may not meet.
+        public const int ProtocolVersion = 185;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

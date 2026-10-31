@@ -1,20 +1,21 @@
 # Current checkpoint
 
-Updated 2026-10-28. [TODO](TODO.md) is the only active queue.
+Updated 2026-10-31. [TODO](TODO.md) is the only active queue.
 
-- LOBBY-UI-1028: desktop rules/chat/layout fixes7c1a7a0ac integrated here.
-  Edit20/20; exact chat/rules Play1/1. Evidence/build/push receipt on PC:
-  Logs/lobby-ui-20261028/fixes/. Main separate; phone work excluded.
-  Desktop visual review, physical pad and real-peer acceptance remain separate.
+- UI-REVAMP-1029, QoLUpdates-v2: Settings, Room, match menu in game; review open. [Method](UI_REVAMP.md).
+- FEEL-1031, feel/replay-and-impact, unmerged: replay wipes, spectator 3D replay, break card,
+  impact, 0.6 m knockback, SFX. Film: run_ui_player_review.py --feel-only. Next: owner review.
+- ONLINE-CAST-1028: 73b1f403b pushed/built. Ult victims stand on own floor from the
+  host-frozen pose; GroundY ignores awnings. Payo delayed pairs: Cheska gap 0, Nemu 0.015,
+  Paete tree grounded. Next: victims in Paete/Amihan/Phaister reach, then multi-PC.
+  Logs/ult-terrain-20261029/. Preserve six owner files.
 - Owner requested wrapping up and handing off unfinished mobile UI work.
   [Resume here](reports/mobile-ui-2026-10-26/HANDOFF.md): ff9 Android candidate is
   built/uploaded, native41/41 and recorded actual touch journeys passed. Newer
   source has6/7 focused checks, picker clipping still fails, and no APK contains
   those patches. Emulator/native jobs are stopped.
-- Keep `mobile+network` separate from main. Fetch/inspect main before the next
-  final build and publication. Final fetch found newmain43c158b86 (Zack polish),
-  not integrated; earlier078f98e87 is included. Preserve
-  original local metadata/settings and stage explicit owned files only.
+- Keep `mobile+network` separate from main; current main is included.
+  Preserve owner metadata/settings and stage only explicit owned paths.
 - Cleanup aaf96e52e1 integrated BugFix47487eda7; BugFix is deleted. Removed
   107.2 MiB proven-unused assets and shortened entry docs97.62%.
   [Receipt](reports/repository-cleanup-2026-10-25.md).
@@ -30,7 +31,5 @@ Updated 2026-10-28. [TODO](TODO.md) is the only active queue.
   remain intact. SFX listening review is still open; rejected sounds were not
   installed. [Evidence](reports/zack-kit-2026-10-25/refinement-validation.md).
 
-ARM translation does not qualify physical phone performance/thermals, separate
-Wi-Fi machines or WAN/Relay. Lossless Android packing is about71% smaller.
 Unrelated future sessions do not automatically owe mobile updates.
 [Earlier checkpoints](archive/cleanup-2026-10-25/docs/ACTIVE_REWORK_LEDGER.md) are history.

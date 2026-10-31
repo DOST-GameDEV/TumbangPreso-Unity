@@ -276,7 +276,7 @@ namespace TumbangPreso.Abilities
         }
 
         /// <summary>15 charges, as Supernova was: the bomb can knock the lata over by itself.</summary>
-        public override float UltimateCost => SeanRules.UltimateCost;
+        public override float UltimateCost => SeanRules.UltimateCost + TumbangPreso.Core.Balance.UltimateExtraObjectivePoints;
 
         /// <summary>The bodies a RAM or a fist may hit: everyone else in the round who is on the court and not already tagged.</summary>
         internal static IEnumerable<CharacterMotor> Rivals(CharacterMotor me)
@@ -311,8 +311,10 @@ namespace TumbangPreso.Abilities
 
             public override void Activate(AbilityContext ctx)
             {
-                // The brace is drawn from the press on every peer; it decides nothing.
-                Visual.SeanStokeFire.Brace(ctx);
+                // The brace is drawn from the press on every peer; it decides nothing. `SeanRamFire` is the approved wake
+                // fitted to the RAM's 8 m; off, the rework's `SeanStokeFire` (STOKE STEP's 2 m numbers) as before.
+                if (Visual.SeanRamFire.Painted) Visual.SeanRamFire.Brace(ctx);
+                else Visual.SeanStokeFire.Brace(ctx);
                 base.Activate(ctx);
                 if (_kit.IsMolten) CooldownRemaining = Mathf.Min(CooldownRemaining, SeanRules.RamMoltenCooldown);
             }
@@ -355,7 +357,8 @@ namespace TumbangPreso.Abilities
                 // The motor owns friction, collision and confinement: a held charge, no teleport. His own dash, so Molten's
                 // zero knockback does not cancel it.
                 ctx.Motor.BeginCarry(_heading * SeanRules.RamSpeed, SeanRules.RamHoldSeconds, own: true);
-                if (Visual.SeanStokeFire.Streak) Visual.SeanStokeFire.Burst(ctx.Motor, _heading);
+                if (Visual.SeanRamFire.Painted) Visual.SeanRamFire.Burst(ctx.Motor, _heading);
+                else if (Visual.SeanStokeFire.Streak) Visual.SeanStokeFire.Burst(ctx.Motor, _heading);
                 else _aura = AbilityVfx.AttachAura(ctx.Motor.transform, AbilityVfx.Aura.FireEmber, SeanRules.RamTravelSeconds);
             }
 
@@ -380,6 +383,8 @@ namespace TumbangPreso.Abilities
                 {
                     _hit = true;
                     me.HaltExternalSlide();
+                    // Drawn on every peer that stops his slide here (a look only; the host alone moves the body).
+                    Visual.SeanRamFire.Contact(me, first.transform.position);
                     if (NetAuthority.ShouldResolve())
                     {
                         Vector3 push = _heading * SeanRules.RamLaunchSpeed + Vector3.up * Balance.ShoveLift;
@@ -404,6 +409,7 @@ namespace TumbangPreso.Abilities
                 {
                     _hit = true;
                     me.HaltExternalSlide();
+                    Visual.SeanRamFire.Wall(me, wall.point);
                     if (NetAuthority.ShouldResolve())
                     {
                         me.ApplyStagger(SeanRules.RamWallStunSeconds);

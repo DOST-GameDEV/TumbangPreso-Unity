@@ -271,9 +271,9 @@ namespace TumbangPreso.CameraSystem
         // -------------------------------------------------------------------
 
         private const float ReplaySampleInterval = 0.10f;
-        private const int ReplayFrameCapacity = 100;
-        private const int ReplayWidth = 640;
-        private const int ReplayHeight = 360;
+        private const int ReplayFrameCapacity = 80;
+        private const int ReplayWidth = 752;
+        private const int ReplayHeight = 424;
 
         /// <summary>
         /// How many readbacks may be in flight at once.
@@ -678,6 +678,7 @@ namespace TumbangPreso.CameraSystem
             // the separate rendering component too, or its depth keeps winning the view.
             if (_camera != null) _camera.enabled = false;
             EndReplay(showLiveToast: false);
+            UnwatchRecordedClips();
             UnhookHighlights();
 
             // ⚠️ THE BORROWED BODY GOES BACK WHEN THIS CAMERA DOES. A spectator leaving the arena
@@ -736,6 +737,7 @@ namespace TumbangPreso.CameraSystem
             }
 
             RecordReplayFrame();
+            WatchRecordedClips();
 
             // ⚠️⚠️ THIS ONLY RECORDS WHAT THE LAST NOTABLE PLAY WAS, AND SINCE 2026-08-27 IT
             // CANNOT START ANYTHING. See § THE REPLAY NEVER STARTS ITSELF ANY MORE. The autopilot
@@ -1158,8 +1160,10 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         private void CaptureSynchronously(RenderTexture source, ReplayFrame frame)
         {
+            // LINEAR, like the RGB565 path above. An sRGB scratch hands back gamma-encoded bytes, and the RGB565
+            // frame they land in is read as linear, so the picture was brightened twice (owner: replay "SO BLURRY", pale).
             var scratch = RenderTexture.GetTemporary(ReplayWidth, ReplayHeight, 0,
-                                                      RenderTextureFormat.ARGB32);
+                                                      RenderTextureFormat.ARGB32, RenderTextureReadWrite.Linear);
             var previous = RenderTexture.active;
 
             try
@@ -1172,7 +1176,7 @@ namespace TumbangPreso.CameraSystem
                 // a managed pixel array or doubling every retained frame.
                 if (_synchronousReadback == null)
                     _synchronousReadback = new Texture2D(ReplayWidth, ReplayHeight,
-                        TextureFormat.RGBA32, mipChain: false) { name = "ReplayReadbackStaging" };
+                        TextureFormat.RGBA32, mipChain: false, linear: true) { name = "ReplayReadbackStaging" };
                 _synchronousReadback.ReadPixels(new Rect(0, 0, ReplayWidth, ReplayHeight), 0, 0, false);
                 var pixels = _synchronousReadback.GetRawTextureData<Color32>();
                 var packed = frame.Image.GetRawTextureData<ushort>();
@@ -1335,6 +1339,8 @@ namespace TumbangPreso.CameraSystem
                 return;
             }
 
+            if (TryStartRecordedReplay()) return;
+
             // ⚠️⚠️ READY FRAMES, NOT FRAMES. Since the readback became asynchronous the newest
             // entries in the ring are reservations whose picture has not landed yet, and a clip
             // built out of those would play whatever the texture pool's previous tenant left in
@@ -1358,6 +1364,7 @@ namespace TumbangPreso.CameraSystem
                     ? _replayFrames[marked].EventAt
                     : _replayFrames[marked].CapturedAt;
 
+                _markedAt = at;
                 first = IndexAtOrAfter(at - LeadInSeconds);
                 last = IndexAtOrBefore(at + LeadOutSeconds);
 
@@ -1425,13 +1432,17 @@ namespace TumbangPreso.CameraSystem
             }
 
             _replayClock = 0.0f;
+            _replayEventClock = marked >= 0 && _markedAt >= 0 ? Mathf.Max(0.0f, _markedAt - _replayClip[0].CapturedAt) : -1.0f;
+            _replayWipe = UI.ReplayStinger.Cover(transform, UI.HudDraw.Honey);
+            _replayExit = null;
             _replaying = true;
             _replayReason = string.IsNullOrEmpty(title) ? "LAST PLAY" : title;
             _replaySlot = slot;
 
             NoteClipWindow();
 
-            if (_replayCanvas != null) _replayCanvas.enabled = true;
+            // The picture changes behind the wipe, in `StepReplay`, on the frame it has covered the screen.
+            if (_replayCanvas != null) _replayCanvas.enabled = _replayWipe == null;
             RefreshReplayLabels();
 
             if (_replayClip.Count > 0) ShowReplayFrame(_replayClip[0]);
@@ -1564,8 +1575,8 @@ namespace TumbangPreso.CameraSystem
                 string who = NameForSlot(_replaySlot);
 
                 _replayLabel.text = string.IsNullOrEmpty(who)
-                    ? "REPLAY  ·  " + _replayReason
-                    : "REPLAY  ·  " + _replayReason + "  ·  " + who;
+                    ? _replayReason
+                    : _replayReason + "  ·  " + who;
             }
 
             if (_replayExitLabel != null)
@@ -1659,12 +1670,36 @@ namespace TumbangPreso.CameraSystem
 
         private void StepReplay()
         {
+            if (_recordedClip != null) { StepRecordedReplay(); return; }
+
             int available = _replayClip.Count;
             if (available < 2) { EndReplay(); return; }
 
-            // A restrained 0.82x lets the decisive beat read while the match remains live in
-            // the rest of the screen.
-            _replayClock += Time.unscaledDeltaTime * 0.82f;
+            // The wipe has covered the old picture: change it behind the band, then let the band leave.
+            if (_replayWipe != null)
+            {
+                if (!_replayWipe.IsCovered) return;
+                if (_replayCanvas != null) _replayCanvas.enabled = true;
+                _replayWipe.Release();
+                _replayWipe = null;
+            }
+
+            // The way out holds the last picture until the band has covered it.
+            if (_replayExit != null)
+            {
+                if (_replayExit.IsCovered) FinishReplay(true);
+                return;
+            }
+
+            // Life speed for the setup and the aftermath, and well under half around the event itself,
+            // easing in and out of it. A clip with no marked event keeps a restrained 0.82x.
+            float speed = 0.82f;
+            if (_replayEventClock >= 0.0f)
+            {
+                float fromEvent = Mathf.Abs(_replayClock - _replayEventClock);
+                speed = Mathf.Lerp(0.38f, 1.0f, Mathf.SmoothStep(0.0f, 1.0f, Mathf.InverseLerp(0.35f, 1.0f, fromEvent)));
+            }
+            _replayClock += Time.unscaledDeltaTime * speed;
             float sample = _replayClock / ReplaySampleInterval;
             int localIndex = Mathf.Clamp(Mathf.FloorToInt(sample), 0, available - 1);
 
@@ -1679,6 +1714,23 @@ namespace TumbangPreso.CameraSystem
 
             ShowReplayFrame(_replayClip[localIndex]);
 
+            // Ten stored frames a second would step visibly, more so slowed: each one dissolves into the next.
+            if (_replayBlend != null)
+            {
+                bool hasNext = localIndex + 1 < available;
+                _replayBlend.enabled = hasNext;
+                if (hasNext)
+                {
+                    _replayBlend.texture = _replayClip[localIndex + 1].Image;
+                    _replayBlend.color = new Color(1.0f, 1.0f, 1.0f, sample - Mathf.Floor(sample));
+                }
+            }
+
+            // A slow push on the picture toward the event, so the frame is never dead.
+            if (_replayImage != null && _replayEventClock >= 0.0f && !Settings.SettingsStore.Current.ReducedUiMotion)
+                _replayImage.rectTransform.localScale = Vector3.one * Mathf.Lerp(1.0f, 1.09f,
+                    Mathf.SmoothStep(0.0f, 1.0f, Mathf.InverseLerp(_replayEventClock - 1.2f, _replayEventClock + 0.2f, _replayClock)));
+
             if (_replayProgress != null)
             {
                 var rt = _replayProgress.rectTransform;
@@ -1688,6 +1740,9 @@ namespace TumbangPreso.CameraSystem
 
         private Text _replayExitLabel;
         private Image _replayProgress;
+        private RawImage _replayBlend;
+        private UI.ReplayStinger _replayWipe, _replayExit;
+        private float _replayEventClock = -1.0f, _markedAt = -1.0f;
 
         private void ShowReplayFrame(ReplayFrame frame)
         {
@@ -1701,9 +1756,25 @@ namespace TumbangPreso.CameraSystem
         {
             if (!_replaying) return;
 
+            // An operator's exit and the clip's end both leave behind the wipe. A teardown (no toast) leaves at once.
+            if (showLiveToast && _replayWipe == null)
+            {
+                if (_replayExit == null) _replayExit = UI.ReplayStinger.Sweep(transform, UI.HudDraw.Honey, true);
+                if (_replayExit != null) return;
+            }
+            FinishReplay(showLiveToast);
+        }
+
+        private void FinishReplay(bool showLiveToast)
+        {
             _replaying = false;
+            _replayExit = null;
+            DisposeRecordedReplay();
+            _markedAt = _replayEventClock = -1.0f;
+            if (_replayWipe != null) { _replayWipe.Release(); _replayWipe = null; }
             if (_replayCanvas != null) _replayCanvas.enabled = false;
-            if (_replayImage != null) _replayImage.texture = null;
+            if (_replayImage != null) { _replayImage.texture = null; _replayImage.rectTransform.localScale = Vector3.one; }
+            if (_replayBlend != null) { _replayBlend.texture = null; _replayBlend.enabled = false; }
 
             // ⚠️ THE BAR IS RESET ON THE WAY OUT, NOT ON THE WAY IN. A replay started while the
             // previous bar was still full would show a finished progress bar for its first frame,
@@ -1779,8 +1850,8 @@ namespace TumbangPreso.CameraSystem
             var imageRt = _replayImage.rectTransform;
             imageRt.anchorMin = Vector2.zero;
             imageRt.anchorMax = Vector2.one;
-            imageRt.offsetMin = new Vector2(10.0f, 10.0f);
-            imageRt.offsetMax = new Vector2(-10.0f, -62.0f);
+            imageRt.offsetMin = Vector2.zero;
+            imageRt.offsetMax = Vector2.zero;
 
             // Storage textures have a fixed memory budget. ShowReplayFrame restores each
             // captured viewport's aspect, and FitInParent letterboxes that original picture
@@ -1789,6 +1860,20 @@ namespace TumbangPreso.CameraSystem
             _replayFit = fit;
             fit.aspectMode = AspectRatioFitter.AspectMode.FitInParent;
             fit.aspectRatio = ReplayWidth / (float)ReplayHeight;
+
+            var blendGo = new GameObject("ReplayImageNext");
+            blendGo.transform.SetParent(imageGo.transform, false);
+            _replayBlend = blendGo.AddComponent<RawImage>();
+            _replayBlend.raycastTarget = false;
+            _replayBlend.enabled = false;
+            var blendRt = _replayBlend.rectTransform;
+            blendRt.anchorMin = Vector2.zero;
+            blendRt.anchorMax = Vector2.one;
+            blendRt.offsetMin = Vector2.zero;
+            blendRt.offsetMax = Vector2.zero;
+
+            // The same camcorder frame as every other replay in the game.
+            UI.ReplayOverlay.Build(panelGo.transform, "REPLAY", false);
 
             var labelGo = new GameObject("ReplayLabel");
             BuildReplayBand(panelGo.transform, "ReplayHeadingBand", true, 76);

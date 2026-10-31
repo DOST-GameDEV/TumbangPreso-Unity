@@ -140,7 +140,7 @@ namespace TumbangPreso.Map
             Vector3 eye = view.transform.position, right = view.transform.right, up = view.transform.up;
             if (live) StepMeteors(dt, out_);
             for (int i = 0; i < Meteors; i++) if (_meteors[i].Live) DrawMeteor(_meteors[i], eye, out_);
-            DrawFireflies(eye, right, up, Mathf.Clamp01((night - 0.3f) / 0.5f));
+            if (PayoDetail.Fireflies) DrawFireflies(eye, right, up, Mathf.Clamp01((night - 0.3f) / 0.5f));
 
             _liveMesh.Clear();
             _liveMesh.SetVertices(_v); _liveMesh.SetColors(_c); _liveMesh.SetUVs(0, _uv); _liveMesh.SetTriangles(_t, 0, false);

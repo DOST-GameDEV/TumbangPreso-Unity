@@ -26,6 +26,15 @@ namespace TumbangPreso.Net
         public bool ReplayReadyForAudience(long clip)=>_nm!=null&&_nm.ConnectedClientsIds.All(peer=>peer==NetworkManager.ServerClientId||
             (_clipReady.TryGetValue(peer,out var ready)&&ready.Contains(clip)));
         public RecordedMatchClip ReceivedReplay(long id)=>_receivedClips.FirstOrDefault(c=>c.Id==id&&c.MatchId==PresentationMatchId);
+        public RecordedMatchClip NewestReceivedReplay
+        {
+            get
+            {
+                RecordedMatchClip newest=null;
+                foreach(var clip in _receivedClips)if(clip.MatchId==PresentationMatchId&&(newest==null||clip.Id>newest.Id))newest=clip;
+                return newest;
+            }
+        }
         private void ClearReplayTransfer()
         {_clipSends.Clear();_clipReady.Clear();_receivedClips.Clear();_clipReceive=null;_clipEpoch=PresentationMatchId;}
         public void StageReplay(MatchReplayArchive.Retained retained)

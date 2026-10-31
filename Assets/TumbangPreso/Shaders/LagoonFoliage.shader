@@ -39,7 +39,7 @@ Shader "TumbangPreso/LagoonFoliage"
         LOD 200
 
         CGPROGRAM
-        #pragma surface surf Standard alphatest:_Cutoff addshadow fullforwardshadows
+        #pragma surface surf Standard alphatest:_Cutoff addshadow fullforwardshadows vertex:vert
         #pragma target 3.0
         #include "LagoonNoise.cginc"
 
@@ -48,7 +48,24 @@ Shader "TumbangPreso/LagoonFoliage"
         half _Glossiness, _Gain, _VertexTint, _PaleOn;
         float4 _PaleRange, _Nudge;
 
-        struct Input { float2 uv_MainTex; float4 color : COLOR; };
+        // 2026-10-29, the owner asked whether the world AO can be baked, then "continue" to a Payo bake test
+        // (Runtime/Map/PayoBakedAO.cs): UV2 x is a static vertex's baked light, y = 1 marks it baked; `_TPBakedAO` is
+        // the cavity shade (rgb) and strength (a), zero unless Payo's switch is on, so every other mesh multiplies by one.
+        float4 _TPBakedAO;
+
+        struct Input { float2 uv_MainTex; float4 color : COLOR; float4 bakedOrigin; };
+
+        // 2026-10-29, the owner: "go ahead and merge the plaza dressing". A merged mesh (PayoSceneBuilder.PlazaMerge.cs)
+        // carries each piece's own world position in UV3 (w = 1); a plain mesh has none (w = 0) and reads its transform.
+        void vert(inout appdata_full v, out Input o)
+        {
+            UNITY_INITIALIZE_OUTPUT(Input, o);
+            o.bakedOrigin = v.texcoord3;
+            // No interpolator is left (ForwardBase holds 10): the baked shade rides on the origin marker, w = marker + shade / 4.
+            // UV2.z = 1 marks THE BAKE's own UV2 (owner, 2026-10-30: "the right side has darker shadows"): a model's native UV2
+            // (the court's floor, the far flora) read as baked shade and tinted whole surfaces violet. Anything else is left alone.
+            o.bakedOrigin.w += saturate((1 - v.texcoord2.x) * v.texcoord2.y * step(0.5, v.texcoord2.z)) * 0.25;
+        }
 
         float3 HueShift(float3 c, float shift)
         {
@@ -71,9 +88,11 @@ Shader "TumbangPreso/LagoonFoliage"
             if (_PaleOn > 0)
                 albedo = lerp(albedo, _PaleColour.rgb, MapRangeLinear(max(c.r, max(c.g, c.b)), _PaleRange.x, _PaleRange.y, 0, 1));
             float3 origin = float3(unity_ObjectToWorld[0].w, unity_ObjectToWorld[1].w, unity_ObjectToWorld[2].w);
+            if (IN.bakedOrigin.w > 0.5) origin = IN.bakedOrigin.xyz;
             float3 h = abs(LagoonHash33(floor(origin * 7.31) + 0.5));
             albedo = HueShift(albedo, lerp(_Nudge.z, _Nudge.w, h.y)) * lerp(_Nudge.x, _Nudge.y, h.x);
-            o.Albedo = saturate(albedo);
+            float shadeAO = (IN.bakedOrigin.w - step(0.5, IN.bakedOrigin.w)) * 4;
+            o.Albedo = saturate(albedo) * lerp(half3(1, 1, 1), _TPBakedAO.rgb, saturate(shadeAO * _TPBakedAO.a));
             o.Alpha = c.a;
             o.Metallic = 0;
             o.Smoothness = _Glossiness;

@@ -13,7 +13,11 @@ namespace TumbangPreso.Tests
         [TestCase("sean", "sean.1.afterburn", "sean.2.flare")]
         [TestCase("zack", "zack.1.arcline", "zack.2.discharge")]
         [TestCase("nemu", "nemu.1.fade", "nemu.2.leash")]
+        [TestCase("phaister", "phaister.1.teleport_next", "phaister.2.drain_next")]
+        // ⚠️ HER OLD KIT'S IDS, AS AN OLD SAVE STILL CARRIES THEM. They left the table with HEX and SHADOW BLINK
+        // (`HeroLoadoutRules`, PHAISTER), so they must bind exactly what a fresh account binds.
         [TestCase("phaister", "phaister.1.brand", "phaister.2.stride")]
+        [TestCase("phaister", "phaister.1.hex", "phaister.2.blink")]
         public void StaleAlternateBuildDoesNotChangeTheHardcodedLiveKit(string hero,string first,string second)
         {
             var owner=new GameObject("Loadout refresh");

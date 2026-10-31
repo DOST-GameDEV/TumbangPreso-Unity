@@ -70,11 +70,15 @@ namespace TumbangPreso.CameraSystem
         /// `GhostPetCompanion.StepOwnerView` never hides him). All nine (the sleeve Kuro, the ember, the stones, the
         /// battery-bean, the snow bunny, the fish, the maya bird, the moth, the sampaguita bud) are KEPT, whole and
         /// working, behind this switch for a possible unlock. It is off, and nothing in the game turns it on yet.
+        /// ⚠️ 2026-10-28, owner: *"i wanna bring that back but make kuro more subtle (like it hides in nemu's sleeves)"*. Kuro
+        /// is back in her sleeve, but as the quiet one that hides in the cuff and peeks out (`NemuKuroHand.InSleeve`, its own
+        /// switch, on). This switch still holds the perched Kuro and the other eight.
         /// </summary>
         public static bool UnlockedHandPets;
 
         private static HandCompanion CompanionFor(string heroId)
         {
+            if (heroId == "nemu" && !UnlockedHandPets && NemuKuroHand.InSleeve) return new NemuKuroHand(inSleeve: true);
             // Without a pet a hero's hands are still their own: what the bare arms do (one class a hero, as they are made).
             // Zack keeps bare hands without the rejected skin-mounted zigzag overlay.
             if (!UnlockedHandPets) return heroId switch { "paete" => new PaeteVineHands(), "phaister" => new SorayaStageHands(), "amihan" => new AmihanWindHands(), "cheska" => new CheskaRimeHands(), "dante" => new DanteGauntletHands(), "sean" => new SeanFlameHands(), "rafi" => new RafiWaterHands(), _ => null };

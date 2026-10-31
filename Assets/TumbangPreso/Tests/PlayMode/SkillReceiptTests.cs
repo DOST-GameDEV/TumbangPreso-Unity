@@ -1634,6 +1634,8 @@ namespace TumbangPreso.PlayTests
         [UnityTest, Timeout(30000)]
         public IEnumerator JoinedStatusPresentationNeedsNoOriginalCastAndCleansUpPerBody()
         {
+            // ⚠️ THE MARK ONLY, SINCE 2026-10-29. This also counted `PhaisterMoonlight` on the Vulnerable timer; that column was
+            // SPOTLIGHT PIN's, retired with her old kit and deleted, and `PhaisterStatusPresenter` now presents Disoriented alone.
             var system = Owner("phaister");
             var first = system.GetComponent<CharacterMotor>();
             var second = new GameObject("Other joined body").AddComponent<CharacterMotor>();
@@ -1642,29 +1644,32 @@ namespace TumbangPreso.PlayTests
             first.ApplyNetworkReworkStatuses(0, 0, 2, 2, Vector3.zero);
             second.ApplyNetworkReworkStatuses(0, 0, 2, 2, Vector3.zero);
             yield return null;
-            Assert.AreEqual(2, Object.FindObjectsByType<Visual.PhaisterMoonlight>(FindObjectsSortMode.None).Length);
-            Assert.IsNotNull(GameObject.Find("HexMark"));
+            Assert.AreEqual(2, HexMarks());
 
             first.gameObject.SetActive(false);
             yield return null;
-            Assert.AreEqual(1, Object.FindObjectsByType<Visual.PhaisterMoonlight>(FindObjectsSortMode.None).Length,
-                "Despawn must clean only that body's presentation.");
+            Assert.AreEqual(1, HexMarks(), "Despawn must clean only that body's presentation.");
             first.gameObject.SetActive(true);
             yield return null;
             yield return null;
-            Assert.AreEqual(2, Object.FindObjectsByType<Visual.PhaisterMoonlight>(FindObjectsSortMode.None).Length);
+            Assert.AreEqual(2, HexMarks());
 
             first.ApplyNetworkReworkStatuses(0, 0, 0, 0, Vector3.zero);
             second.ApplyNetworkReworkStatuses(0, 0, 0, 0, Vector3.zero);
             yield return null;
             yield return null;
-            Assert.IsNull(GameObject.Find("HexMark"));
-            foreach (var moon in Object.FindObjectsByType<Visual.PhaisterMoonlight>(FindObjectsSortMode.None))
-                Assert.IsTrue(moon.Ending, "The authored end must follow received status expiry.");
+            Assert.AreEqual(0, HexMarks(), "The mark must follow received status expiry.");
             Object.Destroy(first.gameObject);
             Object.Destroy(second.gameObject);
             yield return null;
-            Assert.AreEqual(0, Object.FindObjectsByType<Visual.PhaisterMoonlight>(FindObjectsSortMode.None).Length);
+            Assert.AreEqual(0, HexMarks());
+        }
+
+        private static int HexMarks()
+        {
+            int n = 0;
+            foreach (var t in Object.FindObjectsByType<Transform>(FindObjectsSortMode.None)) if (t.name == "HexMark") n++;
+            return n;
         }
 
         [UnityTest, Timeout(30000)]

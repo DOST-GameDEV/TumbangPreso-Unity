@@ -71,6 +71,8 @@ namespace TumbangPreso.CameraSystem
                     var actor = GameServices.Round.PlayerAt(commit.Seat);
                     var visual = actor.GetComponent<CharacterVisual>();
                     if (visual?.Model == null) continue;
+                    // A replica's interpolation lag is not where the caster stands; every peer copies the body's own pose.
+                    visual.SnapForCinematic();
                     var track = new MatchPoseHistory.Track(actor, visual.Model);
                     track.Record(Time.time); track.Record(Time.time + .05f);
                     var actorStage = new GameObject("RecordedCast-P" + (commit.Seat + 1));

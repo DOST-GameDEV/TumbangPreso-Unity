@@ -53,7 +53,7 @@ namespace TumbangPreso.PlayTests
                         .Where(control => control.isActiveAndEnabled && !control.name.StartsWith("SettingsSection")
                                           && control.name != "TumpSettingsBack"),
                     TumpSettingsView.Sections[i] + " has no controls of its own.");
-                Assert.AreEqual(TumpSettingsView.Sections[i],
+                Assert.AreEqual(TumpSettingsView.Sections[i].ToUpperInvariant(),
                     canvas.GetComponentsInChildren<Text>().First(t => t.name == "Heading").text);
                 yield return UiRuntimeShots.Capture("Settings-v5-" + TumpSettingsView.Sections[i], 1920, 1080);
             }

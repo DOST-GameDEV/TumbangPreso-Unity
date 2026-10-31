@@ -24,6 +24,27 @@ namespace TumbangPreso.Tests
     /// </summary>
     public sealed class HeroPresentationTests
     {
+        [TestCase("dante", GeoRules.EarthquakeCost)]
+        [TestCase("cheska", CryoRules.AbsoluteZeroCost)]
+        [TestCase("sean", SeanRules.UltimateCost)]
+        [TestCase("zack", ZackRules.OverclockCost)]
+        [TestCase("nemu", 15.0f)]
+        [TestCase("phaister", VoodooRules.DollCost)]
+        [TestCase("rafi", RafiRules.BahaCost)]
+        [TestCase("paete", PaeteRules.SentryCost)]
+        [TestCase("amihan", AmihanRules.StormSurgeCost)]
+        public void UltimateNeedsThreeMoreObjectivePoints(string hero, float previousCost)
+        {
+            var kit = HeroAbilitySystem.CreateKitFor(hero);
+            Assert.AreEqual(previousCost + 3, kit.UltimateCost);
+            kit.AddUltimateCharge(previousCost);
+            Assert.IsFalse(kit.IsUltimateReady, "The old price must no longer activate " + hero);
+            kit.AddUltimateCharge(2);
+            Assert.IsFalse(kit.IsUltimateReady);
+            kit.AddUltimateCharge(1);
+            Assert.IsTrue(kit.IsUltimateReady, "Exactly three more points must activate " + hero);
+        }
+
         private static readonly string[] Heroes = Roster.HeroPeople.Select(person => person.Id).ToArray();
 
         // ------------------------------------------------------------------ the colour law

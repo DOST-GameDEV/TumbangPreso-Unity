@@ -40,7 +40,7 @@ namespace TumbangPreso.Abilities
             Ultimate = new OverclockAbility(this);
         }
 
-        public override float UltimateCost => ZackRules.OverclockCost;
+        public override float UltimateCost => ZackRules.OverclockCost + TumbangPreso.Core.Balance.UltimateExtraObjectivePoints;
 
         // ================================================================== OVERCLOCKED (the ultimate's state)
 

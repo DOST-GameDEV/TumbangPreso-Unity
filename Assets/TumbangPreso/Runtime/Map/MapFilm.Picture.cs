@@ -246,7 +246,7 @@ namespace TumbangPreso.Map
         private float _gradeBrightness = 1.0f, _gradeSaturation = 1.0f;
         private Light[] _sceneLamps = new Light[0];
         private float[] _sceneLampWas = new float[0];
-        private bool _lightTaken;
+        private bool _lightTaken, _lightChanged;
 
         /// <summary>True: the films light the map exactly as the match does (see <see cref="Tint"/>).</summary>
         public static readonly bool AdoptsGameLight = true;
@@ -291,7 +291,7 @@ namespace TumbangPreso.Map
                 SunYaw = Mathf.Atan2(forward.x, forward.z) * Mathf.Rad2Deg,
                 FogStart = _fogStart, FogEnd = _fogEnd, Brightness = _gradeBrightness, Saturation = _gradeSaturation, Lamps = 1.0f, KeepYaw = true,
             };
-            _lightTaken = true;
+            _lightTaken = true;_lightChanged = false;
         }
 
         /// <summary>
@@ -304,6 +304,7 @@ namespace TumbangPreso.Map
         protected void Tint(in Mood mood, float weight)
         {
             if (AdoptsGameLight || !_lightTaken) return;
+            _lightChanged = true;
             var a = Authored;
             float w = Mathf.Clamp01(weight);
             RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Trilight;
@@ -340,6 +341,13 @@ namespace TumbangPreso.Map
         {
             if (!_lightTaken) return;
             _lightTaken = false;
+            // An opening that never changed the game light cannot restore an old snapshot over it.
+            if (!_lightChanged)
+            {
+                _sceneLamps = new Light[0];_sceneLampWas = new float[0];
+                _sun = null;_sky = null;_grade = null;return;
+            }
+            _lightChanged = false;
             RenderSettings.ambientMode = _ambientMode;
             RenderSettings.ambientSkyColor = _ambientSky; RenderSettings.ambientEquatorColor = _ambientEquator; RenderSettings.ambientGroundColor = _ambientGround;
             RenderSettings.fog = _fogOn; RenderSettings.fogMode = _fogMode; RenderSettings.fogStartDistance = _fogStart; RenderSettings.fogEndDistance = _fogEnd; RenderSettings.fogColor = _fogColour;

@@ -183,7 +183,7 @@ namespace TumbangPreso.Core
         /// never heroes (`IsHero`), so Classic and the tournament preset are untouched.
         /// Widen it here in one line and every gate follows.
         /// </summary>
-        public static readonly string[] UnlockedHeroes = { "nemu", "paete", "phaister", "amihan", "dante", "sean" };
+        public static readonly string[] UnlockedHeroes = { "nemu", "paete", "phaister", "amihan", "dante", "sean", "cheska", "zack", "rafi" };
 
         /// <summary>True for every non-hero id, and for a hero only when it is in <see cref="UnlockedHeroes"/>.</summary>
         public static bool IsHeroUnlocked(string heroId) =>

@@ -48,7 +48,11 @@ namespace TumbangPreso.Net
             using var bytes = new MemoryStream();
             using (var writer = new BinaryWriter(bytes, Encoding.UTF8, leaveOpen: true))
             {
-                writer.Write("TUMP-skill-contract-1");
+                writer.Write("TUMP-skill-contract-2");
+                writer.Write(Balance.DefenderWalkSpeed);writer.Write(Balance.DefenderRunSpeed);
+                writer.Write(NemuRules.DriftPull);writer.Write(NemuRules.TellPull);writer.Write(NemuRules.SurgePull);
+                // Shared placement support: constructs and resting slippers stand on the floor at their height (2026-10-29).
+                writer.Write("ground-support-step");writer.Write(Slipper.GroundStep);
                 int count = 0;
                 foreach (var kit in kits)
                 {
