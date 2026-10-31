@@ -56,10 +56,32 @@ namespace TumbangPreso.Settings
         {
             new Entry("Low", ShadowQuality.HardOnly, ShadowResolution.Low, 15f, 0, 0, false, 0.7f, true),
             new Entry("Balanced", ShadowQuality.All, ShadowResolution.Medium, 40f, 2, 2, false),
-            new Entry("High", ShadowQuality.All, ShadowResolution.High, 70f, 4, 4, true),
+            new Entry("High", ShadowQuality.All, ShadowResolution.High, 70f, 2, 4, true),   // two cascades (owner, 2026-10-31, comparing 4 and 2: "yeah the cascades are good")
         };
 
         public const int Default = 1;
+
+        /// <summary>
+        /// THE STRIPES ON THE SUNLIT FLOORS (owner, 2026-10-31: "figure out a way to not have those stripey lines on the
+        /// shading"). They were shadow acne, the floor shadowing itself in rows of shadow-map texels: with shadows off, or at
+        /// three times the sun's normal bias, they are gone, while three times the depth bias alone leaves them. So every map's
+        /// sun gets at least this normal bias. Measured at 0.48 on Lagoon and 0.6 on Payo; the long pole shadows keep their shape.
+        /// </summary>
+        private const float SunNormalBias = 0.6f;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+        private static void WatchSunBias()
+        {
+            RaiseSunBias();
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded += (scene, mode) => RaiseSunBias();
+        }
+
+        private static void RaiseSunBias()
+        {
+            foreach (var light in Object.FindObjectsByType<Light>(FindObjectsSortMode.None))
+                if (light.type == LightType.Directional && light.shadows != LightShadows.None && light.shadowNormalBias < SunNormalBias)
+                    light.shadowNormalBias = SunNormalBias;
+        }
         public static int Current { get; private set; } = Default;
         public static Entry Of(int index) => All[Mathf.Clamp(index, 0, All.Length - 1)];
         public static event System.Action AppliedInEditor;
