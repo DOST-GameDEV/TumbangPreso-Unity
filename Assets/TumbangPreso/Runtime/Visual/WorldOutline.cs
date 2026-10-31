@@ -328,6 +328,8 @@ namespace TumbangPreso.Visual
         /// mask (R) covers the cast, and the world's kernel where <see cref="LiveAOProps"/> are drawn (G); every other pixel
         /// returns clean at once, since the static world carries its occlusion in its vertices.</summary>
         public static bool BakedWorldAO;
+        /// <summary>Benchmark only (`-tp-no-rescan`): scans once, an A/B for the uneven frames (owner, 2026-10-31).</summary>
+        internal static bool BenchNoRescan;
         /// <summary>
         /// DETAILED PROPS KEEP THE LIVE CREASE AO ON A BAKED MAP (owner, 2026-10-30, of the bake beside the screen AO: "no ao
         /// on the creases of the statue face", then "continue with these fixes"). A vertex bake is only as fine as the mesh,
@@ -810,7 +812,7 @@ namespace TumbangPreso.Visual
                 return;
             }
 
-            if (Time.unscaledTime >= _nextScan)
+            if (Time.unscaledTime >= _nextScan && (!BenchNoRescan || _nextScan == 0f))
             {
                 _nextScan = Time.unscaledTime + Mathf.Max(0.1f, _rescanSeconds);
                 Rescan();

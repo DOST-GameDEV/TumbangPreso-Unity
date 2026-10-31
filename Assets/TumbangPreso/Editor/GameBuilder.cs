@@ -1030,6 +1030,9 @@ namespace TumbangPreso.EditorTools
             }
         }
 
+        /// <summary>A development build from the open editor, whose command line cannot say so (`dev PATH` in PerfBuildRequest).</summary>
+        internal static bool ForceDevelopment;
+
         private static bool Execute(string outputPath, BuildTarget target = BuildTarget.StandaloneWindows64)
         {
             var scenes = EditorBuildSettings.scenes
@@ -1138,7 +1141,7 @@ namespace TumbangPreso.EditorTools
                 // data. Keep authored meshes/textures and gameplay contracts identical.
                 options = (target == BuildTarget.Android || target == BuildTarget.StandaloneWindows64
                     ? BuildOptions.CompressWithLz4HC : BuildOptions.None)
-                    | (Environment.GetCommandLineArgs().Any(arg =>
+                    | (ForceDevelopment || Environment.GetCommandLineArgs().Any(arg =>
                     string.Equals(arg, "-developmentBuild", StringComparison.OrdinalIgnoreCase))
                     ? BuildOptions.Development | BuildOptions.ConnectWithProfiler
                     : BuildOptions.None),
