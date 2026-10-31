@@ -188,15 +188,15 @@ namespace TumbangPreso.PlayTests
                     yield return new WaitForSeconds(.15f);
                     var streaks = rewind.GetComponentsInChildren<LineRenderer>(true);
                     Assert.AreEqual(2, rewind.transform.Cast<Transform>().Count(t => t.GetComponent<LineRenderer>() == null),
-                        "Only the travelling body and one hologram may be copied.");
-                    Assert.AreEqual(4, rewind.GetComponentsInChildren<SkinnedMeshRenderer>(true).Length);
-                    Assert.AreEqual(1, rewind.MomentsDrawn);
-                    Assert.IsFalse(rewind.TryMoment(1, out _, out _), "There is only one historical subject.");
+                        "Only the travelling body and the painted wake may stand under the rewind.");
+                    Assert.AreEqual(2, rewind.GetComponentsInChildren<SkinnedMeshRenderer>(true).Length, "The travelling body is the only skinned copy.");
+                    Assert.AreEqual(0, rewind.MomentsDrawn);
+                    Assert.IsFalse(rewind.TryMoment(0, out _, out _), "A painted rewind draws no lead hologram.");
+                    Assert.AreEqual(0, rewind.PastMomentsChosen, "A painted rewind draws no past moments.");
                     Assert.IsTrue(Visual.TagExposure.OnFloor(_caster, .8f, out var cueFeet, out _, out _));
                     var markerError = cueFeet - rewind.VisualFeet; markerError.y = 0;
                     Assert.Less(markerError.magnitude, .08f, "The taggability floor brackets must follow the drawn body, not the instant teleport.");
-                    if (calm) Assert.IsEmpty(streaks, "Reduced effects omit speed dashes.");
-                    else Assert.That(streaks.Length, Is.InRange(1, 20), "Speed dashes must remain bounded.");
+                    Assert.IsEmpty(streaks, "A painted rewind draws no line streaks.");
                     foreach (var streak in streaks)
                     {
                         Assert.IsTrue(streak.name.StartsWith("RewindStreak"));
@@ -206,25 +206,22 @@ namespace TumbangPreso.PlayTests
                             "A speed dash must never become a route-length cable.");
                     }
                     var memoryShader=Resources.Load<Shader>("Shaders/ZackTemporalMemory");
-                    Assert.IsNotNull(memoryShader); Assert.IsTrue(memoryShader.isSupported);
-                    Assert.Greater(rewind.GetComponentsInChildren<Renderer>(true).Count(v=>v.sharedMaterials.Any(m=>m.shader==memoryShader)),0,
-                        "Past selves must use textured transparency instead of opaque bronze coats.");
+                    Assert.AreEqual(0,rewind.GetComponentsInChildren<Renderer>(true).Count(v=>v.sharedMaterials.Any(m=>m!=null&&m.shader==memoryShader)),
+                        "The wire memory look must not be drawn on the default path.");
+                    Assert.IsTrue(rewind.DrawnPainted);
+                    Assert.Greater(rewind.PaintedEchoes,0,"The route must carry painted echoes.");
+                    var echoBodies=rewind.GetComponentsInChildren<MeshRenderer>(true).Where(v=>v.name.StartsWith("echo-body-")).ToArray();
+                    Assert.AreEqual(rewind.PaintedEchoes,echoBodies.Length);
+                    Assert.IsTrue(echoBodies.All(v=>v.sharedMaterial==Visual.ZackKitPaint.Ghost),"Echoes wear the painted afterimage.");
+                    var echoSpots=rewind.GetComponentsInChildren<Transform>(true).Where(v=>v.name.StartsWith("echo-")&&char.IsDigit(v.name[5]))
+                        .Select(v=>Vector3.Distance(v.position,from)).OrderBy(v=>v).ToArray();
+                    for(int i=2;i<echoSpots.Length;i++)Assert.Greater(echoSpots[i]-echoSpots[i-1],echoSpots[i-1]-echoSpots[i-2],"Echoes open out from the end he leaves.");
                     Assert.IsEmpty(rewind.GetComponentsInChildren<Collider>(true));
                     Assert.IsEmpty(rewind.GetComponentsInChildren<CharacterMotor>(true));
-                    int count = 1;
-                    var before = new Vector3[count];
-                    for (int i = 0; i < count; i++) Assert.IsTrue(rewind.TryMoment(i, out before[i], out _));
-                    var initialLead = before[0] - rewind.RenderedFeet; initialLead.y = 0;
-                    Assert.Greater(Vector3.Dot(initialLead, (to - from).normalized), .05f, "The hologram must lead toward the old spot.");
+                    var feetBefore = rewind.RenderedFeet;
                     Debug.Log($"[Rewind speed cost] reduced={calm} bodies=2 streaks={streaks.Length} renderers={rewind.GetComponentsInChildren<Renderer>(true).Length} skinned={rewind.GetComponentsInChildren<SkinnedMeshRenderer>(true).Length}");
                     yield return new WaitForSeconds(.12f);
-                    for (int i = 0; i < count; i++)
-                    {
-                        Assert.IsTrue(rewind.TryMoment(i, out var now, out _));
-                        Assert.Less(Vector3.Distance(now, to), Vector3.Distance(before[i], to), "Every past moment must move toward the old location.");
-                        var closingLead = now - rewind.RenderedFeet; closingLead.y = 0;
-                        Assert.Less(closingLead.magnitude, initialLead.magnitude, "Zack must close the gap to his hologram.");
-                    }
+                    Assert.Less(Vector3.Distance(rewind.RenderedFeet, to), Vector3.Distance(feetBefore, to), "The drawn body must move toward the old location.");
                     rig.SetDebugThirdPerson(false);
                     float baseFov = Settings.GameSettings.ValidFirstPersonFov(Settings.SettingsStore.Current.FirstPersonFov);
                     rig.Camera.fieldOfView = baseFov;
@@ -240,7 +237,7 @@ namespace TumbangPreso.PlayTests
                     Assert.IsTrue(Visual.TagExposure.OnFloor(_caster, .8f, out cueFeet, out _, out _));
                     markerError = cueFeet - rewind.VisualFeet; markerError.y = 0;
                     Assert.Less(markerError.magnitude, .08f, "The marker follows the projected catch overshoot too.");
-                    yield return new WaitForSeconds(.35f);
+                    yield return new WaitForSeconds(.45f); // The painted wake lives to 0.88 s, past the line look's end.
                     Assert.IsTrue(rewind == null, "All temporal copies must retire after the catch.");
                     Assert.IsTrue(streaks.All(s => s == null), "All speed dashes must retire with their rewind.");
                     Assert.AreEqual(0, Visual.ZackBacktrackLook.FovKick(_caster), "The lens kick cannot outlive the effect.");

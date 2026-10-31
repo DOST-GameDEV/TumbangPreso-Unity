@@ -355,6 +355,8 @@ namespace TumbangPreso.EditorTools.MapKit
                 case "momentum": BuildMomentum(s, p); break;
                 case "overclock": BuildOverclock(s, p, false); break;
                 case "overclockend": BuildOverclock(s, p, true); break;
+                case "backtracklive": BuildBacktrackLive(s, p, false); break;
+                case "backtracklivefloor": BuildBacktrackLive(s, p, true); break;
                 default: throw new ArgumentException("no such ability: " + p.Name + " (" + string.Join(", ", Abilities) + ")");
             }
         }
