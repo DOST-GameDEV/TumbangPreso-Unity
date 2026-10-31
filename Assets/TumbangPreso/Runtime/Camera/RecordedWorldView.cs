@@ -397,7 +397,7 @@ namespace TumbangPreso.CameraSystem
                     surface.SetPropertyBlock(_coatBlock);
                 }
                 if(!state.HasCoat)continue;
-                bool ability=state.Element!=StunElement.None;var coat=StunCoat.For(state.Element);
+                bool ability=state.Element!=StunElement.None;
                 foreach(var surface in item.Copy.Renderers)
                 {
                     surface.GetPropertyBlock(_coatBlock);
@@ -406,7 +406,7 @@ namespace TumbangPreso.CameraSystem
                     _coatBlock.SetColor("_RimColor",state.HasAccent?state.RimColour:material!=null&&material.HasProperty("_RimColor")?material.GetColor("_RimColor"):Color.white);
                     _coatBlock.SetFloat("_FlashAmount",state.Flash*Mathf.Clamp01(Settings.SettingsStore.Current.EffectiveFlashIntensity));
                     _coatBlock.SetFloat("_CaughtAmount",ability?0:state.Frost);_coatBlock.SetFloat("_FrostAmount",ability?state.Frost:0);
-                    if(ability){_coatBlock.SetColor("_FrostColor",coat.Body);_coatBlock.SetColor("_FrostRimColor",coat.Rim);}
+                    if(ability)StunCoat.WriteBody(_coatBlock,state.Element);
                     surface.SetPropertyBlock(_coatBlock);
                 }
             }
