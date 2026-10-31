@@ -33,20 +33,16 @@ namespace TumbangPreso.UI
         private int _nextRoundNumber;
         private bool _popupBuilt;
         private const float PopupWidth=1100, PopupHeight=470, PopupTop=0;
-        // Owner, October 31: "the sides of the grey stuff is ugly", "same quality dun sa red stuff", "color blue if di pa taya".
-        // Every plate is the headline's: solid colour, a chunky darker side, no hairline. Red is the taya, blue everyone else.
-        private static readonly Color CardFill=new Color32(38,78,168,255), CardSide=new Color32(18,38,92,255);
-        private static readonly Color TayaFill=HudDraw.Alarm, TayaSide=new Color32(112,18,24,255);
-        private static void Plate(HudCard card,Color fill,Color side)
+        // Owner, October 31: dark cards, with "the highlight or sides blue na di pixelated". Red is the taya, blue everyone else.
+        private static readonly Color CardFill=new Color32(30,18,12,245);
+        private static readonly Color EdgeBlue=new Color32(72,142,255,255), EdgeRed=new Color32(236,48,56,255);
+        private static void Plate(HudCard card,float lean,Color edge)
         {
-            card.Glass(fill,card.Slant>0?card.Slant:HudDraw.Lean,4,.45f);card.Border=Color.clear;card.BorderWidth=0;
-            card.Side=side;card.Depth=9;card.FollowContrast=false;
+            card.Glass(CardFill,lean,6,.5f);card.Border=edge;card.BorderWidth=3;card.SoftEdge=3;card.FollowContrast=false;
         }
         private readonly Text[] _ranks=new Text[4];
         private RectTransform _headline;
-        private readonly HudCard[] _gainPills=new HudCard[4];
-        private readonly Image[] _rules=new Image[4];
-        // ⚠️ ON THE ARENA THE BREAK IS A SHOW, AND THIS CARD WAS STANDING IN FRONT OF IT (owner,
+                // ⚠️ ON THE ARENA THE BREAK IS A SHOW, AND THIS CARD WAS STANDING IN FRONT OF IT (owner,
         // 2026-10-05: "map transformation is so dull, theres no emphasis on it"). That map draws
         // its stage rebuilding itself behind the card (`HalftimePresentation.LiveStageBreak`),
         // and an 1100 by 270 card dead centre covered the can, the hologram and every lock. So
@@ -101,7 +97,7 @@ namespace TumbangPreso.UI
             }
 
             var headline=Card(_popup,"HalftimePlate",250,0,600,112,HudDraw.Alarm);
-            Plate(headline,TayaFill,TayaSide);_headline=headline.rectTransform;
+            headline.Glass(HudDraw.Alarm,HudDraw.Lean,3,.5f);headline.FollowContrast=false;_headline=headline.rectTransform;
             _round=Label(headline.transform,"RoundHeadline","HALFTIME",84,HudDraw.Ivory);
             OwnerUiLayout.Place(_round.rectTransform,0,0,600,112);_round.alignment=TextAnchor.MiddleCenter;_round.fontStyle=FontStyle.Italic;
             _round.horizontalOverflow=HorizontalWrapMode.Wrap;_round.resizeTextForBestFit=true;_round.resizeTextMinSize=48;_round.resizeTextMaxSize=84;
@@ -110,10 +106,11 @@ namespace TumbangPreso.UI
             for(int i=0;i<4;i++)
             {
                 float x=i*(266+12);
-                var chip=_chips[i]=Card(_popup,"ScoreTicket"+i,x,i==0?116:128,266,i==0?238:226,CardFill);
-                chip.Slant=.06f;Plate(chip,CardFill,CardSide);
+                var chip=_chips[i]=Card(_popup,"ScoreTicket"+i,x,128,266,226,CardFill);
+                Plate(chip,.06f,EdgeBlue);
                 var swatch=_chipSwatches[i]=Card(chip.transform,"StandingSwatch"+i,10,10,246,118,Color.white);
-                swatch.ShadowAlpha=0;swatch.FollowContrast=false;swatch.Radius=6;
+                swatch.ShadowAlpha=0;swatch.FollowContrast=false;swatch.Radius=4;swatch.Slant=.06f;
+                // The owner kept this: pale diagonal slats behind the portrait, the wipe's pattern.
                 var slats=OwnerUiLayout.Rect(swatch.transform,"StandingSlats");OwnerUiLayout.Place(slats,0,0,246,118);
                 slats.gameObject.AddComponent<RectMask2D>();
                 for(int s=0;s<7;s++)
@@ -122,59 +119,53 @@ namespace TumbangPreso.UI
                     slat.color=new Color(1,1,1,.13f);slat.raycastTarget=false;
                     OwnerUiLayout.Place(slat.rectTransform,-20+s*44,-30,20,178);slat.rectTransform.localRotation=Quaternion.Euler(0,0,-14);
                 }
-                _portraits[i]=OwnerUiLayout.Rect(chip.transform,"StandingPortrait"+i).gameObject.AddComponent<Image>();
-                _portraits[i].preserveAspect=true;_portraits[i].raycastTarget=false;OwnerUiLayout.Place(_portraits[i].rectTransform,58,-12,150,140);
-                _ranks[i]=Label(chip.transform,"StandingRank"+i,(i+1).ToString(),i==0?72:60,i==0?HudDraw.Honey:HudDraw.Ivory);
-                OwnerUiLayout.Place(_ranks[i].rectTransform,22,10,60,74);_ranks[i].fontStyle=FontStyle.Italic;
+                _portraits[i]=OwnerUiLayout.Rect(swatch.transform,"StandingPortrait"+i).gameObject.AddComponent<Image>();
+                _portraits[i].preserveAspect=true;_portraits[i].raycastTarget=false;OwnerUiLayout.Place(_portraits[i].rectTransform,58,0,130,118);
+                _ranks[i]=Label(swatch.transform,"StandingRank"+i,(i+1).ToString(),60,HudDraw.Ivory);
+                OwnerUiLayout.Place(_ranks[i].rectTransform,14,4,60,70);_ranks[i].fontStyle=FontStyle.Italic;
                 var rankInk=_ranks[i].gameObject.AddComponent<Outline>();rankInk.effectColor=UiTheme.InGameOutline;rankInk.effectDistance=new Vector2(3,-3);
                 _chipCrowns[i]=OwnerUiLayout.Rect(chip.transform,"StandingCrown"+i).gameObject.AddComponent<HudBadge>();
-                OwnerUiLayout.Place(_chipCrowns[i].rectTransform,108,-34,50,38);_chipCrowns[i].raycastTarget=false;
+                OwnerUiLayout.Place(_chipCrowns[i].rectTransform,108,-24,50,38);_chipCrowns[i].raycastTarget=false;
                 _chipRoles[i]=OwnerUiLayout.Rect(chip.transform,"StandingRole"+i).gameObject.AddComponent<HudBadge>();
                 OwnerUiLayout.Place(_chipRoles[i].rectTransform,204,76,44,44);_chipRoles[i].Detail=UiTheme.Defense;_chipRoles[i].raycastTarget=false;
-                float below=i==0?12:0;
-                var rule=OwnerUiLayout.Rect(chip.transform,"StandingRule").gameObject.AddComponent<Image>();
-                rule.color=PlayerIdentity.Colour(i);rule.raycastTarget=false;OwnerUiLayout.Place(rule.rectTransform,10,128,246,4);_rules[i]=rule;
                 _names[i]=Label(chip.transform,"StandingName"+i,"",28,HudDraw.Ivory);
-                OwnerUiLayout.Place(_names[i].rectTransform,16,134+below,234,36);
+                OwnerUiLayout.Place(_names[i].rectTransform,16,130,234,36);
                 _names[i].horizontalOverflow=HorizontalWrapMode.Wrap;_names[i].resizeTextForBestFit=true;_names[i].resizeTextMinSize=20;_names[i].resizeTextMaxSize=28;
                 _scores[i]=Label(chip.transform,"StandingScore"+i,"",60,HudDraw.Ivory);
-                OwnerUiLayout.Place(_scores[i].rectTransform,96,162+below,158,62);_scores[i].alignment=TextAnchor.MiddleRight;_scores[i].fontStyle=FontStyle.Italic;
+                OwnerUiLayout.Place(_scores[i].rectTransform,96,160,158,62);_scores[i].alignment=TextAnchor.MiddleRight;_scores[i].fontStyle=FontStyle.Italic;
                 // What this seat earned since the last break, beside its total.
-                _gainPills[i]=Card(chip.transform,"StandingGainPill"+i,14,176+below,92,36,HudDraw.Honey);
-                _gainPills[i].Glass(HudDraw.Honey,HudDraw.Lean,3,.3f);_gainPills[i].FollowContrast=false;_gainPills[i].BorderWidth=0;
-                _gains[i]=Label(chip.transform,"StandingGain"+i,"",28,HudDraw.CardInk);
-                OwnerUiLayout.Place(_gains[i].rectTransform,14,176+below,92,36);_gains[i].fontStyle=FontStyle.Italic;_gains[i].alignment=TextAnchor.MiddleCenter;
+                _gains[i]=Label(chip.transform,"StandingGain"+i,"",30,HudDraw.Honey);
+                OwnerUiLayout.Place(_gains[i].rectTransform,16,172,84,40);_gains[i].fontStyle=FontStyle.Italic;
+                var gainInk=_gains[i].gameObject.AddComponent<Outline>();gainInk.effectColor=UiTheme.InGameOutline;gainInk.effectDistance=new Vector2(2,-2);
                 _chipHome[i]=chip.rectTransform.anchoredPosition;_chipFrom[i]=_chipHome[i].x;
             }
 
-            var ticket=_ticket=Card(_popup,"NextTayaTicket",0,370,822,88,CardFill);
-            Plate(ticket,TayaFill,TayaSide);
+            var ticket=_ticket=Card(_popup,"NextTayaTicket",180,370,500,88,CardFill);
+            Plate(ticket,HudDraw.Lean,EdgeRed);
             _nextSwatch=Card(ticket.transform,"NextTayaSwatch",30,8,72,72,Color.white);_nextSwatch.Slant=HudDraw.Lean;
-            _nextSwatch.ShadowAlpha=0;_nextSwatch.FollowContrast=false;_nextSwatch.Radius=8;
+            _nextSwatch.ShadowAlpha=0;_nextSwatch.FollowContrast=false;_nextSwatch.Radius=4;
             _portrait=OwnerUiLayout.Rect(_nextSwatch.transform,"NextDefenderPortrait").gameObject.AddComponent<Image>();
             _portrait.preserveAspect=true;_portrait.raycastTarget=false;OwnerUiLayout.Place(_portrait.rectTransform,3,3,66,66);
             var badge=OwnerUiLayout.Rect(ticket.transform,"NextTayaBadge").gameObject.AddComponent<HudBadge>();
             OwnerUiLayout.Place(badge.rectTransform,84,54,32,32);badge.Detail=UiTheme.Defense;badge.raycastTarget=false;
             badge.Show(HudBadge.Glyph.Can,HudDraw.Ivory,UiTheme.Defense);_tayaBadge=badge.rectTransform;
-            var cue=OwnerUiLayout.Rect(ticket.transform,"NextTayaCan").gameObject.AddComponent<HudBadge>();
-            OwnerUiLayout.Place(cue.rectTransform,736,12,64,64);cue.raycastTarget=false;cue.Show(HudBadge.Glyph.Can,new Color(1,1,1,.16f),Color.clear);
             var next=Label(ticket.transform,"NextRole","NEXT TAYA",28,HudDraw.Honey);
             next.gameObject.AddComponent<Outline>().effectColor=UiTheme.InGameOutline;
-            OwnerUiLayout.Place(next.rectTransform,128,4,590,38);
+            OwnerUiLayout.Place(next.rectTransform,128,4,360,38);
             _name=Label(ticket.transform,"NextDefenderName","",36,HudDraw.Ivory);
-            OwnerUiLayout.Place(_name.rectTransform,128,38,590,46);
+            OwnerUiLayout.Place(_name.rectTransform,128,38,360,46);
             _name.horizontalOverflow=HorizontalWrapMode.Wrap;_name.resizeTextForBestFit=true;
             _name.resizeTextMinSize=28;_name.resizeTextMaxSize=36;
 
-            var clock=Card(_popup,"ReturnTimer",834,370,266,88,CardFill);
-            Plate(clock,CardFill,CardSide);
+            var clock=Card(_popup,"ReturnTimer",692,370,228,88,CardFill);
+            Plate(clock,HudDraw.Lean,EdgeBlue);
             _returnClock=OwnerUiLayout.Rect(clock.transform,"ReturnClock").gameObject.AddComponent<HudRing>();
             OwnerUiLayout.Place(_returnClock.rectTransform,26,8,72,72);_returnClock.Thickness=6;_returnClock.raycastTarget=false;
             _returnClock.color=HudDraw.Honey;_returnClock.Track=new Color(1,1,1,.14f);
             _buffer=Label(clock.transform,"WarmupTime","4",34,HudDraw.Honey);
             OwnerUiLayout.Place(_buffer.rectTransform,26,8,72,72);_buffer.alignment=TextAnchor.MiddleCenter;
             _nextRound=Label(clock.transform,"NextRound","ROUND 5",28,HudDraw.Ivory);
-            OwnerUiLayout.Place(_nextRound.rectTransform,104,20,150,48);_nextRound.alignment=TextAnchor.MiddleCenter;
+            OwnerUiLayout.Place(_nextRound.rectTransform,102,20,122,48);_nextRound.alignment=TextAnchor.MiddleCenter;
 
             _notice=Label(_popup,"ReplayNotice","",28,HudDraw.Ivory);
             OwnerUiLayout.Place(_notice.rectTransform,0,PopupHeight-8,PopupWidth,36);_notice.alignment=TextAnchor.MiddleCenter;
@@ -217,10 +208,8 @@ namespace TumbangPreso.UI
             {
                 int seat=order[i];bool taya=seat==nextTaya;
                 _chipSwatches[i].color=PlayerIdentity.Colour(seat);
-                if(_rules[i]!=null)_rules[i].color=Color.Lerp(PlayerIdentity.Colour(seat),Color.black,.25f);
-                _chips[i].Style(taya?TayaFill:CardFill,Color.clear,0,
+                _chips[i].Style(CardFill,taya?EdgeRed:EdgeBlue,3,
                     seat==mine?HudDraw.Honey:Color.clear,seat==mine?6:0);
-                _chips[i].Side=taya?TayaSide:CardSide;_chips[i].SetVerticesDirty();
                 _chipCrowns[i].Show(i==0&&uniqueLeader?HudBadge.Glyph.Crown:HudBadge.Glyph.None,CourtPresentationPalette.Gold,Color.clear);
                 _chipRoles[i].Show(taya?HudBadge.Glyph.Can:HudBadge.Glyph.None,CourtPresentationPalette.Paper,UiTheme.Defense);
             }
@@ -331,12 +320,7 @@ namespace TumbangPreso.UI
                 int shown=Mathf.RoundToInt(gain*count);
                 // Blank until the count begins: a "+0" waiting on the chip read as a score of nothing.
                 _gains[i].text=gain==0||shown==0?"":(gain>0?"+":"")+shown;
-                _gains[i].color=gain<0?HudDraw.Ivory:HudDraw.CardInk;
-                if(_gainPills[i]!=null)
-                {
-                    _gainPills[i].enabled=_gains[i].text.Length>0;
-                    _gainPills[i].color=gain<0?HudDraw.Alarm:HudDraw.Honey;
-                }
+                var c=gain<0?HudDraw.Alarm:HudDraw.Honey;c.a=e;_gains[i].color=c;
                 // The tab punches once as its count lands.
                 float punch=reduced?0:Mathf.Clamp01(1-Mathf.Abs(age-(1.3f+i*.1f))/.12f);
                 _gains[i].rectTransform.localScale=Vector3.one*(1+.25f*punch);
