@@ -394,7 +394,7 @@ namespace TumbangPreso.CameraSystem
             {
                 Vector3 dir=Quaternion.AngleAxis(yaw+attempt*45*(attempt%2==0?1:-1)*((attempt+1)/2),Vector3.up)*_shotSide;
                 eye=focus+dir*distance+Vector3.up*(distance*lift);
-                clear=Clear(focus,eye,_shotLens)&&(attempt>=4||!Foreground(eye,focus));
+                clear=Clear(focus,eye,_shotLens);
             }
             if(!clear&&_shotPlaced)eye=_camera.transform.position;
             // The contact is a cut, not a glide: the lens jumps once into the close shot.
