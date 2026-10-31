@@ -13,7 +13,16 @@ namespace TumbangPreso.UI
         private CanvasGroup _group;
         private Text _title, _detail, _bonus;
         private Image _accent, _portrait;
-        private HudCard _plate, _tag, _portraitTile, _wingLeft, _wingRight;
+        private HudCard _plate, _tag, _portraitTile, _wingLeft, _wingRight, _sheen;
+        // Owner, October 31: "parang ang repetitive and bland nila", "like ingame celebrations". Ten moments shared one tile
+        // and one entrance. Each family now has its own colour and its own way in, catches and hits count up in pips, a
+        // sheen crosses the tile and the bonus lands after it, and the words vary. The tiers still set how grand it is.
+        private enum Family { Catch, Knockdown, Accuracy, Lead }
+        private Family _family;
+        private readonly HudCard[] _pips = new HudCard[5];
+        private int _pipCount, _pipFilled;
+        private const int PipGap = 24;
+        private static readonly Color KnockFace = new Color32(28, 96, 190, 255), AccuracyFace = new Color32(26, 140, 96, 255), LeadFace = new Color32(116, 62, 178, 255);
         private HudBurst _burst;
         private HudConfetti _confetti;
         private HudBadge _crown;
@@ -79,6 +88,8 @@ namespace TumbangPreso.UI
             // only the surfaces under it lost their bevel, side and sheen, so an earned moment reads
             // as part of the same HUD as the bar above it.
             banner._plate.Glass(HudDraw.Alarm, HudDraw.Lean, 3, .45f).raycastTarget = false; banner._plate.FollowContrast = false;
+            banner._sheen = OwnerUiLayout.Rect(rect, "MomentSheen").gameObject.AddComponent<HudCard>();
+            banner._sheen.Glass(new Color(1, 1, 1, .3f), HudDraw.Lean, 0, 0).raycastTarget = false; banner._sheen.BorderWidth = 0; banner._sheen.FollowContrast = false;
             banner._portraitTile = OwnerUiLayout.Rect(rect, "MomentPortraitTile").gameObject.AddComponent<HudCard>();
             banner._portraitTile.Glass(Color.white, HudDraw.Lean, 2, 0).raycastTarget = false; banner._portraitTile.BorderWidth = 0;
             banner._portraitTile.FollowContrast = false;
@@ -98,6 +109,12 @@ namespace TumbangPreso.UI
             banner._crown.raycastTarget = false; banner._crown.RimWidth = 3; banner._crown.Rim = HudDraw.Brown;
             banner._confetti = OwnerUiLayout.Rect(rect, "MomentConfetti").gameObject.AddComponent<HudConfetti>();
             banner._confetti.raycastTarget = false; OwnerUiLayout.Fill(banner._confetti.rectTransform);
+            for (int i = 0; i < banner._pips.Length; i++)
+            {
+                var pip = OwnerUiLayout.Rect(rect, "MomentPip" + i).gameObject.AddComponent<HudCard>();
+                pip.Glass(HudDraw.Honey, HudDraw.Lean, 2, 0).raycastTarget = false; pip.FollowContrast = false; pip.gameObject.SetActive(false);
+                banner._pips[i] = pip;
+            }
             banner._accent = OwnerUiLayout.Rect(rect, "PlayerAccent").gameObject.AddComponent<Image>();
             banner._accent.raycastTarget = false; banner._accent.enabled = false;
             banner._detail = OwnerUiLayout.Text(rect, "MomentPlayer", "", 28, OwnerUiLayout.TypeRole.Reading);
@@ -120,6 +137,47 @@ namespace TumbangPreso.UI
             for (int i = 0; i < words.Length; i++)
                 if (words[i].Length > 0) words[i] = char.ToUpperInvariant(words[i][0]) + words[i].Substring(1);
             return string.Join(" ", words) + "!";
+        }
+
+        private static Family FamilyOf(MatchMomentKind kind)
+        {
+            switch (kind)
+            {
+                case MatchMomentKind.SingleCatch: case MatchMomentKind.DoubleCatch: case MatchMomentKind.TripleCatch: case MatchMomentKind.MultiCatch: return Family.Catch;
+                case MatchMomentKind.FirstKnockdown: case MatchMomentKind.LateKnockdown: case MatchMomentKind.MultiKnockdown: return Family.Knockdown;
+                case MatchMomentKind.AccurateThree: case MatchMomentKind.AccurateFive: return Family.Accuracy;
+                default: return Family.Lead;
+            }
+        }
+        // Chosen by the moment's own sequence number, so every peer draws the same words. `Phrase` keeps the canonical name.
+        private static string Shout(MatchMoment moment, string phrase)
+        {
+            string[] others;
+            switch (moment.Kind)
+            {
+                case MatchMomentKind.SingleCatch: others = new[] { "Huli Ka!", "Gotcha!" }; break;
+                case MatchMomentKind.DoubleCatch: others = new[] { "Dalawa Agad!" }; break;
+                case MatchMomentKind.TripleCatch: others = new[] { "Walang Takas!" }; break;
+                case MatchMomentKind.FirstKnockdown: others = new[] { "Tumba!" }; break;
+                case MatchMomentKind.LateKnockdown: others = new[] { "Tumba Pa!" }; break;
+                case MatchMomentKind.AccurateThree: others = new[] { "Sapul!" }; break;
+                case MatchMomentKind.AccurateFive: others = new[] { "Asintado!" }; break;
+                default: return Spoken(phrase);
+            }
+            int pick = (int)(moment.Sequence % (others.Length + 1));
+            return pick == 0 ? Spoken(phrase) : others[pick - 1];
+        }
+        private static int PipsOf(MatchMoment moment)
+        {
+            switch (moment.Kind)
+            {
+                case MatchMomentKind.AccurateThree: return 3;
+                case MatchMomentKind.AccurateFive: return 5;
+                case MatchMomentKind.DoubleCatch: return 2;
+                case MatchMomentKind.TripleCatch: return 3;
+                case MatchMomentKind.MultiCatch: return Mathf.Clamp(moment.Count, 4, 5);
+                default: return 0;
+            }
         }
 
         private void Layout()
@@ -148,8 +206,8 @@ namespace TumbangPreso.UI
                 float wingWidth = 96 + (_tier - 2) * 30, wingHeight = height * .62f;
                 OwnerUiLayout.Place(_wingLeft.rectTransform, -wingWidth + 34, (height - wingHeight) * .5f + 10, wingWidth, wingHeight);
                 OwnerUiLayout.Place(_wingRight.rectTransform, width - 34, (height - wingHeight) * .5f + 10, wingWidth, wingHeight);
-                var face = _tier == 3 ? HudDraw.HoneySide : HudDraw.AlarmDeep;
-                Color side = _tier == 3 ? (Color)new Color32(150, 100, 20, 255) : HudDraw.AlarmSide;
+                var face = _tier == 3 ? HudDraw.HoneySide : Darker(_plate.color, .7f);
+                Color side = _tier == 3 ? (Color)new Color32(150, 100, 20, 255) : Darker(_plate.color, .55f);
                 foreach (var wing in new[] { _wingLeft, _wingRight }) { wing.color = face; wing.Side = side; wing.SetVerticesDirty(); }
             }
             _crown.gameObject.SetActive(_tier == 3);
@@ -163,7 +221,15 @@ namespace TumbangPreso.UI
             _burst.color = _tier == 3 ? new Color(1, .96f, .86f, .8f) : new Color(1, .77f, .25f, .6f);
             _burst.Second = _tier == 3 ? new Color(1, .77f, .25f, .8f) : new Color(1, .96f, .86f, .35f);
             OwnerUiLayout.Place(_confetti.rectTransform, 0, 0, width, height);
+            OwnerUiLayout.Place(_sheen.rectTransform, 0, 2, 46, height - 4);
+            for (int i = 0; i < _pips.Length; i++)
+            {
+                bool on = i < _pipCount;
+                _pips[i].gameObject.SetActive(on);
+                if (on) OwnerUiLayout.Place(_pips[i].rectTransform, lead + i * PipGap, height - 9, 20, 14);
+            }
         }
+        private static Color Darker(Color c, float k) => new Color(c.r * k, c.g * k, c.b * k, 1);
 
         private void PaintPortrait(int actor)
         {
@@ -259,10 +325,13 @@ namespace TumbangPreso.UI
         {
             _moment = moment; _began = Time.unscaledTime; _duration = Lifetime;
             _phrase = Title(moment.Kind);
-            _title.text = Spoken(_phrase);
+            _title.text = Shout(moment, _phrase);
             _tier = TierOf(moment.Kind);
+            _family = FamilyOf(moment.Kind);
+            _pipCount = PipsOf(moment); _pipFilled = -1;
             bool big = _tier == 3;
-            _plate.color = big ? HudDraw.Honey : HudDraw.Alarm; _plate.Side = big ? HudDraw.HoneySide : HudDraw.AlarmSide; _plate.SetVerticesDirty();
+            Color face = _family == Family.Knockdown ? KnockFace : _family == Family.Accuracy ? AccuracyFace : _family == Family.Lead ? LeadFace : HudDraw.Alarm;
+            _plate.color = big ? HudDraw.Honey : face; _plate.Side = big ? HudDraw.HoneySide : Darker(face, .65f); _plate.SetVerticesDirty();
             _title.color = big ? HudDraw.Brown : HudDraw.Ivory;
             _detail.text = PlayerIdentity.Label(moment.Actor) + " · " + SeatLabel.Raw(moment.Actor)
                 + (moment.Bonus > 0 ? "   +" + moment.Bonus + " bonus" : "");
@@ -271,7 +340,7 @@ namespace TumbangPreso.UI
             PaintPortrait(moment.Actor);
             Layout();
             _burst.Set(0, 0);
-            if (_tier == 3 && !Settings.SettingsStore.Current.ReducedUiMotion)
+            if (_tier >= 2 && !Settings.SettingsStore.Current.ReducedUiMotion)
                 _confetti.Burst(PlayerIdentity.Colour(moment.Actor), HudDraw.Honey, HudDraw.Cream);
             else _confetti.Stop();
             Paint();
@@ -306,9 +375,34 @@ namespace TumbangPreso.UI
             // The slap grows with the tier, and the bigger tiers settle with a short shake.
             float slap = _tier == 3 ? .34f : _tier == 2 ? .26f : .18f;
             float shake = reduced || _tier < 2 ? 0 : Mathf.Sin(age * 70f) * Mathf.Clamp01(1 - (age - .18f) / .3f) * (age > .18f ? 1 : 0) * (_tier == 3 ? 7 : 4);
-            _rect.anchoredPosition = Rest + (reduced ? Vector2.zero : new Vector2(shake, -8 * (1 - leave)));
-            _rect.localScale = Vector3.one * Reading() * (reduced ? 1 : 1 + slap * (1 - arrive));
-            _rect.localRotation = Quaternion.Euler(0, 0, Tilt + (reduced ? 0 : -6 * (1 - arrive)));
+            // Each family's way in: a catch is stamped down, a knockdown skids in, a good aim rises, the lead drops from above.
+            float land = 1 - arrive;
+            Vector2 way = _family == Family.Knockdown ? new Vector2(-150 * land, 0)
+                : _family == Family.Accuracy ? new Vector2(0, -56 * land)
+                : _family == Family.Lead ? new Vector2(0, 70 * land) : Vector2.zero;
+            float stamp = _family == Family.Catch ? slap * 2.2f : slap * .6f;
+            float tilt = _family == Family.Knockdown ? 9 : _family == Family.Catch ? -8 : 0;
+            _rect.anchoredPosition = Rest + (reduced ? Vector2.zero : way + new Vector2(shake, 12 * (1 - leave)));
+            _rect.localScale = Vector3.one * Reading() * (reduced ? 1 : 1 + stamp * land);
+            _rect.localRotation = Quaternion.Euler(0, 0, Tilt + (reduced ? 0 : tilt * land));
+            // The sheen crosses once, after the landing. The pips count up after it, then the bonus lands on the last.
+            float across = Mathf.Clamp01((age - .16f) / .3f);
+            bool sheen = !reduced && across > 0 && across < 1;
+            if (_sheen.gameObject.activeSelf != sheen) _sheen.gameObject.SetActive(sheen);
+            if (sheen)
+            {
+                var at = _sheen.rectTransform.anchoredPosition;
+                at.x = Mathf.Lerp(0, Mathf.Max(0, _rect.sizeDelta.x - 46), across); _sheen.rectTransform.anchoredPosition = at;
+            }
+            for (int i = 0; i < _pipCount; i++)
+            {
+                float since = age - .14f - i * .07f;
+                bool lit = reduced || since >= 0;
+                _pips[i].color = lit ? HudDraw.Honey : HudDraw.GlassDeep; _pips[i].SetVerticesDirty();
+                _pips[i].rectTransform.localScale = Vector3.one * (lit && !reduced && since < .14f ? 1 + Mathf.Sin(since / .14f * Mathf.PI) * .6f : 1);
+            }
+            float due = .2f + _pipCount * .07f, badge = age - due;
+            _tag.rectTransform.localScale = Vector3.one * (reduced ? 1 : badge < 0 ? 0 : badge < .16f ? 1 + Mathf.Sin(badge / .16f * Mathf.PI) * .35f : 1);
             if (_tier >= 2)
             {
                 float reach = (reduced ? 1 : arrive) * (_tier == 3 ? 1.55f : 1.15f);

@@ -27,8 +27,12 @@ namespace TumbangPreso.CameraSystem
                 System.Array.Clear(_tracks, 0, _tracks.Length);
                 _match = match.PresentationMatchId; _round = match.RoundNumber; _next = 0;
             }
-            if (!round.RoundActive || Time.time < _next) return;
-            _next = Time.time + Interval;
+            if (!round.RoundActive) return;
+            // ⚠️ THE TOUCH IS NEVER LEFT TO CHANCE. 20 samples a second, fewer on a slow frame, can straddle a touch held for a
+            // tenth of a second, and the replay then shows an arm and chest that never arrived. A tag at its height is sampled
+            // on the frame it gets there, between the regular samples.
+            if (Time.time < _next && !TouchDue(round)) return;
+            if (Time.time >= _next) _next = Time.time + Interval;
             for (int i = 0; i < _tracks.Length; i++)
             {
                 var actor = round.PlayerAt(i); var visual = actor != null ? actor.GetComponent<CharacterVisual>() : null;
@@ -40,6 +44,20 @@ namespace TumbangPreso.CameraSystem
                 _tracks[i].Record(Time.time);
             }
             Sampled?.Invoke(Time.time);
+        }
+
+        private readonly bool[] _touchTaken = new bool[Core.Balance.PlayerCount];
+        private bool TouchDue(RoundDirector round)
+        {
+            bool due = false;
+            for (int i = 0; i < _tracks.Length; i++)
+            {
+                var track = _tracks[i];
+                float weight = track != null ? track.TagWeightNow : 0;
+                if (weight < .5f) _touchTaken[i] = false;
+                else if (weight >= .98f && !_touchTaken[i]) { _touchTaken[i] = true; due = true; }
+            }
+            return due;
         }
 
         public static Transform[] StableTransforms(GameObject source)
@@ -68,6 +86,14 @@ namespace TumbangPreso.CameraSystem
             private int _recordedEpoch;
             private CharacterAnimator _tagAnimator;
             public bool Ready => _count >= 2;
+            internal float TagWeightNow
+            {
+                get
+                {
+                    if (_tagAnimator == null && Actor != null) _tagAnimator = Actor.GetComponentInChildren<CharacterAnimator>();
+                    return _tagAnimator != null ? _tagAnimator.RecordedTagContactWeight : 0;
+                }
+            }
             /// <summary>A recorded bone was destroyed: this track can never record again.</summary>
             public bool Broken { get; private set; }
             public float Newest => _count > 0 ? _frames[(_cursor + Samples - 1) % Samples].Time : 0;

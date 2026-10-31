@@ -113,10 +113,12 @@ namespace TumbangPreso.UI
                 // the can inside a turning arrow, a catch is an open hand on a burst and a block
                 // is a shield. Four outlines before four colours, so the feed reads in greyscale.
                 case Glyph.Knock:
-                    Burst(vh, c, s * .50f, s * .27f, 9, Accent);
-                    HudDraw.RoundedRect(vh, new Rect(P(-.30f, -.17f), new Vector2(.60f, .36f) * s), s * .07f, fill);
-                    HudDraw.Bar(vh, P(.14f, -.17f), P(.14f, .19f), s * .06f, Detail);
-                    HudDraw.Bar(vh, P(-.14f, -.17f), P(-.14f, .19f), s * .06f, Detail);
+                    // Owner, October 31: "medyo weird kasi icons". A little can on a big spiky burst read as a smudge at
+                    // feed size. Now the can fills the badge, caught mid-topple, with three contact ticks behind it.
+                    Ticks(vh, P(-.26f, .16f), s, Accent);
+                    HudDraw.Bar(vh, P(-.20f, -.20f), P(.26f, .10f), s * .40f, fill);
+                    HudDraw.Bar(vh, P(-.09f, -.32f), P(-.26f, -.06f), s * .055f, Detail);
+                    HudDraw.Bar(vh, P(.22f, -.09f), P(.05f, .17f), s * .055f, Detail);
                     break;
                 case Glyph.Restore:
                     HudDraw.Arc(vh, c, s * .48f, s * .38f, 60, 290, Accent, 48);
@@ -126,14 +128,14 @@ namespace TumbangPreso.UI
                     HudDraw.Bar(vh, P(-.15f, -.12f), P(.15f, -.12f), s * .05f, Detail);
                     break;
                 case Glyph.Tag:
-                    Burst(vh, c, s * .50f, s * .30f, 9, Accent);
-                    // A mitten hand, like the cast's own: palm plus four fingers, no thumb.
-                    HudDraw.RoundedRect(vh, new Rect(P(-.20f, -.30f), new Vector2(.40f, .34f) * s), s * .08f, fill);
+                    // A big mitten hand, like the cast's own, landing: palm plus four fingers, contact ticks at the fingertips.
+                    Ticks(vh, P(.02f, .30f), s, Accent);
+                    HudDraw.RoundedRect(vh, new Rect(P(-.27f, -.44f), new Vector2(.50f, .42f) * s), s * .09f, fill);
                     for (int f = 0; f < 4; f++)
                     {
-                        float x = -.15f + f * .10f, top = f == 0 || f == 3 ? .24f : .32f;
-                        HudDraw.Bar(vh, P(x, -.02f), P(x, top), s * .085f, fill);
-                        HudDraw.Disc(vh, P(x, top), s * .0425f, fill, 10);
+                        float x = -.21f + f * .127f, top = f == 0 || f == 3 ? .07f : .17f;
+                        HudDraw.Bar(vh, P(x, -.08f), P(x, top), s * .105f, fill);
+                        HudDraw.Disc(vh, P(x, top), s * .052f, fill, 10);
                     }
                     break;
                 case Glyph.Block:
@@ -146,6 +148,17 @@ namespace TumbangPreso.UI
                     HudDraw.Arc(vh, c, s * .30f + RimWidth, s * .25f - RimWidth, 90, 360, Rim, 64);
                     HudDraw.Arc(vh, c, s * .30f, s * .25f, 90, 360, fill, 64);
                     break;
+            }
+        }
+
+        /// <summary>Three short strokes fanning up from a contact point: the accepted-contact mark at feed size.</summary>
+        private static void Ticks(VertexHelper vh, Vector2 from, float s, Color colour)
+        {
+            for (int i = -1; i <= 1; i++)
+            {
+                float a = Mathf.PI * .5f + i * .62f;
+                var way = new Vector2(Mathf.Cos(a), Mathf.Sin(a));
+                HudDraw.Bar(vh, from + way * (s * .09f), from + way * (s * .25f), s * .075f, colour);
             }
         }
 

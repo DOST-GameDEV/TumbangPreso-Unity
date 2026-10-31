@@ -27,7 +27,7 @@ namespace TumbangPreso.UI
     {
         public const int Capacity = 3;
         public const float Lifetime = 3f;
-        private const float RowHeight = 54, Chip = 44, GlyphSize = 42, Pad = 5, Gap = 7, RowStep = 60, Width = 450;
+        private const float RowHeight = 54, Chip = 44, GlyphSize = 46, Pad = 5, Gap = 7, RowStep = 60, Width = 450;
 
         private sealed class Row
         {

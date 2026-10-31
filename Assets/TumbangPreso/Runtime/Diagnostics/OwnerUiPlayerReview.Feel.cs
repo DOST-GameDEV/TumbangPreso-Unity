@@ -102,6 +102,27 @@ namespace TumbangPreso.Diagnostics
                 yield return WaitFor(()=>b.CanAct(),8);
             }
 
+            // 4e-f. Tags as they happen in play, inside the box: on the run and dashed into.
+            yield return FeelTagInPlay("4e-tag-running",taya,b,new Vector3(-4,.12f,-5),Vector3.forward,1.1f,false,rig,Park);
+            yield return FeelTagInPlay("4f-tag-dash",taya,b,new Vector3(4,.12f,-4),new Vector3(-1,0,1).normalized,1.7f,true,rig,Park);
+
+            // 4i. The same tag from a third player's own eyes: the live game the replay has to match.
+            Park();FeelPlace(taya,tayaAt,victimSpot);FeelPlace(b,victimSpot,victimSpot+Vector3.forward);FeelArm(b);
+            FeelPlace(c,victimSpot+new Vector3(3f,0,-.5f),victimSpot+Vector3.back*.5f);rig.Follow(c,true);Hud.Instance.Bind(c);
+            yield return new WaitForSecondsRealtime(2.5f);
+            yield return FeelClip("4i-tag-third-person",2.6f,()=>FeelPunch(taya,false,true));
+
+            // 4j. One of each moment family, in the HUD.
+            Park();FeelPlace(c,new Vector3(-5,.12f,-5),mark);rig.Follow(c,true);Hud.Instance.Bind(c);
+            yield return FeelClip("4j-moments",10.5f,()=>FeelMoments(match,round));
+
+            // 4h. The taya's warnings: swinging at somebody with no slipper, then walking into the chalk.
+            Park();FeelPlace(taya,tayaAt,victimSpot);FeelPlace(a,victimSpot,victimSpot+Vector3.forward);
+            if(a.HoldingSlipper)throw new InvalidOperationException("The filmed empty attacker still holds a slipper");
+            rig.Follow(taya,true);Hud.Instance.Bind(taya);
+            yield return new WaitForSecondsRealtime(1.5f);
+            yield return FeelClip("4h-taya-warnings",6,()=>FeelWarnings(taya,a));
+
             // 4c. The tagger's own eyes: the jab lands, then the dash lands.
             foreach(string verb in new[]{"jab","dash"})
             {
@@ -109,7 +130,6 @@ namespace TumbangPreso.Diagnostics
                 rig.Follow(taya,true);Hud.Instance.Bind(taya);
                 yield return new WaitForSecondsRealtime(2.5f);
                 yield return FeelClip("4c-tagger-"+verb,2.5f,()=>FeelPunch(taya,verb=="dash"));
-                yield return WaitFor(()=>b.CanAct(),8);
             }
 
             // 4d. The taya raises the downed can, from their own eyes.
@@ -158,7 +178,57 @@ namespace TumbangPreso.Diagnostics
             yield return new WaitForSecondsRealtime(.7f);
             FeelThrow(who,aim);
         }
-        private static IEnumerator FeelPunch(CharacterMotor taya,bool dash=false)
+        // Both really run under their own motors, so the replay has a real recorded chase to show.
+        private IEnumerator FeelTagInPlay(string name,CharacterMotor taya,CharacterMotor victim,Vector3 victimAt,Vector3 heading,float behind,bool dash,CameraRig rig,Action park)
+        {
+            park();FeelPlace(victim,victimAt,victimAt+heading);FeelPlace(taya,victimAt-heading*behind,victimAt);FeelArm(victim);
+            rig.Follow(victim,true);Hud.Instance.Bind(victim);
+            yield return new WaitForSecondsRealtime(1.5f);
+            yield return FeelClip(name,6,()=>FeelChase(taya,victim,dash));
+            yield return WaitFor(()=>victim.CanAct(),8);
+        }
+        private static IEnumerator FeelChase(CharacterMotor taya,CharacterMotor victim,bool dash)
+        {
+            victim.Intent.Parked=false;taya.Intent.Parked=false;
+            float until=Time.realtimeSinceStartup+1.1f;
+            while(Time.realtimeSinceStartup<until){victim.Intent.Move=Vector2.up;taya.Intent.Move=Vector2.up;yield return null;}
+            var verbs=taya.GetComponent<CombatVerbs>();
+            Vector3 to=victim.transform.position-taya.transform.position;to.y=0;
+            if(to.sqrMagnitude>.01f)taya.transform.forward=to.normalized;
+            if(dash)typeof(CombatVerbs).GetMethod("ReleaseLunge",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(verbs,new object[]{1f});
+            else if(!verbs.HostResolvePunch(taya.transform.position,taya.transform.forward))
+                throw new InvalidOperationException("Filmed chase tag was refused at "+to.magnitude);
+            yield return new WaitForSecondsRealtime(.25f);
+            victim.Intent.Clear();taya.Intent.Clear();victim.Intent.Parked=true;taya.Intent.Parked=true;
+            if(!dash&&!Object.FindAnyObjectByType<CatchReconstruction>().Playing)throw new InvalidOperationException("The chase tag did not land");
+            yield return new WaitForSecondsRealtime(.65f);
+        }
+        private static IEnumerator FeelMoments(MatchDirector match,RoundDirector round)
+        {
+            long id=match.PresentationMatchId;int number=match.RoundNumber,sequence=5000;
+            foreach(var kind in new[]{MatchMomentKind.SingleCatch,MatchMomentKind.FirstKnockdown,MatchMomentKind.AccurateFive,MatchMomentKind.DoubleCatch,MatchMomentKind.TripleCatch})
+            {
+                int count=kind==MatchMomentKind.TripleCatch?3:kind==MatchMomentKind.DoubleCatch?2:1;
+                // Straight to the banner: the match rightly ignores a made-up moment on its own host.
+                typeof(MatchMomentBanner).GetMethod("OnMoment",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(Object.FindAnyObjectByType<MatchMomentBanner>(),
+                    new object[]{new MatchMoment(id,sequence++,number,round.Players.First(p=>!p.IsDefender).PlayerSlot,kind,count,kind==MatchMomentKind.SingleCatch?0:50)});
+                yield return new WaitForSecondsRealtime(2.05f);
+            }
+        }
+        private static IEnumerator FeelWarnings(CharacterMotor taya,CharacterMotor empty)
+        {
+            yield return new WaitForSecondsRealtime(.5f);
+            taya.GetComponent<CombatVerbs>().GetType().GetMethod("WarnWhyNoTag",BindingFlags.Instance|BindingFlags.NonPublic)
+                .Invoke(taya.GetComponent<CombatVerbs>(),new object[]{Balance.PunchRange});
+            if(UI.Hud.Instance.Local!=taya)throw new InvalidOperationException("Warnings filmed on the wrong screen");
+            yield return new WaitForSecondsRealtime(2.2f);
+            FeelPlace(taya,new Vector3(0,.12f,5.5f),new Vector3(0,.12f,20));
+            taya.Intent.Parked=false;
+            float until=Time.realtimeSinceStartup+2.6f;
+            while(Time.realtimeSinceStartup<until){taya.Intent.Move=Vector2.up;yield return null;}
+            taya.Intent.Clear();taya.Intent.Parked=true;
+        }
+        private static IEnumerator FeelPunch(CharacterMotor taya,bool dash=false,bool bystander=false)
         {
             yield return new WaitForSecondsRealtime(.5f);
             var verbs=taya.GetComponent<CombatVerbs>();
@@ -167,7 +237,7 @@ namespace TumbangPreso.Diagnostics
                 throw new InvalidOperationException("Filmed catch was refused");
             yield return new WaitForSecondsRealtime(.9f);
             var rig=Camera.main.GetComponent<CameraRig>();
-            if(!rig.IsFollowing(taya)&&!Object.FindAnyObjectByType<CatchReconstruction>().Playing)throw new InvalidOperationException("The tag replay did not play");
+            if(!rig.IsFollowing(taya)&&!bystander&&!Object.FindAnyObjectByType<CatchReconstruction>().Playing)throw new InvalidOperationException("The tag replay did not play");
         }
         private static IEnumerator FeelRaise(CharacterMotor taya,Lata can)
         {
