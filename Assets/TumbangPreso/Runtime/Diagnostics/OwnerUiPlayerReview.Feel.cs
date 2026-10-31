@@ -91,12 +91,36 @@ namespace TumbangPreso.Diagnostics
                 yield return new WaitForSecondsRealtime(.5f);
             }
 
-            // 4. Tagged: the victim's replay.
-            Park();FeelPlace(taya,new Vector3(0,.12f,-4),new Vector3(0,.12f,-3));FeelPlace(b,new Vector3(0,.12f,-3),new Vector3(0,.12f,-2));FeelArm(b);
+            // 4. Tagged: the victim's hit and replay, facing the taya and with the taya behind them.
+            Vector3 tayaAt=new Vector3(0,.12f,-4),victimSpot=new Vector3(0,.12f,-3);
+            foreach(bool facing in new[]{true,false})
+            {
+                Park();FeelPlace(taya,tayaAt,victimSpot);FeelPlace(b,victimSpot,facing?tayaAt:victimSpot+Vector3.forward);FeelArm(b);
+                rig.Follow(b,true);Hud.Instance.Bind(b);
+                yield return new WaitForSecondsRealtime(2.5f);
+                yield return FeelClip(facing?"4-tagged-replay":"4b-tagged-from-behind",facing?6:2.5f,()=>FeelPunch(taya));
+                yield return WaitFor(()=>b.CanAct(),8);
+            }
+
+            // 4c. The tagger's own eyes: the jab lands, then the dash lands.
+            foreach(string verb in new[]{"jab","dash"})
+            {
+                Park();FeelPlace(taya,tayaAt,victimSpot);FeelPlace(b,victimSpot,victimSpot+Vector3.forward);FeelArm(b);
+                rig.Follow(taya,true);Hud.Instance.Bind(taya);
+                yield return new WaitForSecondsRealtime(2.5f);
+                yield return FeelClip("4c-tagger-"+verb,2.5f,()=>FeelPunch(taya,verb=="dash"));
+                yield return WaitFor(()=>b.CanAct(),8);
+            }
+
+            // 4d. The taya raises the downed can, from their own eyes.
+            Park();FeelPlace(taya,new Vector3(mark.x,.12f,mark.z-1.2f),mark);
+            rig.Follow(taya,true);Hud.Instance.Bind(taya);
+            yield return WaitFor(()=>!can.IsProtected,8);
+            can.HostKnockDown(b.PlayerSlot);
+            yield return new WaitForSecondsRealtime(1.2f);
+            yield return FeelClip("4d-can-raise",can.ResetChannelTime+3,()=>FeelRaise(taya,can));
+            yield return WaitFor(()=>can.IsUpright,6);
             rig.Follow(b,true);Hud.Instance.Bind(b);
-            yield return new WaitForSecondsRealtime(2.5f);
-            yield return FeelClip("4-tagged-replay",6,()=>FeelPunch(taya));
-            yield return WaitFor(()=>b.CanAct(),8);
 
             // 5. Halftime.
             var archive=Object.FindAnyObjectByType<MatchReplayArchive>();
@@ -134,13 +158,27 @@ namespace TumbangPreso.Diagnostics
             yield return new WaitForSecondsRealtime(.7f);
             FeelThrow(who,aim);
         }
-        private static IEnumerator FeelPunch(CharacterMotor taya)
+        private static IEnumerator FeelPunch(CharacterMotor taya,bool dash=false)
         {
             yield return new WaitForSecondsRealtime(.5f);
-            if(!taya.GetComponent<CombatVerbs>().HostResolvePunch(taya.transform.position,taya.transform.forward))
+            var verbs=taya.GetComponent<CombatVerbs>();
+            if(dash)typeof(CombatVerbs).GetMethod("ReleaseLunge",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(verbs,new object[]{1f});
+            else if(!verbs.HostResolvePunch(taya.transform.position,taya.transform.forward))
                 throw new InvalidOperationException("Filmed catch was refused");
             yield return new WaitForSecondsRealtime(.9f);
-            if(!Object.FindAnyObjectByType<CatchReconstruction>().Playing)throw new InvalidOperationException("The tag replay did not play");
+            var rig=Camera.main.GetComponent<CameraRig>();
+            if(!rig.IsFollowing(taya)&&!Object.FindAnyObjectByType<CatchReconstruction>().Playing)throw new InvalidOperationException("The tag replay did not play");
+        }
+        private static IEnumerator FeelRaise(CharacterMotor taya,Lata can)
+        {
+            yield return new WaitForSecondsRealtime(.4f);
+            // The carry lives as long as the key is held, as in play.
+            taya.Intent.Parked=false;taya.Intent.Set(Verb.Grab,true);
+            yield return new WaitForSecondsRealtime(.2f);
+            if(!can.IsCarriedBy(taya.PlayerSlot))throw new InvalidOperationException("Filmed can raise was refused");
+            float give=Time.realtimeSinceStartup+8;
+            while(!can.IsUpright&&Time.realtimeSinceStartup<give)yield return null;
+            taya.Intent.Set(Verb.Grab,false);taya.Intent.Parked=true;
         }
         private static IEnumerator FeelHalftime(RoundDirector round,MatchDirector match)
         {

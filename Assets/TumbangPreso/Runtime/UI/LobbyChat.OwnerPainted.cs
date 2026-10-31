@@ -67,9 +67,10 @@ namespace TumbangPreso.UI
                 }
                 _lines.Add(line);_stamps.Add(-999);
             }
-            var fieldHost=OwnerUiLayout.Rect(_rect,"ChatFieldRow");Height(fieldHost,78);_fieldRow=fieldHost.gameObject;
+            // Owner, October 31: "make that smaller ... ang distracting and unnecessary". A small quiet strip in a match.
+            var fieldHost=OwnerUiLayout.Rect(_rect,"ChatFieldRow");Height(fieldHost,_inMatch?40:78);_fieldRow=fieldHost.gameObject;
             _field=BuildChatEntry(fieldHost);
-            _field.textComponent.fontSize=30;_field.characterLimit=Net.MatchRpc.MaxChatLength;_field.onSubmit.AddListener(Submit);
+            _field.textComponent.fontSize=_inMatch?20:30;_field.characterLimit=Net.MatchRpc.MaxChatLength;_field.onSubmit.AddListener(Submit);
             if(_inMatch)_fieldRow.SetActive(false);else BuildNativeHistory();
             SetNativeLines();
             if (_inMatch) HudReadingLayout.Watch(_rect, new Vector2(0, 184));
@@ -77,15 +78,28 @@ namespace TumbangPreso.UI
         private InputField BuildChatEntry(Transform parent)
         {
             var rect=OwnerUiLayout.Rect(parent,"ChatInput");OwnerUiLayout.Fill(rect);
-            var background=rect.gameObject.AddComponent<Image>();background.color=_inMatch?new Color32(31,39,45,245):new Color32(242,243,226,255);
+            if(_inMatch)rect.anchorMax=new Vector2(.68f,1);
+            var background=rect.gameObject.AddComponent<Image>();background.color=_inMatch?new Color32(31,39,45,0):new Color32(242,243,226,255);
+            // Owner, October 31: "js big slab of black in the middle". No plate over the match: words on a thin line.
+            if(_inMatch)
+            {
+                var rule=OwnerUiLayout.Rect(rect,"ChatEntryRule").gameObject.AddComponent<Image>();rule.raycastTarget=false;
+                rule.color=new Color(OwnerUiTheme.Current.Pale.r,OwnerUiTheme.Current.Pale.g,OwnerUiTheme.Current.Pale.b,.45f);
+                rule.rectTransform.anchorMin=Vector2.zero;rule.rectTransform.anchorMax=Vector2.right;rule.rectTransform.pivot=Vector2.zero;
+                rule.rectTransform.offsetMin=Vector2.zero;rule.rectTransform.offsetMax=new Vector2(0,2);
+            }
             var field=rect.gameObject.AddComponent<InputField>();field.targetGraphic=background;field.transition=Selectable.Transition.None;
             field.customCaretColor=true;field.caretColor=_inMatch?OwnerUiTheme.Current.Pale:ChatInk;
             field.selectionColor=new Color(.42f,.60f,.39f,.45f);field.lineType=InputField.LineType.SingleLine;
-            var area=OwnerUiLayout.Rect(rect,"ChatEntryArea");OwnerUiLayout.Fill(area);area.offsetMin=new Vector2(20,8);area.offsetMax=new Vector2(-20,-8);
+            var area=OwnerUiLayout.Rect(rect,"ChatEntryArea");OwnerUiLayout.Fill(area);area.offsetMin=new Vector2(_inMatch?12:20,_inMatch?4:8);area.offsetMax=new Vector2(_inMatch?-12:-20,_inMatch?-4:-8);
             var text=OwnerUiLayout.Text(area,"EnteredText","",30);OwnerUiLayout.Fill(text.rectTransform);text.supportRichText=false;
             text.color=field.caretColor;text.horizontalOverflow=HorizontalWrapMode.Overflow;field.textComponent=text;
-            var hint=OwnerUiLayout.Text(area,"Placeholder",_inMatch?"ENTER TO TALK":"SAY SOMETHING",30,OwnerUiLayout.TypeRole.Accent);
-            OwnerUiLayout.Fill(hint.rectTransform);hint.color=_inMatch?new Color32(184,203,192,255):new Color32(79,105,87,255);field.placeholder=hint;
+            var hint=OwnerUiLayout.Text(area,"Placeholder",_inMatch?"TALK  ·  ESC TO HIDE":"SAY SOMETHING",_inMatch?20:30,OwnerUiLayout.TypeRole.Accent);
+            OwnerUiLayout.Fill(hint.rectTransform);hint.color=_inMatch?new Color32(184,203,192,190):new Color32(79,105,87,255);field.placeholder=hint;
+            if(_inMatch)foreach(var words in new[]{text,hint})
+            {
+                var outline=words.gameObject.AddComponent<Outline>();outline.effectColor=UiTheme.InGameOutline;outline.effectDistance=new Vector2(2,-2);
+            }
             return field;
         }
         private static void Height(RectTransform rect,float height)

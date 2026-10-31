@@ -332,6 +332,8 @@ namespace TumbangPreso
             // instant and close, the dash is a commitment. One shake for both flattens that.
             Animator?.PlayAction("punch");
             Rig?.ViewmodelKick(Vector3.forward);
+            // The head goes with the arm, or from inside it is only a hand moving (owner, October 31).
+            Rig?.ViewPunch(new Vector3(1.6f, 0f, -1.4f), -3f);
 
             if (NetAuthority.ShouldRequest())
             {
@@ -402,6 +404,7 @@ namespace TumbangPreso
             // meant to hit the camera harder than a jab.
             Animator?.PlayAction("lunge");
             Rig?.ViewmodelKick(Vector3.forward, 1.4f);
+            Rig?.ViewPunch(new Vector3(2.6f, 0f, -2f), 5f);
 
             // ⚠️ A VELOCITY IMPULSE, NOT A TELEPORT. The friction model integrates it down and
             // the intervening frames are what the sweep reads. It is also why the taya can be

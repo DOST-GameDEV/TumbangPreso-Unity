@@ -498,9 +498,11 @@ namespace TumbangPreso.Visual
                 if (rig != null && rig.IsFollowing(victim))
                 {
                     Vector3 impact = hitDirection;
-                    rig.ImpactPunch(impact.sqrMagnitude > 0.01f ? impact.normalized : Vector3.back,
+                    if (rig.IsLocalFpp) LandTagOnVictim(rig, taya, victim, at);
+                    else rig.ImpactPunch(impact.sqrMagnitude > 0.01f ? impact.normalized : Vector3.back,
                                     1.0f);
                 }
+                else if (rig != null && rig.IsLocalFpp && rig.IsFollowing(taya)) LandTagOnTagger(rig, taya, victim);
             }
 
 
@@ -509,6 +511,41 @@ namespace TumbangPreso.Visual
             // been told about, and nobody hears somebody else's announcer.
             GameServices.Voice?.OnAttackerTagged();
             GameServices.HeroVoice?.OnTagged(taya, victim);
+        }
+
+        // Owner, October 31: "make it feel and look like natag sila", "its implemented well in getting hit by slipper". The
+        // slipper's recipe, harder: the view is thrown away from where the hand came from and flares in the taya's colour.
+        // The view also stays a moment where you were caught, on the taya closing in, before you are sent home and the replay
+        // wipes in (`CatchReconstruction.VictimHitBeat`). Your look angles are untouched and the match never stops for it.
+        private static void LandTagOnVictim(CameraSystem.CameraRig rig, CharacterMotor taya, CharacterMotor victim, Vector3 at)
+        {
+            Vector3 fromHand = taya.transform.position - at;
+            // `HitFeel` measures from the body, and the host may already have sent that body home.
+            HitFeel.Land(victim, HitFeel.Weight.Knockdown, UI.PlayerIdentity.Colour(taya.PlayerSlot), victim.transform.position + fromHand);
+            Vector3 local = rig.transform.InverseTransformDirection(fromHand);
+            float side = Mathf.Clamp(local.x / Mathf.Max(.2f, Mathf.Abs(local.z)), -1f, 1f);
+            // Caught from the front the head goes back; caught from behind it goes forward.
+            rig.ViewPunch(new Vector3(local.z >= 0f ? -9f : 9f, -side * 9f, side >= 0f ? 8f : -8f), 11f);
+            if (!Settings.SettingsStore.Current.ReducedUiMotion) rig.HoldFrame(CameraSystem.CatchReconstruction.VictimHitBeat);
+            GameServices.Audio?.PlayReplayCue("tag", 1f, 1f, 0f);
+        }
+
+        // Your hand got them: it lands on the body (`ViewmodelArms.PresentTagTouch`), the view hangs for a few frames and
+        // drives in toward the touch. A camera hold on this screen only, as on a can hit: the match never stops for it.
+        private static void LandTagOnTagger(CameraSystem.CameraRig rig, CharacterMotor taya, CharacterMotor victim)
+        {
+            Vector3 touch = taya.GetComponent<CharacterAnimator>() != null
+                ? taya.GetComponent<CharacterAnimator>().AcceptedTagContact : victim.transform.position + Vector3.up;
+            rig.PresentTagTouch(touch);
+            rig.HoldFrame(.06f);
+            Vector3 toward = touch - rig.transform.position;
+            Vector3 local = rig.transform.InverseTransformDirection(toward);
+            float side = Mathf.Clamp(local.x / Mathf.Max(.2f, Mathf.Abs(local.z)), -1f, 1f);
+            rig.ImpactPunch(toward.sqrMagnitude > .01f ? toward.normalized : taya.transform.forward, .35f);
+            rig.ViewPunch(new Vector3(3f, side * 3f, side >= 0f ? -3.5f : 3.5f), -8f);
+            InputLayer.Rumble.Pulse(.35f, .6f, .12f);
+            UI.Hud.TriggerHitmarker(UI.UiTheme.Defense);
+            GameServices.Audio?.PlayReplayCue("tag", 1f, .8f, 0f);
         }
 
         private static void PlayBlock(int thrower, CharacterMotor blocker, Vector3 at, float alongSpeed)

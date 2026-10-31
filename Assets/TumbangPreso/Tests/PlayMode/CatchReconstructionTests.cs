@@ -242,6 +242,29 @@ namespace TumbangPreso.PlayTests
         /// The frames in Logs/tag-live-afterimage are the review; the asserts only pin where and how long.
         /// </summary>
         [UnityTest]
+        public IEnumerator FirstPersonTagPutsTheTaggersHandOnTheCaughtBody()
+        {
+            yield return Open(); Stage();
+            yield return new WaitForSeconds(.4f);
+            var round = GameServices.Round; var taya = round.PlayerAt(0); var victim = round.PlayerAt(1);
+            // Off to one side of the crosshair: the old reach went to one fixed point whoever it was for.
+            taya.Teleport(victim.transform.position - Vector3.forward * 1.1f - Vector3.right * .25f);
+            taya.transform.forward = Vector3.forward;
+            var rig = Camera.main.GetComponent<CameraRig>();
+            rig.Follow(taya, true);
+            yield return new WaitForSeconds(.3f);
+            Vector3 torso = victim.GetComponent<CharacterVisual>().TorsoBone.position;
+            Assert.IsTrue(taya.GetComponent<CombatVerbs>().HostResolvePunch(taya.transform.position, taya.transform.forward));
+            yield return new WaitForSecondsRealtime(ViewmodelArms.TouchReach + .1f);
+            var arms = rig.GetComponentInChildren<ViewmodelArms>();
+            Assert.IsTrue(arms.TryDrawnArm(false, out Vector3 hand, out _, out _));
+            Vector3 drawn = Camera.main.WorldToViewportPoint(hand), body = Camera.main.WorldToViewportPoint(torso);
+            Debug.Log("[TagTouch] hand=" + drawn + " body=" + body);
+            Assert.Less(Vector2.Distance(drawn, body), .16f, "The hand must be drawn over the caught body.");
+            Assert.IsTrue(taya.CanAct() || !taya.IsStunned, "The touch is presentation: the tagger's own control is untouched.");
+        }
+
+        [UnityTest]
         public IEnumerator LiveTagLeavesTheCaughtBodyUnderTheHandThenSendsItHome()
         {
             yield return Open(); Stage();
@@ -816,8 +839,8 @@ namespace TumbangPreso.PlayTests
                 Assert.IsTrue(view.Playing);
                 const float Play = CatchReconstruction.AnimationDuration, Hold = CatchReconstruction.FreezeDuration;
                 const float Total = CatchReconstruction.ReplayDuration;
-                Assert.That(view.Remaining, Is.InRange(Total - .04f, Total),
-                    "Play the approach and touch, hold the settled frame, then fade.");
+                Assert.That(view.Remaining, Is.InRange(Total + CatchReconstruction.VictimHitBeat - .04f, Total + CatchReconstruction.VictimHitBeat + .001f),
+                    "The hit lands first; then play the approach and touch, hold the settled frame, then fade.");
                 yield return new WaitForSeconds(.3f);
                 var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
                 var clock = typeof(CatchReconstruction).GetField("_began", flags);
