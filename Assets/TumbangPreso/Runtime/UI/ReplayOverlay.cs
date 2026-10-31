@@ -141,7 +141,8 @@ namespace TumbangPreso.UI
         {
             _promptRoot = OwnerUiLayout.Rect(root, "ReplayActionPrompt");
             _promptRoot.anchorMin = _promptRoot.anchorMax = _promptRoot.pivot = new Vector2(.5f, 0);
-            _promptRoot.anchoredPosition = new Vector2(0, 282);
+            // On the frame's bottom line, between its corners: halfway up the picture it stood on the feet and the touch itself.
+            _promptRoot.anchoredPosition = new Vector2(0, 74);
             _promptPlate = OwnerUiLayout.Rect(_promptRoot, "PromptPlate").gameObject.AddComponent<HudCard>();
             _promptPlate.Glass(HudDraw.GlassDeep).raycastTarget = false;
             OwnerUiLayout.Fill(_promptPlate.rectTransform);

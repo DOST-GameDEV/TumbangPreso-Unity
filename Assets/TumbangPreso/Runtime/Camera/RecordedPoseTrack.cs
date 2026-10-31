@@ -61,6 +61,37 @@ namespace TumbangPreso.CameraSystem
             float tt=t*t,ttt=tt*t;
             return (2*ttt-3*tt+1)*p+(ttt-2*tt+t)*m0+(3*tt-2*ttt)*q+(ttt-tt)*m1;
         }
+        /// <summary>
+        /// As `Apply`, on curves through the samples. A replay slowed to a fifth shows every straight join between 20 keys a
+        /// second as a tick in the limb. A teleport nearby keeps `Apply`'s hard edge.
+        /// </summary>
+        public void ApplySmooth(Transform[] bones,float time)
+        {
+            int n=Samples.Length;
+            if(bones==null||bones.Length!=Paths.Length||n<3){Apply(bones,time);return;}
+            int k=0;while(k<n-2&&Samples[k+1].Time<time)k++;
+            Sample a=Samples[Mathf.Max(0,k-1)],b=Samples[k],c=Samples[k+1],d=Samples[Mathf.Min(n-1,k+2)];
+            if(a.Epoch!=b.Epoch||b.Epoch!=c.Epoch||c.Epoch!=d.Epoch){Apply(bones,time);return;}
+            float span=c.Time-b.Time,t=span>0?Mathf.Clamp01((time-b.Time)/span):0;
+            float tt=t*t,ttt=tt*t,h00=2*ttt-3*tt+1,h10=ttt-2*tt+t,h01=3*tt-2*ttt,h11=ttt-tt;
+            float inScale=span/Mathf.Max(.001f,c.Time-a.Time),outScale=span/Mathf.Max(.001f,d.Time-b.Time);
+            for(int i=0;i<bones.Length;i++)
+            {
+                var bone=bones[i];if(bone==null)continue;
+                Vector3 p=b.Positions[i],q=c.Positions[i];
+                bone.localPosition=h00*p+h10*((q-a.Positions[i])*inScale)+h01*q+h11*((d.Positions[i]-p)*outScale);
+                Quaternion r=b.Rotations[i],s=Near(r,c.Rotations[i]),r0=Near(r,a.Rotations[i]),s1=Near(s,d.Rotations[i]);
+                var turned=new Quaternion(
+                    h00*r.x+h10*(s.x-r0.x)*inScale+h01*s.x+h11*(s1.x-r.x)*outScale,
+                    h00*r.y+h10*(s.y-r0.y)*inScale+h01*s.y+h11*(s1.y-r.y)*outScale,
+                    h00*r.z+h10*(s.z-r0.z)*inScale+h01*s.z+h11*(s1.z-r.z)*outScale,
+                    h00*r.w+h10*(s.w-r0.w)*inScale+h01*s.w+h11*(s1.w-r.w)*outScale);
+                bone.localRotation=Quaternion.Normalize(turned);
+                bone.localScale=Vector3.Lerp(b.Scales[i],c.Scales[i],t);
+                bone.gameObject.SetActive(time<c.Time?b.Active[i]:c.Active[i]);
+            }
+        }
+        private static Quaternion Near(Quaternion to,Quaternion q)=>Quaternion.Dot(to,q)<0?new Quaternion(-q.x,-q.y,-q.z,-q.w):q;
         public void Apply(Transform[] bones,float time)
         {
             if(bones==null||bones.Length!=Paths.Length||Samples.Length==0)return;

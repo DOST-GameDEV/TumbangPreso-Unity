@@ -89,6 +89,17 @@ namespace TumbangPreso.CameraSystem
             if(_sounds.Count>=RecordedMatchClip.SoundCueLimit)_sounds.RemoveAt(0);
             _sounds.Add(new RecordedWorldCue{Time=now,Id=id,Position=position,Pitch=pitch,Gain=gain});
         }
+        /// <summary>Every recorded prop's own track, for a replay drawn straight back (`CatchReconstruction`).</summary>
+        internal void ForEachProp(Action<RecordedObjectKind,int,MatchPoseHistory.Track> visit)
+        {foreach(var prop in _props)if(prop.Source!=null&&prop.Track.Ready)visit(prop.Kind,prop.Seat,prop.Track);}
+        /// <summary>Adds the recorded world frames from this window that <paramref name="into"/> does not have yet.</summary>
+        internal void CopyFields(float start,float end,List<RecordedFieldFrame> into)
+        {
+            float last=into.Count>0?into[into.Count-1].Time:float.NegativeInfinity;
+            int from=_fields.FindLastIndex(f=>f.Time<=start);
+            for(int i=Mathf.Max(0,from);i<_fields.Count;i++)
+                if(_fields[i].Time>last&&_fields[i].Time<=end)into.Add(_fields[i]);
+        }
         private void Sample(float time)
         {
             CheckIdentity();

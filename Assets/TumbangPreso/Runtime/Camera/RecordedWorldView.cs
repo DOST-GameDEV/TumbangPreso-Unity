@@ -52,10 +52,20 @@ namespace TumbangPreso.CameraSystem
         private Light _skyFill;
         private RenderTexture _target;
         private Material _frameMaterial;
-        private readonly Dictionary<int,RecordedFieldView> _fields=new Dictionary<int,RecordedFieldView>();
-        private readonly Dictionary<int,RecordedFlightStroke> _trails=new Dictionary<int,RecordedFlightStroke>();
-        private readonly HashSet<int> _visibleTrails=new HashSet<int>();
-        private readonly HashSet<int> _visibleFields=new HashSet<int>();
+        private RecordedFieldPlayback _fields;
+        // ⚠️ A CAUGHT BODY DOES NOT VANISH (owner, October 31: make it look way better). The record shows the victim sent home on the
+        // tag's own frame, and the closest shot of the whole replay then framed a court's width of nothing. Through a catch the
+        // body stays at the touch and takes the shove, as in the tag replay, and the bodies keep their spacing.
+        private bool _catch;
+        private float _holdAt;
+        private Vector3 _holdActor,_holdSubject,_knockLine;
+        private Quaternion _holdFacing;
+        private float _knockRoom;
+        private TagBodyBoxes _actorBoxes,_subjectBoxes;
+        private CaughtRecoil _recoil;
+        private float _actorBack;
+        private readonly List<(Bounds box,Renderer renderer)> _shotProps=new List<(Bounds,Renderer)>();
+        private ReplayImpact _impactLook;
         private readonly MaterialPropertyBlock _coatBlock=new MaterialPropertyBlock();
         private int _sound;
         private float _lastTime;
@@ -101,8 +111,7 @@ namespace TumbangPreso.CameraSystem
             }
             if(_arena!=null&&clip.Round!=_clip.Round)_arena.BeginReplay(clip.MatchId,clip.Round);
             for(int i=0;i<_items.Count;i++)_items[i].Track=clip.Objects[i];
-            foreach(var field in _fields.Values)field.Dispose();_fields.Clear();
-            foreach(var trail in _trails.Values)trail.Dispose();_trails.Clear();
+            _fields?.Clear();
             foreach(var dust in _contactDust.Values)if(dust!=null)Object.Destroy(dust.gameObject);_contactDust.Clear();
             foreach(var puff in _escapePuffs.Values)if(puff!=null)Object.Destroy(puff.gameObject);_escapePuffs.Clear();
             _clip=clip;_sound=0;_lastTime=clip.Start;if(!continuous)GameServices.Audio?.StopReplayCues();return true;
@@ -207,6 +216,8 @@ namespace TumbangPreso.CameraSystem
                 _camera.transform.position=eye;_camera.transform.LookAt(centre);
                 _shotActor=focus;_shotSubject=subject;_shotLens=lensRadius;_tracking=!standalone;
                 _shotSide=eye-centre;_shotSide.y=0;_shotSide=_shotSide.sqrMagnitude>.01f?_shotSide.normalized:side;
+                _fields=new RecordedFieldPlayback(_stage.transform,seat=>_items.FirstOrDefault(i=>IsBody(i.Track)&&i.Track.Seat==seat)?.Copy.Root,seat=>_items.FirstOrDefault(i=>i.Track.Kind==RecordedObjectKind.Slipper&&i.Track.Seat==seat)?.Copy.Root);
+                if(!standalone){PrepareCatch();ChooseBearing();}
                 _target=new RenderTexture(width,height,24,RenderTextureFormat.ARGB32){name="RetainedMatchFrame",
                     antiAliasing=Mathf.Max(2,QualitySettings.antiAliasing)};_target.Create();_camera.targetTexture=_target;
                 _canvas=OwnerUiLayout.Canvas(owner,"CanonicalReplayCanvas",240);
@@ -228,6 +239,7 @@ namespace TumbangPreso.CameraSystem
                 {
                     _contactFlash=OwnerUiLayout.Rect(_canvas.transform,"RecordedContactFlash").gameObject.AddComponent<Image>();
                     OwnerUiLayout.Fill(_contactFlash.rectTransform);_contactFlash.raycastTarget=false;_contactFlash.color=new Color(1,1,1,0);
+                    _impactLook=ReplayImpact.Build(_canvas.transform);
                     _overlay=ReplayOverlay.Build(_canvas.transform,"HIGHLIGHT",false);_overlay.HoldAnnouncement();
                 }
                 _audioMix=GameServices.Audio?.EnterReplayMix();
@@ -277,6 +289,89 @@ namespace TumbangPreso.CameraSystem
             foreach(var shoe in Object.FindObjectsByType<Slipper>(FindObjectsInactive.Include))if(shoe.SeatOfOrigin==track.Seat)return MatchReplayArchive.PropModel(shoe.gameObject);
             return null;
         }
+        // Finds where the caught body really stood: the last sample before its teleport near the contact, or the contact.
+        private void PrepareCatch()
+        {
+            if(_clip.Reason!="CATCH"||_clip.Subject<0||_shotActor==null||_shotSubject==null||!IsBody(_shotSubject.Track))return;
+            var samples=_shotSubject.Track.Pose.Samples;_holdAt=_clip.Contact;
+            for(int i=1;i<samples.Length;i++)
+                if(samples[i].Time>=_clip.Contact-.2f&&samples[i].Time<=_clip.Contact+.5f&&samples[i].Epoch!=samples[i-1].Epoch)
+                {_holdAt=Mathf.Min(_clip.Contact,samples[i-1].Time);break;}
+            _shotSubject.Track.Pose.Apply(_shotSubject.Bones,_holdAt);_shotActor.Track.Pose.Apply(_shotActor.Bones,_holdAt);
+            _holdSubject=_shotSubject.Bones[0].position;_holdFacing=_shotSubject.Bones[0].rotation;_holdActor=_shotActor.Bones[0].position;
+            _knockLine=_holdSubject-_holdActor;_knockLine.y=0;
+            _knockLine=_knockLine.sqrMagnitude>.01f?_knockLine.normalized:Vector3.ProjectOnPlane(_holdFacing*Vector3.forward,Vector3.up).normalized;
+            _knockRoom=TagBodyBoxes.KnockRoom(_holdSubject,_knockLine,CaughtAfterimage.KnockDistance);
+            _actorBoxes=new TagBodyBoxes(_shotActor.Copy.Renderers,true);_subjectBoxes=new TagBodyBoxes(_shotSubject.Copy.Renderers,false);
+            _recoil=new CaughtRecoil(_shotSubject.Bones);
+            _catch=true;
+        }
+        private void HoldCaughtBody(float time)
+        {
+            if(!_catch||time<_holdAt)return;
+            _shotSubject.Track.Pose.Apply(_shotSubject.Bones,_holdAt);_shotActor.Track.Pose.Apply(_shotActor.Bones,time);
+            float v=Mathf.Clamp01((time-_clip.Contact-.12f)/.4f),e=1-(1-v)*(1-v)*(1-v);
+            var root=_shotSubject.Bones[0];
+            root.SetPositionAndRotation(_holdSubject+_knockLine*(_knockRoom*e)+Vector3.up*CaughtRecoil.Hop(time-_clip.Contact-.12f),
+                Quaternion.AngleAxis(CaughtAfterimage.KnockTilt*(_knockRoom/CaughtAfterimage.KnockDistance)*e,Vector3.Cross(Vector3.up,_knockLine))*_holdFacing);
+            _recoil.Pose(_knockLine,time-_clip.Contact-.12f);
+            // The taya's feet stop at the touch or they walk after the shoved body, and what the record shows of them backs off
+            // only as far as these bodies measure. The record already carries the live hand on the touch, so this stays small.
+            var actor=_shotActor.Bones[0];
+            actor.position=_holdActor-_knockLine*_actorBack;
+            float need=TagBodyBoxes.Overlap(_actorBoxes.Read(_knockLine),_subjectBoxes.Read(_knockLine));
+            if(need>0)
+            {
+                float back=TagBodyBoxes.Room(actor.position,-_knockLine,Mathf.Min(need,Mathf.Max(0,MostHighlightBack-_actorBack)));
+                _actorBack+=back;actor.position-=_knockLine*back;
+            }
+        }
+        private const float MostHighlightBack=.35f;
+        private bool Foreground(Vector3 eye,Vector3 focus)
+        {
+            // A collider test alone let leaves and poles fill the frame: they have none. Rays across the frame, out to where the
+            // play stands, each asked about scenery and about small props by their bounds.
+            var turn=Quaternion.LookRotation(focus-eye,Vector3.up);
+            float reach=Mathf.Max(.5f,Vector3.Distance(eye,focus)-1.6f);
+            for(int y=-1;y<=1;y++)for(int x=-2;x<=2;x++)
+            {
+                var ray=new Ray(eye,turn*new Vector3(x*.3f,y*.24f,1).normalized);
+                foreach(var hit in Physics.RaycastAll(ray,reach,~0,QueryTriggerInteraction.Ignore))if(IsReplayScenery(hit.collider))return true;
+                foreach(var prop in _shotProps)if(prop.box.IntersectRay(ray,out float along)&&along<reach)return true;
+            }
+            return false;
+        }
+        // ⚠️ ONE GOOD BEARING, CHOSEN BEHIND THE WIPE, as the tag replay does (owner, October 22 and 31: "ang bobo ng replay cameras").
+        private void ChooseBearing()
+        {
+            if(_shotActor==null||_shotSubject==null)return;
+            Vector3 a=_catch?_holdActor:_shotActor.Track.Pose.StateAt(_clip.Contact).Positions[0];
+            Vector3 b=_catch?_holdSubject:_shotSubject.Track.Pose.StateAt(_clip.Contact).Positions[0];
+            Vector3 focus=Vector3.Lerp(a,b,.5f)+Vector3.up*.9f,line=b-a;line.y=0;line=line.sqrMagnitude>.01f?line.normalized:Vector3.forward;
+            _shotProps.Clear();
+            foreach(var renderer in Object.FindObjectsByType<MeshRenderer>())
+            {
+                if(renderer.transform.IsChildOf(_stage.transform)||!renderer.enabled)continue;
+                if(renderer.GetComponentInParent<CharacterMotor>()!=null||renderer.GetComponentInParent<Slipper>()!=null||renderer.GetComponentInParent<Lata>()!=null)continue;
+                var box=renderer.bounds;
+                if(box.extents.magnitude<5&&(box.center-focus).sqrMagnitude<16*16)_shotProps.Add((box,renderer));
+            }
+            Vector3 face=Vector3.ProjectOnPlane(_shotSubject.Track.Pose.StateAt(_clip.Contact).Rotations[0]*Vector3.forward,Vector3.up).normalized;
+            Vector3 start=_shotSubject.Track.Pose.StateAt(_clip.Start).Positions[0]+Vector3.up*.9f;
+            float best=float.MinValue;Vector3 chosen=_shotSide;
+            for(int bearing=0;bearing<360;bearing+=30)
+            {
+                Vector3 dir=Quaternion.AngleAxis(bearing,Vector3.up)*Vector3.forward;
+                Vector3 close=focus+dir*3.6f+Vector3.up*.75f,wide=focus+dir*6f+Vector3.up*1.6f;
+                float along=Mathf.Abs(Vector3.Dot(dir,line));
+                float score=1.2f*Vector3.Dot(dir,face)-1.8f*along-3*Mathf.Pow(Mathf.Max(0,along-.6f),2);
+                if(!Clear(focus,close,_shotLens))score-=8;else if(Foreground(close,focus))score-=4;
+                if(!Clear(focus,wide,_shotLens))score-=3;else if(Foreground(wide,focus))score-=2;
+                if(!Clear(start,wide,_shotLens))score-=.5f;
+                if(score>best){best=score;chosen=dir;}
+            }
+            _shotSide=chosen;
+        }
         private void TrackShot(float time)
         {
             if(_shotActor==null||_shotSubject==null||_camera==null)return;
@@ -284,16 +379,17 @@ namespace TumbangPreso.CameraSystem
             Vector3 flat=b-a;flat.y=0;float separation=flat.magnitude;
             bool close=time>=_clip.Contact-.35f&&time<=_clip.Contact+.9f;
             Vector3 focus=Vector3.Lerp(a,b,close?.62f:.5f)+Vector3.up*.9f;
-            float distance=close?Mathf.Clamp(separation*.9f+3.2f,3.6f,8):Mathf.Clamp(separation+4.2f,4.8f,11);
-            float lift=close?.26f:.42f;
-            // A slow drift round the pair, seven degrees a second, so even a still moment has motion.
-            float yaw=(time-_clip.Start)*7;
+            // Near enough to read faces. A long chase frames its runner rather than backing off to a dead wide.
+            float distance=close?Mathf.Clamp(separation*.6f+2.9f,3.2f,5.4f):Mathf.Clamp(separation*.7f+3.6f,4.2f,8.5f);
+            float lift=close?.2f:.27f;
+            // A slow drift round the pair, so even a still moment has motion. The bearing was chosen for this moment: stay near it.
+            float yaw=(time-_clip.Contact)*3;
             Vector3 eye=focus;bool clear=false;
             for(int attempt=0;attempt<8&&!clear;attempt++)
             {
                 Vector3 dir=Quaternion.AngleAxis(yaw+attempt*45*(attempt%2==0?1:-1)*((attempt+1)/2),Vector3.up)*_shotSide;
                 eye=focus+dir*distance+Vector3.up*(distance*lift);
-                clear=Clear(focus,eye,_shotLens);
+                clear=Clear(focus,eye,_shotLens)&&(attempt>=4||!Foreground(eye,focus));
             }
             if(!clear&&_shotPlaced)eye=_camera.transform.position;
             // The contact is a cut, not a glide: the lens jumps once into the close shot.
@@ -316,10 +412,19 @@ namespace TumbangPreso.CameraSystem
         private void StepContactBeat(float time)
         {
             if(_overlay==null)return;
-            if(!_contactLanded&&time>=_clip.Contact){_contactLanded=true;_contactLandedAt=Time.unscaledTime;_overlay.Slam();}
+            if(!_contactLanded&&time>=_clip.Contact)
+            {
+                _contactLanded=true;_contactLandedAt=Time.unscaledTime;_overlay.Slam();
+                if(_impactLook!=null&&_shotSubject!=null)
+                {
+                    Vector3 hit=_catch?Vector3.Lerp(_shotActor.Bones[0].position,_shotSubject.Bones[0].position,.55f)+Vector3.up*.85f:_shotSubject.Bones[0].position+Vector3.up*.2f;
+                    _impactLook.Fire(_camera.WorldToViewportPoint(hit));
+                }
+            }
+            if(_impactLook!=null)_impactLook.Closing=(_clip.Contact-time<.35f&&time-_clip.Contact<.9f?1f:0f)*.7f;
             if(_contactFlash==null||!_contactLanded)return;
             var look=Settings.SettingsStore.Current;
-            float flash=look.ReducedEffects?0:.5f*Mathf.Clamp01(1-(Time.unscaledTime-_contactLandedAt)/.18f)*look.EffectiveFlashIntensity;
+            float flash=look.ReducedEffects?0:.16f*Mathf.Clamp01(1-(Time.unscaledTime-_contactLandedAt)/.18f)*look.EffectiveFlashIntensity;
             _contactFlash.color=new Color(1,1,1,flash);
         }
         private static bool Clear(Vector3 centre,Vector3 eye,float lensRadius)
@@ -332,7 +437,7 @@ namespace TumbangPreso.CameraSystem
                 if(IsReplayScenery(hit.collider))return false;
             return true;
         }
-        private static bool IsReplayScenery(Collider collider)=>collider.GetComponentInParent<CharacterMotor>()==null&&collider.GetComponentInParent<Slipper>()==null&&collider.GetComponentInParent<Lata>()==null;
+        private static bool IsReplayScenery(Collider collider)=>collider.GetComponentInParent<CharacterMotor>()==null&&collider.GetComponentInParent<Slipper>()==null&&collider.GetComponentInParent<Lata>()==null&&collider.GetComponentInParent<AmbientLife>()==null;
         public void Draw(float time,bool audible=true)
         {
             if(!Ready)return;
@@ -359,9 +464,12 @@ namespace TumbangPreso.CameraSystem
                 _canLanding.Place(can.Bones[0].position,bottom,new Vector2(.29f,.29f),
                     (elevated?.62f:settle*.62f)*WorldCueProfile.Current.HeroObjects,true);
             }
+            HoldCaughtBody(time);
             foreach(var item in _items)
             {
-                item.Track.Pose.Apply(item.Bones,time);var state=item.Track.Pose.StateAt(time);
+                bool held=_catch&&time>=_holdAt&&(item==_shotSubject||item==_shotActor);
+                if(!held)item.Track.Pose.Apply(item.Bones,time);
+                var state=item.Track.Pose.StateAt(held&&item==_shotSubject?_holdAt:time);
                 if(item.Contact!=null)
                 {
                     bool player=IsBody(item.Track),shoe=item.Track.Kind==RecordedObjectKind.Slipper;
@@ -370,7 +478,7 @@ namespace TumbangPreso.CameraSystem
                     {
                         float bottom=WorldContactPresentation.ModelBottom(item.Copy.Renderers,item.Bones[0].position.y);
                         item.Contact.Place(item.Bones[0].position,bottom,player?new Vector2(.45f,.45f):shoe?new Vector2(.24f,.15f):new Vector2(.25f,.22f),
-                            WorldCueProfile.LightingWeight*(shoe?.16f:.20f));
+                            WorldCueProfile.LightingWeight*(shoe?.16f:.42f));
                     }
                 }
                 if(item.Track.Kind==RecordedObjectKind.Can)
@@ -419,38 +527,7 @@ namespace TumbangPreso.CameraSystem
                 {Vector3 p=_camera.WorldToViewportPoint(cue.Position);GameServices.Audio?.PlayReplayCue(cue.Id,cue.Pitch,cue.Gain*Mathf.Clamp01(1-(Vector3.Distance(_camera.transform.position,cue.Position)-2)/30),Mathf.Clamp(p.x*2-1,-1,1));}
             }
             _lastTime=time;_hidden.Clear();_previous.Clear();_hiddenLights.Clear();_lightWasEnabled.Clear();_hiddenCanvases.Clear();_canvasWasEnabled.Clear();
-            RecordedFieldFrame frame=null,nextFrame=null;
-            foreach(var snapshot in _clip.FieldFrames){if(snapshot.Time>time){nextFrame=snapshot;break;}frame=snapshot;}
-            _visibleTrails.Clear();
-            if(frame!=null)foreach(var trail in frame.Trails)
-            {
-                _visibleTrails.Add(trail.Id);if(!_trails.TryGetValue(trail.Id,out var view))_trails[trail.Id]=view=new RecordedFlightStroke(_stage.transform,trail);
-                RecordedTrail? later=null;if(nextFrame!=null)foreach(var candidate in nextFrame.Trails)if(candidate.Id==trail.Id){later=candidate;break;}
-                view.Sample(trail,later,nextFrame!=null?Mathf.InverseLerp(frame.Time,nextFrame.Time,time):0);
-            }
-            foreach(int id in _trails.Keys.ToArray())if(!_visibleTrails.Contains(id)){_trails[id].Dispose();_trails.Remove(id);}
-            _visibleFields.Clear();
-            if(frame!=null)foreach(var field in frame.Fields)
-            {
-                if(field.State.Remaining<=time-frame.Time)continue;
-                _visibleFields.Add(field.Id);
-                if(_fields.TryGetValue(field.Id,out var existing)&&!existing.Matches(field.State)){existing.Dispose();_fields.Remove(field.Id);}
-                if(!_fields.TryGetValue(field.Id,out var view))
-                    _fields[field.Id]=view=new RecordedFieldView(_stage.transform,field.State,_items.FirstOrDefault(i=>IsBody(i.Track)&&i.Track.Seat==field.State.Owner)?.Copy.Root,_items.FirstOrDefault(i=>i.Track.Kind==RecordedObjectKind.Slipper&&i.Track.Seat==field.State.Owner)?.Copy.Root);
-                var state=field.State;
-                if(nextFrame!=null&&(state.Type==RecordedSpecialFields.Kuro||state.Type==RecordedSpecialFields.Ward))
-                {
-                    foreach(var later in nextFrame.Fields)if(later.Id==field.Id)
-                    {
-                        float t=Mathf.InverseLerp(frame.Time,nextFrame.Time,time);
-                        state.Position=Vector3.Lerp(state.Position,later.State.Position,t);
-                        state.Forward=state.Type==RecordedSpecialFields.Kuro?Vector3.Lerp(state.Forward,later.State.Forward,t):Vector3.Slerp(state.Forward,later.State.Forward,t).normalized;
-                        break;
-                    }
-                }
-                view.Sample(state,time-frame.Time);
-            }
-            foreach(int id in _fields.Keys.ToArray())if(!_visibleFields.Contains(id)){_fields[id].Dispose();_fields.Remove(id);}
+            var frame=_fields.Draw(_clip.FieldFrames,time);
             if(RecordedEffects!=null)
             {
                 var material=Map.ArenaFx.Instance?.RecordedMaterial;
@@ -478,8 +555,7 @@ namespace TumbangPreso.CameraSystem
             }
             _arenaEffects?.Visible(RecordedEffects!=null);
             _scenery?.Visible(RecordedScenery!=null);
-            foreach(var field in _fields.Values)field.Visible(true);
-            foreach(var trail in _trails.Values)trail.Visible(true);
+            _fields.Visible(true);
             if(!_standalone)
             foreach(var actor in GameServices.Round.Bodies)if(actor!=null){Hide(actor.gameObject);var pet=actor.GetComponent<CharacterVisual>()?.Companion;if(pet!=null)Hide(pet.gameObject);}
             foreach(var shoe in Object.FindObjectsByType<Slipper>())Hide(shoe.gameObject);
@@ -506,7 +582,7 @@ namespace TumbangPreso.CameraSystem
             using var sceneState=LocalReplaySceneState.Apply(RecordedScene,time,UnityEngine.SceneManagement.SceneManager.GetActiveScene());
             using var shaderTime=RecordedShaderClock.At(LocalReplaySceneState.ShaderTimeAt(RecordedScene,time));using var skyTime=NeighbourhoodSkyMotion.At(time);using var lighting=frame!=null?frame.Lighting.Use(_grade,_sky,_skyFill):null;_camera.Render();
             }
-            finally{_scenery?.Visible(false);_arenaEffects?.Visible(false);foreach(var dust in _contactDust.Values)if(dust!=null)dust.ShowForCapture(false);_court.ShowForCapture(false);_lataClock.ShowForCapture(false);foreach(var puff in _escapePuffs.Values)puff.ShowForCapture(false);for(int i=0;i<_hiddenCanvases.Count;i++)if(_hiddenCanvases[i]!=null)_hiddenCanvases[i].enabled=_canvasWasEnabled[i];foreach(var trail in _trails.Values)trail.Visible(false);for(int i=0;i<_hiddenLights.Count;i++)if(_hiddenLights[i]!=null)_hiddenLights[i].enabled=_lightWasEnabled[i];foreach(var field in _fields.Values)field.Visible(false);foreach(var item in _items){item.Copy.ShowOnlyForCapture(false);item.Contact?.Visible(false);}_canLanding.Visible(false);for(int i=0;i<_hidden.Count;i++)if(_hidden[i]!=null)_hidden[i].forceRenderingOff=_previous[i];}
+            finally{_scenery?.Visible(false);_arenaEffects?.Visible(false);foreach(var dust in _contactDust.Values)if(dust!=null)dust.ShowForCapture(false);_court.ShowForCapture(false);_lataClock.ShowForCapture(false);foreach(var puff in _escapePuffs.Values)puff.ShowForCapture(false);for(int i=0;i<_hiddenCanvases.Count;i++)if(_hiddenCanvases[i]!=null)_hiddenCanvases[i].enabled=_canvasWasEnabled[i];for(int i=0;i<_hiddenLights.Count;i++)if(_hiddenLights[i]!=null)_hiddenLights[i].enabled=_lightWasEnabled[i];_fields.Visible(false);foreach(var item in _items){item.Copy.ShowOnlyForCapture(false);item.Contact?.Visible(false);}_canLanding.Visible(false);for(int i=0;i<_hidden.Count;i++)if(_hidden[i]!=null)_hidden[i].forceRenderingOff=_previous[i];}
         }
         private void Hide(GameObject root)
         {
@@ -526,8 +602,7 @@ namespace TumbangPreso.CameraSystem
             if(_sky!=null)Object.Destroy(_sky);_sky=null;
             if(_stage!=null)Object.Destroy(_stage);_stage=null;
             if(_arena!=null)_arena.EndReplay();_arena=null;
-            foreach(var trail in _trails.Values)trail.Dispose();_trails.Clear();
-            _items.Clear();foreach(var field in _fields.Values)field.Dispose();_fields.Clear();
+            _items.Clear();_fields?.Dispose();_fields=null;_shotProps.Clear();
         }
     }
 }

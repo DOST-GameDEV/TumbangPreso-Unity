@@ -165,7 +165,7 @@ namespace TumbangPreso.Visual
             {
                 var other = Hits[i].collider;
                 if (other.GetComponentInParent<CharacterMotor>() != null || other.GetComponentInParent<Slipper>() != null
-                    || other.GetComponentInParent<Lata>() != null) continue;
+                    || other.GetComponentInParent<Lata>() != null || other.GetComponentInParent<AmbientLife>() != null) continue;
                 if (Hits[i].distance > 0) room = Mathf.Min(room, Hits[i].distance);
             }
             return room;

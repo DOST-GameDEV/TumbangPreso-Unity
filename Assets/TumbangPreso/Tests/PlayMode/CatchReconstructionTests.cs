@@ -528,6 +528,7 @@ namespace TumbangPreso.PlayTests
                 string directory = (authoredMap ? "Logs/tag-contact-authored/reach-" : "Logs/tag-contact/reach-") + distance.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
                 if (actorArt != null) directory = "Logs/tag-contact-silhouettes/" + actorArt + "-to-" + victimArt;
                 System.IO.Directory.CreateDirectory(directory);
+                bool lastPoseAtTouch = false;
                 float lastTime = -1, lastGap = float.MaxValue, lastPoseTime = 0, lastAlpha = 0;
                 float lastShift = 0, lastLean = 0, lastStretch = 0, liveAimGap = float.MaxValue;
                 var poseTiming = new System.Collections.Generic.List<string> { "simulation,delta,presentation,recorded,newest,liveTagTime,liveTorsoLean" };
@@ -536,6 +537,7 @@ namespace TumbangPreso.PlayTests
                 {
                     if (c != camera) return;
                     lastTime = Time.unscaledTime - began;
+                    lastPoseAtTouch = (bool)Field("_poseAtTouch");
                     end = (float)Field("_clipEnd");
                     // The replay's touch is when the hand arrives, settled once the follow-through is captured.
                     lastPoseTime = CatchReconstruction.RecordedTimeAt(start, (float)Field("_impact"), end, lastTime);
@@ -569,8 +571,7 @@ namespace TumbangPreso.PlayTests
                     yield return null;
                     float presentationTime = Time.unscaledTime - began;
                     // The touch is judged inside its held beat, before the shove. A slow machine must not sample past it.
-                    bool inTouch = lastTime >= CatchReconstruction.ContactPlayback
-                        && lastTime <= CatchReconstruction.ContactPlayback + CatchReconstruction.HitStop;
+                    bool inTouch = lastPoseAtTouch;
                     bool firstTouch = inTouch && bestDistance >= 0;
                     if (!view.Playing || target == null || lastTime < 0 || (presentationTime < next && !firstTouch)) continue;
                     next = presentationTime + .075f;
@@ -671,15 +672,142 @@ namespace TumbangPreso.PlayTests
         [UnityTest] public IEnumerator RunningTagBodiesNeverIntersect_DanteOnNemu() => CheckRunningTag("dante", "nemu", false, limit: .05f); // Measured .035: the tightest pair, where the hand wins at the limit.
         [UnityTest] public IEnumerator RunningTagBodiesNeverIntersect_NemuOnDante() => CheckRunningTag("nemu", "dante", false);
         // The widest shape in the cast: the hand wins at the limit, so a little brim may remain. Measured, not assumed.
-        [UnityTest] public IEnumerator RunningTagWidestPairStaysWithinItsLimit_PhaisterOnRafi() => CheckRunningTag("phaister", "rafi", false, limit: .3f);
+        [UnityTest] public IEnumerator RunningTagWidestPairStaysWithinItsLimit_PhaisterOnRafi() => CheckRunningTag("phaister", "rafi", false, limit: .15f);
         [UnityTest] public IEnumerator TagWithAWallBehindTheVictimDoesNotShoveThemThroughIt() => CheckRunningTag(null, null, false, wallBehindVictim: true, limit: .15f); // Measured .12 live, for an instant: the caught body has nowhere to be carried.
-        [UnityTest] public IEnumerator TagUpAStepStillLandsWithBodiesApart() => CheckRunningTag(null, null, false, step: true, limit: .1f); // Measured .06: the hand wins at the limit.
+        [UnityTest] public IEnumerator TagUpAStepStillLandsWithBodiesApart() => CheckRunningTag(null, null, false, step: true, limit: .1f); // Measured .01 to .099, varying by frame: the hand wins at the limit.
         [UnityTest] public IEnumerator SecondCatchDoesNotStealTheFirstReplaysHand() => CheckRunningTag(null, null, false, doubleCatch: true);
         [UnityTest] public IEnumerator StunnedVictimsReplayShowsTheCoatAndRunsItsLength() => CheckRunningTag(null, null, false, stunned: true);
         [UnityTest] public IEnumerator DashTagBodiesNeverIntersect() => CheckRunningTag(null, null, true);
         [UnityTest] public IEnumerator RunningTagBodiesNeverIntersect_OnAuthoredMap() => CheckRunningTag(null, null, false, map: true);
         [UnityTest] public IEnumerator TagWithAWallBehindTheTayaKeepsBodiesApartAndOutOfTheWall() => CheckRunningTag(null, null, false, wall: true);
-        [UnityTest] public IEnumerator JumpingTagBodiesNeverIntersect() => CheckRunningTag(null, null, false, air: true, limit: .1f); // Measured .074: the hand wins at the limit in the air.
+        [UnityTest] public IEnumerator JumpingTagBodiesNeverIntersect() => CheckRunningTag(null, null, false, air: true, limit: .08f); // Measured 0 to .074, varying by frame: the hand wins at the limit in the air.
+
+        // Tag spacing reads the real mesh and silently does nothing on one it cannot read.
+        [Test]
+        public void EveryBodyCanBeMeasuredForTagSpacing()
+        {
+            var book = RosterBook.Load();
+            foreach (var mode in new[] { GameMode.Classic, GameMode.HeroStrike })
+                foreach (var person in Roster.GetPeople(mode))
+                {
+                    var art = book.FindPersonArt(person.Id); Assert.IsNotNull(art, person.Id);
+                    var skins = art.Model.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+                    Assert.That(skins.Length, Is.GreaterThan(0), person.Id);
+                    foreach (var skin in skins) Assert.IsTrue(skin.sharedMesh == null || skin.sharedMesh.isReadable, person.Id + " " + skin.name);
+                }
+        }
+
+        // Owner, October 31: ults and kit pieces missing from the tag replay.
+        [UnityTest]
+        public IEnumerator TagReplayDrawsKitsAndTheWholeRecordedWorld()
+        {
+            yield return Open(); Stage();
+            var round = GameServices.Round; var actor = round.PlayerAt(0); var victim = round.PlayerAt(1);
+            var dante = RosterBook.Load().FindPersonArt("dante");
+            actor.GetComponent<CharacterVisual>().ApplyModel(dante.Model, dante.Tint, dante.Clips, dante.Palette, dante.PetModel);
+            victim.GetComponent<CharacterVisual>().ApplyModel(dante.Model, dante.Tint, dante.Clips, dante.Palette, dante.PetModel);
+            yield return null;
+            Assert.IsNotNull(DanteMountainArmour.Attach(actor), "The mountain must be worn.");
+            Assert.IsNotNull(DanteMountainArmour.Attach(victim), "On the body the lens favours too.");
+            Assert.IsNotNull(DanteCarapaceVisual.Attach(victim, false, 12), "The carapace must be on.");
+            yield return new WaitForSeconds(CatchReconstruction.LeadSeconds + .3f);
+            var view = Object.FindAnyObjectByType<CatchReconstruction>();
+            var settings = Settings.SettingsStore.Current;
+            bool reduced = settings.ReducedUiMotion, cinematic = settings.CinematicCameraMotion;
+            settings.ReducedUiMotion = false; settings.CinematicCameraMotion = true;
+            try
+            {
+                Assert.IsTrue(actor.GetComponent<CombatVerbs>().HostResolvePunch(actor.transform.position, actor.transform.forward));
+                Assert.IsTrue(view.Playing);
+                var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+                object Field(string name) => typeof(CatchReconstruction).GetField(name, flags).GetValue(view);
+                var extras = (System.Collections.IList)Field("_extras");
+                var worn = (System.Collections.Generic.List<Renderer>)Field("_worn");
+                Assert.That(extras.Count, Is.GreaterThanOrEqualTo(3), "The other two players and the can stand where they stood.");
+                int mountain = actor.GetComponent<CharacterVisual>().Model.GetComponentsInChildren<DanteMountainPiece>(false).Length;
+                Assert.That(mountain, Is.GreaterThan(0));
+                Assert.That(worn.Count, Is.GreaterThanOrEqualTo(mountain), "What the bodies wear must be on the copies.");
+                var playback = (RecordedFieldPlayback)Field("_fieldPlayback");
+                // Sean's lit shoe, through the same path a real ignition takes: its recorded frame on the seat's own shoe copy.
+                var shoe = Object.FindObjectsByType<Slipper>().First(s => s.SeatOfOrigin == 1);
+                var frames = (System.Collections.Generic.List<RecordedFieldFrame>)Field("_fieldFrames");
+                var lit = new Net.WorldEffectSnapshot.Field { Type = RecordedSpecialFields.Ignition, Position = shoe.transform.position, Forward = Vector3.forward, Duration = 1, Remaining = 1, Radius = 1, Owner = 1, SecondScale = 0 };
+                frames.Add(new RecordedFieldFrame { Time = (float)Field("_clipStart"), Fields = new[] { new RecordedField { Id = 9001, State = lit } }, Trails = new RecordedTrail[0] });
+                frames.Sort((a, b) => a.Time.CompareTo(b.Time));
+                var stage = (GameObject)Field("_stage");
+                bool emberSeen = false, wardSeen = false; int fieldsSeen = 0;
+                var world = (GameObject)Field("_worldRoot");
+                float began = (float)Field("_began"), until = Time.unscaledTime + 1.1f;
+                while (view.Playing && Time.unscaledTime < until)
+                {
+                    yield return null;
+                    fieldsSeen = Mathf.Max(fieldsSeen, playback.FieldCount);
+                    foreach (Transform child in world.transform) if (child.name == "RecordedField-" + RecordedSpecialFields.Ward) wardSeen = true;
+                    foreach (var child in stage.GetComponentsInChildren<Transform>(true)) if (child.name == "IgnitionEmber") emberSeen = true;
+                }
+                Assert.That(fieldsSeen, Is.GreaterThan(0));
+                Assert.IsTrue(wardSeen, "The carapace's recorded field must be drawn.");
+                Assert.IsTrue(emberSeen, "The lit shoe must be drawn on the recorded shoe.");
+                Assert.IsNotNull((RecordedFieldPlayback)Field("_fieldPlayback"), "No kit may have failed to draw.");
+                var target = (RenderTexture)Field("_target");
+                System.IO.Directory.CreateDirectory("Logs/tag-kits");
+                var image = new Texture2D(target.width, target.height, TextureFormat.RGB24, false);
+                var previous = RenderTexture.active; RenderTexture.active = target;
+                image.ReadPixels(new Rect(0, 0, target.width, target.height), 0, 0); image.Apply(); RenderTexture.active = previous;
+                System.IO.File.WriteAllBytes("Logs/tag-kits/dante-kit.png", image.EncodeToPNG()); Object.Destroy(image);
+                foreach (var part in actor.GetComponentsInChildren<DanteMountainPiece>(true))
+                    foreach (var renderer in part.GetComponentsInChildren<Renderer>(true))
+                        Assert.IsFalse(renderer.forceRenderingOff, "The live mountain must be restored after every capture.");
+            }
+            finally { view.End(); settings.ReducedUiMotion = reduced; settings.CinematicCameraMotion = cinematic; }
+        }
+
+        // Halftime and a spectator's replay: the record sends the victim home on the tag's frame.
+        [UnityTest]
+        public IEnumerator HighlightKeepsTheCaughtBodyAtTheTouchAndApart()
+        {
+            yield return Open(); Stage();
+            var round = GameServices.Round; var actor = round.PlayerAt(0); var victim = round.PlayerAt(1);
+            yield return new WaitForSeconds(2.2f);
+            var archive = Object.FindAnyObjectByType<MatchReplayArchive>();
+            var settings = Settings.SettingsStore.Current;
+            bool reduced = settings.ReducedUiMotion; settings.ReducedUiMotion = false;
+            RecordedWorldView replay = null;
+            try
+            {
+                Assert.IsTrue(actor.GetComponent<CombatVerbs>().HostResolvePunch(actor.transform.position, actor.transform.forward));
+                Vector3 touched = victim.transform.position;
+                float wait = Time.unscaledTime + 3;
+                while (archive.Clips.Count == 0 && Time.unscaledTime < wait) yield return null;
+                Assert.That(archive.Clips.Count, Is.GreaterThan(0), "The tag must be retained: " + archive.LastSkip);
+                var clip = archive.Clips[0].Clip;
+                Assert.AreEqual("CATCH", clip.Reason);
+                replay = new RecordedWorldView(Object.FindAnyObjectByType<CatchReconstruction>().transform, clip);
+                Assert.IsTrue(replay.Ready, replay.UnavailableReason);
+                System.IO.Directory.CreateDirectory("Logs/tag-highlight");
+                var image = new Texture2D(replay.Target.width, replay.Target.height, TextureFormat.RGB24, false);
+                int shot = 0;
+                for (float offset = -.6f; offset <= 1.2f; offset += .15f)
+                {
+                    replay.Draw(clip.Contact + offset, false);
+                    yield return null;
+                    replay.Draw(clip.Contact + offset, false);
+                    Assert.IsTrue(replay.TryPlayerPosition(1, out var body));
+                    Assert.IsTrue(replay.TryPlayerPosition(0, out var taya));
+                    Vector3 apart = body - taya; apart.y = 0;
+                    if (offset >= 0)
+                    {
+                        Assert.That(apart.magnitude, Is.LessThan(3), "The caught body must stay by the touch, not leave for home.");
+                        Assert.That(Vector3.Distance(replay.CameraTransform.position, body), Is.LessThan(9), "The shot must stay on the play.");
+                    }
+                    var previous = RenderTexture.active; RenderTexture.active = replay.Target;
+                    image.ReadPixels(new Rect(0, 0, image.width, image.height), 0, 0); image.Apply(); RenderTexture.active = previous;
+                    System.IO.File.WriteAllBytes("Logs/tag-highlight/frame-" + (shot++).ToString("D2") + ".png", image.EncodeToPNG());
+                }
+                Object.Destroy(image);
+            }
+            finally { replay?.Dispose(); settings.ReducedUiMotion = reduced; }
+        }
 
         private IEnumerator CheckRunningTag(string actorArt, string victimArt, bool dash, bool map = false, bool wall = false, bool air = false, float limit = .03f, bool wallBehindVictim = false, bool step = false, bool doubleCatch = false, bool stunned = false)
         {
@@ -958,7 +1086,11 @@ namespace TumbangPreso.PlayTests
                     surface.BakeMesh(mesh, true);
                     int offset = skinPoints.Count;
                     foreach (var v in mesh.vertices) skinPoints.Add(surface.transform.TransformPoint(v));
-                    foreach (int t in mesh.triangles) skinTriangles.Add(offset + t);
+                    var skinFaces = mesh.triangles;
+                    // Only the skin a fist could reach: every skin face against every fist point stalled the replay being measured.
+                    for (int t = 0; t < skinFaces.Length; t += 3)
+                        if ((skinPoints[offset + skinFaces[t]] - hand.position).sqrMagnitude < .6f * .6f)
+                        { skinTriangles.Add(offset + skinFaces[t]); skinTriangles.Add(offset + skinFaces[t + 1]); skinTriangles.Add(offset + skinFaces[t + 2]); }
                 }
                 foreach (var renderer in actor)
                 {
@@ -966,15 +1098,22 @@ namespace TumbangPreso.PlayTests
                     int index = System.Array.IndexOf(skin.bones, hand.parent);
                     if (index < 0) continue;
                     skin.BakeMesh(mesh, true);
-                    var vertices = mesh.vertices; var weights = skin.sharedMesh.boneWeights;
+                    var vertices = mesh.vertices; var weights = skin.sharedMesh.boneWeights; var fist = mesh.triangles;
                     if (weights.Length != vertices.Length) continue;
-                    for (int i = 0; i < vertices.Length; i++)
+                    bool Fist(int v) => weights[v].boneIndex0 == index && weights[v].weight0 >= .5f;
+                    // Across the fist's faces, not only its corners: on these blocky hands the flat of a face is what lands.
+                    for (int f = 0; f < fist.Length; f += 3)
                     {
-                        if (weights[i].boneIndex0 != index || weights[i].weight0 < .5f) continue;
-                        Vector3 point = skin.transform.TransformPoint(vertices[i]);
-                        if ((point - hand.position).sqrMagnitude > .16f * .16f) continue;
-                        for (int t = 0; t < skinTriangles.Count; t += 3)
-                            best = Mathf.Min(best, (point - ClosestTriangle(point, skinPoints[skinTriangles[t]], skinPoints[skinTriangles[t + 1]], skinPoints[skinTriangles[t + 2]])).magnitude);
+                        if (!Fist(fist[f]) || !Fist(fist[f + 1]) || !Fist(fist[f + 2])) continue;
+                        Vector3 pa = skin.transform.TransformPoint(vertices[fist[f]]), pb = skin.transform.TransformPoint(vertices[fist[f + 1]]), pc = skin.transform.TransformPoint(vertices[fist[f + 2]]);
+                        for (int u = 0; u <= 2; u++)
+                            for (int w = 0; w <= 2 - u; w++)
+                            {
+                                Vector3 point = pa + (pb - pa) * (u * .5f) + (pc - pa) * (w * .5f);
+                                if ((point - hand.position).sqrMagnitude > .16f * .16f) continue;
+                                for (int t = 0; t < skinTriangles.Count; t += 3)
+                                    best = Mathf.Min(best, (point - ClosestTriangle(point, skinPoints[skinTriangles[t]], skinPoints[skinTriangles[t + 1]], skinPoints[skinTriangles[t + 2]])).magnitude);
+                            }
                     }
                 }
             }

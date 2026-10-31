@@ -338,6 +338,36 @@ namespace TumbangPreso.CameraSystem
                 if (result.Bones.Length != _bones.Length) { Object.Destroy(root); return null; }
                 return result;
             }
+            /// <summary>
+            /// What the body is wearing right now that its bones do not record: Dante's mountain, the taya's headband. Render
+            /// only, on the copy's matching bones, as worn at this moment. The carapace has its own recorded timeline.
+            /// </summary>
+            public void CloneWornParts(Copy copy, System.Collections.Generic.List<Renderer> into)
+            {
+                if (Source == null) return;
+                for (int i = 0; i < _bones.Length && i < copy.Bones.Length; i++)
+                {
+                    if (_bones[i] == null) continue;
+                    foreach (Transform child in _bones[i])
+                        if (child.GetComponent<DanteMountainPiece>() != null || child.GetComponent<TransientModelPart>() != null)
+                            CloneWorn(child, copy.Bones[i], into);
+                }
+            }
+            private static void CloneWorn(Transform source, Transform parent, System.Collections.Generic.List<Renderer> into)
+            {
+                var copied = new GameObject(source.name).transform;
+                copied.SetParent(parent, false);
+                copied.localPosition = source.localPosition; copied.localRotation = source.localRotation; copied.localScale = source.localScale;
+                copied.gameObject.layer = source.gameObject.layer; copied.gameObject.SetActive(source.gameObject.activeSelf);
+                var mesh = source.GetComponent<MeshFilter>(); var surface = source.GetComponent<MeshRenderer>();
+                if (mesh != null && surface != null)
+                {
+                    copied.gameObject.AddComponent<MeshFilter>().sharedMesh = mesh.sharedMesh;
+                    var rendered = copied.gameObject.AddComponent<MeshRenderer>();
+                    CopySurface(surface, rendered); into.Add(rendered);
+                }
+                foreach (Transform child in source) CloneWorn(child, copied, into);
+            }
             private static void CopySurface(Renderer source, Renderer target)
             {
                 target.sharedMaterials = source.sharedMaterials; target.enabled = source.enabled;
