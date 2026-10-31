@@ -44,12 +44,16 @@ namespace TumbangPreso.CameraSystem
         {
             var match = GameServices.Match;
             if (ProbeUsePictureRing || _freshClip == null || match == null || Time.unscaledTime - _freshClipAt > RecordedClipFreshSeconds
-                || _freshClip.MatchId != match.PresentationMatchId || _freshClip.Round != match.RoundNumber) return false;
+                || _freshClip.MatchId != match.PresentationMatchId || _freshClip.Round != match.RoundNumber)
+            {
+                Debug.Log("[Replay] Spectator uses the picture ring: " + (_freshClip == null ? "no recorded clip, " + _boundArchive?.LastSkip : "the clip is stale"));
+                return false;
+            }
             RecordedWorldView view = null;
             try
             {
                 view = new RecordedWorldView(transform, _freshClip);
-                if (!view.Ready) { view.Dispose(); return false; }
+                if (!view.Ready) { Debug.Log("[Replay] Recorded spectator view not ready: " + view.UnavailableReason); view.Dispose(); return false; }
                 view.ShowOnScreen(false);
                 view.Draw(_freshClip.Start, false);
             }

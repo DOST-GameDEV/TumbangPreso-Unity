@@ -301,8 +301,10 @@ namespace TumbangPreso.CameraSystem
             _holdSubject=_shotSubject.Bones[0].position;_holdFacing=_shotSubject.Bones[0].rotation;
             // ⚠️ THE FEET STOP WHEN THE HAND HAS LANDED, NOT WHEN THE TAG WAS ACCEPTED. A running taya's recorded reach was
             // posed from where they had run to by then: held any earlier, the same arm stops a body's width short.
+            // The line comes from before that: a taya still running may be past the victim's spot by the time the hand lands.
+            _shotActor.Track.Pose.Apply(_shotActor.Bones,_holdAt-.15f);
+            _knockLine=_holdSubject-_shotActor.Bones[0].position;_knockLine.y=0;
             _shotActor.Track.Pose.Apply(_shotActor.Bones,Mathf.Min(_clip.Contact+HandLands,_clip.End));_holdActor=_shotActor.Bones[0].position;
-            _knockLine=_holdSubject-_holdActor;_knockLine.y=0;
             _knockLine=_knockLine.sqrMagnitude>.01f?_knockLine.normalized:Vector3.ProjectOnPlane(_holdFacing*Vector3.forward,Vector3.up).normalized;
             _knockRoom=TagBodyBoxes.KnockRoom(_holdSubject,_knockLine,CaughtAfterimage.KnockDistance);
             _actorBoxes=new TagBodyBoxes(_shotActor.Copy.Renderers,true);_subjectBoxes=new TagBodyBoxes(_shotSubject.Copy.Renderers,false);
@@ -319,7 +321,7 @@ namespace TumbangPreso.CameraSystem
                 Quaternion.AngleAxis(CaughtRecoil.Tilt*(_knockRoom/CaughtAfterimage.KnockDistance)*e,Vector3.Cross(Vector3.up,_knockLine))*_holdFacing);
             _recoil.Pose(_knockLine,time-_clip.Contact-.12f);
             // The taya's feet stop at the touch or they walk after the shoved body, and what the record shows of them backs off
-            // only as far as these bodies measure. The record already carries the live hand on the touch, so this stays small.
+            // only as far as these bodies measure, so a taya who ran on past the spot is brought back to their own side.
             var actor=_shotActor.Bones[0];
             if(time>=_clip.Contact+HandLands)actor.position=_holdActor;
             actor.position-=_knockLine*_actorBack;
@@ -330,7 +332,7 @@ namespace TumbangPreso.CameraSystem
                 _actorBack+=back;actor.position-=_knockLine*back;
             }
         }
-        private const float MostHighlightBack=.35f,HandLands=.12f;
+        private const float MostHighlightBack=1.4f,HandLands=.12f;
         private bool Foreground(Vector3 eye,Vector3 focus)
         {
             // A collider test alone let leaves and poles fill the frame: they have none. Rays across the frame, out to where the
