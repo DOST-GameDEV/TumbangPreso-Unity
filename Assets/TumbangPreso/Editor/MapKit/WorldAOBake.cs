@@ -14,7 +14,8 @@ namespace TumbangPreso.EditorTools.MapKit
     /// WORLD OCCLUSION ON THE OTHER MAPS (owner, 2026-10-31: "go ahead with 1 and 3", bake the world AO on the other maps
     /// the way Payo does). `survey` in `Temp/worldao.request` opens each map's saved scene additively and reports, per
     /// shader, what a bake would meet, because their builders and shaders differ from Payo's. The answer is
-    /// `Logs/worldao/survey.txt` and `Temp/worldao.done`. Nothing is saved.
+    /// `Logs/worldao/survey.txt` and `Temp/worldao.done`. Nothing is saved. `bake MAP METRES` bakes that map's saved scene near
+    /// the court and saves it (`PayoSceneBuilder.BakeOtherMap`), leaving that scene open.
     /// </summary>
     [InitializeOnLoad]
     internal static class WorldAOBake
@@ -31,7 +32,13 @@ namespace TumbangPreso.EditorTools.MapKit
             string verb = File.ReadAllText(Request).Trim();
             File.Delete(Request);
             string said;
-            try { said = verb == "survey" ? Survey() : "unknown verb " + verb; }
+            try
+            {
+                var words = verb.Split(' ');
+                said = verb == "survey" ? Survey()
+                    : words[0] == "bake" && words.Length == 3 ? PayoSceneBuilder.BakeOtherMap(words[1], float.Parse(words[2], System.Globalization.CultureInfo.InvariantCulture))
+                    : "unknown verb " + verb;
+            }
             catch (System.Exception e) { said = "FAIL " + e; }
             File.WriteAllText(Done, said + "\n");
         }

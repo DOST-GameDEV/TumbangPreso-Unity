@@ -79,17 +79,37 @@ Shader "TumbangPreso/IlalimPainted"
         float _MainRot, _AntiTileCount;
         float4 _AT0, _AT0Mask, _AT0Seed, _AT1, _AT1Mask, _AT1Seed, _Ov0, _Ov1, _Ov2;
 
+        // World occlusion baked per vertex (owner, 2026-11-01: "bake ilalim and lagood"; Runtime/Map/PayoBakedAO.cs): x the light that
+        // reaches it, y = 1 baked, z = 1 the bake's own mark; `_TPBakedAO` is zero on a map without a bake.
+        float4 _TPBakedAO;
+        // ⚠️ IN TEXCOORD4: this shader already spends all of UV0 to UV3 on its overlays, so the bake cannot sit in UV2 as on Payo.
+        struct appdata_baked
+        {
+            float4 vertex : POSITION;
+            float4 tangent : TANGENT;
+            float3 normal : NORMAL;
+            float4 texcoord : TEXCOORD0;
+            float4 texcoord1 : TEXCOORD1;
+            float4 texcoord2 : TEXCOORD2;
+            float4 texcoord3 : TEXCOORD3;
+            float4 baked : TEXCOORD4;
+            fixed4 color : COLOR;
+            UNITY_VERTEX_INPUT_INSTANCE_ID
+        };
+
         struct Input
         {
             float4 packA;      // xy uv0, zw uv1
             float4 packB;      // xy uv2, zw uv3
             float3 worldPos;
+            float2 bakedAO;
             INTERNAL_DATA
         };
 
-        void vert(inout appdata_full v, out Input o)
+        void vert(inout appdata_baked v, out Input o)
         {
             UNITY_INITIALIZE_OUTPUT(Input, o);
+            o.bakedAO = float2(v.baked.x, v.baked.y * step(0.5, v.baked.z));
             o.packA = float4(v.texcoord.xy, v.texcoord1.xy);
             o.packB = float4(v.texcoord2.xy, v.texcoord3.xy);
             if (dot(v.tangent.xyz, v.tangent.xyz) < 1e-4)
@@ -161,7 +181,7 @@ Shader "TumbangPreso/IlalimPainted"
             c = Overlay(c, IN, _Ov2Tex, _Ov2Tex_ST, _Ov2, _Ov2Tex_TexelSize);
             c *= _PostTint.rgb;
             o.Normal = UnpackScaleNormal(tex2D(_BumpMap, IN.packA.xy * _BumpMap_ST.xy + _BumpMap_ST.zw), _BumpScale);
-            o.Albedo = c;
+            o.Albedo = c * lerp(half3(1, 1, 1), _TPBakedAO.rgb, saturate((1 - IN.bakedAO.x) * IN.bakedAO.y * _TPBakedAO.a));
             o.Metallic = 0;
             o.Smoothness = _Glossiness;
             o.Emission = _EmissionColor.rgb * lerp(float3(1, 1, 1), c, _EmissionFromAlbedo);

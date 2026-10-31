@@ -47,7 +47,7 @@ namespace TumbangPreso.Diagnostics
         private static string _output;
         private static string[] _maps;
         private static float _seconds = 30f;
-        private static bool _trace, _noWorldAO, _cascadeShots, _lookTests, _viewFps;
+        private static bool _trace, _noWorldAO, _cascadeShots, _lookTests, _viewFps, _liveMap;
         private static int _cascades = -1, _width, _height;
         /// <summary>A benchmark run goes straight to the round, without the arrival film; the game itself never sets this.</summary>
         internal static bool SkipArrival;
@@ -94,6 +94,7 @@ namespace TumbangPreso.Diagnostics
             _trace = Array.IndexOf(args, "-tp-trace") >= 0;
             _noWorldAO = Array.IndexOf(args, "-tp-no-world-ao") >= 0;
             _lookTests = Array.IndexOf(args, "-tp-look-tests") >= 0;
+            _liveMap = Array.IndexOf(args, "-tp-live-ao") >= 0;   // a baked map runs its screen AO instead, for an A/B
             _viewFps = Array.IndexOf(args, "-tp-view-fps") >= 0;
             _cascadeShots = _lookTests || Array.IndexOf(args, "-tp-cascade-shots") >= 0;
             int cascades = Array.IndexOf(args, "-tp-cascades");
@@ -128,6 +129,7 @@ namespace TumbangPreso.Diagnostics
             if (_cascades > 0) QualitySettings.shadowCascades = _cascades;
             if (_width > 0 && (Screen.width != _width || Screen.height != _height)) Screen.SetResolution(_width, _height, FullScreenMode.Windowed);
             if (_noWorldAO) TumbangPreso.Visual.WorldOutline.BakedWorldAO = true;
+            if (_liveMap) TumbangPreso.Map.PayoBakedAO.Test = 0;
         }
 
         /// <summary>
@@ -359,6 +361,8 @@ namespace TumbangPreso.Diagnostics
                 ("nomerged", () => { foreach (var r in plants) if (r.name.StartsWith("plaza merged")) r.enabled = false; }, () => { foreach (var r in plants) r.enabled = true; }),
                 ("noinstancing", () => { foreach (var m in plantMaterials) m.enableInstancing = false; }, () => { foreach (var m in plantMaterials) m.enableInstancing = true; }),
                 ("noprepass", () => { foreach (var m in foliageMaterials) m.SetOverrideTag("RenderType", "PayoGrass"); }, () => { foreach (var m in foliageMaterials) m.SetOverrideTag("RenderType", ""); }),
+                ("livemap", () => TumbangPreso.Map.PayoBakedAO.Test = 0, () => TumbangPreso.Map.PayoBakedAO.Test = -1),
+                ("bakedmap", () => TumbangPreso.Map.PayoBakedAO.Test = 1, () => TumbangPreso.Map.PayoBakedAO.Test = -1),
                 ("tol0", () => TumbangPreso.Visual.WorldOutline.BenchMaskTolerance = 0.00001f, () => TumbangPreso.Visual.WorldOutline.BenchMaskTolerance = -1f),
                 ("nomasklist", () => TumbangPreso.Visual.WorldOutline.BenchNoExcluded = true, () => TumbangPreso.Visual.WorldOutline.BenchNoExcluded = false),
                 ("baseb", null, null),
