@@ -751,6 +751,10 @@ namespace TumbangPreso.InputLayer
             label.color=SettingsPalette.Ink;
             label.name = "Job";
             label.raycastTarget = false;
+            // 28 is the reading floor at 960x540, so a long action wraps. Two tightened lines fit
+            // RowHeight, but vertical truncation still drops the second, so let it draw.
+            label.lineSpacing = .85f;
+            label.verticalOverflow = VerticalWrapMode.Overflow;
 
             var lrt = label.rectTransform;
             lrt.anchorMin = new Vector2(0.0f, 0.0f);
@@ -882,7 +886,7 @@ namespace TumbangPreso.InputLayer
             // same sentence over the same rows in the settings list.
             var note=OwnerUiLayout.Text(root,"SpectatorHint","Spectator controls: Settings / Controls.",28);
             note.alignment=TextAnchor.MiddleCenter;note.color=SettingsPalette.Muted;
-            MenuKit.Place(note.rectTransform,new Vector2(.5f,0),new Vector2(0,96),new Vector2(1500,38));
+            MenuKit.Place(note.rectTransform,new Vector2(.5f,0),new Vector2(0,96),new Vector2(1500,44));
 
             var reset = FooterAction(root,"Reset","RESET ALL");
             MenuKit.Place((RectTransform)reset.transform, new Vector2(0.5f, 0.0f),

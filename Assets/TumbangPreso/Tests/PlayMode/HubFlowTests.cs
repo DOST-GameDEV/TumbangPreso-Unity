@@ -143,6 +143,15 @@ namespace TumbangPreso.PlayTests
         /// and 0.45 s is not the time it takes. The shop's HEROES door read as broken for that
         /// reason alone (`docs/TODO_Archive.md` UX-1.5a). The time is logged so a slow reveal is seen.
         /// </summary>
+        /// <summary>A networked room picks heroes together after START, so its lobby has no
+        /// CHARACTER door. A case about the picker itself opens it as that door would.</summary>
+        internal static IEnumerator OpenRoomPicker()
+        {
+            TumpHub.Current.Push<HubCharacterSelect>(c => c.Timed = false);
+            float until = Time.realtimeSinceStartup + 10;
+            while (!(TumpHub.Current.Top is HubCharacterSelect) && Time.realtimeSinceStartup < until) yield return null;
+        }
+
         internal static IEnumerator AwaitDeferredHero()
         {
             float began = Time.realtimeSinceStartup, until = began + 10;
@@ -254,7 +263,7 @@ namespace TumbangPreso.PlayTests
                 until = Time.realtimeSinceStartup + 5;
                 while (!(TumpHub.Current.Top is HubLobby) && Time.realtimeSinceStartup < until) yield return null;
                 Assert.IsInstanceOf<HubLobby>(TumpHub.Current.Top);
-                yield return Press("CharacterDoor");
+                yield return OpenRoomPicker();
                 var picker = TumpHub.Current.Top as HubCharacterSelect;
                 Assert.IsNotNull(picker);
                 var people = Roster.GetPeople(GameMode.HeroStrike);

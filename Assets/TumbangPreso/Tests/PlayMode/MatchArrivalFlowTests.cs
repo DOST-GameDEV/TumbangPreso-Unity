@@ -321,7 +321,7 @@ namespace TumbangPreso.PlayTests
                 Assert.IsTrue(HubOwnership.OwnsHero("dante"));
                 Assert.IsFalse(HubOwnership.OwnsHero("zack"));
 
-                yield return HubFlowTests.Press("CharacterDoor");
+                yield return HubFlowTests.OpenRoomPicker();
                 var selector = TumpHub.Current.Top as HubCharacterSelect;
                 Assert.IsNotNull(selector,"The lobby's CHARACTER door did not open the selector.");
                 var portraits = selector.GetComponentsInChildren<HubButton>(true);
