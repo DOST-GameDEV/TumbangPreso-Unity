@@ -55,7 +55,8 @@ namespace TumbangPreso.Tests
                 { "lata_knockdown",         "alias target of can_knockdown" },
                 { "reset_channel_complete", "alias target of reset_complete" },
                 { "grab",                   "alias target of pickup" },
-                { "throw_whoosh",           "alias target of throw_release" },
+                { "throw_whoosh",           "alias target of court_escape" },
+                { "slipper_throw",          "alias target of throw_release" },
             };
 
         [Test]

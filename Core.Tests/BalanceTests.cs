@@ -329,10 +329,10 @@ namespace TumbangPreso.Core.Tests
         /// distance beside it would be silently wrong.
         /// </summary>
         [Fact]
-        public void BlockKnockback_SolvesToThePublished0Point35Metres()
+        public void BlockKnockback_SolvesToThePublished0Point6Metres()
         {
-            Assert.Equal(0.35f, Combat.KnockbackDistance(Balance.BlockKnockbackSpeed), 2);
-            Assert.Equal(Balance.BlockKnockbackSpeed, Combat.SpeedForDistance(0.35f), 2);
+            Assert.Equal(0.6f, Combat.KnockbackDistance(Balance.BlockKnockbackSpeed), 2);
+            Assert.Equal(Balance.BlockKnockbackSpeed, Combat.SpeedForDistance(0.6f), 2);
         }
 
         /// <summary>
@@ -1083,8 +1083,8 @@ namespace TumbangPreso.Core.Tests
 
             // The impact half, which is equipment and survives the archive. Both published
             // figures are the neutral push scaled by the slipper alone.
-            Assert.Equal(3.941f, Combat.BlockKnockbackSpeed(pantulog, junjun), 2);
-            Assert.Equal(5.224f, Combat.BlockKnockbackSpeed(crocs, junjun), 2);
+            Assert.Equal(5.16f, Combat.BlockKnockbackSpeed(pantulog, junjun), 2);
+            Assert.Equal(6.84f, Combat.BlockKnockbackSpeed(crocs, junjun), 2);
             Assert.Equal(1.14f / 0.86f,
                 Combat.BlockKnockbackSpeed(crocs, junjun) / Combat.BlockKnockbackSpeed(pantulog, junjun), 3);
 

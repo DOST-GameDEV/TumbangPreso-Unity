@@ -2007,7 +2007,7 @@ namespace TumbangPreso
             // `tools/audit_audio_reach.py` could not see this class of fault at all, because it
             // looks for a gate at the same brace depth and this one is two frames up the stack.
             // See `docs/TODO.md` § 83.12.
-            NetCue.PlayImpact("hit_body", "guard_block", transform.position, 0.72f);
+            NetCue.PlayImpact("slipper_hit", "guard_block", transform.position, 0.72f);
 
             float speed = Combat.BlockKnockbackSpeed(_skinIndex, blocker.CharacterIndex, blocker.Mode);
             Vector3 along = _velocity;

@@ -56,6 +56,9 @@ namespace TumbangPreso
         }
         private float _replayBegan;
         private Scene _scene;
+        // The wipe opens the package and hides the replay's build, leaves on its first drawn frame, and crosses again to the standings.
+        private UI.ReplayStinger _cover;
+        private bool _exitSwept;
         // PAYO FORCES A HALF TIME (owner, 2026-10-12, of the map that turns to night at half time: "force it to have").
         // Four-round matches also play their middle break (owner, 2026-10-21). On a map that sets this lower it has one
         // at its middle whatever its length (2 rounds: after round 1). It is set by the MAP when its scene loads
@@ -105,6 +108,8 @@ namespace TumbangPreso
             _scene=SceneManager.GetActiveScene();Active=true;_attempted=false;_standings=false;_stageShow=false;_replayBegan=.35f;FallbackReason=null;
             PresentationClock.RequestScale(requestedScale);PresentationClock.Hold();FreshInput();
             if(!halftime)FindAnyObjectByType<UI.RoleSwapCard>()?.ShowScheduledBreak(completed+1,nextTaya,Remaining,null);
+            _exitSwept=false;
+            if(halftime&&clip>0&&SharedUltimatePhase.Now-began<1)_cover=UI.ReplayStinger.Cover(transform,UI.HudDraw.Honey);
             return true;
         }
         private void Update()
@@ -116,6 +121,8 @@ namespace TumbangPreso
             float age=(float)(SharedUltimatePhase.Now-Began);
             if(age>=Duration){End(true);return;}
             if(!IsHalftime)return;
+            // A late peer still waiting for the clip's bytes is not left behind a held wipe.
+            if(_cover!=null&&(_attempted||age>=1.5f)){_cover.Release();_cover=null;}
             if(StageShowPlaying)
             {
                 // The package is over: its replay, its still frame and the centred card give way to the live stage.
@@ -148,6 +155,8 @@ namespace TumbangPreso
                 if(_view?.Ready!=true)
                 { Debug.Log("[Replay] clip="+ClipId+" unavailable: "+(_clip==null?"canonical bytes missing":_view?.UnavailableReason??"view preference or scene"));_view?.Dispose();_view=null;FallbackReason=ClipId==0?"No complete highlight this half":"Replay unavailable on this screen"; }
             }
+            if(_view?.Ready==true&&!_exitSwept&&age>=ReplayEndAge-UI.ReplayStinger.InSeconds)
+            {_exitSwept=true;UI.ReplayStinger.Sweep(transform,UI.HudDraw.Honey,true);}
             if(_view?.Ready==true&&age<ReplayEndAge)
             {
                 // Real-time setup, a long contact slowdown, then full consequence.
@@ -167,6 +176,7 @@ namespace TumbangPreso
         {
             bool wasActive=Active;Active=false;IsHalftime=false;
             _clip=null;_view?.Dispose();_view=null;
+            if(_cover!=null){_cover.Release();_cover=null;}
             _frame?.Release();
             if(wasActive){PresentationClock.Release();FreshInput();}
             if(advance&&wasActive&&NetAuthority.ShouldResolve()&&GameServices.Match?.IsWarmupBuffer==true)GameServices.Match.AdvanceRound();

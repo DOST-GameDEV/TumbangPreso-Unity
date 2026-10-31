@@ -202,7 +202,7 @@ namespace TumbangPreso.Visual
                     break;
 
                 case Kind.Block:
-                    PlayBlock(Seat(subject), at, strength);
+                    PlayBlock(actor, Seat(subject), at, strength);
                     break;
 
                 case Kind.BankShot:
@@ -313,10 +313,25 @@ namespace TumbangPreso.Visual
         private static void PlayCanConfirmation(CharacterMotor scorer, Vector3 at)
         {
             var rig = Camera.main != null ? Camera.main.GetComponent<CameraSystem.CameraRig>() : null;
-            if (scorer == null || rig == null || !rig.IsFollowing(scorer)) return;
+            if (rig == null) return;
+            // Anyone standing near the can feels it go over, fading to nothing at nine metres.
+            if (scorer == null || !rig.IsFollowing(scorer))
+            {
+                float near = 1.0f - Mathf.Clamp01(Vector3.Distance(rig.transform.position, at) / 9.0f);
+                if (near > 0.0f) rig.Shake(.3f * near, .16f);
+                return;
+            }
             UI.Hud.TriggerHitmarker(UI.UiTheme.Offense);
             Vector3 towardCan = at - scorer.transform.position;
-            rig.ImpactPunch(towardCan.sqrMagnitude > .01f ? towardCan.normalized : scorer.transform.forward, .22f);
+            // The scorer's own payoff (owner, October 31: "hitting the can doesnt feel that satisfying"): the view hangs
+            // for a few frames, punches toward the can and the frame's edges split. A camera hold on this screen only,
+            // not `Hitstop`: the match, and the retrieval run that starts now, never stop.
+            rig.HoldFrame(.065f);
+            rig.ImpactPunch(towardCan.sqrMagnitude > .01f ? towardCan.normalized : scorer.transform.forward, .7f);
+            // The lens snaps in on the hit, and the tin is heard in your own head however far away the can is.
+            rig.ViewPunch(new Vector3(-3.5f, 0, 2.5f), -7f);
+            GameServices.Audio?.PlayReplayCue("can_knockdown", 1f, .75f, 0f);
+            rig.GetComponent<ColourGrade>()?.PulseChromatic(.3f, .24f);
         }
 
         private static void RecordHighlight(Kind kind, int actor, int subject, Vector3 at,
@@ -496,17 +511,40 @@ namespace TumbangPreso.Visual
             GameServices.HeroVoice?.OnTagged(taya, victim);
         }
 
-        private static void PlayBlock(CharacterMotor blocker, Vector3 at, float alongSpeed)
+        private static void PlayBlock(int thrower, CharacterMotor blocker, Vector3 at, float alongSpeed)
         {
+            var rig = Camera.main != null ? Camera.main.GetComponent<CameraSystem.CameraRig>() : null;
             if (blocker != null)
             {
                 blocker.GetComponentInChildren<CharacterVisual>()?.FlashHit();
                 blocker.GetComponentInChildren<CharacterSquashStretch>()?
-                    .Impact((at - blocker.transform.position).normalized * alongSpeed, 0.22f);
+                    .Impact((at - blocker.transform.position).normalized * alongSpeed, 0.4f);
 
+                // Owner, October 31: "di masyado ramdam if a slipper hits u". Taken on your own screen it now has the
+                // hit frame, a punch from where it came, an edge flash in the thrower's colour and a thump. In first
+                // person a popup would spawn inside the head, so only those watching the body get the word.
+                HitFeel.Land(blocker, HitFeel.Weight.Solid,
+                             thrower >= 0 ? UI.PlayerIdentity.Colour(thrower) : UI.HudDraw.Alarm, at);
+                if (rig != null && rig.IsFollowing(blocker))
+                {
+                    InputLayer.Rumble.Pulse(.4f, .55f, .14f);
+                    // In first person your body is not drawn: the view is jolted away from the hit and tilts, the lens
+                    // flares, and PAK is right in your head.
+                    Vector3 local = rig.transform.InverseTransformPoint(at);
+                    float side = local.sqrMagnitude > .01f ? Mathf.Clamp(local.x / Mathf.Max(.2f, Mathf.Abs(local.z)), -1f, 1f) : 0f;
+                    rig.ViewPunch(new Vector3(-7f, -side * 6f, side >= 0f ? 6f : -6f), 9f);
+                    GameServices.Audio?.PlayReplayCue("slipper_hit", 1f, 1f, 0f);
+                }
+                else ComicPopup.Spawn(blocker.transform.position + Vector3.up * 1.2f, "PAK!", UI.UiTheme.Highlight, 1.0f);
             }
 
-            ImpactBurst.SpawnAt(blocker != null ? blocker.transform.position : at);
+            // The thrower is told it connected.
+            var throwerBody = Seat(thrower);
+            if (throwerBody != null && throwerBody != blocker && rig != null && rig.IsFollowing(throwerBody))
+                UI.Hud.TriggerHitmarker(UI.UiTheme.Highlight);
+
+            ImpactBurst.SpawnSlipperHit(at, thrower >= 0 ? UI.PlayerIdentity.Colour(thrower) : UI.UiTheme.Impact,
+                                        rig != null && blocker != null && rig.IsFollowing(blocker));
         }
 
         private static void PlayZap(CharacterMotor jolted, Vector3 at)

@@ -520,7 +520,8 @@ namespace TumbangPreso.Core
         public const float LataRecoilScale = 0.25f;
 
         public const float LataRecoilLiftScale = 0.55f;
-        public const float BlockKnockbackSpeed = 4.583f;
+        // Owner, October 31: a slipper hit should knock you back a bit. 0.6 m, up from 0.35 m, which barely read as a push.
+        public const float BlockKnockbackSpeed = 6.0f;
 
         // -------------------------------------------------------------------
         // THE LATA — lata.gd
