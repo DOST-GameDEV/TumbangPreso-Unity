@@ -214,7 +214,7 @@ namespace TumbangPreso.Abilities
                 // The live look draws no area, because the ultimate has none (`CheskaAbsoluteZeroLook`); off, the old nova.
                 // It starts BEFORE the freezes below, because each casing waits for the wave's front to reach its body and
                 // the host raises its casings in that loop. Look only: no rule moves.
-                if (Visual.CheskaAbsoluteZeroLook.Enabled) Visual.CheskaAbsoluteZeroLook.Play(ctx.Position, ownEyes: ctx.Motor != null && ctx.Motor.IsLocalViewer);
+                if (Visual.CheskaAbsoluteZeroLook.Enabled) Visual.CheskaAbsoluteZeroLook.Play(ctx.Position, ownEyes: ctx.Motor != null && ctx.Motor.IsLocalViewer && CameraSystem.ViewmodelArms.IsFirstPersonFor(ctx.Motor));
                 else
                 {
                     if (Visual.UltimateLiveLook.CheskaAbsoluteZero) Visual.UltimateLiveLook.Cheska(ctx.Position);
