@@ -25,6 +25,7 @@ namespace TumbangPreso.Visual
             }
             // The rest of her kit in the same ice (`CheskaFrostKit`) bakes its crystals here too, one a frame.
             if (CheskaFrozenLook.Enabled) { CheskaFrozenLook.Warm(); yield return null; }
+            if (CheskaColdFeetLook.Enabled) { CheskaColdFeetLook.Warm(); yield return null; }
             if (CheskaAbsoluteZeroLook.Enabled) { CheskaAbsoluteZeroLook.Warm(); yield return null; }
         }
 

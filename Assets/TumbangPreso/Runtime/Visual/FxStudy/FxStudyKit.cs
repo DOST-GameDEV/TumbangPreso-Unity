@@ -445,7 +445,7 @@ namespace TumbangPreso.Visual
     /// </summary>
     public abstract class FxStudyEffect : IDisposable
     {
-        public static readonly string[] Names = { "phaistersky", "phaisterskyday", "phaisterskyunder", "phaisterdoll", "phaisterdollday", "trails", "wisp", "wispshells", "smoke", "circle", "lotus", "lotusfrost", "scorch", "whirlwind", "whirlwindparts", "whirlwindh1", "whirlwindh7", "drift", "rafiwall", "danteboulder", "rafiwallsplit", "danteboulderboard", "dantebastion", "dantebastionb3", "dantebastionb4", "dantebastionb5", "dantebastionb6", "dantebastionb6day", "dantebastionb7", "dantebastionb7day", "dantebastionb8", "dantebastionb8day", "dantebastionboard", "cloud", "cloudline", "clouddark", "cloudburst", "cloudlinedark", "raficurrent", "raficurrentspent", "airburst", "airburstabove", "airburstday", "rafibaha", "rafibahaside", "rafibahaback", "dantefirewave", "phaistera", "phaisterb", "phaisterhexa", "phaisterhexb", "phaisterdrain", "phaisterdrainday", "phaisterdrainabove", "phaisterdrainbreak", "phaisterpassive", "phaisterpassivestill", "rafibahapeak", "rafibahaday", "zackmomentum", "zackmomentumday", "zackoverclock", "zackoverclockday", "zackoverclockend", "zackoverclockendday", "zackzapday" };
+        public static readonly string[] Names = { "phaistersky", "phaisterskyday", "phaisterskyunder", "phaisterdoll", "phaisterdollday", "trails", "wisp", "wispshells", "smoke", "circle", "lotus", "lotusfrost", "scorch", "whirlwind", "whirlwindparts", "whirlwindh1", "whirlwindh7", "drift", "rafiwall", "danteboulder", "rafiwallsplit", "danteboulderboard", "dantebastion", "dantebastionb3", "dantebastionb4", "dantebastionb5", "dantebastionb6", "dantebastionb6day", "dantebastionb7", "dantebastionb7day", "dantebastionb8", "dantebastionb8day", "dantebastionboard", "cloud", "cloudline", "clouddark", "cloudburst", "cloudlinedark", "raficurrent", "raficurrentspent", "airburst", "airburstabove", "airburstday", "rafibaha", "rafibahaside", "rafibahaback", "dantefirewave", "phaistera", "phaisterb", "phaisterhexa", "phaisterhexb", "phaisterdrain", "phaisterdrainday", "phaisterdrainabove", "phaisterdrainbreak", "phaisterpassive", "phaisterpassivestill", "rafibahapeak", "rafibahaday", "zackmomentum", "zackmomentumday", "zackoverclock", "zackoverclockday", "zackoverclockend", "zackoverclockendday", "zackzapday", "coldfeet", "coldfeeteye", "coldfeettop" };
 
         public readonly Transform Root;
         private readonly List<FxPiece> _pieces = new List<FxPiece>();
@@ -562,6 +562,9 @@ namespace TumbangPreso.Visual
                 case "zackoverclockend": return new FxStudyZackSpeed(parent, FxStudyZackSpeed.Show.OverclockEnd, false);
                 case "zackoverclockendday": return new FxStudyZackSpeed(parent, FxStudyZackSpeed.Show.OverclockEnd, true);
                 case "zackzapday": return new FxStudyZackSpeed(parent, FxStudyZackSpeed.Show.Zap, true);
+                case "coldfeet": return new FxStudyColdFeet(parent, FxStudyColdFeet.View.Three);
+                case "coldfeeteye": return new FxStudyColdFeet(parent, FxStudyColdFeet.View.Eye);
+                case "coldfeettop": return new FxStudyColdFeet(parent, FxStudyColdFeet.View.Above);
                 default: return null;
             }
         }

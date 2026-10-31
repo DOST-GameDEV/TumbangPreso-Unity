@@ -162,8 +162,8 @@ namespace TumbangPreso.PlayTests
                 camera.fieldOfView = 48;
                 target = new RenderTexture(960, 540, 24, RenderTextureFormat.ARGB32);
                 target.Create(); camera.targetTexture = target;
-                var skin = root.transform.Find("FrozenSkin").GetComponent<Renderer>().sharedMaterial;
-                var edge = root.transform.Find("FrostEdge").GetComponent<Renderer>().sharedMaterial;
+                var flakes = field.Look.Parts[0];
+                var clock = new MaterialPropertyBlock();
                 var position = root.transform.position;
                 int fullCoverage = 0, lateCoverage = 0;
                 foreach (var child in root.GetComponentsInChildren<Transform>()) child.gameObject.layer = 31;
@@ -201,22 +201,28 @@ namespace TumbangPreso.PlayTests
                     }
                     finally { RenderTexture.active = previous; Object.Destroy(pixels); camera.cullingMask = mask; camera.clearFlags = flags; camera.backgroundColor = background; }
                     Assert.AreEqual(position, root.transform.position);
-                    Assert.That(edge.GetFloat("_Opacity"), Is.EqualTo(Mathf.Clamp01(remaining / .1f)).Within(.001f));
+                    flakes.GetPropertyBlock(clock);
+                    Assert.That(clock.GetFloat("_Age"), Is.EqualTo(field.Duration - remaining).Within(.001f));
+                    Assert.That(clock.GetFloat("_DieAt"), Is.EqualTo(field.Duration - CheskaColdFeetLook.MeltLead).Within(.001f));
                 }
-                Assert.IsTrue(skin.HasProperty("_Thaw"), "The current uniform fade has no spatial thaw phase.");
+                Assert.IsTrue(flakes.sharedMaterial.HasProperty("_DieAt"), "The flakes have no melt driven off the field's clock.");
                 Debug.Log($"[FrostThaw] full={fullCoverage} late={lateCoverage}");
                 Assert.That(fullCoverage, Is.GreaterThan(5000));
-                Assert.That(lateCoverage, Is.InRange(fullCoverage * .02f, fullCoverage * .6f), "Thaw must open the rendered surface while retaining its edge.");
+                Assert.That(lateCoverage, Is.InRange(fullCoverage * .02f, fullCoverage * .6f), "The melt must take the rim and most of the big flake without fading the whole picture.");
                 foreach (float duration in new[] { 5f, 7.5f })
                 {
                     field.Duration = duration;
                     field.StepTo(duration - .2f);
-                    float first = skin.GetFloat("_Thaw");
-                    Assert.That(first, Is.GreaterThan(.5f));
+                    flakes.GetPropertyBlock(clock);
+                    float first = clock.GetFloat("_Age");
+                    Assert.AreEqual(duration - CheskaColdFeetLook.MeltLead, clock.GetFloat("_DieAt"), .001f);
+                    Assert.That(first, Is.GreaterThan(clock.GetFloat("_DieAt")));
                     field.StepTo(.3f);
-                    Assert.AreEqual(0, skin.GetFloat("_Thaw"));
+                    flakes.GetPropertyBlock(clock);
+                    Assert.AreEqual(.3f, clock.GetFloat("_Age"), .001f);
                     field.StepTo(duration - .2f);
-                    Assert.AreEqual(first, skin.GetFloat("_Thaw"), "Restored/recorded sampling cannot depend on a prior frame.");
+                    flakes.GetPropertyBlock(clock);
+                    Assert.AreEqual(first, clock.GetFloat("_Age"), "Restored/recorded sampling cannot depend on a prior frame.");
                 }
             }
             finally
