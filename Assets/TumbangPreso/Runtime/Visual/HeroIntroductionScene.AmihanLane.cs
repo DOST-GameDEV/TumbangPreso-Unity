@@ -88,13 +88,13 @@ namespace TumbangPreso.Visual
             var model = visual.Model.transform;
             var motor = p.transform;
             var yaw = Quaternion.Euler(0f, motor.eulerAngles.y, 0f);
-            var feetWorld = new Vector3(motor.position.x, Slipper.GroundY(motor.position + Vector3.up * .3f), motor.position.z);
+            var feetWorld = new Vector3(motor.position.x, SupportUnder(motor.position, .35f), motor.position.z);
             var feet = _root.transform.InverseTransformPoint(feetWorld);
             var flat = new Vector3(feet.x, 0f, feet.z);
             var c = new AlBody
             {
                 Body = copy, Holder = holder, Model = copy.Root.transform, Feet = feet, Inside = inside,
-                ModelOffset = Quaternion.Inverse(yaw) * (model.position - feetWorld),
+                ModelOffset = Quaternion.Inverse(yaw) * (visual.RestModelPosition - feetWorld),
                 ModelTilt = Quaternion.Inverse(yaw) * model.rotation,
                 Yaw = motor.eulerAngles.y - _facing.eulerAngles.y,
                 // Facing her: the way back along the lane to her feet.

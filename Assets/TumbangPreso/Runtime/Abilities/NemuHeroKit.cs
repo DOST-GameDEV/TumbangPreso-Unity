@@ -39,7 +39,7 @@ namespace TumbangPreso.Abilities
             Ultimate = new NightmareSeanceVoidAbility();
         }
 
-        public override float UltimateCost => 15.0f;
+        public override float UltimateCost => 15.0f + TumbangPreso.Core.Balance.UltimateExtraObjectivePoints;
 
         // ================================================================== SOULBOUND (passive)
 

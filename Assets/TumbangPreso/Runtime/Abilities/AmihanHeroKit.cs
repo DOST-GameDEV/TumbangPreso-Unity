@@ -29,7 +29,7 @@ namespace TumbangPreso.Abilities
     /// </summary>
     public sealed class AmihanHeroKit : HeroKit
     {
-        public override float UltimateCost => AmihanRules.StormSurgeCost;
+        public override float UltimateCost => AmihanRules.StormSurgeCost + TumbangPreso.Core.Balance.UltimateExtraObjectivePoints;
 
         public AmihanHeroKit() : base("amihan", "AMIHAN")
         {

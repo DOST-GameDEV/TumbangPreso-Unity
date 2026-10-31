@@ -172,11 +172,11 @@ namespace TumbangPreso.Visual
             var model = visual.Model.transform;
             var motor = p.transform;
             var yaw = Quaternion.Euler(0f, motor.eulerAngles.y, 0f);
-            var feet = new Vector3(motor.position.x, Slipper.GroundY(motor.position + Vector3.up * .3f), motor.position.z);
+            var feet = new Vector3(motor.position.x, SupportUnder(motor.position, .35f), motor.position.z);
             var c = new PtCaught
             {
                 Body = copy, Holder = holder, Model = copy.Root.transform,
-                ModelOffset = Quaternion.Inverse(yaw) * (model.position - feet),
+                ModelOffset = Quaternion.Inverse(yaw) * (visual.RestModelPosition - feet),
                 ModelTilt = Quaternion.Inverse(yaw) * model.rotation,
                 StartYaw = motor.eulerAngles.y - _facing.eulerAngles.y,
             };
@@ -188,6 +188,8 @@ namespace TumbangPreso.Visual
             float d = offset.magnitude;
             c.Dir = offset.sqrMagnitude > 1e-4f ? offset.normalized : Quaternion.Euler(0f, PaeteTreeYaw, 0f) * Vector3.forward;
             c.Start = spot + c.Dir * d;
+            // On their own floor, never the tree's: the reel carries them from it to his (`PtFeet`).
+            c.Start.y = _root.transform.InverseTransformPoint(feet).y;
             c.Hold = spot + c.Dir * Core.PaeteRules.SentryHoldDistance;
             // The animated root: where the rig's clips are bound (the live `Animator`'s transform), and the clips his kit gave this rig.
             var animator = visual.Model.GetComponentInChildren<Animator>();
@@ -256,7 +258,7 @@ namespace TumbangPreso.Visual
         private Vector3 PtRideEnd(PtCaught c)
         {
             var side = Vector3.Cross(Vector3.up, c.Dir).normalized * _ptRideSide;
-            var face = c.Ghost ? c.Start + Vector3.up * .35f : new Vector3(c.Start.x, _paeteCourt + 1.3f, c.Start.z);
+            var face = c.Ghost ? c.Start + Vector3.up * .35f : c.Start + Vector3.up * 1.3f;
             return face + (-c.Dir * Mathf.Cos(50f * Mathf.Deg2Rad) + side * Mathf.Sin(50f * Mathf.Deg2Rad)) * 2.4f + Vector3.up * .3f;
         }
 
@@ -282,6 +284,7 @@ namespace TumbangPreso.Visual
             float d = Mathf.Lerp(c.StartDist, Core.PaeteRules.SentryHoldDistance, Mathf.Pow(yank, 1.7f));
             var dir = new Vector3(Mathf.Sin(a), 0f, Mathf.Cos(a));
             var feet = spot + dir * d;
+            feet.y = Mathf.Lerp(c.Start.y, spot.y, Ease(0f, 1f, yank));
             float hop = .12f * Mathf.Sin(Mathf.PI * Mathf.Clamp01((t - c.Lash) / .22f));
             feet.y += hop + .32f * Mathf.Sin(Mathf.PI * yank);
             if (yank > 0f) yaw = angle + 180f + c.Spin * Ease(.15f, .95f, yank);
@@ -432,7 +435,7 @@ namespace TumbangPreso.Visual
                     if (c.Crack >= 0)
                     {
                         float k = Ease(c.WrapAt - .02f, c.WrapAt + .06f, t) * (1f - Ease(PtArriveAt, 4.9f, t));
-                        Place(c.Crack, new Vector3(c.Start.x, court + .015f, c.Start.z), new Vector3(1f, 1f, 1f) * Mathf.Max(.001f, k), Quaternion.Euler(0f, 23f * i, 0f), k > .001f ? leave : 0f);
+                        Place(c.Crack, c.Start + Vector3.up * .015f, new Vector3(1f, 1f, 1f) * Mathf.Max(.001f, k), Quaternion.Euler(0f, 23f * i, 0f), k > .001f ? leave : 0f);
                     }
                 }
 
@@ -516,7 +519,7 @@ namespace TumbangPreso.Visual
             var dir = c.Dir;
             var side = Vector3.Cross(up, dir).normalized * _ptRideSide;
             var anchor = PtAnchor(c, PtLashAt);
-            var face = c.Ghost ? c.Start + up * .35f : new Vector3(c.Start.x, _paeteCourt + 1.3f, c.Start.z);
+            var face = c.Ghost ? c.Start + up * .35f : c.Start + Vector3.up * 1.3f;
 
             // 1 THE RIDE: from beside the limb's root, chasing its head out to them. ⚠️ It ends BESIDE them (`PtRideEnd`), not on the
             // limb's line: film r20 ended 1.75 m in front of them on that line, so the limb crossed the lens and their face, and on

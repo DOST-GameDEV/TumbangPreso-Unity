@@ -307,6 +307,7 @@ namespace TumbangPreso.UI
 
             string password = rules.Password ?? "";
             var clamped = CustomGameRules.Parse(CustomGameRules.ToWire(rules), rules.Mode);
+            clamped.Format = CustomGameRules.NewMatchFormat(clamped.Format);
             clamped.Password = password;
 
             SelectedRules = clamped;
