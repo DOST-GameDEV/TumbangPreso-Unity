@@ -63,6 +63,9 @@ Shader "TumbangPreso/Toon"
         _FrostAmount ("Frost Amount", Range(0, 1)) = 0
         _FrostColor ("Frost Colour", Color) = (0.62, 0.87, 0.95, 1)
         _FrostRimColor ("Frost Rim Colour", Color) = (0.85, 0.98, 1, 1)
+        // Yasmin's Frozen only (`StunCoat.WriteBody`): 1 turns the frost term from a pale wash into a graded blue.
+        _FrostSolid ("Frost Solid", Range(0, 1)) = 0
+        _FrostDeepColor ("Frost Deep Colour", Color) = (0.08, 0.27, 0.39, 1)
 
         // ⚠️⚠️ § THE CAUGHT MARK — what a TAG looks like, and it is not ice. 🧑 2026-08-26:
         // *"freeze effects show up when u get tagged, this was an old stale version bcz back
@@ -413,6 +416,8 @@ Shader "TumbangPreso/Toon"
         half _FrostAmount;
         fixed4 _FrostColor;
         fixed4 _FrostRimColor;
+        half _FrostSolid;
+        fixed4 _FrostDeepColor;
         half _CaughtAmount;
         fixed4 _CaughtRimColor;
         fixed4 _RimColor;
@@ -643,7 +648,33 @@ Shader "TumbangPreso/Toon"
             // rather than as a different character, which is the same constraint the slipper
             // highlight settled on and for the same reason: the player picked that look on the
             // CHARACTER screen and a status effect must not overwrite it.
-            if (_FrostAmount > 0.0)
+            half3 iceOwnLight = 0;
+            if (_FrostAmount > 0.0 && _FrostSolid > 0.5)
+            {
+                // YASMIN'S FROZEN. Owner, 2026-10-31: "you'll need to color the character blue when they're hit".
+                // A mix toward one pale colour lifts every dark to the same milk, which is what the term below does
+                // and what made him look half see-through. So this one REGRADES: the body's own brightness picks a
+                // place on a deep, body, light ramp of her ice, so black hair stays the darkest thing on him, a face
+                // keeps its eyes, and shirt and trousers stay apart. The trace of the original hue is what keeps two
+                // equally bright cloths from becoming one colour. Everything is a surface colour under the normal
+                // lighting, so it reads with bloom off.
+                half iceLum = dot(base, half3(0.299h, 0.587h, 0.114h));
+                half iceTone = pow(saturate(iceLum), 0.6h);
+                half3 iceGrade = iceTone < 0.5h
+                    ? lerp(_FrostDeepColor.rgb, _FrostColor.rgb, iceTone * 2.0h)
+                    : lerp(_FrostColor.rgb, _FrostRimColor.rgb, iceTone * 2.0h - 1.0h);
+                iceGrade = saturate(iceGrade + (base - iceLum) * 0.10h);
+                // Warm skin mixed evenly into blue passes through a grey, so the mix crosses the middle quickly.
+                half iceMix = smoothstep(0.1h, 0.9h, _FrostAmount);
+                base = lerp(base, iceGrade, iceMix);
+                // The street's warm key takes most of the blue out of any lit albedo, so a third of the grade is ice's own
+                // light, as her crystals carry it. It stays under the bloom threshold: the colour is on the surface.
+                iceOwnLight = iceGrade * 0.34h * iceMix;
+                // A thin lit edge keeps the silhouette off the pale road, far less than the milky term's full rim.
+                half iceEdge = pow(1.0h - saturate(dot(normalize(IN.viewDir), normalize(IN.worldNormal))), 3.0h);
+                base = lerp(base, _FrostRimColor.rgb, iceEdge * 0.4h * iceMix);
+            }
+            else if (_FrostAmount > 0.0)
             {
                 // ⚠️ IT SETTLES FROM ABOVE, like real rime, which is what stops a flat tint
                 // from reading as "somebody recoloured the model". Upward-facing surfaces take
@@ -722,6 +753,7 @@ Shader "TumbangPreso/Toon"
             // ⚠️ THE FLASH GOES ON TOP OF THE FROST, not under it. A stunned attacker can still
             // be shoved, and a hit flash buried beneath a 0.68 ice mix would not register.
             o.Albedo = lerp(base, _FlashColor.rgb, _FlashAmount);
+            o.Emission = iceOwnLight * (1.0h - _FlashAmount);
             o.Alpha = 1.0;
             o.Specular = 0.0;
             o.Gloss = 0.0;

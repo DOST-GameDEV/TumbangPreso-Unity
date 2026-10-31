@@ -59,7 +59,7 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(rime.enabled);Assert.AreSame(original,rime.GetComponent<MeshFilter>().sharedMesh);
             CollectionAssert.AreEqual(materials,renderer.sharedMaterials,"The cue replaced authored shoe materials.");
             Shot(renderer,"loaded");
-            Assert.IsTrue(_shoe.HostDisarm());yield return null;yield return null;
+            Assert.IsTrue(_shoe.HostDisarm());yield return new WaitForSeconds(TumbangPreso.Visual.CheskaFrostbiteCoating.MeltSeconds+.1f);
             Assert.IsFalse(rime.enabled,"A loose shoe must not advertise a held Frostbite load.");
             Assert.IsTrue(_shoe.HostForceEquip(_actor));yield return null;yield return null;
             Assert.IsTrue(rime.enabled,"Returning the same still-loaded shoe lost its cue.");

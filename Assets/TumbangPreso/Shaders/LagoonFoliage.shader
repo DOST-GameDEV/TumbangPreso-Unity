@@ -34,7 +34,11 @@ Shader "TumbangPreso/LagoonFoliage"
     }
     SubShader
     {
-        Tags { "Queue" = "AlphaTest" "RenderType" = "TransparentCutout" "IgnoreProjector" = "True" }
+        // RenderType PayoFoliage, not TransparentCutout (owner, 2026-10-31: "do whatever fix as long as it gets rid of the plant
+        // ghosting without losing anything major"): the world outline's depth-normals prepass, a replacement shader keyed on
+        // RenderType, skips the leaves, as it skips PayoBlades. Drawn there, leaves behind a floor or wall left specks of their
+        // normals over it, and the ink drew them as faint plant outlines. Why they got through is not known.
+        Tags { "Queue" = "AlphaTest" "RenderType" = "PayoFoliage" "IgnoreProjector" = "True" }
         Cull Off
         LOD 200
 

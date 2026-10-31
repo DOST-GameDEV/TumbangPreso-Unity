@@ -54,6 +54,34 @@ namespace TumbangPreso.Visual
         /// reading SHATTER THE ICE, and the whole reason the element is carried through the stun
         /// at all is so the game can be specific about what is holding you.
         /// </summary>
+        /// <summary>On: a Frozen body is regraded into Yasmin's ice. Off: the older pale wash of the Ice row.</summary>
+        public static bool SolidIce = true;
+
+        // Her ice as the body wears it. On the road the Glacial Wall crystal measures dark 51 151 179 and body 93 192 214,
+        // and these are set to land a frozen body on those numbers after the lighting. Only the body uses them: `For`
+        // keeps its Ice row because the victim's screen reads it, and that screen is not this change.
+        private static readonly Color IceDeep = new Color32(8, 30, 70, 255);
+        private static readonly Color IceBody = new Color32(90, 210, 255, 255);
+        private static readonly Color IceLight = new Color32(165, 232, 255, 255);
+        private static readonly int FrostColorId = Shader.PropertyToID("_FrostColor");
+        private static readonly int FrostRimColorId = Shader.PropertyToID("_FrostRimColor");
+        private static readonly int FrostDeepColorId = Shader.PropertyToID("_FrostDeepColor");
+        private static readonly int FrostSolidId = Shader.PropertyToID("_FrostSolid");
+
+        /// <summary>
+        /// Writes this element's body colours into a property block, for the two forms of one picture: the live body
+        /// and its recorded copy in a replay. Only Ice is regraded; every other element keeps its wash.
+        /// </summary>
+        public static void WriteBody(MaterialPropertyBlock block, StunElement element)
+        {
+            bool solid = SolidIce && element == StunElement.Ice;
+            var coat = For(element);
+            block.SetFloat(FrostSolidId, solid ? 1f : 0f);
+            block.SetColor(FrostColorId, solid ? IceBody : coat.Body);
+            block.SetColor(FrostRimColorId, solid ? IceLight : coat.Rim);
+            if (solid) block.SetColor(FrostDeepColorId, IceDeep);
+        }
+
         public static Coat For(StunElement element)
         {
             switch (element)
