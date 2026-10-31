@@ -172,13 +172,18 @@ namespace TumbangPreso.Map
             return true;
         }
 
+        private float _archiveSearchAt;
+
         private void LateUpdate()
         {
             // The opening has the screens: hand them over whole.
             if (ArenaIntro.HidesUi) { EndReplay(); _pending = null; if (_screens.Built) _screens.Destroy(); _until = -1.0f; return; }
 
-            if (_archive == null)
+            // Looked for once a second, not every frame, while no archive exists (owner, 2026-10-30: "i want it so
+            // optimized i'm able to run at 300+ fps").
+            if (_archive == null && Time.unscaledTime >= _archiveSearchAt)
             {
+                _archiveSearchAt = Time.unscaledTime + 1.0f;
                 _archive = FindAnyObjectByType<CameraSystem.MatchReplayArchive>();
                 if (_archive != null) _archive.RecordedClip += OnRetained;
             }

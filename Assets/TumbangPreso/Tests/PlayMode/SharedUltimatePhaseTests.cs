@@ -152,9 +152,8 @@ namespace TumbangPreso.PlayTests
             // Rebinding heroes above is fixture setup. Wait for the same setup
             // warmup that the ordinary ready window gives the selected roster.
             float readyUntil=Time.realtimeSinceStartup+4;
-            while((!PhaisterRitualWarmup.Ready||UltimateIntroductionCache.Find(sean,sean.GetComponent<Carrier>().Held!=null)==null||
+            while((UltimateIntroductionCache.Find(sean,sean.GetComponent<Carrier>().Held!=null)==null||
                 UltimateIntroductionCache.Find(phaister,phaister.GetComponent<Carrier>().Held!=null)==null)&&Time.realtimeSinceStartup<readyUntil)yield return null;
-            Assert.IsTrue(PhaisterRitualWarmup.Ready);
             // HIGOP joins on release; arm its aim before the instant cast's receipt frame.
             Press(phaister,Verb.Ultimate);yield return null;yield return null;
             Assert.IsTrue(phaister.AbilitySystem.IsAiming(HeroAbilitySystem.Slot.Ultimate));
@@ -234,8 +233,6 @@ namespace TumbangPreso.PlayTests
             var actors=GameServices.Round.Players.ToArray();string[] heroes={"sean","dante","cheska","phaister"};
             for(int i=0;i<4;i++)Hero(actors[i],heroes[i]);
             Settings.SettingsStore.Current.CinematicCameraMotion=false;Settings.SettingsStore.Current.ReducedUiMotion=true;
-            float warm=Time.realtimeSinceStartup+4;
-            while(!PhaisterRitualWarmup.Ready&&Time.realtimeSinceStartup<warm)yield return null;
             int starts=0;void Count(CharacterMotor actor,HeroKit kit,HeroAbility ability)=>starts++;
             HeroAbilitySystem.UltimateStarted+=Count;
             try

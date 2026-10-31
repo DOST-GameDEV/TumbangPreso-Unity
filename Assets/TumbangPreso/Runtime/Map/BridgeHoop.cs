@@ -44,10 +44,11 @@ namespace TumbangPreso
 
             Vector3 centre = WorldCentre;
 
-            foreach (var slipper in Object.FindObjectsByType<Slipper>(
-                         FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+            // The retained slipper inventory, not a scene search every frame (owner, 2026-10-30: "i want it so
+            // optimized i'm able to run at 300+ fps"). Same set: live, active and enabled slippers.
+            foreach (var slipper in BotSlipperInventory.All)
             {
-                if (slipper == null) continue;
+                if (slipper == null || !slipper.enabled) continue;
 
                 Vector3 now = slipper.transform.position;
 

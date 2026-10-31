@@ -214,6 +214,10 @@ namespace TumbangPreso.EditorTools.MapKit
             if (art.Doc != null) { try { _farSaid += "; " + FarTown(root); } catch (Exception e) { Warn("far houses: FAILED, the houses keep their own materials: " + e.Message); Debug.LogException(e); } }   // the far houses' cheap LOD1 (PayoSceneBuilder.FarTown.cs), before Night reads the glows
             if (art.Doc != null) { try { Debug.Log(Tag + Plaza(root, named)); } catch (Exception e) { Warn("plaza: FAILED, the map is built without it: " + e.Message); Debug.LogException(e); } }   // the basin's dressing (PayoSceneBuilder.Plaza.cs)
             if (art.Doc != null) { try { Debug.Log(Tag + NightFires(root, named)); } catch (Exception e) { Warn("night fires: FAILED, the map is built without them: " + e.Message); Debug.LogException(e); } }   // fire pedestals and torches for the night (PayoSceneBuilder.Fire.cs), after every other dressing so they keep clear of it
+            // 2026-10-29, the owner: "go ahead and merge the plaza dressing" (PayoSceneBuilder.PlazaMerge.cs), before Night reads the glows
+            if (art.Doc != null) { try { Debug.Log(Tag + PlazaMerge(root)); } catch (Exception e) { Warn("plaza merge: FAILED, the plaza keeps its pieces: " + e.Message); Debug.LogException(e); } }
+            if (art.Doc != null) { try { Debug.Log(Tag + MeshLodStep(root)); } catch (Exception e) { Warn("mesh LOD: FAILED, the far pieces keep full detail: " + e.Message); Debug.LogException(e); } }   // 2026-10-30 owner: "simplify the places that are further from the arena" (PayoSceneBuilder.MeshLevels.cs), before the AO bake so it bakes every level
+            if (art.Doc != null) { try { Debug.Log(Tag + BakedAOStep(root)); } catch (Exception e) { Warn("baked AO: FAILED, the map keeps the screen AO: " + e.Message); Debug.LogException(e); } }   // 2026-10-29 Payo bake test (PayoSceneBuilder.BakedAO.cs)
             // Rice on the paddies and grass on the flat ground near the court, baked onto the land just placed (docs/PAYO_BLADES.md).
             string blades = "no blades (no art)";
             if (art.Doc != null)

@@ -409,7 +409,8 @@ namespace TumbangPreso.Tests
             //181 retires the Cinder Gate: snapshot kind 17 is reserved and no longer carries a dynamic identity.
             //183 lowers Live Wire to a jumpable ankle-height contact line.
             //184 keeps Live Wire on the court with a reel-in request, adds Zack's Overclock zap messages and his Charge rates.
-            Assert.AreEqual(184, NetSession.ProtocolVersion,
+            //185 lengthens Basilio's ultimate introduction to the 4.86 s longhorn cutscene.
+            Assert.AreEqual(185, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");

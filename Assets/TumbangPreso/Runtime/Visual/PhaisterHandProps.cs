@@ -119,12 +119,16 @@ namespace TumbangPreso.Visual
     /// smirks; first person: the doll held up in her left hand, the pin going in). While she holds the key the doll is in her
     /// throwing hand (the body clip `hero-phaister-manika-aim` holds it up at her chin), jerking at each prick; on her own screen
     /// a copy sits in her first-person left hand, raised into view (`ViewmodelArms.HoldingProp`). On the release it is gone: the
-    /// thrown doll (`PhaisterManika`) leaves from the same place.
+    /// thrown doll (the retired `PhaisterManika`) left from the same place.
     /// </summary>
     public sealed class PhaisterHandDoll : MonoBehaviour
     {
         /// <summary>How often she pricks it while she aims: the tell has a beat others can read.</summary>
         public const float PrickEvery = 0.62f;
+
+        /// <summary>The doll's size in her hand. ⚠️ Was `PhaisterManika.HeldScale`, the size the thrown doll settled to back in her
+        /// palm; kept here when the thrown manika was deleted with MANIKA MISCHIEF (2026-10-29), so the held doll does not change.</summary>
+        public const float HeldScale = 0.9f;
 
         private CharacterMotor _caster;
         private Transform _hand, _leftArm;
@@ -148,7 +152,7 @@ namespace TumbangPreso.Visual
                 d._body = PhaisterProp.Spawn("manika", d._hand, null, PhaisterProp.InsectOutlineWidth * 1.3f);
                 if (d._body != null)
                 {
-                    d._body.transform.localScale = Vector3.one * PhaisterManika.HeldScale;
+                    d._body.transform.localScale = Vector3.one * HeldScale;
                     // ⚠️ Film v8: in her own first person the body's hand is at her lens; that doll is for everyone else.
                     if (ViewmodelArms.IsFirstPersonFor(caster)) d._body.AddComponent<HiddenFromMainCamera>();
                 }

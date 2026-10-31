@@ -315,38 +315,28 @@ namespace TumbangPreso.Core
                 "Use Astral Hijack six times", true, 6),
 
             // ---------------------------------------------------------------
-            // PHAISTER. HEX / SHADOW BLINK. `PhaisterHeroKit`.
-            // ⚠️ THE HERO THE PREVIOUS TABLE LEFT OUT ENTIRELY.
+            // PHAISTER. TELEPORT / CURSE: DRAIN. `PhaisterHeroKit` (the voodoo kit, HERO-10 v3, 2026-09-27).
+            // ⚠️⚠️ THE OLD KIT'S FOUR ROWS ARE GONE, NOT RENAMED. `phaister.1.hex`, `.1.brand`, `.2.blink` and `.2.stride`
+            // described HEX and SHADOW BLINK, which she no longer has, and nothing could equip them with sidegrades closed
+            // (`SidegradesOpen`). A save or a peer still naming one needs no migration: `HeroBuildRules.Equipped` answers the
+            // slot's default for any id this table does not know, which is the same path an edited `settings.json` takes.
+            // Same rule as Amihan's and Paete's rows: named for her real abilities, slot 2 for the attacking role ability,
+            // the second reading of each slot playing as the default until the owner designs the variants.
             // ---------------------------------------------------------------
-            new AbilityVariant("phaister.1.hex", "phaister", 1, "HEX", "PhaisterHexSigil",
-                "HEX",
-                // ⚠️ 66 AND 65 CHARACTERS, AGAINST `EveryVariantRowFitsTheTileItIsDrawnOn`'S 67.
-                // Both of Phaister's slot 1 rows were written at 76 and 101 and shipped over the
-                // budget, because this hero was added after the bound was measured and the core
-                // suite that holds it had been red for long enough that a third red case read as
-                // the weather. They say the same two things in the room the tile has.
-                "Bind a broad patch of ground. Whoever stays in it keeps stumbling.",
-                0.0f, 0.0f, "Covers more space", "Lighter, slower pulses"),
-
-            // ⚠️ THE GAIN REACHES THREE NUMBERS, for the reason Arc Line's note above gives: a
-            // 40 per cent gain on a 0.35 s stagger alone is a tenth of a second and reads as
-            // nothing. It scales the drag, the stagger and the rate the ward re-bites, so a
-            // 1.44 m brand is a place one attacker genuinely cannot cross rather than a smaller
-            // version of the same puddle.
-            new AbilityVariant("phaister.1.brand", "phaister", 1, "HEX", "PhaisterHexSigil",
-                "SLOW BRAND", "A tighter patch, and whoever stays in it stumbles harder, sooner.",
-                0.40f, -0.40f, "Stronger, quicker pulses", "Smaller reach",
-                "Use Hex eight times", true, 8),
-
-            new AbilityVariant("phaister.2.blink", "phaister", 2, "SHADOW BLINK", "PhaisterShadowBlink",
-                "SHADOW BLINK",
-                "Hold to aim, let go to step through. Whoever you left is shoved.",
-                0.0f, 0.0f, "Out of any corner", "The aim is visible"),
-
-            new AbilityVariant("phaister.2.stride", "phaister", 2, "SHADOW BLINK", "PhaisterShadowBlink",
-                "LONG STRIDE", "Reaches much further, and takes long enough to aim to be read.",
-                0.30f, -0.30f, "Crosses the court", "They see it coming",
-                "Use Shadow Blink eight times", true, 8),
+            new AbilityVariant("phaister.1.teleport", "phaister", 1, "TELEPORT", "PhaisterShadowBlink",
+                "TELEPORT", "Aim a spot and let go. Moths carry you there, slipper in hand.",
+                0, 0, "Out of any corner", "The aim is visible"),
+            new AbilityVariant("phaister.1.teleport_next", "phaister", 1, "TELEPORT", "PhaisterShadowBlink",
+                "TELEPORT II", "A second reading, still being designed. Plays as Teleport.",
+                .30f, -.30f, "Being designed", "Same as the default",
+                "Use Teleport eight times", true, 8),
+            new AbilityVariant("phaister.2.drain", "phaister", 2, "CURSE: DRAIN", "PhaisterCursedDoll",
+                "CURSE: DRAIN", "Attacking: reach for a player 2 s. 1.5 s later they are Drained.",
+                0, 0, "Empties their stamina", "A 2 s reach first"),
+            new AbilityVariant("phaister.2.drain_next", "phaister", 2, "CURSE: DRAIN", "PhaisterCursedDoll",
+                "CURSE: DRAIN II", "A second reading, still being designed. Plays as Curse: Drain.",
+                .30f, -.30f, "Being designed", "Same as the default",
+                "Use Curse: Drain six times", true, 6),
             new AbilityVariant("rafi.1.current", "rafi", 1, "CROSSCURRENT", "RafiCrosscurrent",
                 "CROSSCURRENT", "Bend one flying slipper toward your aim. Keep its throw credit.",
                 0, 0, "Turns a throw", "One slipper only"),

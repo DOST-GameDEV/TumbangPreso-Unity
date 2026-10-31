@@ -51,8 +51,15 @@ Shader "TumbangPreso/LagoonRock"
         float _TileMetres, _BumpScale;
         half _Glossiness;
 
+        // 2026-10-29, the owner asked whether the world AO can be baked, then "continue" to a Payo bake test
+        // (Runtime/Map/PayoBakedAO.cs): UV2 x is a static vertex's baked light, y = 1 marks it baked; `_TPBakedAO` is
+        // the cavity shade (rgb) and strength (a), zero unless Payo's switch is on, so every other mesh multiplies by one.
+        float4 _TPBakedAO;
+        inline half3 TPBakedAO(float2 b) { return lerp(half3(1, 1, 1), _TPBakedAO.rgb, saturate((1 - b.x) * b.y * _TPBakedAO.a)); }
+
         struct Input
         {
+            float2 bakedAO;
             float3 worldPos;
             float3 worldNormal;
             float2 bakeUv;
@@ -63,6 +70,9 @@ Shader "TumbangPreso/LagoonRock"
         void vert(inout appdata_full v, out Input o)
         {
             UNITY_INITIALIZE_OUTPUT(Input, o);
+            // UV2.z = 1 marks THE BAKE's own UV2 (owner, 2026-10-30: "the right side has darker shadows"): a model's native UV2
+            // (the court's floor, the far flora) read as baked shade and tinted whole surfaces violet. Anything else is left alone.
+            o.bakedAO = float2(v.texcoord2.x, v.texcoord2.y * step(0.5, v.texcoord2.z));
             o.bakeUv = v.texcoord1.xy;
             float3 sx = float3(unity_ObjectToWorld[0].x, unity_ObjectToWorld[1].x, unity_ObjectToWorld[2].x);
             float3 sy = float3(unity_ObjectToWorld[0].y, unity_ObjectToWorld[1].y, unity_ObjectToWorld[2].y);
@@ -138,7 +148,7 @@ Shader "TumbangPreso/LagoonRock"
             colour *= MapRangeLinear(cut, 0, 1, 1, 1.3);
             colour = lerp(colour, _EdgeWhite.rgb, cut * 0.05);
 
-            o.Albedo = colour;
+            o.Albedo = colour * TPBakedAO(IN.bakedAO);
             o.Metallic = 0;
             o.Smoothness = _Glossiness;
 

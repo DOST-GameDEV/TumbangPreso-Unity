@@ -80,6 +80,14 @@ namespace TumbangPreso.Visual
         public static UltimatePerformance For(string hero, bool holdingSlipper = false)
         {
             if (string.IsNullOrEmpty(hero)) return null;
+            // ⚠️ DANTE'S LONGHORN CUTSCENE IS A SECOND TABLE BEHIND A SWITCH (`HeroIntroductionScene.DanteLonghornCut`, owner 2026-10-29:
+            // "basically we're merging the armor thing that astra brought + the longhorn cutscene"). Off, ASTRA's v8 tables load
+            // as before. Its length is shared phase timing, so every peer must be built with the same switch.
+            if (hero == "dante" && HeroIntroductionScene.DanteLonghornCut)
+            {
+                var longhorn = Load(holdingSlipper ? "dante-longhorn-held" : "dante-longhorn") ?? (holdingSlipper ? Load("dante-longhorn") : null);
+                if (longhorn != null) return longhorn;
+            }
             if (holdingSlipper)
             {
                 var held = Load(hero + "-held");
@@ -111,7 +119,8 @@ namespace TumbangPreso.Visual
 
         public static UltimatePerformance Parse(string name, string text)
         {
-            var p = new UltimatePerformance { Hero = name.EndsWith("-held") ? name.Substring(0, name.Length - 5) : name };
+            // The hero is the name's first word: `cheska-held` is Cheska's, `dante-longhorn-held` is Dante's. No hero id has a dash.
+            var p = new UltimatePerformance { Hero = name.Split('-')[0] };
             float F(string[] parts, int i) => float.Parse(parts[i], NumberStyles.Float, CultureInfo.InvariantCulture);
             Vector3 V(string[] parts, int i) => new Vector3(F(parts, i), F(parts, i + 1), F(parts, i + 2));
             foreach (var raw in text.Split('\n'))
