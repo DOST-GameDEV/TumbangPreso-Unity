@@ -2,11 +2,8 @@
 
 Updated 2026-10-31. [TODO](TODO.md) is the only active queue.
 
-- FEEL-1031, branch feel/replay-and-impact, not merged: replay wipes, spectator 3D replay
-  with picture fallback, tag and halftime replay beats, results-style break card, throw, can
-  and body impact, 0.6 m slipper knockback, new SFX. Film: run_ui_player_review.py --feel-only.
-  Owner judges feel and sound. Picture fallback still looks pale; online spectators only get
-  clips the host staged. Next: owner review, then integrate.
+- FEEL-1031, feel/replay-and-impact, unmerged: replay wipes, spectator 3D replay, break card,
+  impact, 0.6 m knockback, SFX. Film: run_ui_player_review.py --feel-only. Next: owner review.
 - ONLINE-CAST-1028: 73b1f403b pushed/built. Ult victims stand on own floor from the
   host-frozen pose; GroundY ignores awnings. Payo delayed pairs: Cheska gap 0, Nemu 0.015,
   Paete tree grounded. Next: victims in Paete/Amihan/Phaister reach, then multi-PC.
@@ -33,7 +30,5 @@ Updated 2026-10-31. [TODO](TODO.md) is the only active queue.
   remain intact. SFX listening review is still open; rejected sounds were not
   installed. [Evidence](reports/zack-kit-2026-10-25/refinement-validation.md).
 
-ARM translation does not qualify physical phone performance/thermals, separate
-Wi-Fi machines or WAN/Relay. Lossless Android packing is about71% smaller.
 Unrelated future sessions do not automatically owe mobile updates.
 [Earlier checkpoints](archive/cleanup-2026-10-25/docs/ACTIVE_REWORK_LEDGER.md) are history.
