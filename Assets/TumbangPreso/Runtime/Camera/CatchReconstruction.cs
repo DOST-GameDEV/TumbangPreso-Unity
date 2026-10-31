@@ -98,6 +98,7 @@ namespace TumbangPreso.CameraSystem
         private const float ReplayMargin = .025f;
         private bool _touchRead, _hasTouch;
         private int _armAxis;
+        private float _knockRoom = CaughtAfterimage.KnockDistance;
         private float _armSpan;
         private Vector3 _touch;
         private float _armGive = CharacterAnimator.ArmGive;
@@ -237,6 +238,7 @@ namespace TumbangPreso.CameraSystem
             if (forward.sqrMagnitude < .01f) forward = _victimFacing * Vector3.forward;
             forward.Normalize();
             _knockAway = forward;
+            _knockRoom = TagBodyBoxes.KnockRoom(_victimContact, forward, CaughtAfterimage.KnockDistance);
             _actorBoxes = new TagBodyBoxes(_actorCopy.Renderers, true); _victimBoxes = new TagBodyBoxes(_victimCopy.Renderers, false);
             _actorApart = _victimApart = 0; _touchRead = _hasTouch = false; _armGive = CharacterAnimator.ArmGive;
             var actorVisual = actor.Actor != null ? actor.Actor.GetComponent<CharacterVisual>() : null;
@@ -255,6 +257,7 @@ namespace TumbangPreso.CameraSystem
             }
             // A cramped contact gets the normal recovery view rather than a camera pushed into a face.
             if (!ChooseShot(forward, actor, victimTrack)) { End(); return; }
+            ReadTouch();
             _flashBlock = new MaterialPropertyBlock();
             _stage.SetActive(true);
             BuildView();
@@ -304,8 +307,9 @@ namespace TumbangPreso.CameraSystem
             float v = Mathf.Clamp01((elapsed - ContactPlayback - HitStop) / FollowPlayback), e = 1 - (1 - v) * (1 - v) * (1 - v);
             var root = _victimCopy.Root.transform;
             Vector3 axis = Vector3.Cross(Vector3.up, _knockAway);
-            root.SetPositionAndRotation(_victimContact + _knockAway * (CaughtAfterimage.KnockDistance * e),
-                Quaternion.AngleAxis(CaughtAfterimage.KnockTilt * e, axis) * _victimFacing);
+            // A wall behind them takes the shove: they do not go through it.
+            root.SetPositionAndRotation(_victimContact + _knockAway * (_knockRoom * e),
+                Quaternion.AngleAxis(CaughtAfterimage.KnockTilt * (_knockRoom / CaughtAfterimage.KnockDistance) * e, axis) * _victimFacing);
             float squash = .1f * Mathf.Sin(Mathf.Min(1, v * 2) * Mathf.PI);
             root.localScale = Vector3.Scale(root.localScale, new Vector3(1 + squash * .5f, 1 - squash, 1 + squash * .5f));
             float flash = elapsed < ContactPlayback ? 0 : CaughtAfterimage.KnockFlash * (1 - Mathf.Clamp01(v * 2.5f));
@@ -366,14 +370,21 @@ namespace TumbangPreso.CameraSystem
             Vector3 from = _actorHand.position - _actorArm.position, to = target - _actorArm.position;
             if (from.sqrMagnitude > .0001f && to.sqrMagnitude > .0001f)
                 _actorArm.rotation = Quaternion.Slerp(_actorArm.rotation, Quaternion.FromToRotation(from, to) * _actorArm.rotation, touching);
+            // A bent elbow spans less than a straight arm's reach. Whatever the arm still lacks, the body steps: the hand lands.
+            float lacking = Vector3.Dot(target - _actorHand.position, _knockAway);
+            if (recordedTime >= _impact - .001f && lacking > .005f && lacking < .5f) actor.position += _knockAway * lacking;
         }
+        // ⚠️ ONLY THIS VICTIM'S TOUCH. A double catch puts the same taya's next touch in the same field, and it may be close enough
+        // to pass for this one. If it has already been replaced, the recorded hand stands as it is.
         private void ReadTouch()
         {
+            if (_victim == null) return;
+            var animator = _actorTrack.Actor != null ? _actorTrack.Actor.GetComponent<CharacterAnimator>() : null;
+            if (animator == null || animator.AcceptedTagSubject != _victim.PlayerSlot) return;
+            // The live pose sets this pair's give as it reaches, which can be after the replay begins.
+            _armGive = Mathf.Max(_armGive, animator.TagArmGive);
             if (_touchRead) return;
             _touchRead = true;
-            var animator = _actorTrack.Actor != null ? _actorTrack.Actor.GetComponent<CharacterAnimator>() : null;
-            if (animator == null) return;
-            _armGive = animator.TagArmGive;
             Vector3 touch = animator.AcceptedTagContact, flat = touch - _victimContact; flat.y = 0;
             if (flat.sqrMagnitude < 2.25f) { _touch = touch; _hasTouch = true; }
         }

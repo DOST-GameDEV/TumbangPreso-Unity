@@ -41,7 +41,7 @@ namespace TumbangPreso.Visual
         private Vector3 _yankFrom;
         // The taya is a real player and may run straight on. The caught body cannot stop them, so it is carried ahead of them.
         private TagBodyBoxes _tayaBoxes, _ownBoxes;
-        private float _carried;
+        private float _carried, _knock = KnockDistance;
         private LineRenderer _streak;
         private Material _streakMaterial;
         private MaterialPropertyBlock _block;
@@ -77,6 +77,7 @@ namespace TumbangPreso.Visual
             var capsule = victim.GetComponent<CharacterController>();
             image._height = capsule != null ? capsule.height : 1.6f;
             image._born = Time.unscaledTime;
+            image._knock = TagBodyBoxes.KnockRoom(image._feet, image._push, KnockDistance);
             var tayaBody = taya != null ? taya.GetComponentInChildren<Animator>() : null;
             if (tayaBody != null)
             {
@@ -103,7 +104,7 @@ namespace TumbangPreso.Visual
             var root = _copy.Root.transform;
             root.position += _push * _carried;
             float more = TagBodyBoxes.Overlap(_tayaBoxes.Read(_push), _ownBoxes.Read(_push));
-            more = TagBodyBoxes.Room(root.position, _push, more);
+            more = TagBodyBoxes.KnockRoom(root.position, _push, more);
             if (more > 0) { _carried += more; root.position += _push * more; }
         }
 
@@ -140,7 +141,7 @@ namespace TumbangPreso.Visual
                 float u = (t - knockAt) / KnockSeconds, e = 1 - (1 - u) * (1 - u);
                 Vector3 axis = Vector3.Cross(Vector3.up, _push);
                 if (axis.sqrMagnitude < .0001f) axis = root.right;
-                root.SetPositionAndRotation(_feet + _push * (KnockDistance * e), Quaternion.AngleAxis(KnockTilt * e, axis.normalized) * _rest);
+                root.SetPositionAndRotation(_feet + _push * (_knock * e), Quaternion.AngleAxis(KnockTilt * (_knock / KnockDistance) * e, axis.normalized) * _rest);
                 float squash = .12f * Mathf.Sin(u * Mathf.PI);
                 root.localScale = new Vector3(_restScale.x * (1 + squash * .5f), _restScale.y * (1 - squash), _restScale.z * (1 + squash * .5f));
                 Flash(KnockFlash * (1 - u));
@@ -158,9 +159,9 @@ namespace TumbangPreso.Visual
                 float e = y * y, upright = 1 - (1 - y) * (1 - y);
                 Vector3 axis = Vector3.Cross(Vector3.up, _push);
                 if (axis.sqrMagnitude < .0001f) axis = Vector3.right;
-                root.rotation = Quaternion.AngleAxis(KnockTilt * (1 - upright), axis.normalized) * _rest;
+                root.rotation = Quaternion.AngleAxis(KnockTilt * (_knock / KnockDistance) * (1 - upright), axis.normalized) * _rest;
                 root.localScale = new Vector3(_restScale.x * Mathf.Lerp(1, .06f, e), _restScale.y * Mathf.Lerp(1, 1.45f, e), _restScale.z * Mathf.Lerp(1, .06f, e));
-                root.position = _feet + _push * (KnockDistance + _carried) + Vector3.up * (.35f * e);
+                root.position = _feet + _push * (_knock + _carried) + Vector3.up * (.35f * e);
                 Flash(.6f * e);
             }
             else foreach (var renderer in _copy.Renderers) if (renderer != null) renderer.forceRenderingOff = true;

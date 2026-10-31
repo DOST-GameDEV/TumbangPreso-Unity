@@ -41,36 +41,50 @@ namespace TumbangPreso.Visual
             foreach (var renderer in renderers)
             {
                 if (!(renderer is SkinnedMeshRenderer skin) || !skin.enabled || skin.sharedMesh == null || !skin.sharedMesh.isReadable) continue;
-                var mesh = skin.sharedMesh; var bones = skin.bones; var binds = mesh.bindposes;
-                var vertices = mesh.vertices; var weights = mesh.boneWeights;
-                if (weights.Length != vertices.Length) continue;
-                for (int b = 0; b < bones.Length && b < binds.Length; b++)
-                {
-                    if (bones[b] == null || !IsBodyPart(bones[b].name, reaching)) continue;
-                    AddSlices(bones[b], binds[b], vertices, weights, b, skin.transform.InverseTransformDirection(Vector3.up));
-                }
+                var bones = skin.bones;
+                foreach (var part in PartsOf(skin))
+                    if (part.Bone < bones.Length && bones[part.Bone] != null && IsBodyPart(bones[part.Bone].name, reaching))
+                        _boxes.Add(new Box { Bone = bones[part.Bone], Points = part.Points });
             }
             _spans = new Span[_boxes.Count];
         }
 
-        private void AddSlices(Transform bone, Matrix4x4 bind, Vector3[] vertices, BoneWeight[] weights, int index, Vector3 up)
+        // Built on the tag's own frame, several times over, and hit stop is no moment for a hitch: one mesh is walked once.
+        private struct Part { public int Bone; public Vector3[] Points; }
+        private static readonly Dictionary<Mesh, List<Part>> Known = new Dictionary<Mesh, List<Part>>();
+        private static List<Part> PartsOf(SkinnedMeshRenderer skin)
         {
+            var mesh = skin.sharedMesh;
+            if (Known.TryGetValue(mesh, out var parts)) return parts;
+            if (Known.Count >= 64) Known.Clear();
+            parts = new List<Part>();
+            var binds = mesh.bindposes; var vertices = mesh.vertices; var weights = mesh.boneWeights;
+            if (weights.Length == vertices.Length)
+            {
+                Vector3 up = skin.transform.InverseTransformDirection(Vector3.up);
+                for (int b = 0; b < binds.Length; b++) AddSlices(parts, binds[b], vertices, weights, b, up);
+            }
+            return Known[mesh] = parts;
+        }
+
+        private static void AddSlices(List<Part> parts, Matrix4x4 bind, Vector3[] vertices, BoneWeight[] weights, int index, Vector3 up)
+        {
+            var mine = new List<int>();
             float low = float.MaxValue, high = float.MinValue;
             for (int i = 0; i < vertices.Length; i++)
             {
                 if (weights[i].boneIndex0 != index || weights[i].weight0 < .5f) continue;
                 float height = Vector3.Dot(vertices[i], up);
-                low = Mathf.Min(low, height); high = Mathf.Max(high, height);
+                low = Mathf.Min(low, height); high = Mathf.Max(high, height); mine.Add(i);
             }
-            if (high < low) return;
+            if (mine.Count == 0) return;
             float size = Mathf.Max(.0001f, (high - low) / Slices);
             for (int slice = 0; slice < Slices; slice++)
             {
                 var best = new float[Directions.Length]; var hull = new Vector3[Directions.Length];
                 bool any = false;
-                for (int i = 0; i < vertices.Length; i++)
+                foreach (int i in mine)
                 {
-                    if (weights[i].boneIndex0 != index || weights[i].weight0 < .5f) continue;
                     if (Mathf.Min(Slices - 1, (int)((Vector3.Dot(vertices[i], up) - low) / size)) != slice) continue;
                     Vector3 point = bind.MultiplyPoint3x4(vertices[i]);
                     for (int d = 0; d < Directions.Length; d++)
@@ -80,7 +94,7 @@ namespace TumbangPreso.Visual
                     }
                     any = true;
                 }
-                if (any) _boxes.Add(new Box { Bone = bone, Points = hull });
+                if (any) parts.Add(new Part { Bone = index, Points = hull });
             }
         }
 
@@ -129,6 +143,13 @@ namespace TumbangPreso.Visual
                 }
             }
             return need;
+        }
+
+        /// <summary>How far of its shove a caught body can travel with its own depth clear of whatever is behind it.</summary>
+        public static float KnockRoom(Vector3 feet, Vector3 direction, float wanted)
+        {
+            const float depth = .35f;
+            return Mathf.Clamp(Room(feet, direction, wanted + depth, .3f) - depth, 0, wanted);
         }
 
         /// <summary>

@@ -55,6 +55,7 @@ namespace TumbangPreso.Visual
         internal int RecordedTagContactSubject => _tgApplied && _tagContactValid ? _tagContactSubject : -1;
         /// <summary>The point on the victim's body the last accepted tag lands on (`PresentTagContact`).</summary>
         internal Vector3 AcceptedTagContact => _tagContact;
+        internal int AcceptedTagSubject => _tagContactSubject;
         private Vector3 _tgRootPositionRest;
         private Quaternion _tgRootRotationRest;
         private Vector3 _tgPalmR, _tgArmScaleRest, _tagContact;
@@ -130,7 +131,7 @@ namespace TumbangPreso.Visual
                 foreach (var span in _tagVictimSpans)
                     if (span.Far >= span.Near) { radius = Mathf.Max(radius, Vector3.Dot(at, _tagAlong) - span.Near); top = Mathf.Max(top, span.MaxUp - at.y); }
             var ownTorso = GetComponent<CharacterVisual>()?.TorsoBone;
-            if (ownTorso != null) height = Mathf.Min(ownTorso.position.y - _motor.transform.position.y + .12f, top - .05f);
+            if (ownTorso != null) height = Mathf.Min(ownTorso.position.y + .12f - at.y, top - .05f);
             _tagContact = at + Vector3.up * Mathf.Clamp(height, .3f, 1.2f)
                 + (toward.sqrMagnitude > .001f ? toward.normalized * radius : Vector3.zero);
             SampleTagSkin(victim, at);
@@ -194,6 +195,9 @@ namespace TumbangPreso.Visual
             else if (Mathf.Abs(along.y) >= Mathf.Abs(along.z)) size.y = give; else size.z = give;
             _tgArmR.localScale = Vector3.Scale(_tgArmR.localScale, size);
             ReachAcceptedContact(weight);
+            // A bent elbow spans less than a straight arm's reach. Whatever the arm still lacks, the body steps: the hand lands.
+            float lacking = Vector3.Dot(_tagContact - _tgArmR.TransformPoint(_tgPalmR), _tagAlong);
+            if (lacking > .005f && lacking < .5f) { _tgRoot.position += _tagAlong * (lacking * weight); ReachAcceptedContact(weight); }
         }
 
         private void ReachAcceptedContact(float weight)

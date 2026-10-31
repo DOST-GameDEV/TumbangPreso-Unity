@@ -672,12 +672,16 @@ namespace TumbangPreso.PlayTests
         [UnityTest] public IEnumerator RunningTagBodiesNeverIntersect_NemuOnDante() => CheckRunningTag("nemu", "dante", false);
         // The widest shape in the cast: the hand wins at the limit, so a little brim may remain. Measured, not assumed.
         [UnityTest] public IEnumerator RunningTagWidestPairStaysWithinItsLimit_PhaisterOnRafi() => CheckRunningTag("phaister", "rafi", false, limit: .3f);
+        [UnityTest] public IEnumerator TagWithAWallBehindTheVictimDoesNotShoveThemThroughIt() => CheckRunningTag(null, null, false, wallBehindVictim: true, limit: .15f); // Measured .12 live, for an instant: the caught body has nowhere to be carried.
+        [UnityTest] public IEnumerator TagUpAStepStillLandsWithBodiesApart() => CheckRunningTag(null, null, false, step: true, limit: .1f); // Measured .06: the hand wins at the limit.
+        [UnityTest] public IEnumerator SecondCatchDoesNotStealTheFirstReplaysHand() => CheckRunningTag(null, null, false, doubleCatch: true);
+        [UnityTest] public IEnumerator StunnedVictimsReplayShowsTheCoatAndRunsItsLength() => CheckRunningTag(null, null, false, stunned: true);
         [UnityTest] public IEnumerator DashTagBodiesNeverIntersect() => CheckRunningTag(null, null, true);
         [UnityTest] public IEnumerator RunningTagBodiesNeverIntersect_OnAuthoredMap() => CheckRunningTag(null, null, false, map: true);
         [UnityTest] public IEnumerator TagWithAWallBehindTheTayaKeepsBodiesApartAndOutOfTheWall() => CheckRunningTag(null, null, false, wall: true);
         [UnityTest] public IEnumerator JumpingTagBodiesNeverIntersect() => CheckRunningTag(null, null, false, air: true, limit: .1f); // Measured .074: the hand wins at the limit in the air.
 
-        private IEnumerator CheckRunningTag(string actorArt, string victimArt, bool dash, bool map = false, bool wall = false, bool air = false, float limit = .03f)
+        private IEnumerator CheckRunningTag(string actorArt, string victimArt, bool dash, bool map = false, bool wall = false, bool air = false, float limit = .03f, bool wallBehindVictim = false, bool step = false, bool doubleCatch = false, bool stunned = false)
         {
             if (map) yield return Open(); else yield return OpenIsolatedCatchWorld();
             var round = GameServices.Round;
@@ -694,12 +698,26 @@ namespace TumbangPreso.PlayTests
             float behind = dash ? 1.7f : 1.1f;
             float startZ = -Confinement.Radius + behind + .2f; // Inside the taya's box: they are confined to it, as in play.
             float startX = map ? -4 : 0, startY = map ? .12f : .02f;
-            bool standing = wall || air;
+            bool standing = wall || air || wallBehindVictim || step || doubleCatch || stunned;
             if (standing) { startZ = 0; behind = 1; }
+            GameObject stepBlock = null;
+            if (step)
+            {
+                stepBlock = GameObject.CreatePrimitive(PrimitiveType.Cube); stepBlock.name = "Step under the victim";
+                stepBlock.transform.position = new Vector3(startX, .15f, startZ + 1.4f); stepBlock.transform.localScale = new Vector3(6, .3f, 3);
+                startY = .32f;
+            }
             victim.Teleport(new Vector3(startX, startY, startZ)); victim.transform.forward = Vector3.forward;
+            if (step) startY = .02f;
             actor.Teleport(new Vector3(startX, startY, startZ - behind)); actor.transform.forward = Vector3.forward;
             float wallFace = startZ - behind - .45f;
             GameObject wallBlock = null;
+            float victimWall = startZ + .6f;
+            if (wallBehindVictim)
+            {
+                wallBlock = GameObject.CreatePrimitive(PrimitiveType.Cube); wallBlock.name = "Wall behind the victim";
+                wallBlock.transform.position = new Vector3(startX, 1.5f, victimWall + 1); wallBlock.transform.localScale = new Vector3(8, 3, 2);
+            }
             if (wall)
             {
                 wallBlock = GameObject.CreatePrimitive(PrimitiveType.Cube); wallBlock.name = "Wall behind the taya";
@@ -710,7 +728,7 @@ namespace TumbangPreso.PlayTests
             var settings = Settings.SettingsStore.Current;
             bool reduced = settings.ReducedUiMotion, cinematic = settings.CinematicCameraMotion;
             settings.ReducedUiMotion = false; settings.CinematicCameraMotion = true;
-            string name = (wall ? "wall-" : air ? "air-" : map ? "map-" : dash ? "dash-" : "run-") + (actorArt ?? "default") + "-to-" + (victimArt ?? "default");
+            string name = (wallBehindVictim ? "wall-victim-" : step ? "step-" : doubleCatch ? "double-" : stunned ? "stunned-" : wall ? "wall-" : air ? "air-" : map ? "map-" : dash ? "dash-" : "run-") + (actorArt ?? "default") + "-to-" + (victimArt ?? "default");
             string directory = "Logs/tag-running/" + name;
             System.IO.Directory.CreateDirectory(directory);
             var view = Object.FindAnyObjectByType<CatchReconstruction>();
@@ -730,6 +748,11 @@ namespace TumbangPreso.PlayTests
                 Vector3 to = victim.transform.position - actor.transform.position; to.y = 0;
                 Debug.Log("[RunningTag] " + name + " separation=" + to.magnitude + " taya=" + actor.transform.position + " victim=" + victim.transform.position + " started=" + started + " grounded=" + actor.IsGrounded);
                 if (!standing) Assert.That(actor.transform.position.z, Is.GreaterThan(started + 1), "The taya must really be running.");
+                if (stunned)
+                {
+                    victim.ApplyStagger(1f, StunElement.Shock, 0);
+                    yield return new WaitForSeconds(.4f);
+                }
                 if (air)
                 {
                     actor.Intent.Set(Verb.Jump, true);
@@ -745,6 +768,13 @@ namespace TumbangPreso.PlayTests
                 float wait = Time.unscaledTime + 1.5f;
                 while (!view.Playing && Time.unscaledTime < wait) { actor.Intent.Move = Vector2.up; yield return null; }
                 Assert.IsTrue(view.Playing, "The tag must start its replay.");
+                if (stunned) Assert.That((float)Field("_duration"), Is.GreaterThan(CatchReconstruction.ReplayDuration - .1f), "An old stun must not cut the replay short.");
+                if (doubleCatch)
+                {
+                    var second = round.PlayerAt(2);
+                    second.Teleport(victim.transform.position + Vector3.right * .9f);
+                    actor.GetComponent<CharacterAnimator>().PresentTagContact(second, second.transform.position);
+                }
                 float began = (float)Field("_began"), runUntil = Time.unscaledTime + .25f, next = 0;
                 var copy = (MatchPoseHistory.Copy)Field("_actorCopy"); var victimCopy = (MatchPoseHistory.Copy)Field("_victimCopy");
                 var target = (RenderTexture)Field("_target");
@@ -752,6 +782,7 @@ namespace TumbangPreso.PlayTests
                 float worstReplay = 0, worstLive = 0, touchGap = float.MaxValue; string worstParts = "", worstLiveParts = "";
                 int frames = 0;
                 EndOfFrameBodies sampler = null;
+                float coatSeen = 0, drawnAt = -1;
                 var liveActor = actor.GetComponent<CharacterVisual>().Model.GetComponentsInChildren<Renderer>(false);
                 var image = new Texture2D(target.width, target.height, TextureFormat.RGB24, false);
                 while (view.Playing)
@@ -769,8 +800,21 @@ namespace TumbangPreso.PlayTests
                     var bounds = victimCopy.Renderers[0].bounds;
                     foreach (var renderer in victimCopy.Renderers) bounds.Encapsulate(renderer.bounds);
                     float gap = Vector3.Distance(hand.position, bounds.ClosestPoint(hand.position));
-                    if (elapsed >= CatchReconstruction.ContactPlayback && elapsed <= CatchReconstruction.ContactPlayback + CatchReconstruction.HitStop)
+                    // The pose read here was drawn for the previous frame's clock: on a slow load this frame's has moved well on.
+                    if (drawnAt >= CatchReconstruction.ContactPlayback && drawnAt <= CatchReconstruction.ContactPlayback + CatchReconstruction.HitStop + .2f)
                         touchGap = Mathf.Min(touchGap, gap);
+                    drawnAt = elapsed;
+                    if (wallBehindVictim)
+                    {
+                        Assert.That(victimCopy.Root.transform.position.z, Is.LessThan(victimWall), "The shove must not go through the wall.");
+                        var caught = CaughtAfterimage.For(victim.PlayerSlot);
+                        if (caught != null) Assert.That(caught.GetComponentInChildren<Animator>(true).transform.position.z, Is.LessThan(victimWall), "Nor live.");
+                    }
+                    if (stunned && elapsed < CatchReconstruction.ContactPlayback)
+                    {
+                        var coat = new MaterialPropertyBlock(); victimCopy.Renderers[0].GetPropertyBlock(coat);
+                        coatSeen = Mathf.Max(coatSeen, coat.GetFloat("_FrostAmount"));
+                    }
                     if (wall) Assert.That(copy.Root.transform.position.z, Is.GreaterThan(wallFace), "The taya must not back through the wall.");
                     if (replay > worstReplay) { worstReplay = replay; worstParts = parts + " at " + elapsed; }
                     if (live > worstLive) { worstLive = live; worstLiveParts = liveParts + " at " + elapsed; }
@@ -788,7 +832,8 @@ namespace TumbangPreso.PlayTests
                 string values = name + " worstReplay=" + worstReplay + " (" + worstParts + ") worstLive=" + worstLive + " (" + worstLiveParts + ") touchGap=" + touchGap;
                 System.IO.File.WriteAllText(directory + "/measurements.txt", values); Debug.Log("[RunningTag] " + values);
                 Assert.That(worstReplay, Is.LessThan(limit), "Replay bodies intersect: " + values);
-                Assert.That(worstLive, Is.LessThan(limit), "Live bodies intersect: " + values);
+                if (!doubleCatch) Assert.That(worstLive, Is.LessThan(limit), "Live bodies intersect: " + values);
+                if (stunned) Assert.That(coatSeen, Is.GreaterThan(.05f), "A shocked body must look shocked in its replay.");
                 Assert.That(touchGap, Is.LessThan(.08f), "The hand must still land: " + values);
             }
             finally
@@ -796,6 +841,7 @@ namespace TumbangPreso.PlayTests
                 System.IO.File.WriteAllLines(directory + "/bodies.csv", log);
                 view.End();
                 if (wallBlock != null) Object.Destroy(wallBlock);
+                if (stepBlock != null) Object.Destroy(stepBlock);
                 settings.ReducedUiMotion = reduced; settings.CinematicCameraMotion = cinematic;
             }
         }
