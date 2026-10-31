@@ -63,7 +63,15 @@ namespace TumbangPreso.Abilities
         private MaterialPropertyBlock _block;
         // The pet mouse's darting figure-eights round its hiding spot (`PetGhostFlight`, drawing only, behind `PetGhostModels.PetGhosts`).
         private readonly PetGhostFlight _flight = new PetGhostFlight(PetGhostFlight.Kind.Mouse);
-        private static readonly int TrailId = Shader.PropertyToID("_Trail");
+        private static readonly int TrailId = Shader.PropertyToID("_Trail"), ShadeKeepId = Shader.PropertyToID("_ShadeKeep");
+        // The painted look's moments already shown by THIS peer's copy (`NemuGhostLook`): each is spawned once, from state every
+        // peer has (its age and its phase), so every screen sees the same puffs with nothing sent.
+        private bool _fxArrived, _fxHidden, _fxSeen;
+        // ⚠️ THE MOUSE AS PARTS, KURO'S WAY (`PetGhostRig`, owner 2026-10-29: *"to stiff ... a single rigid model"*). Hung under
+        // `_body`'s own transform, so every place that poses the body (its spot, the lunge, the lens in the victim's camera)
+        // poses the parts too; the one-piece renderer is then switched off.
+        private PetGhostRig _rig;
+        private State _fxState;
         private static Material _material;
         private static readonly int FadeId = Shader.PropertyToID("_Fade"), FlashId = Shader.PropertyToID("_Flash"),
             ClockId = Shader.PropertyToID("_Clock"), SwayId = Shader.PropertyToID("_Sway");
@@ -117,6 +125,7 @@ namespace TumbangPreso.Abilities
             _body = go.AddComponent<MeshRenderer>();
             _body.sharedMaterial = PetGhostModels.MaterialFor(_mesh.sharedMesh, _material);
             _body.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            if (PetGhostRig.On) _rig = PetGhostRig.Build(go.transform, PetGhostRig.Pet.Mouse, Color.white);
             _body.receiveShadows = false;
             _block = new MaterialPropertyBlock();
         }
@@ -211,6 +220,21 @@ namespace TumbangPreso.Abilities
 
         private static Vector3 EyesOf(CharacterMotor body) => body.transform.position + Vector3.up * 1.25f;
 
+        /// <summary>The eyes of the nearest other player within 7 m, for the hiding mouse to watch (every peer has positions).</summary>
+        private Vector3? NearestEyes()
+        {
+            var round = GameServices.Round;
+            if (round == null) return null;
+            Vector3? best = null; float bestD = 49f;
+            foreach (var p in round.Players)
+            {
+                if (p == null || p.PlayerSlot == OwnerSlot || !p.gameObject.activeInHierarchy) continue;
+                float d = (p.transform.position - Spot).sqrMagnitude;
+                if (d < bestD) { bestD = d; best = EyesOf(p); }
+            }
+            return best;
+        }
+
         private void ShowAgain(Camera camera)
         {
             if (_posedForLens && _body != null)
@@ -225,7 +249,8 @@ namespace TumbangPreso.Abilities
         private void Show(bool on)
         {
             if (_smoke != null) _smoke.Visible = on;
-            if (_body != null) _body.enabled = on && _drawn;
+            if (_body != null) _body.enabled = on && _drawn && _rig == null;
+            _rig?.Visible(on && _drawn);
         }
 
         private bool _drawn;
@@ -452,6 +477,8 @@ namespace TumbangPreso.Abilities
                 default:
                     facing = WaitingFacing();
                     at = BaseAt(_age);
+                    // Painted: it unfolds out of its puff as it rises, never grown from a point.
+                    if (NemuGhostLook.On) scale *= NemuGhostLook.Unfold(_age);
                     break;
             }
             if (PetGhostModels.PetGhosts)
@@ -468,18 +495,35 @@ namespace TumbangPreso.Abilities
                 // The mint mouse (`PetGhostModels`, behind its switch) is drawn with its own painted material.
                 _body.sharedMaterial = PetGhostModels.MaterialFor(mesh, _material);
             }
+            if (_rig != null)
+            {
+                // The acting (`PetGhostActing.Mouse`): sly and jumpy while it waits, wide eyed and grinning on the lunge, giggling
+                // on the face. Its eyes watch the nearest player while it hides, and its victim once it has one.
+                var phase = _state == State.Waiting ? PetGhostActing.MousePhase.Waiting
+                    : _state == State.Lunging ? PetGhostActing.MousePhase.Lunging
+                    : _state == State.Covering ? PetGhostActing.MousePhase.Covering
+                    : sprung ? PetGhostActing.MousePhase.LettingGo : PetGhostActing.MousePhase.Sinking;
+                _rig.LookAt = sprung ? EyesOf(_victim) : NearestEyes();
+                PetGhostActing.Mouse(_rig, phase, _age, _stateAge, facing, ref at);
+            }
             var body = _body.transform;
             body.SetPositionAndRotation(at, facing);
             body.localScale = Vector3.one * scale;
             _drawn = fade > .005f;
-            _body.enabled = _drawn;
+            _body.enabled = _drawn && _rig == null;
+            if (_rig != null) { _rig.Visible(_drawn); _rig.Pose(_age, _recorded ? 0f : Time.deltaTime, fade, flash); }
             _block.SetFloat(FadeId, fade);
             _block.SetFloat(FlashId, flash);
             _block.SetFloat(ClockId, _age);
             _block.SetFloat(SwayId, sway);
+            _block.SetFloat(ShadeKeepId, NemuGhostLook.On ? 1f : 0f);
             _body.SetPropertyBlock(_block);
+            if (NemuGhostLook.On) PaintedMoments(at);
 
             if (_smoke == null) return;
+            // ⚠️ PAINTED, ITS DOTS ARE NOT DRAWN. ASTRA's cold aura and cyan pinpoints are additive glows that wash out on the
+            // sunlit court (`NemuGhostLook`); the mouse's own painted eyes and its cloth dropping (the sprung mesh) carry it.
+            if (NemuGhostLook.On) { _smoke.Begin(); _smoke.End(_age); return; }
             // Its cold air round it, and, sprung, the cyan pinpoints in its eyes.
             _smoke.Begin();
             if (_drawn)
@@ -490,6 +534,39 @@ namespace TumbangPreso.Abilities
                         _smoke.Light(body.TransformPoint(eye), .22f * scale, eyes * fade, BlindfoldGhostModel.Pinpoint);
             }
             _smoke.End(_age);
+        }
+
+        /// <summary>
+        /// The painted look's moments (`NemuGhostLook`), each on the frame this copy first sees it: out of a puff as it is
+        /// placed, a sigh of mint as it fades to its shimmer, a kick off its spot at the lunge, a burst on the crown at the
+        /// latch, and a puff it is gone into as it leaves. A moment older than a quarter second when this copy first sees it
+        /// (a rejoiner, a late frame) is skipped rather than played late. Never in a replay.
+        /// </summary>
+        private void PaintedMoments(Vector3 at)
+        {
+            if (_recorded) return;
+            if (!_fxSeen) { _fxSeen = true; _fxState = _state; _fxArrived = _age > .25f; _fxHidden = _age > NecroRules.DontLookArmSeconds - .55f; }
+            if (!_fxArrived) { _fxArrived = true; NemuGhostLook.Arrive(NemuGhostLook.Pet.Mouse, Spot); }
+            if (!_fxHidden && _state == State.Waiting && _age >= NecroRules.DontLookArmSeconds - .8f)
+            {
+                _fxHidden = true;
+                NemuGhostLook.Hide(at + Vector3.up * BlindfoldGhostModel.HeadCentre.y * .6f);
+            }
+            if (_fxState == _state) return;
+            _fxState = _state;
+            if (_stateAge > .25f) return;
+            switch (_state)
+            {
+                case State.Lunging: NemuGhostLook.Lunge(Spot); break;
+                case State.Covering:
+                    if (_victim != null) NemuGhostLook.Latch(_victim.transform.position + Vector3.up * (VictimHeadHeight + .42f));
+                    break;
+                case State.Leaving:
+                    // Off its victim it is gone up out of a puff over their head; unsprung it sinks into one on its spot.
+                    NemuGhostLook.Depart(NemuGhostLook.Pet.Mouse, _victim != null
+                        ? _victim.transform.position + Vector3.up * (VictimHeadHeight + .3f) : Spot + Vector3.up * .15f);
+                    break;
+            }
         }
 
         /// <summary>A rejoiner's waiting ghost, at the same age. Never springs on restore: the host's status decides that.</summary>

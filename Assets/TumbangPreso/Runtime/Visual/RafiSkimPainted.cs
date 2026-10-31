@@ -21,11 +21,18 @@ namespace TumbangPreso.Visual
     //     down them from the same clock, so drops travel down and off.
     //   * IT IS PAINTED, NOT LIT. Covers what is behind (`_Light` near 0), a saturated blue body over a deep navy shade
     //     with the white foam lines pushed up, three bands that hold their contrast on a pale court.
-    // Off until `Enabled` is set; the line renderer coat (`RafiSkimCoating`) stays the shipped look until then.
     // One mesh per coat, built once; one shared material; per-frame values go in a property block per submesh.
+    //
+    // ⚠️ SKIM REWORK (2026-10-29). `Enabled` is now `RafiSkimWater.Painted`, the one switch for the whole of SKIM's look
+    // (off, the line coat `RafiSkimCoating` is the shipped look, exactly as before). With it on:
+    //   * the coat is made and kept by what every peer knows (`RafiSkimWater.Loaded`), not by the kit's private loaded shoe,
+    //     which only a replayed cast sets, so a joiner and an observer see it too;
+    //   * it stays on the shoe while the loaded throw FLIES and slides (`RafiSkimWater.Wears`): the throw is the loaded one;
+    //   * it wears the water wall's colours (`FxStudyRafiWall.Look`, as Crosscurrent does), so SKIM reads as the same water
+    //     as the rest of his kit, keeping this pass's daylight cover (`_Light` near 0).
     public sealed class RafiSkimPainted : MonoBehaviour
     {
-        public static bool Enabled = false;
+        public static bool Enabled { get => RafiSkimWater.Painted; set => RafiSkimWater.Painted = value; }
 
         private static Material _shared;
         private static readonly int AgeId = Shader.PropertyToID("_Age"), OpacityId = Shader.PropertyToID("_Opacity"),
@@ -45,7 +52,7 @@ namespace TumbangPreso.Visual
 
         public static void Ensure(MeshFilter target, Slipper shoe, RafiHeroKit kit)
         {
-            if (target == null || target.sharedMesh == null || shoe == null || kit == null || !kit.IsSkimLoadedFor(shoe)) return;
+            if (target == null || target.sharedMesh == null || shoe == null || kit == null || !RafiSkimWater.Loaded(kit, shoe)) return;
             var existing = target.GetComponentInChildren<RafiSkimPainted>(true);
             if (existing != null)
             {
@@ -83,6 +90,15 @@ namespace TumbangPreso.Visual
             _shared.SetColor("_Body", new Color(0.05f, 0.42f, 0.86f, 1f));
             _shared.SetColor("_Pale", new Color(0.42f, 0.80f, 1f, 1f));
             _shared.SetColor("_Foam", new Color(0.97f, 1f, 1f, 1f));
+            if (RafiSkimWater.Painted)
+            {
+                // The wall's water, a step deeper in its shade so the thin coat keeps its value contrast on a pale court.
+                var look = FxStudyRafiWall.Look.Bench;
+                _shared.SetColor("_Deep", look.Deep * 0.8f);
+                _shared.SetColor("_Body", look.Body);
+                _shared.SetColor("_Pale", look.Pale);
+                _shared.SetColor("_Foam", look.Foam);
+            }
             _shared.SetVector("_Cut", new Vector4(0.0f, 0.2f, 0, 0));
             _shared.SetFloat("_LineGain", 1.5f);
             _shared.SetFloat("_Rim", 0.9f);
@@ -223,7 +239,7 @@ namespace TumbangPreso.Visual
         private void Sample(float dt)
         {
             _age += dt;
-            bool alive = _kit != null && _shoe != null && _kit.IsSkimLoadedFor(_shoe) && _target != null && _target.sharedMesh == _source;
+            bool alive = _kit != null && _shoe != null && RafiSkimWater.Wears(_kit, _shoe) && _target != null && _target.sharedMesh == _source;
             if (!alive && _dying < 0) _dying = 0f;
             if (_dying >= 0) _dying += dt;
             if (_dying > DieSeconds || _target == null) { gameObject.SetActive(false); Destroy(gameObject); return; }

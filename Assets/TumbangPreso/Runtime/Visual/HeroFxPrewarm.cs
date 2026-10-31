@@ -120,6 +120,8 @@ namespace TumbangPreso.Visual
                 {
                     // The LANDING PUFFS: the match's field made now, empty, and a field of the same kind drawn with a puff in it.
                     CloudPuffs.Prepare();
+                    // ...and Nemu's own field of ghost puffs (`NemuGhostLook`), so her first summon makes nothing.
+                    NemuGhostPuffs.Prepare();
                     var field = new CloudPuffField(holder, "prewarm-puffs");
                     field.Spawn(CloudPuffField.Puff.Landing(at), 0f);
                     field.Hold(0.15f);

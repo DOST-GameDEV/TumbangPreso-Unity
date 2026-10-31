@@ -115,7 +115,11 @@ namespace TumbangPreso.Visual
             if (GameServices.Round != null && GameServices.Round.RoundActive) Hitstop.Trigger(0.05f, 0.12f);
             along.y = 0.0f;
             Vector3 struck = can + Vector3.up * 0.2f - (along.sqrMagnitude > 0.0001f ? along.normalized * 0.12f : Vector3.zero);
-            HeroHazards.CreateExplosionVisual(struck, 0.55f, "", HeroHazards.ExplosionStyle.Ignition);
+            // The coated shoe's first impact IS this can (a can hit only counts while the shoe is still coated), and that
+            // impact already draws the approved s2 burst on every peer (`Slipper.ResolveEmpoweredThrowImpact`). With both
+            // looks on, the Ignition blast laid on top of it was a second, older fire picture in the same frame.
+            if (!SeanIgnitionVisual.Painted || !SeanThrowFire.Painted)
+                HeroHazards.CreateExplosionVisual(struck, 0.55f, "", HeroHazards.ExplosionStyle.Ignition);
             ImpactBurst.SpawnTinContact(struck);
             SeanGroundMark.Spawn(can, 0.85f, SeanGroundMark.Mode.Flash, 0.3f, Accent);
         }

@@ -12,9 +12,9 @@ namespace TumbangPreso.Tests
     {
         private static WorldEffectSnapshot.Field Field(float distance=12)
         {
-            var path=new Vector3[9];for(int i=0;i<9;i++)path[i]=new Vector3(Mathf.Lerp(-3,3,i/8f),0,distance);
+            var path=new Vector3[9];for(int i=0;i<9;i++)path[i]=new Vector3(Mathf.Lerp(-RafiRules.BahaHalfWidth,RafiRules.BahaHalfWidth,i/8f),0,distance);
             return new WorldEffectSnapshot.Field{Type=WorldEffectSnapshot.Kind.Baha,Owner=1,EventId=1902,Position=Vector3.zero,
-                Forward=Vector3.forward,Radius=3,FirstScale=5,SecondScale=distance,Duration=RafiRules.BahaDuration(distance),
+                Forward=Vector3.forward,Radius=RafiRules.BahaHalfWidth,FirstScale=5,SecondScale=distance,Duration=RafiRules.BahaDuration(distance),
                 Remaining=RafiRules.BahaDuration(distance),Path=path};
         }
         [Test] public void NewKindHasAnExplicitBoundAndTheAdoptedCost()

@@ -54,6 +54,10 @@ namespace TumbangPreso.Abilities
         private Quaternion _facing = Quaternion.identity;
         private float _age, _leftAt, _scare, _lift, _engage, _cheerAt = -10f, _swing, _swingVel, _roll, _rollVel;
         private bool _leaving, _placed;
+        // The painted look (`NemuGhostLook`): what this copy has already shown. From state every peer has, nothing sent.
+        private bool _fxSeen, _fxLeaving;
+        private float _fxCheerAt = -10f;
+        private int _fxBeat = -1;
 
         /// <summary>
         /// How far up the can is DRAWN by a Lookout heaving at it (0 when none is): `Lata` tilts its mesh by this, as it does
@@ -135,10 +139,13 @@ namespace TumbangPreso.Abilities
             float p = Mathf.Clamp01(_age / PopSeconds);
             float pop = p >= 1f ? 1f : Mathf.Max(0f, 1f + Mathf.Sin(p * Mathf.PI * 1.25f) * (1f - p) * .5f - (1f - p) * (1f - p));
             float fade = 1f, sink = 0f, leaveU = 0f;
+            // Painted, NOTHING POPS: it unfolds out of a butter puff (`NemuGhostLook.Unfold`) instead of growing from a point.
+            bool painted = NemuGhostLook.On;
+            if (painted) { pop = NemuGhostLook.Unfold(_age); fade = NemuGhostLook.UnfoldFade(_age); }
             if (_leaving)
             {
                 leaveU = Mathf.Clamp01((_age - _leftAt) / LeaveSeconds);
-                fade = 1f - leaveU * leaveU; sink = .5f * leaveU * leaveU;
+                fade = (painted ? NemuGhostLook.UnfoldFade(_age) : 1f) * (1f - leaveU * leaveU); sink = .5f * leaveU * leaveU;
                 if (leaveU >= 1f) { Destroy(gameObject); return; }
             }
             float cheer = Mathf.Clamp01((_age - _cheerAt) / CheerSeconds);
@@ -182,6 +189,8 @@ namespace TumbangPreso.Abilities
             // It leans back against the can's weight while it heaves.
             Quaternion facing = _facing * Quaternion.AngleAxis(-12f * _engage - 8f * heave, Vector3.right);
             float flash = Mathf.Max((1f - p) * .7f, cheering ? (1f - cheer) * .5f : 0f);
+            // Painted, no white flash at the summon: its puff is the arrival.
+            if (painted) flash = cheering ? (1f - cheer) * .35f : 0f;
             if (PetGhostModels.PetGhosts && _body != null)
             {
                 // The pet owl glides round its minding spot while nothing happens; it is back on the point to lift, hide or
@@ -194,8 +203,66 @@ namespace TumbangPreso.Abilities
 
             PoseArms(top, bottom, ends, heave, hop, fade, flash);
             PoseLantern(at, fade, flash, dt);
-            DrawFx(at, top, bottom, fade, p, cheer, leaveU, heaveClock);
+            if (painted)
+            {
+                PaintedMoments(at, top, bottom, heaveClock);
+                DrawPaintedFx(fade);
+            }
+            else DrawFx(at, top, bottom, fade, p, cheer, leaveU, heaveClock);
             _lastAt = at;
+        }
+
+        /// <summary>
+        /// ⚠️ PAINTED (`NemuGhostLook`): out of a butter puff beside the can as it is summoned; chalk dust off the can's foot at
+        /// the start of every heave, so each pulse of the 1.5 s lift is a pulse you can see; three butter puffs round the rim
+        /// as it cheers; gone into a puff as it leaves. A moment this copy first sees late (a rejoiner) is not played.
+        /// </summary>
+        private void PaintedMoments(Vector3 at, Vector3 top, Vector3 bottom, float heaveClock)
+        {
+            if (!_fxSeen)
+            {
+                _fxSeen = true; _fxLeaving = _leaving; _fxCheerAt = _cheerAt;
+                if (_age < .25f) NemuGhostLook.Arrive(NemuGhostLook.Pet.Owl, VfxShapes.GroundPoint(at));
+            }
+            if (_leaving && !_fxLeaving && _age - _leftAt < .25f) NemuGhostLook.Depart(NemuGhostLook.Pet.Owl, at + Vector3.up * .25f);
+            _fxLeaving = _leaving;
+            if (_cheerAt != _fxCheerAt) { _fxCheerAt = _cheerAt; if (_age - _cheerAt < .25f) NemuGhostLook.Cheer(top, _side); }
+            int beat = Mathf.FloorToInt(heaveClock / (Mathf.PI * 2f));
+            if (beat != _fxBeat)
+            {
+                _fxBeat = beat;
+                if (_engage > .4f && !_leaving) NemuGhostLook.Heave(bottom, beat);
+            }
+        }
+
+        /// <summary>
+        /// Painted, the lights that stay: the lantern's small hot heart (it IS a lantern) and the ring filling round the can's
+        /// foot, which is the lift's 1.5 s told as progress (the picture tells the truth about the rule). The wide glows, the
+        /// light pool, embers, eye dots, sparks and violet smoke are gone: they wash out on the sunlit court.
+        /// </summary>
+        private void DrawPaintedFx(float fade)
+        {
+            if (_fx == null || _body == null) return;
+            _fx.Begin();
+            if (fade > .005f)
+            {
+                Vector3 glass = _lantern != null ? _lantern.Transform.TransformPoint(NemuGhostModels.LookoutGlass) : _at;
+                float flicker = .85f + .15f * Mathf.Sin(_age * 17f) * Mathf.Sin(_age * 5f + 1f);
+                _fx.Light(glass, .16f, 1.3f * flicker * fade, Warm);
+                if (_engage > .01f && _lift > .001f)
+                {
+                    const int Ring = 14;
+                    float lit = _lift * Ring;
+                    for (int i = 0; i < Ring; i++)
+                    {
+                        float k = Mathf.Clamp01(lit - i);
+                        if (k <= 0f) break;
+                        float a = i / (float)Ring * Mathf.PI * 2f + Mathf.PI * .5f;
+                        _fx.Light(_canAt + new Vector3(Mathf.Cos(a), 0f, Mathf.Sin(a)) * .5f + Vector3.up * .03f, .16f, 1f * k * _engage * fade, Warm, default, .6f);
+                    }
+                }
+            }
+            _fx.End(_age);
         }
 
         private void PoseArms(Vector3 top, Vector3 bottom, bool ends, float heave, float hop, float fade, float flash)

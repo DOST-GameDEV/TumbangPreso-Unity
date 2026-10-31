@@ -541,6 +541,8 @@ namespace TumbangPreso.Map
             else Core.Confinement.Use(true, BoxRadiusFor(Layouts[layout] != null ? Layouts[layout].Name : null));
             Core.Confinement.Touch();
             LayoutApplied?.Invoke(layout);
+            // In a break: ABSOLUTE ZERO's floor is on this layout's surfaces, and a cast must only reveal it.
+            if (Application.isPlaying) Visual.CheskaAbsoluteZeroLook.PrepareFloor();
 
             // ⚠️ BEFORE A MATCH, THE BODIES ARE SEATED AGAIN (owner, 2026-10-05: "on entablado sometimes
             // during the count down ur in the floor"). They are seated on the floor when they spawn, on the

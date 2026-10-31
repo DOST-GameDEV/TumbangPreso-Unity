@@ -445,7 +445,7 @@ namespace TumbangPreso.Visual
     /// </summary>
     public abstract class FxStudyEffect : IDisposable
     {
-        public static readonly string[] Names = { "trails", "wisp", "wispshells", "smoke", "circle", "lotus", "scorch", "whirlwind", "whirlwindparts", "whirlwindh1", "whirlwindh7", "drift", "rafiwall", "danteboulder", "rafiwallsplit", "danteboulderboard", "dantebastion", "dantebastionb3", "dantebastionb4", "dantebastionb5", "dantebastionb6", "dantebastionb6day", "dantebastionb7", "dantebastionb7day", "dantebastionb8", "dantebastionb8day", "dantebastionboard", "cloud", "cloudline", "clouddark", "cloudburst", "cloudlinedark", "raficurrent", "raficurrentspent", "airburst", "airburstabove", "airburstday", "dantefirewave" };
+        public static readonly string[] Names = { "phaistersky", "phaisterskyday", "phaisterskyunder", "phaisterdoll", "phaisterdollday", "trails", "wisp", "wispshells", "smoke", "circle", "lotus", "lotusfrost", "scorch", "whirlwind", "whirlwindparts", "whirlwindh1", "whirlwindh7", "drift", "rafiwall", "danteboulder", "rafiwallsplit", "danteboulderboard", "dantebastion", "dantebastionb3", "dantebastionb4", "dantebastionb5", "dantebastionb6", "dantebastionb6day", "dantebastionb7", "dantebastionb7day", "dantebastionb8", "dantebastionb8day", "dantebastionboard", "cloud", "cloudline", "clouddark", "cloudburst", "cloudlinedark", "raficurrent", "raficurrentspent", "airburst", "airburstabove", "airburstday", "rafibaha", "rafibahaside", "rafibahaback", "dantefirewave", "phaistera", "phaisterb", "phaisterhexa", "phaisterhexb", "phaisterdrain", "phaisterdrainday", "phaisterdrainabove", "phaisterdrainbreak", "rafibahapeak", "rafibahaday" };
 
         public readonly Transform Root;
         private readonly List<FxPiece> _pieces = new List<FxPiece>();
@@ -463,6 +463,11 @@ namespace TumbangPreso.Visual
         {
             switch ((name ?? "").ToLowerInvariant())
             {
+                case "phaistersky": return new FxStudyPhaisterSky(parent, FxStudyPhaisterSky.View.Court);
+                case "phaisterskyday": return new FxStudyPhaisterSky(parent, FxStudyPhaisterSky.View.Day);
+                case "phaisterskyunder": return new FxStudyPhaisterSky(parent, FxStudyPhaisterSky.View.Under);
+                case "phaisterdoll": return new FxStudyPhaisterDoll(parent, false);
+                case "phaisterdollday": return new FxStudyPhaisterDoll(parent, true);
                 case "trails": return new FxStudyTrails(parent);
                 case "wisp": return new FxStudyWisp(parent);
                 // The wisp's shell meshes alone, flat and whole, to check their structure.
@@ -470,6 +475,10 @@ namespace TumbangPreso.Visual
                 case "smoke": return new FxStudySmokePlumes(parent);
                 case "circle": return new FxStudyCircle(parent);
                 case "lotus": return new FxStudyLotus(parent);
+                // The lotus's floor driven as ABSOLUTE ZERO drives it (`FxStudyLotusFrost`): Eskinita's box with her 2 m
+                // behind its middle, the rule's 0.5 s front, hold and thaw, after 0.3 s of empty floor.
+                case "lotusfrost": return new FxStudyLotusFrost(parent, new Vector2(-8.6f, -11f), new Vector2(8.6f, 15f), CheskaAbsoluteZeroLook.RunSeconds,
+                                                                CheskaAbsoluteZeroLook.ThawStart, CheskaAbsoluteZeroLook.ThawSeconds, null, 0.3f);
                 case "scorch": return new FxStudyScorch(parent);
                 case "whirlwind": return new FxStudyWhirlwind(parent);
                 // The cloud (`FxCloud`): smoke as solid balls that die by shrinking, on a blue ground; with its thin line; on the dark floor.
@@ -502,6 +511,10 @@ namespace TumbangPreso.Visual
                 // The CROSSCURRENT of Ilyas (`FxStudyRafiCurrent`), its whole 6 m, and spent by a slipper 0.55 s in.
                 case "raficurrent": return new FxStudyRafiCurrent(parent);
                 case "raficurrentspent": return new FxStudyRafiCurrent(parent, FxStudyRafiWall.Look.Bench, 0.55f, 0f);
+                // BAHA of Ilyas, its second live look (`RafiBahaWave`) alone: three quarters from the front, from the side, from behind him.
+                case "rafibaha": return new FxStudyRafiBaha(parent);
+                case "rafibahaside": return new FxStudyRafiBaha(parent, FxStudyRafiBaha.View.Side);
+                case "rafibahaback": return new FxStudyRafiBaha(parent, FxStudyRafiBaha.View.Behind);
                 // The same wall broken by a slipper 1.6 s in, bursting forward.
                 case "rafiwallsplit": return new FxStudyRafiWall(parent, FxStudyRafiWall.Look.Bench, 1.6f, 1f);
                 // Basilio's BOULDER (`FxStudyDanteBoulder`): the bench's first earth.
@@ -528,6 +541,18 @@ namespace TumbangPreso.Visual
                 case "dantebastionb8": return new FxStudyDanteBastion(parent, FxStudyDanteBastion.Look.B8);
                 case "dantebastionb8day": return new FxStudyDanteBastion(parent, FxStudyDanteBastion.Look.B8, true);
                 case "dantebastionboard": return new FxStudyDanteBastionBoard(parent);
+                // Phaister's kit rework, the owner's two directions side by side (`PhaisterLook`): A moonlit moths, B sleepy cosmos.
+                case "phaistera": return new FxStudyPhaisterTeleport(parent, PhaisterLook.Style.A);
+                case "phaisterb": return new FxStudyPhaisterTeleport(parent, PhaisterLook.Style.B);
+                case "phaisterhexa": return new FxStudyPhaisterHex(parent, PhaisterLook.Style.A);
+                // CURSE: DRAIN (`FxStudyPhaisterDrain`).
+                case "phaisterdrain": return new FxStudyPhaisterDrain(parent, FxStudyPhaisterDrain.Variant.Bench);
+                case "phaisterdrainday": return new FxStudyPhaisterDrain(parent, FxStudyPhaisterDrain.Variant.Day);
+                case "phaisterdrainabove": return new FxStudyPhaisterDrain(parent, FxStudyPhaisterDrain.Variant.Above);
+                case "phaisterdrainbreak": return new FxStudyPhaisterDrain(parent, FxStudyPhaisterDrain.Variant.Break);
+                case "phaisterhexb": return new FxStudyPhaisterHex(parent, PhaisterLook.Style.B);
+                case "rafibahapeak": return new FxStudyRafiBaha(parent, FxStudyRafiBaha.View.Peak);
+                case "rafibahaday": return new FxStudyRafiBaha(parent, FxStudyRafiBaha.View.Day);
                 default: return null;
             }
         }

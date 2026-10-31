@@ -15,9 +15,20 @@ namespace TumbangPreso.Visual
     // never closer than 1.2 m to each other, his body or the landing, so they read as separate beats instead of a muddy lineup.
     // They stamp in during the reveal; as the rewinding body reaches each one it flashes, swells a touch and is absorbed with a
     // crack of sparks. The moving lead hologram still marks the destination and merges at the catch.
+    //
+    // PAINTED (2026-10-29, the owner: "a lot of our previous work was overridden because of reworked abilities. its pretty
+    // poorly made so eventually we'll need to do a vfx revamp again"). The fourteen line streaks rewritten every frame and
+    // the line spark bursts are replaced by the approved Zack pieces in `ZackRewindPaint`: Bank Shot b13d's silk trail laid
+    // along the real route, Quick Circuit z4's strikes and afterimage, b13d's GPU spark bursts. The body pull, the lead
+    // hologram and the past moments are this class's own and draw exactly as before either way.
     [DefaultExecutionOrder(2500)]
     public sealed class ZackBacktrackLook : MonoBehaviour
     {
+        /// <summary>
+        /// ⚠️ THE SWITCH. On, the rewind's wake is painted (`ZackRewindPaint`). Off, it is the rework's line streaks and line
+        /// sparks. Read when a rewind begins. TO GO BACK, MAKE THE LINE BELOW `false`.
+        /// </summary>
+        public static bool Painted = true;
         public const float RevealSeconds = .06f, TravelSeconds = .42f, CatchSeconds = .14f;
         /// <summary>The catch: the body reaches the old spot and the landing cue plays. Matches the 0.46 s pull cue.</summary>
         public const float PullSeconds = RevealSeconds + TravelSeconds;
@@ -55,7 +66,17 @@ namespace TumbangPreso.Visual
         private Renderer[] _hidden;
         private bool[] _wasHidden;
         private bool _restored, _landed;
-        public float Age => Mathf.Max(0,Time.time-_born);
+        private bool _painted, _staged, _stagedEyes;
+        private float _stagedAge;
+        private Vector3 _stagedEye;
+        private ZackRewindPaint _paint;
+        /// <summary>Whether this rewind draws the painted wake (the switch as it stood when it began).</summary>
+        public bool DrawnPainted => _painted;
+        /// <summary>How many painted echoes this rewind stood on its route (0 for the line look).</summary>
+        public int PaintedEchoes => _paint != null ? _paint.Echoes : 0;
+        public float Age => _staged ? _stagedAge : Mathf.Max(0,Time.time-_born);
+        // The painted wake's last points live past the catch; the line look ends where it always did.
+        private float EndSeconds => _painted ? Mathf.Max(PullSeconds+CatchSeconds+Linger, ZackRewindPaint.After(PullSeconds)) : PullSeconds+CatchSeconds+Linger;
         public bool Pulling => _motor!=null && Age<PullSeconds;
         public Vector3 VisualFeet => FeetAt(Age) + CatchOffset(Mathf.Clamp01((Age-PullSeconds)/CatchSeconds));
         /// <summary>Where the drawn body's model root actually is (minus the model's own offset).</summary>
@@ -82,7 +103,7 @@ namespace TumbangPreso.Visual
             if(motor==null)return null;
             if(Live.TryGetValue(motor.PlayerSlot,out var old)&&old!=null)old.Finish();
             var v=new GameObject("ZackBacktrackRewind").AddComponent<ZackBacktrackLook>();
-            v._motor=motor;v._from=from;v._to=to;v._born=Time.time;v._serial=motor.PresentationTeleportSerial;
+            v._motor=motor;v._from=from;v._to=to;v._born=Time.time;v._serial=motor.PresentationTeleportSerial;v._painted=Painted;
             v._round=GameServices.Match?.RoundNumber??0;v._model=motor.GetComponent<CharacterVisual>()?.Model?.transform;
             v._body=ZackFx.Echo.Of(motor.PlayerSlot,v.transform);
             if(v._body!=null)
@@ -107,20 +128,55 @@ namespace TumbangPreso.Visual
             }
             bool calm=Settings.SettingsStore.Current.ReducedEffects;
             if(v._body!=null)v.ChoosePastMoments(calm?1:MaxPast);
-            ZackFx.Sparks(to+Vector3.up*.15f,.22f,calm?1:3,1.3f);
-            // The kick-off: a crack of sparks at his feet where the present lets go of him.
-            ZackFx.Sparks(from+Vector3.up*.2f,.35f,calm?2:5,.6f);
-            if(!calm)
-            {
-                v._streaks=new LineRenderer[Streaks];v._streakBorn=new float[Streaks];
-                for(int i=0;i<Streaks;i++)
-                {
-                    v._streaks[i]=ZackFx.Line(v.transform,"RewindStreak"+i,StreakPoints,.012f+.005f*(i%3),i%2==0?ZackFx.Core:ZackFx.Body,1.5f);
-                    v._streaks[i].widthCurve=new AnimationCurve(new Keyframe(0,.08f),new Keyframe(.3f,1),new Keyframe(.7f,.7f),new Keyframe(1,.04f));
-                    v._streaks[i].enabled=false;v._streakBorn[i]=-1;
-                }
-            }
+            // His body as it stands at the cast, before the teleport: the painted afterimage is baked from it.
+            if(v._painted)v._paint=new ZackRewindPaint(v.transform,v._route,v._routeDistance,motor.GetComponent<CharacterVisual>()?.Model,calm);
+            else v.LineStart(calm);
             Live[motor.PlayerSlot]=v;v.Step();return v;
+        }
+
+        // The rework's own start: two line spark bursts and the fourteen streaks (the switch off).
+        private void LineStart(bool calm)
+        {
+            if(!_staged)
+            {
+                ZackFx.Sparks(_to+Vector3.up*.15f,.22f,calm?1:3,1.3f);
+                // The kick-off: a crack of sparks at his feet where the present lets go of him.
+                ZackFx.Sparks(_from+Vector3.up*.2f,.35f,calm?2:5,.6f);
+            }
+            if(calm)return;
+            _streaks=new LineRenderer[Streaks];_streakBorn=new float[Streaks];
+            for(int i=0;i<Streaks;i++)
+            {
+                _streaks[i]=ZackFx.Line(transform,"RewindStreak"+i,StreakPoints,.012f+.005f*(i%3),i%2==0?ZackFx.Core:ZackFx.Body,1.5f);
+                _streaks[i].widthCurve=new AnimationCurve(new Keyframe(0,.08f),new Keyframe(.3f,1),new Keyframe(.7f,.7f),new Keyframe(1,.04f));
+                _streaks[i].enabled=false;_streakBorn[i]=-1;
+            }
+        }
+
+        /// <summary>
+        /// FOR A FILM MADE OUTSIDE PLAY: the rewind along `path` (oldest first, as `ZackHeroKit.PathSince` gives it) with no
+        /// motor, no pose history and no camera of its own. The wake (painted or lines, as asked) is drawn; the drawn body,
+        /// the hologram and the past moments need a match's pose history and are not. `model` is his body as it stands at the
+        /// cast (the painted afterimage is baked from it). Step it with `StagedStep`; place his body at `VisualFeet`.
+        /// </summary>
+        public static ZackBacktrackLook Stage(Transform parent,GameObject model,Vector3 from,Vector3 to,Vector3[] path,bool painted)
+        {
+            var go=new GameObject("ZackBacktrackRewind"){hideFlags=HideFlags.DontSave};
+            go.transform.SetParent(parent,false);
+            var v=go.AddComponent<ZackBacktrackLook>();
+            v._staged=true;v._from=from;v._to=to;v._painted=painted;v._poseNow=0;
+            v.RouteFromPath(path);
+            if(painted)v._paint=new ZackRewindPaint(v.transform,v._route,v._routeDistance,model,false);
+            else v.LineStart(false);
+            v.StagedStep(0,false,from+Vector3.up*1.6f);
+            return v;
+        }
+
+        /// <summary>A staged rewind at `age` seconds, seen from `eye` (his own when `eyes`).</summary>
+        public void StagedStep(float age,bool eyes,Vector3 eye)
+        {
+            if(!_staged)return;
+            _stagedAge=Mathf.Max(0,age);_stagedEyes=eyes;_stagedEye=eye;Step();
         }
         public void SealTeleport(){if(_motor!=null)_serial=_motor.PresentationTeleportSerial;}
         public static Vector3 EyeOffset(CharacterMotor motor)
@@ -272,7 +328,8 @@ namespace TumbangPreso.Visual
                 if(_pastMergedAt[k]<0&&e>=_pastAt[k])
                 {
                     _pastMergedAt[k]=age;
-                    ZackFx.Sparks(_pastFeet[k]+Vector3.up*.9f,.32f,calm?1:3,k*3.1f+age);
+                    if(_paint!=null)_paint.Burst(_pastFeet[k]+Vector3.up*.9f,age);
+                    else ZackFx.Sparks(_pastFeet[k]+Vector3.up*.9f,.32f,calm?1:3,k*3.1f+age);
                 }
                 float absorb=_pastMergedAt[k]<0?0:Mathf.Clamp01((age-_pastMergedAt[k])/PastAbsorb);
                 float near=eyes?Mathf.SmoothStep(0,1,Mathf.InverseLerp(1.1f,1.8f,Vector3.Distance(_pastFeet[k]+Vector3.up*1.2f,eye))):1;
@@ -331,9 +388,10 @@ namespace TumbangPreso.Visual
         }
         private void LateUpdate()
         {
+            if(_staged)return;
             if(_motor==null||_motor.AbilitySystem?.HeroId!="zack"||_motor.IsTagged||_motor.IsStunned||_motor.IsTripped
                 ||GameServices.Round?.RoundActive!=true||(GameServices.Match?.RoundNumber??0)!=_round||_motor.PresentationTeleportSerial!=_serial)
-            {Finish();return;}Step();if(Age>PullSeconds+CatchSeconds+Linger)Finish();
+            {Finish();return;}Step();if(Age>EndSeconds)Finish();
         }
 
         // ------------------------------------------------------------------ one frame of the look
@@ -341,9 +399,9 @@ namespace TumbangPreso.Visual
         private void Step()
         {
             float age=Age,x=Travel(age),e=Progress(age),c=Mathf.Clamp01((age-PullSeconds)/CatchSeconds);
-            bool travelling=age<PullSeconds,catching=!travelling&&c<1,eyes=ZackFx.InOwnFirstPerson(_motor);
-            bool calm=Settings.SettingsStore.Current.ReducedEffects;
-            var eye=UnityEngine.Camera.main!=null?UnityEngine.Camera.main.transform.position:Vector3.zero;
+            bool travelling=age<PullSeconds,catching=!travelling&&c<1,eyes=_staged?_stagedEyes:ZackFx.InOwnFirstPerson(_motor);
+            bool calm=!_staged&&Settings.SettingsStore.Current.ReducedEffects;
+            var eye=_staged?_stagedEye:UnityEngine.Camera.main!=null?UnityEngine.Camera.main.transform.position:Vector3.zero;
             float length=RouteLength;
             var feet=FeetAt(age);Route(e,out float time,out _);
             if(_body!=null)
@@ -429,15 +487,20 @@ namespace TumbangPreso.Visual
             if(!_landed&&!travelling)
             {
                 _landed=true;
-                ZackFx.Sparks(_to+Vector3.up*.12f,.38f,calm?2:5,2.1f);
-                if(!calm)ZackFx.Sparks(_to+Vector3.up*1.1f,.3f,3,4.7f);
-                GameServices.Audio?.PlayAt("sfx_zack_backtrack_land",_to);
+                // (Painted, the catch's strike and bursts are the wake's own, posed below.)
+                if(_paint==null&&!_staged)
+                {
+                    ZackFx.Sparks(_to+Vector3.up*.12f,.38f,calm?2:5,2.1f);
+                    if(!calm)ZackFx.Sparks(_to+Vector3.up*1.1f,.3f,3,4.7f);
+                }
+                if(!_staged)GameServices.Audio?.PlayAt("sfx_zack_backtrack_land",_to);
             }
+            _paint?.Pose(age,e,RevealSeconds,PullSeconds,eye,eyes);
         }
         private void WriteStreak(LineRenderer streak,int index,float age,float progress,float rush,bool eyes,Vector3 eye,Vector3 along)
         {
             float h=Hash(index,Mathf.FloorToInt(age*90)),g=Hash(index+31,Mathf.FloorToInt(age*70));
-            var camera=UnityEngine.Camera.main;
+            var camera=_staged?null:UnityEngine.Camera.main;
             var side=eyes&&camera!=null?camera.transform.right:Vector3.Cross(along,Vector3.up).normalized;
             var up=eyes&&camera!=null?camera.transform.up:Vector3.up;
             float spin=h*Mathf.PI*2,radius=eyes?Mathf.Lerp(.65f,1.15f,g):Mathf.Lerp(.35f,.9f,g);
@@ -467,7 +530,7 @@ namespace TumbangPreso.Visual
         private void Finish(){Restore();if(_motor!=null&&Live.TryGetValue(_motor.PlayerSlot,out var v)&&v==this)Live.Remove(_motor.PlayerSlot);Destroy(gameObject);}
         private void OnDestroy()
         {
-            Restore();_body?.Destroy();foreach(var m in _moments)m?.Destroy();foreach(var m in _past)m?.Destroy();
+            Restore();_body?.Destroy();foreach(var m in _moments)m?.Destroy();foreach(var m in _past)m?.Destroy();_paint?.Dispose();_paint=null;
             if(_motor!=null&&Live.TryGetValue(_motor.PlayerSlot,out var v)&&v==this)Live.Remove(_motor.PlayerSlot);
         }
     }

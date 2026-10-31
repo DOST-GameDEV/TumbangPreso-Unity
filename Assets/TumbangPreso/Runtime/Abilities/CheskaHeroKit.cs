@@ -211,6 +211,15 @@ namespace TumbangPreso.Abilities
                 if (UnityEngine.Camera.main != null)
                     UnityEngine.Camera.main.GetComponent<CameraSystem.CameraRig>()?.Shake(0.5f, 0.25f);
 
+                // The live look draws no area, because the ultimate has none (`CheskaAbsoluteZeroLook`); off, the old nova.
+                // It starts BEFORE the freezes below, because each casing waits for the wave's front to reach its body and
+                // the host raises its casings in that loop. Look only: no rule moves.
+                if (Visual.CheskaAbsoluteZeroLook.Enabled) Visual.CheskaAbsoluteZeroLook.Play(ctx.Position, ownEyes: ctx.Motor != null && ctx.Motor.IsLocalViewer);
+                else
+                {
+                    if (Visual.UltimateLiveLook.CheskaAbsoluteZero) Visual.UltimateLiveLook.Cheska(ctx.Position);
+                    FrostSurfacePresentation.Nova(ctx.Position, 4.6f);
+                }
                 var round = ctx.Round;
                 if (round != null && NetAuthority.ShouldResolve())
                 {
@@ -225,8 +234,6 @@ namespace TumbangPreso.Abilities
                         MatchFlair.Announce(MatchFlair.Kind.UltimateImpact, ctx.Motor.PlayerSlot, p.PlayerSlot, ctx.Position);
                     }
                 }
-                if (Visual.UltimateLiveLook.CheskaAbsoluteZero) Visual.UltimateLiveLook.Cheska(ctx.Position);
-                FrostSurfacePresentation.Nova(ctx.Position, 4.6f);
             }
         }
     }
