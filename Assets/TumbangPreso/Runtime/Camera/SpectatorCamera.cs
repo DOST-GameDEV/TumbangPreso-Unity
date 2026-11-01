@@ -272,8 +272,8 @@ namespace TumbangPreso.CameraSystem
 
         private const float ReplaySampleInterval = 0.10f;
         private const int ReplayFrameCapacity = 80;
-        private const int ReplayWidth = 752;
-        private const int ReplayHeight = 424;
+        private const int ReplayWidth = 1280;
+        private const int ReplayHeight = 720;
 
         /// <summary>
         /// How many readbacks may be in flight at once.
