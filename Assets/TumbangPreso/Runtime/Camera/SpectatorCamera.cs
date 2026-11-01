@@ -272,8 +272,8 @@ namespace TumbangPreso.CameraSystem
 
         private const float ReplaySampleInterval = 0.10f;
         private const int ReplayFrameCapacity = 80;
-        private const int ReplayWidth = 752;
-        private const int ReplayHeight = 424;
+        private const int ReplayWidth = 1024;
+        private const int ReplayHeight = 576;
 
         /// <summary>
         /// How many readbacks may be in flight at once.
@@ -1339,6 +1339,7 @@ namespace TumbangPreso.CameraSystem
                 return;
             }
 
+            _pendingReplayReason = reason;
             if (TryStartRecordedReplay()) return;
 
             // ⚠️⚠️ READY FRAMES, NOT FRAMES. Since the readback became asynchronous the newest

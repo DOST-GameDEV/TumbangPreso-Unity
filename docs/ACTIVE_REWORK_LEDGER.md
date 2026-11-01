@@ -6,9 +6,7 @@ Updated 2026-11-01. [TODO](TODO.md) is the only active queue.
   SFX. Film: run_ui_player_review.py --feel-only. Next: owner review.
 - TAG-FEEL-1031, on main: one tag live and in replay (spacing, reach, shared shove), FPP swing, replay impact on hand
   arrival, taya warnings on the red tile, moment families, feed icons. Open: arm spin in tag replay. Next: owner review.
-- TAG-PHASE-1031, on main: spacing, kits and whole world in replay, recoil. Next: owner look.
-- REPLAY-LIMITS-1101, on main: clip 18/protocol 186 records the mountain and headband; real Sean ignition test;
-  halftime lens favours faces, taya spacing settled ahead; spectator clip ages by newer moments. Next: owner look.
+- REPLAY-LIMITS-1101, on main: clip 18/protocol 186 records mountain and headband. Next: owner.
 - ONLINE-CAST-1028: 73b1f403b pushed/built. Ult victims stand on own floor from the
   host-frozen pose; GroundY ignores awnings. Payo delayed pairs: Cheska gap 0, Nemu 0.015,
   Paete tree grounded. Next: victims in Paete/Amihan/Phaister reach, then multi-PC.
