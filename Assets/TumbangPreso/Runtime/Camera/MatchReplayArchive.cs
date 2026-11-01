@@ -167,6 +167,36 @@ namespace TumbangPreso.CameraSystem
                 Sounds=_sounds.Where(c=>(sequence==1?c.Time>=start:c.Time>start)&&c.Time<=end).ToArray()};
             return true;
         }
+        /// <summary>
+        /// A clip cut now round a moment the archive does not seal by itself, from the history every body and prop already has.
+        /// Null when that history cannot cover it: the caller keeps its fallback. Never kept for halftime or sent to anyone.
+        /// </summary>
+        public RecordedMatchClip CaptureMoment(float contact,int actor,string reason)
+        {
+            if(_history==null||_match<=0||!NetAuthority.ShouldResolve())return null;
+            float start=contact-3.5f,end=contact+1.4f,oldest=float.MinValue,newest=float.MaxValue;
+            for(int seat=0;seat<4;seat++)
+            {var track=_history.ForSeat(seat);if(track==null||!track.Ready)return null;oldest=Mathf.Max(oldest,track.Oldest);newest=Mathf.Min(newest,track.Newest);}
+            foreach(var prop in _props){if(prop.Source==null||!prop.Track.Ready)return null;oldest=Mathf.Max(oldest,prop.Track.Oldest);newest=Mathf.Min(newest,prop.Track.Newest);}
+            start=Mathf.Max(start,oldest);end=Mathf.Min(end,newest);
+            if(end-start<.5f)return null;
+            if(!TryCaptureSession(start,end,++_sequence,out var clip,out _))return null;
+            clip.Contact=Mathf.Clamp(contact,start,end);clip.Reason=string.IsNullOrEmpty(reason)?"LAST PLAY":reason;clip.Subject=-1;clip.Actor=actor>=0&&actor<4?actor:NearestToCan(clip.Contact);
+            return clip;
+        }
+        private int NearestToCan(float time)
+        {
+            var can=GameServices.Round?.Lata;int best=0;float nearest=float.MaxValue;
+            if(can==null)return best;
+            for(int seat=0;seat<4;seat++)
+            {
+                var track=_history.ForSeat(seat);
+                if(track==null||!track.TryRootAt(time,out var at,out _))continue;
+                float distance=(at-can.transform.position).sqrMagnitude;
+                if(distance<nearest){nearest=distance;best=seat;}
+            }
+            return best;
+        }
         private static RecordedPoseTrack RetainSession(MatchPoseHistory.Track track,float start,float end,bool captureEndpoint)
         {
             if(track==null)return null;

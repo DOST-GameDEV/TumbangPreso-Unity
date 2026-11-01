@@ -272,8 +272,8 @@ namespace TumbangPreso.CameraSystem
 
         private const float ReplaySampleInterval = 0.10f;
         private const int ReplayFrameCapacity = 80;
-        private const int ReplayWidth = 1024;
-        private const int ReplayHeight = 576;
+        private const int ReplayWidth = 752;
+        private const int ReplayHeight = 424;
 
         /// <summary>
         /// How many readbacks may be in flight at once.
@@ -1434,7 +1434,7 @@ namespace TumbangPreso.CameraSystem
 
             _replayClock = 0.0f;
             _replayEventClock = marked >= 0 && _markedAt >= 0 ? Mathf.Max(0.0f, _markedAt - _replayClip[0].CapturedAt) : -1.0f;
-            _replayWipe = UI.ReplayStinger.Cover(transform, UI.HudDraw.Honey);
+            _replayWipe = TakeReplayWipe();
             _replayExit = null;
             _replaying = true;
             _replayReason = string.IsNullOrEmpty(title) ? "LAST PLAY" : title;
