@@ -54,12 +54,24 @@ Characters are `Art/CharacterRedesign/{zack,sean}/*-redesign.glb`, on a track of
 - "What is dis blob": the park's trees are real boxes now, like the cast and the buildings.
 - The stare and the run are shot so Rago stays in frame beside Zack. `HomePlaysTheAnimatedSceneAndHidesItUnderOtherScreens` captures the film and hold under the real board to `Logs/shots-native-ui/Hub-HomeScene-Film-*` and `-Hold`.
 
+## The real map, 2026-11-01
+
+The owner overrode the 2026-09-24 note about a drawn set: "USE THE ACTUAL 3D ASSET OF CURRENT MAPS WE HAVE", with
+"EVERYTHING na makikita sa game" and "kita ren ung shit na nagalaw". `HomeFilmPlateRecorder` records Kanto through
+`camAt` in Play mode, and `BgcScene` composites the cast and effects over those plates. The hour is therefore the map's
+own clear morning, and the cast's light was retuned to match it. The shots of the signal now watch the map's real signal, which goes
+from red straight to green: its amber comes after green, as in the game.
+
+Backtrack follows the kit's own spec (`zack-kit-2026-10-25/plan.md`): a gold streak running back along his path, ghost
+frames with the thin contour, and a landing ring that holds and breaks into four sparks. The star-burst on his body
+went, because it read as him being hit. On the hold the current appears three times in 24 s and lights him and the court
+(`light.ts`); the owner: "from time to time", "dont spam it".
+
 ## The hold
 
 Worked backward from the frame the player lives with: long lens, Zack large in the gap between HOME's
-tiles and its mode card, Rago over his shoulder, the city out of focus. After the landing there are no
-cuts. The idle is three passes of each hero's own 8 s `idle` clip, 720 frames, so it tiles exactly. The signal
-cycles and the traffic obeys it.
+tiles and its mode card, Rago hidden behind him. After the landing there are no
+cuts. The idle is three passes of each hero's own 8 s `idle` clip, 720 frames, so it tiles exactly. The map's traffic and signals run on behind him.
 
 ## In the game
 
@@ -73,6 +85,7 @@ From `ArtSource/home-scene/`:
 
 ```
 npm run refs
+node scripts/plates.mjs                               # the real map, once; see the README
 node scripts/look.mjs ZackIntro tag 100 200 300       # a contact sheet in scratch/
 node scripts/still1.mjs ZackIdle 0 scratch/hold.png   # one full-resolution frame
 node scripts/uiover.mjs scratch/hold.png scratch/ui.png   # HOME's real board art over it
@@ -85,8 +98,6 @@ Delete `scratch/chunks_*` after changing the source, or a rerun resumes stale pi
 
 ## Choices the owner may want to change
 
-- The hour is a warm late afternoon, not the map's clear cool morning, so it sits with HOME's maroon.
-- The set is drawn rather than rendered from the map's meshes, per the owner's 2026-09-24 direction.
 - The film plays once per run of the game, per hero, rather than on every return to HOME.
 - Phaister's loop is unchanged and still in the random pick, so Zack's film appears about half the time.
 - TUMP! and the "!" use painted lettering (`phaister/lettering.tsx`); the old loop's lamp bounce idea was dropped for the curve.

@@ -5,7 +5,7 @@ here needs remaking from scratch, on any branch that has this folder.
 
 | Hero | Film | Source | Notes |
 |---|---|---|---|
-| Zack | "Green Light", BGC at a warm late afternoon | `src/bgc/` | [zack-bgc.md](../../docs/reports/home-scene/zack-bgc.md) |
+| Zack | "Green Light", on the real BGC map, composited over recorded plates | `src/bgc/` | [zack-bgc.md](../../docs/reports/home-scene/zack-bgc.md) |
 | Phaister | "Showtime", Ermita at night under the LRT | `src/ermita/` | [phaister-ermita.md](../../docs/reports/home-scene/phaister-ermita.md) |
 
 Each hero has two clips on one clock: a 45 s film at 60 fps that plays once per run of the game, and a 24 s idle at
@@ -22,6 +22,23 @@ npm run refs
 
 `refs` copies the game's models, can and slipper from `Assets/` into `public/ref/`. Run it again if a model changes.
 `node_modules/`, `public/ref/`, `out/` and `scratch/` are ignored by git on purpose: all of them can be rebuilt.
+
+## Zack's plates: the real map
+
+Zack's film stands on the real BGC map (`Kanto`), recorded through the film's own camera in Play mode, so everything the
+game shows is in it: shaders, ink, grade, traffic, signals and pigeons. Close the Editor and the game's project, then:
+
+```
+node scripts/plates.mjs
+```
+
+That takes about 8 minutes and writes 2.4 GB to `plates/`, which git ignores. Run it after changing `camera.ts`, a beat
+that moves a shot, or the map; acting and effects never need it. `node scripts/plates.mjs 300 1000` records just those
+film frames for checking an angle, and `node scripts/platesheet.mjs zack-intro scratch/p.png 300 1000` shows them.
+Whatever in the map would stand in front of the cast or against the lens draws only its shadow for those frames
+(`HomeFilmPlateRecorder.Clear`). The idle's last 2 s crossfade to pictures of the same street leading into its first
+frame, so its loop has no seam; a vehicle crossing then shows doubled for that moment. The signals are wound so the
+green lands on `B.green`.
 
 ## The everyday loop
 
@@ -62,8 +79,9 @@ The same files exist in `src/bgc/` and `src/ermita/`.
 | How someone moves | `perform.ts` | Each hero has a track of the model's own clips and keyed poses (`Z_TRACK`, `P_TRACK`). Add `{ at, fade, clip, rate, pose }`. Walking paths and facing are the `place` and `yaw` functions below it |
 | A shot | `camera.ts` | `SHOTS` is the shot list: `at` the start, `in` the blend (0 is a cut), `p` the lens, `t` what it looks at, `f` the zoom |
 | The frame the player lives with | `camera.ts`, `landing` | Keep the hero in the gap between the tiles and the mode card |
-| Effects | `BgcScene.tsx`, `ErmitaScene.tsx` | Burst, rings, body arcs and Backtrack's after-images (`lib/bolt.tsx` draws the bolts); Phaister's sigils, rifts and the blast |
-| The place | `set.tsx` | Buildings, lamps, trees, colours. The palette is the `C` block at the top |
+| Effects | `BgcScene.tsx`, `ErmitaScene.tsx` | Burst, rings, body arcs, Backtrack's streak, ghost frames and landing ring (`lib/bolt.tsx` draws the bolts); Phaister's sigils, rifts and the blast |
+| When his current lights things, and the hold's sparks | `bgc/light.ts` | `IDLE_SPARKS` is the hold's few moments on its 24 s clock; `litAt` drives his rim and the pool on the floor. Keep them rare |
+| The place | Zack: the map itself, then `plates.mjs`. Phaister: `ermita/set.tsx` | Buildings, lamps, trees, colours. Phaister's palette is the `C` block at the top |
 
 `pose` values are degrees added to a bone: `root`, `torso`, `head`, `armL`, `armR`, `foreL`, `foreR`, `legL`, `legR`.
 The clips each model has can be listed from its glb; the common ones are `idle`, `walk`, `sprint`, `slide`, `pick-up`,
@@ -75,6 +93,7 @@ The clips each model has can be listed from its glb; the common ones are `idle`,
 - Feet must look planted. `figure` takes its angle from the floor while the feet are in frame, or low lenses float people.
 - Check a turn's keys. A key that goes from 372 to 12 is a slow full spin, not a small settle.
 - In any shot about two people, keep both in frame. The taya reacts to the thrower and follows them.
+- A walk's `rate` is the path's speed over the clip's stride (about 1.8 m/s for `walk`, 4.1 m/s for `sprint`), or the feet slide.
 - Blocks, not blobs: draw scenery from `box`, so it matches the cast and holds from every lens.
 - After `landing` there are no cuts, and everything in the idle repeats exactly on its 24 s clock.
 - Nothing important goes under a button, in any shot.

@@ -13,7 +13,7 @@ fs.mkdirSync(path.resolve('renders'), { recursive: true });
 const hero = process.argv[2] ?? 'zack';
 const Hero = hero[0].toUpperCase() + hero.slice(1);
 const parts = [
-  { master: `out/${hero}_intro_1080p60.mp4`, clip: `${hero}-home-intro.mp4`, poster: `${hero}-home-intro-poster.png`, id: `${Hero}Intro`, crf: 21 },
+  { master: `out/${hero}_intro_1080p60.mp4`, clip: `${hero}-home-intro.mp4`, poster: `${hero}-home-intro-poster.png`, id: `${Hero}Intro`, crf: 24 },
   { master: `out/${hero}_idle_1080p30.mp4`, clip: `${hero}-home-loop.mp4`, poster: `${hero}-home-poster.png`, id: `${Hero}Idle`, crf: 21 },
 ];
 const serveUrl = await bundle({ entryPoint: path.resolve('src/index.ts') });
