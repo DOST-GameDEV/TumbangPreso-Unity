@@ -759,7 +759,7 @@ const cacheBuilt: Record<string, Built> = {};
 const pending: Record<string, Promise<Built>> = {};
 
 /** Load once; the rig is re-posed on every draw, so one instance per model serves every shot. */
-export const useActor = (model: 'team-zack' | 'team-sean' | 'team-phaister' | 'team-nemu' | 'zack-redesign' | 'sean-redesign', withSlipper = false): Built | null => {
+export const useActor = (model: 'team-zack' | 'team-sean' | 'team-phaister' | 'team-nemu' | 'zack-redesign' | 'sean-redesign' | 'phaister-redesign' | 'nemu-redesign' | 'phaister-doll', withSlipper = false): Built | null => {
   const key = `${model}${withSlipper ? '+s' : ''}`;
   const [built, setBuilt] = useState<Built | null>(cacheBuilt[key] ?? null);
   const [handle] = useState(() => (cacheBuilt[key] ? null : delayRender(`model ${key}`, { timeoutInMilliseconds: 120000 })));

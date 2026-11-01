@@ -10,6 +10,7 @@ import { LOOP, FPS } from './lib/time';
 import { BgcScene } from './bgc/BgcScene';
 import { ClipBoard, CLIP_PAGES } from './bgc/ClipBoard';
 import { IDLE, INTRO } from './bgc/time';
+import { ErmitaScene } from './ermita/ErmitaScene';
 
 export const Root: React.FC = () => (
   <>
@@ -27,6 +28,8 @@ export const Root: React.FC = () => (
     <Composition id="ZackRef" component={ZackRef} durationInFrames={8} fps={FPS} width={1000} height={1000} />
     <Composition id="ClipBoard" component={ClipBoard} durationInFrames={CLIP_PAGES} fps={FPS} width={1920} height={1080} />
     <Composition id="ZackIntro" component={BgcScene} defaultProps={{ part: 'intro' as const }} durationInFrames={INTRO * 2} fps={FPS * 2} width={1920} height={1080} />
+    <Composition id="PhaisterIntro" component={ErmitaScene} defaultProps={{ part: 'intro' as const }} durationInFrames={INTRO * 2} fps={FPS * 2} width={1920} height={1080} />
+    <Composition id="PhaisterIdle" component={ErmitaScene} defaultProps={{ part: 'idle' as const }} durationInFrames={IDLE} fps={FPS} width={1920} height={1080} />
     <Composition id="ZackIdle" component={BgcScene} defaultProps={{ part: 'idle' as const }} durationInFrames={IDLE} fps={FPS} width={1920} height={1080} />
   </>
 );

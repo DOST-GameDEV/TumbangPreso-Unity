@@ -1,5 +1,8 @@
 # Making a home-screen animation: the method
 
+**To edit a film, start with [the workflow guide](../ArtSource/home-scene/README.md).** It has the setup, every command
+and which file changes what. This page is the background.
+
 **Current routing,2026-09-27:** this is a LIVE method. Read [AGENTS](../AGENTS.md)
 and the task's current scope first. [Canonical rendering](CANONICAL_RENDERING_PIPELINE.md)
 and [TESTING](TESTING.md) own safe launch/build/evidence policy. Keep the direction,

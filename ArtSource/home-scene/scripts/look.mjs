@@ -2,10 +2,12 @@
 // node scripts/look.mjs <Composition> <tag> <frame> [frame...]   (files in scratch/, sheet scratch/<tag>_sheet.png)
 import { bundle } from '@remotion/bundler';
 import { renderStill, selectComposition } from '@remotion/renderer';
+import fs from 'node:fs';
 import path from 'node:path';
 import sharp from 'sharp';
 
 const [id, tag, ...frames] = process.argv.slice(2);
+fs.mkdirSync('scratch', { recursive: true });
 const serveUrl = await bundle({ entryPoint: path.resolve('src/index.ts') });
 const composition = await selectComposition({ serveUrl, id });
 const files = [];

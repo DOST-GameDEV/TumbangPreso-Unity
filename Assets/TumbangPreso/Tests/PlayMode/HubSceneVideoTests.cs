@@ -276,6 +276,19 @@ namespace TumbangPreso.PlayTests
             Assert.Greater(scene.Player.frame, first, "Phaister's loop is not advancing.");
             yield return TumpUiCapture.Capture("Hub-HomeScene-Phaister-1920x1080", hub.Canvas, 1920, 1080, checkPalette: false);
             yield return TumpUiCapture.Capture("Hub-HomeScene-Phaister-1600x680", hub.Canvas, 1600, 680, checkPalette: false);
+            // The whole film and the hold under the real board, for a person to look at.
+            foreach (var at in new[] { 5.5, 10.5, 14.0, 17.0, 23.0, 27.0, 30.0, 33.0, 36.5 })
+            {
+                scene.Player.time = at;
+                yield return new WaitForSecondsRealtime(0.5f);
+                yield return TumpUiCapture.Capture($"Hub-HomeScene-Phaister-Film-{at:00.0}", hub.Canvas, 1920, 1080, checkPalette: false);
+            }
+            scene.Player.time = scene.Player.length - 0.5;
+            float settled = Time.realtimeSinceStartup + 20;
+            while (!scene.HoldingIdle && Time.realtimeSinceStartup < settled) yield return null;
+            Assert.IsTrue(scene.HoldingIdle, "Her film never handed over to the idle under the real board.");
+            yield return new WaitForSecondsRealtime(0.5f);
+            yield return TumpUiCapture.Capture("Hub-HomeScene-Phaister-Hold", hub.Canvas, 1920, 1080, checkPalette: false);
         }
 
         [UnityTest, Timeout(240000)]
