@@ -19,6 +19,10 @@ const models = path.resolve('../../Assets/TumbangPreso/Art/models');
 fs.copyFileSync(path.join(models, 'lata_metal.obj'), path.join(out, 'lata_metal.obj'));
 fs.copyFileSync(path.join(models, 'textures/lata_metal.png'), path.join(out, 'lata_metal.png'));
 console.log('copied lata_metal.obj and its texture');
+// The redesigned cast the game shows now, each with its own atlas (Art/CharacterRedesign).
+for (const [dir, f] of [['zack', 'zack-redesign.glb'], ['zack', 'zack-redesign-atlas.png'], ['sean', 'sean-redesign.glb'], ['sean', 'sean-redesign-atlas.png']]) {
+  fs.copyFileSync(path.resolve('../../Assets/TumbangPreso/Art/CharacterRedesign', dir, f), path.join(out, f));
+}
 // Nemu's companion Kuro is the game's own pet model.
 fs.copyFileSync(path.resolve('../../Assets/TumbangPreso/Art/characters/pets/pet-nemu-ghost.glb'), path.join(out, 'pet-nemu-ghost.glb'));
 console.log('copied pet-nemu-ghost.glb');

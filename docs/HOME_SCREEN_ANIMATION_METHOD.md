@@ -50,6 +50,8 @@ are the two worked examples. Neither is a template: the next hero needs their ow
 
 ## 1 · Research before drawing anything
 
+Latest findings and rules: [research 2026-11-01](reports/home-scene/research-2026-11-01.md). A hero may now ship a film that plays once and then holds on a seamless idle ([Zack at BGC](reports/home-scene/zack-bgc.md)).
+
 The owner asked for it explicitly: *"thoroughly research valorant main screens and main screens
 of other games and figure out what makes them good"*. Do it for real (watch the screens frame by
 frame, not articles about them) and write the findings down as rules, then design against them.
@@ -78,6 +80,10 @@ This is the lesson that cost the most. Two whole passes drew Zack by hand, first
 outline style, then as SVG voxel blocks traced off model photos. Both were rejected on the face,
 the hair, the movement and the side view: *"his hair for example is weird"*, *"side view looks so
 bad"*. A flat drawing of a 3D voxel character is a guess at every angle it was not traced from.
+
+⚠️⚠️ **USE THE MODELS THE GAME SHOWS NOW.** The redesigned cast is `Art/CharacterRedesign/<hero>/<hero>-redesign.glb`
+(own atlas, elbow bones `forearm-left` and `forearm-right`); `team-zack.glb` and `team-sean.glb` are the old look,
+and the owner caught a whole render on them (2026-11-01). Compare a still against the live game before posing anything.
 
 **Render the game's own `team-*.glb` models, posed per frame, and composite them into the
 painted set.** `ArtSource/home-scene/src/three/actor.tsx` is the working implementation; reuse it.
@@ -265,6 +271,8 @@ Graphics settings on a laptop with two GPUs.
 | Raised her arms past about 45 degrees | They vanished behind her hair and hat on the test board; a V to the sides reads, straight up does not |
 | Put the train on the guideway right over the lens | From under the deck's edge the deck hides everything on top; the guideway moved 5.3 m off and the train was re-timed to clear her hat |
 | Hung the sigil and the KLANG! over her | Both hid her face; effects sit BESIDE the face they belong to |
+| Hand-keyed every pose pose-to-pose on a redesigned rig (Zack, 2026-11-01) | 🧑: *"medyo clunky"*, *"we alr have animations for updated character models u can js tweak"*. This newer note wins for redesigned rigs: start from the rig's own clips (`layersAt`, `src/bgc/perform.ts`), key only what no clip says |
+| Showed a curve from eye level, and a hit with no hold (Zack, 2026-11-01) | 🧑: *"communicate the curve better"*, *"the moment of impact"*. A path in depth needs a high lens; an impact needs a hit-stop and a reaction that belongs to the person it surprised |
 | Reused the hero's own game clips (sprint, slide, her casts) for a loop (Phaister v2, 2026-09-24) | 🧑: *"make ur own animation"*, *"it wont be as dynamic if u js reuse animations she has"*; every pose is keyed by hand, on a pose TRACK so each hand-over is continuous |
 | Drew a set "like" the map from a screenshot | 🧑: *"make sure it actually loooks like the map"*; read the map's builder for its numbers (map.ts) so every landmark stands where a player has thrown past it |
 | Typeset the UI font on street signs | 🧑: *"dont outright use fonts its so ugly"*; street words are painted (lettering.tsx, a brush skeleton with wobble, outline and drop shadow); lettered SOUND words may use the display face |

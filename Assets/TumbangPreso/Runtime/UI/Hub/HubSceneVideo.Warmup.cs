@@ -12,6 +12,11 @@ namespace TumbangPreso.UI.Hub
         private static HubSceneVideo _preloaded;
         private static readonly Dictionary<string, VideoClip> Clips = new Dictionary<string, VideoClip>();
         private static readonly Dictionary<string, Texture2D> Posters = new Dictionary<string, Texture2D>();
+        private static readonly Dictionary<string, VideoClip> Films = new Dictionary<string, VideoClip>();
+        private static readonly Dictionary<string, Texture2D> FilmPosters = new Dictionary<string, Texture2D>();
+
+        /// <summary>Heroes whose film has finished this run: their next hub goes straight to the idle.</summary>
+        public static readonly HashSet<string> FilmsSeen = new HashSet<string>();
 
         private static VideoClip LoadClip(string hero)
         {
@@ -22,6 +27,19 @@ namespace TumbangPreso.UI.Hub
         private static Texture2D LoadPoster(string hero)
         {
             if (!Posters.TryGetValue(hero, out var poster)) Posters[hero] = poster = Resources.Load<Texture2D>(PosterPathFor(hero));
+            return poster;
+        }
+
+        private static VideoClip LoadFilm(string hero)
+        {
+            if (FilmsSeen.Contains(hero)) return null;
+            if (!Films.TryGetValue(hero, out var film)) Films[hero] = film = Resources.Load<VideoClip>(IntroPathFor(hero));
+            return film;
+        }
+
+        private static Texture2D LoadFilmPoster(string hero)
+        {
+            if (!FilmPosters.TryGetValue(hero, out var poster)) FilmPosters[hero] = poster = Resources.Load<Texture2D>(IntroPosterPathFor(hero));
             return poster;
         }
 
@@ -36,6 +54,12 @@ namespace TumbangPreso.UI.Hub
                         var load = Resources.LoadAsync<VideoClip>(ClipPathFor(Heroes[i]));
                         yield return load;
                         Clips[Heroes[i]] = load.asset as VideoClip;
+                    }
+                    if (!Films.ContainsKey(Heroes[i]))
+                    {
+                        var film = Resources.LoadAsync<VideoClip>(IntroPathFor(Heroes[i]));
+                        yield return film;
+                        Films[Heroes[i]] = film.asset as VideoClip;
                     }
                     completed?.Invoke(.35f * (i + 1) / Heroes.Length);
                     yield return null;
@@ -71,6 +95,10 @@ namespace TumbangPreso.UI.Hub
             var load = Resources.LoadAsync<Texture2D>(PosterPathFor(hero));
             yield return load;
             Posters[hero] = load.asset as Texture2D;
+            if (FilmPosters.ContainsKey(hero)) yield break;
+            var film = Resources.LoadAsync<Texture2D>(IntroPosterPathFor(hero));
+            yield return film;
+            FilmPosters[hero] = film.asset as Texture2D;
         }
 
         private static HubSceneVideo TakePreloaded(RectTransform scene)

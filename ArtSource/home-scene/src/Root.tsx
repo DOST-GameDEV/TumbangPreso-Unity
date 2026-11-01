@@ -7,6 +7,9 @@ import { PhaisterBoard } from './phaister/Board';
 import { PhaisterScene } from './phaister/PhaisterScene';
 import { LOOP as P_LOOP } from './phaister/time';
 import { LOOP, FPS } from './lib/time';
+import { BgcScene } from './bgc/BgcScene';
+import { ClipBoard, CLIP_PAGES } from './bgc/ClipBoard';
+import { IDLE, INTRO } from './bgc/time';
 
 export const Root: React.FC = () => (
   <>
@@ -22,5 +25,8 @@ export const Root: React.FC = () => (
     <Composition id="PhaisterScene" component={PhaisterScene} durationInFrames={P_LOOP} fps={FPS} width={1920} height={1080} />
     <Composition id="PhaisterBoard" component={PhaisterBoard} durationInFrames={4} fps={FPS} width={1920} height={1080} />
     <Composition id="ZackRef" component={ZackRef} durationInFrames={8} fps={FPS} width={1000} height={1000} />
+    <Composition id="ClipBoard" component={ClipBoard} durationInFrames={CLIP_PAGES} fps={FPS} width={1920} height={1080} />
+    <Composition id="ZackIntro" component={BgcScene} defaultProps={{ part: 'intro' as const }} durationInFrames={INTRO} fps={FPS} width={1920} height={1080} />
+    <Composition id="ZackIdle" component={BgcScene} defaultProps={{ part: 'idle' as const }} durationInFrames={IDLE} fps={FPS} width={1920} height={1080} />
   </>
 );

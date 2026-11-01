@@ -2,6 +2,8 @@
 
 Updated 2026-11-01. [TODO](TODO.md) is the only active queue.
 
+- HOME-ZACK-1101, UNCOMMITTED on main working tree: Zack film at BGC into held idle, redesigned models.
+  [Design](reports/home-scene/zack-bgc.md). Next: owner watches it in game, then commit; Phaister redo waits.
 - FEEL-1031, on main: replay wipes, spectator 3D replay, break card, impact, 0.6 m knockback,
   SFX. Film: run_ui_player_review.py --feel-only. Next: owner review.
 - TAG-FEEL-1031, on main: one tag live and in replay (spacing, reach, shared shove), FPP swing, replay impact on hand

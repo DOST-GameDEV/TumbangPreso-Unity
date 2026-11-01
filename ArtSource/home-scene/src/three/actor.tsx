@@ -75,6 +75,10 @@ const EYE_BAND: Record<string, [number, number]> = {
   'team-sean': [0.455, 0.497],
   'team-phaister': [0.455, 0.505],
   'team-nemu': [0.455, 0.497],
+  // Read off zack-redesign.glb by rasterising the head's front: eye paint y 0.443 to 0.472 on the skin
+  // plane (z 0.133), the fringe from y 0.475, the mouth at 0.40 to 0.415.
+  'zack-redesign': [0.441, 0.474],
+  'sean-redesign': [0.54, 0.62],
 };
 
 export type Light = {
@@ -157,6 +161,12 @@ const toonFragment = `
     // can light. Nothing is laid over the face, so nothing can float off it at an angle.
     float eye = step(0.5, usePalette) * step(12.0, row) * (1.0 - step(2.0, col))
       * step(eyeBand.x, vBind.y) * (1.0 - step(eyeBand.y, vBind.y)) * step(0.1, vBind.z);
+    // The redesigns paint their eyes in the atlas: the dark paint on the face plane inside the band.
+    if (usePalette < 0.5 && hasMap > 0.5) {
+      vec3 paint = texture2D(map, vUv).rgb;
+      eye = (1.0 - step(0.22, max(paint.r, max(paint.g, paint.b))))
+        * step(eyeBand.x, vBind.y) * (1.0 - step(eyeBand.y, vBind.y)) * step(0.1, vBind.z);
+    }
     lc = mix(lc, eyeColour, eyeMix * eye);
     gl_FragColor = vec4(lc, 1.0);
   }`;
@@ -235,6 +245,8 @@ const toonify = (root: THREE.Object3D, palette: number[][] | null, mats: Mats, f
     m.geometry = geo;
     const toon = srcs.map((src) => {
       const s = src as THREE.MeshStandardMaterial;
+      // ⚠️ The redesigns' atlas is their paint, read as written (method § 7: default colour management darkens every hex).
+      if (s.map) { s.map.colorSpace = THREE.NoColorSpace; s.map.needsUpdate = true; }
       const t = toonMaterial(s.map ?? null, palette, `#${(s.color ?? new THREE.Color(1, 1, 1)).getHexString()}`);
       t.uniforms.eyeBand.value.set(eyeBand[0], eyeBand[1]);
       mats.toon.push(t);
@@ -315,7 +327,7 @@ const buildActor = (gltf: GLTF, model: string, slipper: GLTF | null): Built => {
   const rest: Record<string, THREE.Quaternion> = {};
   const restPos: Record<string, THREE.Vector3> = {};
   scene.traverse((o) => {
-    if (['root', 'torso', 'head', 'arm-left', 'arm-right', 'leg-left', 'leg-right'].includes(o.name) && !bones[o.name]) {
+    if (['root', 'torso', 'head', 'arm-left', 'arm-right', 'leg-left', 'leg-right', 'forearm-left', 'forearm-right'].includes(o.name) && !bones[o.name]) {
       bones[o.name] = o;
       rest[o.name] = o.quaternion.clone();
       restPos[o.name] = o.position.clone();
@@ -339,10 +351,10 @@ const buildActor = (gltf: GLTF, model: string, slipper: GLTF | null): Built => {
 // ------------------------------------------------------------------------------------ pose
 
 /** Degrees, applied AFTER the clip, in the bone's own frame (YXZ). */
-export type Pose = Partial<Record<'root' | 'torso' | 'head' | 'armL' | 'armR' | 'legL' | 'legR', [number, number, number]>>;
+export type Pose = Partial<Record<'root' | 'torso' | 'head' | 'armL' | 'armR' | 'foreL' | 'foreR' | 'legL' | 'legR', [number, number, number]>>;
 
 const BONE: Record<keyof Pose, string> = {
-  root: 'root', torso: 'torso', head: 'head', armL: 'arm-left', armR: 'arm-right', legL: 'leg-left', legR: 'leg-right',
+  root: 'root', torso: 'torso', head: 'head', armL: 'arm-left', armR: 'arm-right', foreL: 'forearm-left', foreR: 'forearm-right', legL: 'leg-left', legR: 'leg-right',
 };
 
 export const addPose = (...ps: (Pose | undefined)[]): Pose => {
@@ -379,6 +391,8 @@ export type SlipperState =
   /** Model space, relative to wherever his right fist is in THIS pose: the flip, the spin. */
   | { at: 'fromHand'; offset: [number, number, number]; rot: [number, number, number] }
   | { at: 'none' };
+
+export type Layer = { clip?: string; t?: number; once?: boolean; pose?: Pose; w: number };
 
 export type ActorProps = {
   /** SVG point where the model's focus point lands. */
@@ -418,6 +432,11 @@ export type ActorProps = {
   res?: number;
   /** Draw only the tsinelas (the thrown one flies in its own image). */
   only?: 'slipper';
+  /**
+   * Blended stack, oldest first: each layer is a clip (with `pose` as a tweak on top of it) or a keyed
+   * pose alone, slerped over the stack below it by `w`. When set, it replaces clip and pose.
+   */
+  layers?: Layer[];
   /**
    * 0..1 how much of `clip` shows against the keyed `pose` (1, the default, is the clip alone with
    * `clipPose` added on top). ⚠️ This is what lets a performance hand over between one of the game's
@@ -465,10 +484,40 @@ const clipBones = (b: Built, p: ActorProps) => {
   keyBones(b, p.clipPose, 0);
 };
 
+const layerBones = (b: Built, l: Layer) => {
+  const c = l.clip ? b.clips[l.clip] : null;
+  restBones(b);
+  b.mixer.stopAllAction();
+  if (c) {
+    const a = b.mixer.clipAction(c);
+    a.reset().play();
+    const d = c.duration;
+    const t = l.t ?? 0;
+    b.mixer.setTime(l.once ? Math.min(Math.max(0, t), d - 0.001) : ((t % d) + d) % d);
+    keyBones(b, l.pose, 0);
+  } else keyBones(b, l.pose, 78);
+};
+
+const stackBones = (b: Built, layers: Layer[]) => {
+  let q: Record<string, THREE.Quaternion> = {};
+  let v: Record<string, THREE.Vector3> = {};
+  layers.forEach((l, i) => {
+    layerBones(b, l);
+    for (const k of Object.keys(b.bones)) {
+      const w = i === 0 ? 1 : l.w;
+      q[k] = i === 0 ? b.bones[k].quaternion.clone() : q[k].clone().slerp(b.bones[k].quaternion, w);
+      v[k] = i === 0 ? b.bones[k].position.clone() : v[k].clone().lerp(b.bones[k].position, w);
+    }
+  });
+  for (const k of Object.keys(b.bones)) { b.bones[k].quaternion.copy(q[k]); b.bones[k].position.copy(v[k]); }
+};
+
 const poseRig = (b: Built, p: ActorProps) => {
   const hasClip = !!(p.clip && b.clips[p.clip]);
   const mix = hasClip ? Math.max(0, Math.min(1, p.clipMix ?? 1)) : 0;
-  if (hasClip && mix < 1) {
+  if (p.layers?.length) {
+    stackBones(b, p.layers);
+  } else if (hasClip && mix < 1) {
     // The keyed pose first, kept; then the clip; then each bone slerped from one to the other.
     restBones(b);
     b.mixer.stopAllAction();
@@ -505,8 +554,10 @@ const poseRig = (b: Built, p: ActorProps) => {
       // strap up; the arm bone's -x runs down the arm to the fist. So the slipper's long axis is
       // laid along the arm, turned 90 about it so the sole faces sideways, and pushed past the
       // fist by its own half length, pivoting at the grip so `swing` is a pendulum.
-      b.bones['arm-right'].add(b.slipper);
-      b.slipper.position.set(HAND_R[0] + 0.03, HAND_R[1], HAND_R[2]);
+      // ⚠️ On a rig with elbows the hand is on the forearm (`CharacterVisual.HandBones`).
+      const fore = b.bones['forearm-right'];
+      (fore ?? b.bones['arm-right']).add(b.slipper);
+      b.slipper.position.set(fore ? -0.075 : HAND_R[0] + 0.03, HAND_R[1], HAND_R[2]);
       b.slipper.rotation.set(0, 0, 0);
       b.slipper.rotateZ((s.swing ?? 0) * deg);
       b.slipper.rotateX((90 + (s.twist ?? 0)) * deg);
@@ -677,7 +728,7 @@ const cacheBuilt: Record<string, Built> = {};
 const pending: Record<string, Promise<Built>> = {};
 
 /** Load once; the rig is re-posed on every draw, so one instance per model serves every shot. */
-export const useActor = (model: 'team-zack' | 'team-sean' | 'team-phaister' | 'team-nemu', withSlipper = false): Built | null => {
+export const useActor = (model: 'team-zack' | 'team-sean' | 'team-phaister' | 'team-nemu' | 'zack-redesign' | 'sean-redesign', withSlipper = false): Built | null => {
   const key = `${model}${withSlipper ? '+s' : ''}`;
   const [built, setBuilt] = useState<Built | null>(cacheBuilt[key] ?? null);
   const [handle] = useState(() => (cacheBuilt[key] ? null : delayRender(`model ${key}`, { timeoutInMilliseconds: 120000 })));
