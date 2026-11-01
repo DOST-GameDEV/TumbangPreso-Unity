@@ -4,7 +4,8 @@ import { kf } from '../lib/kf';
 import { idleSin, INTRO, ph } from './time';
 import { B } from './beats';
 import { depth, horizonY, poly, project, scaleAt, V3, View } from '../phaister/view';
-import { box, Item, mixHex } from '../phaister/set';
+import { box, Item } from '../phaister/set';
+import { Clutter, FarBlocks, FloorDetail, OldBuildings, Shopfronts } from './city';
 
 /*
  * ERMITA, drawn, at the hour of the game's own map film (`ErmitaFilm`): night under the LRT on Taft, sodium
@@ -30,6 +31,7 @@ const face = (v: View, pts: V3[], fill: string, op = 1) => {
 };
 
 export const LAMPS: [number, number][] = [[-3.6, 2.2], [9.4, -6], [9.4, 9]];
+const UNDER: [number, number][] = [[15, -36], [15, -6], [15, 24], [15, 54], [-11, -11], [-11, 11], [-30, 14], [24, 16]];
 export const DECK_X = 15;
 
 /** The stutter of the lamp over the can: dark, a buzz, on. Steady after. */
@@ -37,7 +39,9 @@ export const lampAt = (f: number) => (f >= B.lamp + 34 ? 1 : f < B.lamp ? 0 : ra
 
 /** Where the train's nose is along the deck, or null. One pass in the film; a quiet one in each idle. */
 export const trainAt = (f: number): number | null => {
-  const t = f < INTRO ? (f - B.train) * 2.3 - 95 : (ph(f) - 300) * 1.6 - 95;
+  // One goes by as the film opens; the next is the roof over the chase.
+  const first = f * 2.3 - 60;
+  const t = f >= INTRO ? (ph(f) - 300) * 1.6 - 95 : first < 240 ? first : (f - B.blink + 60) * 2.3 - 55;
   return t > -100 && t < 240 ? t : null;
 };
 
@@ -68,50 +72,20 @@ export const Ground: React.FC<{ v: View; f: number }> = ({ v, f }) => {
     {rect(-90, 90, 12, 21, C.road)}
     {rect(9.5, 90, -90, 90, C.road)}
     {rect(-11, 10.5, -13, 11.5, C.lot)}
+    <FloorDetail v={v} />
     {frame(8, 0.09, C.yellow)}
     {frame(7, 0.09, C.lotLine)}
     {[-9, -5, -1, 3, 7].map((x) => <g key={x}>{rect(x * 3, x * 3 + 2.2, 16.4, 16.55, '#B9AE9E')}</g>)}
     {pool(v, LAMPS[0][0] + 2.4, LAMPS[0][1] - 2.8, 7, lampAt(f))}
     {pool(v, LAMPS[1][0] - 1, LAMPS[1][1], 5, 0.7)}
     {pool(v, LAMPS[2][0] - 1, LAMPS[2][1], 5, 0.7)}
+    {UNDER.map(([x, z]) => <g key={`${x}.${z}`}>{pool(v, x + 1, z, 6, 0.75)}</g>)}
     {pass !== null && pool(v, DECK_X - 3, pass - 40, 16, 0.55, '#E9D8FF')}
   </g>;
 };
 
-const windows = (v: View, x0: number, x1: number, z: number, y0: number, rows: number, cols: number, seed: string, lit: number) => {
-  const out: React.ReactNode[] = [];
-  const dx = (x1 - x0) / cols;
-  for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
-    const x = x0 + c * dx + dx * 0.28;
-    const y = y0 + r * 3.7;
-    const on = random(`${seed}${r}.${c}`) < lit;
-    out.push(face(v, [[x, y, z], [x + dx * 0.44, y, z], [x + dx * 0.44, y + 2.3, z], [x, y + 2.3, z]], on ? C.winLit : C.win));
-  }
-  return out;
-};
-
-/** The hall, its neighbours and the far towers: all behind the focus layer. */
-export const City = (v: View): Item[] => {
-  const out: Item[] = [];
-  const blk = (x0: number, x1: number, h: number, z: number, body: string, seed: string, lit: number) => {
-    const at: V3 = [(x0 + x1) / 2, h / 2, z];
-    if (depth(v, at) < 1) return;
-    out.push({ z: depth(v, at), node: <g key={k()}>
-      {box(v, x0, x1, 0, h, z, z + 16, { side: mixHex(body, '#1B1030', 0.3), end: body, top: mixHex(body, '#FFFFFF', 0.08) })}
-      {windows(v, x0, x1, z - 0.02, 3, Math.floor((h - 4) / 3.7), Math.max(3, Math.round((x1 - x0) / 3.4)), seed, lit)}
-    </g> });
-  };
-  blk(-14, 12, 22, 23, C.hall, 'hall', 0.22);
-  blk(-42, -15, 15, 24, '#7A5F58', 'old', 0.3);
-  blk(13, 34, 30, 29, '#5A4A68', 'east', 0.34);
-  blk(-70, -44, 28, 34, '#4C4060', 'west', 0.3);
-  blk(36, 60, 40, 38, '#463A5C', 'tower', 0.4);
-  // The hall's columns, in front of its windows.
-  for (let x = -12; x <= 10; x += 4.4) {
-    if (depth(v, [x, 10, 22]) > 1) out.push({ z: depth(v, [x, 10, 22]) - 1, node: <g key={k()}>{box(v, x, x + 0.7, 0, 20, 22.1, 22.9, { side: C.col, end: C.hallLit })}</g> });
-  }
-  return out;
-};
+/** Everything behind the focus layer. */
+export const City = (v: View, f: number): Item[] => [...FarBlocks(v), ...OldBuildings(v), ...Shopfronts(v, f)];
 
 const Z_RUN = 170;
 /** The guideway and its piers: the weight over everything. */
@@ -167,6 +141,7 @@ export const Street = (v: View, f: number): Item[] => {
   add(lampItem(v, LAMPS[0][0], LAMPS[0][1], lampAt(f)));
   add(lampItem(v, LAMPS[1][0], LAMPS[1][1], 0.8));
   add(lampItem(v, LAMPS[2][0], LAMPS[2][1], 0.8));
+  for (const [x, z] of UNDER) add(lampItem(v, x, z, 0.8));
   // The fence along the north of the lot and the hoop on the west.
   for (let x = -10.5; x <= 8; x += 3.7) {
     const at: V3 = [x, 1, 11.5];
@@ -176,6 +151,10 @@ export const Street = (v: View, f: number): Item[] => {
       {x < 7 && box(v, x + 0.25, x + 3.45, 1.0, 1.08, 11.47, 11.53, { side: C.pole, end: C.pole })}
       {x < 7 && Array.from({ length: 9 }, (_, i) => <g key={i}>{box(v, x + 0.5 + i * 0.32, x + 0.54 + i * 0.32, 0.08, 1.15, 11.48, 11.52, { side: C.pole, end: C.pole })}</g>)}
     </g> });
+  }
+  for (let x = -10.5; x <= 8; x += 3.7) {
+    if (depth(v, [x, 1, -13]) < 0.8) continue;
+    out.push({ z: depth(v, [x, 1, -13]), node: <g key={k()}>{box(v, x - 0.25, x + 0.25, 0, 1.5, -13.25, -12.75, { side: '#6F6472', end: '#857A84', top: '#92868E' })}{x < 7 && box(v, x + 0.25, x + 3.45, 1.0, 1.08, -13.03, -12.97, { side: C.pole, end: C.pole })}</g> });
   }
   if (depth(v, [-10, 2, 5]) > 0.8) out.push({ z: depth(v, [-10, 2, 5]), node: <g key={k()}>
     {box(v, -10.1, -9.95, 0, 3.1, 4.95, 5.1, { side: '#B7923A', end: '#D2AC4A' })}
@@ -192,7 +171,7 @@ export const Street = (v: View, f: number): Item[] => {
   // Banderitas and wires, strung the width of the lot.
   const sway = 0.1 * idleSin(f, 4);
   const strung: React.ReactNode[] = [];
-  for (const [z, y, dip] of [[11, 6.1, 1.1], [11.8, 7, 0.9], [12.4, 7.5, 1.4]] as const) {
+  for (const [z, y, dip] of [[11, 6.1, 1.1], [11.8, 7, 0.9], [12.4, 7.5, 1.4], [10.6, 7.6, 1.8], [12.8, 8.2, 0.7], [11.2, 8.6, 2.1]] as const) {
     let d = '';
     const flags: React.ReactNode[] = [];
     for (let i = 0; i <= 24; i++) {
@@ -210,14 +189,12 @@ export const Street = (v: View, f: number): Item[] => {
     if (d) strung.push(<g key={z}><path d={d} fill="none" stroke={C.wire} strokeWidth={Math.max(1.2, scaleAt(v, [0, y, z]) * 0.03)} />{flags}</g>);
   }
   if (depth(v, [0, 6, 11]) > 0.8) out.push({ z: depth(v, [0, 6, 11]) - 0.5, node: <g key={k()}>{strung}</g> });
+  out.push(...Clutter(v, f));
   return out;
 };
 
 /** The train's window light through the piers, across everything near: bars, not a flash. */
 export const strobeAt = (f: number) => {
   if (f >= INTRO) return 0;
-  const nose = trainAt(f);
-  if (nose === null || nose < 10 || nose > 200) return 0;
-  const on = kf(f, [[B.train + 40, 0], [B.train + 52, 1], [B.scoop + 8, 1], [B.scoop + 22, 0]]);
-  return on * (0.5 + 0.5 * Math.sin(f * 1.05));
+  return kf(f, [[B.chase, 0], [B.chase + 8, 1], [B.blink + 6, 1], [B.blink + 20, 0]]) * (0.5 + 0.5 * Math.sin(f * 1.05));
 };

@@ -15,7 +15,20 @@ namespace TumbangPreso.UI.Hub
         private static readonly Dictionary<string, VideoClip> Films = new Dictionary<string, VideoClip>();
         private static readonly Dictionary<string, Texture2D> FilmPosters = new Dictionary<string, Texture2D>();
 
-        /// <summary>Heroes whose film has finished this run: their next hub goes straight to the idle.</summary>
+        private static string _runHero;
+
+        /// <summary>
+        /// ⚠️ ONE HERO, ONE FILM, PER RUN OF THE GAME (owner, 2026-11-01: after the first animation it just loops the idle). Rolling
+        /// again at every hub could start another hero's whole film after a match.
+        /// </summary>
+        private static string HeroForThisRun()
+        {
+            if (!string.IsNullOrEmpty(ForcedHero)) return ForcedHero;
+            if (string.IsNullOrEmpty(_runHero)) _runHero = Pick(n => Random.Range(0, n));
+            return _runHero;
+        }
+
+        /// <summary>Heroes whose film has finished this run. Any entry sends every later hub straight to the idle.</summary>
         public static readonly HashSet<string> FilmsSeen = new HashSet<string>();
 
         private static VideoClip LoadClip(string hero)
@@ -32,7 +45,7 @@ namespace TumbangPreso.UI.Hub
 
         private static VideoClip LoadFilm(string hero)
         {
-            if (FilmsSeen.Contains(hero)) return null;
+            if (FilmsSeen.Count > 0) return null;
             if (!Films.TryGetValue(hero, out var film)) Films[hero] = film = Resources.Load<VideoClip>(IntroPathFor(hero));
             return film;
         }
@@ -64,7 +77,7 @@ namespace TumbangPreso.UI.Hub
                     completed?.Invoke(.35f * (i + 1) / Heroes.Length);
                     yield return null;
                 }
-                string hero = string.IsNullOrEmpty(ForcedHero) ? Pick(n => Random.Range(0, n)) : ForcedHero;
+                string hero = HeroForThisRun();
                 yield return WarmPoster(hero);
                 if (LoadClip(hero) == null || LoadPoster(hero) == null)
                 { hero = "zack"; yield return WarmPoster(hero); }
@@ -128,6 +141,7 @@ namespace TumbangPreso.UI.Hub
                 video.Player.Stop();
                 video.Prepared = false; video.FirstFrameReady = false;
                 video.Player.sendFrameReadyEvents = true;
+                video.ResetWatchdog();
                 video.Player.Prepare();
             }
             return video;

@@ -6,7 +6,7 @@ here needs remaking from scratch, on any branch that has this folder.
 | Hero | Film | Source | Notes |
 |---|---|---|---|
 | Zack | "Green Light", BGC at a warm late afternoon | `src/bgc/` | [zack-bgc.md](../../docs/reports/home-scene/zack-bgc.md) |
-| Phaister | "Palabas", Ermita at night under the LRT | `src/ermita/` | [phaister-ermita.md](../../docs/reports/home-scene/phaister-ermita.md) |
+| Phaister | "Showtime", Ermita at night under the LRT | `src/ermita/` | [phaister-ermita.md](../../docs/reports/home-scene/phaister-ermita.md) |
 
 Each hero has two clips on one clock: a 45 s film at 60 fps that plays once per run of the game, and a 24 s idle at
 30 fps that loops. The idle's first frame continues the film's last, so the join cannot show.
@@ -62,7 +62,7 @@ The same files exist in `src/bgc/` and `src/ermita/`.
 | How someone moves | `perform.ts` | Each hero has a track of the model's own clips and keyed poses (`Z_TRACK`, `P_TRACK`). Add `{ at, fade, clip, rate, pose }`. Walking paths and facing are the `place` and `yaw` functions below it |
 | A shot | `camera.ts` | `SHOTS` is the shot list: `at` the start, `in` the blend (0 is a cut), `p` the lens, `t` what it looks at, `f` the zoom |
 | The frame the player lives with | `camera.ts`, `landing` | Keep the hero in the gap between the tiles and the mode card |
-| Effects | `BgcScene.tsx`, `ErmitaScene.tsx` | Burst, rings, sparks, Backtrack's after-images, Phaister's sigils and rifts |
+| Effects | `BgcScene.tsx`, `ErmitaScene.tsx` | Burst, rings, body arcs and Backtrack's after-images (`lib/bolt.tsx` draws the bolts); Phaister's sigils, rifts and the blast |
 | The place | `set.tsx` | Buildings, lamps, trees, colours. The palette is the `C` block at the top |
 
 `pose` values are degrees added to a bone: `root`, `torso`, `head`, `armL`, `armR`, `foreL`, `foreR`, `legL`, `legR`.

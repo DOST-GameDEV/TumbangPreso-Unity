@@ -243,14 +243,17 @@ const zackYaw = (f: number) => kf(f, [
     [B.snapBack, 20, () => 1], // 380 is 20: the same way round, so the settle below is short
     [B.snapBack + PULL - 1, 20],
     [B.snapBack + PULL + 8, 12],
-    [INTRO, 12],
+    [B.shake + 30, 28], // watching Rago
+    [B.fold, 28],
+    [B.fold + 44, 4.4], // and he turns to us: the idle starts from here
+    [INTRO, 4.4],
 ]);
 
 export const zack = (f: number): Frame => {
   const layers = f >= INTRO ? [{ clip: 'idle', t: (f - INTRO) / 30, w: 1 }] : zackLayers(f);
   const pulling = f >= B.snapBack && f < B.snapBack + PULL + 6;
   const at = f >= INTRO ? LINE : pulling ? zackPlace(f) : { x: rounded(f, (g) => zackPlace(g).x), z: rounded(f, (g) => zackPlace(g).z) };
-  const yaw = f >= INTRO ? 12 + 2.5 * idleSin(f, 2, 0.6) : rounded(f, zackYaw);
+  const yaw = f >= INTRO ? 3 + 2.5 * idleSin(f, 2, 0.6) : rounded(f, zackYaw);
   const glow = Math.max(
     kf(f, [[B.eyes + 8, 0], [B.eyes + 16, 0.35], [B.eyes + 19, 0.1], [B.eyes + 26, 1], [B.snap + 14, 0.9], [B.snap + 30, 0.25], [B.stare, 0.25], [B.stare + 8, 1], [B.run, 1]]) * (f < B.run ? 1 : 0),
     f >= B.run && f < B.land + 30 ? kf(f, [[B.run, 1], [B.scoop, 1], [B.wall + 10, 0.3], [B.commit - 6, 0.3], [B.commit, 1], [B.land, 1], [B.land + 30, 0]]) : 0,
@@ -298,7 +301,7 @@ const R_TRACK: Seg[] = [
   { at: B.stare + 6, fade: 12, pose: { ...R_SQUARE, head: [10, 0, 0] } },
   { at: B.reset - 26, fade: 8, clip: 'walk', rate: 1.5 },
   { at: B.reset - 4, fade: 7, clip: 'pick-up', rate: 0.75, once: true },
-  { at: B.reset + 24, fade: 10, clip: 'walk', rate: 0.75, pose: { root: [12, 0, 0], armR: [-34, 0, 0], armL: [-34, 0, 0], head: [-8, 0, 0] } },
+  { at: B.reset + 24, fade: 10, clip: 'walk', rate: 0.75, pose: { root: [5, 0, 0], armR: [-34, 0, 0], armL: [-34, 0, 0], head: [-6, 0, 0] } },
   { at: B.commit - 10, fade: 10, pose: R_CREEP },
   { at: B.commit, fade: 9, pose: R_REACH },
   { at: B.trip - 1, fade: 4, pose: R_TRIP },
@@ -357,7 +360,9 @@ const ragoYaw = (f: number) => {
   const on = kf(f, [[B.reset + 12, 0], [B.reset + 30, 1], [B.commit - 8, 1], [B.commit, 0]]);
   if (on <= 0) return keyed;
   const cheat = kf(f, [[B.wall - 8, 0], [B.wall + 8, -28]]);
-  return keyed + (yawTo(ragoPlace(f), zackPlace(f - 7)) + cheat - keyed) * on;
+  // ⚠️ 0 to 360, because keyed is: atan2 flips from +170 to -170 as he crosses Zack's line, and he spun the long way round.
+  const toZack = (yawTo(ragoPlace(f), zackPlace(f - 7)) + 360) % 360;
+  return keyed + (toZack + cheat - keyed) * on;
 };
 
 export const rago = (f: number): Frame => {

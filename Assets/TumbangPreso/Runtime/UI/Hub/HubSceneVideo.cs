@@ -166,7 +166,7 @@ namespace TumbangPreso.UI.Hub
         {
             _image = GetComponent<RawImage>();
             _image.raycastTarget = false;
-            if (string.IsNullOrEmpty(Hero)) Hero = string.IsNullOrEmpty(ForcedHero) ? Pick(n => Random.Range(0, n)) : ForcedHero;
+            if (string.IsNullOrEmpty(Hero)) Hero = HeroForThisRun();
             // ⚠️ POSTER AND CLIP ARE ONE HERO'S PAIR. The poster is that loop's own frame 0, so a fallback
             // takes both of Zack's rather than showing one hero's poster before another hero's clip.
             _clip = LoadClip(Hero);
@@ -195,6 +195,8 @@ namespace TumbangPreso.UI.Hub
             Player.frameReady += OnFirstFrame;
             Player.sendFrameReadyEvents = true;
             Player.errorReceived += OnError;
+            if (_film != null) Player.loopPointReached += OnFilmEnded;
+            ResetWatchdog();
             Player.Prepare();
         }
 
@@ -205,6 +207,8 @@ namespace TumbangPreso.UI.Hub
             player.isLooping = loops;
             player.skipOnDrop = true;
             player.waitForFirstFrame = true;
+            // ⚠️ NOT THE AUDIO CLOCK, the default: these clips are silent, and a stalled or reset audio device froze the picture.
+            player.timeUpdateMode = VideoTimeUpdateMode.UnscaledGameTime;
             player.renderMode = VideoRenderMode.RenderTexture;
             player.targetTexture = target;
             player.audioOutputMode = VideoAudioOutputMode.None;
@@ -224,25 +228,26 @@ namespace TumbangPreso.UI.Hub
             _next = NewPlayer(_clip, true, _nextTarget);
             _next.prepareCompleted += OnIdlePrepared;
             _next.errorReceived += OnError;
+            _next.frameReady += OnIdleFrame;
+            _next.sendFrameReadyEvents = true;
             _next.Prepare();
-            Player.loopPointReached += OnFilmEnded;
         }
 
         private void OnIdlePrepared(VideoPlayer player) { _nextPrepared = true; }
 
         private void OnFilmEnded(VideoPlayer player)
         {
-            if (player != Player || _next == null) return;
+            if (player != Player || _film == null) return;
             // The film's last frame stays in its target until the idle has a frame of its own.
             _filmEnded = true;
             FilmsSeen.Add(Hero);
-            _next.sendFrameReadyEvents = true;
-            _next.frameReady += OnIdleFrame;
+            ResetWatchdog();
         }
 
         private void OnIdleFrame(VideoPlayer player, long frame)
         {
-            if (_failed || player != _next) return;
+            // The prepared idle decodes a frame of its own accord; only one played after the film may take over.
+            if (_failed || player != _next || !_filmEnded) return;
             player.sendFrameReadyEvents = false;
             player.frameReady -= OnIdleFrame;
             player.prepareCompleted -= OnIdlePrepared;
@@ -255,6 +260,7 @@ namespace TumbangPreso.UI.Hub
             film.Stop(); film.targetTexture = null;
             Destroy(film);
             filmTarget.Release(); Destroy(filmTarget);
+            ResetWatchdog();
         }
 
         private void OnPrepared(VideoPlayer player)
@@ -278,8 +284,9 @@ namespace TumbangPreso.UI.Hub
         private void OnError(VideoPlayer player, string message)
         {
             if (_failed) return;
+            Debug.LogWarning("[HubSceneVideo] " + message);
+            if (Recover()) return;
             // ⚠️ A decoder that cannot play the file leaves the poster up rather than a black hole.
-            Debug.LogWarning("[HubSceneVideo] " + message + " - showing the poster instead.");
             Prepared = false; FirstFrameReady = false; _failed = true;
             _image.texture = _poster;
             _image.enabled = !_preloading && AtHome && _poster != null;
@@ -304,11 +311,13 @@ namespace TumbangPreso.UI.Hub
             _image.enabled = home && _image.texture != null;
             UpdateCourtVisibility();
             if (home && !reduced && Player == null) PreparePlayback();
+            if (home && !reduced) Watch();
             if (Player == null || !Prepared) return;
             if (_film != null && _next == null && !_nextPreparing && FirstFrameReady && Player.isPlaying) PrepareIdle();
             bool run = home && !reduced;
             if (_filmEnded)
             {
+                if (_next == null) { if (run) PrepareIdle(); return; }
                 if (_nextPrepared && run && !_next.isPlaying) _next.Play();
                 else if (!run && _next.isPlaying) _next.Pause();
                 return;
@@ -321,20 +330,7 @@ namespace TumbangPreso.UI.Hub
         {
             if (_court != null) _court.SetRenderingEnabled(true);
             if (_preloaded == this) _preloaded = null;
-            if (Player != null)
-            {
-                Player.prepareCompleted -= OnPrepared;
-                Player.frameReady -= OnFirstFrame;
-                Player.errorReceived -= OnError;
-                Player.loopPointReached -= OnFilmEnded;
-            }
-            if (_next != null)
-            {
-                _next.prepareCompleted -= OnIdlePrepared;
-                _next.frameReady -= OnIdleFrame;
-                _next.errorReceived -= OnError;
-            }
-            ReleaseTarget();
+            DropPlayers();
         }
 
         private void ReleaseTarget()

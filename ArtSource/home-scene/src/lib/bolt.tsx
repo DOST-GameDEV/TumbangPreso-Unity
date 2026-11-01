@@ -47,26 +47,40 @@ export const branchesFor = (main: Pt[], seed: string, count = 2, reach = 0.35): 
 
 const toD = (pts: Pt[]) => pts.map(([x, y], i) => `${i ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`).join('');
 
+/** The zigzag as a filled shape, fat at its root and running out to a point. */
+const taperD = (pts: Pt[], w: number) => {
+  const left: string[] = [];
+  const right: string[] = [];
+  pts.forEach(([x, y], i) => {
+    const [px, py] = pts[Math.max(0, i - 1)];
+    const [nx, ny] = pts[Math.min(pts.length - 1, i + 1)];
+    const len = Math.hypot(nx - px, ny - py) || 1;
+    const h = (w / 2) * (1 - (i / (pts.length - 1)) ** 1.4);
+    left.push(`${(x - ((ny - py) / len) * h).toFixed(1)} ${(y + ((nx - px) / len) * h).toFixed(1)}`);
+    right.unshift(`${(x + ((ny - py) / len) * h).toFixed(1)} ${(y - ((nx - px) / len) * h).toFixed(1)}`);
+  });
+  return `M${left.join('L')}L${right.join('L')}Z`;
+};
+
 /**
- * Lineless like everything else: Zack's electric yellow over a soft golden glow, with a
- * near-white core. The glow is what separates it from a bright sky, not an outline.
+ * ⚠️ DRAWN LIKE THE CAST, NOT LIKE A HAIR (owner, 2026-11-01: "panget ng electricity"). Hard-edged and tapered, ink round
+ * electric yellow round a white core, so it reads on any wall. The glow is a small halo, not the look.
  */
 export const Bolt: React.FC<{ pts: Pt[]; w?: number; glow?: number; opacity?: number; outline?: string | null }> = ({
   pts,
   w = 6,
   glow = 1,
   opacity = 1,
-  outline,
+  outline = '#3A1020',
 }) => {
-  const d = toD(pts);
+  const body = w * 1.5;
+  const d = taperD(pts, body);
   return (
     <g opacity={opacity}>
-      {glow > 0 && (
-        <path d={d} fill="none" stroke={P.golden} strokeWidth={w * 5} strokeLinecap="round" strokeLinejoin="round" opacity={0.45 * glow} filter="url(#glow)" />
-      )}
-      {outline && <path d={d} fill="none" stroke={outline} strokeWidth={w + 5} strokeLinecap="round" strokeLinejoin="miter" />}
-      <path d={d} fill="none" stroke={P.electric} strokeWidth={w} strokeLinecap="round" strokeLinejoin="miter" />
-      <path d={d} fill="none" stroke={P.boltCore} strokeWidth={Math.max(1.2, w * 0.38)} strokeLinecap="round" strokeLinejoin="miter" />
+      {glow > 0 && <path d={d} fill={P.golden} stroke={P.golden} strokeWidth={w * 2} strokeLinejoin="round" opacity={0.28 * glow} filter="url(#glow)" />}
+      {outline && <path d={d} fill={outline} stroke={outline} strokeWidth={Math.max(2.5, w * 0.7)} strokeLinejoin="miter" />}
+      <path d={d} fill={P.electric} />
+      <path d={taperD(pts, body * 0.42)} fill={P.boltCore} />
     </g>
   );
 };
@@ -81,12 +95,12 @@ export const Crackle: React.FC<{ a: Pt; b: Pt; seed: string; w?: number; branche
   glow = 1,
   opacity = 1,
 }) => {
-  const main = boltPoints(a, b, seed, 4, 0.3);
+  const main = boltPoints(a, b, seed, 3, 0.26);
   const br = branchesFor(main, seed, branches, 0.4);
   return (
     <g opacity={opacity}>
       {br.map((p, i) => (
-        <Bolt key={i} pts={p} w={w * 0.6} glow={glow * 0.6} />
+        <Bolt key={i} pts={p} w={w * 0.55} glow={glow * 0.5} />
       ))}
       <Bolt pts={main} w={w} glow={glow} />
     </g>

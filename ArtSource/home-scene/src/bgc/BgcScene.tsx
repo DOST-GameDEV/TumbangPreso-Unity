@@ -101,6 +101,7 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
   let zackHand: [number, number] | null = null;
   let zackHand2: [number, number] | null = null;
   let zackHead: [number, number] | null = null;
+  let zackAt: ((bone: string, local?: [number, number, number]) => [number, number]) | null = null;
   let ragoHead: [number, number] | null = null;
   const front = (x: number, zz: number) => depth(v, [x, 1, zz]) > 0.7;
   const closeOnFeet = f >= B.feet && f < B.rago;
@@ -113,6 +114,7 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
     const d = figure(zk, v, z, LIGHT, true, { res: closeOnFeet ? 2.2 : 1.35 });
     zackHand = d.img.at('forearm-right', FIST_R);
     zackHand2 = d.img.at('forearm-left', FIST_L);
+    zackAt = d.img.at;
     zackHead = d.img.at('head', [0, 0.14, 0.1]);
     push(<g key="zack"><g>{shadowOf(v, z.x, z.z, 0.72)}</g><g transform={`rotate(${d.roll} ${d.fx} ${d.fy})`}><ActorImage d={d.img} /></g></g>, [z.x, 1, z.z]);
   }
@@ -170,18 +172,32 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
     }
     if (pts.length > 1 && wireT < 1) fx.push(<Bolt key="wire" pts={boltPoints(pts[0], pts[pts.length - 1], seed('wire'), 3, 0.09)} w={3} glow={0.8} />);
   }
-  // The small crackle at rest: the slipper in his hand. Small, and rare (research rule 7).
-  if (zackHand) {
-    const rest = f >= B.land + 40 || f < B.run;
-    const a = rest ? env(((f - INTRO) % 144 + 144) % 144, 8, 12, 26, 34) : 0;
-    if (a > 0 && !closeOnFeet) {
-      const s = scaleAt(v, [z.x, 1, z.z]);
-      fx.push(<Crackle key="rest" a={[zackHand[0], zackHand[1] + s * 0.1]} b={[zackHand[0] + s * 0.18, zackHand[1] + s * 0.42]} seed={seed('r')} w={Math.max(1.4, s * 0.012)} branches={1} glow={0.6} opacity={a} />);
+  // ⚠️ THE CURRENT LIVES ON HIM: arcs jump between points of his own body, never out into the air.
+  const bodyArcs = (key: string, n: number, opacity = 1) => {
+    if (!zackAt || n <= 0) return;
+    const at = zackAt;
+    const pts: Pt[] = [at('forearm-right', FIST_R), at('arm-right', [0, 0, 0]), at('torso', [0, 0.06, 0.1]), at('arm-left', [0, 0, 0]), at('forearm-left', FIST_L), at('leg-left', [0, 0, 0.05]), at('leg-left', [0, -0.16, 0.05]), at('leg-right', [0, -0.16, 0.05]), at('leg-right', [0, 0, 0.05]), at('head', [0.12, 0.02, 0]), at('head', [-0.12, 0.02, 0])];
+    const s = scaleAt(v, [z.x, 1, z.z]);
+    const stamp = Math.floor(f / 2);
+    for (let i = 0; i < n; i++) {
+      const from = Math.floor(random(`${key}p${i}${stamp}`) * pts.length);
+      const to = (from + 1 + Math.floor(random(`${key}q${i}${stamp}`) * 2)) % pts.length;
+      fx.push(<Crackle key={`${key}${i}`} a={pts[from]} b={pts[to]} seed={`${key}${i}${stamp}`} w={Math.max(2, s * 0.022)} branches={i % 2} glow={0.7} opacity={opacity} />);
     }
-    if (env(f, B.shake + 4, B.shake + 8, B.shake + 16, B.shake + 22) > 0 && zackHand2) {
-      const s = scaleAt(v, [z.x, 1, z.z]);
-      fx.push(<Crackle key="shake" a={zackHand2} b={[zackHand2[0] - s * 0.3, zackHand2[1] + s * 0.26]} seed={seed('sh')} w={Math.max(1.6, s * 0.014)} branches={2} glow={0.8} />);
-    }
+  };
+  // Resting: now and then one small arc across him.
+  if (zackAt && (f >= B.land + 40 || f < B.run)) {
+    const a = env(((f - INTRO) % 144 + 144) % 144, 8, 10, 22, 26);
+    if (a > 0 && !closeOnFeet && f >= B.whole) bodyArcs('rest', 1, a);
+  }
+  // The green reaches him: it builds over his whole figure, then snaps into his eyes.
+  const charge = f >= B.eyes + 6 && f < B.wide ? kf(f, [[B.eyes + 6, 0], [B.eyes + 26, 5], [B.eyes + 32, 2], [B.wide, 1]]) : 0;
+  bodyArcs('ch', Math.round(charge));
+  if (f >= B.stare + 8 && f < B.run) bodyArcs('st', 1);
+  if (f >= B.commit && f < B.snapBack) bodyArcs('cm', 2);
+  if (env(f, B.shake + 4, B.shake + 8, B.shake + 16, B.shake + 22) > 0 && zackHand2) {
+    const s = scaleAt(v, [z.x, 1, z.z]);
+    fx.push(<Crackle key="shake" a={zackHand2} b={[zackHand2[0] - s * 0.16, zackHand2[1] + s * 0.14]} seed={seed('sh')} w={Math.max(2, s * 0.02)} branches={1} glow={0.8} />);
   }
   // The foot taps a tiny spark out of the chalk.
   if (closeOnFeet) {
@@ -205,7 +221,7 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
     // Crackle off the ribbon's head, where it is being bent.
     if (f < B.tump) {
       const h = tr[tr.length - 1];
-      fx.push(<Crackle key="rh" a={h} b={[h[0] + 46 * Math.sin(f), h[1] - 40 * Math.cos(f * 1.3)]} seed={seed('rh')} w={3} branches={2} glow={1} />);
+      for (let i = 0; i < 2; i++) { const back = tr[Math.max(0, tr.length - 5 - i * 4)]; fx.push(<Crackle key={`rh${i}`} a={h} b={[back[0] + (i ? 26 : -26), back[1] + (i ? -20 : 20)]} seed={`${seed('rh')}${i}`} w={5} branches={1} glow={0.8} />); }
     }
   }
   // Its shadow on the court, which is what makes the shape legible from above.
@@ -221,20 +237,19 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
     const q = scaleAt(v, bend);
     for (let i = 0; i < 5; i++) {
       const a = (i / 5) * Math.PI * 2 + random(`${seed('c')}${i}`);
-      fx.push(<Crackle key={`cl${i}`} a={[x, y]} b={[x + Math.cos(a) * q * 1.4, y + Math.sin(a) * q * 1.4]} seed={`${seed('cl')}${i}`} w={3} branches={1} glow={1} opacity={clang} />);
+      fx.push(<Crackle key={`cl${i}`} a={[x, y]} b={[x + Math.cos(a) * q * 1.4, y + Math.sin(a) * q * 1.4]} seed={`${seed('cl')}${i}`} w={5} branches={1} glow={0.8} opacity={clang} />);
     }
     fx.push(<circle key="clr" cx={x} cy={y} r={q * (0.25 + (1 - clang) * 1.3)} fill="none" stroke="#F6FFA0" strokeWidth={4} opacity={clang} />);
   }
-  // Momentum: three visible stages of current at the feet.
+  // Momentum's three stages: more of his body lit, and a fatter trail torn off his heels along the floor.
   const stage = momentum(f);
   if (stage > 0 && front(z.x, z.z)) {
-    const [hx, hy] = project(v, [z.x, 0.3, z.z]);
+    bodyArcs('m', stage);
+    const [hx, hy] = project(v, [z.x, 0.25, z.z]);
     const s = scaleAt(v, [z.x, 0.4, z.z]);
-    const back = (g: number) => project(v, [echoAt(g).x, 0.3, echoAt(g).z]) as Pt;
-    for (let i = 0; i < stage; i++) {
-      const b = back(Math.max(B.run, f - 4 - i * 4));
-      fx.push(<Bolt key={`m${i}`} pts={boltPoints([hx, hy + i * s * 0.14], [b[0], b[1] + i * s * 0.14], `${seed('m')}${i}`, 3, 0.12)} w={1.8 + stage * 0.8} glow={0.3 + stage * 0.25} />);
-    }
+    const g = echoAt(Math.max(B.run, f - 7 - stage * 2));
+    const [bx0, by0] = project(v, [g.x, 0.12, g.z]);
+    for (let i = 0; i < stage; i++) fx.push(<Bolt key={`m${i}`} pts={boltPoints([hx, hy + i * s * 0.08], [bx0, by0 + i * s * 0.05], `${seed('mt')}${i}`, 3, 0.1)} w={Math.max(3, s * 0.02) + stage} glow={0.5} />);
   }
   // The angle he has found: the whole curve draws itself in the air from his hand, and holds.
   const aimT = kf(f, [[B.wide + 18, 0], [B.snap - 10, 1]]);
@@ -253,16 +268,6 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
         <path d={pts.join('')} stroke="#FFFBD0" strokeWidth={3.6} strokeDasharray="16 13" strokeDashoffset={-f * 2.6} />
       </g>);
     }
-  }
-  // His eyes when the green reaches him: two thin streaks off the eye line.
-  const flare = env(f, B.eyes + 24, B.eyes + 27, B.eyes + 34, B.wide - 6);
-  if (flare > 0 && f < B.wide && zackHead) {
-    const s2 = scaleAt(v, [z.x, 1.3, z.z]);
-    fx.push(<g key="flare" opacity={flare}>
-      <ellipse cx={zackHead[0]} cy={zackHead[1]} rx={s2 * 1.7 * flare} ry={s2 * 0.022} fill="#F6FFA0" filter="url(#glow)" />
-      <Crackle a={[zackHead[0] + s2 * 0.34, zackHead[1] - s2 * 0.06]} b={[zackHead[0] + s2 * 0.8, zackHead[1] - s2 * 0.42]} seed={seed('fl')} w={3} branches={1} glow={0.8} />
-      <Crackle a={[zackHead[0] - s2 * 0.34, zackHead[1] - s2 * 0.06]} b={[zackHead[0] - s2 * 0.76, zackHead[1] - s2 * 0.34]} seed={seed('fm')} w={3} branches={1} glow={0.8} />
-    </g>);
   }
   // Rago's shock: action lines, the mark beside his head (never on it), sweat.
   if (f >= B.jolt && f < B.stare && ragoHead) {
@@ -309,11 +314,10 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
       const [x, y] = project(v, at);
       const s2 = scaleAt(v, at);
       const burst = kf(f, [[B.snapBack - 1, 0.2], [B.snapBack + 8, 1]]);
-      fx.push(<circle key="btr" cx={x} cy={y} r={s2 * 0.75 * burst} fill="none" stroke="#F6FFA0" strokeWidth={6 * a} opacity={a} />);
-      fx.push(<circle key="bti" cx={x} cy={y} r={s2 * 0.34} fill="#F6FFA0" opacity={kf(f, [[B.snapBack, 0.9], [B.snapBack + 5, 0]])} filter="url(#glow)" />);
+      if (f < B.snapBack + 6) fx.push(<g key="btb" transform={`translate(${x} ${y}) scale(${burst})`}><path d={burstPath(10, s2 * 0.2, s2 * 0.62, 'bb-ink', 0.25)} fill="#3A1020" /><path d={burstPath(10, s2 * 0.17, s2 * 0.54, 'bb-ink', 0.25)} fill="#F6C22B" /><path d={burstPath(8, s2 * 0.08, s2 * 0.28, 'bb-c', 0.25)} fill="#FFFBD0" /></g>);
       for (let i = 0; i < 3; i++) {
         const ang = (i / 3) * Math.PI * 2 + 0.4;
-        fx.push(<Crackle key={`bb${i}`} a={[x, y]} b={[x + Math.cos(ang) * s2 * 0.8 * burst, y + Math.sin(ang) * s2 * 0.8 * burst]} seed={`${seed('bb')}${i}`} w={3} branches={1} glow={1} opacity={a} />);
+        fx.push(<Crackle key={`bb${i}`} a={[x, y]} b={[x + Math.cos(ang) * s2 * 0.8 * burst, y + Math.sin(ang) * s2 * 0.8 * burst]} seed={`${seed('bb')}${i}`} w={5} branches={1} glow={0.8} opacity={a} />);
       }
     }
     // The current pulls taut ahead of him, all the way off to the line it is reeling him toward.
@@ -324,7 +328,7 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
         const q = pullAt(u0 + ((1 - u0) * i) / 10);
         if (depth(v, [q.x, 1, q.z]) > 0.6) taut.push(project(v, [q.x, 1, q.z]));
       }
-      for (let i = 0; i < taut.length - 1; i++) fx.push(<Bolt key={`tt${i}`} pts={boltPoints(taut[i], taut[i + 1], `${seed('tt')}${i}`, 2, 0.05)} w={5} glow={1.1} />);
+      if (taut.length > 1) fx.push(<Bolt key="taut" pts={taut.flatMap((p, i) => (i < taut.length - 1 ? boltPoints(p, taut[i + 1], `${seed('tt')}${i}`, 2, 0.14).slice(0, -1) : [p]))} w={11} glow={0.9} />);
     }
   }
   // Stars round the head of a taya who has met his own can.

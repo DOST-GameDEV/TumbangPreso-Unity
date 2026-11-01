@@ -22,16 +22,23 @@ const blend = (a: Cam, b: Cam, t: number): Cam => ({
   roll: a.roll + (b.roll - a.roll) * t,
 });
 
-/**
- * The hold. Zack in the gap between the hub's left column and its right cards, a little left of the
- * gap's middle; Rago and the can small over his shoulder; the signal up by the right cards' top edge.
- */
-export const landing = (f: number): Cam => ({
-  // A long lens from well back: the figures large, the city close behind them and out of focus.
+/** The settle: Zack on the line, Rago over his shoulder, getting up and keeping the score. */
+const settle = (f: number): Cam => ({
   p: [1.2 + 0.12 * idleSin(f, 1, 0.4), 1.42 + 0.025 * idleSin(f, 2, 1.1), -12.9 + 0.08 * idleSin(f, 1, 2.1)],
   t: [-2.05 + 0.05 * idleSin(f, 1, 1.4), 0.486 + 0.02 * idleSin(f, 2, 0.2), -2.0],
   f: 1500 * (1 + 0.006 * idleSin(f, 1, 0.3)),
   roll: 0.2 * idleSin(f, 1, 0.5),
+});
+
+/**
+ * ⚠️ THE HOLD IS HIS ALONE (owner, 2026-11-01: "make him turn tapos focus ung camera to him tapos di na kita si rago"). The lens
+ * stands on the line from Rago through Zack, so Rago is behind him, and the drift is too small to bring him out.
+ */
+export const landing = (f: number): Cam => ({
+  p: [LINE.x - 0.39 + 0.04 * idleSin(f, 1, 0.4), 1.35 + 0.02 * idleSin(f, 2, 1.1), LINE.z - 4.5 + 0.05 * idleSin(f, 1, 2.1)],
+  t: [LINE.x + 0.16 + 0.015 * idleSin(f, 1, 1.4), 1.0 + 0.012 * idleSin(f, 2, 0.2), LINE.z],
+  f: 1700 * (1 + 0.006 * idleSin(f, 1, 0.3)),
+  roll: 0.15 * idleSin(f, 1, 0.5),
 });
 
 /** How far out of focus the city is, per shot. */
@@ -153,7 +160,9 @@ const SHOTS: Shot[] = [
     },
   },
   // One whip home along the route, landing exactly on the hold.
-  { at: B.land - 1, in: 8, cam: (f) => landing(f) },
+  { at: B.land - 1, in: 8, cam: (f) => settle(f) },
+  // He turns to us and the lens comes in on him.
+  { at: B.fold + 2, in: 74, cam: (f) => landing(f) },
 ];
 
 const camOf = (f: number, n: number): Cam => {
@@ -162,7 +171,7 @@ const camOf = (f: number, n: number): Cam => {
   if (n === 0 || sh.in <= 0) return c;
   const t = (f - sh.at) / sh.in;
   if (t >= 1) return c;
-  return blend(camOf(f, n - 1), c, n === SHOTS.length - 1 ? outCubic(clamp01(t)) : easeInOut(clamp01(t)));
+  return blend(camOf(f, n - 1), c, sh.at === B.land - 1 ? outCubic(clamp01(t)) : easeInOut(clamp01(t)));
 };
 
 const cam = (f: number): Cam => {
