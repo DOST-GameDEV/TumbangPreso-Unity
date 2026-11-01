@@ -321,20 +321,19 @@ export const Buildings = (v: View): Item[] =>
 
 // ------------------------------------------------------------------------------------ park furniture
 
-const leafBall = (x: number, y: number, r: number, lite: string, dark: string, sway: number, seed: string) => {
-  const blobs: React.ReactNode[] = [];
-  blobs.push(<circle key="d" cx={x + sway * 0.6} cy={y + r * 0.14} r={r} fill={dark} />);
-  for (let i = 0; i < 11; i++) {
-    const a = random(`${seed}a${i}`) * Math.PI * 2;
-    const q = r * (0.25 + 0.68 * random(`${seed}r${i}`));
-    const rr = r * (0.2 + 0.14 * random(`${seed}s${i}`));
-    const by = y + Math.sin(a) * q * 0.85;
-    const light = by < y + r * 0.15;
-    blobs.push(<circle key={i} cx={x + Math.cos(a) * q + sway} cy={by} r={rr} fill={light ? lite : mixHex(lite, dark, 0.55)} />);
-  }
-  blobs.push(<ellipse key="h" cx={x - r * 0.2 + sway} cy={y - r * 0.42} rx={r * 0.5} ry={r * 0.32} fill={lite} />);
-  return blobs;
-};
+/**
+ * ⚠️ BLOCKS, LIKE THE CAST AND THE BUILDINGS. A drawn leaf ball read as a green blob on a stick (owner,
+ * 2026-11-01) and, being flat, turned to nothing under the crane. Real boxes hold from every lens.
+ */
+const leafBlocks = (v: View, t: { x: number; z: number; lite: string; dark: string }, cubes: [number, number, number, number][], swayM: number) =>
+  cubes
+    .map(([dx, y, dz, r]) => ({ dx, y, dz, r, d: depth(v, [t.x + dx, y, t.z + dz]) }))
+    .sort((a, b) => b.d - a.d)
+    .flatMap(({ dx, y, dz, r }) => {
+      const x = t.x + dx + swayM * (y / 8);
+      const z = t.z + dz;
+      return box(v, x - r, x + r, y - r * 0.8, y + r * 0.8, z - r, z + r, { top: t.lite, side: mixHex(t.lite, t.dark, 0.55), end: t.dark });
+    });
 
 /** The park's four trees, each its own kind, at the map's corners. */
 const TREES: { x: number; z: number; h: number; clumps: [number, number, number][]; lite: string; dark: string; pine?: boolean }[] = [
@@ -364,30 +363,14 @@ export const Park = (v: View, f: number): Item[] => {
   const out: Item[] = [];
   for (const t of TREES) {
     if (depth(v, [t.x, 3, t.z]) < 1) continue;
-    const s = scaleAt(v, [t.x, 3, t.z]);
-    const [bx, by] = project(v, [t.x, 0.1, t.z]);
-    const sway = 3 * idleSin(f, 3, t.x) * (s / 40);
+    const sway = 0.05 * idleSin(f, 3, t.x);
     const n: React.ReactNode[] = [];
-    if (t.pine) {
-      const [tx, ty] = project(v, [t.x, t.h, t.z]);
-      n.push(<rect key="tr" x={bx - s * 0.16} y={by - s * 1.3} width={s * 0.32} height={s * 1.3} fill="#5A3A22" />);
-      for (let i = 0; i < 6; i++) {
-        const u = i / 6;
-        const y = by - s * 1.2 + (ty - (by - s * 1.2)) * u;
-        const y2 = by - s * 1.2 + (ty - (by - s * 1.2)) * (u + 0.3);
-        const w = s * 2.0 * (1 - u * 0.8);
-        n.push(<path key={i} d={`M${bx - w + sway * u} ${y}L${tx + sway} ${y2}L${bx + w + sway * u} ${y}Z`} fill={i % 2 ? t.lite : t.dark} />);
-      }
-    } else {
-      const [cx, cy] = project(v, [t.x, t.h - 2.8, t.z]);
-      n.push(<path key="tr" d={`M${bx - s * 0.2} ${by}L${bx + s * 0.2} ${by}L${cx + s * 0.1} ${cy}L${cx - s * 0.1} ${cy}Z`} fill="#6B4226" />);
-      n.push(<path key="tr2" d={`M${cx} ${cy + s * 0.5}L${cx - s * 0.9} ${cy - s * 0.8}`} stroke="#6B4226" strokeWidth={s * 0.12} />);
-      n.push(<path key="tr3" d={`M${cx} ${cy + s * 0.5}L${cx + s * 0.9} ${cy - s * 0.8}`} stroke="#6B4226" strokeWidth={s * 0.12} />);
-      t.clumps.forEach(([dx, y, r], i) => {
-        const [x, py] = project(v, [t.x + dx, y, t.z]);
-        n.push(<g key={i}>{leafBall(x, py, r * s, t.lite, t.dark, sway, `t${t.x}${t.z}${i}`)}</g>);
-      });
-    }
+    const trunk = t.pine ? '#5A3A22' : '#6B4226';
+    n.push(<g key="tr">{box(v, t.x - 0.28, t.x + 0.28, 0.1, t.pine ? 2.2 : t.h - 2.4, t.z - 0.28, t.z + 0.28, { side: trunk, end: '#4A2E1A', top: trunk })}</g>);
+    const cubes: [number, number, number, number][] = t.pine
+      ? [[0, 2.5, 0, 2.1], [0, 4.1, 0, 1.6], [0, 5.5, 0, 1.15], [0, 6.7, 0, 0.75], [0, 7.6, 0, 0.42]]
+      : t.clumps.flatMap(([dx, y, r], i): [number, number, number, number][] => [[dx, y, i - 1, r * 0.72], [dx * 0.6, y + r * 0.55, (i - 1) * 0.5 - 0.4, r * 0.48]]);
+    n.push(<g key="leaf">{leafBlocks(v, t, cubes, sway)}</g>);
     out.push({ z: depth(v, [t.x, 3, t.z]), node: <g key={`tree${t.x}${t.z}`}>{n}</g> });
   }
   for (const [x, z] of [[3.4, 13], [-3.4, 13], [3.4, -13], [-3.4, -13], [13, 3.4], [-13, 3.4], [13, -3.4], [-13, -3.4]]) {

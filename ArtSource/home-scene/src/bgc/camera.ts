@@ -61,7 +61,7 @@ const SHOTS: Shot[] = [
   {
     at: B.feet, in: 0, cam: (f) => {
       const u = clamp01((f - B.feet) / (B.rago - B.feet));
-      return { p: [LINE.x + 1.25 + 0.3 * u, 0.62, LINE.z - 1.3], t: [LINE.x + 0.15, 0.34, LINE.z + 0.15], f: 1750, roll: 1.4 };
+      return { p: [LINE.x + 1.25 + 0.3 * u, 0.62, LINE.z - 1.3], t: [LINE.x - 0.05, 0.34, LINE.z + 0.15], f: 1750, roll: 1.4 };
     },
   },
   // The wall. Low and close enough to look up at; a very slow push.
@@ -127,14 +127,14 @@ const SHOTS: Shot[] = [
   {
     at: B.stare, in: 0, cam: (f) => {
       const u = clamp01((f - B.stare) / (B.run - B.stare));
-      return { p: [LINE.x - 0.7, 0.85, LINE.z - 3.1], t: [LINE.x + 0.55, 1.2, LINE.z], f: 1120 * (1 + 0.08 * easeInOut(u)), roll: 2 };
+      return { p: [LINE.x + 1.6, 0.85, LINE.z - 3.1], t: [LINE.x + 0.4, 1.2, LINE.z], f: 1120 * (1 + 0.08 * easeInOut(u)), roll: 2 };
     },
   },
-  // The run: the lens runs AHEAD of him and looks back (method § 7), Rago at the can on the side.
+  // The run: the lens runs beside him on the far side from the can, so Rago stays in frame, turning with him.
   {
     at: B.run, in: 6, cam: (f) => {
       const z = zack(f);
-      return { p: [z.x + 2.3, 1.15, z.z + 4.1], t: [z.x - 0.5, 1.05, z.z - 0.1], f: 980, roll: 1.6 };
+      return { p: [z.x + 3.6, 1.3, z.z - 0.6], t: [z.x - 0.7, 1.05, z.z], f: 980, roll: 1.6 };
     },
   },
   // The tag, side on and low, the can between them. It pushes all the way in to the lunge, then follows

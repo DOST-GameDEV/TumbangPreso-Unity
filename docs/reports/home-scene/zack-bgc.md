@@ -51,6 +51,8 @@ Characters are `Art/CharacterRedesign/{zack,sean}/*-redesign.glb`, on a track of
 - "More fluid": the film is 60 fps on the same timetable; each bone is a gaussian of its neighbouring frames, the head and hands trailing the hips (`sampledBones`); paths and turns are rounded. The idle stays 30 fps.
 - "Why is Rago just staring": as in a match he now goes straight to the can, rights it, and turns with Zack from then on, shadowing him along his side of the can before the lunge.
 - Backtrack is a 12 frame yank along a route across the frame with after-images burning off where he passed and a taut current ahead of him, not a teleport. It no longer retraces the run, which swung him into the lens.
+- "What is dis blob": the park's trees are real boxes now, like the cast and the buildings.
+- The stare and the run are shot so Rago stays in frame beside Zack. `HomePlaysTheAnimatedSceneAndHidesItUnderOtherScreens` captures the film and hold under the real board to `Logs/shots-native-ui/Hub-HomeScene-Film-*` and `-Hold`.
 
 ## The hold
 

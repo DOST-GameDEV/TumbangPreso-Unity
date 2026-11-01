@@ -240,8 +240,9 @@ const zackYaw = (f: number) => kf(f, [
     [B.wall + 20, 380],
     [B.snapBack - 1, 380],
     // He faces where he was as he is dragged away from it, and comes round on the stop.
-    [B.snapBack + PULL - 1, 380],
-    [B.snapBack + PULL + 8, 372],
+    [B.snapBack, 20, () => 1], // 380 is 20: the same way round, so the settle below is short
+    [B.snapBack + PULL - 1, 20],
+    [B.snapBack + PULL + 8, 12],
     [INTRO, 12],
 ]);
 

@@ -303,6 +303,19 @@ namespace TumbangPreso.PlayTests
             yield return TumpUiCapture.Capture("Hub-HomeScene-1920x1080", hub.Canvas, 1920, 1080, checkPalette: false);
             yield return TumpUiCapture.Capture("Hub-HomeScene-1600x680", hub.Canvas, 1600, 680, checkPalette: false);
 
+            // The whole film and the hold under the real board, for a person to look at.
+            foreach (var at in new[] { 6.0, 18.5, 26.5, 28.5, 32.0, 33.2, 34.0, 37.0 })
+            {
+                scene.Player.time = at;
+                yield return new WaitForSecondsRealtime(0.5f);
+                yield return TumpUiCapture.Capture($"Hub-HomeScene-Film-{at:00.0}", hub.Canvas, 1920, 1080, checkPalette: false);
+            }
+            scene.Player.time = scene.Player.length - 0.5;
+            float settled = Time.realtimeSinceStartup + 20;
+            while (!scene.HoldingIdle && Time.realtimeSinceStartup < settled) yield return null;
+            Assert.IsTrue(scene.HoldingIdle, "The film never handed over to the idle under the real board.");
+            yield return new WaitForSecondsRealtime(0.5f);
+            yield return TumpUiCapture.Capture("Hub-HomeScene-Hold", hub.Canvas, 1920, 1080, checkPalette: false);
             yield return HubFlowTests.Press("HeroButton");
             yield return HubFlowTests.AwaitDeferredHero();
             Assert.IsInstanceOf<HubHero>(hub.Top);
