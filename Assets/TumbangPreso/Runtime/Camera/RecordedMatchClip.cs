@@ -4,6 +4,7 @@ using System.IO.Compression;
 using System.Text;
 using TumbangPreso.Core;
 using TumbangPreso.Net;
+using TumbangPreso.Visual;
 using UnityEngine;
 
 namespace TumbangPreso.CameraSystem
@@ -25,7 +26,8 @@ namespace TumbangPreso.CameraSystem
         // 16 (protocol 182): Zack's AFTERIMAGE and LIVE WIRE fields; the old magnet charge (107) is skipped on load.
         // 17 (protocol 184): LIVE WIRE stays on the court (its lifetime is a bound, `FirstScale` is when it went dark, `Split` is
         // reeled in). A 16 clip's 10 s wire is read in its own meaning and translated (`ZackLiveWire.FromRecordedV16`).
-        public const int WireVersion=17;
+        // 18 (protocol 186): Dante's mountain and the taya's headband are recorded fields, the headband with its fit in `Path`.
+        public const int WireVersion=18;
         public const int ObjectLimit=21; // Four players, shoes, pets, dolls, doll shoes and one can.
         public const int ByteLimit=2*1024*1024;
         public const int RawByteLimit=12*1024*1024;
@@ -83,7 +85,7 @@ namespace TumbangPreso.CameraSystem
                     {
                         var f=item.State;writer.Write(item.Id);writer.Write((byte)f.Type);Write(writer,f.Position);Write(writer,f.Forward);
                         writer.Write(f.Duration);writer.Write(f.Remaining);writer.Write(f.Radius);writer.Write(f.FirstScale);writer.Write(f.SecondScale);writer.Write(f.Owner);writer.Write(f.Split);
-                        if(WorldEffectSnapshot.UsesDynamicIdentity(f.Type))
+                        if(RecordedSpecialFields.CarriesPath(f.Type))
                         { writer.Write(f.EventId);writer.Write(f.Path.Length);foreach(var point in f.Path)Write(writer,point); }
                     }
                 }
@@ -118,7 +120,7 @@ namespace TumbangPreso.CameraSystem
                 int version=reader.ReadInt32();
                 // Retain earlier field layouts for saved clips. Arc walls require14;
                 // live network admission separately requires the current protocol.
-                if(version!=WireVersion&&version!=16&&version!=15&&version!=14&&version!=13&&version!=12&&version!=11&&version!=10)throw new InvalidDataException("Unsupported clip schema");
+                if(version!=WireVersion&&version!=17&&version!=16&&version!=15&&version!=14&&version!=13&&version!=12&&version!=11&&version!=10)throw new InvalidDataException("Unsupported clip schema");
                 int bodies=version>=15?CompanionSeats.BodyCount:Balance.PlayerCount;
                 var result=new RecordedMatchClip{MatchId=reader.ReadInt64(),Id=reader.ReadInt64(),Round=reader.ReadInt32(),Actor=reader.ReadInt32(),Subject=reader.ReadInt32(),Mode=(GameMode)reader.ReadByte()};
                 result.Map=ReadText(reader,64);result.Reason=ReadText(reader,96);
@@ -187,7 +189,13 @@ namespace TumbangPreso.CameraSystem
                         // A saved clip from protocol 130 to 180 may hold a Cinder Gate (retired in 181): read its identity and
                         // path so the layout stays in step, then leave it out of the frame. Nothing draws it any more.
                         bool retiredGate=kind==WorldEffectSnapshot.Kind.RetiredCinderGate;
-                        if(WorldEffectSnapshot.UsesDynamicIdentity(kind)||retiredGate)
+                        if((kind==RecordedSpecialFields.Mountain||kind==RecordedSpecialFields.TayaBand)&&version<18)throw new InvalidDataException("Worn part in an incompatible clip");
+                        if(RecordedSpecialFields.CarriesPath(kind)&&kind==RecordedSpecialFields.TayaBand)
+                        {
+                            f.EventId=reader.ReadInt32();int points=Count(reader,0,TayaIdentity.RecordedPathLength);
+                            f.Path=new Vector3[points];for(int p=0;p<points;p++)f.Path[p]=ReadVector(reader,10000);
+                        }
+                        else if(WorldEffectSnapshot.UsesDynamicIdentity(kind)||retiredGate)
                         {
                             if(version<11 || (retiredGate && version<12) || (kind==WorldEffectSnapshot.Kind.Baha && version<13)
                                 || ((kind==WorldEffectSnapshot.Kind.Afterimage||kind==WorldEffectSnapshot.Kind.LiveWire) && version<16))throw new InvalidDataException("Dynamic field in an incompatible clip");

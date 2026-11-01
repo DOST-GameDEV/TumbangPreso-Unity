@@ -38,7 +38,7 @@ namespace TumbangPreso.CameraSystem
                 if(!_fields.TryGetValue(field.Id,out var view))
                     _fields[field.Id]=view=new RecordedFieldView(_parent,field.State,_body(field.State.Owner),_prop(field.State.Owner));
                 var state=field.State;
-                if(nextFrame!=null&&(state.Type==RecordedSpecialFields.Kuro||state.Type==RecordedSpecialFields.Ward))
+                if(nextFrame!=null&&(state.Type==RecordedSpecialFields.Kuro||state.Type==RecordedSpecialFields.Ward||state.Type==RecordedSpecialFields.Mountain))
                 {
                     foreach(var later in nextFrame.Fields)if(later.Id==field.Id)
                     {

@@ -63,7 +63,7 @@ namespace TumbangPreso.CameraSystem
         private float _knockRoom;
         private TagBodyBoxes _actorBoxes,_subjectBoxes;
         private CaughtRecoil _recoil;
-        private float _actorBack;
+        private float _actorBack,_settledBack;
         private readonly List<(Bounds box,Renderer renderer)> _shotProps=new List<(Bounds,Renderer)>();
         private ReplayImpact _impactLook;
         private readonly MaterialPropertyBlock _coatBlock=new MaterialPropertyBlock();
@@ -310,6 +310,11 @@ namespace TumbangPreso.CameraSystem
             _actorBoxes=new TagBodyBoxes(_shotActor.Copy.Renderers,true);_subjectBoxes=new TagBodyBoxes(_shotSubject.Copy.Renderers,false);
             _recoil=new CaughtRecoil(_shotSubject.Bones);
             _catch=true;
+            // ⚠️ THE SPACING IS KNOWN BEFORE IT IS SHOWN. Measured live it grew frame by frame and the taya visibly slid back as it
+            // settled. The whole aftermath is walked once here, and the taya eases to that one spot by the time the hand lands.
+            _actorBack=0;
+            for(float at=_holdAt;at<=_clip.End;at+=.05f)HoldCaughtBody(at);
+            _settledBack=_actorBack;_actorBack=0;
         }
         private void HoldCaughtBody(float time)
         {
@@ -324,11 +329,13 @@ namespace TumbangPreso.CameraSystem
             // only as far as these bodies measure, so a taya who ran on past the spot is brought back to their own side.
             var actor=_shotActor.Bones[0];
             if(time>=_clip.Contact+HandLands)actor.position=_holdActor;
-            actor.position-=_knockLine*_actorBack;
+            float ease=Mathf.SmoothStep(0,1,Mathf.InverseLerp(_holdAt,_clip.Contact+HandLands,time));
+            actor.position-=_knockLine*(_actorBack+_settledBack*ease);
             float need=TagBodyBoxes.Overlap(_actorBoxes.Read(_knockLine),_subjectBoxes.Read(_knockLine));
-            if(need>0)
+            // While the taya is still easing to the settled spot the gap is closing by itself: correcting it too would overshoot.
+            if(need>0&&(ease>=1||_settledBack<=0))
             {
-                float back=TagBodyBoxes.Room(actor.position,-_knockLine,Mathf.Min(need,Mathf.Max(0,MostHighlightBack-_actorBack)));
+                float back=TagBodyBoxes.Room(actor.position,-_knockLine,Mathf.Min(need,Mathf.Max(0,MostHighlightBack-_settledBack-_actorBack)));
                 _actorBack+=back;actor.position-=_knockLine*back;
             }
         }
@@ -371,7 +378,10 @@ namespace TumbangPreso.CameraSystem
                 Vector3 dir=Quaternion.AngleAxis(bearing,Vector3.up)*Vector3.forward;
                 Vector3 close=focus+dir*3.6f+Vector3.up*.75f,wide=focus+dir*6f+Vector3.up*1.6f;
                 float along=Mathf.Abs(Vector3.Dot(dir,line));
-                float score=1.2f*Vector3.Dot(dir,face)-1.8f*along-3*Mathf.Pow(Mathf.Max(0,along-.6f),2);
+                // ⚠️ THE FACE, NOT THE BACK (owner's limit, November 1). A fleeing victim faces along the line, so a square side-on
+                // lens that scored best here saw a shoulder blade: a three-quarter front now wins, and behind them costs extra.
+                float faced=Vector3.Dot(dir,face);
+                float score=2.2f*faced-3*Mathf.Max(0,-faced-.1f)-1.8f*along-3*Mathf.Pow(Mathf.Max(0,along-.6f),2);
                 if(!Clear(focus,close,_shotLens))score-=8;else if(Foreground(close,focus))score-=4;
                 if(!Clear(focus,wide,_shotLens))score-=3;else if(Foreground(wide,focus))score-=2;
                 if(!Clear(start,wide,_shotLens))score-=.5f;

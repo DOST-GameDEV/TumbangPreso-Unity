@@ -95,6 +95,20 @@ namespace TumbangPreso.Visual
         public float Age { get; private set; }
         public IReadOnlyList<Renderer> Renderers => _renderers;
         public int PieceCount => _pieces.Count;
+        /// <summary>The live body wearing it. Null on a cutscene's or a replay's copy, which are never recorded.</summary>
+        public CharacterMotor RecordedOwner => _owner;
+        /// <summary>Where fallen stones lie. A replay keeps them on its own stage; left null they stand in the scene.</summary>
+        public Transform DebrisParent { get; set; }
+        /// <summary>
+        /// On a recorded body's copy, for a replay. ⚠️ A stone that fell before the clip began is not drawn: where it lay was not
+        /// recorded. It stays scaled to nothing, so it never shows at a place it did not fall. One that falls in the clip does.
+        /// </summary>
+        public static DanteMountainArmour Recorded(GameObject model, Transform worldRoot, float endAt, Transform debrisParent)
+        {
+            var armour = Build(model, worldRoot);
+            if (armour != null) { armour.EndAt = endAt; armour.DebrisParent = debrisParent; }
+            return armour;
+        }
         /// <summary>
         /// ⚠️ THE BODY IT WAS BUILT ON IS GONE: his model was rebuilt under it (`CharacterVisual.ApplyModel`, a skin or a roster
         /// refresh mid-form), so every stone went with the old bones and the veins' bone is a destroyed transform. Nothing here
@@ -794,6 +808,7 @@ namespace TumbangPreso.Visual
                 {
                     _debris = new GameObject("DanteMountainDebris").transform;
                     VfxRenderTag.Attach(_debris.gameObject);
+                    if (DebrisParent != null) _debris.SetParent(DebrisParent, true);
                 }
                 // Where it was on his body as it lets go.
                 p.FromWorld = p.Node.position; p.FromTurn = p.Node.rotation;

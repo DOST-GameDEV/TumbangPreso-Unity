@@ -25,9 +25,9 @@ namespace TumbangPreso.PlayTests
 #endif
             _previousIdleImportDelay=-1;
         }
-        private static IEnumerator Open()
+        private static IEnumerator Open(GameMode mode = GameMode.Classic)
         {
-            SceneFlow.Networked = false; SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.Classic));
+            SceneFlow.Networked = false; if (mode == GameMode.Classic) SceneFlow.SetSelectedRules(CustomGameRules.Defaults(mode)); else SceneFlow.PinSelectedRules(CustomGameRules.Defaults(mode));
             GameLaunch.SoloSeat = 1; GameLaunch.GuidedTutorial = false;
             string map=System.Environment.GetEnvironmentVariable("TUMP_CATCH_REVIEW_MAP")??SceneFlow.Eskinita;
             Assert.Contains(map,SceneFlow.Maps,"Catch review must target an authored playable map.");
@@ -707,8 +707,10 @@ namespace TumbangPreso.PlayTests
             actor.GetComponent<CharacterVisual>().ApplyModel(dante.Model, dante.Tint, dante.Clips, dante.Palette, dante.PetModel);
             victim.GetComponent<CharacterVisual>().ApplyModel(dante.Model, dante.Tint, dante.Clips, dante.Palette, dante.PetModel);
             yield return null;
-            Assert.IsNotNull(DanteMountainArmour.Attach(actor), "The mountain must be worn.");
-            Assert.IsNotNull(DanteMountainArmour.Attach(victim), "On the body the lens favours too.");
+            var worn = DanteMountainArmour.Attach(actor); var wornVictim = DanteMountainArmour.Attach(victim);
+            Assert.IsNotNull(worn, "The mountain must be worn.");
+            Assert.IsNotNull(wornVictim, "On the body the lens favours too.");
+            worn.StepTo(DanteMountainArmour.FormedAt + 1); wornVictim.StepTo(DanteMountainArmour.FormedAt + 1);
             Assert.IsNotNull(DanteCarapaceVisual.Attach(victim, false, 12), "The carapace must be on.");
             yield return new WaitForSeconds(CatchReconstruction.LeadSeconds + .3f);
             var view = Object.FindAnyObjectByType<CatchReconstruction>();
@@ -722,11 +724,9 @@ namespace TumbangPreso.PlayTests
                 var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
                 object Field(string name) => typeof(CatchReconstruction).GetField(name, flags).GetValue(view);
                 var extras = (System.Collections.IList)Field("_extras");
-                var worn = (System.Collections.Generic.List<Renderer>)Field("_worn");
                 Assert.That(extras.Count, Is.GreaterThanOrEqualTo(3), "The other two players and the can stand where they stood.");
                 int mountain = actor.GetComponent<CharacterVisual>().Model.GetComponentsInChildren<DanteMountainPiece>(false).Length;
                 Assert.That(mountain, Is.GreaterThan(0));
-                Assert.That(worn.Count, Is.GreaterThanOrEqualTo(mountain), "What the bodies wear must be on the copies.");
                 var playback = (RecordedFieldPlayback)Field("_fieldPlayback");
                 // Sean's lit shoe, through the same path a real ignition takes: its recorded frame on the seat's own shoe copy.
                 var shoe = Object.FindObjectsByType<Slipper>().First(s => s.SeatOfOrigin == 1);
@@ -735,18 +735,23 @@ namespace TumbangPreso.PlayTests
                 frames.Add(new RecordedFieldFrame { Time = (float)Field("_clipStart"), Fields = new[] { new RecordedField { Id = 9001, State = lit } }, Trails = new RecordedTrail[0] });
                 frames.Sort((a, b) => a.Time.CompareTo(b.Time));
                 var stage = (GameObject)Field("_stage");
-                bool emberSeen = false, wardSeen = false; int fieldsSeen = 0;
+                bool emberSeen = false, wardSeen = false, mountainSeen = false; int fieldsSeen = 0;
                 var world = (GameObject)Field("_worldRoot");
                 float began = (float)Field("_began"), until = Time.unscaledTime + 1.1f;
                 while (view.Playing && Time.unscaledTime < until)
                 {
                     yield return null;
                     fieldsSeen = Mathf.Max(fieldsSeen, playback.FieldCount);
-                    foreach (Transform child in world.transform) if (child.name == "RecordedField-" + RecordedSpecialFields.Ward) wardSeen = true;
+                    foreach (Transform child in world.transform)
+                    {
+                        if (child.name == "RecordedField-" + RecordedSpecialFields.Ward) wardSeen = true;
+                        if (child.name == "RecordedField-" + RecordedSpecialFields.Mountain) mountainSeen = true;
+                    }
                     foreach (var child in stage.GetComponentsInChildren<Transform>(true)) if (child.name == "IgnitionEmber") emberSeen = true;
                 }
                 Assert.That(fieldsSeen, Is.GreaterThan(0));
                 Assert.IsTrue(wardSeen, "The carapace's recorded field must be drawn.");
+                Assert.IsTrue(mountainSeen, "The mountain's recorded field must be drawn.");
                 Assert.IsTrue(emberSeen, "The lit shoe must be drawn on the recorded shoe.");
                 Assert.IsNotNull((RecordedFieldPlayback)Field("_fieldPlayback"), "No kit may have failed to draw.");
                 var target = (RenderTexture)Field("_target");
@@ -760,6 +765,43 @@ namespace TumbangPreso.PlayTests
                         Assert.IsFalse(renderer.forceRenderingOff, "The live mountain must be restored after every capture.");
             }
             finally { view.End(); settings.ReducedUiMotion = reduced; settings.CinematicCameraMotion = cinematic; }
+        }
+
+        // A real MOLTEN THROW load, not a staged frame: the kit lights the shoe, the archive records it, and a replay draws it.
+        [UnityTest]
+        public IEnumerator RealIgnitionIsRecordedAndDrawnOnTheRecordedShoe()
+        {
+            yield return Open(GameMode.HeroStrike); Stage();
+            var round = GameServices.Round; var actor = round.PlayerAt(0); var sean = round.PlayerAt(1);
+            sean.CharacterIndex = Roster.IndexIn(Roster.HeroPeople, "sean");
+            var art = RosterBook.Load().People.First(p => p.Id == "sean");
+            sean.GetComponent<CharacterVisual>().ApplyModel(art.Model, art.Tint, art.Clips, art.Palette, art.PetModel);
+            var system = sean.AbilitySystem; Assert.IsNotNull(system, "A Hero Strike body has a kit."); system.BindHero("sean");
+            var kit = (Abilities.SeanHeroKit)system.Kit;
+            var shoe = Object.FindObjectsByType<Slipper>().First(s => s.SeatOfOrigin == 1);
+            shoe.HostForceEquip(sean);
+            var context = new Abilities.AbilityContext(sean, sean.GetComponent<Carrier>(), null);
+            using (NetCue.SuppressRelay()) kit.AttackingSkill.Activate(context);
+            Assert.IsTrue(kit.IsEmpoweredThrowLoadedFor(shoe), "The load must take.");
+            yield return null;
+            Assert.IsTrue(RecordedSpecialFields.Capture().Any(f => f.Type == RecordedSpecialFields.Ignition && f.Owner == 1), "The lit shoe must reach the recording.");
+            yield return new WaitForSeconds(2.2f);
+            var archive = Object.FindAnyObjectByType<MatchReplayArchive>();
+            RecordedWorldView replay = null;
+            try
+            {
+                Assert.IsTrue(actor.GetComponent<CombatVerbs>().HostResolvePunch(actor.transform.position, actor.transform.forward));
+                float wait = Time.unscaledTime + 3;
+                while (archive.Clips.Count == 0 && Time.unscaledTime < wait) yield return null;
+                Assert.That(archive.Clips.Count, Is.GreaterThan(0), "The tag must be retained: " + archive.LastSkip);
+                var clip = archive.Clips[0].Clip;
+                var lit = clip.FieldFrames.First(f => f.Fields.Any(x => x.State.Type == RecordedSpecialFields.Ignition));
+                replay = new RecordedWorldView(Object.FindAnyObjectByType<CatchReconstruction>().transform, clip);
+                Assert.IsTrue(replay.Ready, replay.UnavailableReason);
+                replay.Draw(Mathf.Max(clip.Start, lit.Time), false);
+                Assert.IsTrue(Object.FindObjectsByType<SeanIgnitionVisual>(FindObjectsInactive.Include).Any(e => !e.enabled), "The replay must draw its own ember on the recorded shoe.");
+            }
+            finally { replay?.Dispose(); }
         }
 
         // Halftime and a spectator's replay: the record sends the victim home on the tag's frame.
@@ -782,8 +824,16 @@ namespace TumbangPreso.PlayTests
                 Assert.That(archive.Clips.Count, Is.GreaterThan(0), "The tag must be retained: " + archive.LastSkip);
                 var clip = archive.Clips[0].Clip;
                 Assert.AreEqual("CATCH", clip.Reason);
+                // The headband travels in the clip itself, through the bytes a client receives.
+                Assert.IsTrue(RecordedMatchClip.TryDecode(archive.Clips[0].Bytes, out var received, out string unread), unread);
+                Assert.IsTrue(received.FieldFrames.Any(f => f.Fields.Any(x => x.State.Type == RecordedSpecialFields.TayaBand && x.State.Owner == 0)), "The taya's headband must be recorded.");
                 replay = new RecordedWorldView(Object.FindAnyObjectByType<CatchReconstruction>().transform, clip);
                 Assert.IsTrue(replay.Ready, replay.UnavailableReason);
+                var hidden = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+                var side = (Vector3)typeof(RecordedWorldView).GetField("_shotSide", hidden).GetValue(replay);
+                var subject = clip.Objects.First(o => o.Kind == RecordedObjectKind.Player && o.Seat == clip.Subject).Pose.StateAt(clip.Contact);
+                Assert.That(Vector3.Dot(side, Vector3.ProjectOnPlane(subject.Rotations[0] * Vector3.forward, Vector3.up).normalized), Is.GreaterThan(-.25f), "The chosen bearing must not film the victim's back.");
+                float lastBack = 0, biggestJump = 0;
                 System.IO.Directory.CreateDirectory("Logs/tag-highlight");
                 var image = new Texture2D(replay.Target.width, replay.Target.height, TextureFormat.RGB24, false);
                 int shot = 0;
@@ -795,8 +845,11 @@ namespace TumbangPreso.PlayTests
                     Assert.IsTrue(replay.TryPlayerPosition(1, out var body));
                     Assert.IsTrue(replay.TryPlayerPosition(0, out var taya));
                     Vector3 apart = body - taya; apart.y = 0;
+                    float back = (float)typeof(RecordedWorldView).GetField("_actorBack", hidden).GetValue(replay);
+                    biggestJump = Mathf.Max(biggestJump, back - lastBack); lastBack = back;
                     if (offset >= 0)
                     {
+                        Assert.That(biggestJump, Is.LessThan(.01f), "The spacing is settled before it is shown: nothing is left to correct on screen.");
                         Assert.That(apart.magnitude, Is.LessThan(3), "The caught body must stay by the touch, not leave for home.");
                         Assert.That(Vector3.Distance(replay.CameraTransform.position, body), Is.LessThan(9), "The shot must stay on the play.");
                     }

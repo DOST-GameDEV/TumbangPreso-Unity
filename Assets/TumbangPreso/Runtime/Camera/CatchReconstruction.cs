@@ -114,7 +114,6 @@ namespace TumbangPreso.CameraSystem
         private sealed class Extra { public MatchPoseHistory.Track Track; public MatchPoseHistory.Copy Copy; public RecordedPoseTrack Clip; public RecordedObjectKind Kind; public int Seat; public GroundContactVisual Contact; }
         private readonly List<Extra> _extras = new List<Extra>();
         private readonly List<RecordedFieldFrame> _fieldFrames = new List<RecordedFieldFrame>();
-        private readonly List<Renderer> _worn = new List<Renderer>();
         private GameObject _worldRoot;
         private RecordedFieldPlayback _fieldPlayback;
         private RecordedFieldFrame _fieldFrame;
@@ -256,7 +255,6 @@ namespace TumbangPreso.CameraSystem
             _victimFacing = _victimCopy.Root.transform.rotation;
             CopyHeldItem(victimTrack, _victimCopy);
             _continuousFrom = LastEdgeBefore(_actorClip, LastEdgeBefore(_victimClip, _clipStart));
-            actor.CloneWornParts(_actorCopy, _worn); victimTrack.CloneWornParts(_victimCopy, _worn);
             BuildRecordedWorld(availableEnd);
             // The lens and the shove use the true line at the tag. Guessing where a running taya would land flipped it when
             // they were close and fast, which shoved the victim back into them and filmed the pair end on. They now stay on
@@ -324,7 +322,6 @@ namespace TumbangPreso.CameraSystem
             if (clip == null) return;
             var copy = track.Clone(_stage.transform);
             if (copy == null) return;
-            track.CloneWornParts(copy, _worn);
             _extras.Add(new Extra { Track = track, Copy = copy, Clip = clip, Kind = kind, Seat = seat,
                 Contact = kind == RecordedObjectKind.Player ? new GroundContactVisual(_worldRoot.transform, "Replay contact", true) : null });
         }
@@ -850,7 +847,6 @@ namespace TumbangPreso.CameraSystem
             foreach (var field in RecordedSpecialFields.Capture()) if (field.Source != null) HideTree(field.Source.transform);
             _actorCopy.ShowOnlyForCapture(true); _victimCopy.ShowOnlyForCapture(true);
             foreach (var extra in _extras) { extra.Copy.ShowOnlyForCapture(true); extra.Contact?.Visible(true); }
-            foreach (var r in _worn) if (r != null) r.forceRenderingOff = false;
             _actorGround.Visible(true); _victimGround.Visible(true);
             _fieldPlayback?.Visible(true);
             if (_copiedItems != null) foreach (var r in _copiedItems) if (r != null) r.forceRenderingOff = false;
@@ -867,7 +863,6 @@ namespace TumbangPreso.CameraSystem
                 lighting?.Dispose();
                 _actorCopy.ShowOnlyForCapture(false); _victimCopy.ShowOnlyForCapture(false);
                 foreach (var extra in _extras) { extra.Copy.ShowOnlyForCapture(false); extra.Contact?.Visible(false); }
-                foreach (var r in _worn) if (r != null) r.forceRenderingOff = true;
                 _actorGround.Visible(false); _victimGround.Visible(false);
                 _fieldPlayback?.Visible(false);
                 if (_copiedItems != null) foreach (var r in _copiedItems) if (r != null) r.forceRenderingOff = true;
@@ -904,7 +899,7 @@ namespace TumbangPreso.CameraSystem
             if (_worldRoot != null) Destroy(_worldRoot);
             if (_sky != null) Destroy(_sky);
             _worldRoot = null; _sky = null; _skyFill = null; _grade = null; _impactLook = null; _actorGround = _victimGround = null;
-            _extras.Clear(); _fieldFrames.Clear(); _worn.Clear(); _victimRecoil = null; _actorCarry = 0; _touchShown = _poseAtTouch = false;
+            _extras.Clear(); _fieldFrames.Clear(); _victimRecoil = null; _actorCarry = 0; _touchShown = _poseAtTouch = false;
             _stage = null; _canvas = null; _target = null; _camera = null; _picture = null; _overlay = null; _flash = null;
             _actorCopy = _victimCopy = null; _actorTrack = _victimTrack = null; _victim = null;
             _actorClip = _victimClip = null; _followthroughCaptured = _freezeCaptured = false;

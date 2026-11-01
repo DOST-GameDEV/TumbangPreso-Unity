@@ -707,7 +707,9 @@ namespace TumbangPreso.Net
         // 185 (2026-10-30): Basilio's longhorn cutscene (owner: "lock in dante's", then "bump network"). His ultimate's
         // introduction is 4.86 s where it was 3.61 s, and that length is shared phase timing carried in
         // `SkillContractFingerprint`. A 184 peer would run the shorter cutscene against a 185 host's clock: the two may not meet.
-        public const int ProtocolVersion = 185;
+        // 186 (2026-11-01): recorded clips are version 18, with Dante's mountain and the taya's headband as recorded fields. A 185
+        // peer cannot read a 186 host's replay: the two may not meet.
+        public const int ProtocolVersion = 186;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

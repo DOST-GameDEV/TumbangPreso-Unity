@@ -7,7 +7,6 @@ namespace TumbangPreso.CameraSystem
     // play, the same as halftime's. The ring stays as the fallback for anything with no record.
     public sealed partial class SpectatorCamera
     {
-        private const float RecordedClipFreshSeconds = 14.0f;
         private MatchReplayArchive _boundArchive;
         private RecordedMatchClip _freshClip, _recordedClip;
         private float _freshClipAt, _recordedElapsed;
@@ -43,10 +42,19 @@ namespace TumbangPreso.CameraSystem
         private bool TryStartRecordedReplay()
         {
             var match = GameServices.Match;
-            if (ProbeUsePictureRing || _freshClip == null || match == null || Time.unscaledTime - _freshClipAt > RecordedClipFreshSeconds
-                || _freshClip.MatchId != match.PresentationMatchId || _freshClip.Round != match.RoundNumber)
+            // ⚠️ A CLIP GOES OLD WHEN SOMETHING NEWER HAPPENS, NOT ON A TIMER. A fixed 14 s sent a watcher who pressed a little late to
+            // the blurry ring for the very moment the clip holds. A clip arrives after its own marker, so a marker later than the
+            // clip's arrival is a newer moment, and only then does the ring know more than the record.
+            int marked = NewestHighlightIndex();
+            float markedAt = marked >= 0 ? (_replayFrames[marked].EventAt > 0.0f ? _replayFrames[marked].EventAt : _replayFrames[marked].CapturedAt) : -1.0f;
+            string refused = ProbeUsePictureRing ? "a capture asked for it"
+                : _freshClip == null ? "no recorded clip, " + _boundArchive?.LastSkip
+                : match == null || _freshClip.MatchId != match.PresentationMatchId || _freshClip.Round != match.RoundNumber ? "the clip is from another round"
+                : markedAt > _freshClipAt ? "a newer moment has no clip yet"
+                : null;
+            if (refused != null)
             {
-                Debug.Log("[Replay] Spectator uses the picture ring: " + (_freshClip == null ? "no recorded clip, " + _boundArchive?.LastSkip : "the clip is stale"));
+                Debug.Log("[Replay] Spectator uses the picture ring: " + refused);
                 return false;
             }
             RecordedWorldView view = null;
