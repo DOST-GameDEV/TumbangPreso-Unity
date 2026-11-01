@@ -2,7 +2,7 @@
 
 Replaces the Sa Bubong loop: that map is disabled, the old loop predates his current kit (it showed
 Magnet) and the owner asked for a film that settles instead of a loop. Source is
-`ArtSource/home-scene/src/bgc/`, compositions `ZackIntro` (45 s, plays once) and `ZackIdle` (24 s, loops).
+`ArtSource/home-scene/src/bgc/`, compositions `ZackIntro` (45 s at 60 fps, plays once) and `ZackIdle` (24 s, loops).
 [Research and rules](research-2026-11-01.md). Method: `docs/HOME_SCREEN_ANIMATION_METHOD.md`.
 
 ## Why BGC
@@ -45,6 +45,13 @@ Characters are `Art/CharacterRedesign/{zack,sean}/*-redesign.glb`, on a track of
 
 `src/bgc/beats.ts` is the one timetable.
 
+## Owner's review of v4, 2026-11-01
+
+- "Looks like he is floating": a figure is one image at one angle, measured from the hips, so a low lens showed his soles over a floor seen from above. While the feet are in frame the angle now comes from the floor under them (`figure` in `BgcScene.tsx`).
+- "More fluid": the film is 60 fps on the same timetable; each bone is a gaussian of its neighbouring frames, the head and hands trailing the hips (`sampledBones`); paths and turns are rounded. The idle stays 30 fps.
+- "Why is Rago just staring": as in a match he now goes straight to the can, rights it, and turns with Zack from then on, shadowing him along his side of the can before the lunge.
+- Backtrack is a 12 frame yank along a route across the frame with after-images burning off where he passed and a taut current ahead of him, not a teleport. It no longer retraces the run, which swung him into the lens.
+
 ## The hold
 
 Worked backward from the frame the player lives with: long lens, Zack large in the gap between HOME's
@@ -67,7 +74,7 @@ npm run refs
 node scripts/look.mjs ZackIntro tag 100 200 300       # a contact sheet in scratch/
 node scripts/still1.mjs ZackIdle 0 scratch/hold.png   # one full-resolution frame
 node scripts/uiover.mjs scratch/hold.png scratch/ui.png   # HOME's real board art over it
-node scripts/chunks.mjs ZackIntro out/zack_intro_1080p30.mp4 1 17 270 2 45
+node scripts/chunks.mjs ZackIntro out/zack_intro_1080p60.mp4 1 17 270 2 45
 node scripts/chunks.mjs ZackIdle out/zack_idle_1080p30.mp4 1 17 270 2 45
 node scripts/ship-zack.mjs
 ```

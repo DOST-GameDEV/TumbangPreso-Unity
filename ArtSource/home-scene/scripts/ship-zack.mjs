@@ -9,7 +9,7 @@ import { renderStill, selectComposition } from '@remotion/renderer';
 
 const home = path.resolve('../../Assets/TumbangPreso/Resources/UI/home');
 const parts = [
-  { master: 'out/zack_intro_1080p30.mp4', clip: 'zack-home-intro.mp4', poster: 'zack-home-intro-poster.png', id: 'ZackIntro', crf: 21 },
+  { master: 'out/zack_intro_1080p60.mp4', clip: 'zack-home-intro.mp4', poster: 'zack-home-intro-poster.png', id: 'ZackIntro', crf: 21 },
   { master: 'out/zack_idle_1080p30.mp4', clip: 'zack-home-loop.mp4', poster: 'zack-home-poster.png', id: 'ZackIdle', crf: 21 },
 ];
 const serveUrl = await bundle({ entryPoint: path.resolve('src/index.ts') });

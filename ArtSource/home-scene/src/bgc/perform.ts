@@ -1,4 +1,4 @@
-import { Face, Layer, Pose, SlipperState } from '../three/actor';
+import { Face, Layer, Pose, PoseSample, SlipperState } from '../three/actor';
 import { Ease, kf, outCubic, outQuad } from '../lib/kf';
 import { clamp01, easeInOut, idleSin, INTRO } from './time';
 import { B } from './beats';
@@ -26,6 +26,7 @@ export type Frame = {
   eyeGlow: number;
   slipper: SlipperState;
   visible: number;
+  samples?: PoseSample[];
 };
 
 /**
@@ -60,10 +61,12 @@ export const LINE = { x: -0.55, z: -8.35 };
 export const POST = { x: 0.05, z: -1.45 };
 export const REST_SLIPPER = { x: 2.1, z: 2.0 };
 const CAN_DOWN = { x: 1.15, z: -0.35 };
+/** Where he rights it from: beside it, still on the side he guards. */
+const SET = { x: 0.7, z: -0.95 };
 /** Where Zack waits for him, on the far side of the can. */
-export const STAND = { x: 0.8, z: 1.6 };
+export const STAND = { x: 0.8, z: 1.4 };
 /** Where Rago's lunge starts. */
-const CREEP = { x: 0.45, z: -1.75 };
+const CREEP = { x: 0.45, z: -1.15 };
 /** Where he ends up. */
 export const FLAT = { x: 0.7, z: 0.75 };
 /** Where the can rolls the second time. */
@@ -84,6 +87,26 @@ const path = (f: number, pts: [number, number, number][], e: Ease = easeInOut) =
   return { x: l[1], z: l[2] };
 };
 
+/** The yaw that faces from one spot to another. */
+const yawTo = (a: { x: number; z: number }, b: { x: number; z: number }) => Math.atan2(b.x - a.x, a.z - b.z) / (Math.PI / 180);
+
+/** Backtrack is a real cut: nothing may blur across it. */
+const sameSide = (f: number, g: number) => (f < B.snapBack ? Math.min(g, B.snapBack - 0.01) : Math.max(g, B.snapBack));
+const WINDOW = [-5, -4, -3, -2, -1, 0, 1, 2, 3];
+const samplesOf = (f: number, layers: (g: number) => Layer[]): PoseSample[] =>
+  WINDOW.map((o) => ({ at: o, layers: layers(sameSide(f, f + o)) }));
+/** Paths and turns rounded over a third of a second, so no corner or start is sudden. */
+const rounded = (f: number, v: (g: number) => number) => {
+  let sum = 0;
+  let w = 0;
+  for (let o = -6; o <= 6; o++) {
+    const k = Math.exp(-0.5 * (o / 3) * (o / 3));
+    sum += v(sameSide(f, f + o)) * k;
+    w += k;
+  }
+  return sum / w;
+};
+
 // ------------------------------------------------------------------------------------ Zack's poses
 
 /** The pause before the snap: bladed, side-on, slipper back by the ear. */
@@ -91,6 +114,7 @@ const Z_AIM: Pose = { foreR: [0, 96, 0], foreL: [0, -40, 0], root: [2, 0, 0], to
 const Z_SNAP: Pose = { foreR: [0, 6, 0], foreL: [0, -70, 0], root: [8, 0, 0], torso: [12, -22, 0], head: [2, 10, 0], armR: [-78, -8, 18], armL: [28, 0, 22], legL: [-18, 0, 6], legR: [24, 0, -6] };
 /** The dead stop on the line: arms out with the arrival, weight still coming. */
 const Z_ARRIVE: Pose = { foreR: [0, 28, 0], foreL: [0, -28, 0], root: [10, 0, 0], torso: [6, 6, 0], head: [-8, -4, 0], armR: [-30, -6, 42], armL: [-18, 0, 54], legL: [-14, 0, 13], legR: [-6, 0, -12] };
+const Z_PULLED: Pose = { root: [-16, 0, 0], torso: [18, 0, 0], head: [14, 0, 0], armR: [-78, 0, 24], armL: [-78, 0, 24], foreR: [0, 8, 0], foreL: [0, -8, 0], legL: [-34, 0, 8], legR: [-52, 0, -8] };
 const Z_SHAKE: Pose = { foreR: [0, 24, 0], foreL: [0, -64, 0], root: [1, 0, -1], torso: [3, 8, 1], head: [8, -14, 3], armR: [-30, -10, 14], armL: [-48, 26, 30], legL: [0, 0, 9], legR: [-5, 0, -5] };
 
 // ------------------------------------------------------------------------------------ Rago's poses
@@ -124,7 +148,26 @@ const RUN: [number, number, number][] = [
 ];
 const routeAt = (f: number) => path(f, RUN, (t) => t);
 
+/** ⚠️ BACKTRACK IS A YANK, NOT A TELEPORT (owner, 2026-11-01): quick, across the frame and off toward the line. */
+export const PULL = 12;
+// Straight past Rago on the far side from the lens: the way he came would swing him up against the camera.
+const pullRoute = () => [STAND, { x: -0.75, z: -0.6 }, { x: -0.75, z: -3 }, LINE];
+/** u 0..1 along the route home, by length. */
+export const pullAt = (u: number) => {
+  const r = pullRoute();
+  const len = r.slice(1).map((p, i) => Math.hypot(p.x - r[i].x, p.z - r[i].z));
+  let d = Math.max(0, Math.min(1, u)) * len.reduce((a, b) => a + b, 0);
+  for (let i = 0; i < len.length; i++) {
+    if (d <= len[i]) return { x: r[i].x + (r[i + 1].x - r[i].x) * (d / len[i]), z: r[i].z + (r[i + 1].z - r[i].z) * (d / len[i]) };
+    d -= len[i];
+  }
+  return LINE;
+};
+/** It catches him, then hauls him in: slow for two frames, then everything. */
+export const pullU = (f: number) => clamp01((f - B.snapBack) / PULL) ** 2.2;
+
 const zackPlace = (f: number) => {
+  if (f >= B.snapBack && f < B.snapBack + PULL) return pullAt(pullU(f));
   if (f < B.run) return LINE;
   if (f < B.scoop) return routeAt(f);
   if (f < B.snapBack) return path(f, [[B.scoop + 8, RUN[3][1], RUN[3][2]], [B.wall + 10, STAND.x, STAND.z]]);
@@ -158,7 +201,10 @@ const Z_TRACK: Seg[] = [
   // Rago's hand is nearly on him and he looks at us.
   ZI(B.commit, 8, { head: [-8, 26, 8], torso: [-4, 14, 0] }),
   // Home, already looking back to see how it went.
-  ZI(B.snapBack, 0, LOOK_BACK),
+  // Hauled backward from the hips, arms and head left behind; then the stop arrives through him.
+  { at: B.snapBack, fade: 3, pose: Z_PULLED },
+  { at: B.snapBack + PULL - 2, fade: 3, pose: Z_ARRIVE },
+  ZI(B.snapBack + PULL + 8, 14, LOOK_BACK),
   { at: B.shake - 2, fade: 8, pose: Z_SHAKE },
   ZI(B.shake + 18, 14, LOOK_BACK),
   // His answer to the score.
@@ -166,12 +212,14 @@ const Z_TRACK: Seg[] = [
   ZI(B.fold, 30),
 ];
 
-export const zack = (f: number): Frame => {
+const zackLayers = (f: number) => {
   const tap = f >= B.feet && f < B.lookUp ? Math.max(0, Math.sin((((f - B.feet) % 18) / 18) * Math.PI * 2 + 1.2)) : 0;
-  const layers = f >= INTRO ? [{ clip: 'idle', t: (f - INTRO) / 30, w: 1 }] : layersAt(f, Z_TRACK);
+  const layers = layersAt(f, Z_TRACK);
   if (tap > 0) layers[layers.length - 1] = { ...layers[layers.length - 1], pose: { ...(layers[layers.length - 1].pose ?? {}), legR: [-11 * tap, 0, 0] } };
-  const at = zackPlace(f);
-  const yaw = f >= INTRO ? 12 + 2.5 * idleSin(f, 2, 0.6) : kf(f, [
+  return layers;
+};
+
+const zackYaw = (f: number) => kf(f, [
     [0, 8],
     [B.lookUp, 8],
     [B.lookUp + 14, 22],
@@ -188,11 +236,20 @@ export const zack = (f: number): Frame => {
     [B.scoop + 8, 175],
     [B.scoop + 14, 250],
     [B.wall + 6, 250],
-    [B.wall + 18, 66],
-    [B.snapBack - 1, 66],
-    [B.snapBack, 12, () => 1],
+    // Square up to Rago across the can, cheated a little to the side lens.
+    [B.wall + 20, 380],
+    [B.snapBack - 1, 380],
+    // He faces where he was as he is dragged away from it, and comes round on the stop.
+    [B.snapBack + PULL - 1, 380],
+    [B.snapBack + PULL + 8, 372],
     [INTRO, 12],
-  ]);
+]);
+
+export const zack = (f: number): Frame => {
+  const layers = f >= INTRO ? [{ clip: 'idle', t: (f - INTRO) / 30, w: 1 }] : zackLayers(f);
+  const pulling = f >= B.snapBack && f < B.snapBack + PULL + 6;
+  const at = f >= INTRO ? LINE : pulling ? zackPlace(f) : { x: rounded(f, (g) => zackPlace(g).x), z: rounded(f, (g) => zackPlace(g).z) };
+  const yaw = f >= INTRO ? 12 + 2.5 * idleSin(f, 2, 0.6) : rounded(f, zackYaw);
   const glow = Math.max(
     kf(f, [[B.eyes + 8, 0], [B.eyes + 16, 0.35], [B.eyes + 19, 0.1], [B.eyes + 26, 1], [B.snap + 14, 0.9], [B.snap + 30, 0.25], [B.stare, 0.25], [B.stare + 8, 1], [B.run, 1]]) * (f < B.run ? 1 : 0),
     f >= B.run && f < B.land + 30 ? kf(f, [[B.run, 1], [B.scoop, 1], [B.wall + 10, 0.3], [B.commit - 6, 0.3], [B.commit, 1], [B.land, 1], [B.land + 30, 0]]) : 0,
@@ -204,6 +261,7 @@ export const zack = (f: number): Frame => {
     y: 0,
     yaw,
     layers,
+    samples: f < INTRO ? samplesOf(f, zackLayers) : undefined,
     lift: [0, 0, 0],
     face: glow > 0.02 ? 'glow' : 'rest',
     eyeGlow: glow,
@@ -234,12 +292,12 @@ const R_TRACK: Seg[] = [
   { at: B.snap + 8, fade: 10, pose: { ...R_WALL, head: [-4, 30, 0] } },
   { at: B.closeOn, fade: 8, pose: R_TURNING },
   { at: B.jolt - 1, fade: 4, pose: R_SHOCK },
-  { at: B.stare, fade: 16, pose: { ...R_SQUARE, head: [-12, 0, 0] } },
-  { at: B.reset - 16, fade: 10, clip: 'walk', rate: 1.1 },
-  // He rights the can with his own pick-up.
-  { at: B.reset - 2, fade: 8, clip: 'pick-up', rate: 0.34, once: true },
-  { at: B.wall - 6, fade: 10, pose: R_SQUARE },
-  { at: B.load, fade: 16, clip: 'walk', rate: 0.5, pose: { armR: [-44, 0, 0], armL: [-44, 0, 0], root: [10, 0, 0] } },
+  // Then he goes for the can, as a taya must, and from the moment it stands he never takes his eyes off
+  // Zack (owner, 2026-11-01: "he wouldve followed him while he was running").
+  { at: B.stare + 6, fade: 12, pose: { ...R_SQUARE, head: [10, 0, 0] } },
+  { at: B.reset - 26, fade: 8, clip: 'walk', rate: 1.5 },
+  { at: B.reset - 4, fade: 7, clip: 'pick-up', rate: 0.75, once: true },
+  { at: B.reset + 24, fade: 10, clip: 'walk', rate: 0.75, pose: { root: [12, 0, 0], armR: [-34, 0, 0], armL: [-34, 0, 0], head: [-8, 0, 0] } },
   { at: B.commit - 10, fade: 10, pose: R_CREEP },
   { at: B.commit, fade: 9, pose: R_REACH },
   { at: B.trip - 1, fade: 4, pose: R_TRIP },
@@ -255,15 +313,18 @@ const R_TRACK: Seg[] = [
   { at: B.fold + 24, fade: 30, clip: 'idle', abs: RAGO_PHASE },
 ];
 
-export const rago = (f: number): Frame => {
-  const layers = f >= INTRO ? [{ clip: 'idle', t: (f - INTRO) / 30 + RAGO_PHASE, w: 1 }] : layersAt(f, R_TRACK);
-  const at = f < B.reset - 16
+const ragoLayers = (f: number) => layersAt(f, R_TRACK);
+
+const ragoPlace = (f: number) =>
+  f < B.reset - 26
     ? POST
     : path(f, [
-        [B.reset - 16, POST.x, POST.z],
-        [B.reset - 4, POST.x + 0.5, POST.z + 0.5],
-        [B.wall - 2, POST.x + 0.5, POST.z + 0.5],
-        [B.load, CREEP.x, CREEP.z - 0.3],
+        [B.reset - 26, POST.x, POST.z],
+        [B.reset - 4, SET.x, SET.z],
+        [B.reset + 24, SET.x, SET.z],
+        // He shadows Zack along his side of the can: out with the run, back with the stroll.
+        [B.wall - 4, SET.x + 0.65, SET.z - 0.05],
+        [B.commit - 6, CREEP.x, CREEP.z],
         [B.commit, CREEP.x, CREEP.z],
         [B.trip, CREEP.x + 0.05, -0.55],
         [B.sprawl, FLAT.x, FLAT.z],
@@ -272,16 +333,17 @@ export const rago = (f: number): Frame => {
         [B.pick + 22, CAN_KICKED.x - 0.1, CAN_KICKED.z - 0.75],
         [B.home, POST.x, POST.z],
       ]);
-  const yaw = f >= INTRO ? 0 + 1.5 * idleSin(f, 3) : kf(f, [
+
+const ragoYaw = (f: number) => {
+  const keyed = kf(f, [
     [0, 0],
     [B.noLook, 0],
     [B.noLook + 30, 14],
     [B.jolt, 26],
     [B.stare, 26],
-    [B.stare + 16, 0],
-    [B.reset - 16, 0],
-    [B.reset - 4, 165],
-    [B.load, LUNGE_YAW],
+    [B.stare + 16, yawTo(POST, CAN_DOWN)],
+    [B.reset + 22, yawTo(POST, CAN_DOWN)],
+    [B.commit, LUNGE_YAW],
     [B.rise + 20, LUNGE_YAW],
     [B.walk + 10, 170],
     [B.pick + 22, 200],
@@ -290,9 +352,20 @@ export const rago = (f: number): Frame => {
     [B.home, 360],
     [INTRO, 360],
   ]);
+  // A beat behind Zack, as a head turning after someone is. Cheated toward the tag's side lens once the can is between them.
+  const on = kf(f, [[B.reset + 12, 0], [B.reset + 30, 1], [B.commit - 8, 1], [B.commit, 0]]);
+  if (on <= 0) return keyed;
+  const cheat = kf(f, [[B.wall - 8, 0], [B.wall + 8, -28]]);
+  return keyed + (yawTo(ragoPlace(f), zackPlace(f - 7)) + cheat - keyed) * on;
+};
+
+export const rago = (f: number): Frame => {
+  const layers = f >= INTRO ? [{ clip: 'idle', t: (f - INTRO) / 30 + RAGO_PHASE, w: 1 }] : ragoLayers(f);
+  const at = f >= INTRO ? POST : { x: rounded(f, (g) => ragoPlace(g).x), z: rounded(f, (g) => ragoPlace(g).z) };
+  const yaw = f >= INTRO ? 0 + 1.5 * idleSin(f, 3) : rounded(f, ragoYaw);
   // The hop out of his skin; the bounce off the floor.
   const hop = kf(f, [[B.jolt - 2, 0], [B.jolt + 5, 0.13, outQuad], [B.jolt + 12, 0], [B.jolt + 16, 0.02], [B.jolt + 20, 0]]) + kf(f, [[B.sprawl - 4, 0.09], [B.sprawl, 0.015], [B.sprawl + 4, 0.05], [B.sprawl + 8, 0.015]]) * (f >= B.sprawl - 4 && f < B.rise + 20 ? 1 : 0);
-  return { x: at.x, z: at.z, y: 0, yaw, layers, lift: [0, hop, 0], face: 'rest', eyeGlow: 0, slipper: { at: 'none' }, visible: 1 };
+  return { x: at.x, z: at.z, y: 0, yaw, layers, lift: [0, hop, 0], face: 'rest', eyeGlow: 0, slipper: { at: 'none' }, visible: 1, samples: f < INTRO ? samplesOf(f, ragoLayers) : undefined };
 };
 
 /** Where his head is while he is flat on the court, for the stars. */

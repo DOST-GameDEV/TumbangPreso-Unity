@@ -61,7 +61,7 @@ const SHOTS: Shot[] = [
   {
     at: B.feet, in: 0, cam: (f) => {
       const u = clamp01((f - B.feet) / (B.rago - B.feet));
-      return { p: [LINE.x + 1.25 + 0.3 * u, 0.42, LINE.z - 1.3], t: [LINE.x + 0.15, 0.3, LINE.z + 0.15], f: 1250, roll: 1.4 };
+      return { p: [LINE.x + 1.25 + 0.3 * u, 0.62, LINE.z - 1.3], t: [LINE.x + 0.15, 0.34, LINE.z + 0.15], f: 1750, roll: 1.4 };
     },
   },
   // The wall. Low and close enough to look up at; a very slow push.
@@ -127,7 +127,7 @@ const SHOTS: Shot[] = [
   {
     at: B.stare, in: 0, cam: (f) => {
       const u = clamp01((f - B.stare) / (B.run - B.stare));
-      return { p: [LINE.x + 0.75, 0.75, LINE.z - 2.9], t: [LINE.x + 0.1, 1.15, LINE.z], f: 1220 * (1 + 0.08 * easeInOut(u)), roll: 2 };
+      return { p: [LINE.x - 0.7, 0.85, LINE.z - 3.1], t: [LINE.x + 0.55, 1.2, LINE.z], f: 1120 * (1 + 0.08 * easeInOut(u)), roll: 2 };
     },
   },
   // The run: the lens runs AHEAD of him and looks back (method § 7), Rago at the can on the side.
@@ -146,8 +146,8 @@ const SHOTS: Shot[] = [
       const down = clamp01((f - B.trip) / (B.sprawl - B.trip));
       return {
         p: [6.5 - 0.5 * easeInOut(u) - 0.4 * go, 0.7 - 0.2 * go, 0.05],
-        t: [0.65, 0.85 - 0.3 * down, 0.05 + 0.75 * easeInOut(down)],
-        f: 1280 * (1 + 0.12 * easeInOut(u)) * (1 + 0.14 * easeInOut(go)) * (1 + 0.18 * easeInOut(down)),
+        t: [0.65, 0.85 - 0.15 * down, 0.35 + 0.6 * easeInOut(down)],
+        f: 1280 * (1 + 0.12 * easeInOut(u)) * (1 + 0.08 * easeInOut(go)) * (1 - 0.1 * easeInOut(down)),
         roll: -1 + 3 * outCubic(go) - 5 * easeInOut(down),
       };
     },

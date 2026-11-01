@@ -304,6 +304,7 @@ namespace TumbangPreso.PlayTests
             yield return TumpUiCapture.Capture("Hub-HomeScene-1600x680", hub.Canvas, 1600, 680, checkPalette: false);
 
             yield return HubFlowTests.Press("HeroButton");
+            yield return HubFlowTests.AwaitDeferredHero();
             Assert.IsInstanceOf<HubHero>(hub.Top);
             yield return new WaitForSecondsRealtime(0.5f);
             Assert.IsFalse(scene.Player.isPlaying, "The loop kept playing behind HERO.");

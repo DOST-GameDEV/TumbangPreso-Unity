@@ -393,6 +393,7 @@ export type SlipperState =
   | { at: 'none' };
 
 export type Layer = { clip?: string; t?: number; once?: boolean; pose?: Pose; w: number };
+export type PoseSample = { at: number; layers: Layer[] };
 
 export type ActorProps = {
   /** SVG point where the model's focus point lands. */
@@ -437,6 +438,8 @@ export type ActorProps = {
    * pose alone, slerped over the stack below it by `w`. When set, it replaces clip and pose.
    */
   layers?: Layer[];
+  /** The stack at neighbouring frames, `at` frames from now: replaces `layers`, see `sampledBones`. */
+  samples?: PoseSample[];
   /**
    * 0..1 how much of `clip` shows against the keyed `pose` (1, the default, is the clip alone with
    * `clipPose` added on top). ⚠️ This is what lets a performance hand over between one of the game's
@@ -512,10 +515,38 @@ const stackBones = (b: Built, layers: Layer[]) => {
   for (const k of Object.keys(b.bones)) { b.bones[k].quaternion.copy(q[k]); b.bones[k].position.copy(v[k]); }
 };
 
+/** How many frames each bone trails the body: the head and hands arrive after the hips do. */
+const TRAIL: Record<string, number> = { root: 0, torso: 0.4, head: 1.2, 'arm-left': 0.8, 'arm-right': 0.8, 'forearm-left': 2, 'forearm-right': 2, 'leg-left': 0, 'leg-right': 0 };
+
+/**
+ * ⚠️ THE POSE OVER A SHORT WINDOW OF TIME, BONE BY BONE. A straight blend between two poses starts and
+ * stops every bone together, which is what reads as clunky. Each bone here is a gaussian of its own
+ * neighbouring frames, centred `TRAIL` frames back, so corners round off and the limbs follow through.
+ */
+const sampledBones = (b: Built, samples: PoseSample[]) => {
+  const q: Record<string, THREE.Quaternion> = {};
+  const v: Record<string, THREE.Vector3> = {};
+  const sum: Record<string, number> = {};
+  for (const s of samples) {
+    stackBones(b, s.layers);
+    for (const k of Object.keys(b.bones)) {
+      const d = (s.at + (TRAIL[k] ?? 0)) / 1.3;
+      const w = Math.exp(-0.5 * d * d);
+      sum[k] = (sum[k] ?? 0) + w;
+      if (!q[k]) { q[k] = b.bones[k].quaternion.clone(); v[k] = b.bones[k].position.clone(); continue; }
+      q[k].slerp(b.bones[k].quaternion, w / sum[k]);
+      v[k].lerp(b.bones[k].position, w / sum[k]);
+    }
+  }
+  for (const k of Object.keys(b.bones)) { b.bones[k].quaternion.copy(q[k]); b.bones[k].position.copy(v[k]); }
+};
+
 const poseRig = (b: Built, p: ActorProps) => {
   const hasClip = !!(p.clip && b.clips[p.clip]);
   const mix = hasClip ? Math.max(0, Math.min(1, p.clipMix ?? 1)) : 0;
-  if (p.layers?.length) {
+  if (p.samples?.length) {
+    sampledBones(b, p.samples);
+  } else if (p.layers?.length) {
     stackBones(b, p.layers);
   } else if (hasClip && mix < 1) {
     // The keyed pose first, kept; then the clip; then each bone slerped from one to the other.

@@ -2,8 +2,7 @@
 
 Updated 2026-11-01. [TODO](TODO.md) is the only active queue.
 
-- HOME-ZACK-1101, UNCOMMITTED on main working tree: Zack film at BGC into held idle, redesigned models.
-  [Design](reports/home-scene/zack-bgc.md). Next: owner watches it in game, then commit; Phaister redo waits.
+- HOME-ZACK-1101, on main: Zack film at BGC (60 fps) into held idle. [Design](reports/home-scene/zack-bgc.md). Next: owner in game; Phaister redo waits.
 - FEEL-1031, on main: replay wipes, spectator 3D replay, break card, impact, 0.6 m knockback,
   SFX. Film: run_ui_player_review.py --feel-only. Next: owner review.
 - TAG-FEEL-1031, on main: one tag live and in replay (spacing, reach, shared shove), FPP swing, replay impact on hand
@@ -13,11 +12,8 @@ Updated 2026-11-01. [TODO](TODO.md) is the only active queue.
   host-frozen pose; GroundY ignores awnings. Payo delayed pairs: Cheska gap 0, Nemu 0.015,
   Paete tree grounded. Next: victims in Paete/Amihan/Phaister reach, then multi-PC.
   Logs/ult-terrain-20261029/. Preserve six owner files.
-- Owner requested wrapping up and handing off unfinished mobile UI work.
-  [Resume here](reports/mobile-ui-2026-10-26/HANDOFF.md): ff9 Android candidate is
-  built/uploaded, native41/41 and recorded actual touch journeys passed. Newer
-  source has6/7 focused checks, picker clipping still fails, and no APK contains
-  those patches. Emulator/native jobs are stopped.
+- Unfinished mobile UI: [resume here](reports/mobile-ui-2026-10-26/HANDOFF.md). ff9 candidate built; newer
+  source has picker clipping failing and no APK. Jobs stopped.
 - Keep `mobile+network` separate from main; current main is included.
   Preserve owner metadata/settings and stage only explicit owned paths.
 - Desktop spectator is on main: grouped live controls, calmer camera, actual

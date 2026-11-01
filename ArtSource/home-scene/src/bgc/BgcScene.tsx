@@ -11,7 +11,7 @@ import { setNight, Item } from '../phaister/set';
 import { burstPath } from '../art/burst';
 import { Buildings, Clouds, FarCity, FEED, Ground, Park, Poles, sagAt, Signals, Sky, Traffic } from './set';
 import { camAt, focusAt, panSpeed } from './camera';
-import { canAt, echoAt, curveAt, flatHead, flyingAt, FLAT, Frame, momentum, STOP, rago, slipperTrail, STAND, zack } from './perform';
+import { canAt, echoAt, curveAt, flatHead, flyingAt, FLAT, Frame, momentum, PULL, pullAt, pullU, STOP, rago, slipperTrail, STAND, zack } from './perform';
 import { Paint } from '../phaister/lettering';
 
 /** Zack's hit: electric yellow on ink, white at the heart. */
@@ -52,8 +52,15 @@ const figure = (b: NonNullable<ReturnType<typeof useActor>>, v: View, p: Frame, 
   const ppu = scaleAt(v, [p.x, p.y + focusY, p.z]) * PERSON_SCALE;
   const ap = apparent(v, [p.x, p.y, p.z], p.yaw, focusY);
   const [fx, fy] = project(v, [p.x, p.y + focusY, p.z]);
+  // ⚠️ THE FIGURE IS ONE IMAGE AT ONE ANGLE. Measured from the hips, a low lens drew him from below: his
+  // soles showed over a floor seen from above, and he floated (owner, 2026-11-01). While his feet are in
+  // frame the angle is the one the lens sees the floor under them from.
+  const footY = project(v, [p.x, 0.135, p.z])[1];
+  const onFloor = Math.max(0, Math.min(1, (1300 - footY) / 220));
+  const floorPitch = Math.atan2(v.y - 0.135, Math.hypot(v.x - p.x, v.z - p.z)) / (Math.PI / 180);
+  const pitch = ap.pitch + Math.max(0, floorPitch - ap.pitch) * onFloor;
   const img = drawActor(b, {
-    x: fx, y: fy, ppu, focus: FOCUS, reach: 0.72, yaw: ap.yaw, pitch: ap.pitch, layers: p.layers, lift: p.lift, face: p.face, eyeGlow: p.eyeGlow,
+    x: fx, y: fy, ppu, focus: FOCUS, reach: 0.72, yaw: ap.yaw, pitch, layers: p.layers, samples: p.samples, lift: p.lift, face: p.face, eyeGlow: p.eyeGlow,
     slipper: slipper ? p.slipper : undefined, res: extra.res ?? 1.3,
     light: { ...light, flash: extra.flash ?? 0, flashColour: '#F6FFA0' },
   });
@@ -74,7 +81,8 @@ const shadowOf = (v: View, x: number, z: number, r: number) => {
 export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
   useFonts();
   const frame = useCurrentFrame();
-  const f = part === 'idle' ? INTRO + frame : frame;
+  // The film is shot at 60 on the same 30 a second timetable; the idle's slow drift stays at 30.
+  const f = part === 'idle' ? INTRO + frame : frame / 2;
   setNight(0);
   const zk = useActor('zack-redesign', true);
   const rg = useActor('sean-redesign');
@@ -127,16 +135,21 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
 
   // Backtrack: thin electric echoes of where he has been, merging into him as he lands.
   const echoes: React.ReactNode[] = [];
-  const echoOn = f >= B.snapBack - 2 && f < B.snapBack + 26;
-  if (zk && echoOn) {
-    const a = env(f, B.snapBack - 2, B.snapBack, B.snapBack + 8, B.snapBack + 26);
-    for (let i = 0; i < 6; i++) {
-      const g = B.run + Math.round(((B.scoop - B.run) * i) / 5);
-      const at = echoAt(g);
+  // Each hangs where he passed and burns off, oldest first; the pose is the one he had there.
+  if (zk && f >= B.snapBack && f < B.snapBack + PULL + 16) {
+    for (let i = 0; i < 8; i++) {
+      const g = B.snapBack + (i / 7) * (PULL - 1);
+      if (f < g) continue;
+      const a = 1 - (f - g) / 16;
+      if (a <= 0) continue;
+      const at = pullAt(pullU(g));
       if (!front(at.x, at.z)) continue;
       const fr = zack(g);
-      const d = figure(zk, v, { ...fr, x: at.x, z: at.z, slipper: { at: 'none' } }, LIGHT, false, { flash: 1, res: 0.8 });
-      echoes.push(<g key={`e${i}`} filter="url(#contour)" opacity={a * (0.45 + 0.1 * i)}><ActorImage d={d.img} /></g>);
+      const d = figure(zk, v, { ...fr, x: at.x, z: at.z, samples: undefined, slipper: { at: 'none' } }, LIGHT, false, { flash: 1, res: 0.8 });
+      echoes.push(<g key={`e${i}`} opacity={a}>
+        <g opacity={0.28}><ActorImage d={d.img} /></g>
+        <g filter="url(#contour)"><ActorImage d={d.img} /></g>
+      </g>);
     }
   }
 
@@ -289,26 +302,29 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
     fx.push(<g key="rush" opacity={rush}>{n}</g>);
   }
   // Backtrack: the flash where he was, then the route lit from there to the line.
-  if (f >= B.snapBack - 1 && f < B.snapBack + 24) {
-    const a = env(f, B.snapBack - 1, B.snapBack, B.snapBack + 8, B.snapBack + 24);
+  if (f >= B.snapBack - 1 && f < B.snapBack + 14) {
+    const a = env(f, B.snapBack - 1, B.snapBack, B.snapBack + 5, B.snapBack + 14);
     const at: V3 = [STAND.x, 1.0, STAND.z];
     if (depth(v, at) > 0.6) {
       const [x, y] = project(v, at);
       const s2 = scaleAt(v, at);
       const burst = kf(f, [[B.snapBack - 1, 0.2], [B.snapBack + 8, 1]]);
-      fx.push(<circle key="btr" cx={x} cy={y} r={s2 * 1.4 * burst} fill="none" stroke="#F6FFA0" strokeWidth={6 * a} opacity={a} />);
-      fx.push(<circle key="bti" cx={x} cy={y} r={s2 * 0.62} fill="#F6FFA0" opacity={kf(f, [[B.snapBack, 0.9], [B.snapBack + 5, 0]])} filter="url(#glow)" />);
-      for (let i = 0; i < 5; i++) {
-        const ang = (i / 5) * Math.PI * 2 + 0.4;
-        fx.push(<Crackle key={`bb${i}`} a={[x, y]} b={[x + Math.cos(ang) * s2 * 1.5 * burst, y + Math.sin(ang) * s2 * 1.5 * burst]} seed={`${seed('bb')}${i}`} w={3} branches={1} glow={1} opacity={a} />);
+      fx.push(<circle key="btr" cx={x} cy={y} r={s2 * 0.75 * burst} fill="none" stroke="#F6FFA0" strokeWidth={6 * a} opacity={a} />);
+      fx.push(<circle key="bti" cx={x} cy={y} r={s2 * 0.34} fill="#F6FFA0" opacity={kf(f, [[B.snapBack, 0.9], [B.snapBack + 5, 0]])} filter="url(#glow)" />);
+      for (let i = 0; i < 3; i++) {
+        const ang = (i / 3) * Math.PI * 2 + 0.4;
+        fx.push(<Crackle key={`bb${i}`} a={[x, y]} b={[x + Math.cos(ang) * s2 * 0.8 * burst, y + Math.sin(ang) * s2 * 0.8 * burst]} seed={`${seed('bb')}${i}`} w={3} branches={1} glow={1} opacity={a} />);
       }
     }
-    const pts: V3[] = [];
-    for (let g = B.run; g <= B.scoop; g += 6) { const q = echoAt(g); pts.push([q.x, 0.9, q.z]); }
-    pts.push(at);
-    const inFront = pts.filter((p) => depth(v, p) > 0.6).map((p) => project(v, p) as Pt);
-    for (let i = 0; i < inFront.length - 1; i++) {
-      fx.push(<Bolt key={`bt${i}`} pts={boltPoints(inFront[i], inFront[i + 1], `${seed('bt')}${i}`, 3, 0.1)} w={3.2} glow={0.9} opacity={a} />);
+    // The current pulls taut ahead of him, all the way off to the line it is reeling him toward.
+    if (f < B.snapBack + PULL) {
+      const u0 = pullU(f);
+      const taut: Pt[] = [];
+      for (let i = 0; i <= 10; i++) {
+        const q = pullAt(u0 + ((1 - u0) * i) / 10);
+        if (depth(v, [q.x, 1, q.z]) > 0.6) taut.push(project(v, [q.x, 1, q.z]));
+      }
+      for (let i = 0; i < taut.length - 1; i++) fx.push(<Bolt key={`tt${i}`} pts={boltPoints(taut[i], taut[i + 1], `${seed('tt')}${i}`, 2, 0.05)} w={5} glow={1.1} />);
     }
   }
   // Stars round the head of a taya who has met his own can.
