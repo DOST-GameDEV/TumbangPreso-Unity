@@ -47,9 +47,9 @@ export const B = {
   // The settle, into the frame the player lives with
   shake: s(35.8), // static flicked off his hand
   rise: s(36.6), // Rago gets up
-  walk: s(37.8), // walks to the can
-  pick: s(39.2), // rights it, again
-  home: s(40.2),
-  one: s(40.8), // one arm up, and a chalk mark: he is counting
+  walk: s(37.6), // walks to the can
+  pick: s(38.7), // rights it, again
+  home: s(40.4),
+  one: s(41.0), // one arm up, and a chalk mark: he is counting
   fold: s(42.2), // arms folded again
 };

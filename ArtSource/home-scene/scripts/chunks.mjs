@@ -15,6 +15,7 @@
 // 224. A `renderMedia` call opens its own browser, so rendering a chunk as 45-frame pieces gives
 // every 45 frames a clean tab; each piece took ~10 s. Do not raise `piece` or `concurrency` to go
 // faster without re-measuring a close-up stretch.
+import './platesrv.mjs';
 import { bundle } from '@remotion/bundler';
 import { renderMedia, selectComposition } from '@remotion/renderer';
 import { execFileSync } from 'node:child_process';

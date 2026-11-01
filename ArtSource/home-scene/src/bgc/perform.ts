@@ -2,6 +2,7 @@ import { Face, Layer, Pose, PoseSample, SlipperState } from '../three/actor';
 import { Ease, kf, outCubic, outQuad } from '../lib/kf';
 import { clamp01, easeInOut, idleSin, INTRO } from './time';
 import { B } from './beats';
+import { litAt } from './light';
 
 /**
  * Zack and Rago, KEYED BY HAND on the real rigs. No game clips (method § 7, and the owner again on
@@ -194,7 +195,8 @@ const Z_TRACK: Seg[] = [
   { at: B.snap + 16, fade: 22, clip: 'idle', abs: 0, pose: { head: [-6, -10, 5] } },
   // The cut to him after Rago's jump: chin up, slipper hand lifted, head on one side.
   ZI(B.stare - 12, 14, { head: [-8, 12, 6], torso: [-4, 8, 3], armL: [-22, 0, 0] }),
-  { at: B.run - 3, fade: 5, clip: 'sprint', rate: 1 },
+  // ⚠️ RATES ARE THE PATH'S SPEED OVER THE CLIP'S STRIDE, so feet stay planted: sprint covers about 4.1 m/s at rate 1, walk 1.8.
+  { at: B.run - 3, fade: 5, clip: 'sprint', rate: 1.4 },
   { at: B.scoop - 8, fade: 5, clip: 'slide', rate: 1.1, once: true },
   { at: B.scoop + 8, fade: 10, clip: 'walk', rate: 0.9 },
   ZI(B.wall + 6, 14, { head: [-4, 14, 8], torso: [-3, 8, 0] }),
@@ -258,6 +260,8 @@ export const zack = (f: number): Frame => {
     kf(f, [[B.eyes + 8, 0], [B.eyes + 16, 0.35], [B.eyes + 19, 0.1], [B.eyes + 26, 1], [B.snap + 14, 0.9], [B.snap + 30, 0.25], [B.stare, 0.25], [B.stare + 8, 1], [B.run, 1]]) * (f < B.run ? 1 : 0),
     f >= B.run && f < B.land + 30 ? kf(f, [[B.run, 1], [B.scoop, 1], [B.wall + 10, 0.3], [B.commit - 6, 0.3], [B.commit, 1], [B.land, 1], [B.land + 30, 0]]) : 0,
   );
+  // On the hold his eyes answer only his biggest moment of current.
+  const held = f >= INTRO ? Math.max(0, litAt(f) - 0.4) / 0.5 : 0;
   const flying = f >= B.snap + 2 && f < B.scoop + 3;
   return {
     x: at.x,
@@ -267,8 +271,8 @@ export const zack = (f: number): Frame => {
     layers,
     samples: f < INTRO ? samplesOf(f, zackLayers) : undefined,
     lift: [0, 0, 0],
-    face: glow > 0.02 ? 'glow' : 'rest',
-    eyeGlow: glow,
+    face: Math.max(glow, held) > 0.02 ? 'glow' : 'rest',
+    eyeGlow: Math.max(glow, held),
     slipper: flying ? { at: 'none' } : { at: 'hand', swing: 5 * idleSin(f, 18) },
     visible: 1,
   };
@@ -299,18 +303,18 @@ const R_TRACK: Seg[] = [
   // Then he goes for the can, as a taya must, and from the moment it stands he never takes his eyes off
   // Zack (owner, 2026-11-01: "he wouldve followed him while he was running").
   { at: B.stare + 6, fade: 12, pose: { ...R_SQUARE, head: [10, 0, 0] } },
-  { at: B.reset - 26, fade: 8, clip: 'walk', rate: 1.5 },
+  { at: B.reset - 26, fade: 8, clip: 'walk', rate: 0.8 },
   { at: B.reset - 4, fade: 7, clip: 'pick-up', rate: 0.75, once: true },
-  { at: B.reset + 24, fade: 10, clip: 'walk', rate: 0.75, pose: { root: [5, 0, 0], armR: [-34, 0, 0], armL: [-34, 0, 0], head: [-6, 0, 0] } },
+  { at: B.reset + 24, fade: 10, clip: 'walk', rate: 0.3, pose: { root: [5, 0, 0], armR: [-34, 0, 0], armL: [-34, 0, 0], head: [-6, 0, 0] } },
   { at: B.commit - 10, fade: 10, pose: R_CREEP },
   { at: B.commit, fade: 9, pose: R_REACH },
   { at: B.trip - 1, fade: 4, pose: R_TRIP },
   { at: B.sprawl - 5, fade: 5, pose: R_SPRAWL },
   { at: B.rise, fade: 22, pose: R_UP },
   { at: B.rise + 24, fade: 12, pose: R_SQUARE },
-  { at: B.walk, fade: 10, clip: 'walk', rate: 0.9 },
+  { at: B.walk, fade: 10, clip: 'walk', rate: 1.2 },
   { at: B.pick - 4, fade: 8, clip: 'pick-up', rate: 0.34, once: true },
-  { at: B.pick + 22, fade: 8, clip: 'walk', rate: 0.9 },
+  { at: B.pick + 22, fade: 8, clip: 'walk', rate: 0.75 },
   { at: B.home - 6, fade: 14, pose: R_WALL },
   { at: B.one - 2, fade: 12, pose: R_ONE },
   { at: B.fold - 4, fade: 18, pose: R_WALL },

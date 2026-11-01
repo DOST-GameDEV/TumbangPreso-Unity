@@ -1,4 +1,4 @@
-import { kf, outCubic } from '../lib/kf';
+import { outCubic } from '../lib/kf';
 import { clamp01, easeInOut, idleSin, INTRO } from './time';
 import { B } from './beats';
 import { aim, V3, View } from '../phaister/view';
@@ -41,27 +41,12 @@ export const landing = (f: number): Cam => ({
   roll: 0.15 * idleSin(f, 1, 0.5),
 });
 
-/** How far out of focus the city is, per shot. */
-export const focusAt = (f: number) => {
-  if (f >= B.land) return kf(f, [[B.land, 1], [B.land + 40, 2.4]]);
-  if (f >= B.wall - 4) return 1.6;
-  if (f >= B.run) return 1.0;
-  if (f >= B.closeOn) return 2.6;
-  if (f >= B.wide) return 0.8;
-  if (f >= B.eyes) return 2.6;
-  if (f >= B.amber) return 2.0;
-  if (f >= B.whole) return 1.6;
-  if (f >= B.rago) return 2.2;
-  if (f >= B.feet) return 3.0;
-  return 2.0;
-};
-
 const SHOTS: Shot[] = [
-  // The signal, red, from under it. A slow tilt along the wire.
+  // The map's real signal, red, from under it. A slow tilt onto the lamp.
   {
     at: B.signal, in: 0, cam: (f) => {
       const u = clamp01((f - B.signal) / (B.feet - B.signal));
-      return { p: [14.6 - 1.2 * u, 1.8, 11.2], t: [15.6 + 0.3 * u, 5.0 + 0.4 * easeInOut(u), 16.4], f: 1320, roll: -2 + 1.6 * u };
+      return { p: [15.1 - 1.0 * u, 1.3, 11.3], t: [16.9 + 0.4 * easeInOut(u), 3.7 - 0.2 * easeInOut(u), 16.6], f: 1180, roll: -2 + 1.6 * u };
     },
   },
   // The foot on the chalk. Low, level with the line.
@@ -89,7 +74,7 @@ const SHOTS: Shot[] = [
   {
     at: B.amber, in: 0, cam: (f) => {
       const u = clamp01((f - B.amber) / (B.eyes - B.amber));
-      return { p: [14.2 - 0.2 * u, 3.4, 12.2], t: [15.0, 5.3, 16.4], f: 1500 * (1 + 0.1 * easeInOut(u)), roll: -1 };
+      return { p: [14.8 - 0.2 * u, 2.0, 12.2], t: [17.0, 3.15, 16.6], f: 1300 * (1 + 0.1 * easeInOut(u)), roll: -1 };
     },
   },
   // His face, and what the green does to it. Held.

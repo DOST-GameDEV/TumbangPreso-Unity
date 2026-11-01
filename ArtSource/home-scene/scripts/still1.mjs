@@ -1,4 +1,5 @@
 // One full-resolution frame. Usage: node scripts/still1.mjs <Composition> <frame> <out.png>
+import './platesrv.mjs';
 import { bundle } from '@remotion/bundler';
 import { renderStill, selectComposition } from '@remotion/renderer';
 import path from 'node:path';

@@ -1,5 +1,6 @@
 // Stills of any composition, one bundle, one contact sheet. Usage:
 // node scripts/look.mjs <Composition> <tag> <frame> [frame...]   (files in scratch/, sheet scratch/<tag>_sheet.png)
+import './platesrv.mjs';
 import { bundle } from '@remotion/bundler';
 import { renderStill, selectComposition } from '@remotion/renderer';
 import fs from 'node:fs';

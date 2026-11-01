@@ -1,6 +1,7 @@
 // Renders nothing but the posters: takes a hero's two masters in out/ and puts the game's copies where
 // HubSceneVideo loads them. The film is <hero>-home-intro, the idle keeps the <hero>-home-loop name.
 // Usage: node scripts/ship-zack.mjs [zack|phaister], after both masters (scripts/chunks.mjs <Hero>Intro and <Hero>Idle).
+import './platesrv.mjs';
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -8,6 +9,7 @@ import { bundle } from '@remotion/bundler';
 import { renderStill, selectComposition } from '@remotion/renderer';
 
 const home = path.resolve('../../Assets/TumbangPreso/Resources/UI/home');
+fs.mkdirSync(path.resolve('renders'), { recursive: true });
 const hero = process.argv[2] ?? 'zack';
 const Hero = hero[0].toUpperCase() + hero.slice(1);
 const parts = [

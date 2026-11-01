@@ -8,6 +8,7 @@ import path from 'node:path';
 const hero = process.argv[2];
 if (!hero) throw new Error('Usage: node scripts/film.mjs <zack|phaister> [--keep]');
 const keep = process.argv.includes('--keep');
+if (hero === 'zack' && !fs.existsSync('plates/zack-idle/00719.jpg')) throw new Error('No plates of the real map: run node scripts/plates.mjs first.');
 const Hero = hero[0].toUpperCase() + hero.slice(1);
 fs.mkdirSync('out', { recursive: true });
 fs.mkdirSync('scratch', { recursive: true });

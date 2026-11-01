@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { AbsoluteFill, continueRender, delayRender, random, staticFile, useCurrentFrame } from 'remotion';
+import { AbsoluteFill, continueRender, delayRender, Img, random, staticFile, useCurrentFrame } from 'remotion';
 import { Defs } from '../lib/Defs';
 import { Bolt, boltPoints, Crackle, Pt } from '../lib/bolt';
 import { kf } from '../lib/kf';
-import { env, INTRO } from './time';
+import { env, INTRO, IDLE, ph } from './time';
 import { B } from './beats';
 import { ActorImage, drawActor, drawProp, Light, useActor, useProp } from '../three/actor';
 import { apparent, depth, line, PERSON_SCALE, poly, project, scaleAt, V3, View } from '../phaister/view';
 import { setNight, Item } from '../phaister/set';
 import { burstPath } from '../art/burst';
-import { Buildings, Clouds, FarCity, FEED, Ground, Park, Poles, sagAt, Signals, Sky, Traffic } from './set';
-import { camAt, focusAt, panSpeed } from './camera';
-import { canAt, echoAt, curveAt, flatHead, flyingAt, FLAT, Frame, momentum, PULL, pullAt, pullU, STOP, rago, slipperTrail, STAND, zack } from './perform';
+import { camAt, panSpeed } from './camera';
+import { canAt, echoAt, curveAt, flatHead, flyingAt, FLAT, Frame, LINE, momentum, POST, PULL, pullAt, pullU, STOP, rago, slipperTrail, STAND, zack } from './perform';
+import { IDLE_SPARKS, litAt } from './light';
 import { Paint } from '../phaister/lettering';
+import { BLEND, plateAt, preAt } from './plates';
 
 /** Zack's hit: electric yellow on ink, white at the heart. */
 const Burst: React.FC<{ x: number; y: number; s: number }> = ({ x, y, s }) => (
@@ -36,13 +37,24 @@ const useFonts = () => {
   }, [handle]);
 };
 
-/** Warm key from the lens side, warm rim from the low sun (method § 2). */
-const LIGHT: Light = { dir: [0.45, 0.6, 0.66], lit: '#FFF2E0', shade: '#BE8E86', rim: '#FFD99A', rim_strength: 0.6 };
+/** The map's clear morning: a neutral key, a cool shade, so the cast sits in the plate. `litAt` adds the current's own light. */
+const DAY: Light = { dir: [0.45, 0.6, 0.66], lit: '#FFF8EE', shade: '#A9A2B6', rim: '#FFF4DC', rim_strength: 0.42 };
+const lightFor = (zap: number): Light => (zap <= 0 ? DAY : { ...DAY, rim: '#F4F27A', rim_strength: 0.42 + 1.1 * zap });
 
 const FOCUS = 0.5;
 /** The fist in the forearm bone's space, on the redesigned rigs. */
 const FIST_R: [number, number, number] = [-0.085, 0, 0];
 const FIST_L: [number, number, number] = [0.085, 0, 0];
+/** The lamp of the real signal the film watches (Kanto's Traffic, the north east corner). */
+const SIGNAL: V3 = [16.7, 3.05, 16.6];
+const GHOSTS = 5;
+const GHOST_LIFE = 11;
+/** Rago's chalk: he keeps the score, in strokes on the court beside his post. */
+const Tally: React.FC<{ v: View; a: number }> = ({ v, a }) => (
+  <g opacity={a} fill="none" stroke="#FFFDF2" strokeWidth={7} strokeLinecap="round">
+    <path d={line(v, [[1.05, 0.14, -1.75], [1.25, 0.14, -0.8]])} />
+  </g>
+);
 const CAN_M_PER_UNIT = 0.62 / 0.383;
 const REST_X = 2.1;
 const REST_Z = 2.0;
@@ -67,15 +79,20 @@ const figure = (b: NonNullable<ReturnType<typeof useActor>>, v: View, p: Frame, 
   return { img, roll: ap.roll, fx, fy };
 };
 
-/** A soft contact shadow, flat on the court. */
+const SUN_X = 0.64;
+const SUN_Z = -0.77;
+/** The figure's shadow, flat on the court. */
 const shadowOf = (v: View, x: number, z: number, r: number) => {
   const pts: V3[] = [];
   for (let i = 0; i < 18; i++) {
     const a = (i / 18) * 2 * Math.PI;
-    pts.push([x + r * Math.cos(a) + 0.12, 0.135, z + r * 0.72 * Math.sin(a) - 0.08]);
+    // Long along the sun's line, as the shadows in the plate fall, and darkest at the feet.
+    const u = r * Math.cos(a) + r * 0.9;
+    const w = r * 0.62 * Math.sin(a);
+    pts.push([x + u * SUN_X - w * SUN_Z, 0.135, z + u * SUN_Z + w * SUN_X]);
   }
   const d = poly(v, pts);
-  return d ? <path d={d} fill="#2A1218" opacity={0.3} /> : null;
+  return d ? <path d={d} fill="#2C2A44" opacity={0.36} /> : null;
 };
 
 export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
@@ -92,9 +109,9 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
   const r = rago(f);
   const c = canAt(f);
 
-  // The city sits behind a focus layer, the park and the cast in front of it (research: depth and air).
-  const city: Item[] = [...FarCity(v), ...Buildings(v), ...Traffic(v, f), ...Poles(v, f)].sort((a, b) => b.z - a.z);
-  const items: Item[] = [...Signals(v, f), ...Park(v, f)];
+  const zap = litAt(f);
+  const LIGHT = lightFor(zap);
+  const items: Item[] = [];
   const push = (node: React.ReactNode, at: V3, bias = 0) => items.push({ z: depth(v, at) + bias, node });
 
   // ---------------------------------------------------------------- the cast
@@ -111,7 +128,8 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
     push(<g key="rago"><g>{shadowOf(v, r.x, r.z, 0.8)}</g><g transform={`rotate(${d.roll} ${d.fx} ${d.fy})`}><ActorImage d={d.img} /></g></g>, [r.x, 1, r.z]);
   }
   if (zk && front(z.x, z.z)) {
-    const d = figure(zk, v, z, LIGHT, true, { res: closeOnFeet ? 2.2 : 1.35 });
+    const snatched = f >= B.snapBack - 5 && f < B.snapBack + PULL ? (Math.floor(f) % 2 ? 0.34 : 0.08) : 0;
+    const d = figure(zk, v, z, LIGHT, true, { res: closeOnFeet ? 2.2 : 1.35, flash: snatched });
     zackHand = d.img.at('forearm-right', FIST_R);
     zackHand2 = d.img.at('forearm-left', FIST_L);
     zackAt = d.img.at;
@@ -135,23 +153,24 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
     push(<g key="slipper"><ActorImage d={img} /></g>, fl.p, -0.2);
   }
 
-  // Backtrack: thin electric echoes of where he has been, merging into him as he lands.
-  const echoes: React.ReactNode[] = [];
-  // Each hangs where he passed and burns off, oldest first; the pose is the one he had there.
-  if (zk && f >= B.snapBack && f < B.snapBack + PULL + 16) {
-    for (let i = 0; i < 8; i++) {
-      const g = B.snapBack + (i / 7) * (PULL - 1);
+  // ⚠️ BACKTRACK'S GHOST FRAMES (zack-kit plan: "ghost frames pulling into the landing"; thin hot contour, transparent faces).
+  // Each is his real pose where he really was, crisp at full size, and takes its place in the depth order so Rago can stand
+  // in front of it. It only burns off once he has gone past: the newest is the strongest, which is what says which way he went.
+  if (zk && f >= B.snapBack && f < B.snapBack + PULL + GHOST_LIFE) {
+    for (let i = 0; i < GHOSTS; i++) {
+      const u = 0.015 + 0.6 * (i / (GHOSTS - 1)) ** 1.5;
+      const g = B.snapBack + PULL * u ** (1 / 2.2);
       if (f < g) continue;
-      const a = 1 - (f - g) / 16;
+      const a = 1 - (f - g) / GHOST_LIFE;
       if (a <= 0) continue;
-      const at = pullAt(pullU(g));
+      const at = pullAt(u);
       if (!front(at.x, at.z)) continue;
       const fr = zack(g);
-      const d = figure(zk, v, { ...fr, x: at.x, z: at.z, samples: undefined, slipper: { at: 'none' } }, LIGHT, false, { flash: 1, res: 0.8 });
-      echoes.push(<g key={`e${i}`} opacity={a}>
-        <g opacity={0.28}><ActorImage d={d.img} /></g>
-        <g filter="url(#contour)"><ActorImage d={d.img} /></g>
-      </g>);
+      const d = figure(zk, v, { ...fr, x: at.x, z: at.z, samples: undefined, slipper: { at: 'none' }, eyeGlow: 0, face: 'rest' }, LIGHT, false, { flash: 0.42, res: 1.2 });
+      push(<g key={`e${i}`} transform={`rotate(${d.roll} ${d.fx} ${d.fy})`}>
+        <g opacity={0.62 * a}><ActorImage d={d.img} /></g>
+        <g opacity={Math.min(1, a * 1.4)} filter="url(#contour)"><ActorImage d={d.img} /></g>
+      </g>, [at.x, 1, at.z], 0.02 * i);
     }
   }
 
@@ -159,18 +178,49 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
 
   // ---------------------------------------------------------------- effects, in screen space
   const fx: React.ReactNode[] = [];
+  /** What the current throws on the floor, under everyone. */
+  const under: React.ReactNode[] = [];
+  /** A pool of its light on the court and the air round it: every effect of his lights the place it happens in. */
+  const pool = (key: string, x: number, zz: number, r: number, a: number) => {
+    if (a <= 0 || depth(v, [x, 0.14, zz]) < 0.6) return;
+    const pts: V3[] = [];
+    for (let i = 0; i < 28; i++) { const t = (i / 28) * 6.283; pts.push([x + Math.cos(t) * r, 0.14, zz + Math.sin(t) * r]); }
+    const d = poly(v, pts);
+    if (d) under.push(<path key={key} d={d} fill="url(#pool)" opacity={a} style={{ mixBlendMode: 'screen' }} />);
+    const [ax, ay] = project(v, [x, 1.1, zz]);
+    const q = scaleAt(v, [x, 1.1, zz]) * r * 1.3;
+    under.push(<circle key={`${key}a`} cx={ax} cy={ay} r={q} fill="url(#air)" opacity={a * 0.55} style={{ mixBlendMode: 'screen' }} />);
+  };
+  /** A floor line of current: fat where it is live, drawn across the court along `path`. */
+  const floorBolt = (key: string, path: V3[], w: number, opacity = 1, jag = 0.16, off = 0) => {
+    const at = path.filter((p) => depth(v, p) > 0.6).map((p) => project(v, p) as Pt);
+    if (at.length < 2) return;
+    const pts: Pt[] = [];
+    for (let i = 0; i < at.length - 1; i++) pts.push(...boltPoints(at[i], at[i + 1], `${key}${i}${Math.floor(f / 2)}`, 2, jag).slice(0, -1));
+    pts.push(at[at.length - 1]);
+    under.push(<Bolt key={key} pts={off ? pts.map(([x, y]) => [x, y + off] as Pt) : pts} w={w} glow={0.9} opacity={opacity} outline={null} />);
+  };
+  pool('zk', z.x, z.z, 1.5, Math.min(1, zap * 1.2));
   const seed = (s: string) => `${s}${Math.floor(f / 2)}`;
 
-  // The current on the wire, first shot.
-  const wireT = kf(f, [[B.spark, 0], [B.feet - 14, 1]]);
-  if (f >= B.spark && f < B.feet) {
-    const pts: Pt[] = [];
-    for (let i = 0; i <= 8; i++) {
-      const u = Math.max(0, wireT - 0.16 + (i / 8) * 0.16);
-      const p = sagAt(FEED[0], FEED[1], u, 0.9);
-      if (depth(v, p) > 0.5) pts.push(project(v, p));
+  // The current finds the real signal: it spits at the lamp as the light turns, twice, small.
+  [B.spark + 20, B.green].forEach((g, n) => {
+    const a = env(f, g, g + 1, g + 5, g + 10);
+    if (a <= 0 || depth(v, SIGNAL) < 0.6) return;
+    const [x, y] = project(v, SIGNAL);
+    const q = scaleAt(v, SIGNAL);
+    for (let i = 0; i < 2 + n; i++) {
+      const ang = 2 + i * 1.7 + random(`${seed('sg')}${i}`);
+      fx.push(<Crackle key={`sg${n}${i}`} a={[x, y]} b={[x + Math.cos(ang) * q * 0.75, y + Math.sin(ang) * q * 0.75]} seed={`${seed('sg')}${n}${i}`} w={Math.max(3, q * 0.022)} branches={1} glow={0.8} opacity={a} />);
     }
-    if (pts.length > 1 && wireT < 1) fx.push(<Bolt key="wire" pts={boltPoints(pts[0], pts[pts.length - 1], seed('wire'), 3, 0.09)} w={3} glow={0.8} />);
+  });
+  // The green has to read at a glance: the lamp blooms.
+  const greenA = f >= B.green && f < B.eyes ? env(f, B.green, B.green + 2, B.eyes - 6, B.eyes) : 0;
+  if (greenA > 0 && depth(v, SIGNAL) > 0.6) {
+    const lamp: V3 = [SIGNAL[0], SIGNAL[1] - 0.66, SIGNAL[2]];
+    const [x, y] = project(v, lamp);
+    const q = scaleAt(v, lamp);
+    fx.push(<g key="gl" style={{ mixBlendMode: 'screen' }} opacity={greenA}><circle cx={x} cy={y} r={q * 0.75} fill="url(#greenlamp)" /></g>);
   }
   // ⚠️ THE CURRENT LIVES ON HIM: arcs jump between points of his own body, never out into the air.
   const bodyArcs = (key: string, n: number, opacity = 1) => {
@@ -185,10 +235,43 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
       fx.push(<Crackle key={`${key}${i}`} a={pts[from]} b={pts[to]} seed={`${key}${i}${stamp}`} w={Math.max(2, s * 0.022)} branches={i % 2} glow={0.7} opacity={opacity} />);
     }
   };
-  // Resting: now and then one small arc across him.
-  if (zackAt && (f >= B.land + 40 || f < B.run)) {
+  // Before the throw: now and then one small arc across him.
+  if (zackAt && f >= B.whole && f < B.run) {
     const a = env(((f - INTRO) % 144 + 144) % 144, 8, 10, 22, 26);
-    if (a > 0 && !closeOnFeet && f >= B.whole) bodyArcs('rest', 1, a);
+    if (a > 0) bodyArcs('rest', 1, a);
+  }
+  // ⚠️ THE HOLD IS QUIET (owner, 2026-11-01: from time to time, "dont spam it"). A few moments on the 24 s clock
+  // (light.ts), each a small piece of acting with an anticipation, a peak and a falloff, and nothing in between.
+  if (part === 'idle' && zackAt) {
+    const q = ph(f);
+    const s2 = scaleAt(v, [z.x, 1, z.z]);
+    const at = zackAt;
+    const w = Math.max(3, s2 * 0.022);
+    const stamp = Math.floor(f / 2);
+    IDLE_SPARKS.forEach((e) => {
+      const t = q - e.at;
+      if (t < 0 || t >= e.len) return;
+      const a = env(t, 0, 1, e.len * 0.55, e.len);
+      if (e.kind === 'fingers' && zackHand2) {
+        fx.push(<Crackle key="if1" a={zackHand2} b={[zackHand2[0] + s2 * 0.1, zackHand2[1] - s2 * 0.13]} seed={`if1${stamp}`} w={w} branches={1} glow={0.7} opacity={a} />);
+      }
+      if (e.kind === 'run') {
+        // Down from the hair, along the arm and off the fingers into the floor: one line that travels.
+        const route: Pt[] = [at('torso', [-0.12, 0.1, 0.05]), at('arm-right', [0, 0, 0]), at('forearm-right', [0, 0, 0]), at('forearm-right', FIST_R)];
+        const u = Math.min(route.length - 1.001, (t / (e.len * 0.45)) * (route.length - 1));
+        const i0 = Math.floor(u);
+        const head: Pt = [route[i0][0] + (route[i0 + 1][0] - route[i0][0]) * (u - i0), route[i0][1] + (route[i0 + 1][1] - route[i0][1]) * (u - i0)];
+        const live = [...route.slice(Math.max(0, i0 - 1), i0 + 1), head].reverse();
+        if (t < e.len * 0.55) fx.push(<Bolt key="ir" pts={live.flatMap((p, n) => (n < live.length - 1 ? boltPoints(p, live[n + 1], `ir${n}${stamp}`, 2, 0.16).slice(0, -1) : [p]))} w={w * 1.3} glow={0.9} />);
+        if (t >= e.len * 0.42 && zackHand) {
+          const [gx, gy] = project(v, [z.x + 0.5, 0.15, z.z - 0.1]);
+          fx.push(<Crackle key="ig" a={zackHand} b={[gx, gy]} seed={`ig${stamp}`} w={w * 1.1} branches={2} glow={0.9} opacity={a} />);
+        }
+      }
+      if (e.kind === 'hair') {
+        fx.push(<Crackle key="ih" a={at('head', [0.13, 0.12, 0])} b={at('head', [-0.12, 0.17, 0])} seed={`ih${stamp}`} w={w} branches={1} glow={0.7} opacity={a} />);
+      }
+    });
   }
   // The green reaches him: it builds over his whole figure, then snaps into his eyes.
   const charge = f >= B.eyes + 6 && f < B.wide ? kf(f, [[B.eyes + 6, 0], [B.eyes + 26, 5], [B.eyes + 32, 2], [B.wide, 1]]) : 0;
@@ -245,11 +328,36 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
   const stage = momentum(f);
   if (stage > 0 && front(z.x, z.z)) {
     bodyArcs('m', stage);
-    const [hx, hy] = project(v, [z.x, 0.25, z.z]);
     const s = scaleAt(v, [z.x, 0.4, z.z]);
-    const g = echoAt(Math.max(B.run, f - 7 - stage * 2));
-    const [bx0, by0] = project(v, [g.x, 0.12, g.z]);
-    for (let i = 0; i < stage; i++) fx.push(<Bolt key={`m${i}`} pts={boltPoints([hx, hy + i * s * 0.08], [bx0, by0 + i * s * 0.05], `${seed('mt')}${i}`, 3, 0.1)} w={Math.max(3, s * 0.02) + stage} glow={0.5} />);
+    const reach = 6 + stage * 5;
+    [-0.17, 0.17].forEach((side, n) => {
+      const trail: V3[] = [];
+      for (let k = 0; k <= reach; k += 2) {
+        const g = echoAt(Math.max(B.run, f - k));
+        const g2 = echoAt(Math.max(B.run, f - k - 1));
+        const dx = g.x - g2.x;
+        const dz = g.z - g2.z;
+        const len = Math.hypot(dx, dz) || 1;
+        trail.push([g.x + (dz / len) * side, 0.15, g.z - (dx / len) * side]);
+      }
+      floorBolt(`mt${n}`, trail, Math.max(3, s * 0.03) + stage * 1.6, 0.6 + stage * 0.13);
+    });
+    pool('mpool', z.x, z.z, 1 + stage * 0.35, 0.28 + stage * 0.17);
+    // Sparks kicked up by the stride at the higher stages.
+    if (stage >= 2) {
+      for (let i = 0; i < stage * 3; i++) {
+        const born = Math.floor(f / 3) * 3 - i * 2;
+        const t = (f - born) / 12;
+        if (t < 0 || t > 1) continue;
+        const g = echoAt(Math.max(B.run, born));
+        const a2 = random(`ms${born}a`) * 6.283;
+        const p: V3 = [g.x + Math.cos(a2) * 0.6 * t, 0.16 + 1.1 * t - 1.4 * t * t, g.z + Math.sin(a2) * 0.6 * t];
+        if (depth(v, p) < 0.6) continue;
+        const [x, y] = project(v, p);
+        const q = scaleAt(v, p);
+        fx.push(<rect key={`ms${i}`} x={x} y={y} width={q * 0.05} height={q * 0.016} transform={`rotate(${born * 41} ${x} ${y})`} fill={i % 2 ? '#F6C22B' : '#FFFBD0'} opacity={1 - t} />);
+      }
+    }
   }
   // The angle he has found: the whole curve draws itself in the air from his hand, and holds.
   const aimT = kf(f, [[B.wide + 18, 0], [B.snap - 10, 1]]);
@@ -295,41 +403,69 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
       })}
     </g>);
   }
-  // The creep and the lunge: speed lines rising behind the reach.
-  const rush = env(f, B.commit, B.commit + 6, B.trip, B.trip + 8);
-  if (rush > 0) {
-    const n: React.ReactNode[] = [];
-    for (let i = 0; i < 14; i++) {
-      const y = 180 + 720 * random(`sl${i}`);
-      const x = 60 + 1800 * random(`sx${i}${Math.floor(f / 2)}`);
-      n.push(<rect key={i} x={x} y={y} width={120 + 260 * random(`sw${i}`)} height={3 + 3 * random(`sh${i}`)} fill="#FFF3E2" opacity={0.65} />);
-    }
-    fx.push(<g key="rush" opacity={rush}>{n}</g>);
-  }
-  // Backtrack: the flash where he was, then the route lit from there to the line.
-  if (f >= B.snapBack - 1 && f < B.snapBack + 14) {
-    const a = env(f, B.snapBack - 1, B.snapBack, B.snapBack + 5, B.snapBack + 14);
-    const at: V3 = [STAND.x, 1.0, STAND.z];
-    if (depth(v, at) > 0.6) {
-      const [x, y] = project(v, at);
-      const s2 = scaleAt(v, at);
-      const burst = kf(f, [[B.snapBack - 1, 0.2], [B.snapBack + 8, 1]]);
-      if (f < B.snapBack + 6) fx.push(<g key="btb" transform={`translate(${x} ${y}) scale(${burst})`}><path d={burstPath(10, s2 * 0.2, s2 * 0.62, 'bb-ink', 0.25)} fill="#3A1020" /><path d={burstPath(10, s2 * 0.17, s2 * 0.54, 'bb-ink', 0.25)} fill="#F6C22B" /><path d={burstPath(8, s2 * 0.08, s2 * 0.28, 'bb-c', 0.25)} fill="#FFFBD0" /></g>);
+  // ⚠️ BACKTRACK, READ AS WHAT IT IS (zack-kit plan): a gold streak runs BACKWARDS along his path, and he reappears in a ring
+  // of sparks that holds and breaks into four. Anticipation is the flicker and the arcs before it (`snatched`, 'cm' above). No
+  // star-burst on his body: that reads as him being hit, and it is the one thing that did not happen.
+  const pullEnd = B.snapBack + PULL;
+  if (f >= B.snapBack && f < pullEnd + 18) {
+    // The streak, on the floor: from the spot he left to wherever he has got to, fading from the old end.
+    const a = env(f, B.snapBack, B.snapBack + 1, pullEnd, pullEnd + 18);
+    const u0 = f < pullEnd ? pullU(f) : 1;
+    const path: V3[] = [];
+    for (let i = 0; i <= 14; i++) { const q = pullAt((u0 * (14 - i)) / 14); path.push([q.x, 0.15, q.z]); }
+    floorBolt('bk0', path, 15, a, 0.09);
+    floorBolt('bk1', path, 7, a * 0.8, 0.12, 7);
+    pool('bkp', STAND.x, STAND.z, 1.5, env(f, B.snapBack, B.snapBack + 1, B.snapBack + 4, B.snapBack + 12) * 0.9);
+    // The place he was snatched from cracks once: a thin ring along the floor and three short arcs.
+    const t = (f - B.snapBack) / 10;
+    if (t < 1) {
+      const ring: V3[] = [];
+      for (let i = 0; i <= 32; i++) ring.push([STAND.x + Math.cos((i / 32) * 6.283) * (0.3 + 1.5 * Math.sqrt(t)), 0.14, STAND.z + Math.sin((i / 32) * 6.283) * (0.3 + 1.5 * Math.sqrt(t))]);
+      fx.push(<path key="bkr" d={line(v, ring)} stroke="#FFFBD0" strokeWidth={5 * (1 - t) + 1} fill="none" opacity={1 - t} />);
+      const [x, y] = project(v, [STAND.x, 0.9, STAND.z]);
+      const q = scaleAt(v, [STAND.x, 0.9, STAND.z]);
       for (let i = 0; i < 3; i++) {
-        const ang = (i / 3) * Math.PI * 2 + 0.4;
-        fx.push(<Crackle key={`bb${i}`} a={[x, y]} b={[x + Math.cos(ang) * s2 * 0.8 * burst, y + Math.sin(ang) * s2 * 0.8 * burst]} seed={`${seed('bb')}${i}`} w={5} branches={1} glow={0.8} opacity={a} />);
+        const ang = (i / 3) * 6.283 + 0.5;
+        fx.push(<Crackle key={`bb${i}`} a={[x, y]} b={[x + Math.cos(ang) * q * 0.7, y + Math.sin(ang) * q * 0.7]} seed={`${seed('bb')}${i}`} w={Math.max(3, q * 0.02)} branches={1} glow={0.7} opacity={1 - t} />);
       }
     }
-    // The current pulls taut ahead of him, all the way off to the line it is reeling him toward.
-    if (f < B.snapBack + PULL) {
-      const u0 = pullU(f);
-      const taut: Pt[] = [];
-      for (let i = 0; i <= 10; i++) {
-        const q = pullAt(u0 + ((1 - u0) * i) / 10);
-        if (depth(v, [q.x, 1, q.z]) > 0.6) taut.push(project(v, [q.x, 1, q.z]));
+    // Hauled by a line pulled taut from his chest, short and ahead of him, and it goes when he lands.
+    if (f < pullEnd && front(z.x, z.z)) {
+      const ahead = pullAt(Math.min(1, u0 + 0.28));
+      if (depth(v, [ahead.x, 1, ahead.z]) > 0.6) {
+        const from = project(v, [z.x, 1, z.z]) as Pt;
+        const to = project(v, [ahead.x, 1, ahead.z]) as Pt;
+        fx.push(<Bolt key="taut" pts={boltPoints(from, to, seed('tt'), 3, 0.07)} w={6} glow={0.9} />);
       }
-      if (taut.length > 1) fx.push(<Bolt key="taut" pts={taut.flatMap((p, i) => (i < taut.length - 1 ? boltPoints(p, taut[i + 1], `${seed('tt')}${i}`, 2, 0.14).slice(0, -1) : [p]))} w={11} glow={0.9} />);
     }
+  }
+  // Where he lands: the ring holds until a beat after the whip shows it, then breaks into four sparks that run off along the floor.
+  const ringEnd = B.land + 18;
+  if (f >= pullEnd - 1 && f < ringEnd + 12) {
+    const a = f < ringEnd ? 1 : 0;
+    const flare = env(f, pullEnd - 1, pullEnd, pullEnd + 1, pullEnd + 10);
+    if (a) {
+      const ring: V3[] = [];
+      const r0 = 0.95 + 0.25 * flare;
+      for (let i = 0; i <= 40; i++) { const t = (i / 40) * 6.283; const n = 1 + 0.025 * Math.sin(t * 9 + f); ring.push([LINE.x + Math.cos(t) * r0 * n, 0.15, LINE.z + Math.sin(t) * r0 * n]); }
+      under.push(<g key="lr" fill="none"><path d={line(v, ring)} stroke="#F6C22B" strokeWidth={13} opacity={0.35} filter="url(#glow)" /><path d={line(v, ring)} stroke="#F4E23A" strokeWidth={5} /><path d={line(v, ring)} stroke="#FFFBD0" strokeWidth={2} /></g>);
+      pool('lrp', LINE.x, LINE.z, 1.6, 0.5 + 0.4 * flare);
+      if (Math.floor(f / 3) % 2 === 0) {
+        const t = random(`lr${Math.floor(f / 3)}`) * 6.283;
+        const q = scaleAt(v, [LINE.x, 0.15, LINE.z]);
+        const [sx, sy] = project(v, [LINE.x + Math.cos(t) * r0, 0.15, LINE.z + Math.sin(t) * r0]);
+        fx.push(<Crackle key="lrs" a={[sx, sy]} b={[sx + Math.cos(t) * q * 0.28, sy - q * 0.24]} seed={seed('lrs')} w={Math.max(3, q * 0.02)} branches={0} glow={0.7} />);
+      }
+    } else {
+      const t = (f - ringEnd) / 12;
+      [0.8, 2.37, 3.94, 5.51].forEach((ang, i) => {
+        const r1 = 0.95 + 1.8 * t;
+        const p0: V3 = [LINE.x + Math.cos(ang) * r1, 0.15, LINE.z + Math.sin(ang) * r1];
+        const p1: V3 = [LINE.x + Math.cos(ang) * (r1 - 0.45), 0.15, LINE.z + Math.sin(ang) * (r1 - 0.45)];
+        floorBolt(`rs${i}`, [p0, p1], 8, 1 - t, 0.2);
+      });
+    }
+    if (f < B.land + 30 && f >= pullEnd) bodyArcs('home', Math.round(kf(f, [[pullEnd, 3], [B.land, 2], [B.land + 30, 0]])));
   }
   // Stars round the head of a taya who has met his own can.
   if (f >= B.sprawl - 2 && f < B.rise + 30) {
@@ -397,41 +533,44 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
   const bx = sp.x > 24 ? Math.min(14, (sp.x - 24) * 0.22) : 0;
   const by = sp.y > 24 ? Math.min(10, (sp.y - 24) * 0.22) : 0;
   const blur = bx > 0.5 || by > 0.5;
+  const tally = f >= INTRO ? 1 : kf(f, [[B.one + 2, 0], [B.one + 12, 1]]);
 
   return (
     <AbsoluteFill style={{ backgroundColor: '#C86A5C' }}>
       <svg width={1920} height={1080} viewBox="0 0 1920 1080">
         <Defs frame={f} />
         <defs>
-          <filter id="city" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation={focusAt(f)} /></filter>
           {/* The owner's approved Backtrack look: transparent faces, a hot thin contour (zack-kit-2026-10-25). */}
           <filter id="contour" x="-20%" y="-20%" width="140%" height="140%">
-            <feMorphology in="SourceAlpha" operator="dilate" radius="2.4" result="fat" />
+            <feMorphology in="SourceAlpha" operator="dilate" radius="1.8" result="fat" />
             <feComposite in="fat" in2="SourceAlpha" operator="out" result="edge" />
-            <feFlood floodColor="#F6FFA0" />
+            <feFlood floodColor="#F9F46A" />
             <feComposite in2="edge" operator="in" result="line" />
-            <feGaussianBlur in="line" stdDeviation="3.5" result="soft" />
+            <feGaussianBlur in="line" stdDeviation="2" result="soft" />
             <feMerge><feMergeNode in="soft" /><feMergeNode in="line" /></feMerge>
           </filter>
+          <radialGradient id="pool"><stop offset="0" stopColor="#FFF18A" stopOpacity={0.85} /><stop offset="0.45" stopColor="#F6C22B" stopOpacity={0.32} /><stop offset="1" stopColor="#F6C22B" stopOpacity={0} /></radialGradient>
+          <radialGradient id="greenlamp"><stop offset="0" stopColor="#B8FFC8" stopOpacity={0.95} /><stop offset="0.3" stopColor="#3DFF7C" stopOpacity={0.5} /><stop offset="1" stopColor="#3DFF7C" stopOpacity={0} /></radialGradient>
+          <radialGradient id="air"><stop offset="0" stopColor="#FFF3A8" stopOpacity={0.5} /><stop offset="1" stopColor="#F6C22B" stopOpacity={0} /></radialGradient>
         </defs>
         {blur && (
           <defs>
             <filter id="whip" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation={`${bx} ${by}`} /></filter>
           </defs>
         )}
+        {/* The real map, recorded through this same camera (scripts/plates.mjs). It already carries the roll. */}
+        <g filter={blur ? 'url(#whip)' : undefined}>
+          <foreignObject width={1920} height={1080}><Img src={plateAt(part, frame)} style={{ width: 1920, height: 1080, display: 'block' }} /></foreignObject>
+          {/* The idle's end fades to the street that leads into its start, so the loop has no seam. */}
+          {part === 'idle' && frame >= IDLE - BLEND && <foreignObject width={1920} height={1080} opacity={(frame - (IDLE - BLEND) + 1) / BLEND}><Img src={preAt(frame - (IDLE - BLEND))} style={{ width: 1920, height: 1080, display: 'block' }} /></foreignObject>}
+        </g>
         <g transform={`rotate(${v.roll} 960 540)`} filter={blur ? 'url(#whip)' : undefined}>
-          <g filter="url(#boilSoft)">
-            <Sky v={v} />
-            <Clouds v={v} f={f} />
-            <Ground v={v} tally={f >= INTRO ? 1 : kf(f, [[B.one + 2, 0], [B.one + 12, 1]])} />
-          </g>
-          <g filter="url(#city)">{city.map((it, i) => <g key={i}>{it.node}</g>)}</g>
+          {under}
+          {tally > 0 && <Tally v={v} a={tally} />}
           {items.map((it, i) => <g key={i}>{it.node}</g>)}
-          {echoes}
           {fx}
         </g>
-        <rect width={1920} height={1080} fill="#FFB060" opacity={0.06} style={{ mixBlendMode: 'screen' }} />
-        <rect width={1920} height={1080} fill="url(#vignette)" opacity={0.38} />
+        <rect width={1920} height={1080} fill="url(#vignette)" opacity={0.14} />
         {/* ⚠️ THE MOMENT OF IMPACT: everything holds for STOP frames. A flash, ink, then the burst. */}
         {f >= B.tump && f < B.tump + 2 && <rect width={1920} height={1080} fill="#FFFBD0" />}
         {f >= B.tump + 2 && f < B.tump + 5 && (
@@ -446,10 +585,8 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
             <Paint text="TUMP!" x={0} y={0} h={170} fill="#F6C22B" outline="#3A1020" shadow="#980715" seed="tump" wobble={0.4} bounce={0.3} />
           </g>
         )}
-        <rect width={1920} height={1080} filter="url(#grain)" opacity={0.3} />
       </svg>
     </AbsoluteFill>
   );
 };
 
-export { line };
