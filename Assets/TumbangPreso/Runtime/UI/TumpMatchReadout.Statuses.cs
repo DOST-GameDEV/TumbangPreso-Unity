@@ -112,13 +112,13 @@ namespace TumbangPreso.UI
 
                 // The seconds, painted white on a dark edge, centred under the ring.
                 var timeChip = OwnerUiLayout.Rect(chip, "StatusTimeChip");
-                CentreAnchors(timeChip); timeChip.anchoredPosition = new Vector2(0, -44); timeChip.sizeDelta = new Vector2(80, 32);
-                _chipTime[i] = LiveHud.Lettering(timeChip, "StatusTime", "", 24, Color.white, LiveHud.Glass, LiveHud.Glass, 3, 3, 1);
+                CentreAnchors(timeChip); timeChip.anchoredPosition = new Vector2(0, -44); timeChip.sizeDelta = new Vector2(88, 34);
+                _chipTime[i] = LiveHud.Lettering(timeChip, "StatusTime", "", 28, Color.white, LiveHud.Glass, LiveHud.Glass, 3, 3, 1);
                 OwnerUiLayout.Fill(_chipTime[i].rectTransform);
                 _chipSeconds[i] = -1;
 
                 // The words that show over the ring when the effect lands: name in painted lettering, description below it.
-                _chipTip[i] = LiveHud.Fact(chip, "StatusTooltip", StatusIcons.Tooltip(kind), 24, Color.white);
+                _chipTip[i] = LiveHud.Fact(chip, "StatusTooltip", StatusIcons.Tooltip(kind), 28, Color.white);
                 _chipTip[i].alignment = TextAnchor.LowerLeft; _chipTip[i].horizontalOverflow = HorizontalWrapMode.Wrap;
                 BottomLeft(_chipTip[i].rectTransform, new Vector2(8, 105), new Vector2(TextWrap, 30));
                 // A little over the measure, so a line is never clipped when the text is laid out at another canvas scale.
@@ -133,7 +133,7 @@ namespace TumbangPreso.UI
                 _listName[i] = LiveHud.Lettering(_statusList, "ListName" + i, StatusIcons.Name(kind).ToUpperInvariant(), 32, Color.white, LiveHud.Glass, LiveHud.Glass, 4, 3, 3);
                 _listName[i].alignment = TextAnchor.LowerLeft;
                 BottomLeft(_listName[i].rectTransform, Vector2.zero, new Vector2(TextWrap, 44));
-                _listTip[i] = LiveHud.Fact(_statusList, "ListTip" + i, StatusIcons.Tooltip(kind), 24, Color.white);
+                _listTip[i] = LiveHud.Fact(_statusList, "ListTip" + i, StatusIcons.Tooltip(kind), 28, Color.white);
                 _listTip[i].alignment = TextAnchor.LowerLeft; _listTip[i].horizontalOverflow = HorizontalWrapMode.Wrap;
                 BottomLeft(_listTip[i].rectTransform, Vector2.zero, new Vector2(TextWrap, _chipTipHeight[i]));
                 _listName[i].enabled = _listTip[i].enabled = false;

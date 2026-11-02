@@ -141,7 +141,8 @@ namespace TumbangPreso.PlayTests
             var ticks = new List<string>();
             gate.CountdownTick += tick => { ticks.Add(tick); readout.Countdown(tick); };
             gate.CountdownHidden += () => readout.Countdown("");
-            var score = readout.Canvas.transform.Find("MatchScores/ScoreRow0/Score").GetComponent<CanvasRenderer>();
+            // The four-chip score row is off in play, so the timer face stands for the HUD that must fade in.
+            var score = readout.Canvas.transform.Find("RoundClock/ClockFace").GetComponent<CanvasRenderer>();
             var countdown = readout.Canvas.transform.Find("Countdown").GetComponent<Text>();
             try
             {

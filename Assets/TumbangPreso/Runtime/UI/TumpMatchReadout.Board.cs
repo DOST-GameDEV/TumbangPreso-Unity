@@ -129,7 +129,7 @@ namespace TumbangPreso.UI
             p.Crown.raycastTarget = false;
             OwnerUiLayout.Place(p.Crown.rectTransform, 48 - 28, -36, 56, 46);
 
-            p.Tag = LiveHud.Tag(p.Root, "Points", "+100", Hub.Knit.ThinGo, LiveHud.GoInk, 24);
+            p.Tag = LiveHud.Tag(p.Root, "Points", "+100", Hub.Knit.ThinGo, LiveHud.GoInk, 28);
             p.Tag.anchorMin = p.Tag.anchorMax = new Vector2(0, 1); p.Tag.pivot = new Vector2(0, .5f);
             p.TagLabel = p.Tag.GetComponentInChildren<Text>();
             p.Tag.gameObject.SetActive(false);

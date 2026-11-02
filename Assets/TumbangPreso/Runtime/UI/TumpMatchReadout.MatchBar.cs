@@ -174,8 +174,9 @@ namespace TumbangPreso.UI
             _pips = OwnerUiLayout.Rect(_clockRoot, "RoundPips").gameObject.AddComponent<HudPips>();
             OwnerUiLayout.Place(_pips.rectTransform, -40, TimerHeight + 10, TimerWidth + 80, 18); _pips.raycastTarget = false;
             _pips.Diameter = 12; _pips.Gap = 10; _pips.enabled = false;
-            _round = LiveHud.Fact(_clockRoot, "RoundLabel", "", 22, Color.white);
-            OwnerUiLayout.Place(_round.rectTransform, -134, TimerHeight + 2, TimerWidth + 268, 32);
+            // 28 is the smallest size that still reads at 14 px in a 960 x 540 window (`TumpUiCapture` floor).
+            _round = LiveHud.Fact(_clockRoot, "RoundLabel", "", 28, Color.white);
+            OwnerUiLayout.Place(_round.rectTransform, -134, TimerHeight, TimerWidth + 268, 38);
         }
 
         private void BuildChip(int i)
@@ -295,14 +296,15 @@ namespace TumbangPreso.UI
             return (score < 0 ? "-" : "") + shown + suffix;
         }
 
-        /// <summary>Fit only a changed score, leaving normal three-digit totals at their authored size.</summary>
-        public static void PaintScoreValue(Text label, int value, int size = ScoreFont)
+        /// <summary>Fit only a changed score, leaving normal three-digit totals at their authored size. `slack` keeps the glyphs
+        /// that far inside the box, because the width measured here shifts a unit or two when the window is resized.</summary>
+        public static void PaintScoreValue(Text label, int value, int size = ScoreFont, float slack = 0)
         {
             string shown = ScoreTextForChip(value);
             if (label.text == shown) return;
             label.text = shown;
             label.fontSize = size;
-            while (label.fontSize > ScoreFontFloor && label.preferredWidth > label.rectTransform.rect.width)
+            while (label.fontSize > ScoreFontFloor && label.preferredWidth > label.rectTransform.rect.width - slack)
                 label.fontSize -= 2;
         }
 

@@ -103,8 +103,8 @@ namespace TumbangPreso.UI
                 _symbols[i].raycastTarget = false;
                 // Overwatch draws the seconds and the charge percentage as the biggest thing on the
                 // power, italic, straight over the dimmed icon.
-                _states[i] = OwnerUiLayout.Text(_ownerDials[i].transform, "PowerState", "", i == 2 ? 26 : 30, OwnerUiLayout.TypeRole.Display);
-                _states[i].font = Hub.HubKnit.SentenceFont(true); _states[i].fontSize = i == 2 ? 26 : 30;
+                _states[i] = OwnerUiLayout.Text(_ownerDials[i].transform, "PowerState", "", i == 2 ? 28 : 30, OwnerUiLayout.TypeRole.Display);
+                _states[i].font = Hub.HubKnit.SentenceFont(true); _states[i].fontSize = i == 2 ? 28 : 30;
                 _states[i].color = Color.white; _states[i].alignment = TextAnchor.MiddleCenter; _states[i].fontStyle = FontStyle.Normal;
                 var stateEdge = _states[i].gameObject.AddComponent<Outline>(); stateEdge.effectColor = LiveHud.Glass; stateEdge.effectDistance = new Vector2(1.5f, -1.5f);
                 _states[i].verticalOverflow = VerticalWrapMode.Overflow; OwnerUiLayout.Fill(_states[i].rectTransform);

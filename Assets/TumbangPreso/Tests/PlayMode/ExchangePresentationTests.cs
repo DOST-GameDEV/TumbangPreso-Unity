@@ -22,11 +22,13 @@ namespace TumbangPreso.PlayTests
         [UnityTest]
         public IEnumerator ForceEquipAndThrowCannotBorrowAnotherPlayersSlipper()
         {
+            // A second seat exists only when bots are on; without one the "stranger" is null, which is an environmental push.
+            Settings.SettingsStore.Current.AiDifficulty = 1; AIController.BotsEnabled = true;
             SceneFlow.Networked = false; SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.Classic));
             yield return SceneManager.LoadSceneAsync("Eskinita"); yield return null;
             foreach (var ai in Object.FindObjectsByType<AIController>()) ai.enabled = false;
             Object.FindAnyObjectByType<SliceRunner>().Begin(); yield return null;
-            var round = GameServices.Round; var owner = round.PlayerAt(1); var stranger = round.PlayerAt(2);
+            var round = GameServices.Round; var owner = round.PlayerAt(1); var stranger = round.PlayerAt(2); Assert.IsNotNull(stranger, "The stranger seat needs bots on.");
             var shoe = Object.FindObjectsByType<Slipper>().First(s => s.OwnerSlot == owner.PlayerSlot);
             var held = shoe.Holder; var state = shoe.State; var position = shoe.transform.position;
             Assert.IsFalse(shoe.HostForceEquip(stranger));

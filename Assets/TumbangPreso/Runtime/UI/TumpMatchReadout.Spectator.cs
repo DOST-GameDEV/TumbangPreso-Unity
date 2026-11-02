@@ -33,10 +33,10 @@ namespace TumbangPreso.UI
 
             var tab = OwnerUiLayout.Rect(row, "TayaTab");
             // On the chip's top edge: the bar sits 22 units from the top of the screen, and a tab above it was off-screen.
-            OwnerUiLayout.Place(tab, ChipWidth - 84, -14, 80, 26);
+            OwnerUiLayout.Place(tab, ChipWidth - 112, -18, 108, 34);
             var plate = tab.gameObject.AddComponent<HudCard>();
             plate.Glass(UiTheme.Taya, HudDraw.Lean, 2, .3f).raycastTarget = false; plate.BorderWidth = 0; plate.FollowContrast = false;
-            var word = OwnerUiLayout.Text(tab, "TayaTabWord", "TAYA", 20, OwnerUiLayout.TypeRole.Display);
+            var word = OwnerUiLayout.Text(tab, "TayaTabWord", "TAYA", 28, OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Fill(word.rectTransform); word.alignment = TextAnchor.MiddleCenter; word.color = HudDraw.Ivory;
             word.raycastTarget = false; word.fontStyle = FontStyle.Italic;
             // The display face's line is taller than the tab: let the word overflow rather than truncate to nothing.

@@ -159,9 +159,12 @@ namespace TumbangPreso.PlayTests
             yield return Open(GameMode.Classic);
             var hud = Hud.Instance; var canvas = GameObject.Find("OwnerMatchCanvas").GetComponent<Canvas>();
             Assert.IsTrue(hud.NativePresentation); Assert.IsEmpty(canvas.GetComponentsInChildren<PaperSkin>(true));
-            Assert.AreEqual(4, canvas.GetComponentsInChildren<RectTransform>().Count(r => r.name.StartsWith("ScoreRow")));
-            Assert.AreEqual(4, canvas.GetComponentsInChildren<Image>().Count(i => i.name == "PlayerPortrait" && i.enabled && i.sprite != null),
-                "A sprite reference alone is not a visible portrait.");
+            // The four-chip row is off in play (`ShowScoreRowInPlay`): your own hero and score sit in the bottom-left
+            // corner and the others arrive as plates. The row is still built, for spectators.
+            Assert.AreEqual(4, canvas.GetComponentsInChildren<RectTransform>(true).Count(r => r.name.StartsWith("ScoreRow")));
+            Assert.IsFalse(canvas.transform.HudFind("MatchScores").gameObject.activeSelf, "The four-chip row is retired in ordinary play.");
+            Assert.AreEqual(1, canvas.GetComponentsInChildren<Image>().Count(i => i.name == "VitalsPortrait" && i.enabled && i.sprite != null),
+                "A sprite reference alone is not a visible portrait: your hero must show in the score corner.");
             Assert.IsFalse(canvas.transform.HudFind("PowerSeals").gameObject.activeSelf, "Classic has no hero power UI.");
             var local = Object.FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None).First(m => m.PlayerSlot == GameLaunch.SoloSeat);
             foreach (var size in TumpUiCapture.HudViewports)
@@ -403,7 +406,9 @@ namespace TumbangPreso.PlayTests
             }
             finally
             {
-                actions.LoadBindingOverridesFromJson(overrides); Rebinding.Invalidate(); Rebinding.Save(actions);
+                // Loading an empty snapshot changes nothing, so clear the test's own rebinds first.
+                actions.RemoveAllBindingOverrides(); if (!string.IsNullOrEmpty(overrides)) actions.LoadBindingOverridesFromJson(overrides);
+                Rebinding.Invalidate(); Rebinding.Save(actions);
                 TouchInput.ReleaseAll(); TouchInput.Active = touchActive; TouchInput.Move = oldMove;
                 TouchHud.ForceVisible = touchVisible; SettingsStore.Current.ReducedUiMotion = reducedMotion;
                 InputSystem.RemoveDevice(pad); InputSystem.RemoveDevice(keyboard);
@@ -606,7 +611,7 @@ namespace TumbangPreso.PlayTests
                 Assert.AreEqual("Ready Up", prompt.text); Assert.IsEmpty(detail.text);
                 Assert.IsTrue(glyph.enabled); Assert.AreSame(InputGlyphs.For(Hud.KeyLabelFor("ReadyUp"), true), glyph.sprite);
                 Assert.That(Hud.KeyLabelFor("ReadyUp"), Does.Contain("F10"));
-                Assert.AreEqual(64, glyph.rectTransform.rect.height);
+                Assert.AreEqual(58, glyph.rectTransform.rect.height);
                 foreach (var shape in new[] { new Vector2Int(960, 540), new Vector2Int(1600, 680) })
                     yield return TumpUiCapture.Capture("Feedback-ready-up-" + shape.x + "x" + shape.y, hud.Canvas, shape.x, shape.y, false, true);
                 Assert.IsNull(Rebinding.TryRebind(actions, "ReadyUp", pad.rightStickButton));
@@ -621,13 +626,16 @@ namespace TumbangPreso.PlayTests
                 TouchInput.Active = false;
                 Hud.Instance.ShowReadyPrompt(false); yield return null;
                 Assert.IsFalse(glyph.enabled); Assert.That(prompt.text, Does.Not.Contain("Ready Up"));
-                Assert.AreEqual(1100, prompt.rectTransform.rect.width, "Non-ready action prompts keep their original layout.");
+                // The prompt is sized to its words by `SizePromptPlate` (a plate that fits, not a fixed 1100 strip), and never wider than the strip.
+                Assert.Less(prompt.rectTransform.rect.width, 1100f, "Non-ready action prompts are sized to their words again.");
                 Hud.Instance.EnterSpectatorMode(); yield return null;
                 Assert.IsFalse(prompt.gameObject.activeInHierarchy);
             }
             finally
             {
-                actions.LoadBindingOverridesFromJson(overrides); Rebinding.Invalidate(); Rebinding.Save(actions);
+                // Loading an empty snapshot changes nothing, so clear the test's own rebinds first.
+                actions.RemoveAllBindingOverrides(); if (!string.IsNullOrEmpty(overrides)) actions.LoadBindingOverridesFromJson(overrides);
+                Rebinding.Invalidate(); Rebinding.Save(actions);
                 TouchInput.Active = touch; TouchHud.ForceVisible = force;
                 InputSystem.RemoveDevice(keys); InputSystem.RemoveDevice(pad);
                 QualitySettings.globalTextureMipmapLimit = mip;
@@ -673,7 +681,7 @@ namespace TumbangPreso.PlayTests
                     var descriptions = skills.Select(a => a.EffectiveDescription).ToArray();
                     yield return null;
                     Assert.AreEqual(Vector3.one * 1.25f, deck.localScale);
-                    Assert.AreEqual(new Vector2(-40, 30), deck.anchoredPosition);
+                    Assert.AreEqual(new Vector2(-22, 5), deck.anchoredPosition);
                     Assert.AreEqual(TumpPowerReadout.SkillDeckWidth * 1.25f, readout.DeckRect().width, .1f);
                     Assert.AreEqual(new Vector2(.5f, 0), ultimate.anchorMin, "Keyboard and pad keep the ultimate at the bottom centre.");
                     Assert.AreEqual(Vector3.one * 1.25f, ultimate.localScale);
@@ -694,7 +702,7 @@ namespace TumbangPreso.PlayTests
                 }
                 SettingsStore.Current.HudScale = 1.2f; yield return null;
                 Assert.AreEqual(1.5f, deck.localScale.x, .001f);
-                Assert.AreEqual(new Vector2(-40, 30), deck.anchoredPosition);
+                Assert.AreEqual(new Vector2(-22, 5), deck.anchoredPosition);
                 TouchInput.Active = true;
                 typeof(LastInputDevice).GetMethod("Set", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { InputDeviceKind.Touch });
                 yield return null;
@@ -736,7 +744,7 @@ namespace TumbangPreso.PlayTests
                     TouchInput.Active = useTouch;
                     typeof(LastInputDevice).GetMethod("Set", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { useTouch ? InputDeviceKind.Touch : InputDeviceKind.KeyboardMouse });
                     yield return null; yield return null;
-                    Vector2 expected = useTouch ? new Vector2(0, 34) : new Vector2(-40, 30);
+                    Vector2 expected = useTouch ? new Vector2(0, 34) : new Vector2(-22, 5);
                     Assert.AreEqual(expected, deck.anchoredPosition);
                     foreach (float next in new[] { 1.2f, 1f })
                     {
@@ -769,7 +777,10 @@ namespace TumbangPreso.PlayTests
             {
                 TouchInput.Active = false; SettingsStore.Current.ToggleRestore = false;
                 typeof(LastInputDevice).GetMethod("Set", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { InputDeviceKind.KeyboardMouse });
+                // The can reset needs a defender, and the other seats exist only when bots are on.
+                Settings.SettingsStore.Current.AiDifficulty = 1; AIController.BotsEnabled = true;
                 yield return MapRetrievalProbe.Load(SceneFlow.Eskinita);
+                actions.RemoveAllBindingOverrides(); Rebinding.Invalidate();
                 Hud.Instance.ShowReadyPrompt(false);
                 var local = GameServices.Round.PlayerAt(GameLaunch.SoloSeat); local.Intent.Parked = false;
                 var shoe = local.GetComponent<Carrier>().Held; Assert.IsNotNull(shoe);
@@ -816,7 +827,9 @@ namespace TumbangPreso.PlayTests
             }
             finally
             {
-                actions.LoadBindingOverridesFromJson(overrides); Rebinding.Invalidate(); Rebinding.Save(actions);
+                // Loading an empty snapshot changes nothing, so clear the test's own rebinds first.
+                actions.RemoveAllBindingOverrides(); if (!string.IsNullOrEmpty(overrides)) actions.LoadBindingOverridesFromJson(overrides);
+                Rebinding.Invalidate(); Rebinding.Save(actions);
                 InputSystem.RemoveDevice(keys); InputSystem.RemoveDevice(pad);
                 TouchInput.Active = touch; SettingsStore.Current.ToggleRestore = toggle; QualitySettings.globalTextureMipmapLimit = mip;
                 typeof(LastInputDevice).GetMethod("Set", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { device });
@@ -1189,7 +1202,8 @@ namespace TumbangPreso.PlayTests
             view.Tick(local,false,false,false,false);Assert.AreEqual("",view.WarningText);
             local.Teleport(new Vector3(0,.1f,-8));round.Lata.HostKnockDown(2);Assert.IsFalse(round.Lata.IsUpright);
             local.Intent.Set(Verb.SpecialAbility,true);view.Tick(local,false,false,false,false);
-            Assert.AreEqual("CANNOT THROW - CAN MUST BE UPRIGHT FIRST",view.WarningText);
+            // Protocol 146: a downed can no longer forbids a throw, so the thrower gets no refusal for it.
+            Assert.AreEqual("",view.WarningText);
             var defender=round.PlayerAt(GameServices.Match.DefenderSlot);defender.Intent.Parked=false;defender.Intent.Set(Verb.SpecialAbility,true);
             view.Tick(defender,false,false,false,false);Assert.AreEqual("CANNOT TAG - CAN MUST BE UPRIGHT FIRST",view.WarningText);
             local.Intent.Clear();local.Intent.Set(Verb.Sprint,true);local.Stamina.ApplyNetworkSnapshot(0,0,2.5f);
@@ -1336,6 +1350,8 @@ namespace TumbangPreso.PlayTests
             bool reduced = SettingsStore.Current.ReducedUiMotion; int solo = GameLaunch.SoloSeat;
             try
             {
+                // The other seats are built only when bots are on, and that follows the saved difficulty.
+                Settings.SettingsStore.Current.AiDifficulty = 1; AIController.BotsEnabled = true;
                 // A live round (past the opening and the role card), the way the capture pass stages it.
                 GameLaunch.SoloSeat = (MatchRules.DefenderSlotFor(1) + 1) % 4;
                 yield return UiArtboardShots.Match("Eskinita", GameMode.HeroStrike);
