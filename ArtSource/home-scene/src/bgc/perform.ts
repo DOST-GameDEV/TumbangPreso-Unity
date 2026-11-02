@@ -61,19 +61,19 @@ export const LINE = { x: -0.55, z: -8.35 };
 /** Rago stands between the line and the can. */
 export const POST = { x: 0.05, z: -1.45 };
 export const REST_SLIPPER = { x: 2.1, z: 2.0 };
-const CAN_DOWN = { x: 1.15, z: -0.35 };
+const CAN_DOWN = { x: 1.1, z: -0.5 };
 /** Where he rights it from: beside it, still on the side he guards. */
-const SET = { x: 0.7, z: -0.95 };
+const SET = { x: 0.75, z: -1.05 };
 /** Where Rago's hand nearly has him and Backtrack takes him: heading home past the can. */
-export const STAND = { x: -0.6, z: -1.6 };
+export const STAND = { x: 0.7, z: -1.9 };
 /** Where Rago's lunge starts: the can is between him and Zack, and he does not see it. */
-const CREEP = { x: 0.3, z: 0.75 };
+const CREEP = { x: 1.4, z: 0.6 };
 /** Where he ends up, past the can. */
-export const FLAT = { x: -0.4, z: -1.2 };
+export const FLAT = { x: 0.95, z: -1.35 };
 /** Where the can rolls the second time. */
-const CAN_KICKED = { x: -1.3, z: 0.2 };
+const CAN_KICKED = { x: 1.8, z: -0.9 };
 /** Rago's yaw through the lunge. */
-const LUNGE_YAW = 339;
+const LUNGE_YAW = 344;
 
 /** Height of a key on a list of [frame, x, z] waypoints. */
 const path = (f: number, pts: [number, number, number][], e: Ease = easeInOut) => {
@@ -167,7 +167,7 @@ const CHASE_R: [number, number, number][] = [
   [B.reset + 51, 2.3, 0.9],
   [B.reset + 75, 2.6, 3],
   [B.reset + 96, 1, 3.4],
-  [B.commit - 9, 0.35, 1.6],
+  [B.commit - 9, 1.3, 1.8],
   [B.commit, CREEP.x, CREEP.z],
 ];
 const unwrapTo = (yaw: number, near: number) => yaw + 360 * Math.round((near - yaw) / 360);
@@ -265,6 +265,7 @@ const zackLayers = (f: number) => {
   return layers;
 };
 
+const IDLE_YAW = 176 + 2.5 * idleSin(INTRO - 40, 2, 0.6);
 const zackYaw = (f: number) => f >= B.scoop + 12 && f < B.snapBack ? zackHeading(f) : kf(f, [
     [0, 8],
     [B.lookUp, 8],
@@ -290,14 +291,16 @@ const zackYaw = (f: number) => f >= B.scoop + 12 && f < B.snapBack ? zackHeading
     [B.yank, 161],
     // He lands facing Rago and never turns from him: the lens is what goes round (camera.ts, `landing`).
     [B.snapBack + PULL + 8, 175],
-    [INTRO, 176], // the idle starts from here
+    [INTRO - 40, IDLE_YAW],
+    [INTRO, IDLE_YAW], // exactly where the idle starts, so the join cannot show
 ]);
 
 export const zack = (f: number): Frame => {
   const layers = f >= INTRO ? [{ clip: 'idle', t: (f - INTRO) / 30, w: 1 }] : zackLayers(f);
   const pulling = f >= B.snapBack && f < B.snapBack + PULL + 6;
   const at = f >= INTRO ? LINE : pulling ? zackPlace(f) : { x: rounded(f, (g) => zackPlace(g).x), z: rounded(f, (g) => zackPlace(g).z) };
-  const yaw = f >= INTRO ? 176 + 2.5 * idleSin(f, 2, 0.6) : rounded(f, zackYaw);
+  // ⚠️ THE JOIN: the film's last second is already the idle's own motion, unsmoothed, so nothing changes on the frame the clips swap.
+  const yaw = f >= INTRO - 40 ? 176 + 2.5 * idleSin(f, 2, 0.6) : rounded(f, zackYaw);
   // ⚠️ NO LIGHTNING EYES BEFORE THE CHASE IS DONE (owner, 2026-11-02). They catch on the look, stutter once, and hold through Backtrack.
   const glow = f >= B.look && f < B.land + 30 ? kf(f, [[B.look + 8, 0], [B.look + 11, 0.5], [B.look + 13, 0.1], [B.look + 16, 1], [B.land, 1], [B.land + 30, 0]]) : 0;
   // On the hold his eyes answer only his biggest moment of current.
@@ -309,7 +312,7 @@ export const zack = (f: number): Frame => {
     y: 0,
     yaw,
     layers,
-    samples: f < INTRO ? samplesOf(f, zackLayers) : undefined,
+    samples: f < INTRO - 30 ? samplesOf(f, zackLayers) : undefined,
     lift: [0, 0, 0],
     face: Math.max(glow, held) > 0.02 ? 'glow' : 'rest',
     eyeGlow: Math.max(glow, held),
@@ -373,9 +376,9 @@ const ragoPlace = (f: number) => {
   if (f < B.commit) return path(f, CHASE_R, linear);
   return path(f, [
     [B.commit, CREEP.x, CREEP.z],
-    [B.snapBack, 0.12, 0.3],
-    [B.yank, 0.0, 0.05],
-    [B.trip, -0.1, -0.15],
+    [B.snapBack, 1.3, 0.25],
+    [B.yank, 1.2, 0],
+    [B.trip, 1.15, -0.3],
     [B.sprawl, FLAT.x, FLAT.z],
     [B.walk, FLAT.x, FLAT.z],
     [B.pick - 4, CAN_KICKED.x - 0.1, CAN_KICKED.z - 0.75],
@@ -397,12 +400,13 @@ const ragoYaw = (f: number) => {
     [B.reset + 24, ragoHeading(B.reset + 24)],
     [B.commit, LUNGE_YAW],
     [B.rise + 20, LUNGE_YAW],
-    [B.walk + 10, 245],
-    [B.pick + 22, 180],
-    [B.pick + 34, 58],
-    [B.home - 6, 58],
-    [B.home + 6, 0],
-    [INTRO, 0],
+    [B.walk + 10, 428],
+    [B.pick - 4, 540],
+    [B.pick + 22, 540],
+    [B.pick + 30, 623],
+    [B.home - 6, 623],
+    [B.home + 6, 720], // a whole number of turns: the idle's 0
+    [INTRO, 720],
   ]);
 };
 
@@ -412,7 +416,7 @@ export const rago = (f: number): Frame => {
   const yaw = f >= INTRO ? 0 + 1.5 * idleSin(f, 3) : rounded(f, ragoYaw);
   // The hop out of his skin; the bounce off the floor.
   const hop = kf(f, [[B.jolt - 2, 0], [B.jolt + 5, 0.13, outQuad], [B.jolt + 12, 0], [B.jolt + 16, 0.02], [B.jolt + 20, 0]]) + kf(f, [[B.sprawl - 4, 0.09], [B.sprawl, 0.015], [B.sprawl + 4, 0.05], [B.sprawl + 8, 0.015]]) * (f >= B.sprawl - 4 && f < B.rise + 20 ? 1 : 0);
-  return { x: at.x, z: at.z, y: 0, yaw, layers, lift: [0, hop, 0], face: 'rest', eyeGlow: 0, slipper: { at: 'none' }, visible: 1, samples: f < INTRO ? samplesOf(f, ragoLayers) : undefined };
+  return { x: at.x, z: at.z, y: 0, yaw, layers, lift: [0, hop, 0], face: 'rest', eyeGlow: 0, slipper: { at: 'none' }, visible: 1, samples: f < INTRO - 30 ? samplesOf(f, ragoLayers) : undefined };
 };
 
 /** Where his head is while he is flat on the court, for the stars. */
@@ -459,24 +463,25 @@ export const flyingAt = (f: number): Flying | null => {
 
 export type CanFrame = { x: number; z: number; hop: number; rot: [number, number, number]; lying: number };
 
+/**
+ * ⚠️ NOTHING MOVES THE CAN BUT A BLOW OR A HAND (owner, 2026-11-02: "it js flies up on its own"). It lands in reach of where he stoops, he
+ * rights it there with his hand on it, and there it stays, so the can he trips on is the can he set up.
+ */
 export const canAt = (f: number): CanFrame => {
-  const rest: CanFrame = { x: 0, z: 0, hop: 0, rot: [0, 0, 0], lying: 0 };
-  const fall = (at: number, to: { x: number; z: number }, up: number, air = 16): CanFrame | null => {
-    const land = at + air;
-    if (f < at) return null;
-    if (f < land) {
+  type P = { x: number; z: number };
+  const fall = (at: number, from: P, to: P, up: number, air: number, rise: number): CanFrame => {
+    if (f < at + air) {
       const u = (f - at) / air;
-      return { x: to.x * u, z: to.z * u, hop: (air > 16 ? 3.2 : 1.5) * 4 * u * (1 - u), rot: [0, 60 * u, 900 * outQuad(u)], lying: u };
+      return { x: from.x + (to.x - from.x) * u, z: from.z + (to.z - from.z) * u, hop: rise * 4 * u * (1 - u), rot: [0, 60 * u, 900 * outQuad(u)], lying: u };
     }
     if (f < up) {
-      const r = clamp01((f - land) / 14);
+      const r = clamp01((f - at - air) / 14);
       return { x: to.x, z: to.z, hop: 0.06 * Math.max(0, 1 - r * 2), rot: [0, 60 + 30 * outCubic(r), 90], lying: 1 };
     }
-    if (f < up + 12) {
-      const u = easeInOut((f - up) / 12);
-      return { x: to.x * (1 - u), z: to.z * (1 - u), hop: 0.3 * 4 * u * (1 - u), rot: [0, 90 * (1 - u), 90 * (1 - u)], lying: 1 - u };
-    }
-    return null;
+    const u = easeInOut(clamp01((f - up) / 12));
+    return { x: to.x, z: to.z, hop: 0, rot: [0, 90 * (1 - u), 90 * (1 - u)], lying: 1 - u };
   };
-  return (f >= B.trip ? fall(B.trip, CAN_KICKED, B.pick + 4) : fall(B.tump + STOP, CAN_DOWN, B.reset + 2, 30)) ?? rest;
+  if (f >= B.trip) return fall(B.trip, CAN_DOWN, CAN_KICKED, B.pick + 4, 16, 1.5);
+  if (f >= B.tump + STOP) return fall(B.tump + STOP, { x: 0, z: 0 }, CAN_DOWN, B.reset + 2, 30, 3.2);
+  return { x: 0, z: 0, hop: 0, rot: [0, 0, 0], lying: 0 };
 };

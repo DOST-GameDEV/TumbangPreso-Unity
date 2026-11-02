@@ -31,3 +31,19 @@ The ring is a film's exaggeration and is not a skill in her kit. Cast: `phaister
 model. The set (`set.tsx`, `city.tsx`) is drawn from the landmarks in `IlalimNgTulay-poster.png`, in boxes like the cast.
 
 `src/ermita/beats.ts` is the one timetable.
+
+## Next pass: match Zack's film
+
+This cut has not been reviewed by the owner and is still on the drawn set. The next pass moves her to the real map with Zack's
+pipeline ([zack-bgc.md](zack-bgc.md), the workflow guide's plates section), not a second one.
+
+- What is hardcoded for Zack and needs parameters: `scripts/plates.mjs` (the module path, `zack-*` clips, `ZackPoses`, `Kanto`, the Rago and
+  can rows), `PoseDump.tsx`, `HomeFilmPlateRecorder` (`Figure.Build("zack"/"sean")`, the eye band and atlas in `BuildEyes`, `Floor` 0.12,
+  `KantoTraffic` lookup and `SetClockForGreen`), `plates.ts`. Kuro needs a row of his own. Measure her map's floor from the scene.
+- Her map is `IlalimNgTulay`, display name ERMITA. It has `Pigeons`, `LiveTraffic`, `StreetLife` and `LrtTrainSystem`; the traffic there is
+  a live road, so check that the recorder's clock drives it in a batch run, and that the train passes during her shots.
+- The map's poster is daytime. Use its real lighting if night does not hold up. Never fake a grade over it.
+- The owner on her: "very panget", "ang empty", "i cant tell wtf is happening", "it isnt as dynamic and cool as the original". The doll stays out.
+- Known weak: too many shots from behind, the hat hiding her face, a dim and small blast, the crane depends on a rich map, and the throw's first
+  frames fill the screen with the slipper. Nemu's fringe hides her face, so her deadpan is pose and timing. The ring is not in her kit.
+- Every owner note from Zack's review applies: see the rules in the workflow guide. Force her in a test with `HubSceneVideo.ForcedHero`.

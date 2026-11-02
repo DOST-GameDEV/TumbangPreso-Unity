@@ -95,6 +95,10 @@ The clips each model has can be listed from its glb; the common ones are `idle`,
 - Check a turn's keys. A key that goes from 372 to 12 is a slow full spin, not a small settle.
 - In any shot about two people, keep both in frame. The taya reacts to the thrower and follows them.
 - A walk's `rate` is the path's speed over the clip's stride (about 1.8 m/s for `walk`, 4.1 m/s for `sprint`), or the feet slide.
+- Lettering is Darumadrop One. No trace lines in the air, nothing the game does not show.
+- Effects are drawn over the plate, so they cannot pass behind anyone. Leave out what a nearer figure covers (`ragoCovers`).
+- Nothing moves a prop but a blow or a hand. Nobody stands and stares: if a taya can run, he runs.
+- The film's last second is the idle's own motion, and both clips use one CRF, so nothing changes at the swap. The idle has no cuts.
 - Blocks, not blobs: draw scenery from `box`, so it matches the cast and holds from every lens.
 - After `landing` there are no cuts, and everything in the idle repeats exactly on its 24 s clock.
 - Nothing important goes under a button, in any shot.

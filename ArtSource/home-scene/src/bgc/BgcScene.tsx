@@ -46,9 +46,9 @@ const FIST_R: [number, number, number] = [-0.085, 0, 0];
 const FIST_L: [number, number, number] = [0.085, 0, 0];
 /** The lamp of the real signal the film watches (Kanto's Traffic, the north east corner). */
 const SIGNAL: V3 = [16.7, 3.05, 16.6];
-/** Lettering in the game's own display face. */
+/** Lettering in Darumadrop, the owner's pick. */
 const Word: React.FC<{ text: string; h: number }> = ({ text, h }) => (
-  <text x={0} y={0} textAnchor="middle" fontFamily="Paalalabas" fontSize={h} fill="#F6C22B" stroke="#3A1020" strokeWidth={h * 0.12} strokeLinejoin="round" style={{ paintOrder: 'stroke' }}>{text}</text>
+  <text x={0} y={0} textAnchor="middle" fontFamily="Darumadrop One" fontSize={h} fill="#F6C22B" stroke="#3A1020" strokeWidth={h * 0.12} strokeLinejoin="round" style={{ paintOrder: 'stroke' }}>{text}</text>
 );
 const GHOSTS = 4;
 const GHOST_LIFE = 11;
@@ -120,6 +120,14 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
     // The current takes hold of him: his thin contour flickers on.
     if (snatched) push(<g key="zack" transform={`rotate(${d.roll} ${d.fx} ${d.fy})`} filter="url(#contour)"><ActorImage d={d.img} /></g>, [z.x, 1, z.z]);
   }
+  // ⚠️ THE EFFECTS ARE OVER THE PICTURE, SO THEY CANNOT PASS BEHIND ANYONE (owner, 2026-11-02: "some vfx go thru rago"). What belongs to
+  // something Rago is standing in front of is left out while he covers that spot.
+  const ragoCovers = (x: number, y: number, zz: number) => {
+    if (depth(v, [x, y, zz]) <= depth(v, [r.x, 1, r.z])) return false;
+    const [rx] = project(v, [r.x, 1, r.z]);
+    return Math.abs(project(v, [x, y, zz])[0] - rx) < scaleAt(v, [r.x, 1, r.z]) * 0.95;
+  };
+
   // ⚠️ BACKTRACK'S GHOST FRAMES (zack-kit plan: "ghost frames pulling into the landing"; thin hot contour, transparent faces).
   // Each is his real pose where he really was, crisp at full size, and takes its place in the depth order so Rago can stand
   // in front of it. It only burns off once he has gone past: the newest is the strongest, which is what says which way he went.
@@ -132,7 +140,7 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
       const a = Math.min(1, 1 - (f - Math.max(g, B.yank)) / GHOST_LIFE);
       if (a <= 0) continue;
       const at = pullAt(u);
-      if (!front(at.x, at.z)) continue;
+      if (!front(at.x, at.z) || ragoCovers(at.x, 1, at.z)) continue;
       const fr = zack(g);
       const d = figure(zk, v, { ...fr, x: at.x, z: at.z, slipper: { at: 'none' }, eyeGlow: 0, face: 'rest' }, LIGHT, false, { flash: 0.42, res: 1.2 });
       push(<g key={`e${i}`} transform={`rotate(${d.roll} ${d.fx} ${d.fy})`}>
@@ -194,7 +202,7 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
   }
   // ⚠️ THE CURRENT LIVES ON HIM: arcs jump between points of his own body, never out into the air.
   const bodyArcs = (key: string, n: number, opacity = 1) => {
-    if (!zackAt || n <= 0) return;
+    if (!zackAt || n <= 0 || ragoCovers(z.x, 1, z.z)) return;
     const at = zackAt;
     const pts: Pt[] = [at('forearm-right', FIST_R), at('arm-right', [0, 0, 0]), at('torso', [0, 0.06, 0.1]), at('arm-left', [0, 0, 0]), at('forearm-left', FIST_L), at('leg-left', [0, 0, 0.05]), at('leg-left', [0, -0.16, 0.05]), at('leg-right', [0, -0.16, 0.05]), at('leg-right', [0, 0, 0.05]), at('head', [0.12, 0.02, 0]), at('head', [-0.12, 0.02, 0])];
     const s = scaleAt(v, [z.x, 1, z.z]);
@@ -294,6 +302,7 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
         const dx = g.x - g2.x;
         const dz = g.z - g2.z;
         const len = Math.hypot(dx, dz) || 1;
+        if (ragoCovers(g.x, 0.15, g.z)) break;
         trail.push([g.x + (dz / len) * side, 0.15, g.z - (dx / len) * side]);
       }
       floorBolt(`mt${n}`, trail, Math.max(3, s * 0.03) + stage * 1.6, 0.6 + stage * 0.13);
@@ -350,7 +359,7 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
     const a = env(f, B.snapBack, B.snapBack + 1, pullEnd, pullEnd + 18);
     const u0 = f < pullEnd ? pullU(f) : 1;
     const path: V3[] = [];
-    for (let i = 0; i <= 14; i++) { const q = pullAt((u0 * (14 - i)) / 14); path.push([q.x, 0.15, q.z]); }
+    for (let i = 0; i <= 14; i++) { const q = pullAt((u0 * (14 - i)) / 14); if (ragoCovers(q.x, 0.15, q.z)) break; path.push([q.x, 0.15, q.z]); }
     if (f < B.land) floorBolt('bk0', path, 15, a, 0.09);
     if (f < B.land) floorBolt('bk1', path, 7, a * 0.8, 0.12, 7);
     pool('bkp', STAND.x, STAND.z, 1.5, env(f, B.snapBack, B.snapBack + 1, B.snapBack + 6, B.snapBack + 20) * 0.9);
@@ -544,7 +553,7 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
         {f >= B.tump + 5 && f < B.tump + STOP && <Burst x={icx} y={icy} s={300} />}
         {tumpWord > 0 && (
           <g opacity={tumpWord} transform={`translate(620 340) rotate(-7) scale(${kf(f, [[B.tump + 5, 0.4], [B.tump + 9, 1.2], [B.tump + 13, 1]])})`}>
-            <Word text="TUMP!" h={320} />
+            <Word text="TUMP!" h={260} />
           </g>
         )}
       </svg>

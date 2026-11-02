@@ -133,7 +133,7 @@ const SHOTS: Shot[] = [
   {
     at: B.reset - 14, in: 0, cam: (f) => {
       const u = clamp01((f - B.reset + 14) / 40);
-      return { p: [-2.6 + 0.4 * u, 0.85, -3.6], t: [0.8, 0.62, -0.7], f: 1250, roll: -1.2 };
+      return { p: [-1.9 + 0.3 * u, 0.8, 0.7], t: [0.95, 0.6, -0.78], f: 1250, roll: -1.2 };
     },
   },
   // Back to Zack as he slides in on the slipper, with Rago already coming.
