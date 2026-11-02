@@ -101,8 +101,8 @@ namespace TumbangPreso.UI
             int xp=profile?.Xp??0;_levelChip.text="LEVEL "+ProgressionRules.LevelForXp(xp);
             int into=ProgressionRules.XpIntoLevel(xp);_xpCount.text=into+" / "+ProgressionRules.XpPerLevel+" XP";
             _xpFill.rectTransform.anchorMax=new Vector2(Mathf.Clamp01(into/(float)ProgressionRules.XpPerLevel),1);
-            var people=Roster.GetPeople(SceneFlow.SelectedMode);int pick=Mathf.Clamp(Settings.SettingsStore.Current.CharacterPick,0,people.Count-1);
-            _ownerPortrait.sprite=OwnerPortraitArt.Get("UI/portraits/"+people[pick].Id);
+            // The same picture as HOME's profile button (owner, 2026-11-02: "profiles dont match").
+            _ownerPortrait.sprite=Avatars.Get(Avatars.Mine());
         }
         private bool Group(string title,string subtitle,bool openByDefault=true)
         {

@@ -57,6 +57,8 @@ Shader "TumbangPreso/XpBarber"
                 const float lightPart = 31.0 / 76.0;
                 float light = smoothstep(-soft, soft, d) * (1.0 - smoothstep(lightPart - soft, lightPart + soft, d)) + smoothstep(1.0 - soft, 1.0 + soft, d);
                 fixed4 c = tex2D(_MainTex, i.uv);
+                // The fill and the cream track share one outline; a fuller edge keeps the cream from showing through (owner, 2026-11-02).
+                c.a = saturate(c.a * 2.0);
                 c.rgb = lerp(_Dark.rgb, _Light.rgb, saturate(light));
                 c *= i.color;
                 #ifdef UNITY_UI_CLIP_RECT

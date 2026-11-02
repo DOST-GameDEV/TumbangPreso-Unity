@@ -118,6 +118,16 @@ namespace TumbangPreso.UI
             }
         }
 
+        /// <summary>This player's face: their choice, or the default for their name. HOME and the profile page both draw this.</summary>
+        public static string Mine()
+        {
+            var settings = Settings.SettingsStore.Current;
+            if (!string.IsNullOrEmpty(settings.AvatarId)) return settings.AvatarId;
+            var account = GameServices.Account;
+            return DefaultFor(account != null && !string.IsNullOrWhiteSpace(account.DisplayName) ? account.DisplayName
+                            : !string.IsNullOrWhiteSpace(settings.PlayerName) ? settings.PlayerName : "PLAYER");
+        }
+
         /// <summary>
         /// Puts an avatar on a node, framed the way the mark frames everything else.
         ///

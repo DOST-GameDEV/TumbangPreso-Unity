@@ -35,6 +35,7 @@ namespace TumbangPreso.UI.Hub
     {
         private Text _name, _tag, _level, _modeTitle, _playLabel, _xpLabel;
         private Image _xpFill, _avatar, _modePoster;
+        private Image _avatarBacking;
         private HubButton _play;
         private GameObject _skillNotice, _taskNotice;
         private HubPlateFit _plateFit;
@@ -62,6 +63,12 @@ namespace TumbangPreso.UI.Hub
             var wellPicture = HubBoard.Picture(avatarFace, avatarGroup, "avatar_well", "Well");
             wellPicture.gameObject.AddComponent<Mask>().showMaskGraphic = true;
             var well = HubBoard.Spec("avatar_well");
+            // The same picture, still, behind the one that lifts on hover: a gap shows the profile, not the peach well (owner, 2026-11-02).
+            var backing = HubKit.Rect(avatarFace, "Backing");
+            HubBoard.At(backing, avatarGroup, new Rect(well.x, well.y, well.w, well.h));
+            backing.SetParent(wellPicture, true);
+            _avatarBacking = backing.gameObject.AddComponent<Image>();
+            _avatarBacking.raycastTarget = false; _avatarBacking.preserveAspect = true;
             var pic = HubKit.Rect(avatarFace, "Face");
             HubBoard.At(pic, avatarGroup, new Rect(well.x, well.y, well.w, well.h));
             pic.SetParent(wellPicture, true);
@@ -137,11 +144,38 @@ namespace TumbangPreso.UI.Hub
 
         // ------------------------------------------------------------------ bottom right
 
+        /// <summary>THE ONE SWITCH for PLAY's travelling stripes (owner, 2026-11-02, an experiment). False puts back the
+        /// old button exactly: play_face.png with the default UI material.</summary>
+        public const bool PlayStripes = true;
+
+        /// <summary>True: the yarn travels with the stripes (owner, 2026-11-02). False: the yarn stays still and only the colour moves.</summary>
+        public const bool PlayKnitMoves = true;
+
+        /// <summary>The stripes' material, or null for the plain art: switched off, reduced motion, or a missing file.</summary>
+        public static Material PlayStripesMaterial()
+        {
+            if (!PlayStripes || HubStyle.ReducedMotion) return null;
+            var shader = Resources.Load<Shader>("Shaders/PlayBarber");
+            var knit = Resources.Load<Texture2D>(PlayKnitMoves ? "UI/play-stripes/play_knit_tile" : "UI/play-stripes/play_knit");
+            if (shader == null || knit == null) return null;
+            var material = new Material(shader);
+            material.SetTexture("_Knit", knit);
+            material.SetFloat("_KnitMove", PlayKnitMoves ? 1f : 0f);
+            material.SetFloat("_KnitWidth", knit.width);
+            return material;
+        }
+
         private void BuildPlay()
         {
             _play = HubBoard.Sticker(Root, "PlayButton", HubKit.BottomRight, "play", Play, out var playFace, out var playGroup);
             _playSpec = HubBoard.Label("play");
             _playLabel = HubBoard.Lettering(playFace, playGroup, "play", "Label");
+            var playStripes = PlayStripesMaterial();
+            if (playStripes != null)
+            {
+                playFace.GetComponent<Image>().material = playStripes;
+                _play.gameObject.AddComponent<HubPlayStripes>().Button = _play;
+            }
             HubBoard.Feel(_play, playFace, HubBoard.Depth("play"), 0.0f, true);
             HubSlap.On(_play.transform, 0.18f, -3);
 
@@ -253,8 +287,10 @@ namespace TumbangPreso.UI.Hub
             float into = profile != null ? ProgressionRules.XpIntoLevel(profile.Xp) / (float)ProgressionRules.XpPerLevel : 0;
             _plateFit.Into = Mathf.Clamp01(into);
 
-            _avatar.sprite = Avatars.Get(string.IsNullOrEmpty(settings.AvatarId) ? Avatars.DefaultFor(name) : settings.AvatarId);
+            _avatar.sprite = Avatars.Get(Avatars.Mine());
             _avatar.color = _avatar.sprite != null ? Color.white : new Color(0, 0, 0, 0);
+            _avatarBacking.sprite = _avatar.sprite;
+            _avatarBacking.color = _avatar.color;
 
             RefreshModeCard();
             RefreshNotices();

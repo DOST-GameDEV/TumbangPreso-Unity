@@ -1,5 +1,6 @@
 using System.Collections;
 using NUnit.Framework;
+using TumbangPreso.UI;
 using TumbangPreso.UI.Hub;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -291,6 +292,36 @@ namespace TumbangPreso.PlayTests
             yield return TumpUiCapture.Capture("Hub-Plate-Stripes-A", hub.Canvas, 1920, 1080, checkPalette: false);
             yield return new WaitForSecondsRealtime(2f);
             yield return TumpUiCapture.Capture("Hub-Plate-Stripes-B", hub.Canvas, 1920, 1080, checkPalette: false);
+        }
+
+        /// <summary>PLAY's stripes run through the still knit on its switch, and reduced motion gets the plain art.</summary>
+        [UnityTest, Timeout(120000)]
+        public IEnumerator PlayStripesRunOnTheKnit()
+        {
+            HubSceneVideo.ForcedHero = "phaister";
+            yield return HubFlowTests.OpenHome();
+            var hub = TumpHub.Current;
+            var play = System.Array.Find(hub.Canvas.GetComponentsInChildren<HubButton>(), b => b.name == "PlayButton").transform;
+            var face = play.Find("Face").GetComponent<Image>();
+            Assert.AreEqual("play_face", face.sprite.name, "The stripes must keep the art's own sprite for its shape.");
+            Assert.IsTrue(HubHome.PlayStripes, "The switch is off; PLAY should be the plain art.");
+            Assert.AreEqual("TumbangPreso/PlayBarber", face.material.shader.name);
+            Assert.IsNotNull(face.material.GetTexture("_Knit"), "The yarn layer did not load.");
+            Assert.AreEqual(0.12f, HubPlayStripes.SpeedFor(0f), 0.001f);
+            Assert.Greater(HubPlayStripes.SpeedFor(1f), HubPlayStripes.SpeedFor(0f) * 2f, "Highlighting PLAY should speed its stripes up.");
+            var avatarFace = System.Array.Find(hub.Canvas.GetComponentsInChildren<Image>(), i => i.name == "Backing");
+            Assert.AreEqual(Avatars.Get(Avatars.Mine()), avatarFace.sprite, "The profile's backing is not the player's picture.");
+            float phase = Shader.GetGlobalFloat("_PlayStripePhase");
+            yield return TumpUiCapture.Capture("Hub-Play-Stripes-A", hub.Canvas, 1920, 1080, checkPalette: false);
+            yield return new WaitForSecondsRealtime(5f);
+            yield return TumpUiCapture.Capture("Hub-Play-Stripes-B", hub.Canvas, 1920, 1080, checkPalette: false);
+            Assert.Greater(Shader.GetGlobalFloat("_PlayStripePhase"), phase, "The stripes stopped.");
+            yield return TumpUiCapture.Capture("Hub-Play-Stripes-1600", hub.Canvas, 1600, 680, checkPalette: false);
+            yield return TumpUiCapture.Capture("Hub-Play-Stripes-Phone", hub.Canvas, 844, 390, checkPalette: false);
+            bool reduced = Settings.SettingsStore.Current.ReducedUiMotion;
+            Settings.SettingsStore.Current.ReducedUiMotion = true;
+            try { Assert.IsNull(HubHome.PlayStripesMaterial(), "Reduced motion must keep the plain art."); }
+            finally { Settings.SettingsStore.Current.ReducedUiMotion = reduced; }
         }
 
         /// <summary>Phaister's loop, picked, prepares and advances in the real hub exactly as Zack's does.</summary>
