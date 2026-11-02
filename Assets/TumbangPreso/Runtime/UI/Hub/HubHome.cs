@@ -58,11 +58,13 @@ namespace TumbangPreso.UI.Hub
         {
             // AVATAR: the frame, the peach well, the player's picture inset in the well.
             var avatar = HubBoard.Sticker(Root, "AvatarButton", HubKit.TopLeft, "avatar_frame", () => Hub.Push<HubAvatar>(), out var avatarFace, out var avatarGroup);
-            HubBoard.Picture(avatarFace, avatarGroup, "avatar_well", "Well");
+            // The picture fills the well, cut to its rounded corners, with no second frame inside the box (owner, 2026-11-02).
+            var wellPicture = HubBoard.Picture(avatarFace, avatarGroup, "avatar_well", "Well");
+            wellPicture.gameObject.AddComponent<Mask>().showMaskGraphic = true;
             var well = HubBoard.Spec("avatar_well");
             var pic = HubKit.Rect(avatarFace, "Face");
-            HubBoard.At(pic, avatarGroup, new Rect(well.x + 9, well.y + 9, well.w - 18, well.h - 18));
-            pic.SetParent(avatarFace, true);
+            HubBoard.At(pic, avatarGroup, new Rect(well.x, well.y, well.w, well.h));
+            pic.SetParent(wellPicture, true);
             _avatar = pic.gameObject.AddComponent<Image>();
             _avatar.raycastTarget = false; _avatar.preserveAspect = true;
             HubBoard.Feel(avatar, avatarFace, HubBoard.Depth("avatar_frame"), 0.1f, false, pic);
