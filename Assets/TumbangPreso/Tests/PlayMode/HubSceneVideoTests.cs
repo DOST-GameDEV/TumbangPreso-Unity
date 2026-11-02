@@ -273,7 +273,17 @@ namespace TumbangPreso.PlayTests
             var fill = System.Array.Find(hub.Canvas.GetComponentsInChildren<Image>(), i => i.name == "XpFill");
             Assert.AreEqual("TumbangPreso/XpBarber", fill.material.shader.name);
             Assert.AreEqual(0.15f, fill.material.GetFloat("_Speed"), 0.001f);
-            fill.fillAmount = 0.65f;
+            var fit = hub.Canvas.GetComponentInChildren<HubPlateFit>();
+            HubBoard.SetWords(name, "Al", HubBoard.Label("Tump_ID"));
+            yield return null;
+            float small = fit.Shrink;
+            HubBoard.SetWords(name, "Longplayername", HubBoard.Label("Tump_ID"), 150f);
+            yield return null;
+            Assert.Greater(small, fit.Shrink, "The plate did not follow the name's length.");
+            yield return TumpUiCapture.Capture("Hub-Plate-LongName", hub.Canvas, 1920, 1080, checkPalette: false);
+            HubBoard.SetWords(name, "Player", HubBoard.Label("Tump_ID"));
+            yield return null;
+            fit.Into = 0.65f;
             yield return TumpUiCapture.Capture("Hub-Plate-Stripes-A", hub.Canvas, 1920, 1080, checkPalette: false);
             yield return new WaitForSecondsRealtime(2f);
             yield return TumpUiCapture.Capture("Hub-Plate-Stripes-B", hub.Canvas, 1920, 1080, checkPalette: false);
