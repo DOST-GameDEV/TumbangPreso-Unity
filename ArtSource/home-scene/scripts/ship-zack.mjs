@@ -12,8 +12,8 @@ const home = path.resolve('../../Assets/TumbangPreso/Resources/UI/home');
 fs.mkdirSync(path.resolve('renders'), { recursive: true });
 const hero = process.argv[2] ?? 'zack';
 const Hero = hero[0].toUpperCase() + hero.slice(1);
-// ⚠️ ONE CRF FOR BOTH CLIPS, so nothing changes at the swap. 20 and no animation tune (owner: "medyo blurry"): the tune's heavy deblocking softened the map's fine detail.
-const CRF = 20;
+// ⚠️ ONE CRF FOR BOTH CLIPS, so nothing changes at the swap. No animation tune (owner: "medyo blurry"): the tune's heavy deblocking softened the map's fine detail. 18 keeps Phaister's film at 93 MB; 17 is 106 MB, over GitHub's 100 MB limit.
+const CRF = 18;
 const parts = [
   { master: `out/${hero}_intro_1080p60.mp4`, clip: `${hero}-home-intro.mp4`, poster: `${hero}-home-intro-poster.png`, id: `${Hero}Intro`, crf: CRF },
   { master: `out/${hero}_idle_1080p30.mp4`, clip: `${hero}-home-loop.mp4`, poster: `${hero}-home-poster.png`, id: `${Hero}Idle`, crf: CRF },

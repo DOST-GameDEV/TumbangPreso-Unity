@@ -95,11 +95,13 @@ namespace TumbangPreso.EditorTools
             while (view.Showing != track.map || view.Camera == null) yield return null;
             yield return null; yield return null; // The world look lifts the ground in its first Update (MAP_PREVIEW_RECORDING.md).
 
-            const int width = 1920, height = 1080;
+            // ⚠️ DRAWN AT TWICE THE SIZE AND AVERAGED DOWN (owner, 2026-11-02: "sobrang blurry"). At 1080p the map itself came out soft, before any encoding: wires stair-stepped and textures sat on a lower mip.
+            const int width = 1920, height = 1080, supersample = 2;
+            QualitySettings.anisotropicFiltering = AnisotropicFiltering.ForceEnable;
             var camera = view.Camera;
             var source = camera.targetTexture;
-            var descriptor = source.descriptor; descriptor.width = width; descriptor.height = height;
-            var target = new RenderTexture(descriptor) { name = source.name, filterMode = source.filterMode };
+            var descriptor = source.descriptor; descriptor.width = width * supersample; descriptor.height = height * supersample;
+            var target = new RenderTexture(descriptor) { name = source.name, filterMode = FilterMode.Bilinear };
             target.Create();
             typeof(MapPreviewSurface).GetField("_target", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(view, target);
             camera.targetTexture = target;
@@ -539,6 +541,7 @@ namespace TumbangPreso.EditorTools
             readonly List<(Vector3 p, Quaternion q)[]> _end, _idle = new List<(Vector3, Quaternion)[]>();
             readonly Transform[] _bodies, _copies;
             readonly int[] _hiddenFrom, _copyFrom;
+            readonly bool[] _held;
 
             public static (Vector3 p, Quaternion q)[] Snap(KantoTraffic t)
             {
@@ -547,10 +550,14 @@ namespace TumbangPreso.EditorTools
                 return row;
             }
 
+            /// <summary>Whether any of a car would show: the true frame, widened by the car's own size at that distance. No distance limit, because a long lens still shows a car at 170 m.</summary>
             static bool InView(Camera c, Vector3 at)
             {
                 var v = c.WorldToViewportPoint(at);
-                return v.z > 0f && v.z < 170f && v.x > -0.35f && v.x < 1.35f;
+                if (v.z <= 0f) return false;
+                float y = 3.5f / (2f * v.z * Mathf.Tan(c.fieldOfView * 0.5f * Mathf.Deg2Rad));
+                float x = y / c.aspect;
+                return v.x > -x && v.x < 1f + x && v.y > -y && v.y < 1f + y;
             }
 
             public LoopedCars(KantoTraffic t, List<(Vector3 p, Quaternion q)[]> filmEnd, Camera lens)
@@ -565,26 +572,30 @@ namespace TumbangPreso.EditorTools
                     update.Invoke(t, null);
                 }
                 t.enabled = false;
-                int n = t.Drivers.Length, stuck = 0, hidden = 0, copied = 0;
-                _bodies = new Transform[n]; _copies = new Transform[n]; _hiddenFrom = new int[n]; _copyFrom = new int[n];
+                int n = t.Drivers.Length, hidden = 0, copied = 0, held = 0;
+                _bodies = new Transform[n]; _copies = new Transform[n]; _hiddenFrom = new int[n]; _copyFrom = new int[n]; _held = new bool[n];
                 for (int d = 0; d < n; d++)
                 {
                     _bodies[d] = t.Drivers[d].Body;
                     _hiddenFrom[d] = Idle; _copyFrom[d] = int.MaxValue;
                     if (_bodies[d] == null) continue;
-                    if (InView(lens, _idle[Idle - 1][d].p))
+                    // In frame for the whole stretch either side of the join, so it has no way in or out unseen. It stands where the film left it for the 24 s, which cannot jump.
+                    int leave = Idle - 1, arrive = _end.Count - 1;
+                    bool last = InView(lens, _idle[Idle - 1][d].p), first = InView(lens, _idle[0][d].p) && _end.Count > 0;
+                    if (last) while (leave > 0 && InView(lens, _idle[leave - 1][d].p)) leave--;
+                    if (first) while (arrive > 0 && InView(lens, _end[arrive - 1][d].p)) arrive--;
+                    if ((last && leave == 0) || (first && arrive == 0))
                     {
-                        int from = Idle - 1;
-                        while (from > 0 && InView(lens, _idle[from - 1][d].p)) from--;
-                        // In frame the whole 24 s, standing in a queue: it has nowhere to come from. Leave it be, and say so.
-                        if (from == 0) { stuck++; } else { _hiddenFrom[d] = from; hidden++; }
+                        _held[d] = true;
+                        held++;
+                        var v = lens.WorldToViewportPoint(_idle[0][d].p);
+                        Debug.Log("[HomeFilmPlates] held car " + d + " at " + v.ToString("F2") + ", would have travelled " + Vector3.Distance(_idle[0][d].p, _idle[Idle - 1][d].p).ToString("F1") + " m");
+                        continue;
                     }
-                    if (InView(lens, _idle[0][d].p) && _end.Count > 0)
+                    if (last) { _hiddenFrom[d] = leave; hidden++; }
+                    if (first)
                     {
-                        int from = _end.Count - 1;
-                        while (from > 0 && InView(lens, _end[from - 1][d].p)) from--;
-                        if (from == 0 && InView(lens, _end[0][d].p)) stuck++;
-                        _copyFrom[d] = from;
+                        _copyFrom[d] = arrive;
                         var copy = Object.Instantiate(_bodies[d].gameObject, _bodies[d].parent);
                         copy.name = _bodies[d].name + " (loop)";
                         foreach (var b in copy.GetComponentsInChildren<Behaviour>(true)) b.enabled = false;
@@ -592,7 +603,7 @@ namespace TumbangPreso.EditorTools
                         copied++;
                     }
                 }
-                Debug.Log("[HomeFilmPlates] looped cars: " + hidden + " hidden before the end, " + copied + " arriving for the start, " + stuck + " with nowhere to come from, of " + n + "; film end " + _end.Count + " frames");
+                Debug.Log("[HomeFilmPlates] looped cars: " + hidden + " hidden before the end, " + copied + " arriving for the start, " + held + " held still, of " + n + "; film end " + _end.Count + " frames");
             }
 
             public void Show(int i)
@@ -602,7 +613,8 @@ namespace TumbangPreso.EditorTools
                     var body = _bodies[d];
                     if (body == null) continue;
                     body.gameObject.SetActive(i < _hiddenFrom[d]);
-                    body.SetPositionAndRotation(_idle[i][d].p, _idle[i][d].q);
+                    int pose = _held[d] ? 0 : i;
+                    body.SetPositionAndRotation(_idle[pose][d].p, _idle[pose][d].q);
                     var copy = _copies[d];
                     if (copy == null) continue;
                     int at = _end.Count - (Idle - i);
