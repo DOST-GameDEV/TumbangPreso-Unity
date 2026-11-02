@@ -34,6 +34,9 @@ namespace TumbangPreso.UI.Hub
     {
         private static HubLoading _current;
         private Image _fill;
+        private RectTransform _fillClip;
+        // The log-in's own fit (`login3-tabs`): the pill rests in the well, its slab on the lip. 13 down and 61 tall of that art's 89.
+        private const float FillX = 12, FillY = 8.5f, FillWidth = 396, FillHeight = 40;
         private float _target, _shown;
         private Canvas _canvas;
         private string _scene;
@@ -158,10 +161,13 @@ namespace TumbangPreso.UI.Hub
             var design = OwnerUiLayout.DesignArea(root, "MapLoadingComposition");
             var track = HubKnit.Plate(design, "LoadingProgressTrack", Knit.Track);
             OwnerUiLayout.Place(track, 750, 990, 420, 58);
-            _fill = HubKit.Rect(track, "ActualProgress").gameObject.AddComponent<Image>();
+            _fillClip = HubKit.Rect(track, "ActualProgressClip");
+            _fillClip.gameObject.AddComponent<RectMask2D>();
+            HubKnit.In(_fillClip, FillX, FillY, 1, FillHeight);
+            _fill = HubKit.Rect(_fillClip, "ActualProgress").gameObject.AddComponent<Image>();
             HubKnit.KitFace(_fill, Knit.PillGo);
-            HubKnit.In(_fill.rectTransform, 6, 5, 70, 46);
-            _fill.gameObject.SetActive(false);
+            HubKnit.In(_fill.rectTransform, 0, 0, 70, FillHeight);
+            _fillClip.gameObject.SetActive(false);
 
             var failure = HubKit.Rect(root, "LoadingFailure"); HubKit.Stretch(failure);
             _failureControls = failure.gameObject; _failureControls.SetActive(false);
@@ -181,8 +187,8 @@ namespace TumbangPreso.UI.Hub
             _shown = Mathf.Lerp(_shown, _target, 1.0f - Mathf.Exp(-4.0f * Time.unscaledDeltaTime));
             if (_fill != null)
             {
-                _fill.gameObject.SetActive(_shown > .01f);
-                _fill.rectTransform.sizeDelta = new Vector2(Mathf.Max(70, 408 * _shown), 46);
+                _fillClip.gameObject.SetActive(_shown > .01f);
+                PaintFill(_shown);
             }
         }
 
@@ -269,7 +275,7 @@ namespace TumbangPreso.UI.Hub
             Debug.Log($"[HubLoading] {_scene} ready after {Time.realtimeSinceStartup - _began:F2} s.");
             // Let the rail visibly reach the end (bounded, so it never becomes a fixed wait).
             for (float t = 0; t < .25f && _shown < .995f; t += Time.unscaledDeltaTime) yield return null;
-            _shown = 1; _fill.gameObject.SetActive(true); _fill.rectTransform.sizeDelta = new Vector2(408, 46);
+            _shown = 1; _fillClip.gameObject.SetActive(true); PaintFill(1);
 
             // OwnerUiLayout creates a scene-root canvas bound by CanvasLifetime, not a child.
             // Keep the actual canvas so a real arena load can dismiss the curtain.
@@ -295,6 +301,13 @@ namespace TumbangPreso.UI.Hub
             var heroes = Visual.HeroFxPrewarm.Run(done => progress?.Invoke(.90f + done * .10f));
             try { while (heroes.MoveNext()) yield return heroes.Current; }
             finally { (heroes as System.IDisposable)?.Dispose(); }
+        }
+
+        private void PaintFill(float shown)
+        {
+            float width = Mathf.Round(FillWidth * shown);
+            _fillClip.sizeDelta = new Vector2(width, FillHeight);
+            _fill.rectTransform.sizeDelta = new Vector2(Mathf.Max(70, width), FillHeight);
         }
 
         private void OnDestroy()
