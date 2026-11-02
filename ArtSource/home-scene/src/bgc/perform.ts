@@ -288,19 +288,16 @@ const zackYaw = (f: number) => f >= B.scoop + 12 && f < B.snapBack ? zackHeading
     [B.snapBack, zackHeading(B.snapBack - 0.5), () => 1],
     [B.snapBack + 16, 161],
     [B.yank, 161],
-    // ⚠️ THE TURN (owner, 2026-11-02: "make him TURN AROUND"). He lands with his back to us, still watching Rago get up and keep the score.
-    // Only when that is done does he turn all the way round to the lens.
+    // He lands facing Rago and never turns from him: the lens is what goes round (camera.ts, `landing`).
     [B.snapBack + PULL + 8, 175],
-    [B.fold, 175],
-    [B.fold + 44, 4.4], // the idle starts from here
-    [INTRO, 4.4],
+    [INTRO, 176], // the idle starts from here
 ]);
 
 export const zack = (f: number): Frame => {
   const layers = f >= INTRO ? [{ clip: 'idle', t: (f - INTRO) / 30, w: 1 }] : zackLayers(f);
   const pulling = f >= B.snapBack && f < B.snapBack + PULL + 6;
   const at = f >= INTRO ? LINE : pulling ? zackPlace(f) : { x: rounded(f, (g) => zackPlace(g).x), z: rounded(f, (g) => zackPlace(g).z) };
-  const yaw = f >= INTRO ? 3 + 2.5 * idleSin(f, 2, 0.6) : rounded(f, zackYaw);
+  const yaw = f >= INTRO ? 176 + 2.5 * idleSin(f, 2, 0.6) : rounded(f, zackYaw);
   // ⚠️ NO LIGHTNING EYES BEFORE THE CHASE IS DONE (owner, 2026-11-02). They catch on the look, stutter once, and hold through Backtrack.
   const glow = f >= B.look && f < B.land + 30 ? kf(f, [[B.look + 8, 0], [B.look + 11, 0.5], [B.look + 13, 0.1], [B.look + 16, 1], [B.land, 1], [B.land + 30, 0]]) : 0;
   // On the hold his eyes answer only his biggest moment of current.

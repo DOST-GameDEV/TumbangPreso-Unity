@@ -31,12 +31,12 @@ const settle = (f: number): Cam => ({
 });
 
 /**
- * ⚠️ THE HOLD IS HIS ALONE (owner, 2026-11-01: "make him turn tapos focus ung camera to him tapos di na kita si rago"). The lens
- * stands on the line from Rago through Zack, so Rago is behind him, and the drift is too small to bring him out.
+ * ⚠️ THE HOLD IS FROM IN FRONT OF HIM (owner's sketch, 2026-11-02). Zack stays facing Rago and the LENS goes round: it stands between
+ * the two, so we face Zack, and Rago is behind us rather than vanishing behind Zack.
  */
 export const landing = (f: number): Cam => ({
-  p: [LINE.x - 0.39 + 0.04 * idleSin(f, 1, 0.4), 1.35 + 0.02 * idleSin(f, 2, 1.1), LINE.z - 4.5 + 0.05 * idleSin(f, 1, 2.1)],
-  t: [LINE.x + 0.16 + 0.015 * idleSin(f, 1, 1.4), 1.0 + 0.012 * idleSin(f, 2, 0.2), LINE.z],
+  p: [LINE.x + 0.39 + 0.04 * idleSin(f, 1, 0.4), 1.35 + 0.02 * idleSin(f, 2, 1.1), LINE.z + 4.5 + 0.05 * idleSin(f, 1, 2.1)],
+  t: [LINE.x - 0.16 + 0.015 * idleSin(f, 1, 1.4), 1.0 + 0.012 * idleSin(f, 2, 0.2), LINE.z],
   f: 1700 * (1 + 0.006 * idleSin(f, 1, 0.3)),
   roll: 0.15 * idleSin(f, 1, 0.5),
 });
@@ -201,8 +201,22 @@ const SHOTS: Shot[] = [
   },
   // The crash zoom: five frames across the court, arriving exactly as he does.
   { at: B.land - 1, in: 5, cam: (f) => settle(f) },
-  // He turns to us and the lens comes in on him.
-  { at: B.fold + 2, in: 74, cam: (f) => landing(f) },
+  // Rago has kept the score. The lens goes round Zack, on the side away from the can, and stops in front of him.
+  {
+    at: B.fold + 2, in: 0, cam: (f) => {
+      const u = easeInOut(clamp01((f - B.fold - 2) / 74));
+      const a = settle(f);
+      const b = landing(f);
+      const polar = (c: Cam) => ({ th: Math.atan2(c.p[0] - LINE.x, c.p[2] - LINE.z), r: Math.hypot(c.p[0] - LINE.x, c.p[2] - LINE.z) });
+      const pa = polar(a);
+      const pb = polar(b);
+      const th = pa.th + (pb.th - pa.th) * u;
+      const r = pa.r + (pb.r - pa.r) * u;
+      const onHim = clamp01(u * 3);
+      const look = lerp3(a.t, b.t, onHim);
+      return { ...blend(a, b, u), t: look, f: blend(a, b, u).f * (1 - 0.3 * Math.sin(Math.PI * u)), p: [LINE.x + Math.sin(th) * r, a.p[1] + (b.p[1] - a.p[1]) * u, LINE.z + Math.cos(th) * r] };
+    },
+  },
 ];
 
 const camOf = (f: number, n: number): Cam => {
@@ -236,6 +250,8 @@ export const camAt = (f: number): View => {
 
 /** Screen speed of the whip, for its blur. */
 export const panSpeed = (f: number) => {
+  // The last move is slow and is meant to be watched.
+  if (f >= B.fold) return { x: 0, y: 0 };
   const a = camAt(f);
   const b = camAt(f - 1);
   const dy = Math.abs(a.yaw - b.yaw) * (a.f / 57.3);

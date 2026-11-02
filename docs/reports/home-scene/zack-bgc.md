@@ -22,7 +22,8 @@ court, and it ends on Zack looking into the lens as his eyes light for the first
 The crux is Backtrack in slow motion. Rago's hand is on him and the whole street nearly stops. Zack drifts out of
 reach, each face gets a close-up, they lock eyes, and it is too late. Then real time: the yank, and Rago's foot finds
 the can. As he starts to fall the lens crashes across to Zack landing on the line in a burst of current, his back to
-us, watching. Rago gets up, rights the can and chalks one up. Only then does Zack turn all the way round to us.
+us, watching. Rago gets up, rights the can and chalks one up. Then the lens goes round Zack and stops between the two
+(the owner's sketch): we face him, and Rago is behind us rather than hidden behind him.
 
 The owner's notes that shaped it, 2026-11-01: use the redesigned models; "we alr have animations", so build on
 the models' own clips; "hindi shocked ung taya", shocked by the curved shot; communicate the curve and the
@@ -75,7 +76,7 @@ went, because it read as him being hit. On the hold the current appears three ti
 ## The hold
 
 Worked backward from the frame the player lives with: long lens, Zack large in the gap between HOME's
-tiles and its mode card, Rago hidden behind him once Zack has turned round. After the landing there are no
+tiles and its mode card, seen from in front of him with Rago behind the lens. After the landing there are no
 cuts. The idle is three passes of each hero's own 8 s `idle` clip, 720 frames, so it tiles exactly. The map's traffic and signals run on behind him.
 
 ## In the game
