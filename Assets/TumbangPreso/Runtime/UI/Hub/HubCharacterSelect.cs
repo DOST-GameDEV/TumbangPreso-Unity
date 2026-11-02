@@ -266,7 +266,7 @@ namespace TumbangPreso.UI.Hub
             for (int i = 0; i < count; i++)
             {
                 int index = i;
-                var tile = HubKnit.Button(grid, "Portrait" + i, null, Knit.Card, () => Pick(index));
+                var tile = HubKnit.Button(grid, "Portrait" + i, null, Knit.DarkCard, () => Pick(index));
                 HubKnit.In((RectTransform)tile.transform, (i % columns) * (cell + Gap), (i / columns) * (cell + Gap), cell, cell + 14);
                 var face = HubKit.Picture(tile.Body, "Face", HubKit.Portrait(People[i].Id));
                 HubKit.Stretch(face.rectTransform, 14); face.rectTransform.offsetMin = new Vector2(14, 28);
@@ -405,7 +405,7 @@ namespace TumbangPreso.UI.Hub
             {
                 bool usable = Usable(i) && !TakenByOther(i);
                 bool picked = i == _pick;
-                HubKnit.Recolour(_cells[i].transform, picked ? Knit.CardOn : usable ? Knit.Card : Knit.Well);
+                HubKnit.Recolour(_cells[i].transform, picked ? Knit.DarkCardOn : usable ? Knit.DarkCard : Knit.Well);
                 var original = _portraitColors[i];
                 _portraitFaces[i].color = usable ? original
                     : new Color(original.r * 0.62f, original.g * 0.62f, original.b * 0.62f, original.a);
@@ -646,7 +646,7 @@ namespace TumbangPreso.UI.Hub
                 // Another player just locked: their card pops and the room hears it.
                 bool justLocked = !first && locked && i < _seatWasLocked.Length && !_seatWasLocked[i] && !seat.Mine;
                 if (i < _seatWasLocked.Length) _seatWasLocked[i] = locked;
-                var card = HubKnit.Plate(_seats, "Seat" + i, open ? Knit.Well : seat.Mine ? Knit.CardOn : Knit.Card);
+                var card = HubKnit.Plate(_seats, "Seat" + i, open ? Knit.Well : seat.Mine ? Knit.DarkCardOn : Knit.DarkCard);
                 HubKnit.In(card, i * 300, 0, 284, SeatHeight);
                 var cardFace = HubKnit.FaceOf(card);
                 var person = seat.Occupied ? Roster.At(People, seat.CharacterPick) : null;

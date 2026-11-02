@@ -5,16 +5,17 @@ using UnityEngine.UI;
 namespace TumbangPreso.UI.Hub
 {
     /// <summary>
-    /// The hamburger: settings, party, career hub, and every door the old title screen had.
+    /// The hamburger: four rows only, SETTINGS, FRIENDS, CREDITS and EXIT GAME (owner, 2026-11-02).
     ///
-    /// ⚠️⚠️ THIS IS WHERE THE OLD FRONT END'S FEATURES ARE RE-HOMED, ONE VISIBLE ROUTE EACH
-    /// (`docs/TODO.md` UX-1.10). The title screen lost TUTORIAL, SETTINGS, CREDITS and QUIT on
-    /// 2026-09-18 with the owner saying *"we hhave new plan for main menu"*; this is that plan's
-    /// home for them. PROFILE is not here because the name plate is its door (§ 6.3: never a
-    /// second door for one place).
+    /// ⚠️⚠️ CAREER AND REPLAYS MOVED INTO THE PLAYER PROFILE (the name plate's door, tabs CAREER and
+    /// REPLAYS). LEARN TO PLAY and BACK TO TITLE are gone: the tutorial lives inside PRACTICE only.
+    /// MATCH RULES is gone too, because PRACTICE has its own RULES button now (`HubPracticePopup`);
+    /// a custom room's host keeps RULES in the room. PROFILE is not here because the name plate is
+    /// its door (§ 6.3: never a second door for one place).
     ///
-    /// ⚠️ QUIT GAME IS APART FROM THE REST AND IN DEEP RED, `Front_End_Design.md` § 2.4: the
-    /// destructive control is never a peer of the safe ones.
+    /// ⚠️ EXIT GAME IS APART FROM THE REST AND IN DEEP RED, `Front_End_Design.md` § 2.4: the
+    /// destructive control is never a peer of the safe ones. It is on touch too, except on iOS,
+    /// where `Application.Quit` does nothing and the platform's own rules say an app never quits itself.
     /// </summary>
     public sealed class HubMenu : HubScreen
     {
@@ -24,58 +25,51 @@ namespace TumbangPreso.UI.Hub
         public override void Build()
         {
             bool touch = Application.isMobilePlatform || InputLayer.TouchHud.ForceVisible;
-            float rowH = touch ? InputLayer.TouchMetrics.MinTargetUnits : 76, gap = touch ? 20 : 10;
-            // ⚠️ MATCH RULES is the old preparation board's rules sheet and bot difficulty, re-homed:
-            // PRACTICE starts at once from GAMEMODE SELECT, so its rules have to be reachable from
-            // somewhere a player goes first. A custom room's host reaches the same sheet from RULES.
-            string[] names = { "SETTINGS", "PARTY", "CAREER HUB", "REPLAYS", "MATCH RULES", "LEARN TO PLAY", "CREDITS", "BACK TO TITLE" };
-            HubGlyph.Mark[] marks = { HubGlyph.Mark.Gear, HubGlyph.Mark.Party, HubGlyph.Mark.Trophy, HubGlyph.Mark.Book, HubGlyph.Mark.Pencil,
-                                      HubGlyph.Mark.Book, HubGlyph.Mark.Info, HubGlyph.Mark.Exit };
+            bool canExit = Application.platform != RuntimePlatform.IPhonePlayer;
+            // The boot kit (`boot_menus.py`): a dark panel with its own red close, cream rows and a red EXIT GAME.
+            float rowH = touch ? Mathf.Max(120, InputLayer.TouchMetrics.MinTargetUnits) : 74, step = touch ? 150 : 90;
+            string[] names = { "SETTINGS", "FRIENDS", "CREDITS" };
+            HubGlyph.Mark[] marks = { HubGlyph.Mark.Gear, HubGlyph.Mark.Party, HubGlyph.Mark.Info };
             System.Action[] actions =
             {
                 () => { Close(); Hub.Host.OpenSettings(); },
                 () => { Close(); Hub.Host.OpenParty(); },
-                () => { Close(); Hub.Host.OpenCareer(); },
-                () => Hub.Push<HubReplays>(),
-                () => { Close(); Hub.Host.OpenCustomRules(); },
-                () => { Hub.Host.LeaveRoom(); SceneFlow.StartTraining(); },
                 () => { Close(); HubCredits.Open(Hub); },
-                () => { Hub.Host.LeaveRoom(); SceneFlow.Go(SceneFlow.MainMenu); },
             };
 
-            float height = touch ? 900 : 150 + names.Length * (rowH + gap) + 40 + rowH + 40;
-            var panel = HubKit.Place(HubKit.Rect(Root, "Panel"), touch ? HubKit.Centre : HubKit.TopRight,
-                touch ? Vector2.zero : new Vector2(-HubKit.Margin + 6, -HubKit.Margin + 6),
-                new Vector2(touch ? 1620 : 520, height));
-            var plate = HubKit.Shape(panel, "Plate", HubStyle.Night, false, 131, 6, 30);
-            HubKit.Stretch(plate.rectTransform);
-            plate.ShadowOffset = new Vector2(10, -12);
+            // The panel is sized to its rows: the heading, three rows, a gap, then EXIT GAME.
+            float first = touch ? 200 : 160, exitY = first + names.Length * step + (touch ? 20 : 10), exitH = touch ? rowH : 100;
+            float pad = touch ? 55 : 50, width = touch ? 900 : 570;
+            float height = (canExit ? exitY + exitH : first + (names.Length - 1) * step + rowH) + pad;
+            var plate = HubKnit.Plate(Root, "Panel", Knit.DarkPanel);
+            if (touch) HubKnit.At(plate, (1920 - width) / 2, (1080 - height - HubKnit.SlabHeight) / 2, width, height + HubKnit.SlabHeight);
+            else HubKnit.At(plate, 1330, 30, width, height + HubKnit.SlabHeight);
+            var panel = HubKnit.FaceOf(plate);
+            panel.GetComponent<Image>().raycastTarget = true;
 
-            var close = HubKit.IconButton(panel, "CloseButton", HubGlyph.Mark.Close, HubStyle.DeepRed, () => Hub.Back(), 132);
-            HubKit.Place((RectTransform)close.transform, HubKit.TopRight, new Vector2(-24, -24), Vector2.one * (touch ? InputLayer.TouchMetrics.MinTargetUnits : 84));
+            var heading = HubKnit.Display(panel, "Heading", "MENU", touch ? 80 : 70, HubKnit.KitCream, TextAnchor.MiddleLeft);
+            if (touch) HubKnit.In(heading.rectTransform, 55, 40, 600, 100); else HubKnit.In(heading.rectTransform, 50, 37, 400, 90);
+            var close = HubKnit.Button(panel, "CloseButton", null, Knit.Danger, () => Hub.Back(), HubStyle.Label, HubGlyph.Mark.Close);
+            if (touch) HubKnit.In((RectTransform)close.transform, width - 175, 22, 130, 110); else HubKnit.In((RectTransform)close.transform, 414, 28, 116, 100);
             var prompt = HubKit.BackPrompt(close.transform);
             HubKit.Place((RectTransform)prompt.transform, HubKit.BottomLeft, new Vector2(-16, -16), new Vector2(40, 40));
-            var heading = HubKit.Text(panel, "Heading", "MENU", HubStyle.Display, true, HubBoard.Colour("#E1D2B7"), TextAnchor.MiddleLeft);
-            HubKit.Place(heading.rectTransform, HubKit.TopLeft, new Vector2(touch ? 48 : 34, -24), new Vector2(touch ? 1260 : 340, 96));
 
+            float rowW = width - (touch ? 110 : 90);
             for (int i = 0; i < names.Length; i++)
             {
-                var row = HubKit.Button(panel, "Menu" + names[i].Replace(" ", ""), names[i], HubStyle.Honey, actions[i],
-                                        HubStyle.Label, 140 + i, marks[i]);
-                float x = touch ? 48 + (i % 2) * 774 : 34;
-                float y = touch ? 164 + (i / 2) * (rowH + gap) : 140 + i * (rowH + gap);
-                HubKit.Place((RectTransform)row.transform, HubKit.TopLeft, new Vector2(x, -y), new Vector2(touch ? 750 : 452, rowH));
+                var row = HubKnit.Button(panel, "Menu" + names[i].Replace(" ", ""), names[i], Knit.ThinPlain, actions[i], touch ? 52 : 38, marks[i]);
+                HubKnit.In((RectTransform)row.transform, touch ? 55 : 50, first + i * step, rowW, rowH);
                 HubKit.LabelOf(row).alignment = TextAnchor.MiddleLeft;
                 HubSlap.On(row.transform, 0.02f * i, 0);
             }
 
-            if (!touch)
+            if (canExit)
             {
-                var quit = HubKit.Button(panel, "MenuQuitGame", "QUIT GAME", HubStyle.DeepRed, SceneFlow.Quit, HubStyle.Label, 150, HubGlyph.Mark.Close);
-                HubKit.Place((RectTransform)quit.transform, HubKit.BottomLeft, new Vector2(34, 36), new Vector2(452, rowH));
-                HubKit.LabelOf(quit).alignment = TextAnchor.MiddleLeft;
+                var exit = HubKnit.Button(panel, "MenuEXITGAME", "EXIT GAME", Knit.Danger, SceneFlow.Quit, touch ? 52 : 44, HubGlyph.Mark.Close);
+                HubKnit.In((RectTransform)exit.transform, touch ? 55 : 50, exitY, rowW, exitH);
+                HubKit.LabelOf(exit).alignment = TextAnchor.MiddleLeft;
             }
-            HubSlap.On(panel, 0, 0);
+            HubSlap.On(plate, 0, 0);
         }
     }
 
@@ -110,40 +104,29 @@ namespace TumbangPreso.UI.Hub
     {
         public override bool WearsBoard => true;
         public override bool IsPopup => true;
-        private Image _big;
+        private KitCutPicture _big;
         private readonly System.Collections.Generic.List<HubButton> _tiles = new System.Collections.Generic.List<HubButton>();
+        private readonly System.Collections.Generic.List<Image> _rims = new System.Collections.Generic.List<Image>();
 
         public override void Build()
         {
-            var panel = HubCards.Panel(Root, this, "PICTURE", "Pick the face your name plate wears.", new Vector2(1320, 760));
+            // The boot kit (`boot_heroes.py`): a dark popup, the picture in a lime-rimmed frame, the grid beside it.
+            var panel = HubKnit.DarkModal(Root, Hub, "PICTURE", "Pick the face your name plate wears.", 1420, 840, out _, true, true, new Vector2(250, 120));
 
-            // ⚠️ THE LARGE PICTURE IS HELD NEAR ITS ART'S OWN SIZE (owner 2026-10-28: "so pixelated").
-            // The avatars are 256 px; drawn 408 wide they were stretched 1.6 times. At 384 the frame
-            // still leads the panel, and it is centred on the grid's height beside it.
-            var frame = HubKit.Shape(panel, "BigFrame", HubStyle.Golden, false, 161, 6, 30);
-            HubKit.Place(frame.rectTransform, HubKit.BottomLeft, new Vector2(68, 110), new Vector2(420, 420));
-            _big = HubKit.Picture(frame.transform, "Picture", null);
-            HubKit.Stretch(_big.rectTransform, 18);
+            // ⚠️ THE LARGE PICTURE IS HELD NEAR ITS ART'S OWN SIZE (owner 2026-10-28: "so pixelated"): 460
+            // units from a 256 px avatar, the largest the board draws.
+            var frame = HubKit.Rect(panel, "BigFrame");
+            HubKnit.In(frame, 60, 250, 460, 460 + HubKnit.SlabHeight);
+            _big = HubKnit.Picture(frame, "Picture", null, 0, 0, 460, 460, .5f, 0);
+            HubKnit.RimOver(frame, true);
 
-            // ⚠️ SIX ACROSS, AS LARGE AS THE AREA ALLOWS, AND CENTRED IN IT (owner 2026-10-28: "so off
-            // center or not even kita"). Five across with a row gap tuned for 20 pictures left the 22 of
-            // today in five rows of 76-unit tiles pinned to the area's top-left, with a third of the
-            // area empty on the right. The block is measured and set in the middle of its area.
-            const float areaW = 700, areaH = 520, gap = 14;
-            var grid = HubKit.Place(HubKit.Rect(panel, "Grid"), HubKit.BottomRight, new Vector2(-48, 60), new Vector2(areaW, areaH));
-            const int columns = 6;
-            int rows = (Avatars.Ids.Length + columns - 1) / columns;
-            float size = Mathf.Floor(Mathf.Min((areaW - gap * (columns - 1)) / columns, (areaH - gap * (rows - 1)) / rows));
-            float blockW = columns * size + (columns - 1) * gap, blockH = rows * size + (rows - 1) * gap;
-            var origin = new Vector2((areaW - blockW) * 0.5f, -(areaH - blockH) * 0.5f);
+            // Six across, as the board lays them: 116 units a tile, 132 apart.
             for (int i = 0; i < Avatars.Ids.Length; i++)
             {
                 string id = Avatars.Ids[i];
-                int col = i % columns, row = i / columns;
-                var tile = HubKit.Button(grid, "Avatar_" + id, null, HubStyle.Night, () => Choose(id), 0, 170 + i);
-                HubKit.Place((RectTransform)tile.transform, HubKit.TopLeft, origin + new Vector2(col * (size + gap), -row * (size + gap)), new Vector2(size, size));
-                var face = HubKit.Picture(tile.Body, "Face", Avatars.Get(id));
-                HubKit.Stretch(face.rectTransform, 8);
+                int col = i % 6, row = i / 6;
+                var tile = HubKnit.ShowCard(panel, "Avatar_" + id, Avatars.Get(id)?.texture, 580 + col * 132, 230 + row * 132, 116, 116, 116, () => Choose(id));
+                _rims.Add(HubKnit.RimOver(tile.Body));
                 _tiles.Add(tile);
             }
             Show();
@@ -171,13 +154,9 @@ namespace TumbangPreso.UI.Hub
         private void Show()
         {
             string current = Current;
-            _big.sprite = Avatars.Get(current);
-            _big.color = Color.white;
+            _big.Fit(Avatars.Get(current)?.texture, 460, 460);
             for (int i = 0; i < _tiles.Count; i++)
-            {
-                bool mine = Avatars.Ids[i] == current;
-                HubKit.SetFill(_tiles[i], mine ? HubStyle.Persimmon : HubStyle.Night);
-            }
+                HubKnit.KitFace(_rims[i], Avatars.Ids[i] == current ? Knit.CardRimOn : Knit.CardRim);
         }
     }
 
@@ -196,28 +175,29 @@ namespace TumbangPreso.UI.Hub
 
         public override void Build()
         {
-            var panel = HubCards.Panel(Root, this, "SHOP", "Spend " + EconomyRules.CurrencyName + " on heroes and items. Earn it by playing.", new Vector2(1180, 700));
-            // ⚠️ THE STORE'S OWN AWNING OVER THE PANEL (`HubScenery`, 2026-09-24), so SHOP opens as the
-            // sari-sari store's window, the same store LOADOUT is the inside of. It sits behind the
-            // panel, so its shadow never falls on the heading.
-            var awning = HubKit.Rect(panel, "Awning").gameObject.AddComponent<HubAwning>();
-            awning.raycastTarget = false;
-            awning.rectTransform.anchorMin = awning.rectTransform.anchorMax = new Vector2(0.5f, 1);
-            awning.rectTransform.pivot = new Vector2(0.5f, 0);
-            awning.rectTransform.anchoredPosition = new Vector2(0, -14);
-            awning.rectTransform.sizeDelta = new Vector2(1240, 126);
-            awning.transform.SetAsFirstSibling();
-            HubSlap.On(awning, 0, 1.5f);
-            var heroes = HubCards.Art(panel, "HeroShopDoor", "HEROES", HubStyle.Persimmon, 181,
-                "Unlock heroes for online play. Every hero is free to try in Practice.",
-                new[] { "rafi", "phaister", "nemu" }, HubGlyph.Mark.Hero, () => { Close(); Hub.Push<HubHero>(h => h.ShopMode = true); });
-            HubKit.Place((RectTransform)heroes.transform, HubKit.BottomLeft, new Vector2(48, 48), new Vector2(520, 460));
-            var items = HubCards.Art(panel, "ItemShopDoor", "ITEMS", HubStyle.Golden, 182,
-                "New tsinelas and lata. Each one trades one strength for another.",
-                new[] { "heels", "karne", "loafers" }, HubGlyph.Mark.Slipper, () => { Close(); Hub.Push<HubLoadout>(l => l.StartUnowned = true); });
-            HubKit.Place((RectTransform)items.transform, HubKit.BottomRight, new Vector2(-48, 48), new Vector2(520, 460));
+            var panel = HubKnit.DarkModal(Root, Hub, "SHOP", "Spend " + EconomyRules.CurrencyName + " on heroes and items. Earn it by playing.", 1230, 815, out _, true, true, new Vector2(345, 130));
+            var heroes = ShopDoor(panel, "HeroShopDoor", "HEROES", "Unlock heroes for online play. Every hero is free to try in Practice.", 45, "sunburst-red",
+                new[] { ("rafi", 150f, 282f, 230f), ("nemu", 405f, 282f, 230f), ("phaister", 278f, 255f, 290f) }, () => { Close(); Hub.Push<HubHero>(h => h.ShopMode = true); });
+            var items = ShopDoor(panel, "ItemShopDoor", "ITEMS", "New tsinelas and lata. Each one trades one strength for another.", 630, "sunburst-lime",
+                new[] { ("heels", 105f, 310f, 170f), ("loafers", 450f, 310f, 170f), ("karne", 278f, 240f, 300f) }, () => { Close(); Hub.Push<HubLoadout>(l => l.StartUnowned = true); });
             HubSlap.On(heroes.transform, 0.02f, -2);
             HubSlap.On(items.transform, 0.08f, 2);
+        }
+
+        private static HubButton ShopDoor(RectTransform panel, string name, string title, string description, float x, string burst,
+                                          (string id, float cx, float cy, float size)[] art, System.Action open)
+        {
+            const float w = 555, h = 540;
+            var door = HubKnit.ShowCard(panel, name, Resources.Load<Texture2D>("UI/boot-kit/" + burst), x, 230, w, h, 400, open, false, false, 0, description);
+            foreach (var (id, cx, cy, size) in art)
+            {
+                var picture = HubKit.Picture(door.Body, "Cast_" + id, HubKit.Portrait(id));
+                HubKnit.In(picture.rectTransform, cx - size / 2, cy - size / 2, size, size);
+            }
+            HubKnit.RimOver(door.Body);
+            var label = HubKnit.Display(door.Body, "Label", title, 76, HubKnit.KitCream, TextAnchor.MiddleCenter);
+            HubKnit.In(label.rectTransform, 0, h - 130, w, 90);
+            return door;
         }
     }
 }

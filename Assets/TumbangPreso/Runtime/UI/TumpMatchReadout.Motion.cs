@@ -92,6 +92,7 @@ namespace TumbangPreso.UI
                     _crowns[i].rectTransform.localScale = Vector3.one * (1 - k);
                 }
             }
+            PaintOwnScore();
             PaintFlights(now, still);
             PaintSpectatorCards();
         }

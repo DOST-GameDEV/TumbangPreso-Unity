@@ -329,7 +329,8 @@ namespace TumbangPreso.Tests
             Assert.AreEqual("<Keyboard>/e", Key("Skill1"), "the signature ability");
             Assert.AreEqual("<Keyboard>/q", Key("Skill2"), "the attacking / defending ability");
             Assert.AreEqual("<Keyboard>/x", Key("Ultimate"));
-            Assert.AreEqual("<Keyboard>/tab", Key("AbilityInfo"));
+            Assert.AreEqual("<Keyboard>/f1", Key("AbilityInfo"));
+            Assert.AreEqual("<Keyboard>/tab", Key("Scoreboard"));
             Assert.AreEqual("<Keyboard>/t", Key("EmoteWheel"));
         }
 

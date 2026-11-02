@@ -699,6 +699,11 @@ namespace TumbangPreso.InputLayer
             MenuKit.Place(rt, new Vector2(0.5f, 0.5f), at, new Vector2(CalloutWidth, RowHeight));
 
             var face=go.GetComponent<ControllerCalloutFace>();face.PointsLeft=slot.Side==Side.Right;
+            // A thin-slab kit button, one type for every callout and yellow only while focused.
+            var kit=OwnerUiLayout.Rect(go.transform,"KitFace").gameObject.AddComponent<Image>();
+            kit.rectTransform.SetAsFirstSibling();OwnerUiLayout.Fill(kit.rectTransform);
+            UI.Hub.HubKnit.KitFace(kit,UI.Hub.Knit.ThinPlain);
+            go.GetComponent<ControllerCalloutButton>().Kit=kit;
 
             var button = go.GetComponent<Button>();
             button.transition = Selectable.Transition.None;
@@ -727,7 +732,7 @@ namespace TumbangPreso.InputLayer
                 glyphGo.transform.SetParent(go.transform, false);
 
                 var glyphRt = (RectTransform)glyphGo.transform;
-                glyphRt.anchorMin = glyphRt.anchorMax = new Vector2(0.0f, 0.5f);
+                glyphRt.anchorMin = glyphRt.anchorMax = new Vector2(0.0f, 0.56f);
                 glyphRt.pivot = new Vector2(0.0f, 0.5f);
                 glyphRt.anchoredPosition = new Vector2(PaperKit.Pad, 0.0f);
                 glyphRt.sizeDelta = new Vector2(GlyphSize, GlyphSize);
@@ -747,8 +752,9 @@ namespace TumbangPreso.InputLayer
             float textLeft = sprite != null ? PaperKit.Pad + GlyphSize + 10.0f : PaperKit.Pad;
 
             var label = OwnerUiLayout.Text(go.transform,"Job",name,28);
-            label.color=SettingsPalette.PanelInk;label.font=UI.Hub.HubKnit.SentenceFont(true);
+            label.color=UI.Hub.HubKnit.InkOf(UI.Hub.Knit.ThinPlain);label.font=UI.Hub.HubKnit.SentenceFont(true);
             label.name = "Job";
+            go.GetComponent<ControllerCalloutButton>().Words=label;
             label.raycastTarget = false;
             // 28 is the reading floor at 960x540, so a long action wraps. Two tightened lines fit
             // RowHeight, but vertical truncation still drops the second, so let it draw.
@@ -758,7 +764,7 @@ namespace TumbangPreso.InputLayer
             var lrt = label.rectTransform;
             lrt.anchorMin = new Vector2(0.0f, 0.0f);
             lrt.anchorMax = new Vector2(1.0f, 1.0f);
-            lrt.offsetMin = new Vector2(textLeft, 0.0f);
+            lrt.offsetMin = new Vector2(textLeft, RowHeight * .10f);
             lrt.offsetMax = new Vector2(-PaperKit.Pad, 0.0f);
 
             var callout = new Callout { Control = slot.Control, Label = label, Button = button };

@@ -144,7 +144,7 @@ namespace TumbangPreso.UI
 
             _hint = Label(headerRow.transform, "Hint", MenuKit.MinReadableUnits, UiTheme.Cream,
                           TextAnchor.MiddleRight);
-            _hint.text = "HOLD [TAB] TO INSPECT";
+            _hint.text = "HOLD [" + Hud.KeyLabelFor("AbilityInfo") + "] TO INSPECT";
             var hintLe = _hint.gameObject.AddComponent<LayoutElement>();
             hintLe.minWidth = 220;
 

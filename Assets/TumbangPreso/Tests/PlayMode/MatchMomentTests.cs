@@ -77,12 +77,12 @@ namespace TumbangPreso.PlayTests
             Assert.IsFalse(match.ApplyNetworkMoment(new MatchMoment(id, 11, match.RoundNumber + 1, 1, MatchMomentKind.FirstKnockdown)));
             Assert.IsTrue(match.ApplyNetworkMoment(new MatchMoment(id, 11, match.RoundNumber, 2, MatchMomentKind.SingleCatch)));
             yield return new WaitForSecondsRealtime(.1f);
-            Assert.AreEqual("MULTI KNOCKDOWN", banner.Phrase, "Another same-frame award must queue behind the current phrase.");
+            Assert.AreEqual("MULTI DOWN", banner.Phrase, "Another same-frame award must queue behind the current phrase.");
             Canvas.ForceUpdateCanvases();
             var title = banner.GetComponentsInChildren<Text>().First(t => t.name == "MomentTitle");
             Assert.Greater(title.cachedTextGenerator.vertexCount, 0, "An accepted string is not enough: the display title must generate visible geometry.");
             Assert.LessOrEqual(title.preferredWidth, title.rectTransform.rect.width);
-            Assert.IsNotNull(banner.GetComponent<CanvasRenderer>(), "The plate needs its own renderer.");
+            Assert.IsNotNull(banner.GetComponent<CanvasGroup>(), "The notice fades as one group.");
             yield return GameplayShots.Render(Camera.main, "triple-catch-visible-banner", true, outDir: "Logs/chain-awards-v2");
             Assert.AreEqual(2, events); Assert.AreEqual(points, match.ScoreFor(1), "Recognition cannot award points locally.");
             var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
@@ -90,7 +90,7 @@ namespace TumbangPreso.PlayTests
             var paint=typeof(MatchMomentBanner).GetMethod("Paint",flags);
             Assert.AreEqual(2.5f,MatchMomentBanner.Lifetime);
             began.SetValue(banner,Time.unscaledTime-2.49f);paint.Invoke(banner,null);
-            Assert.AreEqual("MULTI KNOCKDOWN",banner.Phrase);
+            Assert.AreEqual("MULTI DOWN",banner.Phrase);
             began.SetValue(banner,Time.unscaledTime-2.51f);paint.Invoke(banner,null);
             Assert.AreEqual("SINGLE CATCH",banner.Phrase,"The queued recognition gets its own full interval.");
             Hud.Instance.SetCleanFeed(true); yield return null;

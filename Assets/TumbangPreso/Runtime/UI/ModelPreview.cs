@@ -204,6 +204,154 @@ namespace TumbangPreso.UI
         public static readonly Color PreviewAmbient =
             new Color(0.64690f, 0.57440f, 0.48450f) * (1.35f * 0.65f);
 
+        // The displays wear the match's own light (owner, 2026-11-01: "use what we used for in-game
+        // lighting", then "the lighting we have on ilalim ng tulay"). The ambient, sun and soft ramp come
+        // from that map's WorldLookProfile row, the same one a match reads, and the grade is the one
+        // `IlalimNgTulay.unity` carries on its MapGrade (brightness 1, contrast 1.025, saturation 1.06).
+        private const string MatchMap = "IlalimNgTulay";
+        private static Visual.WorldLookProfile.MapLook MatchLook => Visual.WorldLookProfile.Current.Find(MatchMap);
+
+        /// <summary>
+        /// What a match does per camera in `WorldLookPresentation`, for this camera alone: the cast's soft
+        /// light ramp and the shader globals that switch it on. Set just before the camera renders and put
+        /// back right after, so nothing else on screen, and no match, ever sees them.
+        /// </summary>
+        private sealed class PreviewLook : MonoBehaviour
+        {
+            private static readonly int Ramp = Shader.PropertyToID("_WorldToonRamp"),
+                Weight = Shader.PropertyToID("_WorldLookWeight"), Shape = Shader.PropertyToID("_WorldLookShape"),
+                Soft = Shader.PropertyToID("_WorldSoftLight"), InkFloor = Shader.PropertyToID("_WorldCastInkFloor");
+
+            private Texture2D _ramp;
+            private Texture _oldRamp;
+            private float _oldWeight, _oldInkFloor;
+            private Vector4 _oldShape, _oldSoft;
+
+            public void Build()
+            {
+                var look = MatchLook;
+                if (look != null) _ramp = Visual.WorldLookPresentation.BuildRamp(look, Visual.WorldLookProfile.Current);
+            }
+
+            private void OnPreRender() => Begin();
+
+            /// <summary>What the camera does just before it draws. The baker calls it by hand: edit mode sends no render messages.</summary>
+            public void Begin()
+            {
+                ApplyStyle();
+                if (_ramp == null) return;
+
+                var p = Visual.WorldLookProfile.Current;
+                _oldRamp = Shader.GetGlobalTexture(Ramp);
+                _oldWeight = Shader.GetGlobalFloat(Weight);
+                _oldShape = Shader.GetGlobalVector(Shape);
+                _oldSoft = Shader.GetGlobalVector(Soft);
+                _oldInkFloor = Shader.GetGlobalFloat(InkFloor);
+
+                Shader.SetGlobalTexture(Ramp, _ramp);
+                Shader.SetGlobalFloat(Weight, 1.0f);
+                Shader.SetGlobalVector(Shape, new Vector4(p.BandEdge, p.UpperRim, p.FeetShade, p.MetalHighlight));
+                Shader.SetGlobalVector(Soft, new Vector4(p.Softness, p.Wrap, p.CastInkSelf, p.CastInkWidth));
+                Shader.SetGlobalFloat(InkFloor, p.CastInkFloor);
+            }
+
+            private void OnPostRender() => End();
+
+            public void End()
+            {
+                if (_ramp == null) return;
+
+                Shader.SetGlobalTexture(Ramp, _oldRamp);
+                Shader.SetGlobalFloat(Weight, _oldWeight);
+                Shader.SetGlobalVector(Shape, _oldShape);
+                Shader.SetGlobalVector(Soft, _oldSoft);
+                Shader.SetGlobalFloat(InkFloor, _oldInkFloor);
+            }
+
+            private void OnDestroy() { RestoreStyle(); if (_ramp != null) Destroy(_ramp); }
+
+            // ⚠️ THE CHROMATIC RENDER STYLE, WHATEVER THE PLAYER SAVED (owner, 2026-11-01: "use the chromatic
+            // shading setting not the toon outlines" for character displays). `RenderStyles.Apply` is the one
+            // thing that implements a style: it drops the ink hull (the `_OutlineSuppress` global) and turns on
+            // the radial colour fringe `ColourGrade` reads. It is applied just before this camera renders and
+            // undone by `StyleRestore` after the grade has run, so the setting, the match and every other
+            // camera keep what they had. The saved setting is never read or written.
+            private int _savedStyle = -1;
+
+            private void ApplyStyle()
+            {
+                if (_savedStyle >= 0) return;
+
+                _savedStyle = Settings.RenderStyles.InkOutlinesActive ? Settings.RenderStyles.Toon : Settings.RenderStyles.Chromatic;
+                Settings.RenderStyles.Apply(Settings.RenderStyles.Chromatic);
+            }
+
+            public void RestoreStyle()
+            {
+                if (_savedStyle < 0) return;
+
+                Settings.RenderStyles.Apply(_savedStyle);
+                _savedStyle = -1;
+            }
+        }
+
+        /// <summary>Added after the grade, so its OnRenderImage runs once the grade has read the style.</summary>
+        private sealed class StyleRestore : MonoBehaviour
+        {
+            public PreviewLook Look;
+            public PreviewCrease Crease;
+
+            private void OnRenderImage(RenderTexture source, RenderTexture destination)
+            {
+                if (Look != null) Look.RestoreStyle();
+                // The portraits' dark-tone lift goes on the graded frame, so it is the last thing the display does.
+                if (Crease != null) Crease.Lift(source, destination);
+                else Graphics.Blit(source, destination);
+            }
+        }
+
+        /// <summary>
+        /// One render with the display's look, for a caller outside play mode (the portrait baker): edit
+        /// mode sends no OnPreRender or OnRenderImage, so this does by hand what those two do. The returned
+        /// texture is graded, and the caller releases it. A person gets the crease shade before the grade and the dark-tone
+        /// lift after it, the same two passes the live display runs (`PreviewCrease`).
+        /// </summary>
+        public RenderTexture RenderWithDisplayLook(float saturation = DisplaySaturation, float creaseShare = PreviewCrease.FullShare,
+                                                    float liftPower = PreviewCrease.LiftPower)
+        {
+            var look = _camera.GetComponent<PreviewLook>();
+            var grade = _camera.GetComponent<Visual.ColourGrade>();
+            var crease = _camera.GetComponent<PreviewCrease>();
+            grade.Set(1.0f, 1.025f, saturation, 1.0f, 1.9f);
+            var graded = RenderTexture.GetTemporary(Target.descriptor);
+            try
+            {
+                look.Begin();
+                _camera.Render();
+                look.End();
+                crease.ShadeByHand(Target, creaseShare);
+                grade.GradeForCapture(Target, graded);
+                crease.LiftByHand(graded, liftPower);
+            }
+            finally { look.RestoreStyle(); }
+            return graded;
+        }
+
+        /// <summary>The displays run a little under the arena's saturation (owner, 2026-11-01), the same as the baked portraits.</summary>
+        public const float DisplaySaturation = 0.92f;
+
+        /// <summary>
+        /// The crease kernel's radius for the subject on show, in scene units: the look's radius is a full-size person's
+        /// metres, and the preview figure stands at <see cref="PreviewScale"/> times its body scale, as a match's does.
+        /// Zero for anything that is not a person, which gets neither the shade nor the lift.
+        /// </summary>
+        private float CreaseRadius()
+        {
+            if (!_isPerson || _model == null) return 0;
+            var look = Visual.WorldLookProfile.Current;
+            return look == null ? 0 : look.CharacterAmbientOcclusionRadius * _model.transform.lossyScale.y / Mathf.Max(.01f, _bodyScale) / PreviewScale;
+        }
+
         public const float TurnDegrees = 38.0f;
         public const float TurnPeriod = 9.0f;
         /// <summary>
@@ -541,8 +689,18 @@ namespace TumbangPreso.UI
             // own Environment: tonemap mode 3 at exposure 0.92 with white 1.9, and an adjustment
             // at contrast 1.03 and saturation 1.18. Adopting an arena's grade here instead would
             // make the character you pick a different colour from the one who walks out.
+            //
+            // ⚠️ THE CREASE SHADE IS ADDED BEFORE THE GRADE, because image effects run in component order and
+            // the shade goes in before the grade in a match. The lift is the last thing, in `StyleRestore`.
+            var crease = camGo.AddComponent<PreviewCrease>();
+            crease.Radius = CreaseRadius;
             camGo.AddComponent<Visual.ColourGrade>()
-                 .Set(1.0f, 1.03f, 1.18f, 0.92f, 1.9f);
+                 .Set(1.0f, 1.025f, DisplaySaturation, 1.0f, 1.9f);
+            var previewLook = camGo.AddComponent<PreviewLook>();
+            previewLook.Build();
+            var restore = camGo.AddComponent<StyleRestore>();
+            restore.Look = previewLook;
+            restore.Crease = crease;
 
             BuildLights();
             IsolateFromForeignLights();
@@ -570,19 +728,28 @@ namespace TumbangPreso.UI
             if (!_ambientSaved)
             {
                 _savedAmbientMode = RenderSettings.ambientMode;
+                _savedSky = RenderSettings.ambientSkyColor;
+                _savedEquator = RenderSettings.ambientEquatorColor;
+                _savedGround = RenderSettings.ambientGroundColor;
                 _savedAmbient = RenderSettings.ambientLight;
                 _savedAmbientIntensity = RenderSettings.ambientIntensity;
                 _ambientSaved = true;
             }
 
-            RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
+            // The match's trilight, which is what shades a body there. The flat value stays written
+            // beside it: it is what `PreviewAmbient` pins and what a Flat-mode reader would see.
+            RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Trilight;
+            var look = MatchLook;
+            RenderSettings.ambientSkyColor = look.Sky;
+            RenderSettings.ambientEquatorColor = look.Equator;
+            RenderSettings.ambientGroundColor = look.Ground;
             RenderSettings.ambientLight = PreviewAmbient;
             RenderSettings.ambientIntensity = 1.0f;
         }
 
         private bool _ambientSaved;
         private UnityEngine.Rendering.AmbientMode _savedAmbientMode;
-        private Color _savedAmbient;
+        private Color _savedAmbient, _savedSky, _savedEquator, _savedGround;
         private float _savedAmbientIntensity;
 
         private void IsolateFromForeignLights()
@@ -597,7 +764,7 @@ namespace TumbangPreso.UI
         }
 
         /// <summary>
-        /// The two lights out of `CharacterSelect.tscn`'s SubViewport, transcribed with the
+        /// The key light out of `CharacterSelect.tscn`'s SubViewport, transcribed with the
         /// same handedness flip the map importer uses.
         ///
         /// ⚠️ IT LIGHTS ITSELF. A map brings its own sun; a bare `.glb` brings nothing, so a
@@ -606,12 +773,18 @@ namespace TumbangPreso.UI
         /// </summary>
         private void BuildLights()
         {
-            Light(new Vector3(-0.5f, -0.433013f, 0.75f), new Vector3(0.0f, 0.866025f, 0.5f),
-                  1.35f * LightExposure, "PreviewKey", shadows: true);
+            // One sun, as in the match: the map's colour, intensity and elevation, with the trilight
+            // ambient as the shade. The azimuth is the character screen's own, so the lit side is
+            // the one the approved captures show.
+            var look = MatchLook;
+            var sun = Light(new Vector3(-0.5f, -0.433013f, 0.75f), new Vector3(0.0f, 0.866025f, 0.5f),
+                            look.SunIntensity, "PreviewKey", shadows: true, look.Sun);
 
-            Light(new Vector3(0.642788f, -0.262003f, -0.719846f),
-                  new Vector3(0.0f, 0.939693f, -0.342020f), 0.45f * LightExposure,
-                  "PreviewFill", shadows: false);
+            Vector3 forward = sun.transform.forward;
+            Vector3 flat = new Vector3(forward.x, 0.0f, forward.z).normalized;
+            float elevation = look.SunElevation * Mathf.Deg2Rad;
+            sun.transform.rotation = Quaternion.LookRotation(
+                flat * Mathf.Cos(elevation) + Vector3.down * Mathf.Sin(elevation), Vector3.up);
         }
 
         /// <summary>
@@ -619,7 +792,7 @@ namespace TumbangPreso.UI
         /// -Z and Unity along its +Z, and the mirror maps one onto the other, so a faithful
         /// basis conversion is all that is needed and no extra sign flip belongs here.
         /// </summary>
-        private void Light(Vector3 gz, Vector3 gy, float intensity, string name, bool shadows)
+        private Light Light(Vector3 gz, Vector3 gy, float intensity, string name, bool shadows, Color tint)
         {
             var go = new GameObject(name);
             go.transform.SetParent(_pivot, false);
@@ -632,8 +805,10 @@ namespace TumbangPreso.UI
             var light = go.AddComponent<Light>();
             light.type = LightType.Directional;
             light.intensity = intensity;
+            light.color = tint;
             light.cullingMask = 1 << PreviewLayer;
             light.shadows = shadows ? LightShadows.Soft : LightShadows.None;
+            return light;
         }
 
         /// <summary>
@@ -864,6 +1039,7 @@ namespace TumbangPreso.UI
                     isPerson ? Visual.ToonSkin.PersonOutlineWidth : Visual.ToonSkin.PropOutlineWidth,
                     palette);
             }
+
 
             double dressMs=measure?LoadElapsedMs(dressBegan):0;
             long petBegan=measure?System.Diagnostics.Stopwatch.GetTimestamp():0;
@@ -1432,6 +1608,9 @@ namespace TumbangPreso.UI
             if (!_ambientSaved) return;
 
             RenderSettings.ambientMode = _savedAmbientMode;
+            RenderSettings.ambientSkyColor = _savedSky;
+            RenderSettings.ambientEquatorColor = _savedEquator;
+            RenderSettings.ambientGroundColor = _savedGround;
             RenderSettings.ambientLight = _savedAmbient;
             RenderSettings.ambientIntensity = _savedAmbientIntensity;
             _ambientSaved = false;

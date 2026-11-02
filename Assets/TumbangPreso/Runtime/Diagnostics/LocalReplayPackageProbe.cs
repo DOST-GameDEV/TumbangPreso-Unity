@@ -97,10 +97,10 @@ namespace TumbangPreso.Diagnostics
             if (_phase == 0)
             {
                 Require(LocalReplayStore.SetFolder(_library, out string error), error);
-                TumpHub.Current.Push<HubMenu>(); Stage("menu-open"); _phase = 1;
+                Click("NamePlate"); Stage("profile-open"); _phase = 1;
             }
-            else if (_phase == 1 && ButtonNamed("MenuREPLAYS") != null)
-            { Click("MenuREPLAYS"); Stage("replays-route"); _phase = 2; }
+            else if (_phase == 1 && ButtonNamed("HubTabReplays") != null)
+            { Click("HubTabReplays"); Stage("replays-route"); _phase = 2; }
             else if (_phase == 2 && ButtonNamed("Replay0") != null)
             {
                 var field = GameObject.Find("ReplayFolder").GetComponent<InputField>();

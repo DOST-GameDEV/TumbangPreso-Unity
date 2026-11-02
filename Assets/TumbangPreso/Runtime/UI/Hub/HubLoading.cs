@@ -35,7 +35,6 @@ namespace TumbangPreso.UI.Hub
         private static HubLoading _current;
         private Image _fill;
         private float _target, _shown;
-        private static Sprite _railSprite;
         private Canvas _canvas;
         private string _scene;
         private float _began;
@@ -155,33 +154,22 @@ namespace TumbangPreso.UI.Hub
                 HubKit.Fit(name, 1600);
             }
 
-            // The title screen's rail (HomeCourtView), at the same size and place on the same
-            // 1920x1080 design, so a match load reads as the loader the game opens with.
+            // The boot kit's sunk track holding a lime pill that grows with the work (`boot_record.py`).
             var design = OwnerUiLayout.DesignArea(root, "MapLoadingComposition");
-            if (_railSprite == null)
-            {
-                var white = Texture2D.whiteTexture;
-                _railSprite = Sprite.Create(white, new Rect(0, 0, white.width, white.height), Vector2.one * .5f);
-                _railSprite.hideFlags = HideFlags.DontSave;
-            }
-            var sprite = _railSprite;
-            var rail = OwnerUiLayout.Rect(design, "LoadingProgressTrack").gameObject.AddComponent<Image>();
-            OwnerUiLayout.Place(rail.rectTransform, 775, 1018, 370, 7); rail.sprite = sprite;
-            rail.color = new Color(1, 1, 1, .24f); rail.raycastTarget = false;
-            _fill = OwnerUiLayout.Rect(design, "ActualProgress").gameObject.AddComponent<Image>();
-            OwnerUiLayout.Place(_fill.rectTransform, 775, 1018, 370, 7);
-            _fill.sprite = sprite; _fill.color = Color.white; _fill.raycastTarget = false;
-            _fill.type = Image.Type.Filled; _fill.fillMethod = Image.FillMethod.Horizontal; _fill.fillAmount = 0;
+            var track = HubKnit.Plate(design, "LoadingProgressTrack", Knit.Track);
+            OwnerUiLayout.Place(track, 750, 990, 420, 58);
+            _fill = HubKit.Rect(track, "ActualProgress").gameObject.AddComponent<Image>();
+            HubKnit.KitFace(_fill, Knit.PillGo);
+            HubKnit.In(_fill.rectTransform, 6, 5, 70, 46);
+            _fill.gameObject.SetActive(false);
 
             var failure = HubKit.Rect(root, "LoadingFailure"); HubKit.Stretch(failure);
             _failureControls = failure.gameObject; _failureControls.SetActive(false);
-            var message = HubKit.Text(failure, "Error", "", HubStyle.Body, false, HubStyle.Honey, TextAnchor.MiddleCenter);
-            HubKit.Place(message.rectTransform, HubKit.Centre, new Vector2(0, -205), new Vector2(1300, 70));
-            message.gameObject.AddComponent<Outline>().effectColor = HubStyle.Ink;
-            var back = HubKit.Button(failure, "LoadingReturn", "RETURN TO MENU", HubStyle.Honey,
-                SceneFlow.LeaveMatchToMainMenu, HubStyle.Label);
+            var message = HubKnit.Words(failure, "Error", "", 40, HubKnit.KitWhite, TextAnchor.MiddleCenter, true, 4);
+            HubKnit.At(message.rectTransform, 310, 710, 1300, 60);
+            var back = HubKnit.Button(failure, "LoadingReturn", "RETURN TO MENU", Knit.Danger, SceneFlow.LeaveMatchToMainMenu, 50);
             _returnButton = back;
-            HubKit.Place((RectTransform)back.transform, HubKit.Centre, new Vector2(0, -315), new Vector2(560, 144));
+            HubKnit.At((RectTransform)back.transform, 640, 780, 640, 124);
         }
 
         /// <summary>Moves the target only forward; <see cref="Update"/> eases the rail toward it.</summary>
@@ -191,7 +179,11 @@ namespace TumbangPreso.UI.Hub
         {
             // The splash's rate-based ease: never teleports between stages, never overshoots.
             _shown = Mathf.Lerp(_shown, _target, 1.0f - Mathf.Exp(-4.0f * Time.unscaledDeltaTime));
-            if (_fill != null) _fill.fillAmount = _shown;
+            if (_fill != null)
+            {
+                _fill.gameObject.SetActive(_shown > .01f);
+                _fill.rectTransform.sizeDelta = new Vector2(Mathf.Max(70, 408 * _shown), 46);
+            }
         }
 
         private IEnumerator Follow(AsyncOperation load)
@@ -277,7 +269,7 @@ namespace TumbangPreso.UI.Hub
             Debug.Log($"[HubLoading] {_scene} ready after {Time.realtimeSinceStartup - _began:F2} s.");
             // Let the rail visibly reach the end (bounded, so it never becomes a fixed wait).
             for (float t = 0; t < .25f && _shown < .995f; t += Time.unscaledDeltaTime) yield return null;
-            _shown = 1; _fill.fillAmount = 1;
+            _shown = 1; _fill.gameObject.SetActive(true); _fill.rectTransform.sizeDelta = new Vector2(408, 46);
 
             // OwnerUiLayout creates a scene-root canvas bound by CanvasLifetime, not a child.
             // Keep the actual canvas so a real arena load can dismiss the curtain.

@@ -56,6 +56,7 @@ namespace TumbangPreso.UI
             pop.color = slot == localSlot ? CourtPresentationPalette.Gold : CourtPresentationPalette.Paper;
             _popStarted[slot] = Time.unscaledTime;
             pop.enabled = true;
+            if (slot == localSlot) StartOwnGain(points);
         }
 
         /// <summary>Review captures only: raises the pop a real award would, without scoring.</summary>
@@ -91,28 +92,23 @@ namespace TumbangPreso.UI
             var c = _hitMark.color; c.a = u < .6f ? 1 : Mathf.Clamp01((1 - u) / .4f); _hitMark.color = c;
         }
 
-        /// <summary>Fits the sticker to the toast's words; hidden with them.</summary>
+        /// <summary>The toast is painted lettering on the world with no plate; the old plate object stays, hidden, for the probes.</summary>
         private void SizeToastPlate()
         {
-            if (_toastPlate == null || _toast == null) return;
-            bool show = _toast.enabled && !string.IsNullOrEmpty(_toast.text);
-            _toastPlate.enabled = show;
-            if (!show) return;
-            float width = Mathf.Min(1080, _toast.preferredWidth + 84);
-            _toastPlate.rectTransform.sizeDelta = new Vector2(width, ToastHeight);
+            if (_toastPlate != null) _toastPlate.enabled = false;
         }
 
-        /// <summary>The sticker lands: a short overshoot from 112% unless Reduced UI Motion is on.</summary>
+        /// <summary>The words stamp in letter by letter. Reduced UI Motion draws them at rest.</summary>
         private void PaintToast()
         {
-            if (_toastPlate == null || !_toastPlate.enabled) return;
-            float u = Mathf.Clamp01((Time.unscaledTime - _toastBorn) / .18f);
+            if (_toast == null || !_toast.enabled) return;
             var settings = Settings.SettingsStore.Current;
-            float pop = settings.ReducedUiMotion ? 1 : 1 + .12f * (1 - u) * (1 - u);
-            // HudReadingLayout owns the accessibility size; the pop rides on top of it.
+            // HudReadingLayout owns the accessibility size.
             float reading = Mathf.Max(Settings.GameSettings.ValidHudScale(settings.HudScale), settings.LargerText ? 1.2f : 1f);
-            var scale = Vector3.one * (pop * reading);
-            if (_toastPlate.rectTransform.localScale != scale) { _toastPlate.rectTransform.localScale = scale; _toast.rectTransform.localScale = scale; }
+            var scale = Vector3.one * reading;
+            if (_toast.rectTransform.localScale != scale) _toast.rectTransform.localScale = scale;
+            var letters = _toast.GetComponent<PaintedLetters>();
+            if (letters != null) letters.SetAge(settings.ReducedUiMotion ? float.PositiveInfinity : Time.unscaledTime - _toastBorn, _toast.text.Length);
         }
 
         private MatchMomentBanner _momentBanner;
@@ -129,50 +125,27 @@ namespace TumbangPreso.UI
             if (_root == null) return;
             var settings = Settings.SettingsStore.Current;
             float s = Mathf.Max(Settings.GameSettings.ValidHudScale(settings.HudScale), settings.LargerText ? 1.2f : 1f);
-            float height = _root.rect.height;
-            // Directly under the round beads: the clock tile, its tray and a small breath.
-            float y = BarTop + (ClockHeight + 14 + 24 + 10) * s;
             bool toast = _toast != null && _toast.enabled && !string.IsNullOrEmpty(_toast.text);
             bool moment = _momentBanner != null && _momentBanner.Showing;
             bool warning = _warningRoot != null && _warningRoot.gameObject.activeSelf;
-            float reticleTop = height * .5f - 58 * s, gap = 10 * s;
-            // Owner, 2026-10-06: the earned moment is directly under the match bar. Refusals and
-            // system notices (do not idle, out of bounds, tagged, camera notes) share one lane
-            // under it and stack, refusal first; the stack rises rather than reach the aim point.
-            if (moment)
-            {
-                float h = _momentBanner.LaneHeight;
-                y += (_momentBanner.HasBadge ? 26 : 6) * s; // the bonus badge rides above the tile
-                _momentBanner.Rest = new Vector2(0, height * (1 - .79f) - (y + h * .5f));
-                y += h + (9 + 4) * s + 8;
-            }
-            else if (_momentBanner != null) _momentBanner.Rest = Vector2.zero;
-            float warningHeight = warning ? _warningRoot.rect.height * _warningRoot.localScale.y + 6 * s : 0;
-            float toastHeight = toast ? (ToastHeight + 8) * s : 0;
-            float stack = warningHeight + toastHeight + (warning && toast ? gap : 0);
-            float top = Mathf.Max(y, height * .34f - (warning ? warningHeight : toastHeight) * .5f);
-            if (top + stack > reticleTop) top = Mathf.Max(y, reticleTop - stack);
+            // Live HUD: everything hangs from under the timer and its round count (board y 130). A warning keeps
+            // the top spot, a moment sits below it, and the toast under whichever is above it.
+            float top = 130 * s;
             if (warning)
             {
-                float h = warningHeight - 6 * s;
-                SetLaneY(_warningRoot, height * .34f - (top + h * .5f));
-                top += warningHeight + gap;
-                // A refused input shakes its head once: three quick swings that die out in .3 s.
-                float age = Time.unscaledTime - _warningShookAt;
-                float swing = settings.ReducedUiMotion || age > .3f ? 0 : Mathf.Sin(age * 62f) * 9f * (1 - age / .3f);
-                var at = _warningRoot.anchoredPosition;
-                if (Mathf.Abs(at.x - swing) > .01f) { at.x = swing; _warningRoot.anchoredPosition = at; }
-                // It lands: a quick pop on arrival, then it holds still to be read. The chip lands a beat after the tile.
-                float pop = settings.ReducedUiMotion || age > .2f ? 0 : Mathf.Sin(age / .2f * Mathf.PI) * .12f;
-                _warningRoot.localScale = Vector3.one * (.9f + pop);
-                float chipAge = age - .05f;
-                float chip = settings.ReducedUiMotion ? 1 : chipAge < 0 ? 0 : chipAge > .18f ? 1 : 1 + Mathf.Sin(chipAge / .18f * Mathf.PI) * .35f;
-                _warningChip.rectTransform.localScale = Vector3.one * chip;
+                _warning.Rest = new Vector2(_warningRoot.anchoredPosition.x, -(top + 46 * s));
+                top += 170 * s;
             }
+            if (moment)
+            {
+                _momentBanner.Rest = new Vector2(0, -(top + 50 * s));
+                top += 120 * s;
+            }
+            else if (_momentBanner != null) _momentBanner.Rest = new Vector2(0, -(top + 50 * s));
             if (toast)
             {
-                float centre = top + ToastHeight * s * .5f;
-                SetLaneY(_toast.rectTransform, -centre); SetLaneY(_toastPlate.rectTransform, -centre);
+                if (warning && !moment) top += 95 * s;
+                SetLaneY(_toast.rectTransform, -(top + ToastHeight * s * .5f));
             }
         }
 

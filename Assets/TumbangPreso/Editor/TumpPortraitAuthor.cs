@@ -14,6 +14,43 @@ namespace TumbangPreso.EditorTools
         private const int Size = 320;
 
         /// <summary>
+        /// A float from the command line, or the fallback. The crease shade and the dark-tone lift are the display's own
+        /// passes (`PreviewCrease`), at the match's Full share and the display's lift; `-tp-portrait-ao` and
+        /// `-tp-portrait-lift` change them for a test bake.
+        /// </summary>
+        private static float Argument(string name, float fallback)
+        {
+            var args = System.Environment.GetCommandLineArgs();
+            int at = System.Array.IndexOf(args, name);
+            return at >= 0 && at + 1 < args.Length ? float.Parse(args[at + 1], System.Globalization.CultureInfo.InvariantCulture) : fallback;
+        }
+
+        /// <summary>
+        /// With `-tp-portrait-light`, a test bake's sun comes from the camera's left and above rather than near the lens (owner, 2026-11-01), so a face
+        /// has a lit and a shaded side and the creases have depth. Bakes only: the live displays keep their own sun.
+        /// </summary>
+        private static void AimBakeSun(Quaternion cameraRotation)
+        {
+            var args = System.Environment.GetCommandLineArgs();
+            int at = System.Array.IndexOf(args, "-tp-portrait-light");
+            if (at < 0 || at + 1 >= args.Length) return;
+            float scale = float.Parse(args[at + 1], System.Globalization.CultureInfo.InvariantCulture);
+            foreach (var light in Object.FindObjectsOfType<Light>())
+            {
+                if (light.name != "PreviewKey") continue;
+                light.transform.rotation = Quaternion.LookRotation(cameraRotation * new Vector3(.72f, -.6f, .36f), Vector3.up);
+                light.intensity *= scale;
+            }
+        }
+
+        private static float FaceSaturation()
+        {
+            var args = System.Environment.GetCommandLineArgs();
+            int at = System.Array.IndexOf(args, "-tp-portrait-saturation");
+            return at >= 0 && at + 1 < args.Length ? float.Parse(args[at + 1], System.Globalization.CultureInfo.InvariantCulture) : ModelPreview.DisplaySaturation;
+        }
+
+        /// <summary>
         /// One roster person only, by `-tp-portrait-id amihan`, added to the manifest if new.
         /// ⚠️ Added 2026-09-25 for the eighth hero: `CaptureAll` re-bakes every portrait, and a new
         /// hero should not rewrite nineteen approved thumbnails to add one.
@@ -181,6 +218,7 @@ namespace TumbangPreso.EditorTools
             rect.sizeDelta = new Vector2(render, render);
             var preview = host.AddComponent<ModelPreview>();
             Texture2D image = null;
+            RenderTexture graded = null;
             var active = RenderTexture.active;
             try
             {
@@ -201,8 +239,11 @@ namespace TumbangPreso.EditorTools
                 camera.transform.rotation = rot;
                 camera.transform.position = aim - rot * Vector3.forward * distance;
                 camera.farClipPlane = distance * 2f + 1f;
-                camera.Render();
-                RenderTexture.active = preview.Target;
+                AimBakeSun(rot);
+                // The display's own look (Ilalim ng Tulay light, soft ramp, Chromatic style, grade), by hand:
+                // edit mode sends the camera no render messages. Baked portraits run less saturated (owner, 2026-11-01).
+                graded = preview.RenderWithDisplayLook(FaceSaturation(), Argument("-tp-portrait-ao", PreviewCrease.FullShare), Argument("-tp-portrait-lift", PreviewCrease.LiftPower));
+                RenderTexture.active = graded;
                 image = new Texture2D(render, render, TextureFormat.RGBA32, false);
                 image.ReadPixels(new Rect(0, 0, render, render), 0, 0);
                 image.Apply();
@@ -214,6 +255,7 @@ namespace TumbangPreso.EditorTools
             finally
             {
                 RenderTexture.active = active;
+                if (graded != null) RenderTexture.ReleaseTemporary(graded);
                 if (image != null) Object.DestroyImmediate(image);
                 if (preview.Subject != null) Object.DestroyImmediate(preview.Subject.transform.parent.gameObject);
                 Object.DestroyImmediate(host);
@@ -253,7 +295,7 @@ namespace TumbangPreso.EditorTools
         /// <summary>A hat or a crown of antlers taller than the cast's hair needs more of the figure to reach the chin.</summary>
         private static readonly Dictionary<string, Vector2> BustFor = new Dictionary<string, Vector2>
         {
-            { "phaister", new Vector2(1.02f, .08f) }, { "paete", new Vector2(.78f, .10f) },
+            { "phaister", new Vector2(.8f, .08f) }, { "paete", new Vector2(.64f, .10f) }, { "sean", new Vector2(.68f, .14f) }, { "lola_pacing", new Vector2(.72f, .12f) }, { "nemu", new Vector2(.72f, .10f) }, { "maring", new Vector2(.74f, .12f) }, { "kuya_boy", new Vector2(.72f, .12f) },
         };
 
         private static Texture2D CropBust(Texture2D source, string id)
@@ -296,6 +338,132 @@ namespace TumbangPreso.EditorTools
                         c += source.GetPixelBilinear((sx + .5f) / w, (h - 1 - sy + .5f) / h);
                     }
                     result[(FaceSize - 1 - v) * FaceSize + u] = c * .25f;
+                }
+            output.SetPixels32(result); output.Apply();
+            return output;
+        }
+
+        /// <summary>
+        /// Every tsinelas seen flat on: straight down at the top face, strap showing, toe up, an
+        /// orthographic camera (no perspective tilt), in the display's lighting and Chromatic style.
+        /// Written to <see cref="FlatOutput"/>, never over the existing slipper thumbnails.
+        /// `-tp-portrait-id a,b` limits it. Size and import settings follow the slipper thumbnails.
+        /// </summary>
+        public static void CaptureSlippersFlat()
+        {
+            var book = RosterBook.Load();
+            if (book == null) throw new System.InvalidOperationException("RosterBook is required for real portraits.");
+            var args = System.Environment.GetCommandLineArgs();
+            int idAt = System.Array.IndexOf(args, "-tp-portrait-id");
+            var only = idAt >= 0 && idAt + 1 < args.Length ? new List<string>(args[idAt + 1].Split(',')) : null;
+            Directory.CreateDirectory(FlatOutput);
+            var written = new List<string>();
+            for (int i = 0; i < Roster.Slippers.Count; i++)
+            {
+                string id = Roster.Slippers[i].Id;
+                if (only != null && !only.Contains(id)) continue;
+                var art = book.SlipperArt(i);
+                if (art == null || art.Model == null) throw new System.InvalidOperationException("Missing approved art for " + id);
+                CaptureFlat(art, FlatOutput + "/" + id + ".png");
+                written.Add(id);
+            }
+            AssetDatabase.Refresh();
+            foreach (var id in written)
+            {
+                var importer = (TextureImporter)AssetImporter.GetAtPath(FlatOutput + "/" + id + ".png");
+                importer.textureType = TextureImporterType.Sprite;
+                importer.spriteImportMode = SpriteImportMode.Single;
+                importer.alphaIsTransparency = true;
+                importer.mipmapEnabled = false;
+                importer.maxTextureSize = Size;
+                importer.textureCompression = TextureImporterCompression.Uncompressed;
+                importer.SaveAndReimport();
+            }
+            AssetDatabase.Refresh();
+            Debug.Log("[TumpPortraitAuthor] Flat tsinelas baked: " + string.Join(", ", written));
+        }
+
+        private const string FlatOutput = "Assets/TumbangPreso/Resources/UI/slippers-flat";
+
+        private static void CaptureFlat(RosterEntryAsset art, string path)
+        {
+            int render = Size * 3;
+            var host = new GameObject("FlatBake_" + art.Id, typeof(RectTransform));
+            var rect = (RectTransform)host.transform;
+            rect.sizeDelta = new Vector2(render, render);
+            var preview = host.AddComponent<ModelPreview>();
+            Texture2D image = null;
+            RenderTexture graded = null;
+            var active = RenderTexture.active;
+            try
+            {
+                preview.Attach(rect);
+                preview.ShowingSlipper = true;
+                preview.Show(art.Model, art.Clips, art.Palette, null);
+                preview.CentreSubject();
+                preview.StepForCapture();
+                var model = preview.Subject;
+                if (model == null || preview.Target == null) throw new System.InvalidOperationException("Flat stage missing: " + art.Id);
+                Bounds b = default; bool any = false;
+                foreach (var r in model.GetComponentsInChildren<Renderer>())
+                {
+                    if (!r.enabled || !(r is SkinnedMeshRenderer || r is MeshRenderer)) continue;
+                    if (!any) { b = r.bounds; any = true; } else b.Encapsulate(r.bounds);
+                }
+                if (!any) throw new System.InvalidOperationException("No slipper on " + art.Id);
+                // The toes sit on the model's own right (measured on the tsinelas); the camera's up is that way, looking straight down.
+                Vector3 toe = Vector3.Cross(model.transform.forward, Vector3.down); toe.y = 0;
+                toe = toe.sqrMagnitude < 1e-4f ? Vector3.forward : toe.normalized;
+                if (System.Array.IndexOf(System.Environment.GetCommandLineArgs(), "-tp-flat-reverse") >= 0) toe = -toe;
+                var camera = preview.PreviewCamera;
+                camera.orthographic = true;
+                camera.orthographicSize = Mathf.Max(b.size.x, b.size.z) * .75f;
+                camera.nearClipPlane = .05f; camera.farClipPlane = 40f;
+                camera.transform.rotation = Quaternion.LookRotation(Vector3.down, toe);
+                camera.transform.position = b.center + Vector3.up * 10f;
+                graded = preview.RenderWithDisplayLook();
+                RenderTexture.active = graded;
+                image = new Texture2D(render, render, TextureFormat.RGBA32, false);
+                image.ReadPixels(new Rect(0, 0, render, render), 0, 0);
+                image.Apply();
+                var fitted = FitSquare(image, .88f);
+                Object.DestroyImmediate(image); image = fitted;
+                File.WriteAllBytes(path, image.EncodeToPNG());
+            }
+            finally
+            {
+                RenderTexture.active = active;
+                if (graded != null) RenderTexture.ReleaseTemporary(graded);
+                if (image != null) Object.DestroyImmediate(image);
+                if (preview.Subject != null) Object.DestroyImmediate(preview.Subject.transform.parent.gameObject);
+                Object.DestroyImmediate(host);
+            }
+        }
+
+        /// <summary>The opaque pixels' box, centred and scaled to fill <paramref name="share"/> of a <see cref="Size"/> square.</summary>
+        private static Texture2D FitSquare(Texture2D source, float share)
+        {
+            int w = source.width, h = source.height, x0 = w, x1 = -1, y0 = h, y1 = -1;
+            var px = source.GetPixels32();
+            for (int y = 0; y < h; y++)
+                for (int x = 0; x < w; x++)
+                    if (px[y * w + x].a > 20) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+            if (x1 < 0) return Downsample(source, Size);
+            float side = Mathf.Max(x1 - x0 + 1, y1 - y0 + 1) / share;
+            float cx = (x0 + x1 + 1) * .5f, cy = (y0 + y1 + 1) * .5f, k = side / Size;
+            var output = new Texture2D(Size, Size, TextureFormat.RGBA32, false);
+            var result = new Color32[Size * Size];
+            for (int v = 0; v < Size; v++)
+                for (int u = 0; u < Size; u++)
+                {
+                    Color c = Color.clear;
+                    for (int t = 0; t < 4; t++)
+                    {
+                        float sx = cx + (u + .25f + .5f * (t & 1) - Size * .5f) * k, sy = cy + (v + .25f + .5f * (t >> 1) - Size * .5f) * k;
+                        if (sx < 0 || sx >= w - 1 || sy < 0 || sy >= h - 1) continue;
+                        c += source.GetPixelBilinear((sx + .5f) / w, (sy + .5f) / h);
+                    }
+                    result[v * Size + u] = c * .25f;
                 }
             output.SetPixels32(result); output.Apply();
             return output;

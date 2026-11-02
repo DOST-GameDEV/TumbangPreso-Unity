@@ -496,7 +496,7 @@ namespace TumbangPreso.UI.Hub
         /// </summary>
         private void BuildTicket()
         {
-            _codeChip = HubKnit.Button(Root, "CodeChip", null, Knit.Card, CopyCode);
+            _codeChip = HubKnit.Button(Root, "CodeChip", null, Knit.DarkCard, CopyCode);
             HubKit.Place((RectTransform)_codeChip.transform, HubKit.TopRight, new Vector2(-60, -30), new Vector2(460, 184));
             var face = _codeChip.Body;
             _codeCaption = HubKnit.Display(face, "CodeCaption", "ROOM CODE", 28, HubKnit.KitTan);
@@ -613,7 +613,7 @@ namespace TumbangPreso.UI.Hub
 
         private void BuildBottom()
         {
-            _statusPlate = HubKnit.Plate(Root, "StatusPlate", Knit.Card);
+            _statusPlate = HubKnit.Plate(Root, "StatusPlate", Knit.DarkCard);
             HubKnit.At(_statusPlate, 60, 946, 600, 104);
             _status = HubKnit.Words(HubKnit.FaceOf(_statusPlate), "Status", "", HubStyle.Floor, HubKnit.KitCream, TextAnchor.MiddleLeft);
             HubKit.Stretch(_status.rectTransform);
@@ -624,7 +624,7 @@ namespace TumbangPreso.UI.Hub
             HubKnit.At((RectTransform)_primary.transform, 690, 936, 540, 124);
 
             // A spectator has nothing to press there, so the room's status takes the spot instead.
-            _watching = HubKnit.Plate(Root, "WatchingPlate", Knit.Card);
+            _watching = HubKnit.Plate(Root, "WatchingPlate", Knit.DarkCard);
             HubKnit.At(_watching, 560, 930, 800, 134);
             var watchingWord = HubKnit.Display(HubKnit.FaceOf(_watching), "Word", "WATCHING", 44, HubKnit.KitCream, TextAnchor.MiddleCenter);
             HubKnit.In(watchingWord.rectTransform, 0, 12, 800, 56);
@@ -937,7 +937,7 @@ namespace TumbangPreso.UI.Hub
                 slot.offsetMin = new Vector2(i == 0 ? 0 : CardGap * .5f, 0);
                 slot.offsetMax = new Vector2(i == n - 1 ? 0 : -CardGap * .5f, 0);
                 bool open = !seat.Occupied && !seat.Bot;
-                Knit kind = open ? Knit.Well : seat.Mine ? Knit.CardOn : Knit.Card;
+                Knit kind = open ? Knit.Well : seat.Mine ? Knit.DarkCardOn : Knit.DarkCard;
                 int destination = seat.Slot;
                 bool editBots = host.CanEditBots && !seat.Occupied;
                 float s = (_chatShown ? 280 : 420) / 420f;

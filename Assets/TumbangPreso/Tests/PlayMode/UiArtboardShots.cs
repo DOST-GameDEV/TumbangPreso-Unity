@@ -230,6 +230,7 @@ namespace TumbangPreso.PlayTests
             yield return Step("hub-avatar", HubScreen("hub-avatar", "Avatar picker", () => HubFlowTests.Press("AvatarButton")));
             foreach (var (tab, title) in new[] { ("Profile", "Player record / Profile"), ("Friends", "Player record / Friends"), ("Career", "Player record / Career"), ("Matches", "Player record / History"), ("Account", "Player record / Account") })
                 yield return Step("hub-record-" + tab, Record(tab, title));
+            yield return Step("hub-record-replays", RecordReplays());
             yield return Step("hub-modes", HubScreen("hub-modes", "Game modes", () => HubFlowTests.Press("ModeCard")));
             foreach (var (card, title) in new[] { ("PracticeCard", "Game modes / Practice"), ("ClassicCard", "Game modes / Classic"), ("CustomCard", "Game modes / Custom") })
                 yield return Step("hub-modes-" + card, HubScreen("hub-modes-" + card.Replace("Card", "").ToLowerInvariant(), title, () => ModePopup(card)));
@@ -304,6 +305,20 @@ namespace TumbangPreso.PlayTests
             Global("HubTab" + tab).onClick.Invoke();
             yield return new WaitForSecondsRealtime(.6f);
             yield return Shot("hub-record-" + tab.ToLowerInvariant(), title, "Hub");
+            yield return Click("ClosePlayerHub", .3f);
+        }
+
+        /// <summary>REPLAYS is a tab of the profile that opens the hub's replays screen; BACK returns to the profile.</summary>
+        private static IEnumerator RecordReplays()
+        {
+            yield return HubFlowTests.OpenHome();
+            yield return HubFlowTests.Press("NamePlate");
+            yield return new WaitForSecondsRealtime(.6f);
+            Global("HubTabReplays").onClick.Invoke();
+            yield return new WaitForSecondsRealtime(.8f);
+            yield return Shot("hub-record-replays", "Player record / Replays", "Hub");
+            TumpHub.Current.Back();
+            yield return new WaitForSecondsRealtime(.4f);
             yield return Click("ClosePlayerHub", .3f);
         }
 

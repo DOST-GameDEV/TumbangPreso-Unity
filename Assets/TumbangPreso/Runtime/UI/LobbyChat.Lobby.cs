@@ -41,12 +41,12 @@ namespace TumbangPreso.UI
             // still lands where the drawer will be.
             _sheet = HubKit.Stretch(HubKit.Rect(_rect, "ChatSheet"));
             _sheetGroup = _sheet.gameObject.AddComponent<CanvasGroup>();
-            // A large surface, so a cream panel; the bubbles are berry on it.
-            var paper = HubKnit.Plate(_sheet, "ChatPaper", Knit.Panel);
+            // The chat has its own red close, so it is a dark panel with cream words (`boot_menus.py`); the bubbles are berry on it.
+            var paper = HubKnit.Plate(_sheet, "ChatPaper", Knit.DarkPanel);
             HubKit.Stretch(paper);
             HubKnit.FaceOf(paper).GetComponent<Image>().raycastTarget = true;
 
-            var title = HubKnit.Display(_sheet, "ChatTitle", "ROOM CHAT", 48, HubKnit.KitMaroon);
+            var title = HubKnit.Display(_sheet, "ChatTitle", "ROOM CHAT", 48, HubKnit.KitCream);
             HubKit.Place(title.rectTransform, HubKit.TopLeft, new Vector2(50, -32), new Vector2(380, 60));
             var close = HubKnit.Button(_sheet, "CloseChatButton", null, Knit.Danger, () => SetPresented(false), HubStyle.Label, HubGlyph.Mark.Close);
             HubKit.Place((RectTransform)close.transform, HubKit.TopRight, new Vector2(-40, -22), new Vector2(90, 80));
@@ -73,7 +73,7 @@ namespace TumbangPreso.UI
             var bar = track.gameObject.AddComponent<Scrollbar>();
             bar.direction = Scrollbar.Direction.BottomToTop; bar.transition = Selectable.Transition.None;
             var handle = HubKit.Stretch(HubKit.Rect(HubKit.Stretch(HubKit.Rect(track, "SlidingArea")), "Handle")).gameObject.AddComponent<Image>();
-            handle.color = HubKnit.KitTanDark;
+            handle.color = HubKnit.KitTan;
             bar.targetGraphic = handle; bar.handleRect = handle.rectTransform;
             _historyScroll.viewport = viewport; _historyScroll.content = _bubbles;
             _historyScroll.verticalScrollbar = bar;
@@ -136,7 +136,7 @@ namespace TumbangPreso.UI
             float width = HubLobby.RoomChatWidth - 24 * 2 - 30, y = -10;
             if (_history.Count == 0)
             {
-                var empty = HubKnit.Words(_bubbles, "Empty", EmptyLog, HubStyle.Body, HubKnit.KitTanDark, TextAnchor.MiddleCenter);
+                var empty = HubKnit.Words(_bubbles, "Empty", EmptyLog, HubStyle.Body, HubKnit.KitTan, TextAnchor.MiddleCenter);
                 HubKit.Place(empty.rectTransform, HubKit.Top, new Vector2(0, -20), new Vector2(width, 60));
                 y = -80;
             }
@@ -164,7 +164,7 @@ namespace TumbangPreso.UI
             if (who == null)
             {
                 row.sizeDelta = new Vector2(0, 40);
-                var note = HubKnit.Words(row, "Words", what, HubStyle.Floor, HubKnit.KitTanDark, TextAnchor.MiddleCenter);
+                var note = HubKnit.Words(row, "Words", what, HubStyle.Floor, HubKnit.KitTan, TextAnchor.MiddleCenter);
                 note.rectTransform.anchorMin = new Vector2(0, 1); note.rectTransform.anchorMax = new Vector2(1, 1); note.rectTransform.pivot = new Vector2(.5f, 1);
                 note.rectTransform.offsetMin = new Vector2(20, -40); note.rectTransform.offsetMax = new Vector2(-20, 0);
                 // Measured at the drawer's known inner width, less a margin: on a small window the font

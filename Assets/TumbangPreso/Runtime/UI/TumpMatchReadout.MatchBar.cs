@@ -54,7 +54,7 @@ namespace TumbangPreso.UI
         {
             if (_promptPlate == null || _prompt == null) return;
             bool show = _promptRoot.gameObject.activeInHierarchy && _prompt.enabled && !string.IsNullOrEmpty(_prompt.text);
-            _promptPlate.enabled = show;
+            _promptPlate.enabled = false; // prompts and tooltips carry no background
             bool glyph = _bindingGlyph != null && _bindingGlyph.enabled;
             bool progress = _progress != null && _progress.transform.parent.gameObject.activeSelf;
             // The owner's larger Xelu glyph (Feedback 2026-09-30) beside one line of words on a
@@ -102,10 +102,21 @@ namespace TumbangPreso.UI
         // permanent Hero Strike HUD under 8 per cent of the frame and a 210 chip measured 8.0006.
         // The bar is 1060 wide against the old 1306, whose HUD measured 10.8 on the same check.
         private const float ChipWidth = 200, ChipHeight = 58, ClockWidth = 200, ClockHeight = 58, BarTop = 22;
+        private const float TimerWidth = 380, TimerHeight = 74, TimerTop = 8, TimerInset = 11;
+        /// <summary>
+        /// ⚠️ ONE NAMED SWITCH FOR THE OLD FOUR-PLAYER ROW. The live HUD moved your own score to the bottom-left
+        /// corner, and the other scores are plates on the left edge that slide in when they change and a table held
+        /// on the info key (`TumpMatchReadout.Board`). Nothing in play needs the row, so it is off; a spectator,
+        /// who follows four people, still gets it.
+        /// </summary>
+        private const bool ShowScoreRowInPlay = false;
+        private RectTransform _timerFillMask, _timerFill;
+        private Text _clockOnFill;
+        private float _timerShown = 1;
         private const float ScoreLeft = 70, ScoreWidth = 112;
         private const int ScoreFont = 40, ScoreFontFloor = 28;
-        private static readonly float[] ChipX = { 0, 212, 648, 860 };
-        private const float BarWidth = 1060;
+        private static readonly float[] ChipX = { 0, 212, 828, 1040 };
+        private const float BarWidth = 1240;
         private readonly HudCard[] _portraitTiles = new HudCard[4];
         private readonly HudCard[] _localMarks = new HudCard[4], _roleChips = new HudCard[4];
         private readonly string[] _barNames = new string[4], _barNameLabels = new string[4];
@@ -116,41 +127,55 @@ namespace TumbangPreso.UI
             Pin(_scoreRoot, new Vector2(.5f, 1), new Vector2(0, -(BarTop + ChipHeight * .5f)), new Vector2(BarWidth, ChipHeight));
             for (int i = 0; i < 4; i++) BuildChip(i);
 
-            // The clock is the bar's centre: the same glass, denser, because its numerals are the
-            // one thing on the bar read at a glance under every background.
+            // ⚠️ LIVE HUD 2026-11-01: THE TIMER IS THE KIT'S SLIDER GROWN INTO A RECTANGLE. The lime pill
+            // drains inside the track, the time sits over both with no outline (dark over the fill, cream
+            // over the empty track, split at the fill's edge) and the round count is under the bar.
+            // `boot_match.timer` draws it; every object name the probes address is kept.
             _clockRoot = OwnerUiLayout.Rect(_root, "RoundClock");
-            Pin(_clockRoot, new Vector2(.5f, 1), new Vector2(0, -(BarTop + 50)), new Vector2(ClockWidth, 100));
-            var plate = OwnerUiLayout.Rect(_clockRoot, "ClockFace").gameObject.AddComponent<HudCard>();
-            OwnerUiLayout.Place(plate.rectTransform, 0, 0, ClockWidth, ClockHeight);
-            plate.Glass(HudDraw.GlassDeep).raycastTarget = false;
+            Pin(_clockRoot, new Vector2(.5f, 1), new Vector2(0, -(TimerTop + TimerHeight * .5f)), new Vector2(TimerWidth, TimerHeight));
+            var plate = OwnerUiLayout.Rect(_clockRoot, "ClockFace").gameObject.AddComponent<Image>();
+            LiveHud.GreyTrack(plate);
+            OwnerUiLayout.Place(plate.rectTransform, 0, 0, TimerWidth, TimerHeight);
 
             _canRing = OwnerUiLayout.Rect(_clockRoot, "CanProtection").gameObject.AddComponent<HudRing>();
             OwnerUiLayout.Place(_canRing.rectTransform, 12, 8, 42, 42);
             _canRing.Thickness = 3; _canRing.Track = Color.clear; _canRing.color = HudDraw.Honey;
-            _canRing.Fill = 0; _canRing.raycastTarget = false;
+            _canRing.Fill = 0; _canRing.raycastTarget = false; _canRing.enabled = false;
             _canGlyph = OwnerUiLayout.Rect(_clockRoot, "CanStateIcon").gameObject.AddComponent<HudBadge>();
             OwnerUiLayout.Place(_canGlyph.rectTransform, 17, 13, 32, 32);
-            _canGlyph.Detail = HudDraw.GlassDeep; _canGlyph.raycastTarget = false;
+            _canGlyph.Detail = HudDraw.GlassDeep; _canGlyph.raycastTarget = false; _canGlyph.enabled = false;
 
             // ⚠️ THE CLOCK KEEPS DARUMADROP: `docs/FONT_USAGE.md`, October 6, names `TimeLeft` as the
-            // one in-game label that does not take DIN. Only its colour and plate changed here.
-            _clock = OwnerUiLayout.Text(_clockRoot, "TimeLeft", "", 46, OwnerUiLayout.TypeRole.Display);
-            OwnerUiLayout.Place(_clock.rectTransform, 56, 1, 134, 56);
+            // one in-game label that does not take DIN.
+            _clock = OwnerUiLayout.Text(_clockRoot, "TimeLeft", "", 44, OwnerUiLayout.TypeRole.Display);
+            OwnerUiLayout.Place(_clock.rectTransform, 0, 0, TimerWidth, TimerHeight - 8);
             _clock.alignment = TextAnchor.MiddleCenter; _clock.verticalOverflow = VerticalWrapMode.Overflow;
             _clock.horizontalOverflow = HorizontalWrapMode.Overflow;
-            _clock.color = HudDraw.Ivory;
+            _clock.color = LiveHud.Cream;
 
-            // The round track is a slim glass tray of leaning ticks under the clock, one per round in
-            // that round's taya colour (`HudPips` keeps its meaning; only its shape changed).
+            // The fill and its dark copy of the time sit in one clip as wide as the fill is.
+            _timerFillMask = OwnerUiLayout.Rect(_clockRoot, "TimeFillClip");
+            _timerFillMask.gameObject.AddComponent<RectMask2D>();
+            OwnerUiLayout.Place(_timerFillMask, TimerInset, 9, TimerWidth - TimerInset * 2, TimerHeight - 22);
+            var fill = LiveHud.Sliced(_timerFillMask, "TimeFill", "timer-fill", 76);
+            _timerFill = fill.rectTransform;
+            OwnerUiLayout.Place(_timerFill, 0, 0, TimerWidth - TimerInset * 2, TimerHeight - 22);
+            _clockOnFill = OwnerUiLayout.Text(_timerFillMask, "TimeLeftOnFill", "", 44, OwnerUiLayout.TypeRole.Display);
+            if (InGameTypography.Clock != null) _clockOnFill.font = InGameTypography.Clock;
+            OwnerUiLayout.Place(_clockOnFill.rectTransform, -TimerInset, -9, TimerWidth, TimerHeight - 8);
+            _clockOnFill.alignment = TextAnchor.MiddleCenter; _clockOnFill.verticalOverflow = VerticalWrapMode.Overflow;
+            _clockOnFill.horizontalOverflow = HorizontalWrapMode.Overflow;
+            _clockOnFill.color = LiveHud.GoInk;
+
+            // The round beads are retired; their objects stay for the layout probes.
             var track = OwnerUiLayout.Rect(_clockRoot, "RoundTrack").gameObject.AddComponent<HudCard>();
-            OwnerUiLayout.Place(track.rectTransform, (ClockWidth - 214) * .5f, ClockHeight + 8, 214, 22);
-            _roundTrack = track.rectTransform;
-            track.Glass(HudDraw.Glass, HudDraw.Lean, 2, .2f).raycastTarget = false; track.BorderWidth = 0;
+            OwnerUiLayout.Place(track.rectTransform, (TimerWidth - 214) * .5f, TimerHeight + 8, 214, 22);
+            _roundTrack = track.rectTransform; track.enabled = false;
             _pips = OwnerUiLayout.Rect(_clockRoot, "RoundPips").gameObject.AddComponent<HudPips>();
-            OwnerUiLayout.Place(_pips.rectTransform, -40, ClockHeight + 10, ClockWidth + 80, 18); _pips.raycastTarget = false;
-            _pips.Diameter = 12; _pips.Gap = 10;
-            _round = Ink(_clockRoot, "RoundLabel", "", 28, false);
-            OwnerUiLayout.Place(_round.rectTransform, -134, ClockHeight + 38, ClockWidth + 268, 36);
+            OwnerUiLayout.Place(_pips.rectTransform, -40, TimerHeight + 10, TimerWidth + 80, 18); _pips.raycastTarget = false;
+            _pips.Diameter = 12; _pips.Gap = 10; _pips.enabled = false;
+            _round = LiveHud.Fact(_clockRoot, "RoundLabel", "", 22, Color.white);
+            OwnerUiLayout.Place(_round.rectTransform, -134, TimerHeight + 2, TimerWidth + 268, 32);
         }
 
         private void BuildChip(int i)
@@ -334,17 +359,24 @@ namespace TumbangPreso.UI
         private void MatchBarClock(MatchDirector match, RoundDirector round, int time)
         {
             bool urgent = time <= 10 && round.RoundActive;
-            _clock.color = urgent ? HudDraw.Honey : HudDraw.Ivory;
-            float tick = urgent && !Settings.SettingsStore.Current.ReducedUiMotion ? 1 - Mathf.Repeat(round.TimeLeft, 1f) : 1;
-            float pulse = 1 + .14f * (1 - Mathf.Clamp01(tick / .25f)) * (urgent ? 1 : 0);
-            _clock.rectTransform.localScale = Vector3.one * pulse;
-            _pips.Set(Mathf.Max(1, match.TotalRounds), match.IsWarmupBuffer ? 0 : match.RoundNumber);
-            float gap = _pips.Count >= 4 && _pips.Count % 2 == 0 ? _pips.Gap : 0;
-            float width = _pips.Count * _pips.Diameter + (_pips.Count - 1) * _pips.Gap + gap + 18;
-            if(_roundTrack != null) OwnerUiLayout.Place(_roundTrack, (ClockWidth-width)*.5f, ClockHeight + 8, width, 22);
-            OwnerUiLayout.Place(_pips.rectTransform, (ClockWidth-width)*.5f, ClockHeight + 10, width, 18);
-            // Round pips and the ready prompt already cover this information.
-            _round.enabled = false;
+            // The fill follows the time smoothly and is never wider than the track's room.
+            float length = Mathf.Max(1, SceneFlow.SelectedRoundSeconds);
+            float want = Mathf.Clamp01(round.TimeLeft / length);
+            _timerShown = LiveHud.Still || want > _timerShown + .2f ? want : Mathf.Lerp(_timerShown, want, 1 - Mathf.Exp(-14 * Time.unscaledDeltaTime));
+            float full = TimerWidth - TimerInset * 2, fw = Mathf.Round(full * _timerShown);
+            _timerFillMask.gameObject.SetActive(fw > 0.5f);
+            _timerFillMask.sizeDelta = new Vector2(fw, TimerHeight - 22);
+            _timerFill.sizeDelta = new Vector2(Mathf.Max(70, fw), TimerHeight - 22);
+            if (_clockOnFill.text != _clock.text) _clockOnFill.text = _clock.text;
+            // Under ten seconds the bar swells a little once a second and eases back. The reading scale
+            // is `HudReadingLayout`'s, which owns this group's size.
+            float tick = urgent && !LiveHud.Still ? 1 - Mathf.Repeat(round.TimeLeft, 1f) : 1;
+            float swell = 1 - Mathf.Clamp01(tick / .3f);
+            var settings = Settings.SettingsStore.Current;
+            float reading = Mathf.Max(Settings.GameSettings.ValidHudScale(settings.HudScale), settings.LargerText ? 1.2f : 1f);
+            _clockRoot.localScale = Vector3.one * reading * (1 + .045f * Mathf.Sin(swell * Mathf.PI * .5f) * (urgent ? 1 : 0));
+            _round.text = "ROUND " + Mathf.Max(1, match.IsWarmupBuffer ? 1 : match.RoundNumber) + " OF " + Mathf.Max(1, match.TotalRounds);
+            _round.enabled = true;
         }
 
         private void MatchBarCan(Lata lata)

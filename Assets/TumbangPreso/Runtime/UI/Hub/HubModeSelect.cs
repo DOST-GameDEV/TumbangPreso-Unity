@@ -16,7 +16,7 @@ namespace TumbangPreso.UI.Hub
     ///   out             BACK or Escape to HOME
     ///
     /// ⚠️⚠️ WHAT EACH CARD DOES IS THE OWNER'S FLOW AND IS NOT A DESIGN CHOICE:
-    ///   PRACTICE  a popup asking TUTORIAL or TRAINING
+    ///   PRACTICE  a popup asking TUTORIAL or TRAINING, with RULES (the tutorial lives only here)
     ///   CUSTOM    the HOST / JOIN popup, "POPUP, not its own screen"
     ///   CLASSIC   a popup asking CLASSIC or HERO STRIKE (casual), then back to HOME
     ///   RANKED    always Hero Strike, straight back to HOME with the card reading RANKED
@@ -28,71 +28,41 @@ namespace TumbangPreso.UI.Hub
 
         public override void Build()
         {
-            // ⚠️ POSTERS PASTED ON A YERO WALL (`HubScenery`). The four cards were already posters;
-            // since 2026-09-24 they hang where posters hang on a street, taped to corrugated sheet,
-            // under a title sprayed on it like the TUMP graffiti on the title screen.
-            HubScenery.YeroGround(Root, 28);
-            HubChrome.Back(Root, Hub);
-            // ⚠️ ONE WORD ON ITS OWN PLATE (owner 2026-10-28): the "SELECT" caption read badly both
-            // under the plate and squeezed onto it. This screen's own plate, so TASKS and LOCAL
-            // REPLAYS keep `HubChrome.Title` as it was.
-            HubKnit.TitlePlate(Root, null, "GAMEMODE", 520);
-            HubChrome.TopRight(Root, Hub);
+            // The boot kit (`boot_menus.py`): the berry ground, the white title, checker paint cards.
+            HubKnit.Ground(Root);
+            HubKnit.Frame(Root, Hub, "GAMEMODE");
 
-            // ⚠️ TUTORIAL ONE PRESS FROM HERE (owner 2026-10-28, "add tutorial button here too"), a teal
-            // knit piece with a book beside the title, where a new player's eye lands first. It also
-            // stays inside PRACTICE; this is the same route.
-            var tutorial = HubKnit.Button(Root, "TutorialShortcut", "TUTORIAL", Knit.Teal, () =>
-            {
-                Hub.Host.LeaveRoom();
-                SceneFlow.StartTraining();
-            }, HubStyle.Label, HubGlyph.Mark.Book);
-            var titlePlate = (RectTransform)Root.Find("TitlePlate");
-            float afterTitle = titlePlate.anchoredPosition.x + titlePlate.sizeDelta.x + 32;
-            HubKit.Place((RectTransform)tutorial.transform, HubKit.TopLeft, new Vector2(afterTitle, -HubKit.Margin + 8), new Vector2(300, 96));
-            HubSlap.On(tutorial.transform, 0.2f, 2);
+            // The tutorial lives inside PRACTICE only (owner, 2026-11-02).
 
-            var area = HubKit.Span(HubKit.Rect(Root, "Cards"), new Vector2(0, 0), new Vector2(1, 1),
-                                   new Vector2(HubKit.Margin, 70), new Vector2(HubKit.Margin, 250));
-
-            // Small 400 wide, tall 460 wide, 40 apart: 1400 units centred. At 1920 that leaves
-            // 204 either side, which is where the card art breathes; it never grows past the
-            // content, per § 6.2c row 1 (a size is measured against its content, not the window).
-            var row = HubKit.Place(HubKit.Rect(area, "Row"), HubKit.Centre, Vector2.zero, new Vector2(1400, 740));
-            float small = 400, tall = 460, gap = 40, h = 740, half = (h - gap) / 2;
-
-            var practice = HubCards.KnitCard(row, "PracticeCard", "PRACTICE", Knit.Teal,
-                "Offline. No match rewards or recorded results.",
-                new[] { "phaister" }, HubGlyph.Mark.Bots, () => Hub.Push<HubPracticePopup>());
-            HubKit.Place((RectTransform)practice.transform, HubKit.TopLeft, new Vector2(0, 0), new Vector2(small, half));
-
-            var custom = HubCards.KnitCard(row, "CustomCard", "CUSTOM", Knit.Orange,
-                "Your own room. Host one, or join a friend's by code, on your network or online.",
-                new[] { "nemu", "zack" }, HubGlyph.Mark.Friends, () => Hub.Push<HubCustomPopup>());
-            HubKit.Place((RectTransform)custom.transform, HubKit.BottomLeft, new Vector2(0, 0), new Vector2(small, half));
-
-            var classic = HubCards.KnitCard(row, "ClassicCard", "CLASSIC", Knit.Red,
-                "Casual matchmaking. Pick the street game with no powers, or Hero Strike.",
-                new[] { "maring", "bayan", "lola_pacing" }, HubGlyph.Mark.Can, () => Hub.Push<HubClassicPopup>(), 400);
-            HubKit.Place((RectTransform)classic.transform, HubKit.TopLeft, new Vector2(small + gap, 0), new Vector2(tall, h));
-
-            var ranked = HubCards.KnitCard(row, "RankedCard", "RANKED", Knit.Gold,
-                "The ladder. Always Hero Strike. Solo or a party of up to three; sign-in required.",
-                new[] { "dante", "cheska", "sean" }, HubGlyph.Mark.Trophy, () =>
+            // ⚠️ WHAT EACH CARD DOES IS THE OWNER'S FLOW (see the class summary), not a design choice.
+            var practice = ModeCard("PracticeCard", "PRACTICE", "Offline. No match rewards or recorded results.", Knit.PaintBlue, 120, 190, 520, 400, .72f,
+                () => Hub.Push<HubPracticePopup>());
+            var custom = ModeCard("CustomCard", "CUSTOM", "Your own room. Host one, or join a friend's by code, on your network or online.", Knit.PaintGo, 120, 630, 520, 400, .5f,
+                () => Hub.Push<HubCustomPopup>());
+            var classic = ModeCard("ClassicCard", "CLASSIC", "Casual matchmaking. Pick the street game with no powers, or Hero Strike.", Knit.PaintRed, 700, 190, 520, 840, .5f,
+                () => Hub.Push<HubClassicPopup>());
+            var ranked = ModeCard("RankedCard", "RANKED", "The ladder. Always Hero Strike. Solo or a party of up to three; sign-in required.", Knit.PaintYellow, 1280, 190, 520, 840, .5f,
+                () =>
                 {
                     HubHome.Choice = 0;
                     Hub.Home();
-                }, 400);
-            HubKit.Place((RectTransform)ranked.transform, HubKit.TopLeft, new Vector2(small + gap + tall + gap, 0), new Vector2(tall, h));
-
+                });
             HubSlap.On(practice.transform, 0.02f, -3);
             HubSlap.On(custom.transform, 0.08f, 2);
             HubSlap.On(classic.transform, 0.12f, -2);
             HubSlap.On(ranked.transform, 0.16f, 3);
         }
+
+        private HubButton ModeCard(string name, string title, string description, Knit paint, float x, float y, float w, float h, float focus, System.Action open)
+        {
+            var card = HubKnit.PictureCard(Root, name, title, description, HubKnit.Poster(name), paint, HubKnit.InkOf(paint),
+                                           0, 0, w, h, h - 24 - 90, focus, open);
+            HubKnit.At((RectTransform)card.transform, x, y, w, h + HubKnit.SlabHeight);
+            return card;
+        }
     }
 
-    /// <summary>PRACTICE's two existing local routes, without a room or queue.</summary>
+    /// <summary>PRACTICE's two existing local routes, without a room or queue, and its RULES sheet.</summary>
     public sealed class HubPracticePopup : HubScreen
     {
         public override bool WearsBoard => true;
@@ -102,20 +72,20 @@ namespace TumbangPreso.UI.Hub
 
         public override void Build()
         {
-            var panel = HubCards.KnitPanel(Root, this, "PRACTICE", "Offline, no match rewards.", new Vector2(1180, 700));
-            _tutorial = HubCards.KnitCard(panel, "TutorialChoice", "TUTORIAL", Knit.Teal,
-                "Offline. No match rewards.", new[] { "totoy", "maring" }, HubGlyph.Mark.Book, () =>
-                {
-                    Hub.Host.LeaveRoom();
-                    SceneFlow.StartTraining();
-                });
+            var panel = HubKnit.DarkModal(Root, Hub, "PRACTICE", "Offline, no match rewards.", 1230, 720, out _);
+            _tutorial = HubCards.ChoiceCard(panel, "TutorialChoice", "TUTORIAL", "Offline. No match rewards.", "TutorialChoice", Knit.DarkCard, 55, 200, () =>
+            {
+                Hub.Host.LeaveRoom();
+                SceneFlow.StartTraining();
+            });
             _tutorial.RequireUserAttention = true;
-            HubKit.Place((RectTransform)_tutorial.transform, HubKit.BottomLeft, new Vector2(48, 48), new Vector2(520, 460));
-            var training = HubCards.KnitCard(panel, "TrainingChoice", "TRAINING", Knit.Gold,
-                "Offline with active bots. No match rewards.", new[] { "cheska", "phaister" }, HubGlyph.Mark.Bots,
+            var training = HubCards.ChoiceCard(panel, "TrainingChoice", "TRAINING", "Offline with active bots. No match rewards.", "TrainingChoice", Knit.DarkCard, 635, 200,
                 () => Hub.Host.StartPractice());
             training.RequireUserAttention = true;
-            HubKit.Place((RectTransform)training.transform, HubKit.BottomRight, new Vector2(-48, 48), new Vector2(520, 460));
+            // ⚠️ RULES: PRACTICE starts at once, so its rules sheet and bot difficulty (re-homed from the
+            // hamburger's MATCH RULES, 2026-11-02) are one press from here. A room host has RULES in the room.
+            var rules = HubKnit.Button(panel, "PracticeRules", "RULES", Knit.ThinPlain, () => { Close(); Hub.Host.OpenCustomRules(); }, 38, HubGlyph.Mark.Pencil);
+            HubKnit.In((RectTransform)rules.transform, 1230 - 300, 44, 260, 92);
             HubSlap.On(_tutorial.transform, 0.02f, -2);
             HubSlap.On(training.transform, 0.08f, 2);
         }
@@ -128,15 +98,11 @@ namespace TumbangPreso.UI.Hub
 
         public override void Build()
         {
-            var panel = HubCards.KnitPanel(Root, this, "CLASSIC", "Casual matchmaking. Which game?", new Vector2(1180, 700));
-            var classic = HubCards.KnitCard(panel, "ClassicChoice", "CLASSIC", Knit.Orange,
-                "Tumbang preso as the street plays it. No powers; every character plays the same.",
-                new[] { "totoy", "maring", "kuya_boy" }, HubGlyph.Mark.Can, () => Pick(1));
-            HubKit.Place((RectTransform)classic.transform, HubKit.BottomLeft, new Vector2(48, 48), new Vector2(520, 460));
-            var hero = HubCards.KnitCard(panel, "HeroStrikeChoice", "HERO STRIKE", Knit.Gold,
-                "Heroes with two skills and an ultimate each. Same court, bigger plays.",
-                new[] { "zack", "cheska", "rafi" }, HubGlyph.Mark.Hero, () => Pick(2));
-            HubKit.Place((RectTransform)hero.transform, HubKit.BottomRight, new Vector2(-48, 48), new Vector2(520, 460));
+            var panel = HubKnit.DarkModal(Root, Hub, "CLASSIC", "Casual matchmaking. Which game?", 1230, 720, out _);
+            var classic = HubCards.ChoiceCard(panel, "ClassicChoice", "CLASSIC", "Tumbang preso as the street plays it. No powers; every character plays the same.",
+                                              "ClassicChoice", Knit.PaintRed, 55, 200, () => Pick(1));
+            var hero = HubCards.ChoiceCard(panel, "HeroStrikeChoice", "HERO STRIKE", "Heroes with two skills and an ultimate each. Same court, bigger plays.",
+                                           "HeroStrikeChoice", Knit.PaintYellow, 635, 200, () => Pick(2));
             HubSlap.On(classic.transform, 0.02f, -2);
             HubSlap.On(hero.transform, 0.08f, 2);
         }
@@ -156,13 +122,9 @@ namespace TumbangPreso.UI.Hub
 
         public override void Build()
         {
-            var panel = HubCards.KnitPanel(Root, this, "CUSTOM", "Your own room.", new Vector2(1180, 640));
-            var host = HubCards.KnitDoor(panel, "HostDoor", "HOST", "Open a room and set up the match.",
-                                         "HOST ROOM", Knit.Orange, HubGlyph.Mark.House, () => Hub.Push<HubHost>());
-            HubKit.Place((RectTransform)host.transform, HubKit.BottomLeft, new Vector2(48, 48), new Vector2(520, 400));
-            var join = HubCards.KnitDoor(panel, "JoinDoor", "JOIN", "Type a code, or pick a room near you or online.",
-                                         "JOIN ROOM", Knit.Gold, HubGlyph.Mark.Key, () => Hub.Push<HubJoin>());
-            HubKit.Place((RectTransform)join.transform, HubKit.BottomRight, new Vector2(-48, 48), new Vector2(520, 400));
+            var panel = HubKnit.DarkModal(Root, Hub, "CUSTOM", "Your own room.", 1230, 660, out _);
+            var host = HubCards.DoorCard(panel, "HostDoor", "HOST", "Open a room and set up the match.", "HOST ROOM", HubGlyph.Mark.House, 55, 200, () => Hub.Push<HubHost>());
+            var join = HubCards.DoorCard(panel, "JoinDoor", "JOIN", "Type a code, or pick a room near you or online.", "JOIN ROOM", HubGlyph.Mark.Key, 635, 200, () => Hub.Push<HubJoin>());
             HubSlap.On(host.transform, 0.02f, -2);
             HubSlap.On(join.transform, 0.08f, 2);
         }
@@ -171,6 +133,31 @@ namespace TumbangPreso.UI.Hub
     /// <summary>Card builders shared by GAMEMODE SELECT and its popups.</summary>
     public static class HubCards
     {
+        /// <summary>A popup's option on the dark panel: a picture card (painted when given a colour), the name under its picture.</summary>
+        public static HubButton ChoiceCard(Transform panel, string name, string title, string description, string poster, Knit k, float x, float y, System.Action onClick) =>
+            HubKnit.PictureCard(panel, name, title, description, HubKnit.Poster(poster), k, HubKnit.InkOf(k), x, y, 540, 450, 344, .5f, onClick, 56);
+
+        /// <summary>A door on the dark panel: an icon and name on one line, what it does, and the action at its foot. The whole card is the door.</summary>
+        public static HubButton DoorCard(Transform panel, string name, string title, string line, string action, HubGlyph.Mark mark, float x, float y, System.Action onClick)
+        {
+            var card = HubKnit.Button(panel, name, null, Knit.DarkCard, onClick);
+            HubKnit.In((RectTransform)card.transform, x, y, 540, 410 + HubKnit.SlabHeight);
+            var face = card.Body;
+            var glyph = HubKit.Glyph(face, "Icon", mark, HubKnit.KitTan, 0.09f);
+            HubKnit.In(glyph.rectTransform, 52, 36, 80, 80);
+            var heading = HubKnit.Display(face, "Heading", title, 66, HubKnit.KitCream, TextAnchor.MiddleLeft);
+            HubKnit.In(heading.rectTransform, 150, 36, 360, 80);
+            var words = HubKnit.Words(face, "Line", line, 32, HubKnit.KitCream, TextAnchor.UpperLeft, true);
+            HubKnit.In(words.rectTransform, 50, 126, 440, 140);
+            // The card's own call to action is drawn, not a second button: the whole card is the door.
+            var act = HubKnit.Plate(face, "Action", Knit.Yellow);
+            HubKnit.In(act, 36, 278, 468, 104 + HubKnit.SlabHeight);
+            var label = HubKnit.Display(HubKnit.FaceOf(act), "ActionLabel", action, 46, HubKnit.InkOf(Knit.Yellow), TextAnchor.MiddleCenter);
+            HubKit.Stretch(label.rectTransform);
+            label.rectTransform.anchorMin = new Vector2(0, .10f);
+            return card;
+        }
+
         /// <summary>
         /// A card with the cast on it: real in-engine portraits (the sketches' "placeholder img"),
         /// the name at the bottom, and a description that appears on hover or focus.

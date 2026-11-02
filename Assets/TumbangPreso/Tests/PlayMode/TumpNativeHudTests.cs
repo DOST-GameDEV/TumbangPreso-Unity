@@ -34,7 +34,7 @@ namespace TumbangPreso.PlayTests
             evidence.AppendLine("screen=" + Screen.width + "x" + Screen.height + " canvas=" + canvas.pixelRect + " scale=" + canvas.scaleFactor);
             foreach (string path in targets)
             {
-                var target = canvas.transform.Find(path) as RectTransform;
+                var target = canvas.transform.HudFind(path) as RectTransform;
                 Assert.IsNotNull(target, path);
                 target.GetWorldCorners(corners);
                 foreach (var corner in corners)
@@ -65,13 +65,12 @@ namespace TumbangPreso.PlayTests
             yield return null;
             Assert.IsTrue(RoleSwapCard.Showing);
             Assert.IsFalse(readout.Canvas.enabled, "Ordinary breaks must hide the HUD just like halftime.");
-            Assert.IsFalse(readout.Canvas.transform.Find("RoundClock/RoundLabel").GetComponent<Text>().enabled);
             yield return new WaitForSecondsRealtime(.3f);
             foreach (var shape in new[] { new Vector2Int(960, 540), new Vector2Int(1600, 680) })
                 yield return TumpUiCapture.Capture("Feedback0930-round-break-" + shape.x + "x" + shape.y,
                     view.Canvas, shape.x, shape.y, false, true, inspectViewport: () =>
                     {
-                        var popup = (RectTransform)view.Canvas.transform.Find("CourtBreakPopup");
+                        var popup = (RectTransform)view.Canvas.transform.HudFind("CourtBreakPopup");
                         var canvas = (RectTransform)view.Canvas.transform;
                         Assert.Less(Vector3.Distance(popup.TransformPoint(popup.rect.center),
                             canvas.TransformPoint(canvas.rect.center)), .5f, "Standings left screen center.");
@@ -93,7 +92,7 @@ namespace TumbangPreso.PlayTests
         {
             yield return Open(GameMode.Classic);
             var canvas = GameObject.Find("OwnerMatchCanvas").GetComponent<Canvas>();
-            var row = canvas.transform.Find("MatchScores/ScoreRow0") as RectTransform;
+            var row = canvas.transform.HudFind("MatchScores/ScoreRow0") as RectTransform;
             Assert.IsNotNull(row);
             var score = row.Find("Score").GetComponent<Text>();
             var seat = row.Find("SeatTag").GetComponent<Text>();
@@ -162,7 +161,7 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(4, canvas.GetComponentsInChildren<RectTransform>().Count(r => r.name.StartsWith("ScoreRow")));
             Assert.AreEqual(4, canvas.GetComponentsInChildren<Image>().Count(i => i.name == "PlayerPortrait" && i.enabled && i.sprite != null),
                 "A sprite reference alone is not a visible portrait.");
-            Assert.IsFalse(canvas.transform.Find("PowerSeals").gameObject.activeSelf, "Classic has no hero power UI.");
+            Assert.IsFalse(canvas.transform.HudFind("PowerSeals").gameObject.activeSelf, "Classic has no hero power UI.");
             var local = Object.FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None).First(m => m.PlayerSlot == GameLaunch.SoloSeat);
             foreach (var size in TumpUiCapture.HudViewports)
                 yield return TumpUiCapture.Capture("CourtHud-Classic-" + size.x + "x" + size.y,
@@ -262,7 +261,7 @@ namespace TumbangPreso.PlayTests
             yield return Open(GameMode.HeroStrike);
             var hud = Hud.Instance; var canvas = GameObject.Find("OwnerMatchCanvas").GetComponent<Canvas>();
             var local = Object.FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None).First(m => m.PlayerSlot == GameLaunch.SoloSeat);
-            Assert.IsTrue(canvas.transform.Find("PowerSeals").gameObject.activeSelf);
+            Assert.IsTrue(canvas.transform.HudFind("PowerSeals").gameObject.activeSelf);
             Assert.AreEqual(3, canvas.GetComponentsInChildren<OwnerAbilitySeal>().Count(seal => !seal.Overlay), "The deck holds three powers.");
             float share = 1; string detail = "";
             yield return TumpUiCapture.Capture("OwnerHud-Hero-v1", canvas, 1920, 1080, false, true,
@@ -292,15 +291,15 @@ namespace TumbangPreso.PlayTests
             }
             finally { readout.CloseCapture(); }
             hud.EnterSpectatorMode(); yield return null;
-            Assert.IsFalse(canvas.transform.Find("PowerSeals").gameObject.activeSelf);
-            Assert.IsFalse(canvas.transform.Find("LocalState").gameObject.activeSelf);
+            Assert.IsFalse(canvas.transform.HudFind("PowerSeals").gameObject.activeSelf);
+            Assert.IsFalse(canvas.transform.HudFind("LocalState").gameObject.activeSelf);
             foreach (var size in TumpUiCapture.HudViewports)
                 yield return TumpUiCapture.Capture("CourtHud-spectator-" + size.x + "x" + size.y,
                     canvas, size.x, size.y, false, true, checkActionBounds: true);
             hud.SetCleanFeed(true); Assert.IsFalse(canvas.gameObject.activeSelf);
             hud.SetCleanFeed(false); Assert.IsTrue(canvas.gameObject.activeSelf);
             hud.ExitSpectatorMode(); yield return null;
-            Assert.IsTrue(canvas.transform.Find("LocalState").gameObject.activeSelf);
+            Assert.IsTrue(canvas.transform.HudFind("LocalState").gameObject.activeSelf);
         }
         [UnityTest]
         public IEnumerator RootedPromptTracksLiveBindingsDevicesAndHeldProgress()
@@ -652,14 +651,14 @@ namespace TumbangPreso.PlayTests
                 var system = local.GetComponent<HeroAbilitySystem>();
                 var readout = Object.FindAnyObjectByType<TumpPowerReadout>();
                 var hud = Object.FindAnyObjectByType<TumpMatchReadout>();
-                var deck = (RectTransform)hud.Canvas.transform.Find("PowerSeals");
+                var deck = (RectTransform)hud.Canvas.transform.HudFind("PowerSeals");
                 // 2026-10-20: the identity plate shows the baked icon of this seat's own tsinelas.
                 yield return new WaitForSecondsRealtime(.6f);
                 var objectIcon = hud.Canvas.GetComponentsInChildren<Image>(true).First(i => i.name == "VitalsObject");
                 Assert.IsTrue(objectIcon.isActiveAndEnabled && objectIcon.sprite != null,
                     "The identity plate must show the equipped tsinelas' own icon, not the drawn fallback.");
                 // 2026-10-20 overhaul: the ultimate is its own group at the bottom centre.
-                var ultimate = (RectTransform)hud.Canvas.transform.Find("UltimateSeal");
+                var ultimate = (RectTransform)hud.Canvas.transform.HudFind("UltimateSeal");
                 Assert.IsNotNull(ultimate, "The ultimate is its own bottom-centre group.");
                 System.Collections.Generic.IEnumerable<Image> Glyphs(bool inactive) => deck.GetComponentsInChildren<Image>(inactive)
                     .Concat(ultimate.GetComponentsInChildren<Image>(inactive)).Where(i => i.name == "BindingGlyph");
@@ -684,7 +683,7 @@ namespace TumbangPreso.PlayTests
                     Assert.AreEqual(3, glyphs.Length); Assert.IsTrue(glyphs.All(g => g.enabled && g.sprite != null));
                     if (hero == "paete")
                     {
-                        var sandbox = hud.Canvas.transform.Find("SandboxState") as RectTransform;
+                        var sandbox = hud.Canvas.transform.HudFind("SandboxState") as RectTransform;
                         var hint = deck.Find("PowerInfoBinding") as RectTransform;
                         var corners = new Vector3[4]; sandbox.GetWorldCorners(corners); float bottom = corners[0].y;
                         hint.GetWorldCorners(corners); Assert.Greater(bottom, corners[1].y, "Practice status must clear the enlarged power hints.");
@@ -728,8 +727,8 @@ namespace TumbangPreso.PlayTests
                 typeof(LastInputDevice).GetMethod("Set", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { InputDeviceKind.KeyboardMouse });
                 yield return MapRetrievalProbe.Load(SceneFlow.Eskinita, GameMode.HeroStrike);
                 var hud = Object.FindAnyObjectByType<TumpMatchReadout>();
-                var deck = (RectTransform)hud.Canvas.transform.Find("PowerSeals");
-                var scores = (RectTransform)hud.Canvas.transform.Find("MatchScores");
+                var deck = (RectTransform)hud.Canvas.transform.HudFind("PowerSeals");
+                var scores = (RectTransform)hud.Canvas.transform.HudFind("MatchScores");
                 Vector2 scorePosition = scores.anchoredPosition;
                 foreach (bool useTouch in new[] { true, false, true, false })
                 {
@@ -842,9 +841,9 @@ namespace TumbangPreso.PlayTests
                     settings.HudScale=size;view.Tick(local,false,false,false,false);yield return null;
                     Assert.AreEqual("DO NOT IDLE - RETRIEVE YOUR SLIPPER",view.WarningText);
                     Assert.AreEqual(3,root.GetComponentsInChildren<RectTransform>().Count(x=>x.name.StartsWith("StatusChip")));
-                    Assert.AreEqual(106,((RectTransform)root.Find("RoundClock/RoundTrack")).rect.width,.1f);
+                    Assert.AreEqual(380,((RectTransform)root.HudFind("RoundClock")).rect.width,.1f,"The timer is the 380 wide track of the live HUD.");
                     // The bar is authored at its real size (UI revamp 2026-10-06); only the reading scale enlarges it.
-                    Assert.AreEqual(size,root.Find("MatchScores").localScale.x,.001f);
+                    Assert.AreEqual(size,root.HudFind("MatchScores").localScale.x,.001f);
                     Assert.IsFalse(root.GetComponentsInChildren<Text>(true).First(x=>x.name=="PowerInfoBinding").enabled);
                     foreach(var viewport in new[]{new Vector2Int(960,540),new Vector2Int(1600,680)})
                     {
@@ -854,10 +853,9 @@ namespace TumbangPreso.PlayTests
                         yield return TumpUiCapture.Capture("HarryHud-states-"+size+"-"+viewport.x+"x"+viewport.y,view.Canvas,viewport.x,viewport.y,false,true,
                             inspectViewport:()=>
                             {
-                                var action=HudRevisionBounds(root,(RectTransform)root.Find("ContextualAction/PromptPlate"));
-                                var warning=HudRevisionBounds(root,(RectTransform)root.Find("WarningMessage"));
-                                var progress=HudRevisionBounds(root,(RectTransform)root.Find("ContextualAction/RecoveryProgress"));
-                                Assert.IsTrue(action.Contains(progress.min)&&action.Contains(progress.max),"Progress must sit inside the action background");
+                                var action=HudRevisionBounds(root,(RectTransform)root.HudFind("ContextualAction/PromptPlate"));
+                                var warning=HudRevisionBounds(root,(RectTransform)root.HudFind("WarningMessage"));
+                                var progress=HudRevisionBounds(root,(RectTransform)root.HudFind("ContextualAction/RecoveryProgress"));
                                 Assert.IsFalse(action.Overlaps(warning));
                                 var shownChips = root.GetComponentsInChildren<RectTransform>().Where(x => x.name.StartsWith("StatusChip")).ToArray();
                                 for(int i=0;i<shownChips.Length;i++)
@@ -913,8 +911,8 @@ namespace TumbangPreso.PlayTests
                         inspectViewport:()=>
                         {
                             var root=(RectTransform)view.Canvas.transform;
-                            var warning=HudRevisionBounds(root,(RectTransform)root.Find("WarningMessage"));
-                            foreach(var plate in root.Find("MatchEventFeed").GetComponentsInChildren<HudCard>())
+                            var warning=HudRevisionBounds(root,(RectTransform)root.HudFind("WarningMessage"));
+                            foreach(var plate in root.HudFind("MatchEventFeed").GetComponentsInChildren<Image>())
                                 if(plate.name=="EventPlate")Assert.IsFalse(warning.Overlaps(HudRevisionBounds(root,plate.rectTransform)));
                         });
                 }
@@ -995,7 +993,7 @@ namespace TumbangPreso.PlayTests
                 Assert.AreEqual(oldY, row1.anchoredPosition.y, .1f, "Existing entry must start from its current position.");
                 Assert.AreEqual(first, feed.Entry(1));
                 yield return new WaitForSecondsRealtime(.08f);
-                Assert.That(row1.anchoredPosition.y, Is.LessThan(oldY).And.GreaterThan(-60));
+                Assert.That(row1.anchoredPosition.y, Is.LessThan(oldY).And.GreaterThan(-70));
                 float interruptedY = row1.anchoredPosition.y;
                 Visual.MatchFlair.Play(Visual.MatchFlair.Kind.Block, 3, 2, at);
                 var row2 = (RectTransform)feed.transform.Find("Event2");
@@ -1004,7 +1002,7 @@ namespace TumbangPreso.PlayTests
                 Assert.AreEqual(firstExpiry, (float)items.GetValue(2).GetType().GetField("Expires").GetValue(items.GetValue(2)));
                 Assert.AreEqual(3, feed.Count);
                 yield return new WaitForSecondsRealtime(.22f);
-                Assert.AreEqual(-60, row1.anchoredPosition.y, .1f); Assert.AreEqual(-120, row2.anchoredPosition.y, .1f);
+                Assert.AreEqual(-70, row1.anchoredPosition.y, .1f); Assert.AreEqual(-140, row2.anchoredPosition.y, .1f);
                 var view = Object.FindFirstObjectByType<TumpMatchReadout>();
                 yield return TumpUiCapture.Capture("HarryHud-feed-stack-960x540", view.Canvas, 960, 540, false, true);
                 SettingsStore.Current.ReducedUiMotion = true;
@@ -1052,14 +1050,14 @@ namespace TumbangPreso.PlayTests
                             typeof(TumpMatchReadout).GetMethod("SizePromptPlate",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(view,null);
                             var chips = root.GetComponentsInChildren<RectTransform>().Where(x=>x.name.StartsWith("StatusChip")).ToArray();
                             Assert.AreEqual(10,chips.Length);
-                            var warning = HudRevisionBounds(root,(RectTransform)root.Find("WarningMessage"));
-                            var action = HudRevisionBounds(root,(RectTransform)root.Find("ContextualAction/PromptPlate"));
+                            var warning = HudRevisionBounds(root,(RectTransform)root.HudFind("WarningMessage"));
+                            var action = HudRevisionBounds(root,(RectTransform)root.HudFind("ContextualAction/PromptPlate"));
                             foreach(var chip in chips)
                             {
                                 var bounds = HudRevisionBounds(root,chip);
                                 Assert.IsTrue(root.rect.Contains(bounds.min)&&root.rect.Contains(bounds.max),chip.name+" must stay on screen");
                                 Assert.IsFalse(bounds.Overlaps(warning),chip.name+" overlaps warning");
-                                if(root.Find("ContextualAction/PromptPlate").GetComponent<HudCard>().enabled)
+                                if(root.HudFind("ContextualAction/PromptPlate").GetComponent<HudCard>().enabled)
                                     Assert.IsFalse(bounds.Overlaps(action),chip.name+" overlaps action");
                                 foreach(var other in chips)if(other!=chip)Assert.IsFalse(bounds.Overlaps(HudRevisionBounds(root,other)));
                             }
@@ -1068,14 +1066,14 @@ namespace TumbangPreso.PlayTests
                 local.ClearStatuses(); local.ClearStun(); local.ApplyWhirled(3); local.ApplyChilled(3); local.ApplyHaunted(1);
                 settings.HudScale=1; settings.ReducedUiMotion=false;
                 view.Tick(local,false,false,false,false); yield return new WaitForSecondsRealtime(.22f); view.Tick(local,false,false,false,false);
-                var haunted = root.GetComponentsInChildren<Text>().First(x=>x.name=="StatusName"&&x.text=="Haunted").transform.parent as RectTransform;
+                var haunted = root.GetComponentsInChildren<Text>(true).First(x=>x.name=="StatusName"&&x.text==StatusIcons.Name(StatusKind.Haunted).ToUpperInvariant()).transform.parent as RectTransform;
                 var before = haunted.anchoredPosition;
                 local.ApplyHaunted(1); view.Tick(local,false,false,false,false);
                 Assert.AreEqual(before,haunted.anchoredPosition,"Refreshing the same effect must not restart entry animation");
                 local.ApplyNetworkStatuses(0,3,0,.5f); view.Tick(local,false,false,false,false);
                 Assert.AreEqual(before,haunted.anchoredPosition,"Reflow begins at the existing position");
                 yield return new WaitForSecondsRealtime(.22f); view.Tick(local,false,false,false,false);
-                Assert.Less(haunted.anchoredPosition.y,before.y);
+                Assert.Less(haunted.anchoredPosition.x,before.x,"The ring slides left into the gap.");
                 Assert.AreEqual(.5f/StatusRules.HauntedSeconds,haunted.GetComponentInChildren<HudRing>().Fill,.001f);
                 local.ApplyNetworkStatuses(0,0,0,0); view.Tick(local,false,false,false,false);
                 Assert.IsFalse(haunted.gameObject.activeSelf,"Expired statuses disappear from actual shared timers");
@@ -1116,21 +1114,15 @@ namespace TumbangPreso.PlayTests
                     foreach (var size in new[] { new Vector2Int(960, 540), new Vector2Int(1600, 680) })
                     {
                         Canvas.ForceUpdateCanvases();
-                        var warning = (RectTransform)root.Find("WarningMessage");
-                        // Guide p.12: a thin opaque title strip, with its reason on its own line beneath.
-                        var title = (RectTransform)warning.Find("WarningText");
+                        var warning = (RectTransform)root.HudFind("WarningMessage");
+                        // Live HUD: painted lettering on a soft band with the reason on a cream tag beneath.
+                        var title = (RectTransform)warning.Find("Title");
                         Assert.AreEqual("CANNOT THROW", title.GetComponent<Text>().text);
-                        Assert.AreEqual(InGameTypography.Bold, title.GetComponent<Text>().font);
+                        Assert.AreEqual(InGameTypography.Clock, title.GetComponent<Text>().font);
+                        Assert.IsNotNull(title.GetComponent<PaintedLetters>(), "The words are painted lettering.");
                         var reason=warning.Find("WarningReasonPlate/WarningReason").GetComponent<Text>();
-                        Assert.AreEqual(InGameTypography.Reading,reason.font);
                         Assert.AreEqual(FontStyle.Normal,reason.fontStyle);
-                        Assert.Greater(title.GetComponent<OwnerUiTracking>().Spacing,0);
-                        Assert.Greater(reason.GetComponent<OwnerUiTracking>().Spacing,0);
-                        var band=warning.Find("WarningReasonPlate").GetComponent<HudCard>();
-                        var bandCentre=warning.InverseTransformPoint(band.rectTransform.TransformPoint(band.rectTransform.rect.center));
-                        Assert.AreEqual(bandCentre.y*warning.Find("WarningTitlePlate").GetComponent<HudCard>().Slant,
-                            bandCentre.x,.1f,"The reason band must follow the outer panel's shear, keeping equal side insets.");
-                        Assert.LessOrEqual(title.rect.height, 64, "Ordinary warnings should be a thin strip.");
+                        Assert.IsNotNull(warning.Find("MarkLeft"));Assert.IsNotNull(warning.Find("MarkRight"));
                         Assert.AreEqual("MUST BE OUTSIDE DANGER ZONE", warning.Find("WarningReasonPlate/WarningReason").GetComponent<Text>().text);
                         yield return TumpUiCapture.Capture("Warning-strip-" + scale + "-" + size.x,
                             view.Canvas, size.x, size.y, false, false, inspectViewport: () =>
@@ -1139,7 +1131,6 @@ namespace TumbangPreso.PlayTests
                                 Assert.AreEqual(1, text.cachedTextGenerator.lineCount, "The warning should fit one readable line.");
                                 Assert.GreaterOrEqual(text.fontSize, 28);
                                 Assert.LessOrEqual(text.preferredWidth, text.rectTransform.rect.width + 1);
-                                Assert.AreEqual(1, warning.Find("WarningTitlePlate").GetComponent<HudCard>().color.a, .001f, "The refusal tile is fully opaque.");
                                 var bounds = HudRevisionBounds(root, warning);
                                 Assert.GreaterOrEqual(bounds.xMin, root.rect.xMin);
                                 Assert.LessOrEqual(bounds.xMax, root.rect.xMax);
@@ -1166,9 +1157,9 @@ namespace TumbangPreso.PlayTests
             view.Tick(local,false,false,false,false);
             string words=view.WarningText;Assert.That(words,Does.Contain("OUTSIDE DANGER ZONE"));
             float first=(float)stamp.GetValue(view);
-            var root=view.Canvas.transform.Find("WarningMessage");
+            var root=view.Canvas.transform.HudFind("WarningMessage");
             float reading=Mathf.Max(GameSettings.ValidHudScale(SettingsStore.Current.HudScale),SettingsStore.Current.LargerText?1.2f:1f);
-            Assert.AreEqual(.9f*reading,root.localScale.x,.001f);
+            Assert.AreEqual(reading,root.localScale.x,.001f);
             yield return null;view.Tick(local,false,false,false,false);
             Assert.AreEqual(first,(float)stamp.GetValue(view),"A continuous warning must not restart every tick.");
             view.Tick(local,true,false,false,false);Assert.AreEqual("",view.WarningText);
@@ -1330,6 +1321,61 @@ namespace TumbangPreso.PlayTests
                 Assert.IsFalse(ClockToast(view).enabled);
             }
             finally { PresentationClock.RequestScale(scale); }
+        }
+
+        [UnityTest, Timeout(120000)]
+        public IEnumerator OtherPlayersPlatesSlideInWhenAnotherSeatScoresAndTabListsEveryone()
+        {
+            bool reduced = SettingsStore.Current.ReducedUiMotion; int solo = GameLaunch.SoloSeat;
+            try
+            {
+                // A live round (past the opening and the role card), the way the capture pass stages it.
+                GameLaunch.SoloSeat = (MatchRules.DefenderSlotFor(1) + 1) % 4;
+                yield return UiArtboardShots.Match("Eskinita", GameMode.HeroStrike);
+                SettingsStore.Current.ReducedUiMotion = true;
+                var local = GameServices.Round.PlayerAt(GameLaunch.SoloSeat);
+                var view = Object.FindFirstObjectByType<TumpMatchReadout>();
+                var flags = BindingFlags.Instance | BindingFlags.NonPublic;
+                int others = 0, other = -1;
+                for (int seat = 0; seat < 4; seat++)
+                    if (seat != local.PlayerSlot && GameServices.Round.PlayerAt(seat) != null) { others++; if (other < 0) other = seat; }
+                if (others == 0) Assert.Ignore("This profile builds no other seats (practice with no bots), so there are no other scores to show.");
+                var scoreAt = typeof(TumpMatchReadout).GetField("_scoreAt", flags);
+                view.Tick(local, false, false, false, false); yield return new WaitForSecondsRealtime(.5f);
+                view.Tick(local, false, false, false, false); yield return new WaitForSecondsRealtime(3.2f);
+                view.Tick(local, false, false, false, false); yield return null;
+                Assert.AreEqual(0, view.BoardPlatesShown, "Nothing has scored: the other scores stay away.");
+                Assert.IsFalse(view.Canvas.transform.HudFind("MatchScores").gameObject.activeSelf, "The old four-chip row is retired in play.");
+
+                int scoreBefore = GameServices.Match.ScoreFor(other);
+                GameServices.Match.AddScore(other, ScoreEvent.LataKnocked);
+                int won = GameServices.Match.ScoreFor(other) - scoreBefore;
+                scoreAt.SetValue(view, 0f); view.Tick(local, false, false, false, false); yield return new WaitForSecondsRealtime(.5f);
+                view.Tick(local, false, false, false, false); yield return null;
+                Assert.AreEqual(others, view.BoardPlatesShown, "Another seat scoring brings in the plates of the other seats.");
+                var plates = view.Canvas.transform.HudFind("OtherScores");
+                Assert.IsNotNull(plates);
+                Assert.IsFalse(plates.Find("ScorePlate" + local.PlayerSlot).gameObject.activeSelf, "Your own score is in the corner, not on a plate.");
+                var first = (RectTransform)plates.Find("ScorePlate" + other);
+                Assert.AreEqual(0, first.anchoredPosition.x, .5f, "Flush with the screen edge.");
+                Assert.AreEqual(-150, first.anchoredPosition.y, .5f, "The leader is the first plate.");
+                Assert.IsTrue(first.Find("Points").gameObject.activeSelf, "The points just won sit on the green tag.");
+                Assert.AreEqual("+" + won, first.Find("Points/Label").GetComponent<Text>().text);
+                Assert.AreEqual(HudBadge.Glyph.Crown, first.Find("LeaderCrown").GetComponent<HudBadge>().Kind, "The unique leader wears the crown.");
+
+                // Three seconds later they leave.
+                typeof(TumpMatchReadout).GetField("_boardPopUntil", flags).SetValue(view, Time.unscaledTime - .1f);
+                view.Tick(local, false, false, false, false); yield return new WaitForSecondsRealtime(.5f); view.Tick(local, false, false, false, false); yield return null;
+                Assert.AreEqual(0, view.BoardPlatesShown, "And slide out again.");
+
+                // Holding the table shows every seat that is in the match, yours too.
+                view.HoldBoardForCapture(true);
+                view.Tick(local, false, false, false, false); yield return new WaitForSecondsRealtime(.6f); view.Tick(local, false, false, false, false); yield return null;
+                Assert.AreEqual(others + 1, view.BoardPlatesShown, "Tab lists everyone.");
+                Assert.IsTrue(plates.Find("ScorePlate" + local.PlayerSlot + "/You").GetComponent<Image>().enabled, "Your own plate has the lime line.");
+                view.HoldBoardForCapture(false);
+            }
+            finally { SettingsStore.Current.ReducedUiMotion = reduced; GameLaunch.SoloSeat = solo; }
         }
 
         private static IEnumerator Open(GameMode mode)

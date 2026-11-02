@@ -765,6 +765,11 @@ namespace TumbangPreso.EditorTools
                 // catches until the grade is being compared against the Godot build side by side.
                 "TumbangPreso/ColourGrade",
 
+                // ⚠️ THE CHARACTER DISPLAYS' CREASE SHADE AND DARK-TONE LIFT. `PreviewCrease` reaches it through
+                // `Shader.Find` and its miss path passes the frame through, so a build that strips this draws flat
+                // displays while the editor draws the shaded ones, and nothing says so.
+                "Hidden/TumbangPreso/PreviewCrease",
+
                 // ⚠️ THE WORLD OUTLINE PROTOTYPE, ADDED WHEN IT WAS SWITCHED ON. It was
                 // deliberately left OUT while it was inert, so a disabled prototype did not ship
                 // its variants into every build. `CameraRig` now attaches and enables it, so the

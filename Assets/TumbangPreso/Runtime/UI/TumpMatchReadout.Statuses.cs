@@ -6,167 +6,209 @@ using UnityEngine.UI;
 namespace TumbangPreso.UI
 {
     /// <summary>
-    /// ⚠️ YOUR OWN STATUSES, IN THE LEFT STACK (owner's status table, 2026-09-25): each one is its
-    /// icon, its name and the owner's tooltip ("Disabled Slipper Retrieval"), with a ring draining
-    /// round the icon. VISUAL-1.6 moved every timed row off text and into shapes; a status is the
-    /// exception that names itself, because the tooltip is the only thing that tells a player WHY
-    /// the grab has stopped working. Every live status is retained. Every label is at least 28 units.
+    /// § YOUR OWN STATUSES, a row of small coral rings right of your score (live HUD, 2026-11-01;
+    /// `boot_match.statuses` and `status_landed`).
     ///
-    /// ⚠️ UI REVAMP 2026-10-06: NO MORE FIXED GREY SLABS. The owner rejected a stack of identical
-    /// 500 x 118 panels. A status is now a MEDALLION (paper rim, ink face, the element's ring and
-    /// icon) with an ink TAB behind it that is only as wide and tall as its own name, seconds and
-    /// explanation. Each catalogue entry measures its tab once, from its real tooltip, so a long
-    /// explanation gets its second line and a short one does not pay for it.
+    /// Each ring is the effect's icon on a dark disc with a coral arc that drains from the effect's real
+    /// remaining time (`StatusLeft` over `StatusTotal`) and the whole seconds painted below it. The
+    /// tall rows of icon, name and explanation are gone: a ring says WHICH effect and HOW LONG, and the
+    /// words only appear when they are news.
+    ///
+    /// ⚠️ WHEN ONE LANDS, ITS RING SWELLS WITH A HAND-CUT WHITE RIM AND POINTED TIP and its name and
+    /// description show over it for about three seconds, then fade. The rules the owner settled:
+    /// the effect soonest to expire goes first; its words never outlast it; an effect that ends while
+    /// waiting is dropped from the queue; an effect with under 1.5 s left only pops its ring; and a
+    /// REFRESHED effect (already on, time put back) shows nothing again. Effects landing together take
+    /// turns, about two seconds each, the last holding three.
+    ///
+    /// ⚠️ HOLD THE INFO KEY (TAB) AND EVERY ACTIVE EFFECT IS LISTED with its name and description, so a
+    /// player can look up what is stopping them without waiting for a landing. Nothing here changes a
+    /// status, its icon or its effects; the HUD only reads them.
+    ///
+    /// Object names (`StatusChip{i}`, `StatusIcon`, `StatusName`, `StatusTooltip`, `StatusTimeChip`,
+    /// `StatusTime`) are kept because the capture boards and the probes address them by name.
     /// </summary>
     public sealed partial class TumpMatchReadout
     {
         private static readonly int StatusChips = StatusRules.All.Count;
         private readonly RectTransform[] _chip = new RectTransform[StatusChips];
+        private readonly RectTransform[] _chipBody = new RectTransform[StatusChips];
         private readonly Image[] _chipIcon = new Image[StatusChips];
         private readonly HudRing[] _chipRing = new HudRing[StatusChips];
+        private readonly HudCard[] _chipDisc = new HudCard[StatusChips];
+        private readonly Image[] _chipRim = new Image[StatusChips];
         private readonly Text[] _chipName = new Text[StatusChips];
         private readonly Text[] _chipTip = new Text[StatusChips];
         private readonly Text[] _chipTime = new Text[StatusChips];
-        private readonly int[] _chipTenths = new int[StatusChips];
-        private readonly Vector2[] _chipSize = new Vector2[StatusChips];
-        private readonly Vector2[] _orderedSize = new Vector2[StatusChips];
-        private readonly Vector2[] _orderedPositions = new Vector2[StatusChips];
+        private readonly Text[] _listName = new Text[StatusChips];
+        private readonly Text[] _listTip = new Text[StatusChips];
+        private readonly float[] _chipTipHeight = new float[StatusChips];
+        private readonly int[] _chipSeconds = new int[StatusChips];
+        private readonly bool[] _chipWas = new bool[StatusChips];
+        private readonly float[] _chipPopAt = new float[StatusChips], _chipFocus = new float[StatusChips], _chipMovedAt = new float[StatusChips];
+        private readonly Vector2[] _chipFrom = new Vector2[StatusChips], _chipTarget = new Vector2[StatusChips];
+        private readonly bool[] _chipPlaced = new bool[StatusChips];
+        private readonly int[] _statusQueue = new int[StatusChips];
+        private int _statusQueued, _statusLanding = -1;
+        private float _statusLandingAt;
+        private RectTransform _statusList;
         private OwnerUiGlyph _zappedFallback;
         private readonly List<StatusKind> _liveStatuses = new List<StatusKind>(4);
-
-        private readonly Vector2[] _chipFrom = new Vector2[StatusChips];
-        private readonly Vector2[] _chipTarget = new Vector2[StatusChips];
-        private readonly float[] _chipMovedAt = new float[StatusChips];
         private float _statusPromptMaxWidth = 1100;
 
-        private const float Medal = 92, TabLeft = 104, TabRight = 20, TipWrap = 372, StatusColumn = 520, StatusMargin = 24, StatusGap = 10;
+        private const int RingsPerRow = 6;
+        private const float RingStepX = 86, RingRowStep = 100, RingFirstX = 402, RingY = 82, TextWrap = 440, MinTextSeconds = 1.5f;
+        private const float LandSeconds = 3f, QueuedSeconds = 2f, FocusScale = 84f / 72f;
 
-        /// <summary>"CHILLED" drawn as "Chilled": the catalogue keeps its own spelling.</summary>
-        internal static string StatusTitle(string name)
-            => string.IsNullOrEmpty(name) ? "" : name.Substring(0, 1) + name.Substring(1).ToLowerInvariant();
+        private static void CentreAnchors(RectTransform rect)
+            => rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(.5f, .5f);
+
+        private static void BottomLeft(RectTransform rect, Vector2 at, Vector2 size)
+        {
+            rect.anchorMin = rect.anchorMax = Vector2.zero; rect.pivot = Vector2.zero;
+            rect.anchoredPosition = at; rect.sizeDelta = size;
+        }
 
         private void BuildStatusChips()
         {
+            _statusList = OwnerUiLayout.Rect(_root, "StatusList");
+            BottomLeft(_statusList, Vector2.zero, new Vector2(1, 1));
             for (int i = 0; i < StatusChips; i++)
             {
                 var kind = StatusRules.All[i].Kind;
                 var chip = OwnerUiLayout.Rect(_root, "StatusChip" + i);
-                Pin(chip, new Vector2(0, 0), new Vector2(StatusMargin + 250, 75 + i * 128), new Vector2(500, Medal));
+                CentreAnchors(chip); chip.anchorMin = chip.anchorMax = Vector2.zero;
+                chip.anchoredPosition = new Vector2(RingFirstX, RingY); chip.sizeDelta = new Vector2(84, 84);
 
-                // ⚠️ 2026-10-20 OVERHAUL: the tab is a strip of smoked glass and the medallion a round
-                // glass well, the way Overwatch stacks its buff and debuff icons over the health bar.
-                // Shape and meaning are unchanged: the element's ring drains round the icon.
-                var plate = OwnerUiLayout.Rect(chip, "StatusPlate").gameObject.AddComponent<HudCard>();
-                plate.Glass(HudDraw.Glass).raycastTarget = false;
+                // The hand-cut rim stands behind the ring and shows only while the effect has just landed. The
+                // art has its pointed tip on top, so the ring's centre sits 8 below the art's centre.
+                _chipRim[i] = OwnerUiLayout.Rect(chip, "StatusRim").gameObject.AddComponent<Image>();
+                _chipRim[i].sprite = LiveHud.Picture("rim-cut"); _chipRim[i].raycastTarget = false; _chipRim[i].enabled = false;
+                CentreAnchors(_chipRim[i].rectTransform);
+                _chipRim[i].rectTransform.anchoredPosition = new Vector2(0, 8); _chipRim[i].rectTransform.sizeDelta = new Vector2(99, 115);
 
-                var rim = OwnerUiLayout.Rect(chip, "StatusMedal").gameObject.AddComponent<HudCard>();
-                rim.Glass(HudDraw.GlassDeep, 0, Medal * .5f, .3f).raycastTarget = false;
-                Pin(rim.rectTransform, new Vector2(0, .5f), new Vector2(Medal * .5f, 0), new Vector2(Medal, Medal));
-                var face = OwnerUiLayout.Rect(chip, "StatusFace").gameObject.AddComponent<HudCard>();
-                face.Glass(HudDraw.GlassDeep, 0, (Medal - 10) * .5f, 0).raycastTarget = false; face.enabled = false;
-                Pin(face.rectTransform, new Vector2(0, .5f), new Vector2(Medal * .5f, 0), new Vector2(Medal - 10, Medal - 10));
-
-                _chipRing[i] = OwnerUiLayout.Rect(chip, "StatusRing").gameObject.AddComponent<HudRing>();
+                var body = _chipBody[i] = OwnerUiLayout.Rect(chip, "StatusBody");
+                CentreAnchors(body); body.anchoredPosition = Vector2.zero; body.sizeDelta = new Vector2(72, 72);
+                _chipDisc[i] = OwnerUiLayout.Rect(body, "StatusDisc").gameObject.AddComponent<HudCard>();
+                _chipDisc[i].Glass(new Color(LiveHud.Glass.r, LiveHud.Glass.g, LiveHud.Glass.b, 95 / 255f), 0, 36, 0);
+                _chipDisc[i].BorderWidth = 0; _chipDisc[i].FollowContrast = false; _chipDisc[i].raycastTarget = false;
+                OwnerUiLayout.Fill(_chipDisc[i].rectTransform);
+                _chipRing[i] = OwnerUiLayout.Rect(body, "StatusRing").gameObject.AddComponent<HudRing>();
                 _chipRing[i].Thickness = 6; _chipRing[i].raycastTarget = false;
-                Pin(_chipRing[i].rectTransform, new Vector2(0, .5f), new Vector2(Medal * .5f, 0), new Vector2(Medal - 14, Medal - 14));
-                _chipIcon[i] = OwnerUiLayout.Rect(chip, "StatusIcon").gameObject.AddComponent<Image>();
+                OwnerUiLayout.Fill(_chipRing[i].rectTransform);
+                _chipIcon[i] = OwnerUiLayout.Rect(body, "StatusIcon").gameObject.AddComponent<Image>();
                 _chipIcon[i].raycastTarget = false; _chipIcon[i].preserveAspect = true;
-                Pin(_chipIcon[i].rectTransform, new Vector2(0, .5f), new Vector2(Medal * .5f, 0), new Vector2(62, 62));
+                CentreAnchors(_chipIcon[i].rectTransform);
+                _chipIcon[i].rectTransform.anchoredPosition = Vector2.zero; _chipIcon[i].rectTransform.sizeDelta = new Vector2(54, 54);
                 if (kind == StatusKind.Zapped)
                 {
                     // No supplied sprite exists for this status yet; the existing scalable lock
                     // mark keeps an ability lock legible at a glance until one does.
-                    _zappedFallback = OwnerUiGlyph.Create(chip, "StatusLock", OwnerUiGlyph.Mark.Lock, HudDraw.Honey);
-                    Pin(_zappedFallback.rectTransform, new Vector2(0, .5f), new Vector2(Medal * .5f, 0), new Vector2(40, 40));
+                    _zappedFallback = OwnerUiGlyph.Create(body, "StatusLock", OwnerUiGlyph.Mark.Lock, HudDraw.Honey);
+                    CentreAnchors(_zappedFallback.rectTransform);
+                    _zappedFallback.rectTransform.anchoredPosition = Vector2.zero; _zappedFallback.rectTransform.sizeDelta = new Vector2(34, 34);
                     _zappedFallback.enabled = false;
                 }
 
-                _chipName[i] = OwnerUiLayout.Text(chip, "StatusName", StatusTitle(StatusIcons.Name(kind)), 34, OwnerUiLayout.TypeRole.Display);
-                _chipName[i].color = HudDraw.Ivory; _chipName[i].alignment = TextAnchor.MiddleLeft;
-                _chipName[i].horizontalOverflow = HorizontalWrapMode.Overflow; _chipName[i].verticalOverflow = VerticalWrapMode.Overflow;
-                var timeChip = OwnerUiLayout.Rect(chip, "StatusTimeChip").gameObject.AddComponent<HudCard>();
-                Pin(timeChip.rectTransform, new Vector2(0, .5f), new Vector2(Medal * .5f, -Medal * .5f + 6), new Vector2(78, 32));
-                timeChip.Glass(HudDraw.GlassDeep, HudDraw.Lean, 3, .3f).raycastTarget = false;
-                _chipTime[i] = OwnerUiLayout.Text(timeChip.transform, "StatusTime", "", 28, OwnerUiLayout.TypeRole.Display);
-                _chipTime[i].alignment = TextAnchor.MiddleCenter; _chipTime[i].color = StatusColour(kind);
-                _chipTime[i].horizontalOverflow = HorizontalWrapMode.Overflow; _chipTime[i].verticalOverflow = VerticalWrapMode.Overflow;
-                _chipTenths[i] = -1;
-                _chipTip[i] = OwnerUiLayout.Text(chip, "StatusTooltip", StatusIcons.Tooltip(kind), 28, OwnerUiLayout.TypeRole.Reading);
-                _chipTip[i].color = new Color32(255, 250, 240, 205); _chipTip[i].alignment = TextAnchor.UpperLeft;
-                _chipTip[i].horizontalOverflow = HorizontalWrapMode.Wrap; _chipTip[i].verticalOverflow = VerticalWrapMode.Overflow;
-                _chipTip[i].lineSpacing = .95f;
-
-                // Measure this status's own tab once: name line, then its real explanation.
-                const float nameHeight = 40, timeWidth = 0;
-                Pin(_chipTip[i].rectTransform, new Vector2(0, .5f), Vector2.zero, new Vector2(TipWrap, 40));
-                float tipWidth = Mathf.Min(TipWrap, Mathf.Ceil(_chipTip[i].preferredWidth) + 12);
-                _chipTip[i].rectTransform.sizeDelta = new Vector2(tipWidth, 40);
-                float tipHeight = Mathf.Ceil(_chipTip[i].preferredHeight * 1.08f) + 6;
-                float content = Mathf.Max(tipWidth, _chipName[i].preferredWidth + 16 + timeWidth);
-                float width = TabLeft + content + TabRight, height = Mathf.Max(Medal, 10 + nameHeight + tipHeight + 12);
-                _chipSize[i] = new Vector2(width, height);
-                chip.sizeDelta = _chipSize[i];
-                OwnerUiLayout.Place(plate.rectTransform, Medal * .5f, 4, width - Medal * .5f, height - 8);
-                float top = height * .5f - 10;
-                Pin(_chipName[i].rectTransform, new Vector2(0, .5f), new Vector2(TabLeft + (content - timeWidth - 8) * .5f, top - nameHeight * .5f),
-                    new Vector2(content - timeWidth - 8, nameHeight));
+                // The seconds, painted white on a dark edge, centred under the ring.
+                var timeChip = OwnerUiLayout.Rect(chip, "StatusTimeChip");
+                CentreAnchors(timeChip); timeChip.anchoredPosition = new Vector2(0, -44); timeChip.sizeDelta = new Vector2(80, 32);
+                _chipTime[i] = LiveHud.Lettering(timeChip, "StatusTime", "", 24, Color.white, LiveHud.Glass, LiveHud.Glass, 3, 3, 1);
                 OwnerUiLayout.Fill(_chipTime[i].rectTransform);
-                Pin(_chipTip[i].rectTransform, new Vector2(0, .5f), new Vector2(TabLeft + tipWidth * .5f, top - nameHeight - 2 - tipHeight * .5f),
-                    new Vector2(tipWidth, tipHeight));
+                _chipSeconds[i] = -1;
+
+                // The words that show over the ring when the effect lands: name in painted lettering, description below it.
+                _chipTip[i] = LiveHud.Fact(chip, "StatusTooltip", StatusIcons.Tooltip(kind), 24, Color.white);
+                _chipTip[i].alignment = TextAnchor.LowerLeft; _chipTip[i].horizontalOverflow = HorizontalWrapMode.Wrap;
+                BottomLeft(_chipTip[i].rectTransform, new Vector2(8, 105), new Vector2(TextWrap, 30));
+                // A little over the measure, so a line is never clipped when the text is laid out at another canvas scale.
+                _chipTipHeight[i] = Mathf.Max(30, Mathf.Ceil(_chipTip[i].preferredHeight * 1.3f) + 4);
+                _chipTip[i].rectTransform.sizeDelta = new Vector2(TextWrap, _chipTipHeight[i]);
+                _chipName[i] = LiveHud.Lettering(chip, "StatusName", StatusIcons.Name(kind).ToUpperInvariant(), 36, Color.white, LiveHud.Glass, LiveHud.Glass, 4, 3, 3);
+                _chipName[i].alignment = TextAnchor.LowerLeft;
+                BottomLeft(_chipName[i].rectTransform, new Vector2(8, 105 + _chipTipHeight[i] + 4), new Vector2(TextWrap, 50));
+                _chipName[i].enabled = _chipTip[i].enabled = false;
+
+                // The Tab list's own copy, stacked above the row.
+                _listName[i] = LiveHud.Lettering(_statusList, "ListName" + i, StatusIcons.Name(kind).ToUpperInvariant(), 32, Color.white, LiveHud.Glass, LiveHud.Glass, 4, 3, 3);
+                _listName[i].alignment = TextAnchor.LowerLeft;
+                BottomLeft(_listName[i].rectTransform, Vector2.zero, new Vector2(TextWrap, 44));
+                _listTip[i] = LiveHud.Fact(_statusList, "ListTip" + i, StatusIcons.Tooltip(kind), 24, Color.white);
+                _listTip[i].alignment = TextAnchor.LowerLeft; _listTip[i].horizontalOverflow = HorizontalWrapMode.Wrap;
+                BottomLeft(_listTip[i].rectTransform, Vector2.zero, new Vector2(TextWrap, _chipTipHeight[i]));
+                _listName[i].enabled = _listTip[i].enabled = false;
                 _chip[i] = chip; chip.gameObject.SetActive(false);
             }
         }
 
+        /// <summary>A ring has just come on. It always pops; its words wait their turn when it has time to read them.</summary>
+        private void StatusLanded(int slot, float left)
+        {
+            _chipPopAt[slot] = Time.unscaledTime;
+            if (left >= MinTextSeconds && _statusQueued < _statusQueue.Length) _statusQueue[_statusQueued++] = slot;
+        }
+
+        private void StatusDropQueued(int slot)
+        {
+            for (int k = 0; k < _statusQueued; k++)
+                if (_statusQueue[k] == slot) { _statusQueue[k] = _statusQueue[--_statusQueued]; return; }
+        }
+
         private void PaintStatusChips(CharacterMotor local, bool show)
         {
-            if (_chip[0] == null) return;
+            if (_chip.Length == 0 || _chip[0] == null) return;
             StatusIcons.Live(show ? local : null, _liveStatuses);
-            var settings = Settings.SettingsStore.Current;
-            float scale = Mathf.Max(Settings.GameSettings.ValidHudScale(settings.HudScale), settings.LargerText ? 1.2f : 1f);
+            float now = Time.unscaledTime, dt = Time.unscaledDeltaTime;
+            bool still = LiveHud.Still;
+            bool tab = show && BoardHeld;
+
+            // Landings: an effect that was off and is now on. A refresh changes nothing here.
             for (int i = 0; i < StatusChips; i++)
             {
-                int order = _liveStatuses.IndexOf(StatusRules.All[i].Kind);
-                if (order >= 0) _orderedSize[order] = _chipSize[i];
+                var kind = StatusRules.All[i].Kind;
+                bool on = _liveStatuses.IndexOf(kind) >= 0;
+                if (on && !_chipWas[i]) StatusLanded(i, local.StatusLeft(kind));
+                else if (!on && _chipWas[i]) { StatusDropQueued(i); if (_statusLanding == i) _statusLanding = -1; }
+                _chipWas[i] = on;
             }
-            // Stack upward from the bottom-left corner by each tab's real height; a dense set
-            // opens another column instead of running under the match bar. ⚠️ 2026-10-20: with the
-            // vitals plate drawn, the stack starts ABOVE it, which is where Overwatch keeps its
-            // status icons (over the health bar), and it never covers your own portrait.
-            float floor = VitalsVisible ? VitalsTop : StatusMargin;
-            float bottom = floor, limit = Mathf.Max(Medal + floor, _root.rect.height / scale - 200);
-            int column = 0;
-            for (int order = 0; order < _liveStatuses.Count; order++)
+
+            // Whose words are up: the current one until its time is out or its effect is, then the waiting effect that expires first.
+            if (_statusLanding >= 0)
             {
-                var size = _orderedSize[order];
-                if (bottom > floor && bottom + size.y > limit) { column++; bottom = floor; }
-                _orderedPositions[order] = new Vector2(StatusMargin + (column * StatusColumn + size.x * .5f) * scale, (bottom + size.y * .5f) * scale);
-                bottom += size.y + StatusGap;
+                var kind = StatusRules.All[_statusLanding].Kind;
+                float span = _statusQueued > 0 ? QueuedSeconds : LandSeconds;
+                if (!_chipWas[_statusLanding] || local.StatusLeft(kind) <= 0 || now - _statusLandingAt >= span) _statusLanding = -1;
             }
-            int columns = _liveStatuses.Count == 0 ? 1 : column + 1;
-            float occupied = 20 + columns * StatusColumn * scale;
-            float centre = columns == 1 ? .5f : Mathf.Clamp01((occupied + _root.rect.width - 20) * .5f / _root.rect.width);
-            _statusPromptMaxWidth = columns == 1 ? 1100 : Mathf.Max(240, (_root.rect.width - occupied - 40) / scale);
-            if (_promptRoot != null) _promptRoot.anchorMin = _promptRoot.anchorMax = new Vector2(centre, columns == 1 ? .28f : .36f);
-            if (_warningRoot != null) _warningRoot.anchorMin = _warningRoot.anchorMax = new Vector2(centre, .66f);
+            while (_statusLanding < 0 && _statusQueued > 0)
+            {
+                int best = -1; float soonest = float.MaxValue;
+                for (int k = 0; k < _statusQueued; k++)
+                {
+                    int slot = _statusQueue[k];
+                    float left = _chipWas[slot] ? local.StatusLeft(StatusRules.All[slot].Kind) : 0;
+                    if (left < MinTextSeconds) { _statusQueue[k--] = _statusQueue[--_statusQueued]; continue; }
+                    if (left < soonest) { soonest = left; best = slot; }
+                }
+                if (best < 0) break;
+                StatusDropQueued(best);
+                _statusLanding = best; _statusLandingAt = now; _chipPopAt[best] = now;
+            }
+
             for (int i = 0; i < StatusChips; i++)
             {
-                // A catalog slot belongs to one status, so inserting/removing another
-                // cannot transfer its ring, entry motion or expiry to the wrong effect.
                 var kind = StatusRules.All[i].Kind;
                 int order = _liveStatuses.IndexOf(kind);
                 bool on = order >= 0;
-                bool entered = on && !_chip[i].gameObject.activeSelf;
                 if (_chip[i].gameObject.activeSelf != on) _chip[i].gameObject.SetActive(on);
-                if (!on) continue;
-                var target = _orderedPositions[order];
-                _chip[i].localScale = Vector3.one * scale;
-                if (entered || Vector2.SqrMagnitude(_chipTarget[i] - target) > .01f)
-                {
-                    _chipFrom[i] = entered ? target - Vector2.up * 24 * scale : _chip[i].anchoredPosition;
-                    _chipTarget[i] = target; _chipMovedAt[i] = Time.unscaledTime;
-                }
-                float move = settings.ReducedUiMotion ? 1 : Mathf.SmoothStep(0, 1, Mathf.Clamp01((Time.unscaledTime - _chipMovedAt[i]) / .2f));
-                _chip[i].anchoredPosition = Vector2.Lerp(_chipFrom[i], target, move);
+                if (!on) { _chipFocus[i] = 0; _chipPlaced[i] = false; SetListText(i, false); continue; }
+
+                // Rings sit in a row right of the score (six to a row, so a crowd never runs under the ultimate) and ease to a new place when another leaves.
+                var target = new Vector2(RingFirstX + (order % RingsPerRow) * RingStepX, RingY + (order / RingsPerRow) * RingRowStep);
+                if (!_chipPlaced[i]) { _chipPlaced[i] = true; _chipFrom[i] = _chipTarget[i] = target; _chipMovedAt[i] = now - 1; }
+                else if ((_chipTarget[i] - target).sqrMagnitude > .01f) { _chipFrom[i] = _chip[i].anchoredPosition; _chipTarget[i] = target; _chipMovedAt[i] = now; }
+                var at = Vector2.Lerp(_chipFrom[i], _chipTarget[i], still ? 1 : Mathf.SmoothStep(0, 1, Mathf.Clamp01((now - _chipMovedAt[i]) / .2f)));
+                if (_chip[i].anchoredPosition != at) _chip[i].anchoredPosition = at;
+
                 var sprite = StatusIcons.For(kind);
                 if (_chipIcon[i].sprite != sprite) _chipIcon[i].sprite = sprite;
                 _chipIcon[i].enabled = sprite != null;
@@ -174,31 +216,74 @@ namespace TumbangPreso.UI
                 float total = Mathf.Max(0.01f, local.StatusTotal(kind));
                 float left = Mathf.Max(0, local.StatusLeft(kind));
                 _chipRing[i].Set(Mathf.Clamp01(left / total));
-                _chipRing[i].Paint(StatusColour(kind), new Color(1, 1, 1, .16f));
-                // Rewritten only when the shown tenth changes, never every frame.
-                bool ending = left < 1f && left > 0 && !settings.ReducedUiMotion;
-                var timeColour = ending && Mathf.Repeat(Time.unscaledTime * 6f, 1) < .5f ? HudDraw.Ivory : StatusColour(kind);
-                if (_chipTime[i].color != timeColour) _chipTime[i].color = timeColour;
-                int tenths = Mathf.CeilToInt(left * 10);
-                if (_chipTenths[i] != tenths)
+                _chipRing[i].Paint(LiveHud.Coral, new Color(1, 1, 1, .16f));
+                int whole = Mathf.CeilToInt(left);
+                if (_chipSeconds[i] != whole) { _chipSeconds[i] = whole; _chipTime[i].text = whole.ToString(System.Globalization.CultureInfo.InvariantCulture); }
+
+                // The swell: a landing ring grows to 84 with the rim behind it, overshooting once; an ordinary pop is a small bump.
+                bool landing = _statusLanding == i && !tab;
+                if (landing) _chipFocus[i] = 1; else _chipFocus[i] = Mathf.MoveTowards(_chipFocus[i], 0, still ? 1 : dt / .2f);
+                float focus = _chipFocus[i];
+                float swell = landing ? (still ? 1 : LiveHud.Pop((now - _chipPopAt[i]) / .3f)) : focus;
+                float bump = !landing && focus <= 0 && !still ? Mathf.Sin(Mathf.Clamp01((now - _chipPopAt[i]) / .4f) * Mathf.PI) * .12f : 0;
+                float scale = 1 + (FocusScale - 1) * swell + bump;
+                _chipBody[i].localScale = new Vector3(scale, scale, 1);
+                bool rim = focus > 0;
+                if (_chipRim[i].enabled != rim) _chipRim[i].enabled = rim;
+                if (rim)
                 {
-                    _chipTenths[i] = tenths;
-                    _chipTime[i].text = (tenths * .1f).ToString("0.0", System.Globalization.CultureInfo.InvariantCulture) + "s";
+                    _chipRim[i].rectTransform.localScale = Vector3.one * Mathf.Max(.01f, swell);
+                    _chipRim[i].color = new Color(1, 1, 1, Mathf.Clamp01(focus * 2));
                 }
+                var disc = new Color(LiveHud.Glass.r, LiveHud.Glass.g, LiveHud.Glass.b, Mathf.Lerp(95 / 255f, 1, focus));
+                if (_chipDisc[i].color != disc) _chipDisc[i].color = disc;
+                // Only the lowered seconds show while swollen, and the words over it.
+                var seconds = (RectTransform)_chipTime[i].rectTransform.parent;
+                var lowered = new Vector2(0, Mathf.Lerp(-44, -58, focus));
+                if (seconds.anchoredPosition != lowered) seconds.anchoredPosition = lowered;
+                seconds.localScale = Vector3.one * Mathf.Lerp(1, 26f / 24f, focus);
+
+                if (_chipName[i].enabled != landing) _chipName[i].enabled = _chipTip[i].enabled = landing;
+                if (landing)
+                {
+                    float span = _statusQueued > 0 ? QueuedSeconds : LandSeconds;
+                    float alpha = still ? 1 : Mathf.Clamp01((now - _statusLandingAt) / .15f);
+                    alpha = Mathf.Min(alpha, Mathf.Clamp01(Mathf.Min(span - (now - _statusLandingAt), left) / .25f));
+                    var tint = Color.white; tint.a = alpha;
+                    if (_chipName[i].color != tint) { _chipName[i].color = tint; _chipTip[i].color = tint; }
+                }
+                SetListText(i, tab);
+            }
+            if (tab) PlaceStatusList();
+        }
+
+        private void SetListText(int slot, bool on)
+        {
+            if (_listName[slot].enabled != on) _listName[slot].enabled = _listTip[slot].enabled = on;
+        }
+
+        /// <summary>Stacks the Tab list's entries upward from just above the row, in the row's order.</summary>
+        private void PlaceStatusList()
+        {
+            float y = RingY + 62 + Mathf.Max(0, (_liveStatuses.Count - 1) / RingsPerRow) * RingRowStep;
+            for (int order = 0; order < _liveStatuses.Count; order++)
+            {
+                int slot = IndexOfStatus(_liveStatuses[order]);
+                if (slot < 0) continue;
+                _listTip[slot].rectTransform.anchoredPosition = new Vector2(RingFirstX - 26, y);
+                y += _chipTipHeight[slot] + 4;
+                _listName[slot].rectTransform.anchoredPosition = new Vector2(RingFirstX - 34, y);
+                y += 44 + 12;
             }
         }
 
-        /// <summary>The ring colour: the element that did it. The tag is warm honey here, because
-        /// this is the victim's own HUD and the taya's colour would read as an ally marker.</summary>
-        private static Color StatusColour(StatusKind kind)
+        private static int IndexOfStatus(StatusKind kind)
         {
-            switch (kind)
-            {
-                case StatusKind.Whirled: return UiTheme.HeroWindBright;
-                case StatusKind.Chilled: return new Color(.70f, .92f, 1f);
-                case StatusKind.Frozen: return new Color(.86f, .97f, 1f);
-                default: return HudDraw.Honey;
-            }
+            for (int i = 0; i < StatusChips; i++) if (StatusRules.All[i].Kind == kind) return i;
+            return -1;
         }
+
+        /// <summary>For tests: whose words are up over the row, or -1.</summary>
+        internal int StatusLandingSlot => _statusLanding;
     }
 }

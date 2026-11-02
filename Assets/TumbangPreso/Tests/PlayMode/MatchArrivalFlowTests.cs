@@ -594,8 +594,9 @@ namespace TumbangPreso.PlayTests
         public IEnumerator CustomRoomHasNoSecondReadyOptionAndLegacyRulesStillIntroduceTheCourt()
         {
             yield return HubFlowTests.OpenHome();
-            yield return HubFlowTests.Press("MenuButton");
-            yield return HubFlowTests.Press("MenuMATCHRULES");
+            yield return HubFlowTests.Press("ModeCard");
+            yield return HubFlowTests.Press("PracticeCard");
+            yield return HubFlowTests.Press("PracticeRules");
             var rules = Object.FindFirstObjectByType<CustomGameScreen>();
             Assert.IsNotNull(rules);
             var buttons = GameObject.Find("OwnerCustomGameCanvas").GetComponentsInChildren<UnityEngine.UI.Button>(true);

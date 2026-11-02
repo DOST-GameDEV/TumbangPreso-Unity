@@ -280,8 +280,8 @@ namespace TumbangPreso.UI.Hub
 
         /// <summary>
         /// ⚠️⚠️ BACK ON HOME OPENS THE MENU, IT DOES NOT LEAVE FOR THE TITLE SCREEN (owner, 2026-09-26).
-        /// BACK opens the hamburger MENU (a second BACK closes it), which is where BACK TO TITLE and
-        /// every other way out already live.
+        /// BACK opens the hamburger MENU (a second BACK closes it), which is where EXIT GAME and
+        /// the other doors (SETTINGS, FRIENDS, CREDITS) live.
         /// </summary>
         public override bool Back()
         {

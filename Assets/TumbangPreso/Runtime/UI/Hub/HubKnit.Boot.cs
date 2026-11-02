@@ -30,6 +30,24 @@ namespace TumbangPreso.UI.Hub
         private static Cut KitPill(string art, Color ink) => new Cut { Face = art, FaceBorder = new Vector4(176, 0, 176, 0), SourceHeight = 252, Depth = new Vector2(0, -4), Ink = ink, Kit = true };
         private static Cut KitCard(string art, Color ink) => new Cut { Face = art, FaceBorder = new Vector4(46, 60, 46, 46), Density = 1, Depth = new Vector2(0, -6), Ink = ink, Kit = true };
 
+        // Thin-slab buttons for dense lists: the button's face at its own scale, the slab squeezed (280 tall, not 336).
+        private static Cut KitThin(string art, Color ink) => new Cut { Face = art, FaceBorder = new Vector4(235, 0, 235, 0), SourceHeight = 280, Depth = new Vector2(0, -5), Ink = ink, Kit = true };
+        // Checker paint cards: the centre is two checker periods square, so it tiles without a seam.
+        private static Cut KitPaint(string art, Color ink) => new Cut { Face = art, FaceBorder = new Vector4(46, 60, 46, 46), Density = 1, Tiled = true, Depth = new Vector2(0, -6), Ink = ink, Kit = true };
+
+        /// <summary>A kit card or well: the pieces a press darkens instead of brightening.</summary>
+        private static bool IsKitCard(Knit k)
+        {
+            switch (k)
+            {
+                case Knit.Card: case Knit.CardOn: case Knit.Well:
+                case Knit.DarkCard: case Knit.DarkCardOn: case Knit.DarkCardViewed: case Knit.DarkCardViewedOn:
+                case Knit.PaintYellow: case Knit.PaintRed: case Knit.PaintBlue: case Knit.PaintGo:
+                    return true;
+            }
+            return false;
+        }
+
         private static bool BootCut(Knit k, out Cut cut)
         {
             switch (k)
@@ -54,6 +72,30 @@ namespace TumbangPreso.UI.Hub
                 case Knit.Card: cut = KitCard(KitArt + "card", KitCream); return true;
                 case Knit.CardOn: cut = KitCard(KitArt + "card-on", KitCream); return true;
                 case Knit.Well: cut = KitCard(KitArt + "well", KitCream); return true;
+                case Knit.Blue: cut = KitButton(KitArt + "button-blue", HubBoard.Colour("#0A3E4C")); return true;
+                case Knit.PillBlue: cut = KitPill(KitArt + "pill-blue", HubBoard.Colour("#0A3E4C")); return true;
+                // Dark pieces for the berry ground: words are cream, never a cream border.
+                case Knit.DarkPanel:
+                    cut = new Cut { Face = KitArt + "dark-panel", FaceBorder = new Vector4(60, 74, 60, 60), Density = 1, Tiled = true, Ink = KitCream, Kit = true };
+                    return true;
+                case Knit.DarkCard: cut = KitCard(KitArt + "dark-card", KitCream); return true;
+                case Knit.DarkCardOn: cut = KitCard(KitArt + "dark-card-on", KitCream); return true;
+                case Knit.DarkCardViewed: cut = KitCard(KitArt + "dark-card-viewed", KitCream); return true;
+                case Knit.DarkCardViewedOn: cut = KitCard(KitArt + "dark-card-viewed-on", KitCream); return true;
+                // Checker paint cards, the GAMEMODE card. Inks are the mock-up's (`boot_menus.CARD_INK`).
+                case Knit.PaintYellow: cut = KitPaint(KitArt + "paint-yellow", HubBoard.Colour("#521E04")); return true;
+                case Knit.PaintRed: cut = KitPaint(KitArt + "paint-red", KitCream); return true;
+                case Knit.PaintBlue: cut = KitPaint(KitArt + "paint-blue", HubBoard.Colour("#052238")); return true;
+                case Knit.PaintGo: cut = KitPaint(KitArt + "paint-go", HubBoard.Colour("#163306")); return true;
+                case Knit.CardRim: cut = KitCard(KitArt + "card-rim", KitCream); return true;
+                case Knit.CardRimOn: cut = KitCard(KitArt + "card-rim-on", KitCream); return true;
+                case Knit.DarkCardRim: cut = KitCard(KitArt + "dark-card-rim", KitCream); return true;
+                case Knit.DarkCardRimOn: cut = KitCard(KitArt + "dark-card-rim-on", KitCream); return true;
+                case Knit.ThinPlain: cut = KitThin(KitArt + "thin-plain", KitMaroon); return true;
+                case Knit.ThinYellow: cut = KitThin(KitArt + "thin-yellow", HubBoard.Colour("#A84E0C")); return true;
+                case Knit.ThinRed: cut = KitThin(KitArt + "thin-red", HubBoard.Colour("#6A0C16")); return true;
+                case Knit.ThinGo: cut = KitThin(KitArt + "thin-go", HubBoard.Colour("#2C4A0E")); return true;
+                case Knit.ThinBlue: cut = KitThin(KitArt + "thin-blue", HubBoard.Colour("#0A3E4C")); return true;
             }
             cut = default;
             return false;
@@ -232,6 +274,16 @@ namespace TumbangPreso.UI.Hub
     public sealed class KitCutPicture : RawImage
     {
         public float Cut = 22;
+
+        /// <summary>Shows a texture covering a window of w x h, the crop sliding to focus (0 top, 1 bottom).</summary>
+        public void Fit(Texture source, float w, float h, float focus = .5f)
+        {
+            texture = source;
+            if (source == null || w <= 0 || h <= 0) { uvRect = new Rect(0, 0, 1, 1); return; }
+            float window = w / h, picture = (float)source.width / source.height;
+            float visibleW = window < picture ? window / picture : 1, visibleH = window < picture ? 1 : picture / window;
+            uvRect = new Rect((1 - visibleW) * .5f, (1 - visibleH) * (1 - focus), visibleW, visibleH);
+        }
 
         protected override void OnPopulateMesh(VertexHelper vh)
         {

@@ -20,23 +20,37 @@ namespace TumbangPreso.UI
     /// nothing draws it in play.
     ///
     /// ⚠️ A ROW ON ITS OWN DARK PLATE, NOT FLOATING TEXT. Seat colours are pale (cyan, salmon,
-    /// yellow, lilac) and vanish over sky; the plate is `HudDraw.Plate`, the clock's plate, so
-    /// the feed is one family with the match bar and turns black under High contrast by itself.
+    /// yellow, lilac) and vanish over sky.
+    ///
+    /// ⚠️ LIVE HUD 2026-11-01: THE ROWS ARE THE SCORE PLATES ON THE RIGHT EDGE (`boot_match.events`).
+    /// The same woven grey plate, flush with the screen edge, with a nearly solid dark section holding
+    /// the two heroes and the event glyph between them. Each hero's seat colour is a soft glow wider than
+    /// the section and clipped to it, and what the event was worth sits on the green tag in its own part
+    /// of the plate, with the same 24-unit gaps as the Tab board. Rows are 58 tall on a 70 step.
     /// </summary>
     public sealed class MatchEventFeed : MonoBehaviour
     {
         public const int Capacity = 3;
         public const float Lifetime = 3f;
-        private const float RowHeight = 54, Chip = 44, GlyphSize = 46, Pad = 5, Gap = 7, RowStep = 60, Width = 450;
+        private const float RowHeight = 58, RowStep = 70, Width = 450;
+        // The dark section holds the actor at 64, the glyph at 124 and the other player at 184; a row with no
+        // other player closes the section 60 earlier. The points get their own part with 24 round them.
+        private const float SectionTwo = 232, SectionOne = 172, GlyphBox = 30, HeroOne = 64, GlyphCentre = 124, HeroTwo = 184, TagHeight = 44, Room = 24;
+        private const float PlateCapRight = 12;
+        private static readonly Color GlowTint = new Color(1, 1, 1, 125 / 255f);
 
         private sealed class Row
         {
             public RectTransform Root;
             public CanvasGroup Group;
-            public HudCard Plate;
-            public HudCard[] Swatch = new HudCard[2];
+            public Image Plate;
+            public RectTransform Clip;
+            public Image[] Glow = new Image[2];
+            public RectTransform[] Swatch = new RectTransform[2];
             public Image[] Portrait = new Image[2];
             public Text[] Tag = new Text[2];
+            public RectTransform Tab;
+            public Text TabLabel;
             public HudBadge Glyph;
             public Image Ability;
             public Text Points;
@@ -59,7 +73,7 @@ namespace TumbangPreso.UI
         {
             var root = OwnerUiLayout.Rect(parent, "MatchEventFeed");
             root.anchorMin = root.anchorMax = root.pivot = new Vector2(1, 1);
-            root.anchoredPosition = new Vector2(-30, TopFor(Hud.OnTouch)); root.sizeDelta = new Vector2(Width, RowStep * Capacity);
+            root.anchoredPosition = new Vector2(RailX(Hud.OnTouch), RailTop(Hud.OnTouch)); root.sizeDelta = new Vector2(Width, RowStep * Capacity);
             var feed = root.gameObject.AddComponent<MatchEventFeed>(); feed._placedForTouch = Hud.OnTouch;
             for (int i = 0; i < Capacity; i++) feed._rows[i] = BuildRow(root, i);
             return feed;
@@ -72,20 +86,26 @@ namespace TumbangPreso.UI
             OwnerUiLayout.Place(row.Root, 0, i * RowStep, Width, RowHeight);
             row.Group = row.Root.gameObject.AddComponent<CanvasGroup>();
             row.Group.blocksRaycasts = false; row.Group.interactable = false; row.Group.alpha = 0;
-            row.Plate = OwnerUiLayout.Rect(row.Root, "EventPlate").gameObject.AddComponent<HudCard>();
-            // ⚠️ 2026-10-20 OVERHAUL: a row is a strip of smoked glass, Overwatch's kill feed.
-            row.Plate.Glass(HudDraw.Glass).raycastTarget = false;
+            row.Plate = OwnerUiLayout.Rect(row.Root, "EventPlate").gameObject.AddComponent<Image>();
+            row.Plate.type = Image.Type.Sliced; row.Plate.raycastTarget = false;
+            // Each hero's seat colour, wider than the section and clipped by it.
+            row.Clip = OwnerUiLayout.Rect(row.Root, "SeatGlows");
+            row.Clip.gameObject.AddComponent<RectMask2D>();
             for (int k = 0; k < 2; k++)
             {
-                var swatch = OwnerUiLayout.Rect(row.Root, k == 0 ? "ActorChip" : "OtherChip").gameObject.AddComponent<HudCard>();
-                swatch.Glass(Color.white, HudDraw.Lean, 2, 0); swatch.BorderWidth = 0; swatch.FollowContrast = false; swatch.raycastTarget = false;
+                var glow = row.Glow[k] = OwnerUiLayout.Rect(row.Clip, k == 0 ? "ActorGlow" : "OtherGlow").gameObject.AddComponent<Image>();
+                glow.sprite = LiveHud.Picture("seat-glow"); glow.raycastTarget = false; glow.color = GlowTint;
+            }
+            for (int k = 0; k < 2; k++)
+            {
+                var swatch = OwnerUiLayout.Rect(row.Root, k == 0 ? "ActorChip" : "OtherChip");
                 row.Swatch[k] = swatch;
-                row.Portrait[k] = OwnerPortraitArt.Create(swatch.transform, "Portrait", "");
-                OwnerUiLayout.Place(row.Portrait[k].rectTransform, 2, 2, Chip - 4, Chip - 4);
+                row.Portrait[k] = OwnerPortraitArt.Create(swatch, "Portrait", "");
+                row.Portrait[k].preserveAspect = true;
                 // Only drawn when a seat has no portrait art (a custom character without one).
-                var tag = OwnerUiLayout.Text(swatch.transform, "SeatTag", "", 28, OwnerUiLayout.TypeRole.Display);
+                var tag = OwnerUiLayout.Text(swatch, "SeatTag", "", 28, OwnerUiLayout.TypeRole.Display);
                 OwnerUiLayout.Fill(tag.rectTransform); tag.alignment = TextAnchor.MiddleCenter;
-                tag.color = HudDraw.CardInk; tag.verticalOverflow = VerticalWrapMode.Overflow; tag.raycastTarget = false;
+                tag.color = HudDraw.Ivory; tag.verticalOverflow = VerticalWrapMode.Overflow; tag.raycastTarget = false;
                 row.Tag[k] = tag;
             }
             row.Glyph = OwnerUiLayout.Rect(row.Root, "EventGlyph").gameObject.AddComponent<HudBadge>();
@@ -93,12 +113,11 @@ namespace TumbangPreso.UI
             // A cast row shows the ability's own icon where an event row shows its glyph.
             row.Ability = OwnerUiLayout.Rect(row.Root, "EventAbility").gameObject.AddComponent<Image>();
             row.Ability.raycastTarget = false; row.Ability.preserveAspect = true; row.Ability.enabled = false;
-            // The score feed says what the event was worth, in the same face as the totals.
-            row.Points = OwnerUiLayout.Text(row.Root, "EventPoints", "", 36, OwnerUiLayout.TypeRole.Display);
-            row.Points.color = HudDraw.Ivory; row.Points.alignment = TextAnchor.MiddleRight; row.Points.raycastTarget = false;
-            row.Points.fontStyle = FontStyle.Italic;
-            var edge = row.Points.gameObject.AddComponent<Outline>(); edge.effectColor = UiTheme.InGameOutline; edge.effectDistance = new Vector2(1.5f, -1.5f);
-            row.Points.horizontalOverflow = HorizontalWrapMode.Overflow; row.Points.verticalOverflow = VerticalWrapMode.Overflow;
+            // What the event was worth: the same green tag as the Tab board's, a penalty's in the alarm red.
+            row.Tab = LiveHud.Tag(row.Root, "EventPointsTag", "+100", Hub.Knit.ThinGo, LiveHud.GoInk, 28);
+            row.Tab.anchorMin = row.Tab.anchorMax = new Vector2(0, 1); row.Tab.pivot = new Vector2(0, 1);
+            row.TabLabel = row.Tab.GetComponentInChildren<Text>();
+            row.Points = row.TabLabel; row.Points.name = "EventPoints";
             return row;
         }
 
@@ -229,46 +248,76 @@ namespace TumbangPreso.UI
             Paint(now);
         }
 
-        /// <summary>Right-aligns the row's chips and sizes its plate to what it carries.</summary>
+        /// <summary>Sizes the row's plate to what it carries and lays the heroes, glyph and points on it, flush with the right edge.</summary>
         private static void Layout(Row row, Item item)
         {
             bool two = item.Other >= 0;
-            row.Points.text = item.Points > 0 ? "+" + item.Points : item.Points < 0 ? item.Points.ToString() : "";
-            float points = string.IsNullOrEmpty(row.Points.text) ? 0 : row.Points.preferredWidth + Gap + 4;
-            float width = Pad * 2 + Chip + Gap + GlyphSize + (two ? Gap + Chip : 0) + points;
+            string words = item.Points > 0 ? "+" + item.Points : item.Points < 0 ? item.Points.ToString() : "";
+            row.Points.text = words;
+            float section = two ? SectionTwo : SectionOne;
+            float tag = 0;
+            if (words.Length > 0) { LiveHud.SizeTag(row.Tab, row.TabLabel); tag = row.Tab.sizeDelta.x; }
+            float cap = section + 18 + PlateCapRight;
+            float width = Mathf.Max(cap, words.Length > 0 ? section + Room + tag + Room : section + 28);
             float x = Width - width;
-            OwnerUiLayout.Place(row.Plate.rectTransform, x, 0, width, RowHeight);
-            float y = (RowHeight - Chip) * .5f;
-            Seat(row, 0, item.Actor, x + Pad, y);
-            OwnerUiLayout.Place(row.Glyph.rectTransform, x + Pad + Chip + Gap, (RowHeight - GlyphSize) * .5f, GlyphSize, GlyphSize);
-            // The event's burst takes the acting player's own colour; no team colours in the HUD.
-            row.Glyph.Show(item.Icon != null ? HudBadge.Glyph.None : item.Glyph, item.Points < 0 ? HudDraw.Alarm : HudDraw.Ivory,
+            row.Plate.sprite = Hub.HubKnit.Knitted(LiveHud.Folder + (two ? "feed-plate" : "feed-plate-short"), new Vector4(section + 18, 0, PlateCapRight, 0));
+            OwnerUiLayout.Place(row.Plate.rectTransform, x, 0, width, RowHeight + 5);
+            // The glows are wider than the dark section and clipped to it.
+            OwnerUiLayout.Place(row.Clip, x + 4, 3, section, RowHeight - 6);
+            PlaceGlow(row.Glow[0], HeroOne - 4, item.Actor);
+            row.Glow[1].gameObject.SetActive(two);
+            if (two) PlaceGlow(row.Glow[1], HeroTwo - 4, item.Other);
+            Seat(row, 0, item.Actor, x + HeroOne);
+            // The event's glyph in cream between them; a cast shows the ability's own icon.
+            float glyphX = x + GlyphCentre;
+            OwnerUiLayout.Place(row.Glyph.rectTransform, glyphX - GlyphBox * .5f, (RowHeight - GlyphBox) * .5f - 1, GlyphBox, GlyphBox);
+            row.Glyph.Show(item.Icon != null ? HudBadge.Glyph.None : item.Glyph, item.Points < 0 ? HudDraw.Alarm : LiveHud.Cream,
                 Color.clear, PlayerIdentity.Colour(item.Actor));
             row.Ability.enabled = item.Icon != null;
             if (item.Icon != null)
             {
-                row.Ability.sprite = item.Icon; row.Ability.color = item.Ultimate ? HudDraw.Honey : HudDraw.Ivory;
-                OwnerUiLayout.Place(row.Ability.rectTransform, x + Pad + Chip + Gap, (RowHeight - GlyphSize) * .5f, GlyphSize, GlyphSize);
+                row.Ability.sprite = item.Icon; row.Ability.color = item.Ultimate ? HudDraw.Honey : LiveHud.Cream;
+                OwnerUiLayout.Place(row.Ability.rectTransform, glyphX - GlyphBox * .5f - 2, (RowHeight - GlyphBox - 4) * .5f - 1, GlyphBox + 4, GlyphBox + 4);
             }
-            row.Points.color = item.Points < 0 ? HudDraw.Alarm : HudDraw.Ivory;
             row.Swatch[1].gameObject.SetActive(two);
-            if (two) Seat(row, 1, item.Other, x + Pad + Chip + Gap + GlyphSize + Gap, y);
-            float label = Mathf.Max(0, points - Gap - 4);
-            OwnerUiLayout.Place(row.Points.rectTransform, Width - Pad - 6 - label, 0, label, RowHeight);
+            if (two) Seat(row, 1, item.Other, x + HeroTwo);
+            bool tagged = words.Length > 0;
+            row.Tab.gameObject.SetActive(tagged);
+            if (tagged)
+            {
+                row.Tab.anchoredPosition = new Vector2(x + section + Room, -(RowHeight - TagHeight) * .5f - 1);
+                row.Tab.sizeDelta = new Vector2(tag, TagHeight);
+                row.Points.color = item.Points < 0 ? HudDraw.Alarm : LiveHud.GoInk;
+            }
         }
 
-        private static void Seat(Row row, int k, int slot, float x, float y)
+        private static void PlaceGlow(Image glow, float centreInClip, int slot)
         {
-            OwnerUiLayout.Place(row.Swatch[k].rectTransform, x, y, Chip, Chip);
-            row.Swatch[k].color = PlayerIdentity.Colour(slot);
-            Sprite portrait = null;
+            glow.rectTransform.anchorMin = glow.rectTransform.anchorMax = glow.rectTransform.pivot = new Vector2(0, .5f);
+            glow.rectTransform.sizeDelta = new Vector2(130, 130);
+            glow.rectTransform.anchoredPosition = new Vector2(centreInClip - 65, 0);
+            var colour = PlayerIdentity.Colour(slot); colour.a = GlowTint.a;
+            glow.color = colour;
+        }
+
+        /// <summary>A hero stood on the plate: the same height for everyone, centred by its own ink on the section.</summary>
+        private static void Seat(Row row, int k, int slot, float centreX)
+        {
+            Sprite portrait = null; bool baked = false;
             var actor = GameServices.Round != null ? GameServices.Round.PlayerAt(slot) : null;
             if (actor != null)
             {
                 var people = Roster.GetPeople(actor.Mode);
                 if (actor.CharacterIndex >= 0 && actor.CharacterIndex < people.Count)
-                    portrait = OwnerPortraitArt.Get("UI/portraits/" + people[actor.CharacterIndex].Id);
+                {
+                    portrait = LiveHud.Picture("hero-plate/" + people[actor.CharacterIndex].Id);
+                    baked = portrait != null;
+                    if (portrait == null) portrait = OwnerPortraitArt.Get("UI/portraits/" + people[actor.CharacterIndex].Id);
+                }
             }
+            var size = portrait != null && baked ? portrait.rect.size * .5f : new Vector2(RowHeight - 10, RowHeight - 10);
+            OwnerUiLayout.Place(row.Swatch[k], centreX - size.x * .5f, 5, size.x, size.y);
+            OwnerUiLayout.Fill(row.Portrait[k].rectTransform);
             row.Portrait[k].sprite = portrait; row.Portrait[k].enabled = portrait != null;
             row.Tag[k].text = PlayerIdentity.Label(slot); row.Tag[k].enabled = portrait == null;
         }
@@ -281,6 +330,9 @@ namespace TumbangPreso.UI
         /// phone it keeps its old height: the touch chips (EMOTE and the rest) own the top right.
         /// </summary>
         private static float TopFor(bool touch) => PeerConnectionNotice.TopFor(touch);
+        /// <summary>The plates sit flush with the screen's right edge, 130 units down (`boot_match.events`); a phone keeps its old margin.</summary>
+        private static float RailX(bool touch) => touch ? -30 : 0;
+        private static float RailTop(bool touch) => touch ? TopFor(true) : -130;
         private bool _placedForTouch;
         private bool _connectionSpace;
         public void ReserveConnectionSpace(bool reserved)
@@ -292,9 +344,9 @@ namespace TumbangPreso.UI
         {
             _placedForTouch = touch;
             var root = (RectTransform)transform;
-            root.anchoredPosition = new Vector2(root.anchoredPosition.x,
+            root.anchoredPosition = new Vector2(RailX(touch),
                 // Entry badges/score flyouts extend above the row's layout rect.
-                TopFor(touch) - (_connectionSpace ? PeerConnectionNotice.CardHeight + 40 : 0));
+                RailTop(touch) - (_connectionSpace ? PeerConnectionNotice.CardHeight + 40 : 0));
             GetComponentInParent<HudReadingLayout>()?.RebasePlacement(root);
         }
 

@@ -30,27 +30,20 @@ namespace TumbangPreso.UI.Hub
 
         public override void Build()
         {
-            // ⚠️ THE LISTAHAN (`HubScenery`, 2026-09-24). Six dark cards on maroon read as a
-            // spreadsheet; a sari-sari store keeps its list in marker on a piece of cardboard taped
-            // to the wall, and a finished line gets highlighted, then ticked. Same data, same CLAIM,
-            // now a thing on a wall.
-            HubScenery.PaintedGround(Root, 41);
-            HubChrome.Back(Root, Hub);
-            HubScenery.SprayTitle(HubChrome.Title(Root, "TASKS", "EARN " + EconomyRules.CurrencyName));
-            HubChrome.TopRight(Root, Hub);
+            // The boot kit (`boot_heroes.py`): the berry ground, a cream panel holding the two lists, one
+            // sunk track per task. The list keeps its data and CLAIM exactly as before.
+            HubKnit.Ground(Root);
+            HubKnit.Frame(Root, Hub, "TASKS", "EARN " + EconomyRules.CurrencyName);
 
-            _note = HubKit.Text(Root, "Note", "", HubStyle.Floor, false, HubStyle.HoneySoft, TextAnchor.MiddleLeft);
-            HubKit.Place(_note.rectTransform, HubKit.BottomLeft, new Vector2(HubKit.Margin, HubKit.Margin), new Vector2(1500, 44));
+            _note = HubKnit.Words(Root, "Note", "", 32, HubKnit.KitWhite, TextAnchor.MiddleLeft, true, 3);
+            HubKnit.At(_note.rectTransform, 60, 962, 1700, 44);
 
-            var columns = HubKit.Span(HubKit.Rect(Root, "Columns"), Vector2.zero, Vector2.one,
-                                      new Vector2(HubKit.Margin, HubKit.Margin + 70), new Vector2(HubKit.Margin, HubKit.Margin + 200));
-            var board = HubScenery.Cardboard(columns, "Listahan", 41);
-            // ⚠️ 720 TALL, NOT 790: at 790 the board covered the offline note on the wall under it.
-            HubKit.Place(board, HubKit.Top, new Vector2(0, 44), new Vector2(1800, 720));
-            var row = HubKit.Place(HubKit.Rect(columns, "Row"), HubKit.Top, Vector2.zero, new Vector2(1720, 720));
-            HubSlap.On(board, 0, -2);
-            _daily = Column(row, "Daily", "TODAY", new Vector2(0, 0));
-            _weekly = Column(row, "Weekly", "THIS WEEK", new Vector2(880, 0));
+            var panel = HubKnit.Plate(Root, "Listahan", Knit.Panel);
+            HubKnit.At(panel, 60, 230, 1800, 720 + HubKnit.SlabHeight);
+            var face = HubKnit.FaceOf(panel);
+            HubSlap.On(panel, 0, -2);
+            _daily = Column(face, "Daily", "TODAY", 60);
+            _weekly = Column(face, "Weekly", "THIS WEEK", 940);
 
             Draw();
             if (GameServices.Wallet != null)
@@ -65,17 +58,12 @@ namespace TumbangPreso.UI.Hub
             if (GameServices.Wallet != null) GameServices.Wallet.Changed -= Draw;
         }
 
-        private static RectTransform Column(RectTransform parent, string name, string heading, Vector2 at)
+        private static RectTransform Column(RectTransform parent, string name, string heading, float x)
         {
-            var column = HubKit.Place(HubKit.Rect(parent, name), HubKit.TopLeft, at, new Vector2(840, 720));
-            var title = HubKit.Text(column, "Heading", heading, HubStyle.Title, true, HubStyle.DeepRed, TextAnchor.MiddleLeft);
-            HubKit.Place(title.rectTransform, HubKit.TopLeft, Vector2.zero, new Vector2(800, 64));
-            // Underlined twice in marker, the way a heading on a handwritten list is.
-            var under = HubKit.Rect(title.transform, "Underline").gameObject.AddComponent<HubChalk>();
-            under.Shape = HubChalk.Stroke.Underline; under.Source = title; under.Width = 5;
-            under.color = HubStyle.DeepRed; under.raycastTarget = false;
-            HubKit.Stretch(under.rectTransform);
-            under.DrawIn(0.1f);
+            var column = HubKit.Rect(parent, name);
+            HubKnit.In(column, x, 30, 790, 640);
+            var title = HubKnit.Display(column, "Heading", heading, 52, HubKnit.KitMaroon, TextAnchor.MiddleLeft);
+            HubKnit.In(title.rectTransform, 0, 5, 790, 70);
             return column;
         }
 
@@ -130,61 +118,57 @@ namespace TumbangPreso.UI.Hub
 
         private void Row(RectTransform column, WalletStore.TaskState task, int index)
         {
-            var card = HubKit.Place(HubKit.Rect(column, "Task_" + task.Def.Id), HubKit.TopLeft,
-                                    new Vector2(0, -(84 + index * 196)), new Vector2(840, 176));
-            // ⚠️ A LINE ON THE LISTAHAN, NOT A CARD. Ink on cardboard measures about 7 : 1. The
-            // thing the eye must find first, a finished task, is swiped with a golden highlighter;
-            // a claimed one is ticked in red and fades back into the list.
-            var ink = task.Claimed ? new Color(HubStyle.Ink.r, HubStyle.Ink.g, HubStyle.Ink.b, 0.5f) : HubStyle.Ink;
-            if (task.Done && !task.Claimed)
+            var card = HubKit.Rect(column, "Task_" + task.Def.Id);
+            HubKnit.In(card, 0, 100 + index * 190, 790, 170);
+            // A claimed task fades back into the list; a finished one carries its CLAIM.
+            float fade = task.Claimed ? 0.5f : 1f;
+            var ink = HubKnit.KitInk; ink.a = fade;
+
+            var words = HubKnit.Words(card, "Sentence", task.Def.Sentence, 36, ink, TextAnchor.MiddleLeft, true);
+            HubKnit.In(words.rectTransform, 0, 4, 560, 60);
+            HubKit.Fit(words, 560);
+
+            var coin = HubKit.Rect(card, "Cap").gameObject.AddComponent<Image>();
+            coin.sprite = HubBoard.Art("icon_coin"); coin.preserveAspect = true; coin.raycastTarget = false;
+            coin.color = new Color(1, 1, 1, fade);
+            HubKnit.In(coin.rectTransform, 572, 4, 60, 60);
+            var maroon = HubKnit.KitMaroon; maroon.a = fade;
+            var amount = HubKnit.Display(card, "Amount", "+" + task.Def.Reward, 50, maroon, TextAnchor.MiddleLeft);
+            HubKnit.In(amount.rectTransform, 640, 4, 150, 60);
+
+            // Progress on a sunk track: a lime pill once done, a yellow one on the way.
+            var track = HubKnit.Plate(card, "Track", Knit.Track);
+            HubKnit.In(track, 0, 76, 440, 56);
+            float ratio = Mathf.Clamp01(task.Progress / (float)task.Def.Target);
+            if (ratio > 0)
             {
-                var swipe = HubKit.Shape(card, "Highlight", new Color(HubStyle.Golden.r, HubStyle.Golden.g, HubStyle.Golden.b, 0.72f),
-                                         false, 600 + index, 0, 10);
-                HubKit.Stretch(swipe.rectTransform, 4);
-                swipe.rectTransform.localRotation = Quaternion.Euler(0, 0, index % 2 == 0 ? 0.7f : -0.6f);
+                var fill = HubKit.Rect(track, "Fill").gameObject.AddComponent<Image>();
+                HubKnit.KitFace(fill, task.Done ? Knit.PillGo : Knit.PillYellow);
+                float width = Mathf.Max(70, 428 * ratio);
+                HubKnit.In(fill.rectTransform, 6, 5, width, 40);
             }
-            var rule = HubKit.Rect(card, "Rule").gameObject.AddComponent<HubChalk>();
-            rule.Shape = HubChalk.Stroke.Path; rule.Width = 3.5f; rule.raycastTarget = false;
-            rule.color = new Color(HubStyle.Ink.r, HubStyle.Ink.g, HubStyle.Ink.b, 0.45f);
-            HubKit.Stretch(rule.rectTransform);
-            rule.Points = new[] { new Vector2(-400, -92), new Vector2(0, -94), new Vector2(410, -91) };
-            rule.DrawIn(0.08f + 0.04f * index);
+            var count = HubKnit.Words(card, "Count", task.Progress + " / " + task.Def.Target, 32, ink, TextAnchor.MiddleLeft, true);
+            HubKnit.In(count.rectTransform, 470, 74, 160, 56);
 
-            var words = HubKit.Text(card, "Sentence", task.Def.Sentence, HubStyle.Label, true, ink, TextAnchor.MiddleLeft);
-            HubKit.Place(words.rectTransform, HubKit.TopLeft, new Vector2(30, -18), new Vector2(520, 60));
-            HubKit.Fit(words, 520);
-
-            // Progress in marker: an inked box, filled in red, or in the action's chartreuse once done.
-            var track = HubKit.Shape(card, "Track", new Color(HubStyle.Honey.r, HubStyle.Honey.g, HubStyle.Honey.b, 0.25f), false, 610 + index, 3, 14);
-            HubKit.Place(track.rectTransform, HubKit.BottomLeft, new Vector2(30, 40), new Vector2(420, 30));
-            var fill = HubKit.Rect(track.transform, "Fill");
-            fill.anchorMin = Vector2.zero;
-            fill.anchorMax = new Vector2(Mathf.Clamp01(task.Progress / (float)task.Def.Target), 1);
-            fill.offsetMin = new Vector2(4, 4); fill.offsetMax = new Vector2(0, -4);
-            var image = fill.gameObject.AddComponent<Image>();
-            image.color = task.Done ? HubStyle.Chartreuse : HubStyle.RimRed;
-            image.raycastTarget = false;
-            var count = HubKit.Text(card, "Count", task.Progress + " / " + task.Def.Target, HubStyle.Floor, false, ink, TextAnchor.MiddleLeft);
-            HubKit.Place(count.rectTransform, HubKit.BottomLeft, new Vector2(466, 36), new Vector2(120, 48));
-
-            var reward = HubKit.Place(HubKit.Rect(card, "Reward"), HubKit.TopRight, new Vector2(-30, -20), new Vector2(230, 56));
-            var cap = HubKit.Glyph(reward, "Cap", HubGlyph.Mark.Cap, task.Claimed ? ink : HubStyle.DeepRed, 0.11f);
-            HubKit.Place(cap.rectTransform, HubKit.Left, Vector2.zero, new Vector2(54, 54));
-            var amount = HubKit.Text(reward, "Amount", "+" + task.Def.Reward, HubStyle.Title, true, ink, TextAnchor.MiddleLeft);
-            HubKit.Place(amount.rectTransform, HubKit.Left, new Vector2(62, 0), new Vector2(170, 56));
+            if (index < 2)
+            {
+                var rule = HubKit.Rect(card, "Rule").gameObject.AddComponent<Image>();
+                rule.color = new Color(HubKnit.KitTan.r, HubKnit.KitTan.g, HubKnit.KitTan.b, .8f);
+                rule.raycastTarget = false;
+                HubKnit.In(rule.rectTransform, -10, 160, 790, 3);
+            }
 
             if (task.Claimed)
             {
-                var tick = HubKit.Glyph(card, "Tick", HubGlyph.Mark.Check, HubStyle.RimRed, 0.16f);
-                HubKit.Place(tick.rectTransform, HubKit.BottomRight, new Vector2(-150, 10), new Vector2(110, 110));
-                tick.rectTransform.localRotation = Quaternion.Euler(0, 0, -8);
-                var done = HubKit.Text(card, "Claimed", "CLAIMED", HubStyle.Label, true, HubStyle.RimRed, TextAnchor.MiddleRight);
-                HubKit.Place(done.rectTransform, HubKit.BottomRight, new Vector2(-30, 26), new Vector2(230, 56));
+                var tick = HubKit.Glyph(card, "Tick", HubGlyph.Mark.Check, HubKnit.KitMaroon, 0.16f);
+                HubKnit.In(tick.rectTransform, 560, 80, 50, 50);
+                var done = HubKnit.Display(card, "Claimed", "CLAIMED", 36, HubKnit.KitSoftRed, TextAnchor.MiddleRight);
+                HubKnit.In(done.rectTransform, 610, 80, 180, 50);
             }
             else if (task.Done)
             {
-                var claim = HubKit.Button(card, "Claim_" + task.Def.Id, "CLAIM", HubStyle.Chartreuse, () => Claim(task.Def.Id), HubStyle.Label, 620 + index);
-                HubKit.Place((RectTransform)claim.transform, HubKit.BottomRight, new Vector2(-24, 22), new Vector2(220, 82));
+                var claim = HubKnit.Button(card, "Claim_" + task.Def.Id, "CLAIM", Knit.Go, () => Claim(task.Def.Id), 40);
+                HubKnit.In((RectTransform)claim.transform, 570, 70, 220, 82);
                 claim.interactable = !GameServices.Wallet.Busy;
                 _claimButtons.Add(claim);
             }

@@ -354,25 +354,29 @@ namespace TumbangPreso.UI.Hub
             var ability = shown.Ability;
             string caption = Application.isMobilePlatform || InputLayer.TouchHud.ForceVisible
                 ? shown.Label : shown.Label + "   ·   " + Hud.KeyLabelFor(shown.Action);
-            var panel = HubCards.Panel(Root, this, ability.Name.ToUpperInvariant(), caption, new Vector2(1180, 640));
+            var panel = HubKnit.DarkModal(Root, Hub, ability.Name.ToUpperInvariant(), caption, 1170, 540, out _, true, true, new Vector2(375, 270));
+            panel.Find("Line").GetComponent<Text>().color = HubKnit.KitLime;
 
-            var tile = HubKit.Shape(panel, "GlyphTile", shown.IsUltimate ? HubStyle.Golden : HubStyle.Honey, false, 341, 6, 26);
-            HubKit.Place(tile.rectTransform, HubKit.TopLeft, new Vector2(48, -190), new Vector2(260, 260));
-            var symbol = HubKit.Rect(tile.transform, "Glyph").gameObject.AddComponent<TumpAbilitySymbol>();
+            // The ability's mark on a sunburst card, closed by the card's rim (`boot_heroes.py`).
+            var tile = HubKnit.Plate(panel, "GlyphTile", Knit.Card);
+            HubKnit.In(tile, 50, 210, 290, 290 + HubKnit.SlabHeight);
+            HubKnit.Picture(HubKnit.FaceOf(tile), "Burst", Resources.Load<Texture2D>("UI/boot-kit/sunburst-yellow"), 0, 0, 290, 290, .5f, 0);
+            var symbol = HubKit.Rect(HubKnit.FaceOf(tile), "Glyph").gameObject.AddComponent<TumpAbilitySymbol>();
             symbol.Glyph = ability.Glyph;
-            symbol.color = HubStyle.Ink;
+            symbol.color = HubKnit.KitInk;
             symbol.raycastTarget = false;
-            HubKit.Stretch(symbol.rectTransform, 36);
+            HubKit.Stretch(symbol.rectTransform, 40);
+            HubKnit.RimOver(HubKnit.FaceOf(tile));
 
-            var words = HubKit.Text(panel, "Description", string.IsNullOrEmpty(ability.Description) ? ability.Summary : ability.Description,
-                                    HubStyle.Body, false, HubStyle.Honey, TextAnchor.UpperLeft);
-            HubKit.Place(words.rectTransform, HubKit.TopLeft, new Vector2(350, -190), new Vector2(780, 300));
+            var words = HubKnit.Words(panel, "Description", string.IsNullOrEmpty(ability.Description) ? ability.Summary : ability.Description,
+                                      36, HubKnit.KitCream, TextAnchor.UpperLeft, false);
+            HubKnit.In(words.rectTransform, 400, 218, 700, 220);
 
             if (HeroLoadoutRules.SidegradesOpen && shown.LoadoutSlot > 0 && HeroLoadoutRules.VariantsFor(Hero, shown.LoadoutSlot).Count > 1)
             {
-                var more = HubKit.Button(panel, "OpenSkillTree", "ALTERNATIVES IN THE SKILL TREE", HubStyle.Honey,
-                                         () => { Close(); Hub.Push<HubSkillTree>(t => t.Hero = Hero); }, HubStyle.Body, 342, HubGlyph.Mark.Tree);
-                HubKit.Place((RectTransform)more.transform, HubKit.BottomRight, new Vector2(-48, 44), new Vector2(620, 92));
+                var more = HubKnit.Button(panel, "OpenSkillTree", "ALTERNATIVES IN THE SKILL TREE", Knit.Yellow,
+                                          () => { Close(); Hub.Push<HubSkillTree>(t => t.Hero = Hero); }, 34, HubGlyph.Mark.Tree);
+                HubKnit.In((RectTransform)more.transform, 1170 - 48 - 620, 540 - 44 - 92 - 40, 620, 92);
             }
         }
     }

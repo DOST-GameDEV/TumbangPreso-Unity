@@ -9,22 +9,17 @@ namespace TumbangPreso.UI
     // unrelated qualifications queue; a higher catch supersedes its lower recognition.
     public sealed class MatchMomentBanner : MonoBehaviour
     {
-        private RectTransform _rect;
+        private RectTransform _rect, _tagRect;
         private CanvasGroup _group;
         private Text _title, _detail, _bonus;
-        private Image _accent, _portrait;
-        private HudCard _plate, _tag, _portraitTile, _wingLeft, _wingRight, _sheen;
-        // Owner, October 31: "parang ang repetitive and bland nila", "like ingame celebrations". Ten moments shared one tile
-        // and one entrance. Each family now has its own colour and its own way in, catches and hits count up in pips, a
-        // sheen crosses the tile and the bonus lands after it, and the words vary. The tiers still set how grand it is.
+        private Image _accent, _portrait, _band;
+        private PaintedLetters _letters;
+        // Owner, October 31: "parang ang repetitive and bland nila". Live HUD, 2026-11-01 (`boot_match.moment`): a moment is
+        // painted lettering on a soft band beside the scorer's face, in capitals, with the bonus on a green tag below. The
+        // top moment (tier 3) is yellow with a crown on the face; the others are red. Each family keeps its own way in.
         private enum Family { Catch, Knockdown, Accuracy, Lead }
         private Family _family;
-        private readonly HudCard[] _pips = new HudCard[5];
-        private int _pipCount, _pipFilled;
-        private const int PipGap = 24;
-        private static readonly Color KnockFace = new Color32(28, 96, 190, 255), AccuracyFace = new Color32(26, 140, 96, 255), LeadFace = new Color32(116, 62, 178, 255);
-        private HudBurst _burst;
-        private HudConfetti _confetti;
+        private int _glyphs;
         private HudBadge _crown;
         private int _tier = 1;
         /// <summary>1 nice, 2 big, 3 legendary: how grand the current moment is drawn.</summary>
@@ -39,11 +34,11 @@ namespace TumbangPreso.UI
         /// <summary>Where the sticker settles, in its anchor's units; the HUD's message lanes set it.</summary>
         public Vector2 Rest;
         /// <summary>The settled height in canvas units, including the accessibility size.</summary>
-        public float LaneHeight => _rect != null ? (_rect.sizeDelta.y + (_tier == 3 ? 16 : 0)) * Reading() : 0;
+        public float LaneHeight => _rect != null ? 120 * Reading() : 0;
         /// <summary>The moment's canonical name ("TRIPLE CATCH"); the sticker draws it in title case.</summary>
         public string Phrase => _phrase;
         /// <summary>True while the bonus badge rides above the tile.</summary>
-        public bool HasBadge => _tag != null && _tag.gameObject.activeSelf;
+        public bool HasBadge => _tagRect != null && _tagRect.gameObject.activeSelf;
 
         // ⚠️ UI REVAMP 2026-10-06: EARNED MOMENTS ESCALATE IN THREE TIERS, the way a MOBA escalates
         // from a kill to a legendary streak. Every tier is the same toy tile with the scorer's own
@@ -74,47 +69,24 @@ namespace TumbangPreso.UI
         public static MatchMomentBanner Create(RectTransform parent)
         {
             var rect = OwnerUiLayout.Rect(parent, "EarnedMoment");
-            rect.anchorMin = rect.anchorMax = new Vector2(.5f, .79f); rect.pivot = new Vector2(.5f, .5f);
+            rect.anchorMin = rect.anchorMax = new Vector2(.5f, 1); rect.pivot = new Vector2(.5f, .5f);
             rect.sizeDelta = new Vector2(660, StickerHeight);
             var banner = rect.gameObject.AddComponent<MatchMomentBanner>(); banner._rect = rect;
             banner._group = rect.gameObject.AddComponent<CanvasGroup>(); banner._group.blocksRaycasts = false;
             banner._group.interactable = false; banner._group.alpha = 0;
-            banner._burst = rect.gameObject.AddComponent<HudBurst>(); banner._burst.raycastTarget = false; banner._burst.Reach = 0;
-            banner._wingLeft = Wing(rect, "MomentWingLeft", .55f); banner._wingRight = Wing(rect, "MomentWingRight", -.55f);
-            banner._plate = OwnerUiLayout.Rect(rect, "MomentTile").gameObject.AddComponent<HudCard>();
-            OwnerUiLayout.Fill(banner._plate.rectTransform);
-            // ⚠️ 2026-10-20 OVERHAUL: the same three tiers on the glass HUD's flat leaning panels
-            // instead of extruded toy tiles. The ceremony (wings, sunburst, confetti) is unchanged;
-            // only the surfaces under it lost their bevel, side and sheen, so an earned moment reads
-            // as part of the same HUD as the bar above it.
-            banner._plate.Glass(HudDraw.Alarm, HudDraw.Lean, 3, .45f).raycastTarget = false; banner._plate.FollowContrast = false;
-            banner._sheen = OwnerUiLayout.Rect(rect, "MomentSheen").gameObject.AddComponent<HudCard>();
-            banner._sheen.Glass(new Color(1, 1, 1, .3f), HudDraw.Lean, 0, 0).raycastTarget = false; banner._sheen.BorderWidth = 0; banner._sheen.FollowContrast = false;
-            banner._portraitTile = OwnerUiLayout.Rect(rect, "MomentPortraitTile").gameObject.AddComponent<HudCard>();
-            banner._portraitTile.Glass(Color.white, HudDraw.Lean, 2, 0).raycastTarget = false; banner._portraitTile.BorderWidth = 0;
-            banner._portraitTile.FollowContrast = false;
+            banner._band = LiveHud.Band(rect, "MomentBand", LiveHud.Coral, .55f);
+            Centre(banner._band.rectTransform);
             banner._portrait = OwnerPortraitArt.Create(rect, "MomentPortrait", "");
-            banner._title = OwnerUiLayout.Text(rect, "MomentTitle", "", 58, OwnerUiLayout.TypeRole.Display);
-            banner._title.alignment = TextAnchor.MiddleLeft; banner._title.raycastTarget = false;
-            banner._title.color = HudDraw.Ivory; banner._title.supportRichText = false; banner._title.fontStyle = FontStyle.Italic;
-            banner._title.horizontalOverflow = HorizontalWrapMode.Overflow;
-            banner._title.verticalOverflow = VerticalWrapMode.Overflow;
-            banner._tag = OwnerUiLayout.Rect(rect, "MomentBonus").gameObject.AddComponent<HudCard>();
-            banner._tag.Glass(HudDraw.Honey, HudDraw.Lean, 3, .4f).raycastTarget = false; banner._tag.BorderWidth = 0;
-            banner._tag.FollowContrast = false;
-            banner._bonus = OwnerUiLayout.Text(banner._tag.transform, "MomentBonusPoints", "", 36, OwnerUiLayout.TypeRole.Display);
-            OwnerUiLayout.Fill(banner._bonus.rectTransform); banner._bonus.alignment = TextAnchor.MiddleCenter; banner._bonus.color = HudDraw.Brown;
-            banner._bonus.horizontalOverflow = HorizontalWrapMode.Overflow; banner._bonus.verticalOverflow = VerticalWrapMode.Overflow;
+            Centre(banner._portrait.rectTransform);
+            banner._title = LiveHud.Lettering(rect, "MomentTitle", "", 62, LiveHud.WarnFill, LiveHud.WarnInk, LiveHud.WarnInk, 9, 5, 6);
+            Centre(banner._title.rectTransform);
+            banner._letters = banner._title.GetComponent<PaintedLetters>();
+            banner._tagRect = LiveHud.Tag(rect, "MomentBonus", "", Hub.Knit.ThinGo, LiveHud.GoInk, 30);
+            Centre(banner._tagRect);
+            banner._bonus = banner._tagRect.GetComponentInChildren<Text>(); banner._bonus.name = "MomentBonusPoints";
             banner._crown = OwnerUiLayout.Rect(rect, "MomentCrown").gameObject.AddComponent<HudBadge>();
-            banner._crown.raycastTarget = false; banner._crown.RimWidth = 3; banner._crown.Rim = HudDraw.Brown;
-            banner._confetti = OwnerUiLayout.Rect(rect, "MomentConfetti").gameObject.AddComponent<HudConfetti>();
-            banner._confetti.raycastTarget = false; OwnerUiLayout.Fill(banner._confetti.rectTransform);
-            for (int i = 0; i < banner._pips.Length; i++)
-            {
-                var pip = OwnerUiLayout.Rect(rect, "MomentPip" + i).gameObject.AddComponent<HudCard>();
-                pip.Glass(HudDraw.Honey, HudDraw.Lean, 2, 0).raycastTarget = false; pip.FollowContrast = false; pip.gameObject.SetActive(false);
-                banner._pips[i] = pip;
-            }
+            banner._crown.raycastTarget = false; banner._crown.RimWidth = 3; banner._crown.Rim = LiveHud.YellowInk;
+            Centre(banner._crown.rectTransform);
             banner._accent = OwnerUiLayout.Rect(rect, "PlayerAccent").gameObject.AddComponent<Image>();
             banner._accent.raycastTarget = false; banner._accent.enabled = false;
             banner._detail = OwnerUiLayout.Text(rect, "MomentPlayer", "", 28, OwnerUiLayout.TypeRole.Reading);
@@ -122,13 +94,7 @@ namespace TumbangPreso.UI
             banner.Bind(); return banner;
         }
 
-        private static HudCard Wing(RectTransform parent, string name, float slant)
-        {
-            var wing = OwnerUiLayout.Rect(parent, name).gameObject.AddComponent<HudCard>();
-            wing.Glass(HudDraw.AlarmDeep, slant, 2, .35f).raycastTarget = false; wing.BorderWidth = 0;
-            wing.FollowContrast = false; wing.gameObject.SetActive(false);
-            return wing;
-        }
+        private static void Centre(RectTransform r) => r.anchorMin = r.anchorMax = r.pivot = new Vector2(.5f, .5f);
 
         /// <summary>"FIRST KNOCKDOWN" drawn as "First Knockdown!": the event voice, not a shout.</summary>
         private static string Spoken(string phrase)
@@ -180,56 +146,35 @@ namespace TumbangPreso.UI
             }
         }
 
+        private const float FaceSize = 84;
+        private float _titleWidth;
+
         private void Layout()
         {
-            float height = TierHeight[_tier];
-            _title.fontSize = TierTitle[_tier];
-            var mode = _title.horizontalOverflow; _title.horizontalOverflow = HorizontalWrapMode.Overflow;
-            float words = Mathf.Ceil(_title.preferredWidth) + 12; _title.horizontalOverflow = mode;
-            float pad = 12 + (_tier - 1) * 2, tile = height - pad * 2, lead = pad + tile + 16;
-            float width = Mathf.Clamp(lead + words + 34, 320, 1200);
-            _rect.sizeDelta = new Vector2(width, height);
-            OwnerUiLayout.Place(_portraitTile.rectTransform, pad, pad, tile, tile);
-            OwnerUiLayout.Place(_portrait.rectTransform, pad + 3, pad + 3, tile - 6, tile - 6);
-            OwnerUiLayout.Place(_title.rectTransform, lead, 0, width - lead - 22, height);
+            _title.fontSize = _tier == 3 ? 74 : 62;
+            _glyphs = 0;
+            foreach (char c in _title.text) if (!char.IsWhiteSpace(c)) _glyphs++;
+            _titleWidth = Mathf.Ceil(_title.preferredWidth);
+            _title.rectTransform.sizeDelta = new Vector2(_titleWidth + 24, _title.fontSize * 1.4f);
+            float width = _titleWidth + FaceSize + 10, left = -width * .5f;
+            _portrait.rectTransform.sizeDelta = new Vector2(FaceSize, FaceSize);
+            _portrait.rectTransform.anchoredPosition = new Vector2(left + FaceSize * .5f, 0);
+            _title.rectTransform.anchoredPosition = new Vector2(left + FaceSize + 10 + _titleWidth * .5f, 0);
+            _band.rectTransform.sizeDelta = new Vector2(width + 300, _title.fontSize * .9f);
+            _band.rectTransform.anchoredPosition = new Vector2(0, -_title.fontSize * .06f);
             bool bonus = !string.IsNullOrEmpty(_bonus.text);
-            _tag.gameObject.SetActive(bonus);
-            if (bonus)
-            {
-                float badge = Mathf.Max(84, _bonus.preferredWidth + 28);
-                OwnerUiLayout.Place(_tag.rectTransform, width - badge + 26, -26, badge, 46);
-            }
-            bool wings = _tier >= 2;
-            _wingLeft.gameObject.SetActive(wings); _wingRight.gameObject.SetActive(wings);
-            if (wings)
-            {
-                float wingWidth = 96 + (_tier - 2) * 30, wingHeight = height * .62f;
-                OwnerUiLayout.Place(_wingLeft.rectTransform, -wingWidth + 34, (height - wingHeight) * .5f + 10, wingWidth, wingHeight);
-                OwnerUiLayout.Place(_wingRight.rectTransform, width - 34, (height - wingHeight) * .5f + 10, wingWidth, wingHeight);
-                var face = _tier == 3 ? HudDraw.HoneySide : Darker(_plate.color, .7f);
-                Color side = _tier == 3 ? (Color)new Color32(150, 100, 20, 255) : Darker(_plate.color, .55f);
-                foreach (var wing in new[] { _wingLeft, _wingRight }) { wing.color = face; wing.Side = side; wing.SetVerticesDirty(); }
-            }
+            _tagRect.gameObject.SetActive(bonus);
+            if (bonus) { LiveHud.SizeTag(_tagRect, _bonus); _tagRect.anchoredPosition = new Vector2(0, -_title.fontSize * 1.1f); }
+            _rect.sizeDelta = new Vector2(width + 300, _title.fontSize * 1.4f);
             _crown.gameObject.SetActive(_tier == 3);
             if (_tier == 3)
             {
-                OwnerUiLayout.Place(_crown.rectTransform, (width - 64) * .5f, -40, 64, 48);
-                _crown.Show(HudBadge.Glyph.Crown, HudDraw.Honey, Color.clear);
-            }
-            // The sunburst covers the tile and its wings; the confetti bursts from the tile's centre.
-            _burst.Rays = _tier == 3 ? 18 : 14;
-            _burst.color = _tier == 3 ? new Color(1, .96f, .86f, .8f) : new Color(1, .77f, .25f, .6f);
-            _burst.Second = _tier == 3 ? new Color(1, .77f, .25f, .8f) : new Color(1, .96f, .86f, .35f);
-            OwnerUiLayout.Place(_confetti.rectTransform, 0, 0, width, height);
-            OwnerUiLayout.Place(_sheen.rectTransform, 0, 2, 46, height - 4);
-            for (int i = 0; i < _pips.Length; i++)
-            {
-                bool on = i < _pipCount;
-                _pips[i].gameObject.SetActive(on);
-                if (on) OwnerUiLayout.Place(_pips[i].rectTransform, lead + i * PipGap, height - 9, 20, 14);
+                _crown.rectTransform.sizeDelta = new Vector2(64, 50);
+                _crown.rectTransform.anchoredPosition = new Vector2(left + FaceSize * .5f + 6, FaceSize * .5f + 8);
+                _crown.rectTransform.localRotation = Quaternion.Euler(0, 0, -12);
+                _crown.Show(HudBadge.Glyph.Crown, LiveHud.Yellow, Color.clear);
             }
         }
-        private static Color Darker(Color c, float k) => new Color(c.r * k, c.g * k, c.b * k, 1);
 
         private void PaintPortrait(int actor)
         {
@@ -242,7 +187,6 @@ namespace TumbangPreso.UI
                     art = OwnerPortraitArt.Get("UI/portraits/" + people[who.CharacterIndex].Id);
             }
             _portrait.sprite = art; _portrait.enabled = art != null;
-            _portraitTile.color = PlayerIdentity.Colour(actor); _portraitTile.SetVerticesDirty();
         }
         private void Bind()
         {
@@ -256,7 +200,7 @@ namespace TumbangPreso.UI
         private void OnDisable()
         { if (_match != null) _match.MomentPresented -= OnMoment; _match = null; Hide(); }
         private void Hide()
-        { if (_group != null) _group.alpha = 0; _duration = 0; _moment = default; _phrase = ""; _pending.Clear(); _confetti?.Stop(); _burst?.Set(0, 0); }
+        { if (_group != null) _group.alpha = 0; _duration = 0; _moment = default; _phrase = ""; _pending.Clear(); }
         private static string Title(MatchMomentKind kind)
         {
             switch (kind)
@@ -267,7 +211,7 @@ namespace TumbangPreso.UI
                 case MatchMomentKind.DoubleCatch: return "DOUBLE CATCH";
                 case MatchMomentKind.TripleCatch: return "TRIPLE CATCH";
                 case MatchMomentKind.LateKnockdown: return "LATE KNOCKDOWN";
-                case MatchMomentKind.MultiKnockdown: return "MULTI KNOCKDOWN";
+                case MatchMomentKind.MultiKnockdown: return "MULTI DOWN";
                 case MatchMomentKind.SingleCatch: return "SINGLE CATCH";
                 case MatchMomentKind.MultiCatch: return "MULTI CATCH";
                 default: return "TAKES THE LEAD";
@@ -325,24 +269,18 @@ namespace TumbangPreso.UI
         {
             _moment = moment; _began = Time.unscaledTime; _duration = Lifetime;
             _phrase = Title(moment.Kind);
-            _title.text = Shout(moment, _phrase);
+            _title.text = Shout(moment, _phrase).ToUpperInvariant();
             _tier = TierOf(moment.Kind);
             _family = FamilyOf(moment.Kind);
-            _pipCount = PipsOf(moment); _pipFilled = -1;
-            bool big = _tier == 3;
-            Color face = _family == Family.Knockdown ? KnockFace : _family == Family.Accuracy ? AccuracyFace : _family == Family.Lead ? LeadFace : HudDraw.Alarm;
-            _plate.color = big ? HudDraw.Honey : face; _plate.Side = big ? HudDraw.HoneySide : Darker(face, .65f); _plate.SetVerticesDirty();
-            _title.color = big ? HudDraw.Brown : HudDraw.Ivory;
+            bool top = _tier == 3;
+            _title.color = top ? LiveHud.Yellow : LiveHud.WarnFill;
+            _letters.Edge = _letters.Slab = top ? LiveHud.YellowInk : LiveHud.WarnInk;
+            var band = top ? LiveHud.Yellow : LiveHud.Coral; band.a = .55f; _band.color = band;
             _detail.text = PlayerIdentity.Label(moment.Actor) + " · " + SeatLabel.Raw(moment.Actor)
                 + (moment.Bonus > 0 ? "   +" + moment.Bonus + " bonus" : "");
             _bonus.text = moment.Bonus > 0 ? "+" + moment.Bonus : "";
-            _tag.color = big ? HudDraw.Cream : HudDraw.Honey; _tag.Side = big ? HudDraw.CreamSide : HudDraw.HoneySide; _tag.SetVerticesDirty();
             PaintPortrait(moment.Actor);
             Layout();
-            _burst.Set(0, 0);
-            if (_tier >= 2 && !Settings.SettingsStore.Current.ReducedUiMotion)
-                _confetti.Burst(PlayerIdentity.Colour(moment.Actor), HudDraw.Honey, HudDraw.Cream);
-            else _confetti.Stop();
             Paint();
         }
         private void Update()
@@ -368,48 +306,26 @@ namespace TumbangPreso.UI
                 else Hide();
                 return;
             }
-            float enter = Mathf.Clamp01(age / .18f), leave = Mathf.Clamp01((_duration - age) / .2f);
             bool reduced = Settings.SettingsStore.Current.ReducedUiMotion;
-            _group.alpha = Mathf.Min(reduced ? 1 : enter, leave);
-            float arrive = 1 - Mathf.Pow(1 - enter, 3);
-            // The slap grows with the tier, and the bigger tiers settle with a short shake.
-            float slap = _tier == 3 ? .34f : _tier == 2 ? .26f : .18f;
-            float shake = reduced || _tier < 2 ? 0 : Mathf.Sin(age * 70f) * Mathf.Clamp01(1 - (age - .18f) / .3f) * (age > .18f ? 1 : 0) * (_tier == 3 ? 7 : 4);
-            // Each family's way in: a catch is stamped down, a knockdown skids in, a good aim rises, the lead drops from above.
-            float land = 1 - arrive;
+            float leave = Mathf.Clamp01(1 - (_duration - age) / .2f);
+            _group.alpha = (1 - leave) * (reduced ? Mathf.Clamp01(age / .15f) : 1);
+            // The words stamp in letter by letter, the band wipes out from the middle, and the face, the crown and
+            // the bonus pop last. Out is a quick fade and rise.
+            _letters.SetAge(reduced ? float.PositiveInfinity : age, _glyphs);
+            float stamped = _letters.StampSeconds(_glyphs);
+            _band.rectTransform.localScale = new Vector3(reduced ? 1 : LiveHud.EaseOut((age - .04f) / .28f), 1, 1);
+            float faceU = Mathf.Clamp01((age - stamped * .5f) / .3f);
+            _portrait.rectTransform.localScale = Vector3.one * (reduced ? 1 : LiveHud.Pop(faceU));
+            _portrait.rectTransform.localRotation = Quaternion.Euler(0, 0, reduced ? 0 : Mathf.Sin(faceU * 22) * Mathf.Exp(-5 * faceU) * 8);
+            if (_tier == 3) _crown.rectTransform.localScale = Vector3.one * (reduced ? 1 : LiveHud.Pop((age - stamped * .5f - .08f) / .3f));
+            _tagRect.localScale = Vector3.one * (reduced ? 1 : LiveHud.Pop((age - stamped) / .3f));
+            // Each family keeps its own way in: a knockdown skids in, good aim rises, the lead drops from above.
+            float land = reduced ? 0 : 1 - LiveHud.EaseOut(age / .3f);
             Vector2 way = _family == Family.Knockdown ? new Vector2(-150 * land, 0)
                 : _family == Family.Accuracy ? new Vector2(0, -56 * land)
                 : _family == Family.Lead ? new Vector2(0, 70 * land) : Vector2.zero;
-            float stamp = _family == Family.Catch ? slap * 2.2f : slap * .6f;
-            float tilt = _family == Family.Knockdown ? 9 : _family == Family.Catch ? -8 : 0;
-            _rect.anchoredPosition = Rest + (reduced ? Vector2.zero : way + new Vector2(shake, 12 * (1 - leave)));
-            _rect.localScale = Vector3.one * Reading() * (reduced ? 1 : 1 + stamp * land);
-            _rect.localRotation = Quaternion.Euler(0, 0, Tilt + (reduced ? 0 : tilt * land));
-            // The sheen crosses once, after the landing. The pips count up after it, then the bonus lands on the last.
-            float across = Mathf.Clamp01((age - .16f) / .3f);
-            bool sheen = !reduced && across > 0 && across < 1;
-            if (_sheen.gameObject.activeSelf != sheen) _sheen.gameObject.SetActive(sheen);
-            if (sheen)
-            {
-                var at = _sheen.rectTransform.anchoredPosition;
-                at.x = Mathf.Lerp(0, Mathf.Max(0, _rect.sizeDelta.x - 46), across); _sheen.rectTransform.anchoredPosition = at;
-            }
-            for (int i = 0; i < _pipCount; i++)
-            {
-                float since = age - .14f - i * .07f;
-                bool lit = reduced || since >= 0;
-                _pips[i].color = lit ? HudDraw.Honey : HudDraw.GlassDeep; _pips[i].SetVerticesDirty();
-                _pips[i].rectTransform.localScale = Vector3.one * (lit && !reduced && since < .14f ? 1 + Mathf.Sin(since / .14f * Mathf.PI) * .6f : 1);
-            }
-            float due = .2f + _pipCount * .07f, badge = age - due;
-            _tag.rectTransform.localScale = Vector3.one * (reduced ? 1 : badge < 0 ? 0 : badge < .16f ? 1 + Mathf.Sin(badge / .16f * Mathf.PI) * .35f : 1);
-            if (_tier >= 2)
-            {
-                float reach = (reduced ? 1 : arrive) * (_tier == 3 ? 1.55f : 1.15f);
-                float turn = reduced || _tier < 3 ? 0 : age * 24f;
-                _burst.Set(turn, reach);
-            }
-            else _burst.Set(0, 0);
+            _rect.anchoredPosition = Rest + way + (reduced ? Vector2.zero : new Vector2(0, 26 * leave * leave));
+            _rect.localScale = Vector3.one * Reading();
         }
     }
 }

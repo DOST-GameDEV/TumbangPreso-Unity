@@ -16,7 +16,7 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw
 
-from bootkit import (ROOT, Board, DARUMA, GRAND, MAROON, INK, TAN, TAN_D, WHITE, TITLE_EDGE, GREEN_INK, FIELD,
+from bootkit import (thin_button_art, ROOT, Board, DARUMA, GRAND, MAROON, INK, TAN, TAN_D, WHITE, TITLE_EDGE, GREEN_INK, FIELD,
                      FACE_LIP, art, button, button_art, centred, field, field_art, ground, head, header, left, panel,
                      para, right, rule, scrim, slider, tag, text, toggle, world)
 import prepare
@@ -201,12 +201,10 @@ def controller(b):
         x = 24 if col == 0 else 1920 - 24 - cw
         cy = 232 + row * 76
         y = int(cy - ch / 2)
-        if i == 0:
-            piece = button_art("yellow", cw, ch + 8)
-            b.place("chip-on-%dx%d" % (cw, ch + 8), piece, x, y - 2, "Callout (chosen)")
-            cy = y - 2 + (ch + 8) * FACE_LIP
-        else:
-            b.place("chip-%dx%d" % (cw, ch), field_art(cw, ch), x, y, "Callout")
+        # One type for every callout: the thin-slab button, yellow only on the chosen one.
+        kind = "yellow" if i == 0 else "plain-soft"
+        b.place("chip-%s-%dx%d" % (kind, cw, ch), thin_button_art(kind, cw, ch), x, y, "Callout (chosen)" if i == 0 else "Callout")
+        cy = y + ch * .44
         icon = Image.open(ROOT / g).convert("RGBA")
         icon.thumbnail((40, 40), Image.LANCZOS)
         b.place("glyph-" + Path(g).stem, icon, x + 26, int(cy - icon.height / 2), "Glyph")

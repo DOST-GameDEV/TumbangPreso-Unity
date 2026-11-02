@@ -19,38 +19,50 @@ namespace TumbangPreso.UI.Hub
         private int _page;
         private bool Touch => Application.isMobilePlatform || InputLayer.TouchHud.ForceVisible;
         private int PageSize => Touch ? 3 : 5;
+        /// <summary>True when the player profile's REPLAYS tab opened this screen: BACK returns to the profile.</summary>
+        public bool ReturnToProfile { get; set; }
+        public override bool Back()
+        {
+            if (!ReturnToProfile) return false;
+            Hub.Pop(this);
+            Hub.Host.OpenProfile();
+            return true;
+        }
         public override float CourtShade => 1;
         public override bool ShowsQueuePlate => false;
         public override void Build()
         {
-            HubScenery.YeroGround(Root, 1450);
-            HubChrome.Back(Root, Hub);
-            HubScenery.SprayTitle(HubChrome.Title(Root, "LOCAL", "REPLAYS"));
-            _status = HubKit.Text(Root, "ReplayHelp", "Matches save automatically, including Custom rooms. Choose a replay to watch from any camera.", HubStyle.Body, false, HubStyle.Paper);
-            HubKit.Place(_status.rectTransform, HubKit.TopLeft, new Vector2(90, -192), new Vector2(1720, 70));
+            // The boot kit (`boot_record.py`): the berry ground, dark rows, yellow buttons.
+            HubKnit.Ground(Root);
+            HubKnit.Back(Root, Hub);
+            HubKnit.Title(Root, "LOCAL REPLAYS", "", out _status);
+            _status.name = "ReplayHelp";
+            _status.text = "Matches save automatically, including Custom rooms. Choose a replay to watch from any camera.";
+            HubKnit.At(_status.rectTransform, 60, 126, 1700, 44);
+            float small = Touch ? Mathf.Max(100, InputLayer.TouchMetrics.MinTargetUnits) : 92;
             if (Touch)
             {
-                var storage = HubKit.Text(Root, "ReplayStorage", "Saved on this device. Select a recording below to watch it.", HubStyle.Body, false, HubStyle.Paper);
-                HubKit.Place(storage.rectTransform, HubKit.TopLeft, new Vector2(90, -280), new Vector2(1740, 90));
+                var storage = HubKnit.Words(Root, "ReplayStorage", "Saved on this device. Select a recording below to watch it.", HubStyle.Body, HubKnit.KitWhite, TextAnchor.MiddleLeft, true, 3);
+                HubKnit.At(storage.rectTransform, 60, 190, 1740, 60);
             }
             else
             {
-                _folder = HubField.Build(Root, "ReplayFolder", LocalReplayStore.Folder, "Absolute save folder", 2048, 1451);
-                HubKit.Place((RectTransform)_folder.transform, HubKit.TopLeft, new Vector2(90, -280), new Vector2(1130, 80));
-                var save = HubKit.Button(Root, "ChangeReplayFolder", "USE FOLDER", HubStyle.Honey, ChangeFolder);
-                HubKit.Place((RectTransform)save.transform, HubKit.TopLeft, new Vector2(1240, -280), new Vector2(270, 80));
-                var open = HubKit.Button(Root, "OpenReplayFolder", "OPEN FOLDER", HubStyle.Honey, OpenFolder);
-                HubKit.Place((RectTransform)open.transform, HubKit.TopLeft, new Vector2(1530, -280), new Vector2(300, 80));
+                _folder = HubKnit.Field(Root, "ReplayFolder", LocalReplayStore.Folder, "Absolute save folder", 2048, 30);
+                HubKnit.At((RectTransform)_folder.transform, 60, 214, 1130, 100);
+                var save = HubKnit.Button(Root, "ChangeReplayFolder", "USE FOLDER", Knit.Yellow, ChangeFolder, 38);
+                HubKnit.At((RectTransform)save.transform, 1210, 222, 320, 92);
+                var open = HubKnit.Button(Root, "OpenReplayFolder", "OPEN FOLDER", Knit.Yellow, OpenFolder, 38);
+                HubKnit.At((RectTransform)open.transform, 1550, 222, 310, 92);
             }
-            _rows = HubKit.Span(HubKit.Rect(Root, "ReplayList"), Vector2.zero, Vector2.one,
-                new Vector2(90, 160), new Vector2(90, 390));
-            var previous = HubKit.Button(Root, "PreviousReplays", "PREVIOUS", HubStyle.Honey, () => { _page = Mathf.Max(0, _page - 1); Draw(); });
-            HubKit.Place((RectTransform)previous.transform, HubKit.BottomLeft, new Vector2(90, 55), new Vector2(270, Touch ? InputLayer.TouchMetrics.MinTargetUnits : 80));
-            var refresh = HubKit.Button(Root, "RefreshReplays", "REFRESH", HubStyle.Honey, Refresh);
-            HubKit.Place((RectTransform)refresh.transform, HubKit.BottomLeft, new Vector2(380, 55), new Vector2(270, Touch ? InputLayer.TouchMetrics.MinTargetUnits : 80));
-            var next = HubKit.Button(Root, "NextReplays", "NEXT", HubStyle.Honey,
-                () => { _page = Mathf.Min(Mathf.Max(0, (_entries.Count - 1) / PageSize), _page + 1); Draw(); });
-            HubKit.Place((RectTransform)next.transform, HubKit.BottomRight, new Vector2(-90, 55), new Vector2(270, Touch ? InputLayer.TouchMetrics.MinTargetUnits : 80));
+            _rows = HubKit.Rect(Root, "ReplayList");
+            HubKnit.At(_rows, 60, Touch ? 280 : 346, 1800, 560);
+            var previous = HubKnit.Button(Root, "PreviousReplays", "PREVIOUS", Knit.Yellow, () => { _page = Mathf.Max(0, _page - 1); Draw(); }, 40);
+            HubKnit.At((RectTransform)previous.transform, 60, 1080 - 60 - small, 320, small);
+            var refresh = HubKnit.Button(Root, "RefreshReplays", "REFRESH", Knit.Yellow, Refresh, 40);
+            HubKnit.At((RectTransform)refresh.transform, 410, 1080 - 60 - small, 320, small);
+            var next = HubKnit.Button(Root, "NextReplays", "NEXT", Knit.Yellow,
+                () => { _page = Mathf.Min(Mathf.Max(0, (_entries.Count - 1) / PageSize), _page + 1); Draw(); }, 40);
+            HubKnit.At((RectTransform)next.transform, 1540, 1080 - 60 - small, 320, small);
             Refresh();
         }
         private void Refresh()
@@ -76,12 +88,28 @@ namespace TumbangPreso.UI.Hub
             {
                 var entry = _entries[_page * PageSize + i]; var manifest = entry.Manifest;
                 string date = DateTime.TryParse(manifest.CreatedUtc, out var utc) ? utc.ToLocalTime().ToString("MMM d · HH:mm") : "Recorded match";
-                string words = date + "  ·  " + SceneFlow.PreviewFor(manifest.Map).Name + "  ·  " + manifest.Mode +
-                    "  ·  " + Mathf.FloorToInt(manifest.Duration / 60) + ":" + ((int)manifest.Duration % 60).ToString("00") +
-                    (manifest.Custom ? "  · CUSTOM" : "") + (manifest.Completed ? "" : "  · PARTIAL");
-                var button = HubKit.Button(_rows, "Replay" + i, words, HubStyle.Honey, () => Watch(entry), HubStyle.Body, 1460 + i);
-                HubKit.Place((RectTransform)button.transform, HubKit.TopLeft, new Vector2(0, -i * (Touch ? InputLayer.TouchMetrics.MinTargetUnits + 16 : 96)), new Vector2(1740, Touch ? InputLayer.TouchMetrics.MinTargetUnits : 84));
-                HubKit.LabelOf(button).alignment = TextAnchor.MiddleLeft;
+                string length = Mathf.FloorToInt(manifest.Duration / 60) + ":" + ((int)manifest.Duration % 60).ToString("00");
+                float rowH = Touch ? Mathf.Max(100, InputLayer.TouchMetrics.MinTargetUnits) : 100;
+                var button = HubKnit.Button(_rows, "Replay" + i, null, Knit.DarkCard, () => Watch(entry));
+                HubKnit.In((RectTransform)button.transform, 0, i * (rowH + 16), 1800, rowH + HubKnit.SlabHeight);
+                var face = button.Body;
+                void Column(string name, string words, float x, float width, Color colour, bool display)
+                {
+                    var text = display ? HubKnit.Display(face, name, words, 38, colour, TextAnchor.MiddleLeft)
+                                       : HubKnit.Words(face, name, words, 38, colour, TextAnchor.MiddleLeft, true);
+                    HubKnit.In(text.rectTransform, x, 0, width, rowH - 6);
+                    HubKit.Fit(text, width);
+                }
+                Column("When", date, 48, 440, HubKnit.KitCream, true);
+                Column("Court", SceneFlow.PreviewFor(manifest.Map).Name.ToUpperInvariant(), 500, 240, HubKnit.KitCream, true);
+                Column("Mode", manifest.Mode.ToString(), 760, 340, HubKnit.KitTan, true);
+                Column("Length", length, 1120, 200, HubKnit.KitCream, true);
+                string tag = !manifest.Completed ? "PARTIAL" : manifest.Custom ? "CUSTOM" : null;
+                if (tag != null)
+                {
+                    var chip = HubKnit.Tag(face, "State", tag, Knit.PillPlain, 62);
+                    HubKnit.In(chip, 1420, rowH / 2 - 34, chip.sizeDelta.x, 62);
+                }
             }
         }
         private void Watch(LocalReplayEntry entry)

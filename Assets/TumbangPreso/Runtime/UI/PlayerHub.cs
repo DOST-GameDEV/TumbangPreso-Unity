@@ -40,7 +40,7 @@ namespace TumbangPreso.UI
         /// carries both sides of that decision and `ConvertedCharacterSelect.SlotView` is where
         /// the feature lives now.
         /// </summary>
-        private enum Tab { Profile, Friends, Career, Matches, Account }
+        private enum Tab { Profile, Friends, Career, Matches, Replays, Account }
 
         private const int HistoryPageSize = 20;
 

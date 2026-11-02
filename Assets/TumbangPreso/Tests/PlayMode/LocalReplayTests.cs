@@ -151,14 +151,15 @@ namespace TumbangPreso.PlayTests
             }
             finally{RenderTexture.active=previous;if(image!=null)Object.Destroy(image);}
         }
-        [UnityTest] public IEnumerator ActualHubMenuShowsReplayLibraryAndChangesTheSameSaveFolder()
+        [UnityTest] public IEnumerator ActualProfileReplaysTabShowsReplayLibraryAndChangesTheSameSaveFolder()
         {
             yield return SceneManager.LoadSceneAsync(SceneFlow.MatchSetup);
             float deadline=Time.realtimeSinceStartup+15;
             while(TumbangPreso.UI.Hub.TumpHub.Current==null&&Time.realtimeSinceStartup<deadline)yield return null;
             var hub=TumbangPreso.UI.Hub.TumpHub.Current;Assert.IsNotNull(hub);
-            hub.Push<TumbangPreso.UI.Hub.HubMenu>();yield return null;
-            var route=GameObject.Find("MenuREPLAYS").GetComponent<UnityEngine.UI.Button>();route.onClick.Invoke();
+            // REPLAYS lives in the player profile now (owner, 2026-11-02): name plate, then the REPLAYS tab.
+            yield return HubFlowTests.Press("NamePlate");yield return new WaitForSecondsRealtime(.6f);
+            var route=GameObject.Find("HubTabReplays").GetComponent<UnityEngine.UI.Button>();route.onClick.Invoke();
             yield return null;yield return null;
             Assert.IsNotNull(hub.Find<TumbangPreso.UI.Hub.HubReplays>());
             var field=GameObject.Find("ReplayFolder").GetComponent<UnityEngine.UI.InputField>();Assert.AreEqual(_folder,field.text);

@@ -34,8 +34,14 @@ only as a record; `revamp-2026-10-30-unified` holds its three test PSDs.
   - Panels: a cream card in the boot field's colours, chamfered corners, a lightly wobbled
     rim, a faint cream weave on its face, and the slab 14 units straight below. Cream is
     for the large panels only. Small cards (portraits, room seats, choices, the room code)
-    are berry inside a tan rim, lime when chosen, in the same chamfered outline as the
+    are berry inside a lighter berry rim, lime when chosen, in the same chamfered outline as the
     empty-slot wells, so a filled slot and an open one match (owner, 2026-10-30).
+    A panel carrying its own red back or close button is a dark panel with a visible weave and cream words (owner, 2026-11-01).
+    No yellow outlines: a viewed or hovered card is slightly darker instead.
+    An element may not share its background's colour: on the berry ground, cards are dark.
+    Patterns on coloured cards use an overlay blend, never just a lower lightness.
+    GAMEMODE's coloured card is approved (2026-11-01): checkerboard overlay, a sharp inner shadow top left, a soft one
+    bottom right, and a fill hue-shifted at saturation x1.14 and value x0.94 of the rim's face colour.
   - Buttons: one shape, the boot CREATE button, repainted per role by mapping its slab,
     face and highlight. Lime for the main action, yellow for secondary actions and arrow
     keys, red for leaving and back, cream for unselected tabs. The striped guest button and
@@ -151,6 +157,66 @@ plain names are for controls on the berry; its Panel names are for words on crea
 Running the capture tests overwrites `Logs/ui-artboards`, which `bootroom.py` reads for hero
 renders, so re-capture from a build with the old pick screen before redrawing those PSDs.
 
+### Next rollout (2026-11-01)
+
+Boards in `tools/ui_artboards/boot_menus.py`, `boot_heroes.py` and `boot_record.py` are reviewed and go into the game
+next: menus, modes, heroes, items, shop, tasks, record, replays, results, loading, break and halftime. Settings and
+Room need updating to the newer kit: dark panels where a panel has its own back or close button (Room Chat), dark
+cards on the berry ground, rose rims, thin-slab controller callouts. Locked boards are in the boot folder's `approved/`.
+Character displays use Ilalim ng Tulay lighting and the Chromatic render style through `ModelPreview`.
+
+### Menus in the game (2026-11-02, uncommitted)
+
+Shared pieces live in `Hub/HubKnit.Menus.cs`: `Frame` (BACK, white title, wallet and menu), `TopBar`, `DarkModal`
+(a dark popup with its own red BACK; centred or left-aligned), `PictureCard` and `ShowCard` (picture cards),
+`RimOver` (a card's rim closing over a picture), `KitCutPicture.Fit` (cover crop), `Piece` and `At`/`In` for board
+coordinates (cards and panels are 14 units taller than the board draws them, `SlabHeight`). Extra kit textures:
+`bootkit.py --game` now also writes `card-rim*`, `dark-card-rim*` and the sunbursts; `boot_menus.py --game` writes the warning
+tape, warning mark and queue ticket into `Resources/UI/boot-kit`.
+
+In the game: GAMEMODE and its three popups, the hub menu (PC and touch), credits, connection lost, toast, queue ticket,
+shop, picture picker, tasks, items (grid and popup), ability popup, local replays, loading and its failure, the player
+record shell (tabs, header, panel and SAVE). Room Chat is a dark panel, seats and the code chip on the berry ground are
+dark cards, controller callouts are thin-slab buttons (yellow while focused).
+
+Not yet: the hero screen itself, story, skill tree, the rows inside the record tabs, the result sheet (four views),
+next court, round break and halftime. See the handoff in the session report.
+
+### Live HUD decisions (2026-11-01)
+
+The HUD is simpler than the menus and uses button colours only. Drawn in `tools/ui_artboards/boot_match.py`.
+
+- Timer: the kit slider grown into a 380 wide rectangle, the kit lime pill draining inside it with a thin slab, the time
+  in Darumadrop with no outline (dark over the fill, cream over the track), and the round count below the bar.
+- Scores: your score beside your hero, bottom left. Other scores pop up top left for a moment; Tab shows the table.
+- Tooltips such as Retrieve Slipper have no background.
+- Warning: painted lettering with a flat fill, outline and slab in one darker red, one tilted mark each side, a soft coral
+  band behind the words at 55 per cent, and the reason on a cream tag below. Backup in the boot folder's `approved/`.
+- Points tags such as +50 are green. Other notices are not settled yet.
+- Notices are painted lettering on a soft band: red moments, yellow for the top moment and CAN DOWN (a can each side), lime TAYA.
+- Skills and ultimate: rings that fill, yellow for skills, lime for a charging ultimate and yellow when ready. A round glow outside the
+  ring marks a ready ability, with none inside it. Bare icon, cooldown number on top, keys below. Drawn in the scratch trial, not yet in `boot_match.py`.
+- Score corner: bare hero, painted lime score, yellow place, soft lime band, flat tilted slipper from `UI/slippers-flat` behind them (HUD only).
+- Hero portraits are baked with the display's look, crease AO and a dark-tone lift. `tools/build_avatars.py` must be rerun after any portrait bake.
+
+Later board decisions, now in the game (`tools/ui_artboards/boot_match.py`; code in `TumpMatchReadout.Board.cs`, `MatchEventFeed.cs`, `TumpMatchReadout.Statuses.cs`; textures from `export_live_hud.py` into `Resources/UI/live-hud`):
+- Others' scores and Tab: grey woven plates flush with the left edge, a nearly solid hero section with an inner shadow. Tab has no panel.
+- Kill feed: the same plates on the right edge, seat-colour gradients clipped to the section, points on the green tag.
+- Status effects: small coral draining rings right of the score. When one lands, its name and description show over it for about 3 s; Tab lists them.
+- Status text queue: soonest to expire goes first; text never outlasts its effect; an effect that ends while waiting is dropped; under 1.5 s left gets the ring pop only; a refreshed effect shows no text again.
+- Grey woven plates are for small HUD pieces only (owner, 2026-11-02). The emote wheel is the one large exception. Large surfaces such as held skills, guided training and the training menu keep the dark and cream kit panels.
+- Hero and held slipper: a crisp dark stroke at 35 per cent.
+- Tab is its own rebindable `Scoreboard` action; ability details moved to F1 (owner, 2026-11-02). A pad and touch still open the table on the info hold, as they have no spare control. In debug builds the first seat's handover is Shift+F1. Holding it shows the plates for every seat and lists every active effect. The old four-chip score row is off in play (`ShowScoreRowInPlay`) and spectators keep it. The connection icon moved to the timer so it stays visible.
+- The stroked hero and held slipper are baked copies in `live-hud/hero-corner` and `live-hud/held`; the approved portraits and avatars are never rewritten. Plate heroes are trimmed copies in `live-hud/hero-plate`, so every hero centres by its own ink at one height.
+
+Motion for the live HUD, built with it (spring or eased, never linear; UI Motion Reduced keeps the fades and drops the movement):
+- Ability ready: the ring overshoots to 1.12, settles in .25 s, the glow flashes up then breathes slowly at 80 to 100 per cent. Used: the icon squashes, the glow cuts.
+- Ring fill: follows the value smoothly; the ultimate's lime arc gains a brief lit tip on each charge gain.
+- Timer: fill drains continuously; under 10 s the bar pulses once a second with a small scale.
+- Score: the number rolls up and pops 1.15, the +points tag rises and fades. A lead change pops the place.
+- Notices: words stamp in from 1.3 with a spring and a slight per-letter stagger, the band wipes out from the centre, the `!` marks or cans pop last with a tilt wobble; out is a quick fade and rise.
+- Warning: the band pulses slowly while it stands. Others' scores slide in from the left and out after 3 s. Tab: scrim fades, the panel rises, rows stagger .04 s.
+
 ## Pipeline
 
 Run from this worktree; the owner's editor and other worktrees are never touched.
@@ -190,3 +256,12 @@ PC: Darumadrop, DIN Next, Nunito, Paalalabas, Lydian, Grandstander).
   unified restyle cannot change their face.
 - A PSD is at most 30,000 pixels wide and one 40-artboard document exhausted the
   scratch disk, hence ten artboards per document.
+
+### Live HUD in the game (2026-11-01)
+
+Timer, score corner, rings, notices (warning, moments, CAN DOWN, TAYA, toast) and prompts follow `boot_match.py`. Pieces live in
+`Runtime/UI/LiveHud.cs` (`PaintedLetters`, `LiveNotice`); textures come from `tools/ui_artboards/export_live_hud.py` into
+`Resources/UI/live-hud`. The old four-player row stays behind `ShowScoreRowInPlay` in `TumpMatchReadout.MatchBar.cs` until the
+top-left pop-up and the Tab table exist. The can in CAN DOWN is a stand-in sprite.
+
+Hamburger MENU (2026-11-02): four rows only, SETTINGS, FRIENDS, CREDITS and a red EXIT GAME (`HubMenus.cs`, `boot_menus.py` boards `hub-menu`, `hub-menu-touch`). CAREER stays and REPLAYS joins as the sixth tab of the player profile (`PlayerHub.RecordBook.cs`; REPLAYS opens `HubReplays`, BACK returns to the profile). LEARN TO PLAY and BACK TO TITLE are gone; the tutorial lives inside PRACTICE only, so the GAMEMODE TUTORIAL shortcut is removed. PRACTICE gets a RULES button (`PracticeRules`) for its rules and bot difficulty. Hub navigation only: no rules, networking or save changes.

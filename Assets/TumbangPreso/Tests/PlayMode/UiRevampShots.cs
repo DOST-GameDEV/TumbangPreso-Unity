@@ -151,7 +151,7 @@ namespace TumbangPreso.PlayTests
 
         private static void AssertLanes(RectTransform root)
         {
-            var toast = Bounds(root, (RectTransform)root.Find("MatchToastPlate"));
+            var toast = Bounds(root, (RectTransform)root.Find("MatchToast"));
             var moment = Bounds(root, (RectTransform)root.Find("EarnedMoment"));
             var warning = Bounds(root, (RectTransform)root.Find("WarningMessage"));
             var action = Bounds(root, (RectTransform)root.Find("ContextualAction/PromptPlate"));

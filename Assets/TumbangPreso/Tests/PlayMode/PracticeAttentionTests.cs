@@ -21,7 +21,7 @@ namespace TumbangPreso.PlayTests
         private InputDeviceKind _oldKind;
         private static readonly MethodInfo SetDevice = typeof(LastInputDevice).GetMethod("Set",
             BindingFlags.Static | BindingFlags.NonPublic);
-        private GameObject Shade => _tutorial.transform.Find("Body/Art/Hover").gameObject;
+        private GameObject Shade => _tutorial.transform.Find("Face/Poster/Hover").gameObject;
 
         [UnitySetUp]
         public IEnumerator Before()
@@ -56,8 +56,7 @@ namespace TumbangPreso.PlayTests
             _events.SetSelectedGameObject(_tutorial.gameObject);
             Assert.That(_events.currentSelectedGameObject, Is.SameAs(_tutorial.gameObject));
             Assert.That(Shade.activeSelf, Is.False);
-            Assert.That(_tutorial.Shape.RingWidth, Is.Zero);
-            Assert.That(_tutorial.Shape.OutlineBoost, Is.Zero);
+            Assert.That(_tutorial.HasPadFocus, Is.False, "The kit card lights its rim only for a pad or keyboard.");
         }
 
         [Test]
@@ -67,7 +66,7 @@ namespace TumbangPreso.PlayTests
             var pointer = new PointerEventData(_events);
             _tutorial.OnPointerEnter(pointer);
             Assert.That(Shade.activeSelf, Is.True);
-            Assert.That(_tutorial.Shape.RingWidth, Is.Zero);
+            Assert.That(_tutorial.HasPadFocus, Is.False, "The kit card lights its rim only for a pad or keyboard.");
             _tutorial.OnPointerExit(pointer);
             Assert.That(Shade.activeSelf, Is.False);
             Assert.That(_events.currentSelectedGameObject, Is.SameAs(_tutorial.gameObject));
@@ -81,7 +80,7 @@ namespace TumbangPreso.PlayTests
             _events.SetSelectedGameObject(_tutorial.gameObject, pointer);
             _tutorial.OnPointerExit(pointer);
             Assert.That(Shade.activeSelf, Is.False);
-            Assert.That(_tutorial.Shape.RingWidth, Is.Zero);
+            Assert.That(_tutorial.HasPadFocus, Is.False, "The kit card lights its rim only for a pad or keyboard.");
         }
 
         [Test]
@@ -90,7 +89,7 @@ namespace TumbangPreso.PlayTests
             _events.SetSelectedGameObject(_tutorial.gameObject,
                 new AxisEventData(_events) { moveDir = MoveDirection.Down });
             Assert.That(Shade.activeSelf, Is.True);
-            Assert.That(_tutorial.Shape.RingWidth, Is.GreaterThan(0f));
+            Assert.That(_tutorial.HasPadFocus, Is.True, "The kit card lights its rim for a pad or keyboard.");
         }
 
         [Test]
@@ -99,7 +98,7 @@ namespace TumbangPreso.PlayTests
             SetDevice.Invoke(null, new object[] { InputDeviceKind.Gamepad });
             _events.SetSelectedGameObject(_tutorial.gameObject);
             Assert.That(Shade.activeSelf, Is.True);
-            Assert.That(_tutorial.Shape.RingWidth, Is.GreaterThan(0f));
+            Assert.That(_tutorial.HasPadFocus, Is.True, "The kit card lights its rim for a pad or keyboard.");
         }
 
         [Test]
@@ -114,7 +113,7 @@ namespace TumbangPreso.PlayTests
             _tutorial.OnPointerUp(pointer);
             _tutorial.OnPointerExit(pointer);
             Assert.That(Shade.activeSelf, Is.False);
-            Assert.That(_tutorial.Shape.RingWidth, Is.Zero);
+            Assert.That(_tutorial.HasPadFocus, Is.False, "The kit card lights its rim only for a pad or keyboard.");
         }
 
         [Test]

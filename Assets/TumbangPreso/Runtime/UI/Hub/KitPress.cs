@@ -8,7 +8,7 @@ namespace TumbangPreso.UI.Hub
     /// <summary>
     /// How a boot kit control answers the hand (owner, 2026-10-31), one component for all of them.
     ///
-    ///   hover / pad focus  the piece grows 4 per cent and its paint brightens
+    ///   hover / pad focus  the piece grows 4 per cent and its paint brightens (a card darkens slightly)
     ///   press              it squashes and sinks 5 units
     ///   click              the paint flashes and the piece springs back past rest
     ///
@@ -26,6 +26,8 @@ namespace TumbangPreso.UI.Hub
         public RectTransform Visual;
         public bool Motion = true;
         public bool Sound = true;
+        /// <summary>A berry card answers by darkening slightly; a button's paint brightens.</summary>
+        public bool Darken;
 
         private const float LiftK = 300f, LiftC = 19f, PressK = 900f, PressC = 34f, PopK = 420f, PopC = 15f;
         private const float HoverSheen = .16f, PressSheen = .08f, FlashSheen = .5f;
@@ -168,7 +170,7 @@ namespace TumbangPreso.UI.Hub
             _sheen.fillCenter = true;
             _sheen.preserveAspect = face.preserveAspect;
             _sheen.pixelsPerUnitMultiplier = face.pixelsPerUnitMultiplier;
-            _sheen.color = new Color(1, 1, 1, Mathf.Min(amount, .6f));
+            _sheen.color = Darken ? new Color(0, 0, 0, Mathf.Min(amount, .4f)) : new Color(1, 1, 1, Mathf.Min(amount, .6f));
         }
     }
 }

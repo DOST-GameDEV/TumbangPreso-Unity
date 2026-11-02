@@ -22,7 +22,7 @@ namespace TumbangPreso.PlayTests
         public IEnumerator PreparationKeepsWiredControlsReachableAtReviewSizes()
         {
             yield return HubFlowTests.OpenHome();
-            // UX-1 preserves each capability but relocates rules/settings into the hamburger.
+            // UX-1 relocates settings into the hamburger. Practice's rules and bot difficulty are PRACTICE's own RULES button (2026-11-02).
             foreach (var size in HubFlowTests.Shapes)
             {
                 yield return TumpUiCapture.Capture("Hub-preparation-controls-" + size.x + "x" + size.y,
@@ -30,13 +30,15 @@ namespace TumbangPreso.PlayTests
                 foreach (string name in new[] { "LoadoutButton", "NamePlate", "MenuButton", "ModeCard", "PlayButton" })
                     Hit(Button(name));
             }
-            Press(Button("MenuButton")); yield return null;
-            Press(Button("MenuMATCHRULES")); yield return null;
+            Press(Button("ModeCard")); yield return null;
+            Press(Button("PracticeCard")); yield return null;
+            Press(Button("PracticeRules")); yield return null;
             var custom = Object.FindFirstObjectByType<CustomGameScreen>();
             Assert.IsNotNull(custom); Assert.IsTrue(custom.IsOpen);
             custom.Close(); yield return null; yield return null;
             Assert.IsFalse(custom.IsOpen);
             Assert.IsTrue(TumpHub.Current.Canvas.enabled);
+            TumpHub.Current.Home(); yield return null;
             Press(Button("MenuButton")); yield return null;
             Press(Button("MenuSETTINGS")); yield return null;
             Assert.IsNotNull(Object.FindFirstObjectByType<ConvertedSettingsPanel>());

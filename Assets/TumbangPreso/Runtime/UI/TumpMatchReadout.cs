@@ -196,9 +196,10 @@ namespace TumbangPreso.UI
                 if (_hitLeft <= 0) { if (_hitMark != null) _hitMark.enabled = false; else _hit.enabled = false; }
             }
             var match = GameServices.Match; var round = GameServices.Round;
+            _playing = !spectating && !training && local != null; _playingAs = _playing ? local : null;
             _effects.Tick(local, spectating);
             if (match == null || round == null) return;
-            _clockRoot.gameObject.SetActive(!training); _scoreRoot.gameObject.SetActive(!training);
+            _clockRoot.gameObject.SetActive(!training); _scoreRoot.gameObject.SetActive(!training && (spectating || ShowScoreRowInPlay));
             int time = Mathf.CeilToInt(Mathf.Max(0, round.TimeLeft));
             _clock.text = $"{time / 60:00}:{time % 60:00}";
             _round.text = RoundLine(match.RoundNumber, match.TotalRounds);
@@ -233,6 +234,7 @@ namespace TumbangPreso.UI
             PaintHitMark();
             PaintScorePops();
             PaintMotion();
+            PaintBoard();
             PaintRecede();
             if(_crosshair==null || !_crosshair.enabled)return;
             var anchor=new Vector2(.5f,.5f);
@@ -259,6 +261,14 @@ namespace TumbangPreso.UI
                 else if (value == best && value > 0) tied = true;
             }
             if (tied) leader = -1;
+            if (!spectating && local != null) NoteBoardLeader(leader);
+            if (!spectating && local != null)
+            {
+                int mine = match.ScoreFor(local.PlayerSlot), rank = 1;
+                for (int seat = 0; seat < 4; seat++)
+                    if (seat != local.PlayerSlot && GameServices.Round.PlayerAt(seat) != null && match.ScoreFor(seat) > mine) rank++;
+                NoteOwnScore(mine, rank);
+            }
             for (int i = 0; i < 4; i++)
             {
                 int slot = i; _scoreRowSeats[i] = slot; var actor = GameServices.Round.PlayerAt(slot);
@@ -267,6 +277,7 @@ namespace TumbangPreso.UI
                 if (!_hasScoreValue[i] || _lastScoreValues[i] != score)
                 {
                     if (_hasScoreValue[i]) StartScoreRoll(i, _scores[i].text);
+                    if (!spectating && local != null) NoteBoardScore(slot, score, _lastScoreValues[i], _hasScoreValue[i], slot == local.PlayerSlot);
                     _hasScoreValue[i] = true;
                     _lastScoreValues[i] = score;
                     PaintScoreValue(_scores[i], score);

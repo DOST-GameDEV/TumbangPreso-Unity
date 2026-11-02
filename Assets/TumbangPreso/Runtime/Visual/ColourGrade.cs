@@ -210,6 +210,13 @@ namespace TumbangPreso.Visual
         private float PossessedSaturation => Mathf.Lerp(1.0f, PossessedPerception.Saturation, PossessedSight);
         private float PossessedBrightness => Mathf.Lerp(1.0f, PossessedPerception.Brightness, PossessedSight);
 
+        /// <summary>The grade run by hand on a finished frame, for an editor bake (edit mode sends no OnRenderImage).</summary>
+        public void GradeForCapture(RenderTexture source, RenderTexture destination)
+        {
+            if (_camera == null) _camera = GetComponent<Camera>();
+            OnRenderImage(source, destination);
+        }
+
         private bool IsIdentity =>
             Mathf.Approximately(_brightness * _eventBrightness, 1.0f)
             && Mathf.Approximately(_contrast, 1.0f)

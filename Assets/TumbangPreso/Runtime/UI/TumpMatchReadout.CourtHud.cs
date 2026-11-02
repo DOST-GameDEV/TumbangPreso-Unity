@@ -16,11 +16,12 @@ namespace TumbangPreso.UI
             // `BuildCourtScores` and `BuildCourtClock` below are the previous layout, kept for
             // the record and no longer called.
             BuildMatchBar(); BuildCourtCan(); BuildCourtPersonal(); BuildStaminaArc(); BuildCourtPrompts();
-            var connection = OwnerUiLayout.Rect(_scoreRoot, "ConnectionQuality").gameObject.AddComponent<ConnectionQualityIcon>();
+            // The signal icon rides with the timer: the four-chip row it used to follow is off in play.
+            var connection = OwnerUiLayout.Rect(_clockRoot, "ConnectionQuality").gameObject.AddComponent<ConnectionQualityIcon>();
             connection.rectTransform.anchorMin = connection.rectTransform.anchorMax = new Vector2(1, .5f);
             connection.rectTransform.pivot = new Vector2(.5f, .5f);
             connection.rectTransform.anchoredPosition = new Vector2(26, 0); connection.rectTransform.sizeDelta = new Vector2(22, 22);
-            BuildStatusChips(); BuildWarnings();
+            BuildStatusChips(); BuildBoard(); BuildWarnings();
             var eventFeed = MatchEventFeed.Create(_root);
             _momentBanner = MatchMomentBanner.Create(_root);
             _powers = gameObject.AddComponent<TumpPowerReadout>(); _powers.Build(_root);
@@ -31,12 +32,9 @@ namespace TumbangPreso.UI
             _toastPlate.Glass(HudDraw.Glass).raycastTarget = false; _toastPlate.enabled = false;
             Pin(_toastPlate.rectTransform, new Vector2(.5f, 1), new Vector2(0, -196), new Vector2(400, ToastHeight));
             _toastPlate.rectTransform.localRotation = Quaternion.Euler(0, 0, ToastTilt);
-            _toast = OwnerUiLayout.Text(_root, "MatchToast", "", 36, OwnerUiLayout.TypeRole.Display); _toast.color = HudDraw.Ivory;
-            _toast.fontStyle = FontStyle.Italic;
-            var toastEdge = _toast.gameObject.AddComponent<Outline>(); toastEdge.effectColor = UiTheme.InGameOutline; toastEdge.effectDistance = new Vector2(2, -2);
-            _toast.alignment = TextAnchor.MiddleCenter; _toast.verticalOverflow = VerticalWrapMode.Overflow;
+            // Painted lettering with no plate (`boot_match.toast`).
+            _toast = LiveHud.Lettering(_root, "MatchToast", "", 44, LiveHud.Yellow, LiveHud.YellowInk, LiveHud.YellowInk, 6, 4, 3);
             Pin(_toast.rectTransform, new Vector2(.5f, 1), new Vector2(0, -196), new Vector2(1080, ToastHeight)); _toast.enabled = false;
-            _toast.rectTransform.localRotation = Quaternion.Euler(0, 0, ToastTilt);
             BuildScorePops();
             _countdown = Ink(_root, "Countdown", "", 108, true);
             Pin(_countdown.rectTransform, new Vector2(.5f, .58f), Vector2.zero, new Vector2(740, 180)); _countdown.enabled = false;
@@ -111,20 +109,20 @@ namespace TumbangPreso.UI
             // ⚠️ PIVOTED ON ITS OWN CORNER so its base scale and the reading scale both grow it away
             // from the screen edges instead of off them.
             _personalRoot = OwnerUiLayout.Rect(_root, "LocalState");
-            Pin(_personalRoot, new Vector2(0, 0), new Vector2(36, 28), new Vector2(500, 120));
+            Pin(_personalRoot, new Vector2(0, 0), new Vector2(0, 0), new Vector2(500, 120));
             _personalRoot.pivot = Vector2.zero; _personalRoot.localScale = Vector3.one * VitalsScale;
             BuildVitals();
             _role = Ink(_personalRoot, "LocalRole", "", 34, true); _role.alignment = TextAnchor.MiddleLeft;
-            OwnerUiLayout.Place(_role.rectTransform, 108, -86, 392, 46);
+            OwnerUiLayout.Place(_role.rectTransform, 250, -86, 392, 46);
             _stock = Ink(_personalRoot, "SlipperState", "", 28, false); _stock.alignment = TextAnchor.MiddleLeft;
-            OwnerUiLayout.Place(_stock.rectTransform, 108, -42, 392, 40);
+            OwnerUiLayout.Place(_stock.rectTransform, 250, -42, 392, 40);
             // The labelled bar is the piloting readout (whose stamina it is IS the information), so
             // it rides above the plate with the two lines rather than under the portrait.
             var track = OwnerUiLayout.Rect(_personalRoot, "StaminaTrack").gameObject.AddComponent<Image>();
-            OwnerUiLayout.Place(track.rectTransform, 108, -116, 230, 12); track.color = new Color32(35, 29, 33, 230); track.raycastTarget = false;
+            OwnerUiLayout.Place(track.rectTransform, 250, -116, 230, 12); track.color = new Color32(35, 29, 33, 230); track.raycastTarget = false;
             _stamina = OwnerUiLayout.Rect(track.transform, "StaminaFill").gameObject.AddComponent<Image>();
             OwnerUiLayout.Fill(_stamina.rectTransform); _stamina.color = CourtPresentationPalette.Gold; _stamina.raycastTarget = false;
-            var label = Ink(_personalRoot, "StaminaLabel", "Stamina", 28, false); OwnerUiLayout.Place(label.rectTransform, 346, -131, 154, 42);
+            var label = Ink(_personalRoot, "StaminaLabel", "Stamina", 28, false); OwnerUiLayout.Place(label.rectTransform, 488, -131, 154, 42);
             // VISUAL-1.4: a stun the player cannot time is a stun they cannot play around
             // (`Design.md` § 11), so these stay; they sit under the reticle, where the eye
             // already is, instead of floating in the left margin under a scoreboard that moved.
@@ -149,6 +147,7 @@ namespace TumbangPreso.UI
             _prompt = OwnerUiLayout.Text(_promptRoot, "ActionPrompt", "", 38, OwnerUiLayout.TypeRole.Reading);
             OwnerUiLayout.Place(_prompt.rectTransform, 0, 0, 1100, 74);
             _prompt.alignment = TextAnchor.MiddleLeft; _prompt.verticalOverflow = VerticalWrapMode.Overflow; _prompt.color = PromptInk;
+            if (InGameTypography.Clock != null) { _prompt.font = InGameTypography.Clock; _prompt.fontSize = 36; }
             var promptEdge = _prompt.gameObject.AddComponent<Outline>(); promptEdge.effectColor = UiTheme.InGameOutline; promptEdge.effectDistance = new Vector2(1.5f, -1.5f);
             _bindingGlyph = OwnerUiLayout.Rect(_promptRoot, "ActionBindingGlyph").gameObject.AddComponent<Image>();
             _bindingGlyph.preserveAspect = true; _bindingGlyph.raycastTarget = false; _bindingGlyph.enabled = false;

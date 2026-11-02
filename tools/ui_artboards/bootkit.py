@@ -47,6 +47,8 @@ BUTTONS = {
     "yellow": (((0xC2, 0x6A, 0x12), (0xF6, 0xBC, 0x3A), (0xFF, 0xDE, 0x7A)), (0xA8, 0x4E, 0x0C)),
     "red": (((0x7E, 0x10, 0x1C), (0xC9, 0x2C, 0x36), (0xEC, 0x6A, 0x66)), (0x6A, 0x0C, 0x16)),
     "plain": (((0xB8, 0x96, 0x78), (0xF1, 0xE7, 0xDE), (0xFF, 0xFA, 0xF4)), MAROON),
+    "plain-soft": (((0xDC, 0xCF, 0xC3), (0xF1, 0xE7, 0xDE), (0xFF, 0xFA, 0xF4)), MAROON),
+    "blue": (((0x15, 0x76, 0x8A), (0x2C, 0xB4, 0xC6), (0x8C, 0xE8, 0xEA)), (0x0A, 0x3E, 0x4C)),
 }
 # The CREATE paint has a highlight lip on top, so its flat face centres lower than half.
 FACE_LIP, FACE_PILL = 0.45, 0.47
@@ -133,6 +135,7 @@ def weave(dark, light, size=(1920, 1080)):
 def ground(b):
     b.group = "Ground"
     b.place("ground", weave(*WEAVE), 0, 0, "Ground: berry weave")
+    b.on_weave = True
 
 
 def world(b, path, dim=(40, 8, 14, 110)):
@@ -172,7 +175,7 @@ def panel_art(w, h, drop=14, seed=1):
     d.polygon(wobble(chamfer(2, 2, w - 4, h - 4, 34), 1.6, seed), fill=TAN)
     mask = Image.new("L", im.size)
     ImageDraw.Draw(mask).polygon(wobble(chamfer(16, 16, w - 32, h - 32, 26), 1.2, seed + 1), fill=255)
-    im.paste(weave((0xEC, 0xE0, 0xD5), (0xF6, 0xEE, 0xE7), im.size), (0, 0), mask)
+    im.paste(weave((0xDC, 0xCB, 0xBC), (0xF8, 0xF1, 0xEA), im.size), (0, 0), mask)
     return im
 
 
@@ -198,6 +201,18 @@ def button_art(kind, w, h):
     paint, _ = BUTTONS[kind]
     b = art("login3-primary")
     return slice3(recolor(b, *paint) if paint else b, w, h)
+
+
+def thin_button_art(kind, w, h, keep=.4):
+    """The kit button with a thinner slab, for dense lists: its lower part squeezed, the face kept."""
+    split = .72
+    tall = round(h / (split + (1 - split) * keep))
+    im = button_art(kind, w, tall)
+    cut = round(tall * split)
+    out = Image.new("RGBA", (w, h))
+    out.paste(im.crop((0, 0, w, cut)), (0, 0))
+    out.paste(im.crop((0, cut, w, tall)).resize((w, h - cut), Image.LANCZOS), (0, cut))
+    return out
 
 
 def text(b, xy, s, size, face=DARUMA, fill=INK, weight=None, stroke=0, stroke_fill=None, name=None):
@@ -350,20 +365,135 @@ CARD = (0x8A, 0x2A, 0x3C)  # small cards are berry; cream is kept for the large 
 
 
 def frame_art(w, h, on, fill=CARD):
-    """A small card (a portrait, a seat, a choice): berry inside a tan rim, lime when chosen,
+    """A small card (a portrait, a seat, a choice): berry inside a lighter berry rim, lime when chosen,
     the slab straight below. Cream belongs to the large panels only. Same chamfered, wobbled
     outline as the panels and the empty-slot wells, so a filled slot and an open one match."""
     c, seed = min(34, int(min(w, h) * 0.22)), 3
     im = Image.new("RGBA", (w, h + 14))
     d = ImageDraw.Draw(im)
-    d.polygon(wobble(chamfer(2, 16, w - 4, h - 4, c), 1.6, seed), fill=(0x8E, 0xA6, 0x22) if on else TAN_D)
-    d.polygon(wobble(chamfer(2, 2, w - 4, h - 4, c), 1.6, seed), fill=LIME if on else TAN)
+    d.polygon(wobble(chamfer(2, 16, w - 4, h - 4, c), 1.6, seed), fill=(0x8E, 0xA6, 0x22) if on else (0x4A, 0x0C, 0x1A))
+    d.polygon(wobble(chamfer(2, 2, w - 4, h - 4, c), 1.6, seed), fill=LIME if on else (0xB8, 0x46, 0x5A))
     d.polygon(wobble(chamfer(12, 12, w - 24, h - 24, max(6, c - 8)), 1.2, seed + 1), fill=fill)
     return im
 
 
-def frame(b, x, y, w, h, on=False, name="Card"):
-    b.place("card-%dx%d%s" % (w, h, "-on" if on else ""), frame_art(w, h, on), x, y, name + (" (chosen)" if on else ""))
+def paint_card_art(w, h, kind, pattern="weave"):
+    """A card painted like one of the buttons: its slab below, a lit rim, its own colour as the face."""
+    slab, face, light = BUTTONS[kind][0] or ((0x6B, 0x8A, 0x1A), (0xBB, 0xD6, 0x48), (0xDC, 0xEE, 0x72))
+    c, seed = min(34, int(min(w, h) * 0.22)), 3
+    im = Image.new("RGBA", (w, h + 14))
+    d = ImageDraw.Draw(im)
+    d.polygon(wobble(chamfer(2, 16, w - 4, h - 4, c), 1.6, seed), fill=slab)
+    d.polygon(wobble(chamfer(2, 2, w - 4, h - 4, c), 1.6, seed), fill=light)
+    # The face carries the boot weave in its own colour, at the same scale on every card.
+    mask = Image.new("L", im.size)
+    ImageDraw.Draw(mask).polygon(wobble(chamfer(12, 12, w - 24, h - 24, max(6, c - 8)), 1.2, seed + 1), fill=255)
+    # Patterns are an overlay blend over the card's colour, never a darker shade of it (owner).
+    size = (h + 14, w)
+    if pattern == "checker":
+        sq = 44
+        yy, xx = np.indices(size)
+        grain = np.where((xx // sq + yy // sq) % 2 == 0, .5, .74)
+    else:
+        grain = np.asarray(art("login-background").resize((1920, 1080)).convert("L"), dtype=np.float32) / 255
+        grain = grain[:size[0], :size[1]]
+        grain = np.clip(.5 + (grain - grain.mean()) * 1.6, 0, 1)
+    # The fill sits deeper than the rim, its hue nudged toward the darker neighbouring colour.
+    import colorsys
+    shift = {"yellow": -.035, "red": -.02, "blue": .03, "go": .05}.get(kind, 0)
+    hue, sat, val = colorsys.rgb_to_hsv(*[v / 255 for v in face])
+    deep = colorsys.hsv_to_rgb((hue + shift) % 1, min(1, sat * 1.14), min(1, val * .94))
+    base = np.array(deep, np.float32)
+    g = grain[..., None]
+    blend = np.where(base < .5, 2 * base * g, 1 - 2 * (1 - base) * (1 - g))
+    tile = Image.fromarray((blend.clip(0, 1) * 255).astype(np.uint8)).convert("RGBA")
+    im.paste(tile, (0, 0), mask)
+    # A sharp inner shadow: the face's own shape stepped down and right, in the card's slab colour.
+    from PIL import ImageChops
+    shadow = ImageChops.subtract(mask, ImageChops.offset(mask, 7, 9))
+    im.paste(Image.new("RGBA", im.size, tuple(slab) + (255,)), (0, 0), shadow)
+    # And a soft one from the opposite corner, fading in from the bottom and right edges.
+    from PIL import ImageFilter
+    soft = ImageChops.subtract(mask, ImageChops.offset(mask, -8, -10)).filter(ImageFilter.GaussianBlur(9))
+    soft = ImageChops.multiply(soft, mask).point(lambda v: int(min(255, v * 1.1) * .55))
+    im.paste(Image.new("RGBA", im.size, tuple(slab) + (255,)), (0, 0), soft)
+    return im
+
+
+def paint_card(b, x, y, w, h, kind, name="Card", pattern="weave"):
+    b.place("card-%s-%s-%dx%d" % (kind, pattern, w, h), paint_card_art(w, h, kind, pattern), x, y, name)
+
+
+def frame_face_mask(w, h):
+    """The exact opening of `frame_art`: smooth-edged, same wobble, so a picture meets the rim."""
+    c, seed, S = min(34, int(min(w, h) * 0.22)), 3, 4
+    pts = wobble(chamfer(12, 12, w - 24, h - 24, max(6, c - 8)), 1.2, seed + 1)
+    m = Image.new("L", (w * S, (h + 14) * S))
+    # One unit under the rim's edge on every side, so no gap of berry can show between them.
+    ImageDraw.Draw(m).polygon([(px * S, py * S) for px, py in pts], fill=255)
+    return m.resize((w, h + 14), Image.LANCZOS)
+
+
+def framed(b, x, y, w, h, content, key, on=False, name="Card"):
+    """A card whose whole face is the content. The picture runs under the rim and the rim, with a
+    clear opening, is drawn over it, so no gap can show and nothing passes the border."""
+    from PIL import ImageFilter
+    c = content.convert("RGBA")
+    s = max(w / c.width, h / c.height)
+    c = c.resize((max(1, round(c.width * s)), max(1, round(c.height * s))), Image.LANCZOS)
+    under = Image.new("RGBA", (w, h + 14))
+    under.alpha_composite(c.crop(((c.width - w) // 2, (c.height - h) // 2, (c.width - w) // 2 + w, (c.height - h) // 2 + h)), (0, 0))
+    bleed = frame_face_mask(w, h).point(lambda v: 255 if v > 0 else 0).filter(ImageFilter.MaxFilter(7))
+    under.putalpha(Image.composite(under.getchannel("A"), Image.new("L", under.size), bleed))
+    b.place("%s-%dx%d" % (key, w, h), under, x, y, name)
+    b.place("card-rim-%dx%d%s" % (w, h, "-on" if on else ""), frame_art(w, h, on, fill=(0, 0, 0, 0)), x, y, name + " rim")
+
+
+def dark_card_art(w, h, on, shade=1.0):
+    """A small card for a mid-berry ground: the dark panel's weave and rose rim, in the card's outline."""
+    im = frame_art(w, h, on)
+    d = ImageDraw.Draw(im)
+    c, seed = min(34, int(min(w, h) * 0.22)), 3
+    if not on:
+        d.polygon(wobble(chamfer(2, 16, w - 4, h - 4, c), 1.6, seed), fill=(0x2A, 0x06, 0x10))
+        d.polygon(wobble(chamfer(2, 2, w - 4, h - 4, c), 1.6, seed), fill=(0xD0, 0x62, 0x76))
+    mask = Image.new("L", im.size)
+    ImageDraw.Draw(mask).polygon(wobble(chamfer(12, 12, w - 24, h - 24, max(6, c - 8)), 1.2, seed + 1), fill=255)
+    dark, lit = (0x36, 0x0A, 0x15), (0x6E, 0x1E, 0x30)
+    im.paste(weave(tuple(int(v * shade) for v in dark), tuple(int(v * shade) for v in lit)).crop((0, 0, w, h + 14)), (0, 0), mask)
+    return im
+
+
+def rim_art(w, h, on, dark=False):
+    """A card's rim alone, its opening clear: the frame (or dark frame) of `frame_art` without a fill."""
+    im = frame_art(w, h, on, fill=(0, 0, 0, 0))
+    if dark and not on:
+        c, seed = min(34, int(min(w, h) * 0.22)), 3
+        d = ImageDraw.Draw(im)
+        d.polygon(wobble(chamfer(2, 16, w - 4, h - 4, c), 1.6, seed), fill=(0x2A, 0x06, 0x10))
+        d.polygon(wobble(chamfer(2, 2, w - 4, h - 4, c), 1.6, seed), fill=(0xD0, 0x62, 0x76))
+        d.polygon(wobble(chamfer(12, 12, w - 24, h - 24, max(6, c - 8)), 1.2, seed + 1), fill=(0, 0, 0, 0))
+    return im
+
+
+def blends_with_card(b, x, y, w, h):
+    """An element may not share its background's colour (owner, 2026-11-01): is what lies under
+    this card close to the berry card's own fill?"""
+    # Over a world the colour underneath varies card to card; a row must stay one colour.
+    if not getattr(b, "on_weave", False):
+        return False
+    box = (max(0, int(x)), max(0, int(y)), min(1920, int(x + w)), min(1080, int(y + h)))
+    if box[2] <= box[0] or box[3] <= box[1]:
+        return False
+    r, g, bl = b.im.crop(box).convert("RGB").resize((1, 1), Image.BOX).getpixel((0, 0))
+    return abs(r - CARD[0]) + abs(g - CARD[1]) + abs(bl - CARD[2]) < 70
+
+
+def frame(b, x, y, w, h, on=False, name="Card", dark=None):
+    if blends_with_card(b, x, y, w, h) if dark is None else dark:
+        b.place("card-dark-%dx%d%s" % (w, h, "-on" if on else ""), dark_card_art(w, h, on), x, y, name + (" (chosen)" if on else ""))
+    else:
+        b.place("card-%dx%d%s" % (w, h, "-on" if on else ""), frame_art(w, h, on), x, y, name + (" (chosen)" if on else ""))
 
 
 def picture(b, x, y, w, h, path, key, cut=22):
@@ -390,6 +520,69 @@ def well_art(w, h, seed=1):
 
 def well(b, x, y, w, h, seed=1):
     b.place("well-%dx%d-s%d" % (w, h, seed), well_art(w, h, seed), x, y, "Empty slot")
+
+
+def dark_panel_art(w, h, drop=14, seed=1, on=False):
+    """A large panel on the dark side: a chamfered rose rim, light enough to stand off the berry ground around a deep berry weave."""
+    im = Image.new("RGBA", (w, h + drop))
+    d = ImageDraw.Draw(im)
+    d.polygon(wobble(chamfer(2, 2 + drop, w - 4, h - 4, 34), 1.6, seed), fill=(0x8E, 0xA6, 0x22) if on else (0x2A, 0x06, 0x10))
+    d.polygon(wobble(chamfer(2, 2, w - 4, h - 4, 34), 1.6, seed), fill=LIME if on else (0xD0, 0x62, 0x76))
+    mask = Image.new("L", im.size)
+    ImageDraw.Draw(mask).polygon(wobble(chamfer(16, 16, w - 32, h - 32, 26), 1.2, seed + 1), fill=255)
+    im.paste(weave((0x36, 0x0A, 0x15), (0x6E, 0x1E, 0x30), im.size), (0, 0), mask)
+    return im
+
+
+def dark_panel(b, x, y, w, h, seed=1, group="Panel", on=False):
+    b.group = group
+    b.place("dark-panel-%dx%d-s%d%s" % (w, h, seed, "-on" if on else ""), dark_panel_art(w, h, seed=seed, on=on), x, y, "Dark panel")
+
+
+def sunburst_art(w, h, c1=(0xF6, 0xBC, 0x3A), c2=(0xE8, 0x7A, 0x1E), rays=16, cut=0, centre=None):
+    """Hand-cut rays from a centre, for winners and showcase pictures. `cut` chamfers the top
+    left and bottom right corners so it sits inside a card."""
+    from PIL import ImageFilter
+    S = 2
+    im = Image.new("RGBA", (w * S, h * S), c2 + (255,))
+    d = ImageDraw.Draw(im)
+    cx, cy = centre if centre else (w / 2, h / 2)
+    cx, cy, R = cx * S, cy * S, (w + h) * S
+    rnd = random.Random(w * 7 + h)
+    for i in range(rays):
+        a = 2 * math.pi * i / rays + rnd.uniform(-.02, .02)
+        half = math.pi / rays / 2 * rnd.uniform(.82, 1.0)
+        d.polygon([(cx, cy), (cx + R * math.cos(a - half), cy + R * math.sin(a - half)),
+                   (cx + R * math.cos(a + half), cy + R * math.sin(a + half))], fill=c1 + (255,))
+    im = im.resize((w, h), Image.LANCZOS)
+    glow = Image.new("L", (w, h))
+    gx, gy, gr = cx / S, cy / S, min(w, h) * .42
+    ImageDraw.Draw(glow).ellipse((gx - gr, gy - gr, gx + gr, gy + gr), fill=170)
+    im.paste(Image.new("RGBA", (w, h), (0xFF, 0xF0, 0xB8, 255)), (0, 0), glow.filter(ImageFilter.GaussianBlur(gr * .45)))
+    if cut:
+        m = Image.new("L", (w, h))
+        ImageDraw.Draw(m).polygon([(cut, 0), (w, 0), (w, h - cut), (w - cut, h), (0, h), (0, cut)], fill=255)
+        im.putalpha(m)
+    return im
+
+
+def sunburst(b, x, y, w, h, key="burst", cut=0, **kw):
+    b.place("%s-%dx%d" % (key, w, h), sunburst_art(w, h, cut=cut, **kw), x, y, "Sunburst")
+
+
+def hazard_art(w, h, c1=(0xF6, 0xBC, 0x3A), c2=(0x2A, 0x10, 0x14), band=46):
+    """Yellow warning tape."""
+    im = Image.new("RGBA", (w, h), c1 + (255,))
+    d = ImageDraw.Draw(im)
+    x = -h
+    while x < w + h:
+        d.polygon([(x, h), (x + h, 0), (x + h + band, 0), (x + band, h)], fill=c2 + (255,))
+        x += band * 2
+    return im
+
+
+def hazard(b, x, y, w, h, key="hazard", band=46):
+    b.place("%s-%dx%d" % (key, w, h), hazard_art(w, h, band=band), x, y, "Warning tape")
 
 
 def poster(b, path, dim=(40, 8, 14, 90)):
@@ -495,13 +688,35 @@ def export_game_kit():
     GAME_KIT.mkdir(parents=True, exist_ok=True)
     pieces = {}
     for kind, (paint, _) in BUTTONS.items():
-        if paint:
+        if paint and kind != "plain-soft":  # the soft plain is only ever drawn thin
             pieces["button-" + kind] = recolor(art("login3-primary"), *paint)
             pieces["pill-" + kind] = recolor(art("login3-tabs-pill"), *paint)
+    # Thin-slab buttons for dense lists, at the button's own face scale: 1556 wide, 280 tall
+    # (the face of the 336-tall button with its slab squeezed), sliced like the full button.
+    for kind in ("plain-soft", "yellow", "red", "go", "blue"):
+        pieces["thin-" + kind.replace("-soft", "")] = thin_button_art(kind, 1556, 280)
     pieces["ground-berry"] = weave(*WEAVE)
     pieces["panel"] = panel_art(480, 360, drop=14, seed=4)
+    pieces["dark-panel"] = dark_panel_art(480, 360, drop=14, seed=4)
     pieces["card"] = frame_art(240, 200, False)
     pieces["card-on"] = frame_art(240, 200, True)
+    pieces["dark-card"] = dark_card_art(240, 200, False)
+    pieces["dark-card-on"] = dark_card_art(240, 200, True)
+    pieces["dark-card-viewed"] = dark_card_art(240, 200, False, shade=.72)
+    pieces["dark-card-viewed-on"] = dark_card_art(240, 200, True, shade=.72)
+    # Coloured checker cards. The centre is two checker periods (4 x 44) square, so a tiled
+    # centre repeats without a seam: 46 + 176 + 46 across, 46 + 176 + 60 (slab included) down.
+    for kind in ("yellow", "red", "blue", "go"):
+        pieces["paint-" + kind] = paint_card_art(268, 268, kind, "checker")
+    # Rim-only cards: a picture runs under them and the rim, with a clear opening, closes over it,
+    # so nothing passes the border (the boards' `framed`).
+    for on in (False, True):
+        for dark in (False, True):
+            pieces[("dark-" if dark else "") + "card-rim" + ("-on" if on else "")] = rim_art(240, 200, on, dark)
+    # Sunbursts for showcase pictures: the winners' yellow, the shop's red and lime.
+    pieces["sunburst-yellow"] = sunburst_art(800, 640)
+    pieces["sunburst-red"] = sunburst_art(800, 640, c1=(0xE0, 0x4A, 0x4A), c2=(0xB2, 0x2A, 0x36))
+    pieces["sunburst-lime"] = sunburst_art(800, 640, c1=(0xD8, 0xE8, 0x5A), c2=(0xA8, 0xC2, 0x30))
     pieces["well"] = well_art(240, 200, seed=20)
     pieces["field"] = field_art(1094, 156)
     pieces["knob"] = knob_art()

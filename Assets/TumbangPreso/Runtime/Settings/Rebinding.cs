@@ -33,7 +33,7 @@ namespace TumbangPreso.Settings
     /// Throw / Tag left click; Retrieve / Reset right click; Interact / Ready F;
     /// Shove / Lunge middle click; curve left wheel up, right wheel down.
     /// ABILITIES: Signature E (`Skill1`), Role Ability Q (`Skill2`),
-    /// Ultimate X. INTERFACE: Ability Descriptions Tab. COMMUNICATIONS: Emote
+    /// Ultimate X. INTERFACE: Scoreboard Tab, Ability Descriptions F1. COMMUNICATIONS: Emote
     /// Wheel T. `Groups` below is laid out under the same five headings. It replaced Q/E/F for
     /// the deck, X for a contextual pickup/shove/reset, G for interact, B for emotes and Z/C
     /// for the curve (Z and C were themselves the fix for the arrow keys, 2026-08-27).
@@ -77,7 +77,7 @@ namespace TumbangPreso.Settings
             "Sprint", "Jump", "Crouch",
             "SpecialAbility", "Grab", "Lunge", "CurveLeft", "CurveRight",
             "Skill1", "Skill2", "Ultimate", "Interact",
-            "ReadyUp", "CleanFeed", "AbilityInfo",
+            "ReadyUp", "CleanFeed", "Scoreboard", "AbilityInfo",
             "EmoteWheel",
             "Pause",
             "ToggleFullscreen",
@@ -188,6 +188,7 @@ namespace TumbangPreso.Settings
             { "ReadyUp", "Ready Up" },
             { "Interact", "Interact / Ready" },
             { "CleanFeed", "Hide HUD" },
+            { "Scoreboard", "Scoreboard" },
             { "AbilityInfo", "Ability Descriptions" },
             { "EmoteWheel", "Emote Wheel" },
             { "Pause", "Pause / Match Menu" },
@@ -238,7 +239,7 @@ namespace TumbangPreso.Settings
             ("MOVEMENT", new[] { "MoveForward", "MoveBackward", "MoveLeft", "MoveRight", "Sprint", "Jump", "Crouch" }),
             ("ACTIONS", new[] { "SpecialAbility", "Lunge", "Grab", "CurveLeft", "CurveRight", "Interact" }),
             ("ABILITIES", new[] { "Skill1", "Skill2", "Ultimate" }),
-            ("INTERFACE", new[] { "AbilityInfo", "CleanFeed", "Pause",
+            ("INTERFACE", new[] { "Scoreboard", "AbilityInfo", "CleanFeed", "Pause",
                                   "ToggleFullscreen" }),
             ("COMMUNICATIONS", new[] { "EmoteWheel" }),
             ("SPECTATOR CAMERA", new[] { "SpectatorAutopilot", "SpectatorCycleTarget",

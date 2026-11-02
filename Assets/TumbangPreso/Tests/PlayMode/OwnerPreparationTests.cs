@@ -40,8 +40,9 @@ namespace TumbangPreso.PlayTests
                 Assert.IsFalse(TumpHub.Current.Top.GetComponentsInChildren<HubArrowChoice>().Any(),
                     "HOST GAME must not offer the map the room chooses.");
                 TumpHub.Current.Home();
-                yield return HubFlowTests.Press("MenuButton");
-                yield return HubFlowTests.Press("MenuMATCHRULES");
+                yield return HubFlowTests.Press("ModeCard");
+                yield return HubFlowTests.Press("PracticeCard");
+                yield return HubFlowTests.Press("PracticeRules");
                 var custom=GameObject.Find("OwnerCustomGameCanvas").GetComponent<Canvas>();
                 Assert.IsEmpty(custom.GetComponentsInChildren<TumpSurface>());
                 int rounds=SceneFlow.SelectedRules.Rounds;
@@ -69,6 +70,7 @@ namespace TumbangPreso.PlayTests
                 Assert.IsFalse(Object.FindFirstObjectByType<CustomGameScreen>().IsOpen);
                 Assert.AreEqual(botTier,TumbangPreso.Settings.SettingsStore.Current.AiDifficulty,"Preparation must not overwrite the chosen custom bot setting.");
 
+                TumpHub.Current.Home(); yield return null;
                 Press("LoadoutButton"); yield return null;
                 Assert.IsInstanceOf<HubLoadout>(TumpHub.Current.Top);
                 Press("BackButton"); yield return null;

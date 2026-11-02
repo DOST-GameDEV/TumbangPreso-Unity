@@ -217,6 +217,8 @@ namespace TumbangPreso.CameraSystem
                 if(originalIndex>=0)surface.forceRenderingOff=basis.Surfaces[originalIndex].Hidden;
                 surface.GetPropertyBlock(_viewBlock);
                 _viewBlock.SetFloat("_ViewmodelRimStrength",surface==_heldRenderer?WorldCueProfile.Current.ViewmodelRim*weight:0);
+                // No ink hull on the first-person view (owner, 2026-11-01). Per renderer, because this camera also draws the world.
+                _viewBlock.SetFloat("_OutlineWidth",0);
                 surface.SetPropertyBlock(_viewBlock);
                 if(weight>0)surface.shadowCastingMode=ShadowCastingMode.Off;
             }

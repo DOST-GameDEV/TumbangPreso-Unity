@@ -100,7 +100,6 @@ namespace TumbangPreso.UI.Hub
         private TumpHub _hub;
         private RectTransform _root;
         private Text _clock, _line;
-        private HubBoard.LabelSpec _clockSpec;
         private HubButton _cancel, _bots;
         private int _shownSecond = -1;
 
@@ -112,32 +111,31 @@ namespace TumbangPreso.UI.Hub
             var holder = HubKit.Stretch(HubKit.Rect(parent, "QueuePlateHolder"));
             var plate = holder.gameObject.AddComponent<HubQueuePlate>();
             bool larger = Settings.SettingsStore.Current.LargerText;
-            // ⚠️ THE OWNER'S BOARD PLATE (2026-10-21): her own knit trapezoid (drawn flat, no slab) hanging off the top edge, the
-            // elapsed time in the display face and a red X, nothing else on it. The mode and the
-            // refusal line hang just under it, because a refusal must still be read.
-            var group = HubBoard.Bounds("queue_plate_face", "cancel_button_face");
-            var root = HubBoard.Hang(HubKit.Rect(holder, "QueuePlate"), HubKit.Top, group);
+            // The search as a raffle ticket (`boot_menus.py`): the elapsed time and the mode on its body,
+            // the cancel torn off on the stub. The refusal line shares the mode's line, so it is still read.
+            var root = HubKit.Rect(holder, "QueuePlate");
+            HubKnit.At(root, 660, 20, 600, 128);
             plate._hub = hub;
             plate._root = root;
-            HubBoard.Place(root, group, "queue_plate_face", "Ticket");
-            plate._clockSpec = HubBoard.Label("00:00");
-            plate._clock = HubBoard.Write(root, group, "00:00", "Elapsed");
+            var ticket = HubKit.Rect(root, "Ticket").gameObject.AddComponent<RawImage>();
+            ticket.texture = Resources.Load<Texture2D>("UI/boot-kit/queue-ticket");
+            ticket.raycastTarget = false;
+            HubKit.Stretch(ticket.rectTransform);
+            var inkTime = HubBoard.Colour("#4A1018");
+            plate._clock = HubKnit.Display(root, "Elapsed", "00:00", 70, inkTime, TextAnchor.MiddleCenter);
+            HubKnit.In(plate._clock.rectTransform, 20, 9, 430, 70);
 
-            plate._line = HubKit.Text(root, "QueueLine", "SEARCHING", HubStyle.Floor, false, HubStyle.Honey, TextAnchor.MiddleCenter);
-            HubKit.Place(plate._line.rectTransform, HubKit.Bottom, new Vector2(0, -(larger ? 50 : 42)), new Vector2(520, larger ? 44 : 36));
-            var edge = plate._line.gameObject.AddComponent<Outline>();
-            edge.effectColor = HubBoard.Colour("#2E0310"); edge.effectDistance = new Vector2(2, -2);
+            plate._line = HubKnit.Words(root, "QueueLine", "SEARCHING", larger ? 30 : 28, HubBoard.Colour("#8A3A0C"), TextAnchor.MiddleCenter, true);
+            HubKnit.In(plate._line.rectTransform, 20, 76, 430, 36);
 
-            plate._cancel = HubBoard.Sticker(root, "CancelQueue", new Vector2(0, 1), "cancel_button", () => hub.Host.CancelQueue(), out var xFace, out var xGroup);
-            ((RectTransform)plate._cancel.transform).anchoredPosition = new Vector2(xGroup.x - group.x, -(xGroup.y - group.y));
-            var x = HubBoard.Picture(xFace, xGroup, "glyph_x", "Icon");
-            HubBoard.Feel(plate._cancel, xFace, HubBoard.Depth("cancel_button"), 0.2f, false, x);
+            plate._cancel = HubKnit.Button(root, "CancelQueue", null, Knit.Danger, () => hub.Host.CancelQueue(), HubStyle.Label, HubGlyph.Mark.Close);
+            HubKnit.In((RectTransform)plate._cancel.transform, 475, 49, 100, 72);
 
-            plate._bots = HubKit.Button(holder, "PlayWithBots", "PLAY WITH BOTS", HubStyle.Golden, () =>
+            plate._bots = HubKnit.Button(holder, "PlayWithBots", "PLAY WITH BOTS", Knit.Yellow, () =>
             {
                 HubQueueWatch.AcceptBots();
                 hub.Host.AcceptBots();
-            }, HubStyle.Body, 72, HubGlyph.Mark.Bots);
+            }, HubStyle.Body, HubGlyph.Mark.Bots);
             HubKit.Place((RectTransform)plate._bots.transform, HubKit.Top, new Vector2(0, larger ? -206 : -178), new Vector2(360, 76));
 
             root.gameObject.SetActive(false);
@@ -167,7 +165,7 @@ namespace TumbangPreso.UI.Hub
             int seconds = Mathf.FloorToInt(Time.unscaledTime - HubQueueWatch.StartedAt);
             if (seconds == _shownSecond) return;
             _shownSecond = seconds;
-            HubBoard.SetWords(_clock, $"{seconds / 60:00}:{seconds % 60:00}", _clockSpec);
+            _clock.text = $"{seconds / 60:00}:{seconds % 60:00}";
 
             var host = _hub.Host;
             string mode = HubQueueWatch.Stake == QueueStake.Ranked ? "RANKED"
@@ -232,13 +230,15 @@ namespace TumbangPreso.UI.Hub
 
         public static HubToast Build(RectTransform parent)
         {
-            var root = HubKit.Place(HubKit.Rect(parent, "Toast"), HubKit.Bottom, new Vector2(0, 150), new Vector2(980, 88));
+            var root = HubKit.Place(HubKit.Rect(parent, "Toast"), HubKit.Bottom, new Vector2(0, 150), new Vector2(980, 100));
             var toast = root.gameObject.AddComponent<HubToast>();
             toast._root = root;
-            var shape = HubKit.Shape(root, "Plate", HubStyle.Night, false, 3, 4, 22);
-            HubKit.Stretch(shape.rectTransform);
-            toast._words = HubKit.Text(root, "Words", "", HubStyle.Body, false, HubStyle.Honey, TextAnchor.MiddleCenter);
+            // A dark card with cream words (`boot_menus.py`).
+            HubKit.Stretch(HubKnit.Plate(root, "Plate", Knit.DarkCard));
+            toast._words = HubKnit.Words(root, "Words", "", 40, HubKnit.KitCream, TextAnchor.MiddleCenter, true);
             HubKit.Stretch(toast._words.rectTransform, 18);
+            toast._words.rectTransform.offsetMax = new Vector2(-18, -4);
+            toast._words.rectTransform.offsetMin = new Vector2(18, 18);
             root.gameObject.SetActive(false);
             return toast;
         }
@@ -249,7 +249,7 @@ namespace TumbangPreso.UI.Hub
             _words.text = words;
             // Refusals often need two lines, especially with Larger text. Size this one temporary
             // message from its actual content instead of letting it overflow an88-unit plate.
-            _root.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Mathf.Max(88, _words.preferredHeight + 36));
+            _root.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Mathf.Max(100, _words.preferredHeight + 50));
             _root.gameObject.SetActive(true);
             _root.SetAsLastSibling();
             HubSlap.On(_root, 0, 0);

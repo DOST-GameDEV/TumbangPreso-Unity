@@ -121,7 +121,9 @@ namespace TumbangPreso
             // These keys select POVs while watching. A solo debug handover must
             // never turn that camera choice into control of a player's body.
             if (GameLaunch.Spectator || (UI.Hud.Instance != null && UI.Hud.Instance.Spectating)) return;
-            bool seatKey = kb.f1Key.wasPressedThisFrame || kb.f2Key.wasPressedThisFrame
+            // F1 alone is the ability details hold now, so the first seat takes Shift+F1.
+            bool firstSeat = kb.f1Key.wasPressedThisFrame && kb.shiftKey.isPressed;
+            bool seatKey = firstSeat || kb.f2Key.wasPressedThisFrame
                 || kb.f3Key.wasPressedThisFrame || kb.f4Key.wasPressedThisFrame
                 || kb.f5Key.wasPressedThisFrame || kb.f6Key.wasPressedThisFrame;
             if (!seatKey) return;
@@ -134,14 +136,14 @@ namespace TumbangPreso
             // distinguish it from the original human. Retain the initial seat.
             if (!_resolved) { _defaultSlot = DefaultSlot; DrivenSlot = _defaultSlot; _resolved = true; }
 
-            if (kb.f1Key.wasPressedThisFrame) Assign(0);
+            if (firstSeat) Assign(0);
             else if (kb.f2Key.wasPressedThisFrame) Assign(1);
             else if (kb.f3Key.wasPressedThisFrame) Assign(2);
             else if (kb.f4Key.wasPressedThisFrame) Assign(3);
             else if (kb.f6Key.wasPressedThisFrame) Assign(_defaultSlot);
             else if (kb.f5Key.wasPressedThisFrame) Cycle();
 
-            // ⚠️ CYCLE MOVED OFF TAB ON 2026-08-23. Tab is the hold-to-read ability panel now
+            // ⚠️ CYCLE MOVED OFF TAB ON 2026-08-23. Tab was the hold-to-read ability panel then (F1 since 2026-11-02)
             // (`AbilityInfo` in the input map), and a debug tool must not sit on a key a player
             // presses in a real match: holding it to read a power would have silently handed
             // their body to a different seat. F5 is beside the four F-keys this already owns.

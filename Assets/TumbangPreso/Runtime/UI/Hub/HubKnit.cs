@@ -29,7 +29,12 @@ namespace TumbangPreso.UI.Hub
     /// </summary>
     public enum Knit { Gold, Orange, Teal, Lime, Maroon, Red, Peach, Wine,
                        // The boot kit (`HubKnit.Boot.cs`).
-                       Go, Yellow, Danger, Plain, PillGo, PillYellow, PillDanger, PillPlain, Track, BootField, Panel, Card, CardOn, Well }
+                       Go, Yellow, Danger, Plain, PillGo, PillYellow, PillDanger, PillPlain, Track, BootField, Panel, Card, CardOn, Well,
+                       // The newer boot kit: dark pieces for the berry ground, checker paint cards, thin-slab buttons.
+                       Blue, PillBlue, DarkPanel, DarkCard, DarkCardOn, DarkCardViewed, DarkCardViewedOn,
+                       PaintYellow, PaintRed, PaintBlue, PaintGo, ThinPlain, ThinYellow, ThinRed, ThinGo, ThinBlue,
+                       // A card's rim alone, closing over a picture drawn under it.
+                       CardRim, CardRimOn, DarkCardRim, DarkCardRimOn }
 
     public static partial class HubKnit
     {
@@ -149,6 +154,7 @@ namespace TumbangPreso.UI.Hub
             {
                 var press = rect.gameObject.AddComponent<KitPress>();
                 press.Face = face.GetComponent<Image>(); press.Motion = false; press.Sound = false;
+                press.Darken = IsKitCard(k);
             }
             rect.gameObject.AddComponent<KnitFocus>().Button = button;
             return button;

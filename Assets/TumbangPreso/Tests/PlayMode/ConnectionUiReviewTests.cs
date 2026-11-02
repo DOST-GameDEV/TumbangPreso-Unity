@@ -63,7 +63,7 @@ namespace TumbangPreso.PlayTests
             view.Tick(null, true, false, true, false);
             var notice = view.Canvas.GetComponentInChildren<PeerConnectionNotice>(true);
             var icon = view.Canvas.GetComponentInChildren<ConnectionQualityIcon>(true);
-            Assert.AreEqual("MatchScores", icon.transform.parent.name, "Connection quality must travel with the scoreboard.");
+            Assert.AreEqual("RoundClock", icon.transform.parent.name, "Connection quality travels with the timer, since the score row is off in play.");
             foreach (var shape in new[] { new Vector2Int(960, 540), new Vector2Int(1600, 680) })
             {
                 foreach (var tier in new[] { ConnectionQualityDisplay.Tier.Mild, ConnectionQualityDisplay.Tier.Severe })

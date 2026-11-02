@@ -81,8 +81,8 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual("P2  DOWNED LATA", feed.Entry(0));
             Assert.AreEqual(HudBadge.Glyph.Knock, feed.GlyphAt(0), "The feed draws the knockdown pictogram, not words.");
             var readout = Object.FindFirstObjectByType<TumpMatchReadout>();
-            Assert.AreEqual("+" + MatchRules.PointsFor(ScoreEvent.LataKnocked), readout.ScorePopText(me.PlayerSlot),
-                "The award rises into the scorer's own chip.");
+            Assert.AreEqual("+" + MatchRules.PointsFor(ScoreEvent.LataKnocked), readout.OwnGainText,
+                "The award rises out of your own score in the corner.");
             Assert.IsNotNull(GameObject.Find("~TinContact"));
             Assert.IsNull(GameObject.Find("ConfettiRibbon"), "Routine tin contact does not use milestone confetti.");
             Assert.IsTrue(Mark("HitConfirmation").enabled, "The credited local thrower gets confirmation.");

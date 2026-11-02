@@ -45,7 +45,7 @@ namespace TumbangPreso.UI
         // power deck grows 25 percent around its existing corner/bottom anchor").
         // ⚠️ THE KEY IS 32, NOT THE CORNER BADGE'S 26: it sits under its power now rather than over
         // the art, and at 26 the first 960 x 540 render drew E and Q about ten pixels tall.
-        private const float SkillSize = 88, SkillGap = 14, KeySize = 32, KeyRow = KeySize + 4, UltSize = 92;
+        private const float SkillSize = 83, SkillGap = 10, KeySize = 32, KeyRow = KeySize + 4, UltSize = 109;
         private const float OwnerDeckHeight = SkillSize + 6 + KeyRow + 4;
         /// <summary>Keyboard and pad: two skills side by side.</summary>
         public const float SkillDeckWidth = SkillSize * 2 + SkillGap;
@@ -53,6 +53,13 @@ namespace TumbangPreso.UI
         public const float TouchDeckWidth = SkillSize * 2 + UltWidth + SkillGap * 2;
         public const float UltWidth = UltSize + 12;
         private RectTransform _ultimate;
+        // ⚠️ LIVE HUD 2026-11-01 (`boot_match.powers`): a ready power wears a round glow outside its ring and none inside.
+        // It flashes up when the power comes ready, then breathes; when the power is used the glow cuts and the icon squashes.
+        private readonly Image[] _glows = new Image[3];
+        private readonly bool[] _wasReady = new bool[3], _wasBusy = new bool[3];
+        private readonly float[] _readyAt = { -10, -10, -10 }, _usedAt = { -10, -10, -10 };
+        private float _roleFlip = 1;
+        private const float ReadySeconds = .25f, UsedSeconds = .22f;
 
         // ⚠️⚠️ THE ROLE ABILITY'S BADGE AND SWAP (ability overhaul, 2026-09-25). On a role kit the
         // middle power is one ability attacking and another defending, and it changes at every
@@ -81,6 +88,8 @@ namespace TumbangPreso.UI
             {
                 var group = i == 2 ? _ultimate : _deck;
                 float size = i == 2 ? UltSize : SkillSize;
+                _glows[i] = OwnerUiLayout.Rect(group, "ReadyGlow" + i).gameObject.AddComponent<Image>();
+                _glows[i].sprite = LiveHud.Picture(i == 2 ? "ring-glow-ult" : "ring-glow-skill"); _glows[i].raycastTarget = false; _glows[i].enabled = false;
                 _ownerDials[i] = OwnerUiLayout.Rect(group, "Power" + i).gameObject.AddComponent<OwnerAbilitySeal>();
                 _ownerDials[i].raycastTarget = false; OwnerUiLayout.Place(_ownerDials[i].rectTransform, 0, 0, size, size);
                 _symbols[i] = OwnerUiLayout.Rect(_ownerDials[i].transform, "PowerIcon").gameObject.AddComponent<TumpAbilitySymbol>();
@@ -94,9 +103,10 @@ namespace TumbangPreso.UI
                 _symbols[i].raycastTarget = false;
                 // Overwatch draws the seconds and the charge percentage as the biggest thing on the
                 // power, italic, straight over the dimmed icon.
-                _states[i] = OwnerUiLayout.Text(_ownerDials[i].transform, "PowerState", "", i == 2 ? 32 : 34, OwnerUiLayout.TypeRole.Display);
-                _states[i].color = HudDraw.Ivory; _states[i].alignment = TextAnchor.MiddleCenter; _states[i].fontStyle = FontStyle.Italic;
-                var stateEdge = _states[i].gameObject.AddComponent<Outline>(); stateEdge.effectColor = UiTheme.InGameOutline; stateEdge.effectDistance = new Vector2(2, -2);
+                _states[i] = OwnerUiLayout.Text(_ownerDials[i].transform, "PowerState", "", i == 2 ? 26 : 30, OwnerUiLayout.TypeRole.Display);
+                _states[i].font = Hub.HubKnit.SentenceFont(true); _states[i].fontSize = i == 2 ? 26 : 30;
+                _states[i].color = Color.white; _states[i].alignment = TextAnchor.MiddleCenter; _states[i].fontStyle = FontStyle.Normal;
+                var stateEdge = _states[i].gameObject.AddComponent<Outline>(); stateEdge.effectColor = LiveHud.Glass; stateEdge.effectDistance = new Vector2(1.5f, -1.5f);
                 _states[i].verticalOverflow = VerticalWrapMode.Overflow; OwnerUiLayout.Fill(_states[i].rectTransform);
 
                 // The key sits UNDER its power on a small dark glass cap, Overwatch's arrangement.
@@ -151,13 +161,13 @@ namespace TumbangPreso.UI
             _deckPlacement = placement;
             float width = touch ? TouchDeckWidth : SkillDeckWidth;
             if (touch) { _deck.anchorMin = _deck.anchorMax = _deck.pivot = new Vector2(.5f, 0); _deck.anchoredPosition = new Vector2(0, 34); }
-            else { _deck.anchorMin = _deck.anchorMax = _deck.pivot = new Vector2(1, 0); _deck.anchoredPosition = new Vector2(-40, 30); }
+            else { _deck.anchorMin = _deck.anchorMax = _deck.pivot = new Vector2(1, 0); _deck.anchoredPosition = new Vector2(-22, 5); }
             _deck.sizeDelta = new Vector2(width, OwnerDeckHeight);
             // The ultimate is bottom centre on every device: alone on keyboard and pad, between the
             // two skills on touch (it lands in the gap the touch layout leaves for it).
             _ultimate.anchorMin = _ultimate.anchorMax = _ultimate.pivot = new Vector2(.5f, 0);
-            _ultimate.anchoredPosition = new Vector2(0, touch ? 34 : 26);
-            _ultimate.sizeDelta = new Vector2(UltWidth, OwnerDeckHeight);
+            _ultimate.anchoredPosition = new Vector2(0, touch ? 34 : 0);
+            _ultimate.sizeDelta = new Vector2(UltWidth, UltSize + 4 + KeyRow + 4);
 
             float second = width - SkillSize;
             PlacePower(0, 0, 0, SkillSize);
@@ -174,7 +184,9 @@ namespace TumbangPreso.UI
         private void PlacePower(int i, float x, float y, float size)
         {
             OwnerUiLayout.Place(_ownerDials[i].rectTransform, x, y, size, size);
-            float keyY = i == 2 ? size - 8 : size + 6;
+            float keyY = i == 2 ? size + 4 : size + 6;
+            float glow = size * (i == 2 ? 236f / 136 : 176f / 104);
+            OwnerUiLayout.Place(_glows[i].rectTransform, x + (size - glow) * .5f, y + (size - glow) * .5f, glow, glow);
             OwnerUiLayout.Place(_ownerKeycaps[i].rectTransform, x + (size - KeySize - 6) * .5f, keyY, KeySize + 6, KeySize);
             OwnerUiLayout.Place(_keys[i].rectTransform, x + (size - KeySize) * .5f, keyY, KeySize, KeySize);
             OwnerUiLayout.Place(_chargePips[i].rectTransform, x - 6, y - 6, 32, 30);
@@ -226,15 +238,20 @@ namespace TumbangPreso.UI
                 _chargePips[i].gameObject.SetActive(pip);
                 if (pip) { _chargeCounts[i].text = state; state = ""; }
                 _states[i].text = state;
+                PaintReadyMotion(i, ready, skill.IsActive || aftermath || (i != 2 && skill.CooldownRemaining > 0));
                 bool drawn = AbilityIcons.Illustration(skill.Glyph) != null;
-                _symbols[i].canvasRenderer.SetAlpha(string.IsNullOrEmpty(state) ? 1 : drawn ? .5f : .22f);
+                // A charging ultimate shows its icon whole, raised, with the percentage under it; a skill's number sits over a dimmed icon.
+                bool chargeNumber = i == 2 && !string.IsNullOrEmpty(state) && !ready && !aftermath;
+                _symbols[i].canvasRenderer.SetAlpha(string.IsNullOrEmpty(state) || chargeNumber ? 1 : .3f);
+                _symbols[i].rectTransform.anchoredPosition = new Vector2(0, chargeNumber ? 12 : 0);
+                _states[i].rectTransform.anchoredPosition = new Vector2(0, chargeNumber ? -30 : 0);
                 string binding = Hud.KeyLabelFor(Actions[i]); _keys[i].text = Hud.OnTouch ? "" : binding;
                 bool pad = LastInputDevice.Current == InputDeviceKind.Gamepad;
                 _keyGlyphs[i].sprite = !Hud.OnTouch ? InputGlyphs.For(binding.ToUpperInvariant(), true) : null; _keyGlyphs[i].enabled = _keyGlyphs[i].sprite != null;
                 float extraWidth = (InputGlyphs.PromptWidth(_keyGlyphs[i].sprite, KeySize, KeySize) - KeySize) * .5f;
                 _keyGlyphs[i].rectTransform.offsetMin = new Vector2(-extraWidth, 0);
                 _keyGlyphs[i].rectTransform.offsetMax = new Vector2(extraWidth, 0);
-                bool cap = !Hud.OnTouch && !pad && !_keyGlyphs[i].enabled && binding.Length <= 3;
+                bool cap = false;
                 _ownerKeycaps[i].gameObject.SetActive(cap);
                 _keys[i].color = _keyGlyphs[i].enabled ? Color.clear : HudDraw.Ivory;
                 var edge = _keys[i].GetComponent<Outline>(); if (edge != null) edge.enabled = !cap && !_keyGlyphs[i].enabled;
@@ -249,11 +266,39 @@ namespace TumbangPreso.UI
             _detail.gameObject.SetActive(held); if (held) Describe(kit, _skills);
         }
 
+        /// <summary>
+        /// Ready: the ring overshoots to 1.12 and settles in a quarter second while the glow flashes up, then breathes.
+        /// Used: the icon squashes and the glow cuts. Reduced UI Motion keeps the glow and drops the movement.
+        /// </summary>
+        private void PaintReadyMotion(int i, bool ready, bool busy)
+        {
+            float now = Time.unscaledTime;
+            if (ready && !_wasReady[i]) _readyAt[i] = now;
+            if (busy && !_wasBusy[i] && _wasReady[i]) _usedAt[i] = now;
+            _wasReady[i] = ready; _wasBusy[i] = busy;
+            bool still = LiveHud.Still;
+            float u = still ? 1 : Mathf.Clamp01((now - _readyAt[i]) / ReadySeconds);
+            float pop = u >= 1 ? 1 : u < .35f ? 1 + .12f * LiveHud.EaseOut(u / .35f) : 1 + .12f * (1 - Mathf.SmoothStep(0, 1, (u - .35f) / .65f));
+            float flat = i == 1 ? _roleFlip : 1;
+            _ownerDials[i].rectTransform.localScale = new Vector3(pop * flat, pop, 1);
+            _glows[i].rectTransform.localScale = Vector3.one * pop;
+            _glows[i].enabled = ready;
+            if (ready)
+            {
+                float flash = still ? 1 : Mathf.Lerp(1.15f, 1, LiveHud.EaseOut((now - _readyAt[i]) / .35f));
+                var c = (Color)LiveHud.GlowYellow; c.a = Mathf.Clamp01(.88f * flash * (now - _readyAt[i] < .35f && !still ? 1 : LiveHud.Breath(2.2f)));
+                if (_glows[i].color != c) _glows[i].color = c;
+            }
+            float squash = still ? 1 : Mathf.Clamp01((now - _usedAt[i]) / UsedSeconds);
+            float k = squash >= 1 ? 0 : Mathf.Sin(squash * Mathf.PI);
+            _symbols[i].rectTransform.localScale = new Vector3(1 + .22f * k, 1 - .22f * k, 1);
+        }
+
         private void PaintRole(HeroKit kit)
         {
             bool role = kit.HasRoleAbilities;
             if (_roleBadge.gameObject.activeSelf != role) { _roleBadge.gameObject.SetActive(role); _roleChip.gameObject.SetActive(role); }
-            if (!role) { _shownRoleSkill = null; return; }
+            if (!role) { _shownRoleSkill = null; _roleFlip = 1; return; }
             if (_shownRoleSkill != null && _shownRoleSkill != kit.Skill2) _roleSwappedAt = Time.unscaledTime;
             _shownRoleSkill = kit.Skill2;
             bool defending = kit.IsDefending;
@@ -266,7 +311,7 @@ namespace TumbangPreso.UI
             // with a small overshoot. Reduced motion keeps only the badge.
             float flip = Settings.SettingsStore.Current.ReducedUiMotion || t >= 1 ? 1
                 : t < .45f ? Mathf.Cos(t / .45f * Mathf.PI * .5f) : Mathf.Sin((t - .45f) / .55f * Mathf.PI * .5f) * (1 + .12f * Mathf.Sin((t - .45f) / .55f * Mathf.PI));
-            _ownerDials[1].rectTransform.localScale = new Vector3(Mathf.Max(.02f, flip), 1, 1);
+            _roleFlip = Mathf.Max(.02f, flip);
             float pulse = t >= 1 ? 1 : 1 + .35f * Mathf.Sin(t * Mathf.PI);
             _roleBadge.rectTransform.localScale = Vector3.one * pulse;
         }

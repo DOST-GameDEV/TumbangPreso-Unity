@@ -147,6 +147,16 @@
                     "priority": 0
                 },
                 {
+                    "name": "Scoreboard",
+                    "type": "Button",
+                    "id": "6f1a2b30-0003-4000-8000-000000000002",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
                     "name": "AbilityInfo",
                     "type": "Button",
                     "id": "6f1a2b30-0003-4000-8000-000000000001",
@@ -539,11 +549,22 @@
                 {
                     "name": "",
                     "id": "6f1a2b30-0003-4000-8000-000000000100",
-                    "path": "<Keyboard>/tab",
+                    "path": "<Keyboard>/f1",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "AbilityInfo",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6f1a2b30-0003-4000-8000-000000000102",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Scoreboard",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

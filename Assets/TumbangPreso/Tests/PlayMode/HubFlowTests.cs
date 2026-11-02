@@ -683,20 +683,16 @@ namespace TumbangPreso.PlayTests
                 {
                     var card = TumpHub.Current.Top.GetComponentsInChildren<HubButton>()
                         .Single(b => b.name == name);
-                    var art = card.Body.Find("Art");
+                    // Boot kit (2026-11-01): a checker paint card with the poster under a cut corner.
+                    var art = card.Body.Find("Poster");
                     Assert.IsNotNull(art, name + " has no poster region");
-                    // Owner 2026-10-28: the cards are HOME knit tiles with the poster in a rounded window.
-                    var mask = art.GetComponent<Mask>();
-                    var stencil = art.GetComponent<Image>();
-                    Assert.IsNotNull(mask, name + " has no rounded art mask");
-                    Assert.IsNotNull(stencil, name + " has no rounded stencil");
-                    Assert.IsFalse(mask.showMaskGraphic);
-                    Assert.IsFalse(stencil.raycastTarget);
+                    Assert.IsNotNull(art.GetComponent<KitCutPicture>(), name + " poster must be the kit's cut-corner picture");
+                    Assert.IsFalse(art.GetComponent<KitCutPicture>().raycastTarget);
                     Assert.IsNull(card.Shape, name + " is still an old sticker");
                     Assert.IsNotNull(card.GetComponent<HubStickerFeel>(), name + " lacks HOME's knit feel");
-                    Assert.IsNotNull(art.Find("Poster"));
+                    Assert.IsNotNull(card.GetComponent<KitPress>(), name + " lacks the kit's hover and click");
                     Assert.IsFalse(card.Body.Find("Label").IsChildOf(art),
-                        name + " must keep its title outside the poster mask");
+                        name + " must keep its title outside the poster");
                 }
                 yield return Shots("GameModes");
 

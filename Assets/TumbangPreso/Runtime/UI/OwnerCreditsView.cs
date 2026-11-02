@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using TumbangPreso.Core;
 using TumbangPreso.Net;
+using TumbangPreso.UI.Hub;
 
 namespace TumbangPreso.UI
 {
@@ -24,26 +25,25 @@ namespace TumbangPreso.UI
         private void Build(Transform owner)
         {
             _canvas=OwnerUiLayout.Canvas(owner,"OwnerCreditsCanvas",800);
-            var ground=OwnerUiLayout.Rect(_canvas.transform,"CreditsGround").gameObject.AddComponent<UnityEngine.UI.Image>();
-            OwnerUiLayout.Fill(ground.rectTransform);ground.color=new Color32(239,225,198,255);ground.raycastTarget=false;
+            // The boot kit (`boot_menus.py`): the berry ground, a red BACK, the logo and title on the left,
+            // the team on a cream panel.
+            HubKnit.Ground(_canvas.transform,"CreditsGround");
             var design=OwnerUiLayout.DesignArea(_canvas.transform,"CreditsComposition");
-            var margin=OwnerUiLayout.Rect(design,"StudioMargin").gameObject.AddComponent<UnityEngine.UI.Image>();
-            OwnerUiLayout.Place(margin.rectTransform,0,0,605,1080);margin.color=new Color32(102,42,48,255);margin.raycastTarget=false;
-            var back=OwnerTextAction.CreateBack(design,"CreditsBack",Close,54,30);
-            back.GetComponentInChildren<UnityEngine.UI.Text>().color=new Color32(245,232,198,255);
+            HubKnit.Back((RectTransform)design,null,Close).name="CreditsBack";
             var logo=OwnerUiLayout.Art(design,"OriginalOwnerLogo",OwnerUiTheme.Piece.Logo);
-            OwnerUiLayout.Place(logo.rectTransform,93,249,460,460*273f/407);
+            OwnerUiLayout.Place(logo.rectTransform,80,300,440,440*273f/407);
             logo.gameObject.AddComponent<OwnerUiMotion>().GentleFloat=true;
-            var title=OwnerUiLayout.Text(design,"Heading","CREDITS",62,OwnerUiLayout.TypeRole.Display);
-            OwnerUiLayout.Place(title.rectTransform,91,608,470,172);title.alignment=TextAnchor.MiddleCenter;title.color=new Color32(245,232,198,255);
-            _bonus=OwnerUiLayout.Text(design,"CreditsBonus","",32,OwnerUiLayout.TypeRole.Reading);
-            OwnerUiLayout.Place(_bonus.rectTransform,91,804,470,144);_bonus.alignment=TextAnchor.UpperCenter;
-            _bonus.color=new Color32(245,232,198,255);
+            var title=HubKnit.Display(design,"Heading","CREDITS",96,HubKnit.KitWhite,TextAnchor.MiddleCenter,8);
+            OwnerUiLayout.Place(title.rectTransform,60,640,480,150);
+            _bonus=HubKnit.Words(design,"CreditsBonus","",32,HubKnit.KitWhite,TextAnchor.UpperCenter,true,3);
+            OwnerUiLayout.Place(_bonus.rectTransform,60,804,480,144);
+            var panel=HubKnit.Plate(design,"CreditsPanel",Knit.Panel);
+            OwnerUiLayout.Place(panel,640,50,1220,970+HubKnit.SlabHeight);
             var content=OwnerScrollColumn.Build(design,"Credits",new Rect(698,125,1066,824),out var scroll);
             Heading(content,"THE TEAM");
             foreach(var member in CreditsContent.TeamCredits)
             {
-                Label(content,"TeamName",member.Name,36,OwnerUiLayout.TypeRole.Display);
+                Label(content,"TeamName",member.Name,48,OwnerUiLayout.TypeRole.Display);
                 Label(content,"TeamRole",member.Role,30,OwnerUiLayout.TypeRole.Reading);
             }
             Heading(content,"ARTWORK & SOUND");foreach(var credit in CreditsContent.CourtesyCredits)Credit(content,credit);
@@ -51,20 +51,23 @@ namespace TumbangPreso.UI
             Canvas.ForceUpdateCanvases();UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(content);
             scroll.verticalNormalizedPosition=1;
         }
+        // Words on the cream panel: Darumadrop names in maroon, Grandstander roles and notes in dark ink.
         private static void Heading(Transform parent,string words)
         {
-            var title=OwnerUiLayout.Text(parent,"Section",words,34,OwnerUiLayout.TypeRole.Accent);
+            var title=OwnerUiLayout.Text(parent,"Section",words,40,OwnerUiLayout.TypeRole.Display);
+            title.color=HubKnit.KitTanDark;
             title.gameObject.AddComponent<UnityEngine.UI.LayoutElement>().preferredHeight=84;
         }
         private static void Label(Transform parent,string name,string words,int size,OwnerUiLayout.TypeRole role)
         {
             var label=OwnerUiLayout.Text(parent,name,words,size,role);
-            label.color=role==OwnerUiLayout.TypeRole.Reading?OwnerUiTheme.Current.EnteredInk:OwnerUiTheme.Current.ActionInk;
+            if(role==OwnerUiLayout.TypeRole.Reading){label.font=HubKnit.SentenceFont(true);label.color=HubKnit.KitInk;}
+            else label.color=HubKnit.KitMaroon;
             label.verticalOverflow=VerticalWrapMode.Overflow;label.gameObject.AddComponent<TumpParagraph>();
         }
         private static void Credit(Transform parent,CreditsContent.Credit credit)
         {
-            Label(parent,"CreditName",credit.Chip,32,OwnerUiLayout.TypeRole.Accent);
+            Label(parent,"CreditName",credit.Chip,36,OwnerUiLayout.TypeRole.Display);
             Label(parent,"CreditBody",credit.Body,30,OwnerUiLayout.TypeRole.Reading);
         }
         private void Close(){_code.Reset();_dragging=false;_canvas.gameObject.SetActive(false);_back?.Invoke();}

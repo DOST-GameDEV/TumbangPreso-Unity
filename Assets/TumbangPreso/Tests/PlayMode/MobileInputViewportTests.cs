@@ -253,7 +253,7 @@ namespace TumbangPreso.PlayTests
             return Rect.MinMaxRect(corners.Min(p => p.x), corners.Min(p => p.y), corners.Max(p => p.x), corners.Max(p => p.y));
         }
 
-        [UnityTest] public IEnumerator PhoneMenuKeepsItsDoorsAndReplayLibraryAvoidsDesktopFileOperations()
+        [UnityTest] public IEnumerator PhoneMenuKeepsItsDoorsAndProfileReplayLibraryAvoidsDesktopFileOperations()
         {
             yield return PlayModeWorld.Reset();
             bool force = TouchHud.ForceVisible;
@@ -263,16 +263,23 @@ namespace TumbangPreso.PlayTests
                 yield return HubFlowTests.OpenHome();
                 var hub = UI.Hub.TumpHub.Current; hub.Push<UI.Hub.HubMenu>();
                 yield return new WaitForSecondsRealtime(.5f);
-                Assert.AreEqual(8, hub.Top.GetComponentsInChildren<UnityEngine.UI.Button>().Count(b => b.name.StartsWith("Menu")));
+                Assert.AreEqual(4, hub.Top.GetComponentsInChildren<UnityEngine.UI.Button>().Count(b => b.name.StartsWith("Menu")));
                 foreach (var size in new[] { new Vector2Int(1600, 720), new Vector2Int(1280, 720) })
                     yield return TumpUiCapture.Capture("PhoneHomeMenu-" + size.x, hub.Canvas, size.x, size.y, false, checkActionBounds: true);
-                ClickPhoneControl(hub.Canvas, "MenuREPLAYS"); yield return null;
+                hub.Back(); yield return null;
+                // REPLAYS lives in the player profile now (owner, 2026-11-02).
+                ClickPhoneControl(hub.Canvas, "NamePlate"); yield return new WaitForSecondsRealtime(.6f);
+                var profile = Object.FindFirstObjectByType<UI.PlayerHub>();
+                Assert.IsTrue(profile.IsOpen);
+                ClickPhoneControl(GameObject.Find("OwnerPlayerHubCanvas").GetComponent<Canvas>(), "HubTabReplays"); yield return null;
                 Assert.IsInstanceOf<UI.Hub.HubReplays>(hub.Top);
                 Assert.IsFalse(hub.Top.GetComponentsInChildren<UnityEngine.UI.InputField>().Any(), "Phone recordings should not ask for desktop absolute paths.");
                 Assert.IsFalse(hub.Top.GetComponentsInChildren<UnityEngine.UI.Button>().Any(b => b.name == "OpenReplayFolder"));
                 yield return TumpUiCapture.Capture("PhoneReplayLibrary", hub.Canvas, 1600, 720, false, checkActionBounds: true);
-                hub.Back(); yield return null;
+                hub.Back(); yield return new WaitForSecondsRealtime(.4f);
+                Assert.IsTrue(profile.IsOpen, "BACK on the replays returns to the player profile.");
                 Assert.IsInstanceOf<UI.Hub.HubHome>(hub.Top);
+                ClickPhoneControl(GameObject.Find("OwnerPlayerHubCanvas").GetComponent<Canvas>(), "ClosePlayerHub"); yield return new WaitForSecondsRealtime(.4f);
                 hub.Push<UI.Hub.HubMenu>(); yield return null;
                 ClickPhoneControl(hub.Canvas, "MenuSETTINGS"); yield return null;
                 Assert.IsNotNull(Object.FindFirstObjectByType<TumpSettingsView>());

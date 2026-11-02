@@ -29,9 +29,9 @@ namespace TumbangPreso.PlayTests
             var canvas=GameObject.Find("OwnerMatchCanvas").GetComponent<Canvas>();
             var readout=Object.FindFirstObjectByType<TumpPowerReadout>();
             var system=local.GetComponent<Abilities.HeroAbilitySystem>(); Assert.IsNotNull(system.Kit);
-            var deck=(RectTransform)canvas.transform.Find("PowerSeals");
+            var deck=(RectTransform)canvas.transform.HudFind("PowerSeals");
             // 2026-10-20 overhaul: the two skills are the deck, the ultimate its own bottom-centre group.
-            var ultimate=(RectTransform)canvas.transform.Find("UltimateSeal"); Assert.IsNotNull(ultimate);
+            var ultimate=(RectTransform)canvas.transform.HudFind("UltimateSeal"); Assert.IsNotNull(ultimate);
             var seals=deck.GetComponentsInChildren<OwnerAbilitySeal>().Concat(ultimate.GetComponentsInChildren<OwnerAbilitySeal>()).ToArray();
             Assert.AreEqual(3,seals.Length);
             Assert.IsNull(deck.Find("Power0/PowerDrain"),"Ring timers must not have the rejected tile/jar overlays");
@@ -57,8 +57,8 @@ namespace TumbangPreso.PlayTests
                 Assert.LessOrEqual(mesh.bounds.size.x,rect.width+.5f,"Rim must stay inside its slot");
             }
             readout.Tick(system,true);
-            Assert.IsNotNull(canvas.transform.Find("RoundClock"));
-            Assert.IsNotNull(canvas.transform.Find("MatchScores"));
+            Assert.IsNotNull(canvas.transform.HudFind("RoundClock"));
+            Assert.IsNotNull(canvas.transform.HudFind("MatchScores"));
         }
     }
 }

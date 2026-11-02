@@ -67,6 +67,7 @@ namespace TumbangPreso.UI
         }
         private void Show(Tab tab)
         {
+            if(tab==Tab.Replays){OpenReplays();return;}
             _refreshAfterEditing = false;
             string identity=GameServices.Account?.PlayerId??"local";
             if(_ownerDraftId!=identity)
@@ -81,12 +82,7 @@ namespace TumbangPreso.UI
             _tab=tab;_deleteArmed&=tab==Tab.Account;
             if(arriving && tab==Tab.Friends)GameServices.Social?.Refresh();
             OwnerOptionMenu.OpenOption?.Close();
-            foreach(var pair in _tabs)
-            {
-                pair.Value.GetComponentInChildren<Text>().color=pair.Key==tab?OwnerUiTheme.Current.Green:OwnerUiTheme.Current.Pale;
-                var index=pair.Value.GetComponent<ProfileIndexTab>();index.Selected=pair.Key==tab;index.SetVerticesDirty();
-                pair.Value.transform.Find("SelectedTab").gameObject.SetActive(pair.Key==tab);
-            }
+            if(_kitTabs!=null)Hub.HubKnit.ChooseTab(_kitTabs,Array.IndexOf(TabOrder,tab));
             foreach(Transform child in _list){child.gameObject.SetActive(false);Destroy(child.gameObject);}
             ForgetFields();RefreshHeader();_ownerPageTitle.text=tab==Tab.Matches?"MATCH HISTORY":tab.ToString().ToUpperInvariant();
             switch(tab){case Tab.Profile:BuildProfileTab();break;case Tab.Friends:BuildFriendsTab();break;case Tab.Career:BuildCareerTab();break;case Tab.Matches:BuildMatchesTab();break;case Tab.Account:BuildAccountTab();break;}
@@ -100,7 +96,7 @@ namespace TumbangPreso.UI
                 account.HasPassword?"Signed in as "+account.Username:"Saved on this device · no username yet";
             int xp=profile?.Xp??0;_levelChip.text="LEVEL "+ProgressionRules.LevelForXp(xp);
             int into=ProgressionRules.XpIntoLevel(xp);_xpCount.text=into+" / "+ProgressionRules.XpPerLevel+" XP";
-            _xpFill.rectTransform.anchorMax=new Vector2(Mathf.Clamp01(into/(float)ProgressionRules.XpPerLevel),1);
+            _xpFill.rectTransform.anchorMax=new Vector2(Mathf.Clamp01(into/(float)ProgressionRules.XpPerLevel),1);_xpFill.enabled=into>0;
             var people=Roster.GetPeople(SceneFlow.SelectedMode);int pick=Mathf.Clamp(Settings.SettingsStore.Current.CharacterPick,0,people.Count-1);
             _ownerPortrait.sprite=OwnerPortraitArt.Get("UI/portraits/"+people[pick].Id);
         }

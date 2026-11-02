@@ -25,8 +25,9 @@ namespace TumbangPreso.PlayTests
             var readout = Object.FindAnyObjectByType<TumpMatchReadout>(); Assert.IsNotNull(readout);
             Text Score(int slot)
             {
-                var name = readout.Canvas.GetComponentsInChildren<Text>(true).First(t => t.name == "PlayerName" && t.text.StartsWith(PlayerIdentity.Label(slot) + " "));
-                return name.transform.parent.GetComponentsInChildren<Text>(true).First(t => t.name == "Score");
+                // The four-chip row is off in play (the live HUD shows your score in the corner), but it still follows the seats,
+                // so the chip is found by its seat rather than by a name label that only spectators see.
+                return readout.Canvas.GetComponentsInChildren<Text>(true).First(t => t.name == "Score" && t.transform.parent.name == "ScoreRow" + slot);
             }
             float limit = Time.time + 4;
             while (can.IsProtected && Time.time < limit) yield return null;

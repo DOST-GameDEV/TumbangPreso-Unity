@@ -50,23 +50,11 @@ namespace TumbangPreso.Visual
             var owner=go.AddComponent<WorldLookPresentation>();owner.Look=look;owner.Floor=floor;owner._preview=preview;
             owner.Build(sun);go.SetActive(true);return owner;
         }
-        private void Build(Light previewSun)
+        // The soft-light lookup both the match and the character previews sample (`_WorldToonRamp`).
+        public static Texture2D BuildRamp(WorldLookProfile.MapLook look,WorldLookProfile profile)
         {
-            _sky=RenderSettings.ambientSkyColor;_equator=RenderSettings.ambientEquatorColor;_ground=RenderSettings.ambientGroundColor;
-            _ambientMode=RenderSettings.ambientMode;_fog=RenderSettings.fog;_fogMode=RenderSettings.fogMode;
-            _fogStart=RenderSettings.fogStartDistance;_fogEnd=RenderSettings.fogEndDistance;_fogColour=RenderSettings.fogColor;
-            _settingsScene=UnityEngine.SceneManagement.SceneManager.GetActiveScene();
-            _sun=_preview?previewSun:SkyEvent.RecordedSun;
-            if(_sun!=null){_sunColour=_sun.color;_sunIntensity=_sun.intensity;_sunShadow=_sun.shadowStrength;_sunRotation=_sun.transform.rotation;}
-            _skyAuthored=RenderSettings.skybox;
-            // ⚠️ THE SKYBOX IS INSTANCED, NEVER WRITTEN THROUGH, for SkyEvent's reason: the map's
-            // .mat is a shared asset and a runtime colour written into it survives into the
-            // editor and into every later load of the map.
-            if(_skyAuthored!=null && _skyAuthored.HasProperty("_Zenith"))
-            {_skyLook=new Material(_skyAuthored){name=_skyAuthored.name+" (bright look)",hideFlags=HideFlags.HideAndDontSave};}
-            _ramp=new Texture2D(64,1,TextureFormat.RGBA32,false,true){name=Look.Map+" soft light ramp",wrapMode=TextureWrapMode.Clamp,filterMode=FilterMode.Bilinear};
-            var profile=WorldLookProfile.Current;
-            Color shade=Look.ShadowTint*profile.ShadowLevel;shade.a=1;
+            var ramp=new Texture2D(64,1,TextureFormat.RGBA32,false,true){name=look.Map+" soft light ramp",wrapMode=TextureWrapMode.Clamp,filterMode=FilterMode.Bilinear};
+            Color shade=look.ShadowTint*profile.ShadowLevel;shade.a=1;
             // ⚠️ THE WARM BAND IS WHERE LIGHT TURNS TO SHADE, NOT A SECOND LIGHT. It peaks at
             // 42 per cent of the ramp and is gone by the lit side: the "fuzzy orange" a painter
             // lays on a turning form under a warm key (owner, 2026-09-25).
@@ -81,9 +69,27 @@ namespace TumbangPreso.Visual
                 Color c=Color.Lerp(shade,Color.white,s);
                 float band=Mathf.Exp(-Mathf.Pow((t-.42f)/.2f,2))*profile.Terminator;
                 c=Color.Lerp(c,new Color(c.r*orange.r,c.g*orange.g,c.b*orange.b)/orangeLuma,band);c.a=1;
-                _ramp.SetPixel(i,0,c);
+                ramp.SetPixel(i,0,c);
             }
-            _ramp.Apply(false,true);
+            ramp.Apply(false,true);
+            return ramp;
+        }
+        private void Build(Light previewSun)
+        {
+            _sky=RenderSettings.ambientSkyColor;_equator=RenderSettings.ambientEquatorColor;_ground=RenderSettings.ambientGroundColor;
+            _ambientMode=RenderSettings.ambientMode;_fog=RenderSettings.fog;_fogMode=RenderSettings.fogMode;
+            _fogStart=RenderSettings.fogStartDistance;_fogEnd=RenderSettings.fogEndDistance;_fogColour=RenderSettings.fogColor;
+            _settingsScene=UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+            _sun=_preview?previewSun:SkyEvent.RecordedSun;
+            if(_sun!=null){_sunColour=_sun.color;_sunIntensity=_sun.intensity;_sunShadow=_sun.shadowStrength;_sunRotation=_sun.transform.rotation;}
+            _skyAuthored=RenderSettings.skybox;
+            // ⚠️ THE SKYBOX IS INSTANCED, NEVER WRITTEN THROUGH, for SkyEvent's reason: the map's
+            // .mat is a shared asset and a runtime colour written into it survives into the
+            // editor and into every later load of the map.
+            if(_skyAuthored!=null && _skyAuthored.HasProperty("_Zenith"))
+            {_skyLook=new Material(_skyAuthored){name=_skyAuthored.name+" (bright look)",hideFlags=HideFlags.HideAndDontSave};}
+            var profile=WorldLookProfile.Current;
+            _ramp=BuildRamp(Look,profile);
             if(_skyAuthored!=null && _skyAuthored.HasProperty("_CloudOpacity"))_cloudOpacity=_skyAuthored.GetFloat("_CloudOpacity");
             _clouds=BlockyClouds.Create(this,Look,Floor);
             Current=this;ApplyScene();

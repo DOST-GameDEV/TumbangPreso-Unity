@@ -79,24 +79,29 @@ namespace TumbangPreso.UI.Hub
 
         public override void Build()
         {
-            // ⚠️ THE SARI-SARI STORE (`HubScenery`, 2026-09-24): the loadout is where your slippers
-            // and cans are kept, so it is the corner store's front, planks under a striped awning,
-            // with every row of items standing on a shelf. The top bar's stickers hang in front of
-            // the awning the way a store's signs do.
-            HubScenery.StoreGround(Root, 23, 118);
-            HubChrome.Back(Root, Hub);
-            HubChrome.TopRight(Root, Hub);
+            // The boot kit (`boot_heroes.py`): the berry ground, an OWNED / UNOWNED track, dark item cards,
+            // a calm fade behind the right column. The items, tabs and EQUIP keep their routes.
+            HubKnit.Ground(Root);
+            HubKnit.Back(Root, Hub);
+            HubKnit.TopBar(Root, Hub);
             _unowned = StartUnowned;
 
-            float left = HubKit.Margin + HubChrome.BarHeight + 30;
-            _ownedTab = HubKit.Button(Root, "OwnedTab", "OWNED", HubStyle.Honey, () => { _unowned = false; Rebuild(); }, HubStyle.Label, 401);
-            HubKit.Place((RectTransform)_ownedTab.transform, HubKit.TopLeft, new Vector2(left, -HubKit.Margin), new Vector2(250, HubChrome.BarHeight));
-            _unownedTab = HubKit.Button(Root, "UnownedTab", "UNOWNED", HubStyle.Honey, () => { _unowned = true; Rebuild(); }, HubStyle.Label, 402);
-            HubKit.Place((RectTransform)_unownedTab.transform, HubKit.TopLeft, new Vector2(left + 266, -HubKit.Margin), new Vector2(270, HubChrome.BarHeight));
+            var tabs = HubKnit.Tabs(Root, "ItemTabs", 0, 0, 560, 110, new[] { "OwnedTab", "UnownedTab" }, new[] { "OWNED", "UNOWNED" },
+                                    i => { _unowned = i == 1; Rebuild(); });
+            HubKnit.At((RectTransform)tabs[0].transform.parent, 220, 40, 560, 110);
+            _ownedTab = tabs[0]; _unownedTab = tabs[1];
 
-            // The grid: left of a 420-unit right column, under the tabs.
-            var view = HubKit.Span(HubKit.Rect(Root, "GridView"), Vector2.zero, Vector2.one,
-                                   new Vector2(HubKit.Margin, HubKit.Margin), new Vector2(HubKit.Margin + 470, HubKit.Margin + HubChrome.BarHeight + 34));
+            // A long fade, full before the coin, so the right column reads on a calmer field than the weave.
+            var fade = HubKit.Rect(Root, "SideFade").gameObject.AddComponent<RawImage>();
+            fade.texture = Gradient();
+            fade.color = new Color(0x2A / 255f, 0x06 / 255f, 0x10 / 255f, 160 / 255f);
+            fade.raycastTarget = false;
+            HubKnit.At(fade.rectTransform, 900, 0, 1020, 1080);
+            fade.transform.SetSiblingIndex(1);
+
+            // The grid: four across at 280, under the tabs.
+            var view = HubKit.Rect(Root, "GridView");
+            HubKnit.At(view, 60, 180, 1160, 880);
             var scroll = view.gameObject.AddComponent<ScrollRect>();
             view.gameObject.AddComponent<RectMask2D>();
             scroll.horizontal = false;
@@ -106,36 +111,32 @@ namespace TumbangPreso.UI.Hub
             _grid.anchorMin = new Vector2(0, 1); _grid.anchorMax = new Vector2(1, 1); _grid.pivot = new Vector2(0.5f, 1);
             _grid.offsetMin = _grid.offsetMax = Vector2.zero;
             var layout = _grid.gameObject.AddComponent<GridLayoutGroup>();
-            layout.cellSize = new Vector2(250, 250);
-            layout.spacing = new Vector2(30, 30);
-            layout.padding = new RectOffset(16, 16, 16, 16);
-            layout.constraint = GridLayoutGroup.Constraint.Flexible;
+            layout.cellSize = new Vector2(260, 260 + HubKnit.SlabHeight);
+            layout.spacing = new Vector2(20, 6);
+            layout.padding = new RectOffset(0, 0, 10, 10);
+            layout.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+            layout.constraintCount = 4;
             _grid.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-            var shelves = HubKit.Stretch(HubKit.Rect(_grid, "Shelves")).gameObject.AddComponent<HubShelves>();
-            shelves.gameObject.AddComponent<LayoutElement>().ignoreLayout = true;
-            shelves.raycastTarget = false;
-            shelves.Cell = layout.cellSize.y; shelves.Gap = layout.spacing.y; shelves.Top = layout.padding.top;
             scroll.content = _grid;
             scroll.viewport = view;
 
-            _empty = HubKit.Text(view, "EmptyState", "", HubStyle.Title, true, HubStyle.HoneySoft, TextAnchor.MiddleCenter);
+            _empty = HubKnit.Words(view, "EmptyState", "", HubStyle.Title, HubKnit.KitWhite, TextAnchor.MiddleCenter, true, 3);
             HubKit.Stretch(_empty.rectTransform, 60);
 
-            // The right column: the two categories, then EQUIP at the bottom.
-            _shoeTab = HubKit.Button(Root, "TsinelasTab", "TSINELAS", HubStyle.Honey, () => { _category = 0; Rebuild(); }, HubStyle.Title, 411, HubGlyph.Mark.Slipper);
-            HubKit.Place((RectTransform)_shoeTab.transform, HubKit.TopRight, new Vector2(-HubKit.Margin, -(HubKit.Margin + HubChrome.BarHeight + 40)), new Vector2(420, 130));
-            _canTab = HubKit.Button(Root, "LataTab", "LATA", HubStyle.Honey, () => { _category = 1; Rebuild(); }, HubStyle.Title, 412, HubGlyph.Mark.Can);
-            HubKit.Place((RectTransform)_canTab.transform, HubKit.TopRight, new Vector2(-HubKit.Margin, -(HubKit.Margin + HubChrome.BarHeight + 40 + 150)), new Vector2(420, 130));
+            // The right column: the two categories, the chosen item's name, then EQUIP.
+            _shoeTab = HubKnit.Button(Root, "TsinelasTab", "TSINELAS", Knit.Go, () => { _category = 0; Rebuild(); }, 48, HubGlyph.Mark.Slipper);
+            HubKnit.At((RectTransform)_shoeTab.transform, 1420, 200, 440, 114);
+            _canTab = HubKnit.Button(Root, "LataTab", "LATA", Knit.Plain, () => { _category = 1; Rebuild(); }, 48, HubGlyph.Mark.Can);
+            HubKnit.At((RectTransform)_canTab.transform, 1420, 340, 440, 114);
 
-            _equip = HubKit.Button(Root, "EquipButton", "EQUIP", HubStyle.Chartreuse, () => EquipOrBuy(_selected), HubStyle.Display, 413);
-            HubKit.Place((RectTransform)_equip.transform, HubKit.BottomRight, new Vector2(-HubKit.Margin, HubKit.Margin), new Vector2(420, 150));
-            _equip.Shape.BandFraction = 0.12f;
+            _equip = HubKnit.Button(Root, "EquipButton", "EQUIP", Knit.Go, () => EquipOrBuy(_selected), 58);
+            HubKnit.At((RectTransform)_equip.transform, 1420, 900, 440, 130);
 
-            // ⚠️ THE SELECTED ITEM'S NAME SITS ABOVE EQUIP (2026-09-23 UI review). The brackets
-            // marked which tile was chosen but its NAME appeared nowhere until the popup opened, so
-            // EQUIP and BUY acted on something the screen never named.
-            _selectedName = HubKit.Text(Root, "SelectedItemName", "", HubStyle.Title, true, HubStyle.Honey, TextAnchor.LowerLeft);
-            HubKit.Place(_selectedName.rectTransform, HubKit.BottomRight, new Vector2(-HubKit.Margin, HubKit.Margin + 150 + 14), new Vector2(420, 120));
+            // ⚠️ THE SELECTED ITEM'S NAME SITS ABOVE EQUIP (2026-09-23 UI review). The viewed card marked
+            // which tile was chosen but its NAME appeared nowhere until the popup opened, so EQUIP and BUY
+            // acted on something the screen never named.
+            _selectedName = HubKnit.Display(Root, "SelectedItemName", "", 52, HubKnit.KitWhite, TextAnchor.MiddleLeft, 5);
+            HubKnit.At(_selectedName.rectTransform, 1420, 770, 440, 90);
 
             Rebuild();
             if (GameServices.Wallet != null) GameServices.Wallet.Changed += Rebuild;
@@ -167,10 +168,9 @@ namespace TumbangPreso.UI.Hub
         private void Rebuild()
         {
             if (_grid == null) return;
-            Tab(_ownedTab, !_unowned);
-            Tab(_unownedTab, _unowned);
-            Tab(_shoeTab, _category == 0);
-            Tab(_canTab, _category == 1);
+            HubKnit.ChooseTab(new[] { _ownedTab, _unownedTab }, _unowned ? 1 : 0);
+            HubKnit.Recolour(_shoeTab.transform, _category == 0 ? Knit.Go : Knit.Plain);
+            HubKnit.Recolour(_canTab.transform, _category == 1 ? Knit.Go : Knit.Plain);
 
             foreach (var t in _tiles) if (t.tile != null) Destroy(t.tile.gameObject);
             _tiles.Clear();
@@ -185,39 +185,33 @@ namespace TumbangPreso.UI.Hub
                 bool owned = HubOwnership.Owns(id);
                 if (owned == _unowned) continue;
                 int index = i;
-                // ⚠️ OLIVE, NOT CREAM. The first capture was a wall of pale tiles, which the brief rules
-                // out ("no white or pale default palettes"); Army is the logo's mid-tone, dark enough to
-                // read as a ground and light enough that a black tsinelas still shows on it.
-                var tile = HubKit.Button(_grid, "Item_" + entries[i].Id, null, i == equipped ? HubStyle.Golden : HubStyle.Honey,
-                                         () => Open(id), 0, 420 + i + _category * 40);
+                // Dark cards on the berry ground (the card may not share its ground's colour); the chosen one
+                // reads as a slightly darker card and an equipped one is lime-rimmed.
+                var tile = HubKnit.Button(_grid, "Item_" + entries[i].Id, null, i == equipped && owned ? Knit.DarkCardOn : Knit.DarkCard, () => Open(id), 0);
                 var face = HubKit.Picture(tile.Body, "Face", HubKit.Portrait(entries[i].Id));
-                HubKit.Stretch(face.rectTransform, 16);
-                if (!owned) { face.color = new Color(HubStyle.Night.r, HubStyle.Night.g, HubStyle.Night.b, 0.72f); tile.Hatched = true; }
+                HubKnit.In(face.rectTransform, 0, 0, 260, 236);
+                if (!owned) face.color = new Color(1, 1, 1, 0.45f);
 
                 if (owned && i == equipped)
                 {
-                    var band = HubKit.Shape(tile.Body, "EquippedTag", HubStyle.Ink, false, 5, 0, 8);
-                    HubKit.Place(band.rectTransform, HubKit.Bottom, new Vector2(0, 12), new Vector2(210, 52));
-                    var words = HubKit.Text(band.transform, "Words", "EQUIPPED", HubStyle.Floor, true, HubStyle.Chartreuse, TextAnchor.MiddleCenter);
-                    HubKit.Stretch(words.rectTransform);
+                    var band = HubKnit.Tag(tile.Body, "EquippedTag", "EQUIPPED", Knit.PillGo, 56);
+                    HubKnit.In(band, 30, 184, 200, 56);
                 }
                 else if (!owned)
                 {
-                    var price = PriceTag(tile.Body, EconomyRules.Find(id)?.Price ?? 0);
-                    HubKit.Place(price, HubKit.Bottom, new Vector2(0, 14), new Vector2(170, 44));
+                    var price = HubKnit.Tag(tile.Body, "PriceTag", (EconomyRules.Find(id)?.Price ?? 0).ToString("N0"), Knit.PillYellow, 56);
+                    HubKnit.In(price, 30, 184, 200, 56);
                 }
 
                 if (favourites.Contains(id))
                 {
-                    var star = HubKit.Glyph(tile.Body, "Favourite", HubGlyph.Mark.StarFilled, HubStyle.Persimmon);
-                    HubKit.Place(star.rectTransform, HubKit.TopLeft, new Vector2(12, -12), new Vector2(56, 56));
+                    var star = HubKit.Glyph(tile.Body, "Favourite", HubGlyph.Mark.StarFilled, HubKnit.KitLime, 0.1f);
+                    HubKnit.In(star.rectTransform, 18, 18, 46, 46);
                 }
 
-                // ⚠️ THE BRACKETS SIT ON THE TILE'S EDGE, NOT INSIDE IT. The glyph draws its corners at
-                // 0.36 of its size, so fitted to the tile they landed 30 units in and cut the EQUIPPED
-                // tag in half; drawn at 1.45 times the tile they hug its corners from outside.
-                var brackets = HubKit.Glyph(tile.transform, "Brackets", HubGlyph.Mark.Expand, HubStyle.Golden, 0.04f);
-                HubKit.Stretch(brackets.rectTransform, -56);
+                var brackets = new GameObject("Viewed", typeof(RectTransform));
+                brackets.transform.SetParent(tile.transform, false);
+                brackets.SetActive(false);
                 tile.Focused += () => Select(id);
                 _tiles.Add((id, tile, brackets.gameObject));
                 if (firstId == null) firstId = id;
@@ -233,7 +227,17 @@ namespace TumbangPreso.UI.Hub
             Hub.RefreshFocus();
         }
 
-        private static void Tab(HubButton tab, bool on) => HubKit.SetFill(tab, on ? HubStyle.Persimmon : HubStyle.Honey);
+        private static Texture2D _fade;
+
+        /// <summary>A horizontal ramp: clear on the left, solid from 40 per cent across.</summary>
+        private static Texture2D Gradient()
+        {
+            if (_fade != null) return _fade;
+            _fade = new Texture2D(64, 1, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Bilinear, name = "SideFade" };
+            for (int x = 0; x < 64; x++) _fade.SetPixel(x, 0, new Color(1, 1, 1, Mathf.Clamp01(x / 25.6f)));
+            _fade.Apply();
+            return _fade;
+        }
 
         public static RectTransform PriceTag(Transform parent, int price)
         {
@@ -249,15 +253,20 @@ namespace TumbangPreso.UI.Hub
         private void Select(string id)
         {
             _selected = id;
-            foreach (var t in _tiles) if (t.brackets != null) t.brackets.SetActive(t.id == id);
+            // The chosen item is a slightly darker card, not an outlined one.
+            foreach (var t in _tiles)
+            {
+                if (t.tile == null) continue;
+                bool mine = HubOwnership.Owns(t.id) && IndexOf(t.id) == EquippedIndex(Kind);
+                bool viewed = t.id == id;
+                HubKnit.Recolour(t.tile.transform, mine ? (viewed ? Knit.DarkCardViewedOn : Knit.DarkCardOn) : (viewed ? Knit.DarkCardViewed : Knit.DarkCard));
+            }
             if (_selectedName != null) _selectedName.text = id == null ? "" : ItemName(id);
-            if (id == null) { _equip.interactable = false; HubKit.SetLabel(_equip, "EQUIP"); return; }
+            if (id == null) { _equip.interactable = false; HubKnit.Say(_equip, "EQUIP"); return; }
 
             bool owned = HubOwnership.Owns(id);
             bool equipped = owned && IndexOf(id) == EquippedIndex(Kind);
-            HubKit.SetLabel(_equip, !owned ? "BUY  " + (EconomyRules.Find(id)?.Price ?? 0).ToString("N0") : equipped ? "EQUIPPED" : "EQUIP");
-            HubKit.LabelOf(_equip).fontSize = HubStyle.Size(owned ? HubStyle.Display : HubStyle.Title);
-            HubKit.Fit(HubKit.LabelOf(_equip), 384);
+            HubKnit.Say(_equip, !owned ? "BUY  " + (EconomyRules.Find(id)?.Price ?? 0).ToString("N0") : equipped ? "EQUIPPED" : "EQUIP");
             _equip.interactable = !equipped;
         }
 
@@ -338,26 +347,19 @@ namespace TumbangPreso.UI.Hub
             int index = Roster.IndexIn(entries, refId);
             var entry = Roster.At(entries, index);
 
-            _panel = HubCards.Panel(Root, this, entry?.Name ?? refId.ToUpperInvariant(),
-                                    kind == ShopKind.Slipper ? "Tsinelas" : "Lata", new Vector2(1320, 820));
+            _panel = HubKnit.DarkModal(Root, Hub, entry?.Name ?? refId.ToUpperInvariant(),
+                                       kind == ShopKind.Slipper ? "Tsinelas" : "Lata", 1380, 880, out _, true, true, new Vector2(270, 100));
 
-            _star = HubKit.IconButton(_panel, "FavouriteButton", HubGlyph.Mark.Star, HubStyle.Honey, ToggleFavourite, 431);
-            HubKit.Place((RectTransform)_star.transform, HubKit.TopRight, new Vector2(-34, -30), new Vector2(96, 96));
+            // The favourite star: yellow, lime once it is a favourite.
+            _star = HubKnit.Button(_panel, "FavouriteButton", null, Knit.Yellow, ToggleFavourite, HubStyle.Label, HubGlyph.Mark.Star);
+            HubKnit.In((RectTransform)_star.transform, 1380 - 170, 40, 120, 100);
 
-            _stage = HubKit.Place(HubKit.Rect(_panel, "ModelStage"), HubKit.TopLeft, new Vector2(48, -160), new Vector2(1224, 470));
-            var plate = HubKit.Shape(_stage, "StagePlate", HubStyle.Night, false, 432, 5, 26);
-            HubKit.Stretch(plate.rectTransform);
-            // ⚠️ THE ITEM ON THE STORE COUNTER (`HubScenery`, 2026-09-24): the loadout is the
-            // sari-sari store, so an item lifted off its shelf is shown under the shop's one bulb,
-            // standing on the counter's edge, rather than floating in a dark box.
-            var bulb = HubKit.Rect(_stage, "Light").gameObject.AddComponent<HubGlow>();
-            bulb.color = new Color(HubStyle.Golden.r, HubStyle.Golden.g, HubStyle.Golden.b, 0.30f);
-            bulb.raycastTarget = false;
-            HubKit.Place(bulb.rectTransform, HubKit.Centre, new Vector2(0, 10), new Vector2(760, 440));
-            var counter = HubKit.Rect(_stage, "Counter").gameObject.AddComponent<HubShelves>();
-            counter.raycastTarget = false;
-            HubKit.Stretch(counter.rectTransform, 6);
-            counter.Cell = 446; counter.Gap = 0; counter.Top = 6;
+            // The model on a sunburst card (`boot_heroes.py`): the rim closes over the live preview.
+            _stage = HubKit.Rect(_panel, "ModelStage");
+            HubKnit.In(_stage, 60, 230, 1260, 440 + HubKnit.SlabHeight);
+            var back = HubKnit.Plate(_stage, "StagePlate", Knit.Card);
+            HubKit.Stretch(back);
+            HubKit.Stretch(HubKnit.Picture(_stage, "Burst", Resources.Load<Texture2D>("UI/boot-kit/sunburst-yellow"), 0, 0, 1260, 440, .5f, 0).rectTransform);
             var model = HubKit.Stretch(HubKit.Rect(_stage, "Model"), 8);
             var preview = model.gameObject.AddComponent<ModelPreview>();
             preview.Attach(model);
@@ -367,24 +369,23 @@ namespace TumbangPreso.UI.Hub
             preview.ShowingSlipper = kind == ShopKind.Slipper;
             if (art != null) preview.Show(art.Model, art.Clips, art.Palette, art.PetModel);
             // ⚠️ CLOSER (2026-09-23 UI review): at the default distance a can stood about a sixth of
-            // the stage's height in a 1224-wide dark plate, so the item the popup is about read as a
-            // speck. Zoom is a distance multiplier (`ModelPreview.LookAt`); the wheel still zooms.
+            // the stage's height, so the item the popup is about read as a speck. Zoom is a distance
+            // multiplier (`ModelPreview.LookAt`); the wheel still zooms.
             preview.LookAt(0.5f, 0.62f);
+            HubKnit.RimOver(_stage);
 
-            var inspect = HubKit.IconButton(_stage, "InspectButton", HubGlyph.Mark.Expand, HubStyle.Honey, ToggleFull, 433);
-            HubKit.Place((RectTransform)inspect.transform, HubKit.BottomRight, new Vector2(-20, 20), new Vector2(86, 86));
+            var inspect = HubKnit.Button(_stage, "InspectButton", null, Knit.Plain, ToggleFull, HubStyle.Label, HubGlyph.Mark.Expand);
+            HubKnit.In((RectTransform)inspect.transform, 1110, 310, 120, 100);
 
-            _action = HubKit.Button(_panel, "ItemEquip", "EQUIP", HubStyle.Chartreuse, () =>
+            _action = HubKnit.Button(_panel, "ItemEquip", "EQUIP", Knit.Go, () =>
             {
                 Owner?.EquipOrBuy(ItemId);
                 Refresh();
-            }, HubStyle.Title, 434);
-            HubKit.Place((RectTransform)_action.transform, HubKit.BottomRight, new Vector2(-48, 44), new Vector2(420, 110));
-            _action.Shape.BandFraction = 0.12f;
+            }, 56);
+            HubKnit.In((RectTransform)_action.transform, 1380 - 560, 730, 500, 118);
             Refresh();
             if (GameServices.Wallet != null) GameServices.Wallet.Changed += Refresh;
         }
-
         private void OnDestroy()
         {
             if (GameServices.Wallet != null) GameServices.Wallet.Changed -= Refresh;
@@ -398,14 +399,13 @@ namespace TumbangPreso.UI.Hub
             string refId = ItemId.Substring(ItemId.IndexOf(':') + 1);
             int index = Roster.IndexIn(kind == ShopKind.Slipper ? Roster.Slippers : Roster.Cans, refId);
             bool equipped = owned && index == HubLoadout.EquippedIndex(kind);
-            HubKit.SetLabel(_action, !owned ? "BUY  " + (EconomyRules.Find(ItemId)?.Price ?? 0).ToString("N0") : equipped ? "EQUIPPED" : "EQUIP");
-            HubKit.LabelOf(_action).fontSize = HubStyle.Size(HubStyle.Title);
+            HubKnit.Say(_action, !owned ? "BUY  " + (EconomyRules.Find(ItemId)?.Price ?? 0).ToString("N0") : equipped ? "EQUIPPED" : "EQUIP");
             _action.interactable = !equipped;
             bool fav = Settings.SettingsStore.Current.FavouriteItems.Contains(ItemId);
             var glyph = _star.Body.Find("Icon").GetComponent<HubGlyph>();
             glyph.Kind = fav ? HubGlyph.Mark.StarFilled : HubGlyph.Mark.Star;
             glyph.Redraw();
-            HubKit.SetFill(_star, fav ? HubStyle.Persimmon : HubStyle.Honey);
+            HubKnit.Recolour(_star.transform, fav ? Knit.Go : Knit.Yellow);
         }
 
         private void ToggleFavourite()
@@ -429,7 +429,7 @@ namespace TumbangPreso.UI.Hub
             else
             {
                 _stage.SetParent(_panel, false);
-                HubKit.Place(_stage, HubKit.TopLeft, new Vector2(48, -160), new Vector2(1224, 470));
+                HubKnit.In(_stage, 60, 230, 1260, 440 + HubKnit.SlabHeight);
             }
             _stage.SetAsLastSibling();
         }

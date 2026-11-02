@@ -28,88 +28,67 @@ namespace TumbangPreso.UI
     [RequireComponent(typeof(CanvasRenderer))]
     public sealed class OwnerAbilitySeal : MaskableGraphic
     {
-        private float _fill;
+        private float _fill, _shown = -1, _gainAt = -10;
         private bool _ready, _active, _ultimate;
         /// <summary>The copy drawn over the art: only the drain, the jar level and the active level.</summary>
         public bool Overlay;
         /// <summary>The local player's own colour: the rim and level of a power while it runs.</summary>
         public Color Accent = HudDraw.Honey;
+        private const float FollowRate = 16f, TipSeconds = .45f;
 
+        // ⚠️ LIVE HUD 2026-11-01: EVERY POWER IS A RING THAT FILLS (`boot_match.ring_art`). A skill's arc is
+        // yellow, an ultimate's is lime while it charges and yellow when ready. The glow that marks a ready
+        // power is its own picture outside the ring (`TumpPowerReadout`), so nothing is drawn inside it.
+        // The fill follows the value smoothly, and a charge gain lights the ultimate's arc tip for a moment.
         public void State(float fill, bool ready, bool active, bool ultimate)
         {
             fill = Mathf.Clamp01(fill);
+            if (_ultimate && ultimate && fill > _fill + .004f) _gainAt = Time.unscaledTime;
             if (Mathf.Abs(fill - _fill) < .002f && _ready == ready && _active == active && _ultimate == ultimate) return;
             _fill = fill; _ready = ready; _active = active; _ultimate = ultimate; SetVerticesDirty();
             if (Overlay)
             {
-                // Nothing to cover (a ready power) means nothing drawn and nothing claiming to be drawn.
                 bool band = ultimate ? fill > .001f : active || (!ready && fill < .999f);
                 canvasRenderer.SetAlpha(band ? 1 : 0);
             }
+        }
+
+        private void Update()
+        {
+            if (Overlay) return;
+            float target = _ready && !_active ? 1 : _fill;
+            if (_shown < 0 || LiveHud.Still || Mathf.Abs(target - _shown) > .5f) _shown = target;
+            else _shown = Mathf.Lerp(_shown, target, 1 - Mathf.Exp(-FollowRate * Time.unscaledDeltaTime));
+            if (Mathf.Abs(_shown - target) < .001f) _shown = target;
+            SetVerticesDirty();
         }
 
         protected override void OnPopulateMesh(VertexHelper helper)
         {
             helper.Clear();
             if (Overlay) return;
-            var rect = GetPixelAdjustedRect();
-            if (_ultimate) Ring(helper, rect); else Tile(helper, rect);
-        }
-
-        private void Tile(VertexHelper h, Rect rect)
-        {
-            // ⚠️ 1.5 UNITS OF CLEARANCE ON EACH SIDE: the pixel-adjusted rect on a pixel-perfect
-            // canvas can be most of a pixel wider than the layout rect, and the first native run
-            // measured the lean's corners 0.8 units outside the slot without it.
-            float lean = HudDraw.Lean, overhang = rect.height * .5f * lean, clear = 1.5f;
-            var r = new Rect(rect.xMin + overhang + clear, rect.yMin, rect.width - (overhang + clear) * 2, rect.height);
-            var shadow = HudDraw.Shadow; shadow.a = .28f;
-            HudDraw.Parallelogram(h, new Rect(r.xMin + 1.5f, r.yMin - 3, r.width - 3, r.height), lean, shadow);
-            HudDraw.Parallelogram(h, r, lean, HudDraw.GlassDeep);
-            if (!_ready && !_active && _fill < .999f)
-            {
-                // The unrecovered part, shaded from the top: it drains toward the top as the power returns.
-                var shade = new Color(0, 0, 0, .55f);
-                HudDraw.ParallelogramBand(h, r, lean, r.yMin + r.height * _fill, r.yMax, shade);
-            }
-            if (_active)
-            {
-                // The time left as a honey level along the foot, emptying toward the left. The
-                // narrowed rect keeps the full height so its lean matches the tile's own.
-                var level = HudDraw.Honey; level.a = .9f;
-                HudDraw.ParallelogramBand(h, r, lean, r.yMin, r.yMin + 6, new Color(0, 0, 0, .5f));
-                var left = new Rect(r.xMin, r.yMin, r.width * _fill, r.height);
-                HudDraw.ParallelogramBand(h, left, lean, r.yMin, r.yMin + 6, level);
-            }
-            Color edge = _active ? HudDraw.Honey : _ready ? HudDraw.Ivory : HudDraw.IvoryMuted;
-            HudDraw.ParallelogramFrame(h, r, lean, _ready || _active ? 2.5f : 1.5f, edge);
+            Ring(helper, GetPixelAdjustedRect());
         }
 
         private void Ring(VertexHelper helper, Rect rect)
         {
-            float radius = Mathf.Min(rect.width, rect.height) * .5f - 6;
+            float radius = Mathf.Min(rect.width, rect.height) * .5f - 1;
             var centre = rect.center;
-            if (_ready) { var halo = HudDraw.Honey; halo.a = .26f; Disc(helper, centre, radius + 5, halo); }
-            var shadow = HudDraw.Shadow; shadow.a = .3f;
-            Disc(helper, centre + Vector2.down * 3, radius, shadow);
-            Disc(helper, centre, radius, HudDraw.GlassDeep);
-            float outer = radius - 2, inner = radius - 9;
-            var track = HudDraw.Ivory; track.a = .18f;
-            if (_active || _ready)
+            var glass = (Color)LiveHud.Glass; glass.a = 95f / 255;
+            Disc(helper, centre, radius, glass);
+            float width = radius * 2 * (_ultimate ? .088f : .0865f);
+            float outer = radius, inner = radius - width;
+            var track = Color.white; track.a = 70f / 255;
+            Arc(helper, centre, outer, inner, 90, 360, track);
+            float shown = _shown < 0 ? _fill : _shown;
+            if (shown <= 0) return;
+            Color ink = _ultimate && !_ready ? LiveHud.Lime : LiveHud.Yellow;
+            Arc(helper, centre, outer, inner, 90, 360 * shown, ink);
+            float lit = _ultimate && !_ready && !LiveHud.Still ? 1 - (Time.unscaledTime - _gainAt) / TipSeconds : 0;
+            if (lit > 0 && shown < .999f)
             {
-                Color ink = HudDraw.Honey;
-                Arc(helper, centre, outer, inner, 90, 360, track);
-                Arc(helper, centre, outer, inner, 90, 360 * (_ready && !_active ? 1 : _fill), ink);
-                return;
-            }
-            const int notches = 10;
-            float each = 360f / notches, gap = 7;
-            for (int i = 0; i < notches; i++)
-            {
-                float start = 90 - i * each - gap * .5f, span = each - gap;
-                float lit = Mathf.Clamp01(_fill * notches - i);
-                Arc(helper, centre, outer, inner, start, span, track);
-                Arc(helper, centre, outer, inner, start, span * lit, HudDraw.Ivory);
+                var tip = Color.white; tip.a = lit * .9f;
+                Arc(helper, centre, outer, inner, 90 - 360 * shown + 12, 12, tip);
             }
         }
 

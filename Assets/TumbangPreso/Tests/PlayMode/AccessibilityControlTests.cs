@@ -156,7 +156,7 @@ namespace TumbangPreso.PlayTests
             var root = (RectTransform)canvas.transform;
             foreach (string name in new[] { "MatchScores", "CanReadout", "LocalState", "ContextualAction", "PowerSeals", "SpectatorReadout" })
             {
-                var rect = (RectTransform)root.Find(name); var corners = new Vector3[4]; rect.GetWorldCorners(corners);
+                var rect = (RectTransform)root.HudFind(name); var corners = new Vector3[4]; rect.GetWorldCorners(corners);
                 foreach (var corner in corners)
                 {
                     var point = root.InverseTransformPoint(corner);

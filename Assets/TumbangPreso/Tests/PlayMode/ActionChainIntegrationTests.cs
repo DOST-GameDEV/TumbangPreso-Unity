@@ -70,7 +70,7 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(MatchMomentKind.MultiKnockdown, match.LastMoment.Kind);
             Assert.AreEqual(1, match.LastMoment.Actor); Assert.AreEqual(50, match.LastMoment.Bonus);
             yield return new WaitForSecondsRealtime(.08f);
-            Assert.AreEqual("MULTI KNOCKDOWN", Object.FindAnyObjectByType<UI.MatchMomentBanner>().Phrase);
+            Assert.AreEqual("MULTI DOWN", Object.FindAnyObjectByType<UI.MatchMomentBanner>().Phrase);
             yield return GameplayShots.Render(Camera.main, mode + "-accuracy-milestone", true, outDir: "Logs/announcement-awards-1001");
 
             int catchBonuses = 0;
