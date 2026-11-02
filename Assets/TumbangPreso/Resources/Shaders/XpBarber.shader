@@ -9,7 +9,7 @@ Shader "TumbangPreso/XpBarber"
         _Color ("Tint", Color) = (1,1,1,1)
         _Light ("Light stripe", Color) = (0.4353, 0.7725, 0.7216, 1)
         _Dark ("Dark stripe", Color) = (0.2863, 0.6118, 0.4902, 1)
-        _Speed ("Stripes a second", Float) = 0.15
+        _Speed ("Stripes a second", Float) = 0.11
         _StencilComp ("Stencil Comparison", Float) = 8
         _Stencil ("Stencil ID", Float) = 0
         _StencilOp ("Stencil Operation", Float) = 0
@@ -57,8 +57,6 @@ Shader "TumbangPreso/XpBarber"
                 const float lightPart = 31.0 / 76.0;
                 float light = smoothstep(-soft, soft, d) * (1.0 - smoothstep(lightPart - soft, lightPart + soft, d)) + smoothstep(1.0 - soft, 1.0 + soft, d);
                 fixed4 c = tex2D(_MainTex, i.uv);
-                // The fill and the cream track share one outline; a fuller edge keeps the cream from showing through (owner, 2026-11-02).
-                c.a = saturate(c.a * 2.0);
                 c.rgb = lerp(_Dark.rgb, _Light.rgb, saturate(light));
                 c *= i.color;
                 #ifdef UNITY_UI_CLIP_RECT

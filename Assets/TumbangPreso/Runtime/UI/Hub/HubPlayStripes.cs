@@ -8,7 +8,7 @@ namespace TumbangPreso.UI.Hub
     /// </summary>
     public sealed class HubPlayStripes : MonoBehaviour
     {
-        private const float IdleSpeed = 0.12f, HighlightSpeed = 0.36f, Ease = 6f;
+        private const float IdleSpeed = 0.08f, HighlightSpeed = 0.36f, Ease = 6f;
         // 278 px a stripe and a 750 px yarn tile meet again every 375 stripes, so the wrap shows nothing.
         private const float Loop = 375f;
         private static readonly int Phase = Shader.PropertyToID("_PlayStripePhase");

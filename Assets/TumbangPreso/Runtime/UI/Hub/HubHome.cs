@@ -93,6 +93,8 @@ namespace TumbangPreso.UI.Hub
             _tagSpec = new HubBoard.LabelSpec { size = TagSize, w = NameLineRoom };
             HubBoard.Picture(plateFace, plateGroup, "xp_track", "XpTrack");
             var fill = HubBoard.Picture(plateFace, plateGroup, "xp_fill", "XpFill");
+            // The fill and the cream track share one outline, so soft edges let the cream show (owner, 2026-11-02: "blur"). A little larger, it covers them.
+            fill.offsetMin -= new Vector2(1.5f, 1.5f); fill.offsetMax += new Vector2(1.5f, 1.5f);
             _xpFill = fill.GetComponent<Image>();
             _xpFill.type = Image.Type.Filled; _xpFill.fillMethod = Image.FillMethod.Horizontal;
             _xpFill.fillOrigin = (int)Image.OriginHorizontal.Left;

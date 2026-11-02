@@ -277,7 +277,7 @@ namespace TumbangPreso.PlayTests
             var track = System.Array.Find(images, i => i.name == "XpTrack").rectTransform;
             var label = System.Array.Find(hub.Canvas.GetComponentsInChildren<Text>(), t => t.name == "XpLabel").rectTransform;
             Assert.AreEqual(track.TransformPoint(track.rect.center).x, label.TransformPoint(label.rect.center).x, 0.5f, "XP sits in the middle of its bar");
-            Assert.AreEqual(0.15f, fill.material.GetFloat("_Speed"), 0.001f);
+            Assert.AreEqual(0.11f, fill.material.GetFloat("_Speed"), 0.001f);
             var fit = hub.Canvas.GetComponentInChildren<HubPlateFit>();
             HubBoard.SetWords(name, "Al", HubBoard.Label("Tump_ID"));
             yield return null;
@@ -307,7 +307,7 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(HubHome.PlayStripes, "The switch is off; PLAY should be the plain art.");
             Assert.AreEqual("TumbangPreso/PlayBarber", face.material.shader.name);
             Assert.IsNotNull(face.material.GetTexture("_Knit"), "The yarn layer did not load.");
-            Assert.AreEqual(0.12f, HubPlayStripes.SpeedFor(0f), 0.001f);
+            Assert.AreEqual(0.08f, HubPlayStripes.SpeedFor(0f), 0.001f);
             Assert.Greater(HubPlayStripes.SpeedFor(1f), HubPlayStripes.SpeedFor(0f) * 2f, "Highlighting PLAY should speed its stripes up.");
             var avatarFace = System.Array.Find(hub.Canvas.GetComponentsInChildren<Image>(), i => i.name == "Backing");
             Assert.AreEqual(Avatars.Get(Avatars.Mine()), avatarFace.sprite, "The profile's backing is not the player's picture.");
