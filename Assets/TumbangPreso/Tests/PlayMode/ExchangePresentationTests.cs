@@ -13,8 +13,9 @@ namespace TumbangPreso.PlayTests
 {
     public sealed class ExchangePresentationTests
     {
-        [UnitySetUp] public IEnumerator Before() => PlayModeWorld.Reset();
-        [UnityTearDown] public IEnumerator After() => PlayModeWorld.Reset();
+        private bool _bots; private int _difficulty;
+        [UnitySetUp] public IEnumerator Before() { _bots = AIController.BotsEnabled; _difficulty = Settings.SettingsStore.Current.AiDifficulty; return PlayModeWorld.Reset(); }
+        [UnityTearDown] public IEnumerator After() { AIController.BotsEnabled = _bots; Settings.SettingsStore.Current.AiDifficulty = _difficulty; return PlayModeWorld.Reset(); }
         [UnityTest] public IEnumerator ClassicExchangeUsesTruthfulStateAndPersonalConfirmation() => Exchange(GameMode.Classic);
         [UnityTest] public IEnumerator HeroExchangeUsesTruthfulStateAndPersonalConfirmation() => Exchange(GameMode.HeroStrike);
 
@@ -41,6 +42,8 @@ namespace TumbangPreso.PlayTests
 
         private static IEnumerator Exchange(GameMode mode)
         {
+            // The other seats are built only when bots are on, and that follows the saved profile's difficulty.
+            Settings.SettingsStore.Current.AiDifficulty = 1; AIController.BotsEnabled = true;
             SceneFlow.Networked = false; SceneFlow.SetSelectedRules(CustomGameRules.Defaults(mode));
             GameLaunch.SoloSeat = 1; GameLaunch.GuidedTutorial = false;
             yield return SceneManager.LoadSceneAsync("Eskinita");
@@ -48,6 +51,14 @@ namespace TumbangPreso.PlayTests
             foreach (var ai in Object.FindObjectsByType<AIController>()) ai.enabled = false;
             foreach (var input in Object.FindObjectsByType<PlayerInputReader>()) input.enabled = false;
             var runner = Object.FindAnyObjectByType<SliceRunner>(); Assert.IsNotNull(runner);
+            // The ready gate and the arrival film hold the clock at zero until the countdown has run, so the round is
+            // started the way a player starts it and given time to go live. Time stays at zero otherwise, and the can's
+            // protection never counts down.
+            Object.FindFirstObjectByType<ReadyGate>()?.StartLocalCountdown();
+            yield return new WaitForSecondsRealtime(3.7f);
+            float live = Time.realtimeSinceStartup + 40;
+            while ((Map.ArenaIntro.HidesUi || RoleSwapCard.Showing || !GameServices.Round.RoundActive || PresentationClock.Held)
+                   && Time.realtimeSinceStartup < live) yield return null;
             if (!runner.Running) runner.Begin();
             yield return null;
             var round = GameServices.Round; var match = GameServices.Match;
@@ -77,7 +88,8 @@ namespace TumbangPreso.PlayTests
             float beforeScale = Time.timeScale;
             lata.HostKnockDown(me.PlayerSlot);
             Assert.AreEqual(beforeScale, Time.timeScale, "A normal tin contact must not pause unrelated players.");
-            Assert.AreEqual(points + MatchRules.PointsFor(ScoreEvent.LataKnocked), match.ScoreFor(me.PlayerSlot));
+            // The first knockdown of a round also pays its bonus (e3f21acfb, 2026-10-01).
+            Assert.AreEqual(points + MatchRules.PointsFor(ScoreEvent.LataKnocked) + MatchRules.PointsFor(ScoreEvent.FirstKnockdownBonus), match.ScoreFor(me.PlayerSlot));
             Assert.AreEqual("P2  DOWNED LATA", feed.Entry(0));
             Assert.AreEqual(HudBadge.Glyph.Knock, feed.GlyphAt(0), "The feed draws the knockdown pictogram, not words.");
             var readout = Object.FindFirstObjectByType<TumpMatchReadout>();

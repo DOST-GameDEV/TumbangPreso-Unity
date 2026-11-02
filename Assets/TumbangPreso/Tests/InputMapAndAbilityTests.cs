@@ -140,9 +140,10 @@ namespace TumbangPreso.Tests
             var dante = new DanteHeroKit();
             var shield = dante.CaptureTimedKit();
             Assert.AreSame(dante.Skill1, shield.PersonalAbility);
-            Assert.IsTrue(shield.TryAge(18, 0, false, .25f, out var aged));
-            Assert.AreEqual(17.75f, aged.PersonalRemaining, .001f);
-            Assert.IsFalse(shield.TryAge(21, 0, false, 0, out _));
+            // The carapace lasts GeoRules.ShieldSeconds (15 s since f60eba049; it was 20 s when this was written).
+            Assert.IsTrue(shield.TryAge(GeoRules.ShieldSeconds - 2, 0, false, .25f, out var aged));
+            Assert.AreEqual(GeoRules.ShieldSeconds - 2.25f, aged.PersonalRemaining, .001f);
+            Assert.IsFalse(shield.TryAge(GeoRules.ShieldSeconds + 1, 0, false, 0, out _));
             Assert.IsFalse(shield.TryAge(1, 1, false, 0, out _));
             Assert.IsFalse(shield.TryAge(1, 0, true, 0, out _));
             Assert.IsFalse(shield.TryAge(float.NaN, 0, false, 0, out _));
@@ -586,17 +587,19 @@ namespace TumbangPreso.Tests
         [Test]
         public void UltimateCostsMatchTheCurrentNineHeroEconomy()
         {
+            // Every ultimate costs its authored price plus the three objective points added on 2026-10-28.
+            float extra = Balance.UltimateExtraObjectivePoints;
             var expected = new Dictionary<string, float>
             {
-                ["dante"] = GeoRules.EarthquakeCost,
-                ["cheska"] = CryoRules.AbsoluteZeroCost,
-                ["sean"] = 15.0f,
-                ["zack"] = ZackRules.OverclockCost,
-                ["nemu"] = 10.0f,
-                ["phaister"] = VoodooRules.DollCost,
-                ["rafi"] = 16.0f,
-                ["amihan"] = AmihanRules.StormSurgeCost,
-                ["paete"] = PaeteRules.SentryCost,
+                ["dante"] = GeoRules.EarthquakeCost + extra,
+                ["cheska"] = CryoRules.AbsoluteZeroCost + extra,
+                ["sean"] = SeanRules.UltimateCost + extra,
+                ["zack"] = ZackRules.OverclockCost + extra,
+                ["nemu"] = 15.0f + extra,
+                ["phaister"] = VoodooRules.DollCost + extra,
+                ["rafi"] = RafiRules.BahaCost + extra,
+                ["amihan"] = AmihanRules.StormSurgeCost + extra,
+                ["paete"] = PaeteRules.SentryCost + extra,
             };
             Assert.AreEqual(Roster.HeroPeople.Count, expected.Count, "a hero has no cost contract");
             float lowest = float.MaxValue;
@@ -697,12 +700,13 @@ namespace TumbangPreso.Tests
             var rafi = HeroAbilitySystem.CreateKitFor("rafi");
             foreach (var skill in new[] { rafi.Skill1, rafi.AttackingSkill })
             {
-                Assert.AreEqual(2, skill.MaxCharges, skill.Id + " has the wrong charge cap");
+                // Rafi's skills moved from two charges to 35 s cooldowns on 2026-10-01 (ec644a4b9).
+                Assert.IsFalse(skill.UsesCharges, skill.Id + " is on cooldowns now, not charges");
                 Assert.AreEqual(HeroAbility.Recharge.Never, skill.RechargedBy);
-                skill.ApplyNetworkSnapshot(0, 0);
+                skill.ApplyNetworkSnapshot(20, 0);
                 rafi.OnRechargeEvent(HeroAbility.Recharge.LataKnocked);
                 rafi.OnRechargeEvent(HeroAbility.Recharge.OwnSlipperRetrieved);
-                Assert.AreEqual(0, skill.ChargesRemaining, skill.Id + " recharged without its own event");
+                Assert.AreEqual(20, skill.CooldownRemaining, 0.001f, skill.Id + " recovered without its own event");
             }
         }
 
@@ -733,10 +737,18 @@ namespace TumbangPreso.Tests
 
             Assert.AreEqual(HeroKit.CastOutcome.NotYet, kit.CastUltimate(null),
                 "a full meter cast an ultimate during the warm-up");
-            Assert.AreEqual(HeroKit.CastOutcome.NotYet, kit.CastSkill1(null),
-                "a skill cast during the warm-up");
-            Assert.AreEqual(HeroKit.CastOutcome.NotYet, kit.CastSkill2(null),
-                "a skill cast during the warm-up");
+            // A skill cast with no body is refused as CannotAct before the warm-up gate since 2026-10-01 (9803a3c93),
+            // so the skills are cast by a body that can act and the warm-up is the only thing refusing them.
+            var body = new GameObject("WarmUpProbeMotor");
+            try
+            {
+                var ctx = new AbilityContext(body.AddComponent<CharacterMotor>(), null, null);
+                Assert.AreEqual(HeroKit.CastOutcome.NotYet, kit.CastSkill1(ctx),
+                    "a skill cast during the warm-up");
+                Assert.AreEqual(HeroKit.CastOutcome.NotYet, kit.CastSkill2(ctx),
+                    "a skill cast during the warm-up");
+            }
+            finally { Object.DestroyImmediate(body); }
 
             Assert.AreEqual(banked, kit.UltimateCharge, 0.0001f,
                 "the warm-up spent the banked charge, so carrying an ultimate across a round "

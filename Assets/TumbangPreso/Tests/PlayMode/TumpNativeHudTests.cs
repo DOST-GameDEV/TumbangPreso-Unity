@@ -18,8 +18,9 @@ namespace TumbangPreso.PlayTests
 {
     public sealed class TumpNativeHudTests
     {
-        [UnitySetUp] public IEnumerator Before() => PlayModeWorld.Reset();
-        [UnityTearDown] public IEnumerator After() => PlayModeWorld.Reset();
+        private bool _bots; private int _difficulty;
+        [UnitySetUp] public IEnumerator Before() { _bots = AIController.BotsEnabled; _difficulty = Settings.SettingsStore.Current.AiDifficulty; return PlayModeWorld.Reset(); }
+        [UnityTearDown] public IEnumerator After() { AIController.BotsEnabled = _bots; Settings.SettingsStore.Current.AiDifficulty = _difficulty; return PlayModeWorld.Reset(); }
 
         [UnityTest]
         public IEnumerator CurrentMatchBarGeometryFitsTheNativeScreen()
@@ -911,7 +912,13 @@ namespace TumbangPreso.PlayTests
                         inspectViewport:()=>
                         {
                             var root=(RectTransform)view.Canvas.transform;
-                            var warning=HudRevisionBounds(root,(RectTransform)root.HudFind("WarningMessage"));
+                            // The notice is measured by what is drawn: its title, its two marks and its reason tag. The soft band behind it fades out well beyond them.
+                            var warningRoot=(RectTransform)root.HudFind("WarningMessage");Rect warning=default;bool first=true;
+                            foreach(string part in new[]{"Title","MarkLeft","MarkRight","WarningReasonPlate"})
+                            {
+                                var bounds=HudRevisionBounds(root,(RectTransform)warningRoot.Find(part));
+                                if(first){warning=bounds;first=false;}else warning=Rect.MinMaxRect(Mathf.Min(warning.xMin,bounds.xMin),Mathf.Min(warning.yMin,bounds.yMin),Mathf.Max(warning.xMax,bounds.xMax),Mathf.Max(warning.yMax,bounds.yMax));
+            }
                             foreach(var plate in root.HudFind("MatchEventFeed").GetComponentsInChildren<Image>())
                                 if(plate.name=="EventPlate")Assert.IsFalse(warning.Overlaps(HudRevisionBounds(root,plate.rectTransform)));
                         });
@@ -1008,7 +1015,7 @@ namespace TumbangPreso.PlayTests
                 SettingsStore.Current.ReducedUiMotion = true;
                 Visual.MatchFlair.Play(Visual.MatchFlair.Kind.Tag, 0, 1, at);
                 Assert.AreEqual(3, feed.Count);
-                Assert.AreEqual(0, row0.anchoredPosition.y, .001f); Assert.AreEqual(-60, row1.anchoredPosition.y, .001f);
+                Assert.AreEqual(0, row0.anchoredPosition.y, .001f); Assert.AreEqual(-70, row1.anchoredPosition.y, .001f);
                 items = (System.Array)itemsField.GetValue(feed);
                 var newest = items.GetValue(0); var type = newest.GetType();
                 float born = (float)type.GetField("Born").GetValue(newest);
@@ -1380,11 +1387,17 @@ namespace TumbangPreso.PlayTests
 
         private static IEnumerator Open(GameMode mode)
         {
+            // The match installer builds the other seats only when bots are on, and it reads that from the saved difficulty.
+            Settings.SettingsStore.Current.AiDifficulty = 1; AIController.BotsEnabled = true;
             SceneFlow.Networked = false; SceneFlow.SetSelectedRules(CustomGameRules.Defaults(mode));
             yield return SceneManager.LoadSceneAsync("Eskinita"); yield return new WaitForSecondsRealtime(.4f);
             foreach (var brain in Object.FindObjectsByType<AIController>(FindObjectsSortMode.None)) brain.enabled = false;
             Object.FindFirstObjectByType<ReadyGate>().StartLocalCountdown();
             yield return new WaitForSecondsRealtime(3.7f);
+            // Since 2239d8d1b the Arena's full opening plays and the role card follows it, so the round is not live at 3.7 s.
+            float live = Time.realtimeSinceStartup + 40;
+            while ((Map.ArenaIntro.HidesUi || RoleSwapCard.Showing || !GameServices.Round.RoundActive) && Time.realtimeSinceStartup < live) yield return null;
+            yield return new WaitForSecondsRealtime(.5f);
             Assert.IsNotNull(Hud.Instance);
             Assert.AreEqual(8,GameServices.Match.TotalRounds,"Normal matches must start with the owner's eight-round default.");
             TumpUiCapture.StageHudReview(GameServices.Round.PlayerAt(GameLaunch.SoloSeat));
