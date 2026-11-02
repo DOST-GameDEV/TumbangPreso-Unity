@@ -9,7 +9,7 @@ Shader "TumbangPreso/XpBarber"
         _Color ("Tint", Color) = (1,1,1,1)
         _Light ("Light stripe", Color) = (0.4353, 0.7725, 0.7216, 1)
         _Dark ("Dark stripe", Color) = (0.2863, 0.6118, 0.4902, 1)
-        _Speed ("Stripes a second", Float) = 0.15
+        _Speed ("Stripes a second", Float) = 0.11
         _StencilComp ("Stencil Comparison", Float) = 8
         _Stencil ("Stencil ID", Float) = 0
         _StencilOp ("Stencil Operation", Float) = 0

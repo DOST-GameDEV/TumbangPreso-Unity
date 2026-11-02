@@ -86,6 +86,8 @@ namespace TumbangPreso.UI.Hub
             _tagSpec = new HubBoard.LabelSpec { size = TagSize, w = NameLineRoom };
             HubBoard.Picture(plateFace, plateGroup, "xp_track", "XpTrack");
             var fill = HubBoard.Picture(plateFace, plateGroup, "xp_fill", "XpFill");
+            // The fill and the cream track share one outline, so soft edges let the cream show (owner, 2026-11-02: "blur"). A little larger, it covers them.
+            fill.offsetMin -= new Vector2(1.5f, 1.5f); fill.offsetMax += new Vector2(1.5f, 1.5f);
             _xpFill = fill.GetComponent<Image>();
             _xpFill.type = Image.Type.Filled; _xpFill.fillMethod = Image.FillMethod.Horizontal;
             _xpFill.fillOrigin = (int)Image.OriginHorizontal.Left;
@@ -137,11 +139,38 @@ namespace TumbangPreso.UI.Hub
 
         // ------------------------------------------------------------------ bottom right
 
+        /// <summary>THE ONE SWITCH for PLAY's travelling stripes (owner, 2026-11-02, an experiment). False puts back the
+        /// old button exactly: play_face.png with the default UI material.</summary>
+        public const bool PlayStripes = true;
+
+        /// <summary>True: the yarn travels with the stripes (owner, 2026-11-02). False: the yarn stays still and only the colour moves.</summary>
+        public const bool PlayKnitMoves = true;
+
+        /// <summary>The stripes' material, or null for the plain art: switched off, reduced motion, or a missing file.</summary>
+        public static Material PlayStripesMaterial()
+        {
+            if (!PlayStripes || HubStyle.ReducedMotion) return null;
+            var shader = Resources.Load<Shader>("Shaders/PlayBarber");
+            var knit = Resources.Load<Texture2D>(PlayKnitMoves ? "UI/play-stripes/play_knit_tile" : "UI/play-stripes/play_knit");
+            if (shader == null || knit == null) return null;
+            var material = new Material(shader);
+            material.SetTexture("_Knit", knit);
+            material.SetFloat("_KnitMove", PlayKnitMoves ? 1f : 0f);
+            material.SetFloat("_KnitWidth", knit.width);
+            return material;
+        }
+
         private void BuildPlay()
         {
             _play = HubBoard.Sticker(Root, "PlayButton", HubKit.BottomRight, "play", Play, out var playFace, out var playGroup);
             _playSpec = HubBoard.Label("play");
             _playLabel = HubBoard.Lettering(playFace, playGroup, "play", "Label");
+            var playStripes = PlayStripesMaterial();
+            if (playStripes != null)
+            {
+                playFace.GetComponent<Image>().material = playStripes;
+                _play.gameObject.AddComponent<HubPlayStripes>().Button = _play;
+            }
             HubBoard.Feel(_play, playFace, HubBoard.Depth("play"), 0.0f, true);
             HubSlap.On(_play.transform, 0.18f, -3);
 
@@ -253,7 +282,7 @@ namespace TumbangPreso.UI.Hub
             float into = profile != null ? ProgressionRules.XpIntoLevel(profile.Xp) / (float)ProgressionRules.XpPerLevel : 0;
             _plateFit.Into = Mathf.Clamp01(into);
 
-            _avatar.sprite = Avatars.Get(string.IsNullOrEmpty(settings.AvatarId) ? Avatars.DefaultFor(name) : settings.AvatarId);
+            _avatar.sprite = Avatars.Cut(Avatars.Mine());
             _avatar.color = _avatar.sprite != null ? Color.white : new Color(0, 0, 0, 0);
 
             RefreshModeCard();

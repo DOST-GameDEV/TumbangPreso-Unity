@@ -118,6 +118,28 @@ namespace TumbangPreso.UI
             }
         }
 
+        /// <summary>The same picture with no sunburst (tools/build_hero_cuts.py), for the profile and character select. Ids without one, such as the old `avatar_07`, keep their whole picture.</summary>
+        public static Sprite Cut(string id)
+        {
+            if (string.IsNullOrEmpty(id)) return null;
+            string key = "cut:" + id;
+            if (Loaded.TryGetValue(key, out var known)) return known;
+            var sprite = Resources.Load<Sprite>("UI/hero-cuts/" + (id.StartsWith("avatar_") ? id.Substring(7) : id));
+            if (sprite == null) return Get(id);
+            Loaded[key] = sprite;
+            return sprite;
+        }
+
+        /// <summary>This player's face: their choice, or the default for their name. HOME and the profile page both draw this.</summary>
+        public static string Mine()
+        {
+            var settings = Settings.SettingsStore.Current;
+            if (!string.IsNullOrEmpty(settings.AvatarId)) return settings.AvatarId;
+            var account = GameServices.Account;
+            return DefaultFor(account != null && !string.IsNullOrWhiteSpace(account.DisplayName) ? account.DisplayName
+                            : !string.IsNullOrWhiteSpace(settings.PlayerName) ? settings.PlayerName : "PLAYER");
+        }
+
         /// <summary>
         /// Puts an avatar on a node, framed the way the mark frames everything else.
         ///

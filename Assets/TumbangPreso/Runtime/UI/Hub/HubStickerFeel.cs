@@ -124,7 +124,7 @@ namespace TumbangPreso.UI.Hub
             // from itself whenever u hover over it ... the shadow seemed separate"). Lifting the face alone
             // opened a gap over her slab. Hover now grows and tilts both about the face's centre; only a
             // PRESS moves the face, down into its slab, which is the button being pushed.
-            float breathe = Primary && !still ? Mathf.Sin(t * 2.4f + Phase * 6.28f) * 0.012f * (1f - _lift) : 0f;
+            float breathe = Primary && !still ? Mathf.Sin(t * 1.6f + Phase * 6.28f) * 0.004f * (1f - _lift) : 0f;
             float grow = 1f + 0.035f * _lift + breathe;
             float tilt = _wobble * 0.04f;
             Face.anchoredPosition = _faceRest + Depth * (0.8f * _press);

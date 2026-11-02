@@ -136,10 +136,7 @@ namespace TumbangPreso.UI.Hub
         {
             get
             {
-                var s = Settings.SettingsStore.Current;
-                if (!string.IsNullOrEmpty(s.AvatarId)) return s.AvatarId;
-                string name = GameServices.Account?.DisplayName ?? s.PlayerName;
-                return Avatars.DefaultFor(name);
+                return Avatars.Mine();
             }
         }
 
