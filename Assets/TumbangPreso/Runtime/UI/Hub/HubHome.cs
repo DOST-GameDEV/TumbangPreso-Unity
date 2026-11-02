@@ -324,14 +324,14 @@ namespace TumbangPreso.UI.Hub
         private Text _name, _tag;
         private RectTransform _root, _face, _slab, _track, _label;
         private Image _fill;
-        private float _left, _rootWidth, _faceWidth, _slabWidth, _trackWidth, _labelX;
+        private float _left, _rootWidth, _faceWidth, _slabWidth, _trackWidth;
         private string _seenName, _seenTag;
         private int _seenSize = -1;
 
         public void Bind(Text name, Text tag, RectTransform root, RectTransform face, RectTransform slab, RectTransform track, Image fill, RectTransform label)
         {
             _name = name; _tag = tag; _root = root; _face = face; _slab = slab; _track = track; _fill = fill; _label = label;
-            _left = name.rectTransform.anchoredPosition.x; _labelX = label.anchoredPosition.x;
+            _left = name.rectTransform.anchoredPosition.x;
             _rootWidth = root.sizeDelta.x;
             _faceWidth = Stretch(face, "name_plate_face", 80f); _slabWidth = Stretch(slab, "name_plate_slab", 80f); _trackWidth = Stretch(track, "xp_track", 30f);
         }
@@ -367,8 +367,11 @@ namespace TumbangPreso.UI.Hub
             _face.sizeDelta = new Vector2(_faceWidth - Shrink, _face.sizeDelta.y);
             _slab.sizeDelta = new Vector2(_slabWidth - Shrink, _slab.sizeDelta.y);
             _track.sizeDelta = new Vector2(_trackWidth - Shrink, _track.sizeDelta.y);
-            _label.anchoredPosition = new Vector2(_labelX - Shrink * 0.5f, _label.anchoredPosition.y);
             float bar = _trackWidth - Shrink;
+            // "XP" sits in the true middle of the bar at any length (owner, 2026-11-02). They have different anchors, so it is measured.
+            var space = _label.parent;
+            float middle = space.InverseTransformPoint(_track.TransformPoint(_track.rect.center)).x, at = space.InverseTransformPoint(_label.TransformPoint(_label.rect.center)).x;
+            _label.anchoredPosition += new Vector2(middle - at, 0f);
             _fill.fillAmount = Mathf.Min(_into * bar, bar - CornerClear) / _trackWidth;
         }
     }
