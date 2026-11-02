@@ -1,13 +1,14 @@
 // The XP bar's stripes run like a barber's pole while the bar stays still (owner, 2026-11-02).
-// Colour is read from the sprite's middle, shifted along by whole stripes so it wraps without a seam; alpha stays where it is, so the bar's rounded ends never move.
+// The stripes are worked out here, not read from the sprite: reading them with a shift showed a seam where it wrapped, and jagged edges (owner: "so pixelated", "i see a rectangle").
+// Colours, angle and widths are the sprite's own (xp_fill.png: 76 px a stripe, 31 of them light, at 45 degrees), and the sprite still gives the bar's shape.
 Shader "TumbangPreso/XpBarber"
 {
     Properties
     {
         [PerRendererData] _MainTex ("Sprite", 2D) = "white" {}
         _Color ("Tint", Color) = (1,1,1,1)
-        _Period ("One stripe, in the sprite's width", Float) = 0.14931
-        _From ("Where the wrap starts", Float) = 0.25
+        _Light ("Light stripe", Color) = (0.4353, 0.7725, 0.7216, 1)
+        _Dark ("Dark stripe", Color) = (0.2863, 0.6118, 0.4902, 1)
         _Speed ("Stripes a second", Float) = 0.15
         _StencilComp ("Stencil Comparison", Float) = 8
         _Stencil ("Stencil ID", Float) = 0
@@ -36,7 +37,8 @@ Shader "TumbangPreso/XpBarber"
             sampler2D _MainTex;
             fixed4 _Color;
             float4 _ClipRect;
-            float _Period, _From, _Speed;
+            fixed4 _Light, _Dark;
+            float _Speed;
             v2f vert (appdata v)
             {
                 v2f o;
@@ -48,11 +50,14 @@ Shader "TumbangPreso/XpBarber"
             }
             fixed4 frag (v2f i) : SV_Target
             {
-                float wraps = 3.0 * _Period;
-                float u = _From + frac((i.uv.x - _From - _Time.y * _Speed * _Period) / wraps) * wraps;
-                fixed4 stripes = tex2D(_MainTex, float2(u, i.uv.y));
+                // Sprite pixels (509 by 87, y down), along the stripes' 45 degrees, in whole stripes.
+                float along = (i.uv.x * 509.0 + (1.0 - i.uv.y) * 87.0 - 69.0) / 76.0 - _Time.y * _Speed;
+                float d = frac(along);
+                float soft = max(fwidth(along) * 0.75, 0.002);
+                const float lightPart = 31.0 / 76.0;
+                float light = smoothstep(-soft, soft, d) * (1.0 - smoothstep(lightPart - soft, lightPart + soft, d)) + smoothstep(1.0 - soft, 1.0 + soft, d);
                 fixed4 c = tex2D(_MainTex, i.uv);
-                c.rgb = lerp(c.rgb, stripes.rgb, step(0.5, c.a));
+                c.rgb = lerp(_Dark.rgb, _Light.rgb, saturate(light));
                 c *= i.color;
                 #ifdef UNITY_UI_CLIP_RECT
                 c.a *= UnityGet2DClipping(i.world.xy, _ClipRect);
