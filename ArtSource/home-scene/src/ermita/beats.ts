@@ -1,48 +1,60 @@
 import { s } from './time';
 
 /**
- * ⚠️ THE ONE TIMETABLE for "Showtime", Phaister's film at Ermita, at night under the LRT.
+ * ⚠️ THE ONE TIMETABLE for "Drained", Phaister's film on the real Ermita map (IlalimNgTulay) in its own daylight.
  * docs/reports/home-scene/phaister-ermita.md is this list in prose.
  *
- * Owner, 2026-11-01, on the quiet first version: "i cant tell wtf is happening", "it isnt as dynamic and cool as the
- * original", and of the doll, "dont show her doll na". So one sentence per act, each a big action close to the lens:
- * she throws behind her back and hits the can; she runs for the slipper and Nemu nearly tags her, so she teleports;
- * she burns a ring the size of the lot under Nemu and sets it off. Nemu is unmoved by all of it, right to the last nod.
+ * She hits the can without looking. Nemu rights it and runs her down. Teleport buys a second, and Nemu does not even slow.
+ * Cut off from the line with Nemu's hand coming, she stops running and turns.
+ *
+ * ⚠️ THE CRUX: Curse: Drain, in slow motion, with the LRT crawling over them. Nemu's own ghost is dragged out of her into
+ * Phaister's palm. The gulp, real time, and the hand is still coming: the curse has a 1.5 s fuse, as in the game. It stops an
+ * inch from her hat. Nemu drops at her feet. No stamina left.
  */
 export const B = {
-  // I · The throw
-  lamp: s(0.2),
-  walk: s(3), // she struts in along the line
-  dare: s(5.6), // points at the can over the slipper
-  nemuLook: s(7), // Nemu and Kuro. Nothing.
-  boast: s(8.4), // to us: watch this
-  blind: s(10), // brim down, no looking
-  twirl: s(11.2), // back to the can, the slipper spinning on one finger
-  flick: s(13), // behind her back
-  klang: s(13.7),
-  tada: s(14.1), // arms open to the street
-  nemuFlat: s(15.6), // Nemu has not moved
-  sag: s(16.4),
+  // I · Small to whole
+  lata: s(0), // the can on the chalk; Kuro comes down to look at it
+  nemu: s(3), // the taya, and her ghost at her shoulder
+  twirl: s(5.4), // a slipper going round a finger, then the brim, then the grin
+  walk: s(8), // she walks on to her mark
+  dare: s(10.2), // and points at Nemu
+  nothing: s(11), // nothing. Kuro waves.
+  noLook: s(12), // she turns her back on the can and looks at us
+  flick: s(14.5), // behind her back
+  klang: s(15.3),
+  reactN: s(15.7), // the can goes past Nemu's head. She does not look. Kuro does.
+  canDown: s(16.5),
+  tada: s(17),
   // II · The chase
-  run: s(17),
-  reset: s(17.4), // Nemu rights the can with one finger and comes
-  scoop: s(19.2), // she slides in and takes the slipper
-  faceOff: s(20), // she turns round into Nemu
-  chase: s(20.6), // run
-  reach: s(22.3), // the hand is nearly on her
-  blink: s(22.8), // Teleport. The hand closes on air.
-  skid: s(23.1), // out of a rift on the line
-  nemuComes: s(24.2), // Nemu turns and simply keeps coming
-  stomp: s(24.8),
-  // III · The ring
-  resolve: s(25.4), // brim up: enough
-  raise: s(26.4), // arms up; the night comes down
-  ring: s(27.6), // the ring draws itself across the whole lot, with Nemu inside it
-  slam: s(31), // both hands down: it goes off
-  laugh: s(33.2), // the best thing that has ever happened to her
-  nod: s(35), // Nemu, across the lot, dusts a shoulder and nods. Once.
-  settle: s(36.2),
-  home: s(38),
-  land: s(38.4), // the frame the player lives with
-  fold: s(42),
+  run: s(18.2),
+  rights: s(19.1), // Nemu's hand on the can, in its own shot
+  scoop: s(21.3), // she slides in and takes the slipper
+  chase: s(21.8), // and Nemu is right there
+  reach: s(24.5), // the hand
+  blink: s(25), // Teleport: she bursts into moths
+  arrive: s(25.4), // they knit her back across the lot
+  notice: s(26.2), // Nemu has not slowed
+  bolt: s(26.5), // she runs for the line
+  cutOff: s(27.4), // Nemu is on it first
+  // III · The crux
+  turn: s(28), // she stops running, and turns round
+  slow: s(29), // everything nearly stops. The ghost starts to come out.
+  eyes: s(30), // her eyes catch
+  nemuFace: s(30.8), // Nemu's fringe, and the ghost leaving her
+  kuroFace: s(31.5), // the only one who is frightened
+  full: s(32), // the whole of it, side on, the train over them
+  gulp: s(32.6), // real time: it goes into her palm
+  hand: s(33.1), // the hand is still coming. The curse is on a 1.5 s fuse.
+  drained: s(34.1), // an inch from her hat, and she drops
+  // IV · The settle
+  joy: s(35), // the best thing that has ever happened to her
+  home: s(36.4), // she steps round Nemu and strolls home
+  land: s(37), // no cuts from here
+  rise: s(38), // Nemu gets up, in no hurry
+  back: s(39), // and walks back to her can, Kuro beside her
+  atCan: s(42.9),
+  round: s(40), // the lens goes round to face Phaister
+  settled: s(44), // the last second is the idle's own motion
+  /** Street seconds after the first plate at which the LRT is level with the court: over them, in the middle of the slow part. */
+  trainLevel: s(29) / 30 + 2 * 0.12 - 5 / 18,
 };

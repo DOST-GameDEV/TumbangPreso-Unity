@@ -30,8 +30,11 @@ namespace TumbangPreso.EditorTools
         const string CamKey = "HomeFilmPlateRecorder.Cam", OutKey = "HomeFilmPlateRecorder.Out";
 
         /// <summary>One picture. `dt` is how far the street then runs; 0 takes another picture of the same moment.</summary>
-        [Serializable] class Shot { public string clip; public int i; public float x, y, z, yaw, pitch, roll, f, dt; public Vector3[] subjects; public float[] zack, rago, can; }
-        [Serializable] class Track { public string map; public string[] bones; public int warm; public float green; public Shot[] frames; }
+        [Serializable] class Shot { public string clip; public int i; public bool skip; public float x, y, z, yaw, pitch, roll, f, dt; public Vector3[] subjects; public float[] a, b, kuro, can, moths; }
+        /// <summary>One person in the film: who, where their eye paint is, and what colour it lights. No atlas means no glow.</summary>
+        [Serializable] class Member { public string id; public bool slipper; public string atlas; public float eyeLow, eyeHigh; public Color32 glow; }
+        /// <summary>`floor` is the court's surface in this map. `green` winds the signals and `train` the LRT, in seconds after the first plate; negative leaves them alone.</summary>
+        [Serializable] class Track { public string map; public float floor; public Member[] cast; public bool kuro; public string[] bones; public int warm; public float green; public float train = -1f; public int trainDir = 1; public Shot[] frames; }
 
         static HomeFilmPlateRecorder()
         {
@@ -108,6 +111,12 @@ namespace TumbangPreso.EditorTools
             view.enabled = false; // Its Update would put the sway back on the camera.
 
             var traffic = Object.FindFirstObjectByType<KantoTraffic>();
+            var flyby = Object.FindFirstObjectByType<LrtTrainFlyby>();
+            if (flyby != null)
+                foreach (var r in flyby.GetComponentsInChildren<Renderer>(true))
+                    Debug.Log("[HomeFilmPlates] train part " + r.name + " on=" + r.enabled + "/" + r.gameObject.activeInHierarchy + " layer=" + r.gameObject.layer + " at " + r.bounds.center.ToString("F1"));
+            foreach (var probe in new[] { new Vector3(0f, 30f, 0f), new Vector3(4f, 30f, -6f), new Vector3(-4f, 30f, 5f) })
+                Debug.Log("[HomeFilmPlates] floor under " + probe.ToString("F1") + " = " + (Physics.Raycast(probe, Vector3.down, out var ground, 60f) ? ground.point.y.ToString("F3") + " on " + ground.collider.name : "nothing"));
             if (traffic != null)
                 foreach (var signal in traffic.Signals)
                     if (signal != null) Debug.Log("[HomeFilmPlates] signal " + signal.name + " at " + signal.bounds.center.ToString("F2") + " faces " + signal.transform.forward.ToString("F2"));
@@ -121,8 +130,10 @@ namespace TumbangPreso.EditorTools
             foreach (var t in Object.FindObjectsByType<Transform>(FindObjectsSortMode.None))
                 if (t.name == "Pigeons" && t.gameObject.scene.name == track.map) t.gameObject.SetActive(false);
 
-            var zack = Figure.Build("zack", track.bones);
-            var rago = Figure.Build("sean", track.bones);
+            var first = Figure.Build(track.cast[0], track.bones, track.floor);
+            var second = Figure.Build(track.cast[1], track.bones, track.floor);
+            var kuro = track.kuro ? Pet.Build() : null;
+            var moths = new Moths();
             var can = BuildCan();
 
             float capture = Time.captureDeltaTime;
@@ -131,6 +142,7 @@ namespace TumbangPreso.EditorTools
 
             // The film's light turns green on its own beat, so the street's cycle is set to agree with it.
             if (traffic != null && track.green >= 0f) SetClockForGreen(traffic, track.green);
+            if (flyby != null && track.train >= 0f) SetClockForTrain(flyby, track.train, track.trainDir);
 
             var image = new Texture2D(width, height, TextureFormat.RGB24, false);
             var display = RenderTexture.GetTemporary(width, height, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
@@ -143,9 +155,15 @@ namespace TumbangPreso.EditorTools
                 {
                     var s = track.frames[n];
                     Time.captureDeltaTime = s.dt > 0f ? s.dt : 1f / 60f;
+                    // Only the street's clock runs: `plates.mjs <frame...>` still lands its picks on the right traffic and train.
+                    if (n % 120 == 0)
+                        Debug.Log("[HomeFilmPlates] clock " + n + " road=" + (traffic != null && traffic.DriverCount > 0 ? traffic.DriverPosition(0).ToString("F1") : "none") + " train=" + (flyby != null ? flyby.transform.position.ToString("F1") : "none"));
+                    if (s.skip) { yield return null; continue; }
                     camera.transform.SetPositionAndRotation(new Vector3(s.x, s.y, s.z), Quaternion.Euler(s.pitch, s.yaw, s.roll));
                     camera.fieldOfView = 2f * Mathf.Atan(540f / s.f) * Mathf.Rad2Deg;
-                    zack.Apply(s.zack); rago.Apply(s.rago); PlaceCan(can, s.can);
+                    first.Apply(s.a); second.Apply(s.b); PlaceCan(can, s.can);
+                    kuro?.Apply(s.kuro);
+                    moths.Apply(s.moths);
                     Clear(scenery, hidden, camera.transform.position, s.subjects);
                     camera.Render();
                     GL.sRGBWrite = QualitySettings.activeColorSpace == ColorSpace.Linear;
@@ -171,8 +189,6 @@ namespace TumbangPreso.EditorTools
         }
 
         const float PersonScale = 2.38f;
-        /// <summary>The court's surface in Kanto (kanto_layout.json, gameplay.walk).</summary>
-        const float Floor = 0.12f;
         /// <summary>The can's scale, from the film: 0.62 m tall.</summary>
         const float CanScale = 0.62f / 0.383f;
 
@@ -215,8 +231,9 @@ namespace TumbangPreso.EditorTools
             Renderer _head;
             Texture2D[] _lit;
 
-            public static Figure Build(string id, string[] names)
+            public static Figure Build(Member who, string[] names, float floor)
             {
+                string id = who.id;
                 var art = RosterBook.Load().FindPersonArt(id);
                 var body = Object.Instantiate(art.Model);
                 body.name = "Film " + id;
@@ -231,32 +248,32 @@ namespace TumbangPreso.EditorTools
                 if (idle != null) idle.SampleAnimation(body, 0f);
                 var bounds = new Bounds(body.transform.position, Vector3.zero);
                 foreach (var r in body.GetComponentsInChildren<Renderer>()) bounds.Encapsulate(r.bounds);
-                f._lift = Floor - (bounds.min.y - body.transform.position.y);
+                f._lift = floor - (bounds.min.y - body.transform.position.y);
                 Debug.Log("[HomeFilmPlates] " + id + " lift=" + f._lift + " missing bones=" + Array.FindAll(f._bones, b => b == null).Length);
 
-                if (id == "zack")
+                if (who.slipper)
                 {
                     var slipper = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/TumbangPreso/Art/models/tsinelas_tsinelas.glb"));
                     TumbangPreso.Visual.ToonSkin.ApplySlipper(slipper, TumbangPreso.Visual.ToonSkin.PropOutlineWidth);
                     Dress(slipper);
                     f._slipper = slipper.transform;
-                    f.BuildEyes(all);
                 }
+                if (!string.IsNullOrEmpty(who.atlas)) f.BuildEyes(who);
                 return f;
             }
 
             /// <summary>
-            /// Eyes only glow, and never change shape: copies of his atlas with the eye paint itself recoloured, by the film's
-            /// own rule (the dark paint on the face plane, inside the band read off the glb, y 0.441 to 0.474).
+            /// Eyes only glow, and never change shape: copies of the atlas with the eye paint itself recoloured, by the film's
+            /// own rule (the dark paint on the face plane, inside the band read off the glb).
             /// </summary>
-            void BuildEyes(Transform[] all)
+            void BuildEyes(Member who)
             {
                 foreach (var r in _body.GetComponentsInChildren<Renderer>(true))
                 {
                     var filter = r.GetComponent<MeshFilter>();
                     var mesh = r is SkinnedMeshRenderer sk ? sk.sharedMesh : filter != null ? filter.sharedMesh : null;
                     if (mesh == null || !mesh.isReadable || !r.name.Contains("head")) continue;
-                    var png = File.ReadAllBytes("Assets/TumbangPreso/Art/CharacterRedesign/zack/zack-redesign-atlas.png");
+                    var png = File.ReadAllBytes(who.atlas);
                     var rest = new Texture2D(2, 2, TextureFormat.RGBA32, false);
                     rest.LoadImage(png);
                     var pixels = rest.GetPixels32();
@@ -269,7 +286,7 @@ namespace TumbangPreso.EditorTools
                     {
                         Vector3 a = v[tri[t]], b = v[tri[t + 1]], c = v[tri[t + 2]];
                         float low = Mathf.Min(a.y, b.y, c.y) + up, high = Mathf.Max(a.y, b.y, c.y) + up;
-                        if (high < 0.441f || low > 0.474f || Mathf.Min(a.z, b.z, c.z) < 0.1f) continue;
+                        if (high < who.eyeLow || low > who.eyeHigh || Mathf.Min(a.z, b.z, c.z) < 0.1f) continue;
                         Vector2 p = uv[tri[t]], q = uv[tri[t + 1]], w = uv[tri[t + 2]];
                         int x0 = Mathf.FloorToInt(Mathf.Min(p.x, q.x, w.x) * rest.width), x1 = Mathf.CeilToInt(Mathf.Max(p.x, q.x, w.x) * rest.width);
                         int y0 = Mathf.FloorToInt(Mathf.Min(p.y, q.y, w.y) * rest.height), y1 = Mathf.CeilToInt(Mathf.Max(p.y, q.y, w.y) * rest.height);
@@ -284,7 +301,7 @@ namespace TumbangPreso.EditorTools
                     Debug.Log("[HomeFilmPlates] eye texels=" + marked + " on " + r.name);
                     _head = r;
                     _lit = new Texture2D[6];
-                    var glow = new Color32(255, 250, 150, 255);
+                    var glow = who.glow;
                     for (int n = 0; n < 6; n++)
                     {
                         var copy = (Color32[])pixels.Clone();
@@ -332,6 +349,113 @@ namespace TumbangPreso.EditorTools
             }
         }
 
+        /// <summary>
+        /// Kuro, the game's own model in the dress `GhostPetCompanion.ApplyAppearance` gives him, wearing his own authored faces.
+        /// A row: x y z yaw pitch roll scale, then a face from `Faces`. Nothing of his behaviour runs: the film acts him.
+        /// </summary>
+        sealed class Pet
+        {
+            /// <summary>`GhostPetCompanion.ExpressionFor`: rest, CuriousPeek, HappyHop, GoofyDizzy, ShyPout.</summary>
+            static readonly (string[] show, bool eyeL, bool eyeR, bool mouth)[] Faces =
+            {
+                (new string[0], false, false, false),
+                (new[] { "KuroSparkleL", "KuroSparkleR", "KuroOhMouth" }, false, false, true),
+                (new[] { "KuroHappyEyeL", "KuroHappyEyeR", "KuroGrinMouth" }, true, true, true),
+                (new[] { "KuroCrossLeft", "KuroCrossRight", "KuroGoofyMouth" }, true, true, true),
+                (new[] { "KuroShyEye", "KuroPoutMouth" }, false, true, true),
+            };
+
+            Transform _root, _expressions, _eyeL, _eyeR, _mouth;
+            Vector3 _restEyeL, _restEyeR, _restMouth;
+            readonly Dictionary<string, Transform> _parts = new Dictionary<string, Transform>();
+            readonly Dictionary<Transform, Vector3> _rest = new Dictionary<Transform, Vector3>();
+
+            static Transform Named(Transform root, string name) => Array.Find(root.GetComponentsInChildren<Transform>(true), t => t.name == name);
+
+            public static Pet Build()
+            {
+                var art = RosterBook.Load().FindPersonArt("nemu");
+                var body = Object.Instantiate(art.PetModel);
+                body.name = "Film Kuro";
+                foreach (var b in body.GetComponentsInChildren<Behaviour>(true)) b.enabled = false;
+                TumbangPreso.Visual.GhostPetCompanion.ApplyAppearance(body, art.Palette);
+                var rage = Named(body.transform, "RageForm");
+                if (rage != null) rage.gameObject.SetActive(false);
+                var restored = Named(body.transform, "RestoredCalm");
+                var expressions = Named(body.transform, "KuroExpressions");
+                foreach (var r in body.GetComponentsInChildren<Renderer>(true))
+                    if (!(restored != null && r.transform.IsChildOf(restored)) && !(expressions != null && r.transform.IsChildOf(expressions))) r.enabled = false;
+                var p = new Pet { _root = body.transform, _expressions = expressions };
+                if (expressions != null)
+                {
+                    foreach (var r in expressions.GetComponentsInChildren<Renderer>(true))
+                    {
+                        TumbangPreso.Visual.ToonSkin.Apply(r, 0, null);
+                        r.shadowCastingMode = ShadowCastingMode.Off;
+                        r.receiveShadows = false;
+                    }
+                    foreach (var t in expressions.GetComponentsInChildren<Transform>(true))
+                        if (t != expressions) { p._parts[t.name] = t; p._rest[t] = t.localScale; }
+                }
+                foreach (var t in restored != null ? restored.GetComponentsInChildren<Transform>(true) : new Transform[0])
+                {
+                    if (t.name == "ghost-eye-l") { p._eyeL = t; p._restEyeL = t.localScale; }
+                    else if (t.name == "ghost-eye-r") { p._eyeR = t; p._restEyeR = t.localScale; }
+                    else if (t.name == "ghost-mouth-dot") { p._mouth = t; p._restMouth = t.localScale; }
+                }
+                Dress(body);
+                Debug.Log("[HomeFilmPlates] kuro parts=" + p._parts.Count + " eyes=" + (p._eyeL != null) + "," + (p._eyeR != null) + " mouth=" + (p._mouth != null));
+                return p;
+            }
+
+            public void Apply(float[] d)
+            {
+                _root.SetPositionAndRotation(new Vector3(d[0], d[1], d[2]), Quaternion.Euler(d[4], 180f - d[3], d[5]));
+                _root.localScale = Vector3.one * d[6];
+                var face = Faces[Mathf.Clamp(Mathf.RoundToInt(d[7]), 0, Faces.Length - 1)];
+                if (_expressions != null)
+                {
+                    _expressions.localScale = face.show.Length > 0 ? Vector3.one : Vector3.zero;
+                    foreach (var kv in _rest) kv.Key.localScale = Array.IndexOf(face.show, kv.Key.name) >= 0 ? kv.Value : Vector3.zero;
+                }
+                if (_eyeL != null) _eyeL.localScale = face.eyeL ? Vector3.zero : _restEyeL;
+                if (_eyeR != null) _eyeR.localScale = face.eyeR ? Vector3.zero : _restEyeR;
+                if (_mouth != null) _mouth.localScale = face.mouth ? Vector3.zero : _restMouth;
+            }
+        }
+
+        /// <summary>
+        /// Her Teleport's swarm: the game's own moth (`PhaisterSwarm`), each placed by the film so it is deterministic and passes
+        /// properly behind and in front of the cast. A row is seven numbers a moth: x y z yaw pitch wing scale.
+        /// </summary>
+        sealed class Moths
+        {
+            readonly List<(Transform body, Transform l, Transform r, Quaternion restL, Quaternion restR)> _pool = new List<(Transform, Transform, Transform, Quaternion, Quaternion)>();
+
+            public void Apply(float[] d)
+            {
+                int n = d == null ? 0 : d.Length / 7;
+                while (_pool.Count < n)
+                {
+                    var prop = TumbangPreso.Visual.PhaisterProp.Spawn("moth", null, null, TumbangPreso.Visual.PhaisterProp.InsectOutlineWidth);
+                    Dress(prop);
+                    Transform l = TumbangPreso.Visual.PhaisterProp.Find(prop, "wing-l"), r = TumbangPreso.Visual.PhaisterProp.Find(prop, "wing-r");
+                    _pool.Add((prop.transform, l, r, l != null ? l.localRotation : Quaternion.identity, r != null ? r.localRotation : Quaternion.identity));
+                }
+                for (int i = 0; i < _pool.Count; i++)
+                {
+                    var m = _pool[i];
+                    m.body.gameObject.SetActive(i < n);
+                    if (i >= n) continue;
+                    int o = i * 7;
+                    m.body.SetPositionAndRotation(new Vector3(d[o], d[o + 1], d[o + 2]), Quaternion.Euler(d[o + 4], d[o + 3], 0f));
+                    m.body.localScale = Vector3.one * d[o + 6];
+                    if (m.l != null) m.l.localRotation = m.restL * Quaternion.Euler(0f, 0f, d[o + 5]);
+                    if (m.r != null) m.r.localRotation = m.restR * Quaternion.Euler(0f, 0f, -d[o + 5]);
+                }
+            }
+        }
+
         /// <summary>Bigger than this is the street itself (MapPreviewSurface.MaxOccluderSpan).</summary>
         const float MaxSpan = 14f;
         /// <summary>A prop this close to the lens is a blur across the frame, not a part of the shot.</summary>
@@ -375,6 +499,33 @@ namespace TumbangPreso.EditorTools
             float zGreenStarts = cycle / 2f;
             typeof(KantoTraffic).GetField("_clock", BindingFlags.Instance | BindingFlags.NonPublic)
                 .SetValue(traffic, Mathf.Repeat(zGreenStarts - seconds, cycle));
+        }
+
+        /// <summary>
+        /// Winds the LRT so the consist is level with the court this many seconds after the first plate. The run is the flyby's
+        /// own arithmetic, stepped here at the plates' rate: it gathers speed out of one station, crosses, and brakes into the other.
+        /// `dir` picks the track: from the lot, the deck's parapet hides nearly all of the far one (+1), so -1 is the side to shoot.
+        /// </summary>
+        static void SetClockForTrain(LrtTrainFlyby flyby, float seconds, int dir)
+        {
+            const BindingFlags Own = BindingFlags.Instance | BindingFlags.NonPublic;
+            var type = typeof(LrtTrainFlyby);
+            type.GetField("_dir", Own).SetValue(flyby, dir);
+            float level = -dir * flyby.CentreZ;
+            float along = flyby.StartZ, run = 0f;
+            const float Step = 1f / 60f;
+            while (along < level && along < flyby.EndZ)
+            {
+                float ends = Mathf.Min(along - flyby.StartZ, flyby.EndZ - along);
+                along += flyby.Speed * Mathf.Lerp(0.25f, 1f, Mathf.Clamp01(ends / Mathf.Max(1f, flyby.StationEase))) * Step;
+                run += Step;
+            }
+            Debug.Log("[HomeFilmPlates] train run to the court " + run.ToString("F2") + " s, wanted level at " + seconds.ToString("F2") + " s");
+            if (seconds < run) throw new InvalidOperationException("The train needs " + run + " s from the station to the court: start it earlier in the warm-up.");
+            type.GetField("_isRunning", Own).SetValue(flyby, false);
+            type.GetField("_timer", Own).SetValue(flyby, flyby.Interval - (seconds - run));
+            type.GetMethod("StopRumble", Own).Invoke(flyby, null);
+            type.GetMethod("Place", Own).Invoke(flyby, new object[] { flyby.StartZ });
         }
     }
 }

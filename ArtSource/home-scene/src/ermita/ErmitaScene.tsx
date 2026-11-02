@@ -1,306 +1,304 @@
 import React, { useEffect, useState } from 'react';
-import { AbsoluteFill, continueRender, delayRender, random, staticFile, useCurrentFrame } from 'remotion';
+import { AbsoluteFill, continueRender, delayRender, Img, random, staticFile, useCurrentFrame } from 'remotion';
 import { Defs } from '../lib/Defs';
 import { kf } from '../lib/kf';
-import { env, INTRO } from './time';
+import { BLEND, platesOf } from '../lib/plates';
+import { env, IDLE } from './time';
 import { B } from './beats';
-import { ActorImage, drawActor, drawKuro, drawProp, Light, useActor, useKuro, useProp } from '../three/actor';
+import { ActorImage, drawActor, Light, useActor } from '../three/actor';
 import { apparent, depth, line, PERSON_SCALE, project, scaleAt, V3, View } from '../phaister/view';
-import { Item, setNight } from '../phaister/set';
+import { setNight } from '../phaister/set';
 import { burstPath } from '../art/burst';
-import { Paint } from '../phaister/lettering';
-import { City, Ground, lampAt, Sky, Street, strobeAt, Viaduct } from './set';
-import { Heavens } from './city';
-import { camAt, focusAt, panSpeed } from './camera';
-import { canAt, flyingAt, Frame, GUARD, kuroAt, nemu, phaister, RING, SKID_FROM, SLIP_REST, STOP, throwTrail } from './perform';
+import { camAt, panSpeed } from './camera';
+import { ARRIVE, canAt, FLAT, Frame, kuroAt, nemu, phaister, SLIP_REST, STOP } from './perform';
+
+const { plateAt, preAt } = platesOf('phaister');
 
 const useFonts = () => {
   const [handle] = useState(() => delayRender('fonts'));
   useEffect(() => {
-    const faces = [new FontFace('Darumadrop One', `url(${staticFile('fonts/DarumadropOne-Regular.ttf')})`), new FontFace('Paalalabas', `url(${staticFile('fonts/PaalalabasDisplayWide.otf')})`)];
+    const faces = [new FontFace('Darumadrop One', `url(${staticFile('fonts/DarumadropOne-Regular.ttf')})`)];
     Promise.all(faces.map((x) => x.load()))
       .then((l) => { l.forEach((x) => (document.fonts as unknown as { add: (y: FontFace) => void }).add(x)); continueRender(handle); })
       .catch(() => continueRender(handle));
   }, [handle]);
 };
 
-const WITCH = '#F444D4';
-const WITCH_CORE = '#FFD6F4';
-/** Sodium from above, plum in the shade, her pink on the rims (LORE: selective shop light). */
-const lightOf = (lamp: number): Light => ({ dir: [-0.32, 0.72, 0.4], lit: lamp > 0.4 ? '#FFDDB0' : '#B9A0C0', shade: '#6E4C78', rim: '#FF9CE6', rim_strength: 0.75 });
-
+/** The game's own: `VoodooCursePresenter.DrainHue`, the swarm's violet smoke (`PhaisterSwarm`). */
+const DRAIN = '#FF384D';
+const DRAIN_CORE = '#FFE2E0';
+const SMOKE = '#9460D1';
+const INK = '#1A0620';
+const DAY: Light = { dir: [0.45, 0.6, 0.66], lit: '#FFF8EE', shade: '#A9A2B6', rim: '#FFF4DC', rim_strength: 0.42 };
 const FOCUS = 0.5;
-const CAN_M_PER_UNIT = 0.62 / 0.383;
+/** The fist in the forearm bone's space, on the redesigned rigs. */
+const FIST_L: [number, number, number] = [0.085, 0, 0];
 
-const figure = (b: NonNullable<ReturnType<typeof useActor>>, v: View, p: Frame, light: Light, res = 1.35) => {
+const figure = (b: NonNullable<ReturnType<typeof useActor>>, v: View, p: Frame, res: number, flash = 0, flashColour = '#ffffff', at?: { x: number; z: number }) => {
   const S = PERSON_SCALE;
+  const x = at?.x ?? p.x;
+  const z = at?.z ?? p.z;
   const focusY = FOCUS * S;
-  const ppu = scaleAt(v, [p.x, focusY, p.z]) * S;
-  const ap = apparent(v, [p.x, 0, p.z], p.yaw, focusY);
-  const [fx, fy] = project(v, [p.x, focusY, p.z]);
-  // ⚠️ From the floor while the feet are in frame: see `figure` in bgc/BgcScene.tsx.
-  const footY = project(v, [p.x, 0.02, p.z])[1];
-  const onFloor = Math.max(0, Math.min(1, (1300 - footY) / 220));
-  const floorPitch = Math.atan2(v.y, Math.hypot(v.x - p.x, v.z - p.z)) / (Math.PI / 180);
-  // Capped: past this a low fringe or a hat brim covers the face, and the flat faces are the performance.
-  const pitch = ap.pitch + Math.max(0, Math.min(9, floorPitch) - ap.pitch) * onFloor;
-  const img = drawActor(b, { x: fx, y: fy, ppu, focus: FOCUS, reach: 0.72, yaw: ap.yaw, pitch, layers: p.layers, samples: p.samples, lift: p.lift, face: p.face, eyeGlow: p.eyeGlow, slipper: p.slipper, res, light: { ...light, flash: 0, flashColour: '#F6FFA0' } });
+  const ppu = scaleAt(v, [x, focusY, z]) * S;
+  const ap = apparent(v, [x, 0, z], p.yaw, focusY);
+  const [fx, fy] = project(v, [x, focusY, z]);
+  const img = drawActor(b, { x: fx, y: fy, ppu, focus: FOCUS, reach: 0.72, yaw: ap.yaw, pitch: ap.pitch, layers: p.layers, samples: p.samples, lift: p.lift, face: 'rest', slipper: { at: 'none' }, res, light: { ...DAY, flash, flashColour } });
   return { img, roll: ap.roll, fx, fy };
 };
 
-const shadowOf = (v: View, x: number, z: number, r: number) => {
-  const pts: V3[] = [];
-  for (let i = 0; i <= 18; i++) {
-    const a = (i / 18) * 6.283;
-    pts.push([x + r * Math.cos(a) + 0.1, 0.012, z + r * 0.72 * Math.sin(a) + 0.12]);
-  }
-  const d = line(v, pts);
-  return d ? <path d={d} fill="#140A1C" opacity={0.45} /> : null;
-};
-
-/** A ring of her lunar writing on the floor. Fictional, per CHARACTER_ORIGINS.md. */
-const Sigil: React.FC<{ v: View; x: number; z: number; r: number; a: number; f: number; draw?: number }> = ({ v, x, z, r, a, f, draw = 1 }) => {
-  const ring = (q: number, n = 56) => {
-    const pts: V3[] = [];
-    for (let i = 0; i <= n * draw; i++) {
-      const t = (i / n) * 6.283 + f * 0.03;
-      pts.push([x + Math.cos(t) * r * q, 0.02, z + Math.sin(t) * r * q]);
-    }
-    return pts;
-  };
-  const ticks: React.ReactNode[] = [];
-  for (let i = 0; i < 8; i++) {
-    const t = (i / 8) * 6.283 - f * 0.04;
-    ticks.push(<path key={i} d={line(v, [[x + Math.cos(t) * r * 0.74, 0.02, z + Math.sin(t) * r * 0.74], [x + Math.cos(t + 0.2) * r * 0.88, 0.02, z + Math.sin(t + 0.2) * r * 0.88]])} stroke={WITCH_CORE} strokeWidth={3} />);
-  }
-  return <g opacity={a} fill="none" strokeLinecap="round">
-    <path d={line(v, ring(1))} stroke={WITCH} strokeWidth={12} opacity={0.4} filter="url(#glow)" />
-    <path d={line(v, ring(1))} stroke={WITCH_CORE} strokeWidth={3.4} />
-    <path d={line(v, ring(0.66))} stroke={WITCH} strokeWidth={2.4} />
-    {draw >= 1 && ticks}
-  </g>;
-};
-
-/** A blink: the seam in the air, then it shuts. */
-const Rift: React.FC<{ x: number; y: number; s: number; open: number; seed: string }> = ({ x, y, s, open, seed }) => {
-  if (open <= 0) return null;
-  const sp: React.ReactNode[] = [];
-  for (let i = 0; i < 10; i++) {
-    const a = random(`${seed}${i}`) * 6.283;
-    const q = s * (0.3 + 0.9 * (1 - open) + 0.3 * random(`${seed}q${i}`));
-    const px = x + Math.cos(a) * q;
-    const py = y + Math.sin(a) * q * 1.3;
-    sp.push(<rect key={i} x={px} y={py} width={s * 0.05} height={s * 0.05} fill={i % 3 ? WITCH : WITCH_CORE} transform={`rotate(45 ${px} ${py})`} />);
-  }
-  return <g opacity={Math.min(1, open * 1.6)}>
-    <ellipse cx={x} cy={y} rx={s * 0.42 * open} ry={s * 1.2} fill={WITCH} opacity={0.35} filter="url(#glow)" />
-    <ellipse cx={x} cy={y} rx={s * 0.13 * open} ry={s * 1.05} fill="#1A0620" stroke={WITCH_CORE} strokeWidth={3} />
-    {sp}
-  </g>;
-};
-
-const Burst: React.FC<{ x: number; y: number; s: number }> = ({ x, y, s }) => (
+const Burst: React.FC<{ x: number; y: number; s: number; c?: string; core?: string }> = ({ x, y, s, c = DRAIN, core = '#FFF3FB' }) => (
   <g transform={`translate(${x} ${y})`}>
-    <path d={burstPath(14, s * 0.5, s * 1.08, 'k-ink', 0.25)} fill="#1A0620" />
-    <path d={burstPath(14, s * 0.44, s, 'k-ink', 0.25)} fill={WITCH} />
-    <path d={burstPath(11, s * 0.24, s * 0.56, 'k-core', 0.25)} fill="#FFF3FB" />
+    <path d={burstPath(14, s * 0.5, s * 1.08, 'k-ink', 0.25)} fill={INK} />
+    <path d={burstPath(14, s * 0.44, s, 'k-ink', 0.25)} fill={c} />
+    <path d={burstPath(11, s * 0.24, s * 0.56, 'k-core', 0.25)} fill={core} />
   </g>
 );
+/** Lettering in Darumadrop, the owner's pick. */
+const Word: React.FC<{ text: string; h: number; fill?: string }> = ({ text, h, fill = DRAIN_CORE }) => (
+  <text x={0} y={0} textAnchor="middle" fontFamily="Darumadrop One" fontSize={h} fill={fill} stroke={INK} strokeWidth={h * 0.12} strokeLinejoin="round" style={{ paintOrder: 'stroke' }}>{text}</text>
+);
+
+/** Two held frames at each of the film's peaks: ink, then flipped. Only ever at `klang`, `eyes`, `gulp` and `drained`. */
+const impactAt = (f: number) => {
+  for (const [at, n] of [[B.klang + 2, 1], [B.eyes + 5, 1], [B.gulp, 2], [B.drained + 6, 1]] as const) {
+    const t = f - at;
+    if (t >= 0 && t < 1) return { stage: 1, big: n };
+    if (t >= 1 && t < 2) return { stage: 2, big: n };
+  }
+  return { stage: 0, big: 0 };
+};
 
 export const ErmitaScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
   useFonts();
   const frame = useCurrentFrame();
-  const f = part === 'idle' ? INTRO + frame : frame / 2;
+  const f = part === 'idle' ? 1350 + frame : frame / 2;
   setNight(0);
   const pb = useActor('phaister-redesign', true);
   const nb = useActor('nemu-redesign');
-  const kk = useKuro();
-  const can = useProp('lata_metal');
   const v = camAt(f);
   const P = phaister(f);
   const N = nemu(f);
   const C = canAt(f);
-  const light = lightOf(lampAt(f));
-  // Her night: everything but her pink comes down while the ring burns.
-  const night = f >= INTRO ? 0 : kf(f, [[B.raise, 0], [B.raise + 16, 0.42], [B.settle, 0.42], [B.home, 0]]);
-  const strobe = strobeAt(f);
+  const K = kuroAt(f);
 
-  const city: Item[] = City(v, f).sort((a, b) => b.z - a.z);
-  const items: Item[] = [...Viaduct(v, f), ...Street(v, f)];
-  const push = (node: React.ReactNode, at: V3, bias = 0) => items.push({ z: depth(v, at) + bias, node });
-  const front = (x: number, z: number) => depth(v, [x, 1, z]) > 0.7;
-  let herHand: [number, number] | null = null;
-
-  if (pb && P.visible > 0 && front(P.x, P.z)) {
-    const d = figure(pb, v, P, night > 0.1 ? { ...light, rim: '#FF7AE6', rim_strength: 1 } : light, 1.5);
-    herHand = d.img.at('forearm-right', [-0.085, 0, 0]);
-    push(<g key="her"><g>{shadowOf(v, P.x, P.z, 0.72)}</g><g transform={`rotate(${d.roll} ${d.fx} ${d.fy})`}><ActorImage d={d.img} /></g></g>, [P.x, 1, P.z]);
-  }
-  if (nb && front(N.x, N.z)) {
-    const d = figure(nb, v, N, light);
-    push(<g key="nemu"><g>{shadowOf(v, N.x, N.z, 0.72)}</g><g transform={`rotate(${d.roll} ${d.fx} ${d.fy})`}><ActorImage d={d.img} /></g></g>, [N.x, 1, N.z]);
-  }
-  const K = kuroAt(f, N);
-  if (kk && depth(v, K.p) > 0.7) {
-    const ap = apparent(v, K.p, 0, 0.45);
-    const [x, y] = project(v, [K.p[0], K.p[1] + 0.45, K.p[2]]);
-    const ppu = scaleAt(v, K.p) * (0.85 / kk.height);
-    const img = drawKuro(kk, { x, y, ppu, yaw: K.yaw, pitch: ap.pitch, face: { ...K.face, puff: K.puff }, light: { ...light, lit: '#F6E6FF', shade: '#8A6AA8' } });
-    push(<g key="kuro" opacity={0.95}><ActorImage d={img} /></g>, K.p, -0.1);
-  }
-  if (can && depth(v, [C.x, 0.3, C.z]) > 0.6) {
-    const at: V3 = [C.x, C.hop, C.z];
-    const ppu = scaleAt(v, at) * CAN_M_PER_UNIT;
-    const ap = apparent(v, [C.x, 0, C.z], 22, 0.3);
-    const [x, y] = project(v, [at[0], at[1] + 0.3, at[2]]);
-    const img = drawProp(can, { x, y, ppu, focus: 0.19, reach: 0.34, yaw: ap.yaw, pitch: ap.pitch, rot: C.rot, lift: [0, 0.125 * C.lying, 0], res: 1.5, light });
-    push(<g key="can"><ActorImage d={img} /></g>, at);
-  }
-  const fl = flyingAt(f);
-  if (fl && pb && depth(v, fl.p) > 0.6) {
-    const ppu = scaleAt(v, fl.p) * PERSON_SCALE * (fl.big ? 1.8 : 1);
-    const [x, y] = project(v, fl.p);
-    const img = drawActor(pb, { x, y, ppu, focus: 0, target: [0, 0, 0], reach: 0.22, yaw: 0, pitch: apparent(v, fl.p, 0, 0).pitch, only: 'slipper', slipper: { at: 'free', pos: [0, 0, 0], rot: fl.rot }, light, res: 1.4 });
-    push(<g key="slipper"><ActorImage d={img} /></g>, fl.p, -0.2);
-  }
-  items.sort((a, b) => b.z - a.z);
-
-  // ---------------------------------------------------------------- effects
   const fx: React.ReactNode[] = [];
   const under: React.ReactNode[] = [];
-  const seed = `${Math.floor(f / 2)}`;
-  // The throw's ribbon: you can read where it went.
-  const ribA = f < B.klang ? 1 : env(f, B.klang, B.klang, B.klang + 8, B.tada + 8);
-  const tr = throwTrail(f).filter((p) => depth(v, p) > 0.6).map((p) => project(v, p));
-  if (f >= B.flick && tr.length > 1 && ribA > 0) {
-    const d = tr.map(([x, y], i) => `${i ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`).join('');
-    fx.push(<g key="rib" opacity={ribA} fill="none" strokeLinecap="round"><path d={d} stroke={WITCH} strokeWidth={24} opacity={0.4} filter="url(#glow)" /><path d={d} stroke={WITCH_CORE} strokeWidth={6} /></g>);
+  const inFront = (p: V3) => depth(v, p) > 0.6;
+
+  // ⚠️ THE CAST IS IN THE PLATE, ON THE GAME'S OWN SHADER. These figures are never shown: they only say where a bone lands on screen, for the effects.
+  const curse = f >= B.turn + 10 && f < B.drained + 18;
+  let palm: [number, number] | null = null;
+  let palmWorld: V3 = [P.x, 1.3, P.z - 0.8];
+  if (curse && pb && inFront([P.x, 1, P.z])) {
+    const d = figure(pb, v, P, 0.3);
+    palm = d.img.at('forearm-left', FIST_L);
+    const ax = N.x - P.x;
+    const az = N.z - P.z;
+    const al = Math.hypot(ax, az) || 1;
+    palmWorld = [P.x + (ax / al) * 0.8, 1.2, P.z + (az / al) * 0.8];
   }
-  // The ring: the size of the lot, drawing itself round Nemu.
-  const draw = kf(f, [[B.ring, 0], [B.ring + 44, 1]]);
-  const ringA = f >= INTRO ? 0 : env(f, B.ring, B.ring + 6, B.slam + 12, B.settle);
-  if (ringA > 0) {
-    under.push(<Sigil key="big" v={v} x={RING.x} z={RING.z} r={5.6} a={ringA} f={f} draw={draw} />);
-    under.push(<Sigil key="small" v={v} x={RING.x} z={RING.z} r={2.8} a={ringA * 0.85} f={-f} draw={draw} />);
-    under.push(<Sigil key="tiny" v={v} x={RING.x} z={RING.z} r={1.1} a={ringA} f={f * 2} draw={draw} />);
-  }
-  // A faint mark of hers stays on the can.
-  const stageA = f >= INTRO ? 0.3 : kf(f, [[B.home, 0], [B.fold, 0.3]]);
-  if (stageA > 0) under.push(<Sigil key="stage" v={v} x={0} z={0} r={1.2} a={stageA} f={f} />);
-  // It goes off: a column of her light where Nemu stood, thrown up past the top of the frame.
-  const beam = env(f, B.slam - 1, B.slam, B.slam + 8, B.slam + 30);
-  if (beam > 0 && depth(v, [RING.x, 1, RING.z]) > 0.7) {
-    const [bx0, by0] = project(v, [RING.x, 0, RING.z]);
-    const s = scaleAt(v, [RING.x, 0, RING.z]);
-    fx.push(<g key="beam" opacity={beam}>
-      <path d={`M${bx0 - s * 1.5} ${by0}L${bx0 + s * 1.5} ${by0}L${bx0 + s * 2.6} -60L${bx0 - s * 2.6} -60Z`} fill={WITCH} opacity={0.55} filter="url(#glow)" />
-      <path d={`M${bx0 - s * 0.8} ${by0}L${bx0 + s * 0.8} ${by0}L${bx0 + s * 1.3} -60L${bx0 - s * 1.3} -60Z`} fill={WITCH_CORE} opacity={0.9} />
-    </g>);
-  }
-  for (const [at, x, z, big] of [[B.klang + 2, 0, 0, 6], [B.slam, RING.x, RING.z, 11]] as const) {
-    if (f < at || f >= at + 28) continue;
-    const t = (f - at) / 28;
-    [0, 0.2].forEach((lag, n) => {
-      const q = Math.max(0, t - lag);
-      if (q <= 0) return;
-      const ring: V3[] = [];
-      for (let i = 0; i <= 40; i++) ring.push([x + Math.cos((i / 40) * 6.283) * (0.4 + big * Math.sqrt(q)), 0.02, z + Math.sin((i / 40) * 6.283) * (0.4 + big * Math.sqrt(q))]);
-      fx.push(<path key={`rg${at}${n}`} d={line(v, ring)} stroke={WITCH_CORE} strokeWidth={12 * (1 - q)} fill="none" opacity={(1 - q) * 0.9} />);
-    });
-  }
-  // The blink: out by Nemu's hand, in on the line.
-  for (const [at, x, z] of [[B.blink, P.x, P.z], [B.skid, SKID_FROM.x, SKID_FROM.z]] as const) {
-    const open = env(f, at - 2, at, at + 3, at + 16);
-    if (open > 0 && depth(v, [x, 1, z]) > 0.7) {
-      const [rx, ry] = project(v, [x, 1.2, z]);
-      fx.push(<Rift key={`rift${at}`} x={rx} y={ry} s={scaleAt(v, [x, 1.2, z]) * 1.4} open={open} seed={`rf${at}${seed}`} />);
+
+  // ⚠️ THE EFFECTS ARE OVER THE PICTURE, SO THEY CANNOT PASS BEHIND ANYONE. What Phaister or Nemu stands in front of is left out while they cover it.
+  const covers = (who: { x: number; z: number }, p: V3) => {
+    if (depth(v, p) <= depth(v, [who.x, 1, who.z])) return false;
+    const [cx] = project(v, [who.x, 1, who.z]);
+    return Math.abs(project(v, p)[0] - cx) < scaleAt(v, [who.x, 1, who.z]) * 0.9;
+  };
+  const covered = (p: V3, skipNemu = false) => (P.visible > 0 && covers(P, p)) || (!skipNemu && covers(N, p));
+
+  // ---------------------------------------------------------------- ⚠️ THE CRUX: Curse: Drain (`VoodooSoulDraw`)
+  // The soul is pulled out of the victim, not a cord: a see-through ghost of their own shape, lit in the curse's colour, dragged toward her,
+  // with motes tearing off it and sucked in braided currents to her palm. The game's goes into her doll; the doll is cut from this film (owner),
+  // so here it goes into her open hand. Crimson, as in the game. This is the only big effect in the film.
+  const pull = f >= B.slow - 4 && f < B.gulp + 9;
+  const fill = kf(f, [[B.slow - 4, 0], [B.gulp, 1]]);
+  if (pull && nb && inFront([N.x, 1, N.z])) {
+    const gulped = f >= B.gulp ? (f - B.gulp) / 9 : 0;
+    const out = 0.3 + 0.95 * fill + 1.5 * gulped;
+    const dx = palmWorld[0] - N.x;
+    const dz = palmWorld[2] - N.z;
+    const dd = Math.hypot(dx, dz) || 1;
+    const step = Math.min(out, dd);
+    const at = { x: N.x + (dx / dd) * step, z: N.z + (dz / dd) * step };
+    const a = Math.min(1, fill * 4) * (1 - gulped);
+    if (a > 0) {
+      const d = figure(nb, v, N, 1.2, 1, DRAIN, at);
+      const s = 1 - 0.6 * gulped;
+      fx.push(<g key="soul" transform={`rotate(${d.roll} ${d.fx} ${d.fy}) translate(${d.fx} ${d.fy}) scale(${s}) translate(${-d.fx} ${-d.fy})`} style={{ mixBlendMode: 'screen' }}>
+        <g opacity={0.5 * a}><ActorImage d={d.img} /></g>
+        <g opacity={a} filter="url(#drainline)"><ActorImage d={d.img} /></g>
+      </g>);
+    }
+    // The motes: separate specks, faster and smaller as they go in, in two currents twisting round each other.
+    if (palm && f < B.gulp + 4) {
+      const [ex, ey] = project(v, [at.x, 1.1, at.z]);
+      const q = scaleAt(v, [at.x, 1.1, at.z]);
+      const rate = f >= B.slow && f < B.gulp ? 0.06 : 0.3;
+      for (let i = 0; i < 60; i++) {
+        const t = (random(`m${i}`) + f * rate * (0.5 + random(`mr${i}`) * 0.5)) % 1;
+        const tt = t * t;
+        const strand = i % 2 ? 1 : -1;
+        const tw = Math.sin(t * 9 + random(`mp${i}`) * 1.2) * strand * q * 0.3 * (1 - t);
+        const sx = ex + (random(`mx${i}`) - 0.5) * q * 0.9 * (1 - t);
+        const sy = ey + (random(`my${i}`) - 0.5) * q * 1.3 * (1 - t);
+        const x = sx + (palm[0] - sx) * tt;
+        const y = sy + (palm[1] - sy) * tt + tw;
+        const r = q * (0.03 - 0.02 * t);
+        fx.push(<circle key={`mt${i}`} cx={x} cy={y} r={Math.max(1.6, r)} fill={i % 3 ? DRAIN : DRAIN_CORE} opacity={(0.45 + 0.55 * t) * Math.min(1, fill * 5)} />);
+      }
+      // The light swelling at her palm.
+      const g = q * (0.14 + 0.5 * fill);
+      fx.push(<circle key="pg" cx={palm[0]} cy={palm[1]} r={g * 1.6} fill="url(#drainglow)" style={{ mixBlendMode: 'screen' }} />);
+      fx.push(<circle key="pc" cx={palm[0]} cy={palm[1]} r={g * 0.3} fill={DRAIN_CORE} />);
     }
   }
-  if (f >= B.blink && f < B.blink + 3) fx.push(<rect key="blk" x={-100} y={-100} width={2200} height={1300} fill={WITCH_CORE} opacity={0.8} />);
-  // Speed lines down the run and the chase.
-  const rush = Math.max(env(f, B.run + 4, B.run + 10, B.scoop - 6, B.scoop), env(f, B.chase, B.chase + 4, B.blink - 2, B.blink));
-  if (rush > 0) {
-    for (let i = 0; i < 12; i++) {
-      const y = 140 + 800 * random(`sl${i}`);
-      const x = 40 + 1800 * random(`sx${i}${seed}`);
-      fx.push(<rect key={`sl${i}`} x={x} y={y} width={120 + 240 * random(`sw${i}`)} height={3 + 3 * random(`sh${i}`)} fill="#FFF3E2" opacity={0.55 * rush} />);
+  // The gulp: her palm flares, and a shock goes out along the floor from her feet.
+  if (f >= B.gulp + 2 && f < B.gulp + 26) {
+    const t = (f - B.gulp - 2) / 24;
+    if (t < 1) {
+      [0, 0.2].forEach((lag, n) => {
+        const q = Math.max(0, t - lag);
+        if (q <= 0) return;
+        const ring: V3[] = [];
+        for (let i = 0; i <= 40; i++) ring.push([P.x + Math.cos((i / 40) * 6.283) * (0.4 + 8 * Math.sqrt(q)), 0.02, P.z + Math.sin((i / 40) * 6.283) * (0.4 + 8 * Math.sqrt(q))]);
+        under.push(<path key={`gr${n}`} d={line(v, ring)} stroke={DRAIN_CORE} strokeWidth={18 * (1 - q)} fill="none" opacity={(1 - q) * 0.9} />);
+      });
+      if (palm) fx.push(<g key="pf" opacity={1 - t}><Burst x={palm[0]} y={palm[1]} s={150 + 420 * Math.sqrt(t)} /></g>);
     }
   }
-  // Dust: the slide, the skid, Nemu's long ride.
+  // The mark: DRAIN's twisted crimson knot turning over the marked body, for its 1.5 s fuse (`VoodooCursePresenter`).
+  if (f >= B.gulp + 6 && f < B.drained + 4 && nb) {
+    const at: V3 = [N.x, 2.5, N.z];
+    if (inFront(at)) {
+      const [hx, hy] = project(v, at);
+      const q = scaleAt(v, at);
+      const tight = (f - B.gulp) / (B.drained - B.gulp);
+      const rx = q * (0.32 - 0.12 * tight);
+      const ry = q * 0.1;
+      const turn = f * 0.35;
+      const d = (o: number) => {
+        let s = '';
+        for (let i = 0; i <= 28; i++) { const t = (i / 28) * 6.283 + turn + o; s += `${i ? 'L' : 'M'}${hx + Math.cos(t) * rx} ${hy + Math.sin(t) * ry + Math.sin(t * 3) * ry * 0.6}`; }
+        return s;
+      };
+      fx.push(<g key="knot" fill="none" strokeLinecap="round"><path d={d(0)} stroke={INK} strokeWidth={q * 0.05} /><path d={d(0)} stroke={DRAIN} strokeWidth={q * 0.03} /><path d={d(2)} stroke={DRAIN_CORE} strokeWidth={q * 0.014} /></g>);
+    }
+  }
+  // Drained: her stamina goes, and what is left of it comes off her as she drops.
+  if (f >= B.drained && f < B.drained + 26) {
+    const t = (f - B.drained) / 26;
+    const at: V3 = [FLAT.x, 0.6, FLAT.z];
+    if (inFront(at)) {
+      const q = scaleAt(v, at);
+      const [x, y] = project(v, at);
+      for (let i = 0; i < 18; i++) {
+        const a = random(`dr${i}`) * 6.283;
+        const r = q * (0.4 + 1.6 * random(`drq${i}`)) * t;
+        fx.push(<circle key={`dr${i}`} cx={x + Math.cos(a) * r} cy={y + Math.sin(a) * r * 0.5 - q * 0.9 * t} r={q * 0.028} fill={i % 2 ? DRAIN : DRAIN_CORE} opacity={1 - t} />);
+      }
+    }
+  }
+
+  // ---------------------------------------------------------------- Teleport: violet smoke where she goes and where she knits. The moths are in the plate, on the game's own model.
+  const smoke = (key: string, x0: number, z0: number, at: number) => {
+    const t = (f - at) / 20;
+    if (t < 0 || t >= 1 || !inFront([x0, 1, z0])) return;
+    const q = scaleAt(v, [x0, 1, z0]);
+    for (let i = 0; i < 7; i++) {
+      const a = (i / 7) * 6.283 + random(`${key}${i}`);
+      const r = q * (0.2 + 0.7 * t) * (0.7 + 0.5 * random(`${key}r${i}`));
+      const [x, y] = project(v, [x0, 0.2 + (i % 4) * 0.42 + t * 0.5, z0]);
+      if (!covered([x0, 1, z0], true)) fx.push(<circle key={`${key}${i}`} cx={x + Math.cos(a) * r} cy={y + Math.sin(a) * r * 0.5} r={q * (0.18 + 0.2 * t)} fill={SMOKE} opacity={0.62 * (1 - t)} />);
+    }
+  };
+  smoke('sa', P.visible > 0 ? P.x : 0.8, P.visible > 0 ? P.z : -6.6, B.blink);
+  smoke('sb', ARRIVE.x, ARRIVE.z, B.arrive - 2);
+
+  // ---------------------------------------------------------------- dust and marks
   const puff = (key: string, x0: number, z0: number, start: number, life: number, size: number) => {
-    if (f < start || f >= start + life || depth(v, [x0, 0.1, z0]) < 0.6) return;
+    if (f < start || f >= start + life || !inFront([x0, 0.1, z0])) return;
     const t = (f - start) / life;
     const [x, y] = project(v, [x0, 0.1, z0]);
     const s2 = scaleAt(v, [x0, 0.1, z0]);
     for (let i = 0; i < 6; i++) {
       const ang = (i / 6) * Math.PI + random(`${key}a${i}`) * 0.5;
       const q = s2 * size * (0.35 + 1.1 * t);
-      fx.push(<circle key={`${key}${i}`} cx={x + Math.cos(ang) * q * 1.4} cy={y - Math.sin(ang) * q * 0.55} r={q * 0.55} fill="#BFAEB4" opacity={0.6 * (1 - t)} />);
+      fx.push(<circle key={`${key}${i}`} cx={x + Math.cos(ang) * q * 1.4} cy={y - Math.sin(ang) * q * 0.55} r={q * 0.55} fill="#EBDCBE" opacity={0.6 * (1 - t)} />);
     }
   };
-  puff('slide', SLIP_REST.x + 0.2, SLIP_REST.z, B.scoop - 5, 24, 0.4);
-  puff('skid', P.x, P.z, B.skid, 18, 0.4);
-  puff('land', GUARD.x, GUARD.z, B.slam + 20, 22, 0.5);
-  puff('stomp', P.x, P.z, B.stomp + 2, 12, 0.25);
-  // Her "!" when she turns into Nemu; Kuro's when the ring closes.
+  puff('slide', SLIP_REST.x + 0.3, SLIP_REST.z, B.scoop - 8, 22, 0.36);
+  puff('candn', C.x, C.z, B.canDown, 14, 0.2);
+  puff('arrive', ARRIVE.x, ARRIVE.z, B.arrive, 14, 0.3);
+  puff('skid', -4.9, -5.2, B.cutOff, 16, 0.34);
+  puff('flat', FLAT.x, FLAT.z - 0.2, B.drained + 5, 30, 0.7);
   const bang = (key: string, x: number, y: number, z: number, at: number, until: number, h: number) => {
-    if (f < at || f >= until || depth(v, [x, y, z]) < 0.7) return;
+    if (f < at || f >= until || !inFront([x, y, z])) return;
     const [bx, by] = project(v, [x, y, z]);
     const q = scaleAt(v, [x, y, z]);
-    fx.push(<g key={key} transform={`translate(${bx} ${by}) rotate(10) scale(${kf(f, [[at, 0.2], [at + 4, 1.2], [at + 8, 1]])})`}><Paint text="!" x={0} y={0} h={q * h} fill="#FFE27A" outline="#1A0620" seed={key} wobble={0.2} bounce={0} /></g>);
+    fx.push(<g key={key} transform={`translate(${bx} ${by}) rotate(10) scale(${kf(f, [[at, 0.2], [at + 4, 1.2], [at + 8, 1]])})`}><Word text="!" h={q * h} fill="#FFE27A" /></g>);
   };
-  bang('pb', P.x - 0.7, 2.3, P.z, B.faceOff, B.chase, 0.6);
-  bang('kb', K.p[0] + 0.34, K.p[1] + 0.85, K.p[2], B.ring + 4, B.slam, 0.55);
-  // Her joy: her own sparks at each hop.
-  if (f >= B.laugh && f < B.laugh + 34) {
-    const t = (f - B.laugh) / 34;
-    const [hx, hy] = project(v, [P.x, 2.3, P.z]);
-    const s = scaleAt(v, [P.x, 2, P.z]);
-    for (let i = 0; i < 16; i++) {
-      const a = random(`j${i}`) * 6.283;
-      const q = s * (0.5 + 1.2 * random(`jq${i}`)) * t;
-      const px = hx + Math.cos(a) * q;
-      const py = hy + Math.sin(a) * q + s * 0.9 * t * t;
-      fx.push(<rect key={`j${i}`} x={px} y={py} width={s * 0.07} height={s * 0.07} transform={`rotate(${45 + f * 8} ${px} ${py})`} fill={i % 2 ? WITCH : '#FFD86A'} opacity={1 - t} />);
-    }
-  }
+  bang('kb', K[0] + 0.5, K[1] + 0.7, K[2], B.klang + 2, B.tada - 6, 0.6);
+  bang('pb', P.x + 0.7, 2.3, P.z, B.notice, B.bolt + 2, 0.62);
+  bang('kc', K[0] + 0.45, K[1] + 0.6, K[2], B.kuroFace + 2, B.full, 0.5);
 
-  const klangWord = env(f, B.klang + 4, B.klang + 5, B.klang + 24, B.klang + 30);
+  const klangWord = env(f, B.klang + 5, B.klang + 6, B.reactN - 2, B.reactN);
+  const drainedWord = env(f, B.drained + 8, B.drained + 9, B.joy - 4, B.joy);
   const [icx, icy] = project(v, [0, 0.42, 0]);
   const sp = panSpeed(f);
   const bx = sp.x > 24 ? Math.min(14, (sp.x - 24) * 0.22) : 0;
   const by = sp.y > 24 ? Math.min(10, (sp.y - 24) * 0.22) : 0;
   const blur = bx > 0.5 || by > 0.5;
+  const hit = part === 'intro' ? impactAt(f) : { stage: 0, big: 0 };
+  const punch = hit.stage ? 1.05 : 1;
+  const slowed = f >= B.slow && f < B.gulp;
+  const hush = slowed ? Math.min(1, (f - B.slow) / 6, (B.gulp - f) / 2) : 0;
+  const stopped = f >= B.klang && f < B.klang + STOP;
 
   return (
-    <AbsoluteFill style={{ backgroundColor: '#1B1030' }}>
+    <AbsoluteFill style={{ backgroundColor: '#C86A5C' }}>
       <svg width={1920} height={1080} viewBox="0 0 1920 1080">
         <Defs frame={f} />
         <defs>
-          <filter id="city" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation={focusAt(f)} /></filter>
+          {/* A hot thin contour, as the game's ghost has. */}
+          <filter id="drainline" x="-20%" y="-20%" width="140%" height="140%">
+            <feMorphology in="SourceAlpha" operator="dilate" radius="2.4" result="fat" />
+            <feComposite in="fat" in2="SourceAlpha" operator="out" result="edge" />
+            <feFlood floodColor={DRAIN_CORE} />
+            <feComposite in2="edge" operator="in" result="line" />
+            <feGaussianBlur in="line" stdDeviation="3" result="soft" />
+            <feMerge><feMergeNode in="soft" /><feMergeNode in="line" /></feMerge>
+          </filter>
+          <filter id="impactA" colorInterpolationFilters="sRGB"><feColorMatrix type="saturate" values="0" /><feComponentTransfer><feFuncR type="discrete" tableValues="0.09 0.09 1 1" /><feFuncG type="discrete" tableValues="0.02 0.02 0.9 0.9" /><feFuncB type="discrete" tableValues="0.08 0.08 0.88 0.88" /></feComponentTransfer></filter>
+          <filter id="impactB" colorInterpolationFilters="sRGB"><feColorMatrix type="saturate" values="0" /><feComponentTransfer><feFuncR type="discrete" tableValues="1 1 0.09 0.09" /><feFuncG type="discrete" tableValues="0.22 0.22 0.02 0.02" /><feFuncB type="discrete" tableValues="0.3 0.3 0.08 0.08" /></feComponentTransfer></filter>
+          <radialGradient id="drainglow"><stop offset="0" stopColor={DRAIN_CORE} stopOpacity={0.95} /><stop offset="0.4" stopColor={DRAIN} stopOpacity={0.55} /><stop offset="1" stopColor={DRAIN} stopOpacity={0} /></radialGradient>
           {blur && <filter id="whip" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation={`${bx} ${by}`} /></filter>}
         </defs>
-        <g transform={`rotate(${v.roll} 960 540)`} filter={blur ? 'url(#whip)' : undefined}>
-          <Sky v={v} />
-          <Heavens v={v} f={f} />
-          <g filter="url(#city)">{city.map((it, i) => <g key={i}>{it.node}</g>)}</g>
-          <Ground v={v} f={f} />
-          {under}
-          {items.map((it, i) => <g key={i}>{it.node}</g>)}
-          {fx}
+        <g transform={`translate(960 540) scale(${punch}) translate(-960 -540)`}>
+          {/* The real map with the cast in it, recorded through this same camera (scripts/plates.mjs). It already carries the roll. */}
+          <g filter={hit.stage === 1 ? 'url(#impactA)' : hit.stage === 2 ? 'url(#impactB)' : blur ? 'url(#whip)' : undefined} style={hush > 0 ? { filter: `saturate(${1 - 0.3 * hush}) contrast(${1 + 0.06 * hush})` } : undefined}>
+            <foreignObject width={1920} height={1080}><Img src={plateAt(part, frame)} style={{ width: 1920, height: 1080, display: 'block' }} /></foreignObject>
+            {/* The idle's end fades to the street that leads into its start, so the loop has no seam. */}
+            {part === 'idle' && frame >= IDLE - BLEND && <foreignObject width={1920} height={1080} opacity={(frame - (IDLE - BLEND) + 1) / BLEND}><Img src={preAt(frame - (IDLE - BLEND))} style={{ width: 1920, height: 1080, display: 'block' }} /></foreignObject>}
+          </g>
+          <g transform={`rotate(${v.roll} 960 540)`} filter={blur ? 'url(#whip)' : undefined}>
+            {under}
+            {!hit.stage && fx}
+          </g>
         </g>
-        {strobe > 0 && <rect width={1920} height={1080} fill="#E9D8FF" opacity={0.2 * strobe} style={{ mixBlendMode: 'screen' }} />}
-        {night > 0 && <rect width={1920} height={1080} fill="#26083A" opacity={night} style={{ mixBlendMode: 'multiply' }} />}
-        {f >= B.slam && f < B.slam + 2 && <rect width={1920} height={1080} fill={WITCH_CORE} opacity={0.9} />}
-        <rect width={1920} height={1080} fill="#FF60C0" opacity={0.035} style={{ mixBlendMode: 'screen' }} />
-        <rect width={1920} height={1080} fill="url(#vignette)" opacity={0.5} />
-        {f >= B.klang && f < B.klang + 2 && <rect width={1920} height={1080} fill={WITCH_CORE} />}
-        {f >= B.klang + 2 && f < B.klang + 4 && <g><rect width={1920} height={1080} fill="#14041C" opacity={0.92} /><Burst x={icx} y={icy} s={340} /></g>}
-        {f >= B.klang + 4 && f < B.klang + STOP && <Burst x={icx} y={icy} s={280} />}
-        {klangWord > 0 && <g opacity={klangWord} transform={`translate(${Math.min(1250, icx + 40)} ${Math.max(260, icy - 200)}) rotate(-7) scale(${kf(f, [[B.klang + 4, 0.4], [B.klang + 8, 1.15], [B.klang + 12, 1]])})`}>
-          <Paint text="KLANG!" x={0} y={0} h={140} fill={WITCH_CORE} outline="#1A0620" shadow="#7A1A8C" seed="klang" wobble={0.4} bounce={0.3} />
-        </g>}
-        <rect width={1920} height={1080} filter="url(#grain)" opacity={0.26} />
+        {/* ⚠️ AN IMPACT FRAME: two held frames, ink and paper then flipped, with lines rushing to the moment. */}
+        {hit.stage > 0 && <g fill={hit.stage === 1 ? '#17060F' : '#FFE2E0'} opacity={0.92}>{Array.from({ length: 34 }, (_, i) => {
+          const ang = (i / 34) * Math.PI * 2 + random(`il${i}`) * 0.16;
+          const r0 = 360 + 240 * random(`ir${i}${hit.stage}`);
+          const r1 = 1300;
+          return <path key={i} d={`M${960 + Math.cos(ang - 0.016) * r1} ${540 + Math.sin(ang - 0.016) * r1}L${960 + Math.cos(ang) * r0} ${540 + Math.sin(ang) * r0}L${960 + Math.cos(ang + 0.016) * r1} ${540 + Math.sin(ang + 0.016) * r1}Z`} />;
+        })}</g>}
+        <rect width={1920} height={1080} fill="url(#vignette)" opacity={0.14 + 0.45 * hush} />
+        {/* The can: everything holds for STOP frames. A flash, ink, then the burst. */}
+        {f >= B.klang && f < B.klang + 2 && <rect width={1920} height={1080} fill={DRAIN_CORE} />}
+        {stopped && f >= B.klang + 4 && <Burst x={icx} y={icy} s={300} c="#F444D4" />}
+        {f >= B.gulp && f < B.gulp + 1 && <rect width={1920} height={1080} fill={DRAIN_CORE} />}
+        {klangWord > 0 && <g opacity={klangWord} transform={`translate(1000 300) rotate(-7) scale(${kf(f, [[B.klang + 5, 0.4], [B.klang + 9, 1.15], [B.klang + 13, 1]])})`}><Word text="KLANG!" h={190} /></g>}
+        {drainedWord > 0 && <g opacity={drainedWord} transform={`translate(1060 300) rotate(-5) scale(${kf(f, [[B.drained + 8, 0.4], [B.drained + 12, 1.15], [B.drained + 16, 1]])})`}><Word text="DRAINED!" h={170} fill={DRAIN} /></g>}
       </svg>
     </AbsoluteFill>
   );

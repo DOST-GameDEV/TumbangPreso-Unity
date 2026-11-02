@@ -1,8 +1,10 @@
-// Records the real map through Zack's film camera, as the plates his cast and effects are composited over.
-// Usage: node scripts/plates.mjs             the whole film and idle, one unbroken street
-//        node scripts/plates.mjs <frame...>  just those film frames, to check an angle (60 fps numbering)
-// Plates land in plates/zack-intro, zack-idle and zack-idlepre (ignored by git; this rebuilds them).
-// Re-record after changing camera.ts or the map. One Unity job per machine; nothing else may have the project open.
+// Records the real map through a hero's film camera, with the game's own cast acting in it. Effects are composited over these plates.
+// Usage: node scripts/plates.mjs <zack|phaister>             the whole film and idle, one unbroken street
+//        node scripts/plates.mjs <zack|phaister> <frame...>  just those film frames, to check an angle (60 fps numbering).
+//                                                            The street's clock still runs through the frames between, so traffic and the train are where they will be.
+//        SCOUT=file.json node scripts/plates.mjs phaister    a list of [{ "p": [x,y,z], "t": [x,y,z], "f": zoom }] lenses instead of the film's camera, to look round a map
+// Plates land in plates/<hero>-intro, -idle and -idlepre (ignored by git; this rebuilds them).
+// Re-record after changing the camera, the acting or the map. One Unity job per machine; nothing else may have the project open.
 import { spawnSync } from 'node:child_process';
 import './platesrv.mjs';
 import { bundle } from '@remotion/bundler';
@@ -12,55 +14,61 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
+const DIRS = { zack: 'bgc', phaister: 'ermita' };
+const hero = process.argv[2];
+if (!DIRS[hero]) throw new Error('Usage: node scripts/plates.mjs <zack|phaister> [frame...]');
+const picks = process.argv.slice(3).map(Number);
+
 fs.mkdirSync('scratch', { recursive: true });
-const entry = path.resolve('scratch/_cam.mjs');
+const entry = path.resolve('scratch/_film.mjs');
 await build({
-  stdin: { contents: "export { camAt } from './src/bgc/camera'; export { zack, rago, canAt } from './src/bgc/perform'; export { B } from './src/bgc/beats'; export { INTRO, IDLE } from './src/bgc/time';", resolveDir: process.cwd(), loader: 'ts' },
+  stdin: { contents: `export { PLATES } from './src/${DIRS[hero]}/film';`, resolveDir: process.cwd(), loader: 'ts' },
   bundle: true, format: 'esm', platform: 'node', outfile: entry, logLevel: 'error',
 });
-const { camAt, zack, rago, canAt, B, INTRO, IDLE } = await import(pathToFileURL(entry).href);
+const { PLATES: P } = await import(pathToFileURL(entry).href + `?${Date.now()}`);
+const { INTRO, IDLE } = P;
 
-/** What must stay clear of the map, on this frame. */
-const subjectsAt = (f) => {
-  const z = zack(f);
-  const r = rago(f);
-  const c = canAt(f);
-  const pt = (x, y, zz) => ({ x, y, z: zz });
-  return [pt(z.x, 0.2, z.z), pt(z.x, 1.1, z.z), pt(z.x, 2, z.z), pt(r.x, 0.2, r.z), pt(r.x, 1.1, r.z), pt(r.x, 2.2, r.z), pt(c.x, 0.3, c.z)];
-};
 // The film's acting, computed on its rigs in the browser, for the game's own models to wear.
 const serveUrl = await bundle({ entryPoint: path.resolve('src/index.ts') });
-const composition = await selectComposition({ serveUrl, id: 'ZackPoses' });
+const composition = await selectComposition({ serveUrl, id: P.poses });
 await renderStill({ serveUrl, composition, frame: 0, output: path.resolve('scratch/_poses.png'), imageFormat: 'png', timeoutInMilliseconds: 900000, chromiumOptions: { gl: 'angle' } });
 const poses = JSON.parse(fs.readFileSync('scratch/poses.json', 'utf8'));
-const view = (clip, i, f, dt) => {
-  const v = camAt(f);
+
+const view = (clip, i, f, dt, skip = false) => {
   const row = poses.rows[String(f >= INTRO ? INTRO + ((f - INTRO) % IDLE) : f)];
-  return { clip, i, x: v.x, y: v.y, z: v.z, yaw: v.yaw, pitch: v.pitch, roll: v.roll, f: v.f, dt, subjects: subjectsAt(f), zack: row.z, rago: row.r, can: row.c };
+  if (skip) return { clip, i, skip: true, dt };
+  const v = P.camAt(f);
+  return { clip, i, x: v.x, y: v.y, z: v.z, yaw: v.yaw, pitch: v.pitch, roll: v.roll, f: v.f, dt, subjects: P.subjectsAt(f), a: row.a, b: row.b, kuro: row.k, can: row.c, moths: row.m ?? [] };
 };
 
-const picks = process.argv.slice(2).map(Number);
 const frames = [];
-if (picks.length) {
-  for (const i of picks) frames.push(view('zack-intro', i, i / 2, 1 / 60));
+const FILM = INTRO * 2;
+if (process.env.SCOUT) {
+  const rad = 180 / Math.PI;
+  JSON.parse(fs.readFileSync(process.env.SCOUT, 'utf8')).forEach((c, i) => {
+    const d = [c.t[0] - c.p[0], c.t[1] - c.p[1], c.t[2] - c.p[2]];
+    const base = view('scout', i, 0, 1 / 60);
+    frames.push({ ...base, x: c.p[0], y: c.p[1], z: c.p[2], yaw: Math.atan2(d[0], d[2]) * rad, pitch: -Math.atan2(d[1], Math.hypot(d[0], d[2])) * rad, roll: 0, f: c.f, subjects: [] });
+  });
+} else if (picks.length) {
+  const wanted = new Set(picks);
+  const last = Math.max(...picks);
+  for (let i = 0; i <= last; i++) frames.push(view(`${hero}-intro`, i, i / 2, P.rate(i / 2) / 60, !wanted.has(i)));
 } else {
-  const FILM = INTRO * 2;
   const BLEND = 60; // idle frames over which the idle's end crossfades into the street at its start
   for (let i = 0; i < FILM; i++) {
     // The last of the film also looks through the idle's lens: those are what the idle's end fades to, so its loop has no seam.
     const pre = (i - (FILM - BLEND * 2)) / 2;
-    if (pre >= 0 && Number.isInteger(pre)) frames.push(view('zack-idlepre', pre, INTRO + IDLE - BLEND + pre, 0));
-    // The street slows with the climax: cars and all.
-    frames.push(view('zack-intro', i, i / 2, (i / 2 >= B.snapBack && i / 2 < B.yank ? 0.12 : 1) / 60));
+    if (pre >= 0 && Number.isInteger(pre)) frames.push(view(`${hero}-idlepre`, pre, INTRO + IDLE - BLEND + pre, 0));
+    frames.push(view(`${hero}-intro`, i, i / 2, P.rate(i / 2) / 60));
   }
-  for (let i = 0; i < IDLE; i++) frames.push(view('zack-idle', i, INTRO + i, 1 / 30));
+  for (let i = 0; i < IDLE; i++) frames.push(view(`${hero}-idle`, i, INTRO + i, 1 / 30));
 }
-const camFile = path.resolve('scratch', 'plates_zack.json');
-// The film's clock is 30 a second, and its green opens at B.green.
-fs.writeFileSync(camFile, JSON.stringify({ map: 'Kanto', bones: poses.bones, warm: 900, green: picks.length ? -1 : B.green / 30, frames }));
+const camFile = path.resolve('scratch', `plates_${hero}.json`);
+fs.writeFileSync(camFile, JSON.stringify({ map: P.map, floor: P.floor, cast: P.cast, kuro: P.kuro, bones: poses.bones, warm: 900, green: P.green, train: process.env.SCOUT ? -1 : P.train, trainDir: P.trainDir ?? 1, frames }));
 
 const repo = path.resolve('../..');
-const log = path.join(repo, 'Logs', 'home-plates-zack.log');
+const log = path.join(repo, 'Logs', `home-plates-${hero}.log`);
 const run = spawnSync('python', ['tools/run_unity_guarded.py', '-batchmode', '-force-d3d11', '-tp-profile', 'presentation-validation-20260921', '-executeMethod', 'TumbangPreso.EditorTools.HomeFilmPlateRecorder.Record', '-tp-plate-cam', camFile, '-tp-plate-out', path.resolve('plates'), '-logFile', log], { cwd: repo, stdio: 'inherit' });
 console.log('exit', run.status, 'log', log);
 process.exit(run.status ?? 1);
