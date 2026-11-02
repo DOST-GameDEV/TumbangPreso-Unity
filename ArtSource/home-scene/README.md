@@ -26,14 +26,15 @@ npm run refs
 ## Zack's plates: the real map
 
 Zack's film stands on the real BGC map (`Kanto`), recorded through the film's own camera in Play mode, so everything the
-game shows is in it: shaders, ink, grade, traffic, signals and pigeons. Close the Editor and the game's project, then:
+game shows is in it: shaders, ink, grade, traffic and signals. Zack, Rago, the can and the slipper are the game's own models on
+the game's own skin in that same recording, wearing the film's acting (`src/bgc/PoseDump.tsx`), so they cast real shadows
+and get the real ink. Only the effects are drawn over it. The map's pigeons are left out on purpose. Close the Editor and the game's project, then:
 
 ```
 node scripts/plates.mjs
 ```
 
-That takes about 8 minutes and writes 2.4 GB to `plates/`, which git ignores. Run it after changing `camera.ts`, a beat
-that moves a shot, or the map; acting and effects never need it. `node scripts/plates.mjs 300 1000` records just those
+That takes about 8 minutes and writes 2.4 GB to `plates/`, which git ignores. Run it after changing `camera.ts`, `perform.ts`, `beats.ts` or the map, because the cast is in the plates; only effects never need it. `node scripts/plates.mjs 300 1000` records just those
 film frames for checking an angle, and `node scripts/platesheet.mjs zack-intro scratch/p.png 300 1000` shows them.
 Whatever in the map would stand in front of the cast or against the lens draws only its shadow for those frames
 (`HomeFilmPlateRecorder.Clear`). The idle's last 2 s crossfade to pictures of the same street leading into its first

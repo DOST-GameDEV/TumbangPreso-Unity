@@ -14,12 +14,15 @@ now name BGC as his home court.
 
 ## The story
 
-Rago is taya and stands square in front of the can. Zack waits for the traffic light. On green a curve
-draws itself in the air, and he throws: the slipper bends in one huge electric arc round Rago and takes the
-can from behind him. Rago's whole body goes. Zack sprints with Momentum and scoops the slipper. Rago rights
-the can, creeps up and lunges for the tag; Backtrack snaps Zack home at the last instant, and Rago's foot
-catches the can he just set up. He gets up, rights it again, raises one arm and chalks one up. He keeps the
-score. Both stay on screen.
+Rago is taya and stands square in front of the can. Zack looks over his shoulder at the real signal; on green he
+curves the slipper round Rago and takes the can from behind him. Rago's whole body goes. Zack sprints with Momentum;
+Rago rights the can in its own shot and comes up running the moment Zack reaches the slipper. They chase round the
+court, and it ends on Zack looking into the lens as his eyes light for the first time, on an impact frame.
+
+The crux is Backtrack in slow motion. Rago's hand is on him and the whole street nearly stops. Zack drifts out of
+reach, each face gets a close-up, they lock eyes, and it is too late. Then real time: the yank, and Rago's foot finds
+the can. As he starts to fall the lens crashes across to Zack landing on the line in a burst of current, his back to
+us, watching. Rago gets up, rights the can and chalks one up. Only then does Zack turn all the way round to us.
 
 The owner's notes that shaped it, 2026-11-01: use the redesigned models; "we alr have animations", so build on
 the models' own clips; "hindi shocked ung taya", shocked by the curved shot; communicate the curve and the
@@ -27,10 +30,11 @@ moment of impact; "he's abt to tag zack but he trips"; dynamic cameras and VFX w
 
 | Moment | How it is made legible |
 |---|---|
-| The curve | It arcs in depth, so a low lens sees a flat line: the camera cranes up, the dashed path draws first, the ribbon and its shadow stay on the court |
-| The impact | Cut low behind the can; 8 frame hit-stop: flash, ink frame with the burst, rings along the floor, sparks, shake; the can goes up slowly; lettered TUMP! |
+| The curve | The lens cranes up, and the slipper alone makes the shape, with current on it. No trace in the air: "wala naman ganyan sa game" |
+| The impact | Cut low behind the can; 8 frame hit-stop: flash, ink frame with the burst, rings along the floor, sparks, shake; the can goes up slowly; TUMP! in the game's display face |
 | The shock | Crash zoom, hop, arms flung out, action lines, a "!" beside his head, sweat. The face is the model's and is never redrawn |
-| The tag and the trip | Low side shot with the can between them, speed lines, Backtrack's flash and thin contours, the can kicked, dust, stars |
+| Impact frames | Two held frames, ink then flipped, when the eyes catch, at the snap, the snatch and the landing (`light.ts`) |
+| The crux | Slow motion with the street slowed too, desaturated, ghosts with the thin contour, then the eye lock, the yank and the crash zoom |
 
 | Canon | Where | Used as |
 |---|---|---|
@@ -40,7 +44,7 @@ moment of impact; "he's abt to tag zack but he trips"; dynamic cameras and VFX w
 | The taya rights the can before tagging; the thrower fetches the slipper | `docs/Design.md` | The whole second act |
 
 Characters are `Art/CharacterRedesign/{zack,sean}/*-redesign.glb`, on a track of their own clips (`idle`,
-`sprint`, `slide`, `pick-up`, `walk`, `emote-no`, `hero-zack-charge`) with keyed tweaks, crossfaded in
+`sprint`, `slide`, `pick-up`, `walk`, `emote-no`) with keyed tweaks, crossfaded in
 `layersAt`. Rago's shock, reach, trip and sprawl and Zack's throw are keyed.
 
 `src/bgc/beats.ts` is the one timetable.
@@ -58,11 +62,12 @@ Characters are `Art/CharacterRedesign/{zack,sean}/*-redesign.glb`, on a track of
 
 The owner overrode the 2026-09-24 note about a drawn set: "USE THE ACTUAL 3D ASSET OF CURRENT MAPS WE HAVE", with
 "EVERYTHING na makikita sa game" and "kita ren ung shit na nagalaw". `HomeFilmPlateRecorder` records Kanto through
-`camAt` in Play mode, and `BgcScene` composites the cast and effects over those plates. The hour is therefore the map's
-own clear morning, and the cast's light was retuned to match it. The shots of the signal now watch the map's real signal, which goes
+`camAt` in Play mode, with the game's own models on the game's own `ToonSkin` wearing the film's acting (`PoseDump`), the can and
+the slipper included, and with the map's flock left out. `BgcScene` composites only the effects over those plates. The hour is therefore the map's
+own clear morning, so the cast is lit by the same sun. The shots of the signal now watch the map's real signal, which goes
 from red straight to green: its amber comes after green, as in the game.
 
-Backtrack follows the kit's own spec (`zack-kit-2026-10-25/plan.md`): a gold streak running back along his path, ghost
+Backtrack starts from the kit's own spec (`zack-kit-2026-10-25/plan.md`): a gold streak running back along his path, ghost
 frames with the thin contour, and a landing ring that holds and breaks into four sparks. The star-burst on his body
 went, because it read as him being hit. On the hold the current appears three times in 24 s and lights him and the court
 (`light.ts`); the owner: "from time to time", "dont spam it".
@@ -70,7 +75,7 @@ went, because it read as him being hit. On the hold the current appears three ti
 ## The hold
 
 Worked backward from the frame the player lives with: long lens, Zack large in the gap between HOME's
-tiles and its mode card, Rago hidden behind him. After the landing there are no
+tiles and its mode card, Rago hidden behind him once Zack has turned round. After the landing there are no
 cuts. The idle is three passes of each hero's own 8 s `idle` clip, 720 frames, so it tiles exactly. The map's traffic and signals run on behind him.
 
 ## In the game

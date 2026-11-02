@@ -12,6 +12,20 @@ export const IDLE_SPARKS: { at: number; len: number; kind: 'fingers' | 'run' | '
   { at: 610, len: 14, kind: 'hair', lit: 0.3 },
 ];
 
+/** The film's impact frames: when the eyes catch at the end of the chase, the snap of the throw, the snatch of Backtrack. Film clock, 30 a second. */
+export const EYES_CATCH = B.look + 16;
+export const IMPACTS = [EYES_CATCH, B.snap - 1, B.snapBack, B.land + 5];
+
+/** 1 and 2 are the two held frames of an impact; the punch-in then runs off. */
+export const impactAt = (f: number) => {
+  for (const t of IMPACTS) {
+    if (f >= t && f < t + 1) return { stage: 1, punch: 1 };
+    if (f >= t + 1 && f < t + 2) return { stage: 2, punch: 1 };
+    if (f >= t + 2 && f < t + 12) return { stage: 0, punch: 1 - (f - t - 2) / 10 };
+  }
+  return { stage: 0, punch: 0 };
+};
+
 /** How much of his own current lights him and the court at this moment, 0 to 1. */
 export const litAt = (f: number) => {
   if (f >= INTRO) {
@@ -21,9 +35,8 @@ export const litAt = (f: number) => {
     return out;
   }
   return Math.max(
-    f >= B.eyes + 6 && f < B.wide ? kf(f, [[B.eyes + 6, 0], [B.eyes + 26, 1], [B.eyes + 32, 0.55], [B.wide, 0.25]]) : 0,
-    f >= B.run && f < B.scoop ? 0.55 : 0,
-    f >= B.commit && f < B.snapBack + 14 ? kf(f, [[B.commit, 0.2], [B.snapBack, 0.9], [B.snapBack + 14, 0.5]]) : 0,
-    f >= B.snapBack + 14 && f < B.land + 30 ? kf(f, [[B.snapBack + 14, 0.5], [B.land, 0.5], [B.land + 30, 0]]) : 0,
+    f >= B.run && f < B.look + 11 ? 0.55 : 0,
+    f >= B.look + 11 && f < B.snapBack + 14 ? kf(f, [[B.look + 11, 0.4], [EYES_CATCH, 1], [B.snapBack, 0.9], [B.snapBack + 14, 0.5]]) : 0,
+    f >= B.snapBack + 14 && f < B.land + 30 ? kf(f, [[B.snapBack + 14, 0.6], [B.land, 0.5], [B.land + 30, 0]]) : 0,
   );
 };

@@ -611,6 +611,27 @@ const poseRig = (b: Built, p: ActorProps) => {
   b.scene.updateMatrixWorld(true);
 };
 
+/** Pose a rig and read it back without drawing it: each bone's local transform, and the slipper in the model's own space. */
+export const poseFrame = (b: Built, layers: Layer[], samples: PoseSample[] | undefined, lift: [number, number, number], slipper: SlipperState) => {
+  poseRig(b, { x: 0, y: 0, ppu: 1, yaw: 0, layers, samples, lift, slipper });
+  const bones: Record<string, { p: number[]; q: number[] }> = {};
+  for (const k of Object.keys(b.bones)) {
+    const n = b.bones[k];
+    bones[k] = { p: [n.position.x, n.position.y, n.position.z], q: [n.quaternion.x, n.quaternion.y, n.quaternion.z, n.quaternion.w] };
+  }
+  let held: { p: number[]; q: number[]; s: number } | null = null;
+  if (b.slipper?.visible) {
+    const inner = b.slipper.children[0];
+    const m = new THREE.Matrix4().copy(b.scene.matrixWorld).invert().multiply(inner.matrixWorld);
+    const p = new THREE.Vector3();
+    const q = new THREE.Quaternion();
+    const s = new THREE.Vector3();
+    m.decompose(p, q, s);
+    held = { p: [p.x, p.y, p.z], q: [q.x, q.y, q.z, q.w], s: s.x };
+  }
+  return { bones, slipper: held };
+};
+
 const isInSlipper = (b: Built, o: THREE.Object3D) => {
   for (let q: THREE.Object3D | null = o; q; q = q.parent) if (q === b.slipper) return true;
   return false;

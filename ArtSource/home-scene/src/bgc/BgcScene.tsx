@@ -5,14 +5,13 @@ import { Bolt, boltPoints, Crackle, Pt } from '../lib/bolt';
 import { kf } from '../lib/kf';
 import { env, INTRO, IDLE, ph } from './time';
 import { B } from './beats';
-import { ActorImage, drawActor, drawProp, Light, useActor, useProp } from '../three/actor';
+import { ActorImage, drawActor, EYE_L, EYE_R, Light, useActor } from '../three/actor';
 import { apparent, depth, line, PERSON_SCALE, poly, project, scaleAt, V3, View } from '../phaister/view';
 import { setNight, Item } from '../phaister/set';
 import { burstPath } from '../art/burst';
 import { camAt, panSpeed } from './camera';
-import { canAt, echoAt, curveAt, flatHead, flyingAt, FLAT, Frame, LINE, momentum, POST, PULL, pullAt, pullU, STOP, rago, slipperTrail, STAND, zack } from './perform';
-import { IDLE_SPARKS, litAt } from './light';
-import { Paint } from '../phaister/lettering';
+import { echoAt, curveAt, flatHead, flyingAt, FLAT, Frame, LINE, momentum, POST, PULL, pullAt, pullU, pullWhen, STOP, rago, STAND, zack } from './perform';
+import { EYES_CATCH, IDLE_SPARKS, impactAt, litAt } from './light';
 import { BLEND, plateAt, preAt } from './plates';
 
 /** Zack's hit: electric yellow on ink, white at the heart. */
@@ -47,7 +46,11 @@ const FIST_R: [number, number, number] = [-0.085, 0, 0];
 const FIST_L: [number, number, number] = [0.085, 0, 0];
 /** The lamp of the real signal the film watches (Kanto's Traffic, the north east corner). */
 const SIGNAL: V3 = [16.7, 3.05, 16.6];
-const GHOSTS = 5;
+/** Lettering in the game's own display face. */
+const Word: React.FC<{ text: string; h: number }> = ({ text, h }) => (
+  <text x={0} y={0} textAnchor="middle" fontFamily="Paalalabas" fontSize={h} fill="#F6C22B" stroke="#3A1020" strokeWidth={h * 0.12} strokeLinejoin="round" style={{ paintOrder: 'stroke' }}>{text}</text>
+);
+const GHOSTS = 4;
 const GHOST_LIFE = 11;
 /** Rago's chalk: he keeps the score, in strokes on the court beside his post. */
 const Tally: React.FC<{ v: View; a: number }> = ({ v, a }) => (
@@ -55,7 +58,6 @@ const Tally: React.FC<{ v: View; a: number }> = ({ v, a }) => (
     <path d={line(v, [[1.05, 0.14, -1.75], [1.25, 0.14, -0.8]])} />
   </g>
 );
-const CAN_M_PER_UNIT = 0.62 / 0.383;
 const REST_X = 2.1;
 const REST_Z = 2.0;
 
@@ -79,22 +81,6 @@ const figure = (b: NonNullable<ReturnType<typeof useActor>>, v: View, p: Frame, 
   return { img, roll: ap.roll, fx, fy };
 };
 
-const SUN_X = 0.64;
-const SUN_Z = -0.77;
-/** The figure's shadow, flat on the court. */
-const shadowOf = (v: View, x: number, z: number, r: number) => {
-  const pts: V3[] = [];
-  for (let i = 0; i < 18; i++) {
-    const a = (i / 18) * 2 * Math.PI;
-    // Long along the sun's line, as the shadows in the plate fall, and darkest at the feet.
-    const u = r * Math.cos(a) + r * 0.9;
-    const w = r * 0.62 * Math.sin(a);
-    pts.push([x + u * SUN_X - w * SUN_Z, 0.135, z + u * SUN_Z + w * SUN_X]);
-  }
-  const d = poly(v, pts);
-  return d ? <path d={d} fill="#2C2A44" opacity={0.36} /> : null;
-};
-
 export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
   useFonts();
   const frame = useCurrentFrame();
@@ -103,11 +89,9 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
   setNight(0);
   const zk = useActor('zack-redesign', true);
   const rg = useActor('sean-redesign');
-  const can = useProp('lata_metal');
   const v = camAt(f);
   const z = zack(f);
   const r = rago(f);
-  const c = canAt(f);
 
   const zap = litAt(f);
   const LIGHT = lightFor(zap);
@@ -123,52 +107,36 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
   const front = (x: number, zz: number) => depth(v, [x, 1, zz]) > 0.7;
   const closeOnFeet = f >= B.feet && f < B.rago;
   if (rg && front(r.x, r.z)) {
-    const d = figure(rg, v, r, LIGHT, false);
-    ragoHead = d.img.at('head', [0, 0.14, 0.1]);
-    push(<g key="rago"><g>{shadowOf(v, r.x, r.z, 0.8)}</g><g transform={`rotate(${d.roll} ${d.fx} ${d.fy})`}><ActorImage d={d.img} /></g></g>, [r.x, 1, r.z]);
+    // ⚠️ THE CAST IS IN THE PLATE NOW, ON THE GAME'S OWN SHADER. These figures are never shown: they only say where a bone lands on screen, for the effects.
+    ragoHead = figure(rg, v, r, LIGHT, false, { res: 0.3 }).img.at('head', [0, 0.14, 0.1]);
   }
   if (zk && front(z.x, z.z)) {
-    const snatched = f >= B.snapBack - 5 && f < B.snapBack + PULL ? (Math.floor(f) % 2 ? 0.34 : 0.08) : 0;
-    const d = figure(zk, v, z, LIGHT, true, { res: closeOnFeet ? 2.2 : 1.35, flash: snatched });
+    const snatched = f >= B.snapBack && f < B.lockR && Math.floor(f / 2) % 2 === 1;
+    const d = figure(zk, v, z, LIGHT, false, { res: snatched ? 1.2 : 0.3, flash: 0.4 });
     zackHand = d.img.at('forearm-right', FIST_R);
     zackHand2 = d.img.at('forearm-left', FIST_L);
     zackAt = d.img.at;
     zackHead = d.img.at('head', [0, 0.14, 0.1]);
-    push(<g key="zack"><g>{shadowOf(v, z.x, z.z, 0.72)}</g><g transform={`rotate(${d.roll} ${d.fx} ${d.fy})`}><ActorImage d={d.img} /></g></g>, [z.x, 1, z.z]);
+    // The current takes hold of him: his thin contour flickers on.
+    if (snatched) push(<g key="zack" transform={`rotate(${d.roll} ${d.fx} ${d.fy})`} filter="url(#contour)"><ActorImage d={d.img} /></g>, [z.x, 1, z.z]);
   }
-  if (can && depth(v, [c.x, 0.3, c.z]) > 0.6) {
-    const at: V3 = [c.x, c.hop + 0.13, c.z];
-    const ppu = scaleAt(v, at) * CAN_M_PER_UNIT;
-    const ap = apparent(v, [c.x, 0, c.z], 22, 0.3);
-    const [x, y] = project(v, [at[0], at[1] + 0.3, at[2]]);
-    const img = drawProp(can, { x, y, ppu, focus: 0.19, reach: 0.34, yaw: ap.yaw, pitch: ap.pitch, rot: c.rot, lift: [0, 0.125 * c.lying, 0], res: 1.5, light: LIGHT });
-    push(<g key="can"><ActorImage d={img} /></g>, at);
-  }
-  const fl = flyingAt(f);
-  if (fl && zk && depth(v, fl.p) > 0.6) {
-    // Half as big again in the air: a slipper true to size is a few pixels across the wide.
-    const ppu = scaleAt(v, fl.p) * PERSON_SCALE * (fl.trail && f < B.closeOn ? 1.9 : 1);
-    const [x, y] = project(v, fl.p);
-    const img = drawActor(zk, { x, y, ppu, focus: 0, target: [0, 0, 0], reach: 0.22, yaw: 0, pitch: apparent(v, fl.p, 0, 0).pitch, only: 'slipper', slipper: { at: 'free', pos: [0, 0, 0], rot: fl.rot }, light: LIGHT, res: 1.4 });
-    push(<g key="slipper"><ActorImage d={img} /></g>, fl.p, -0.2);
-  }
-
   // ⚠️ BACKTRACK'S GHOST FRAMES (zack-kit plan: "ghost frames pulling into the landing"; thin hot contour, transparent faces).
   // Each is his real pose where he really was, crisp at full size, and takes its place in the depth order so Rago can stand
   // in front of it. It only burns off once he has gone past: the newest is the strongest, which is what says which way he went.
-  if (zk && f >= B.snapBack && f < B.snapBack + PULL + GHOST_LIFE) {
+  if (zk && ((f >= B.snapBack && f < B.lockR) || (f >= B.yank - 1 && f < B.land))) {
     for (let i = 0; i < GHOSTS; i++) {
-      const u = 0.015 + 0.6 * (i / (GHOSTS - 1)) ** 1.5;
-      const g = B.snapBack + PULL * u ** (1 / 2.2);
+      // Two hang in the slow part, the rest are torn off by the yank; none outlives it by much.
+      const u = i < 2 ? 0.035 + 0.07 * i : 0.2 + 0.22 * (i - 2);
+      const g = pullWhen(u);
       if (f < g) continue;
-      const a = 1 - (f - g) / GHOST_LIFE;
+      const a = Math.min(1, 1 - (f - Math.max(g, B.yank)) / GHOST_LIFE);
       if (a <= 0) continue;
       const at = pullAt(u);
       if (!front(at.x, at.z)) continue;
       const fr = zack(g);
-      const d = figure(zk, v, { ...fr, x: at.x, z: at.z, samples: undefined, slipper: { at: 'none' }, eyeGlow: 0, face: 'rest' }, LIGHT, false, { flash: 0.42, res: 1.2 });
+      const d = figure(zk, v, { ...fr, x: at.x, z: at.z, slipper: { at: 'none' }, eyeGlow: 0, face: 'rest' }, LIGHT, false, { flash: 0.42, res: 1.2 });
       push(<g key={`e${i}`} transform={`rotate(${d.roll} ${d.fx} ${d.fy})`}>
-        <g opacity={0.62 * a}><ActorImage d={d.img} /></g>
+        <g opacity={0.18 * a}><ActorImage d={d.img} /></g>
         <g opacity={Math.min(1, a * 1.4)} filter="url(#contour)"><ActorImage d={d.img} /></g>
       </g>, [at.x, 1, at.z], 0.02 * i);
     }
@@ -201,7 +169,9 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
     under.push(<Bolt key={key} pts={off ? pts.map(([x, y]) => [x, y + off] as Pt) : pts} w={w} glow={0.9} opacity={opacity} outline={null} />);
   };
   pool('zk', z.x, z.z, 1.5, Math.min(1, zap * 1.2));
-  const seed = (s: string) => `${s}${Math.floor(f / 2)}`;
+  const slow = f >= B.snapBack && f < B.yank;
+  const tick = Math.floor(f / (slow ? 5 : 2));
+  const seed = (s: string) => `${s}${tick}`;
 
   // The current finds the real signal: it spits at the lamp as the light turns, twice, small.
   [B.spark + 20, B.green].forEach((g, n) => {
@@ -273,11 +243,8 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
       }
     });
   }
-  // The green reaches him: it builds over his whole figure, then snaps into his eyes.
-  const charge = f >= B.eyes + 6 && f < B.wide ? kf(f, [[B.eyes + 6, 0], [B.eyes + 26, 5], [B.eyes + 32, 2], [B.wide, 1]]) : 0;
-  bodyArcs('ch', Math.round(charge));
-  if (f >= B.stare + 8 && f < B.run) bodyArcs('st', 1);
-  if (f >= B.commit && f < B.snapBack) bodyArcs('cm', 2);
+  // The look: the current comes up through him as the eyes catch, and it is what grabs him.
+  if (f >= B.look + 11 && f < B.snapBack) bodyArcs('cm', f >= EYES_CATCH && f < EYES_CATCH + 10 ? 4 : 2);
   if (env(f, B.shake + 4, B.shake + 8, B.shake + 16, B.shake + 22) > 0 && zackHand2) {
     const s = scaleAt(v, [z.x, 1, z.z]);
     fx.push(<Crackle key="shake" a={zackHand2} b={[zackHand2[0] - s * 0.16, zackHand2[1] + s * 0.14]} seed={seed('sh')} w={Math.max(2, s * 0.02)} branches={1} glow={0.8} />);
@@ -291,26 +258,15 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
       fx.push(<Crackle key="tap" a={[fx0, fy0]} b={[fx0 + s * 0.3, fy0 - s * 0.16]} seed={seed('t')} w={3} branches={1} glow={0.8} opacity={1 - tap / 5} />);
     }
   }
-  // The ribbon: the whole curve so far, staying on the air after the hit so its shape can be read.
-  const ribbonA = f < B.tump ? 1 : env(f, B.tump, B.tump, B.tump + 14, B.deadpan);
-  const tr = slipperTrail(f).filter((p) => depth(v, p) > 0.6).map((p) => project(v, p) as Pt);
-  if (tr.length > 1 && ribbonA > 0) {
-    const d = tr.map(([x, y], i) => `${i ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`).join('');
-    fx.push(<g key="ribbon" opacity={ribbonA} fill="none" strokeLinecap="round" strokeLinejoin="round">
-      <path d={d} stroke="#F6C22B" strokeWidth={22} opacity={0.4} filter="url(#glow)" />
-      <path d={d} stroke="#F4E23A" strokeWidth={8} />
-      <path d={d} stroke="#FFFBD0" strokeWidth={3} />
-    </g>);
-    // Crackle off the ribbon's head, where it is being bent.
-    if (f < B.tump) {
-      const h = tr[tr.length - 1];
-      for (let i = 0; i < 2; i++) { const back = tr[Math.max(0, tr.length - 5 - i * 4)]; fx.push(<Crackle key={`rh${i}`} a={h} b={[back[0] + (i ? 26 : -26), back[1] + (i ? -20 : 20)]} seed={`${seed('rh')}${i}`} w={5} branches={1} glow={0.8} />); }
+  // ⚠️ NO TRACE IN THE AIR (owner, 2026-11-02: "wala naman ganyan sa game"). The slipper alone makes the curve, with its current on it.
+  const fl = flyingAt(f);
+  if (fl?.trail && f < B.tump && depth(v, fl.p) > 0.6) {
+    const [x, y] = project(v, fl.p);
+    const q = scaleAt(v, fl.p);
+    for (let i = 0; i < 2; i++) {
+      const ang = random(`${seed('rh')}${i}`) * 6.283;
+      fx.push(<Crackle key={`rh${i}`} a={[x, y]} b={[x + Math.cos(ang) * q * 0.5, y + Math.sin(ang) * q * 0.5]} seed={`${seed('rh')}${i}`} w={Math.max(3, q * 0.03)} branches={1} glow={0.8} />);
     }
-  }
-  // Its shadow on the court, which is what makes the shape legible from above.
-  if (ribbonA > 0 && f >= B.snap && f < B.closeOn) {
-    const sh: V3[] = slipperTrail(f).map((p) => [p[0], 0.14, p[2]] as V3);
-    fx.unshift(<path key="ribShadow" d={line(v, sh)} stroke="#3A1020" strokeWidth={7} fill="none" opacity={0.28 * ribbonA} strokeLinecap="round" />);
   }
   // The bend: the current snaps it round, here.
   const clang = env(f, B.clang, B.clang + 1, B.clang + 3, B.clang + 12);
@@ -359,24 +315,6 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
       }
     }
   }
-  // The angle he has found: the whole curve draws itself in the air from his hand, and holds.
-  const aimT = kf(f, [[B.wide + 18, 0], [B.snap - 10, 1]]);
-  const aimA = f >= B.wide + 18 && f < B.snap + 6 ? env(f, B.wide + 18, B.wide + 24, B.snap, B.snap + 6) : 0;
-  if (aimA > 0) {
-    const pts: string[] = [];
-    for (let i = 0; i <= 48 * aimT; i++) {
-      const p = curveAt(i / 48);
-      if (depth(v, p) < 0.6) continue;
-      const [x, y] = project(v, p);
-      pts.push(`${pts.length ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`);
-    }
-    if (pts.length > 1) {
-      fx.push(<g key="aim" opacity={aimA} fill="none" strokeLinecap="round">
-        <path d={pts.join('')} stroke="#F6C22B" strokeWidth={12} opacity={0.35} filter="url(#glow)" />
-        <path d={pts.join('')} stroke="#FFFBD0" strokeWidth={3.6} strokeDasharray="16 13" strokeDashoffset={-f * 2.6} />
-      </g>);
-    }
-  }
   // Rago's shock: action lines, the mark beside his head (never on it), sweat.
   if (f >= B.jolt && f < B.stare && ragoHead) {
     const a = env(f, B.jolt, B.jolt + 2, B.stare - 8, B.stare);
@@ -393,7 +331,7 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
     fx.push(<g key="shock" opacity={a}>
       <g opacity={0.7}>{lines}</g>
       <g transform={`translate(${hx + s2 * 0.72} ${hy - s2 * 0.08}) rotate(10) scale(${pop})`}>
-        <Paint text="!" x={0} y={0} h={s2 * 0.6} fill="#F6C22B" outline="#3A1020" seed="shock" wobble={0.2} bounce={0} />
+        <Word text="!" h={s2 * 0.6} />
       </g>
       {[0, 1, 2].map((d) => {
         const t = (((f - B.jolt) * 1.6 + d * 11) % 26) / 26;
@@ -413,11 +351,11 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
     const u0 = f < pullEnd ? pullU(f) : 1;
     const path: V3[] = [];
     for (let i = 0; i <= 14; i++) { const q = pullAt((u0 * (14 - i)) / 14); path.push([q.x, 0.15, q.z]); }
-    floorBolt('bk0', path, 15, a, 0.09);
-    floorBolt('bk1', path, 7, a * 0.8, 0.12, 7);
-    pool('bkp', STAND.x, STAND.z, 1.5, env(f, B.snapBack, B.snapBack + 1, B.snapBack + 4, B.snapBack + 12) * 0.9);
+    if (f < B.land) floorBolt('bk0', path, 15, a, 0.09);
+    if (f < B.land) floorBolt('bk1', path, 7, a * 0.8, 0.12, 7);
+    pool('bkp', STAND.x, STAND.z, 1.5, env(f, B.snapBack, B.snapBack + 1, B.snapBack + 6, B.snapBack + 20) * 0.9);
     // The place he was snatched from cracks once: a thin ring along the floor and three short arcs.
-    const t = (f - B.snapBack) / 10;
+    const t = (f - B.snapBack) / 24;
     if (t < 1) {
       const ring: V3[] = [];
       for (let i = 0; i <= 32; i++) ring.push([STAND.x + Math.cos((i / 32) * 6.283) * (0.3 + 1.5 * Math.sqrt(t)), 0.14, STAND.z + Math.sin((i / 32) * 6.283) * (0.3 + 1.5 * Math.sqrt(t))]);
@@ -429,22 +367,30 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
         fx.push(<Crackle key={`bb${i}`} a={[x, y]} b={[x + Math.cos(ang) * q * 0.7, y + Math.sin(ang) * q * 0.7]} seed={`${seed('bb')}${i}`} w={Math.max(3, q * 0.02)} branches={1} glow={0.7} opacity={1 - t} />);
       }
     }
-    // Hauled by a line pulled taut from his chest, short and ahead of him, and it goes when he lands.
-    if (f < pullEnd && front(z.x, z.z)) {
-      const ahead = pullAt(Math.min(1, u0 + 0.28));
-      if (depth(v, [ahead.x, 1, ahead.z]) > 0.6) {
-        const from = project(v, [z.x, 1, z.z]) as Pt;
-        const to = project(v, [ahead.x, 1, ahead.z]) as Pt;
-        fx.push(<Bolt key="taut" pts={boltPoints(from, to, seed('tt'), 3, 0.07)} w={6} glow={0.9} />);
-      }
+  }
+  // ⚠️ THE ARRIVAL: everything the slow part held back. Current bursts along the floor from his feet, a shock ring runs out, arcs climb him.
+  const arrive = B.land + 5;
+  if (f >= arrive && f < arrive + 16) {
+    const t = (f - arrive) / 16;
+    for (let i = 0; i < 9; i++) {
+      const ang = (i / 9) * 6.283 + random(`ab${i}`) * 0.5;
+      const r0 = 0.6 + 3.4 * Math.sqrt(t);
+      const r1 = Math.max(0.5, r0 - 1.5 - random(`ac${i}`));
+      floorBolt(`ab${i}`, [[LINE.x + Math.cos(ang) * r0, 0.15, LINE.z + Math.sin(ang) * r0], [LINE.x + Math.cos(ang) * r1, 0.15, LINE.z + Math.sin(ang) * r1]], 12 * (1 - t) + 3, 1 - t * t, 0.22);
     }
+    const ring: V3[] = [];
+    for (let i = 0; i <= 40; i++) { const k = (i / 40) * 6.283; const rr = 0.7 + 5.5 * Math.sqrt(t); ring.push([LINE.x + Math.cos(k) * rr, 0.15, LINE.z + Math.sin(k) * rr]); }
+    under.push(<path key="asr" d={line(v, ring)} stroke="#FFFBD0" strokeWidth={14 * (1 - t) + 1} fill="none" opacity={1 - t} />);
+    pool('arp', LINE.x, LINE.z, 3, 1 - t);
+    if (zackAt) bodyArcs('ar', 5, 1 - t);
   }
   // Where he lands: the ring holds until a beat after the whip shows it, then breaks into four sparks that run off along the floor.
-  const ringEnd = B.land + 18;
+  const ringEnd = B.land + 30;
   if (f >= pullEnd - 1 && f < ringEnd + 12) {
     const a = f < ringEnd ? 1 : 0;
     const flare = env(f, pullEnd - 1, pullEnd, pullEnd + 1, pullEnd + 10);
-    if (a) {
+    const a0 = f >= arrive ? 1 : 0;
+    if (a && a0) {
       const ring: V3[] = [];
       const r0 = 0.95 + 0.25 * flare;
       for (let i = 0; i <= 40; i++) { const t = (i / 40) * 6.283; const n = 1 + 0.025 * Math.sin(t * 9 + f); ring.push([LINE.x + Math.cos(t) * r0 * n, 0.15, LINE.z + Math.sin(t) * r0 * n]); }
@@ -456,7 +402,7 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
         const [sx, sy] = project(v, [LINE.x + Math.cos(t) * r0, 0.15, LINE.z + Math.sin(t) * r0]);
         fx.push(<Crackle key="lrs" a={[sx, sy]} b={[sx + Math.cos(t) * q * 0.28, sy - q * 0.24]} seed={seed('lrs')} w={Math.max(3, q * 0.02)} branches={0} glow={0.7} />);
       }
-    } else {
+    } else if (a0) {
       const t = (f - ringEnd) / 12;
       [0.8, 2.37, 3.94, 5.51].forEach((ang, i) => {
         const r1 = 0.95 + 1.8 * t;
@@ -521,7 +467,7 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
       fx.push(<circle key={`${key}${i}`} cx={x + Math.cos(ang) * q * 1.4} cy={y - Math.sin(ang) * q * 0.55} r={q * (0.45 + 0.25 * random(`${key}r${i}`))} fill="#EBDCBE" opacity={0.55 * (1 - t)} />);
     }
   };
-  for (let g = B.run + 4; g < B.scoop; g += 7) { const q = echoAt(g); puff(`rd${g}`, [q.x, 0.15, q.z], g, 14, 0.13); }
+  for (let g = B.run + 4; g < B.snapBack; g += 7) { const q = echoAt(g); puff(`rd${g}`, [q.x, 0.15, q.z], g, 14, 0.13); }
   puff('slide', [REST_X, 0.15, REST_Z], B.scoop - 6, 26, 0.34);
   puff('trip', [r.x, 0.15, -0.3], B.trip, 18, 0.32);
   puff('flat', [FLAT.x + 0.3, 0.15, FLAT.z + 0.6], B.sprawl - 2, 34, 0.62);
@@ -533,6 +479,10 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
   const bx = sp.x > 24 ? Math.min(14, (sp.x - 24) * 0.22) : 0;
   const by = sp.y > 24 ? Math.min(10, (sp.y - 24) * 0.22) : 0;
   const blur = bx > 0.5 || by > 0.5;
+  const hit = part === 'intro' ? impactAt(f) : { stage: 0, punch: 0 };
+  const punch = 1 + 0.07 * hit.punch * hit.punch;
+  const hush = slow ? Math.min(1, (f - B.snapBack) / 6, (B.yank - f) / 2) : 0;
+  const eyes = hit.stage > 0 && zackAt && f >= EYES_CATCH && f < EYES_CATCH + 2 ? [EYE_L, EYE_R].map((e) => (zackAt as NonNullable<typeof zackAt>)('head', e)) : [];
   const tally = f >= INTRO ? 1 : kf(f, [[B.one + 2, 0], [B.one + 12, 1]]);
 
   return (
@@ -549,6 +499,8 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
             <feGaussianBlur in="line" stdDeviation="2" result="soft" />
             <feMerge><feMergeNode in="soft" /><feMergeNode in="line" /></feMerge>
           </filter>
+          <filter id="impactA" colorInterpolationFilters="sRGB"><feColorMatrix type="saturate" values="0" /><feComponentTransfer><feFuncR type="discrete" tableValues="0.09 0.09 1 1" /><feFuncG type="discrete" tableValues="0.02 0.02 0.97 0.97" /><feFuncB type="discrete" tableValues="0.06 0.06 0.82 0.82" /></feComponentTransfer></filter>
+          <filter id="impactB" colorInterpolationFilters="sRGB"><feColorMatrix type="saturate" values="0" /><feComponentTransfer><feFuncR type="discrete" tableValues="0.96 0.96 0.09 0.09" /><feFuncG type="discrete" tableValues="0.76 0.76 0.02 0.02" /><feFuncB type="discrete" tableValues="0.17 0.17 0.06 0.06" /></feComponentTransfer></filter>
           <radialGradient id="pool"><stop offset="0" stopColor="#FFF18A" stopOpacity={0.85} /><stop offset="0.45" stopColor="#F6C22B" stopOpacity={0.32} /><stop offset="1" stopColor="#F6C22B" stopOpacity={0} /></radialGradient>
           <radialGradient id="greenlamp"><stop offset="0" stopColor="#B8FFC8" stopOpacity={0.95} /><stop offset="0.3" stopColor="#3DFF7C" stopOpacity={0.5} /><stop offset="1" stopColor="#3DFF7C" stopOpacity={0} /></radialGradient>
           <radialGradient id="air"><stop offset="0" stopColor="#FFF3A8" stopOpacity={0.5} /><stop offset="1" stopColor="#F6C22B" stopOpacity={0} /></radialGradient>
@@ -559,7 +511,8 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
           </defs>
         )}
         {/* The real map, recorded through this same camera (scripts/plates.mjs). It already carries the roll. */}
-        <g filter={blur ? 'url(#whip)' : undefined}>
+        <g transform={`translate(960 540) scale(${punch}) translate(-960 -540)`}>
+        <g filter={hit.stage === 1 ? 'url(#impactA)' : hit.stage === 2 ? 'url(#impactB)' : blur ? 'url(#whip)' : undefined} style={hush > 0 ? { filter: `saturate(${1 - 0.35 * hush}) contrast(${1 + 0.08 * hush})` } : undefined}>
           <foreignObject width={1920} height={1080}><Img src={plateAt(part, frame)} style={{ width: 1920, height: 1080, display: 'block' }} /></foreignObject>
           {/* The idle's end fades to the street that leads into its start, so the loop has no seam. */}
           {part === 'idle' && frame >= IDLE - BLEND && <foreignObject width={1920} height={1080} opacity={(frame - (IDLE - BLEND) + 1) / BLEND}><Img src={preAt(frame - (IDLE - BLEND))} style={{ width: 1920, height: 1080, display: 'block' }} /></foreignObject>}
@@ -570,7 +523,16 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
           {items.map((it, i) => <g key={i}>{it.node}</g>)}
           {fx}
         </g>
-        <rect width={1920} height={1080} fill="url(#vignette)" opacity={0.14} />
+        </g>
+        {/* ⚠️ AN IMPACT FRAME: two held frames, ink and paper then flipped, with lines rushing to the moment. His eyes alone stay lit. */}
+        {hit.stage > 0 && <g fill={hit.stage === 1 ? '#17060F' : '#F6E25A'} opacity={0.92}>{Array.from({ length: 34 }, (_, i) => {
+          const ang = (i / 34) * Math.PI * 2 + random(`il${i}`) * 0.16;
+          const r0 = 360 + 240 * random(`ir${i}${hit.stage}`);
+          const r1 = 1300;
+          return <path key={i} d={`M${960 + Math.cos(ang - 0.016) * r1} ${540 + Math.sin(ang - 0.016) * r1}L${960 + Math.cos(ang) * r0} ${540 + Math.sin(ang) * r0}L${960 + Math.cos(ang + 0.016) * r1} ${540 + Math.sin(ang + 0.016) * r1}Z`} />;
+        })}</g>}
+        {eyes.map(([x, y], i) => <circle key={i} cx={x} cy={y} r={24} fill="#FFFBD0" />)}
+        <rect width={1920} height={1080} fill="url(#vignette)" opacity={0.14 + 0.5 * hush} />
         {/* ⚠️ THE MOMENT OF IMPACT: everything holds for STOP frames. A flash, ink, then the burst. */}
         {f >= B.tump && f < B.tump + 2 && <rect width={1920} height={1080} fill="#FFFBD0" />}
         {f >= B.tump + 2 && f < B.tump + 5 && (
@@ -581,8 +543,8 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
         )}
         {f >= B.tump + 5 && f < B.tump + STOP && <Burst x={icx} y={icy} s={300} />}
         {tumpWord > 0 && (
-          <g opacity={tumpWord} transform={`translate(${icx + 40} ${Math.max(260, icy - 220)}) rotate(-7) scale(${kf(f, [[B.tump + 5, 0.4], [B.tump + 9, 1.2], [B.tump + 13, 1]])})`}>
-            <Paint text="TUMP!" x={0} y={0} h={170} fill="#F6C22B" outline="#3A1020" shadow="#980715" seed="tump" wobble={0.4} bounce={0.3} />
+          <g opacity={tumpWord} transform={`translate(620 340) rotate(-7) scale(${kf(f, [[B.tump + 5, 0.4], [B.tump + 9, 1.2], [B.tump + 13, 1]])})`}>
+            <Word text="TUMP!" h={320} />
           </g>
         )}
       </svg>

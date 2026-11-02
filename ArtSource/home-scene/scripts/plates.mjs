@@ -4,6 +4,9 @@
 // Plates land in plates/zack-intro, zack-idle and zack-idlepre (ignored by git; this rebuilds them).
 // Re-record after changing camera.ts or the map. One Unity job per machine; nothing else may have the project open.
 import { spawnSync } from 'node:child_process';
+import './platesrv.mjs';
+import { bundle } from '@remotion/bundler';
+import { renderStill, selectComposition } from '@remotion/renderer';
 import { build } from 'esbuild';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -25,9 +28,15 @@ const subjectsAt = (f) => {
   const pt = (x, y, zz) => ({ x, y, z: zz });
   return [pt(z.x, 0.2, z.z), pt(z.x, 1.1, z.z), pt(z.x, 2, z.z), pt(r.x, 0.2, r.z), pt(r.x, 1.1, r.z), pt(r.x, 2.2, r.z), pt(c.x, 0.3, c.z)];
 };
+// The film's acting, computed on its rigs in the browser, for the game's own models to wear.
+const serveUrl = await bundle({ entryPoint: path.resolve('src/index.ts') });
+const composition = await selectComposition({ serveUrl, id: 'ZackPoses' });
+await renderStill({ serveUrl, composition, frame: 0, output: path.resolve('scratch/_poses.png'), imageFormat: 'png', timeoutInMilliseconds: 900000, chromiumOptions: { gl: 'angle' } });
+const poses = JSON.parse(fs.readFileSync('scratch/poses.json', 'utf8'));
 const view = (clip, i, f, dt) => {
   const v = camAt(f);
-  return { clip, i, x: v.x, y: v.y, z: v.z, yaw: v.yaw, pitch: v.pitch, roll: v.roll, f: v.f, dt, subjects: subjectsAt(f) };
+  const row = poses.rows[String(f >= INTRO ? INTRO + ((f - INTRO) % IDLE) : f)];
+  return { clip, i, x: v.x, y: v.y, z: v.z, yaw: v.yaw, pitch: v.pitch, roll: v.roll, f: v.f, dt, subjects: subjectsAt(f), zack: row.z, rago: row.r, can: row.c };
 };
 
 const picks = process.argv.slice(2).map(Number);
@@ -41,13 +50,14 @@ if (picks.length) {
     // The last of the film also looks through the idle's lens: those are what the idle's end fades to, so its loop has no seam.
     const pre = (i - (FILM - BLEND * 2)) / 2;
     if (pre >= 0 && Number.isInteger(pre)) frames.push(view('zack-idlepre', pre, INTRO + IDLE - BLEND + pre, 0));
-    frames.push(view('zack-intro', i, i / 2, 1 / 60));
+    // The street slows with the climax: cars and all.
+    frames.push(view('zack-intro', i, i / 2, (i / 2 >= B.snapBack && i / 2 < B.yank ? 0.12 : 1) / 60));
   }
   for (let i = 0; i < IDLE; i++) frames.push(view('zack-idle', i, INTRO + i, 1 / 30));
 }
 const camFile = path.resolve('scratch', 'plates_zack.json');
 // The film's clock is 30 a second, and its green opens at B.green.
-fs.writeFileSync(camFile, JSON.stringify({ map: 'Kanto', warm: 900, green: picks.length ? -1 : B.green / 30, frames }));
+fs.writeFileSync(camFile, JSON.stringify({ map: 'Kanto', bones: poses.bones, warm: 900, green: picks.length ? -1 : B.green / 30, frames }));
 
 const repo = path.resolve('../..');
 const log = path.join(repo, 'Logs', 'home-plates-zack.log');

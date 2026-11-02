@@ -129,11 +129,43 @@ const SHOTS: Shot[] = [
       return { p: [z.x + 3.6, 1.3, z.z - 0.6], t: [z.x - 0.7, 1.05, z.z], f: 980, roll: 1.6 };
     },
   },
+  // Rago at the can, for the whole of it: he gets there, rights it and comes up running.
+  {
+    at: B.reset - 14, in: 0, cam: (f) => {
+      const u = clamp01((f - B.reset + 14) / 40);
+      return { p: [-2.6 + 0.4 * u, 0.85, -3.6], t: [0.8, 0.62, -0.7], f: 1250, roll: -1.2 };
+    },
+  },
+  // Back to Zack as he slides in on the slipper, with Rago already coming.
+  {
+    at: B.reset + 26, in: 0, cam: (f) => {
+      const z = zack(f);
+      return { p: [z.x + 3.2, 1.2, z.z - 2.6], t: [z.x - 0.7, 0.85, z.z + 0.2], f: 980, roll: 1.2 };
+    },
+  },
+  // The chase: the lens keeps the two of them in frame, the can somewhere between.
+  {
+    at: B.scoop + 12, in: 14, cam: (f) => {
+      const z = zack(f);
+      const r = rago(f);
+      const mx = (z.x + r.x) / 2;
+      const mz = (z.z + r.z) / 2;
+      return { p: [mx + 4.0, 1.4, mz - 3.4], t: [mx, 0.95, mz], f: 1150, roll: 1 };
+    },
+  },
+  // He runs at the lens and looks into it, Rago's reach right behind him. The push in is the only move.
+  {
+    at: B.look, in: 0, cam: (f) => {
+      const z = zack(f);
+      const u = clamp01((f - B.look) / (B.wall - B.look));
+      return { p: [z.x + 1.9 - 0.5 * u, 1.2, z.z - 2.3 + 0.6 * u], t: [z.x, 1.28, z.z], f: 1050 + 300 * easeInOut(u), roll: -1.5 };
+    },
+  },
   // The tag, side on and low, the can between them. It pushes all the way in to the lunge, then follows
   // Rago down.
   {
-    at: B.wall - 4, in: 14, cam: (f) => {
-      const u = clamp01((f - B.wall) / (B.commit - B.wall));
+    at: B.wall, in: 0, cam: (f) => {
+      const u = 1;
       const go = clamp01((f - B.commit) / (B.snapBack - B.commit));
       const down = clamp01((f - B.trip) / (B.sprawl - B.trip));
       return {
@@ -144,8 +176,31 @@ const SHOTS: Shot[] = [
       };
     },
   },
-  // One whip home along the route, landing exactly on the hold.
-  { at: B.land - 1, in: 8, cam: (f) => settle(f) },
+  // ⚠️ THE EYE LOCK: each face from where the other one is looking, from between them so nobody blocks it. Each only pushes in.
+  {
+    at: B.lockR, in: 0, cam: (f) => {
+      const z = zack(f); const r = rago(f);
+      const u = clamp01((f - B.lockR) / (B.lockZ - B.lockR));
+      const dx = z.x - r.x; const dz = z.z - r.z; const d = Math.hypot(dx, dz) || 1;
+      return { p: [r.x + (dx / d) * 1.5 + (dz / d) * 0.25, 1.25, r.z + (dz / d) * 1.5 - (dx / d) * 0.25], t: [r.x, 1.38, r.z], f: 950 * (1 + 0.12 * u), roll: 1.5 };
+    },
+  },
+  {
+    at: B.lockZ, in: 0, cam: (f) => {
+      const z = zack(f); const r = rago(f);
+      const u = clamp01((f - B.lockZ) / (B.yank - B.lockZ));
+      const dx = r.x - z.x; const dz = r.z - z.z; const d = Math.hypot(dx, dz) || 1;
+      return { p: [z.x + (dx / d) * 1.5 - (dz / d) * 0.25, 1.2, z.z + (dz / d) * 1.5 + (dx / d) * 0.25], t: [z.x, 1.32, z.z], f: 1000 * (1 + 0.14 * u), roll: -1.5 };
+    },
+  },
+  {
+    at: B.yank - 1, in: 0, cam: (f) => {
+      const down = clamp01((f - B.trip) / (B.sprawl - B.trip));
+      return { p: [5.7, 0.55, 0.05], t: [0.3, 0.8 - 0.15 * down, -0.2 + 0.4 * easeInOut(down)], f: 1280 * 1.12 * (1 - 0.1 * easeInOut(down)), roll: 2 - 5 * easeInOut(down) };
+    },
+  },
+  // The crash zoom: five frames across the court, arriving exactly as he does.
+  { at: B.land - 1, in: 5, cam: (f) => settle(f) },
   // He turns to us and the lens comes in on him.
   { at: B.fold + 2, in: 74, cam: (f) => landing(f) },
 ];
@@ -171,7 +226,8 @@ export const camAt = (f: number): View => {
   const a = aim(c.p, c.t);
   const hit = f >= B.tump && f < B.tump + 26 ? (1 - (f - B.tump) / 26) * 0.09 : 0;
   const slam = f >= B.sprawl - 2 && f < B.sprawl + 16 ? (1 - (f - B.sprawl + 2) / 18) * 0.06 : 0;
-  const jolt = f >= B.jolt && f < B.jolt + 16 ? (1 - (f - B.jolt) / 16) * 0.05 : 0;
+  const arrive = B.land + 5;
+  const jolt = (f >= B.jolt && f < B.jolt + 16 ? (1 - (f - B.jolt) / 16) * 0.05 : 0) + (f >= arrive && f < arrive + 18 ? (1 - (f - arrive) / 18) * 0.05 : 0);
   // Decaying smooth shakes, layered on the current camera.
   const sx = hit * Math.sin(f * 1.7) + (slam + jolt) * Math.sin(f * 1.3);
   const sy = hit * Math.sin(f * 2.3 + 1) + (slam + jolt) * Math.sin(f * 1.9 + 1);

@@ -5,6 +5,12 @@ import path from 'node:path';
 
 const root = path.resolve('plates');
 const server = http.createServer((req, res) => {
+  if (req.method === 'POST') {
+    const out = fs.createWriteStream(path.resolve('scratch/poses.json'));
+    req.pipe(out);
+    out.on('finish', () => { res.writeHead(200, { 'Access-Control-Allow-Origin': '*' }); res.end(); });
+    return;
+  }
   const file = path.join(root, decodeURIComponent(new URL(req.url, 'http://x').pathname));
   if (!file.startsWith(root) || !fs.existsSync(file)) { res.writeHead(404); res.end(); return; }
   res.writeHead(200, { 'Content-Type': 'image/jpeg', 'Access-Control-Allow-Origin': '*' });

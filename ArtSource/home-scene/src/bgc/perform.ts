@@ -64,16 +64,16 @@ export const REST_SLIPPER = { x: 2.1, z: 2.0 };
 const CAN_DOWN = { x: 1.15, z: -0.35 };
 /** Where he rights it from: beside it, still on the side he guards. */
 const SET = { x: 0.7, z: -0.95 };
-/** Where Zack waits for him, on the far side of the can. */
-export const STAND = { x: 0.8, z: 1.4 };
-/** Where Rago's lunge starts. */
-const CREEP = { x: 0.45, z: -1.15 };
-/** Where he ends up. */
-export const FLAT = { x: 0.7, z: 0.75 };
+/** Where Rago's hand nearly has him and Backtrack takes him: heading home past the can. */
+export const STAND = { x: -0.6, z: -1.6 };
+/** Where Rago's lunge starts: the can is between him and Zack, and he does not see it. */
+const CREEP = { x: 0.3, z: 0.75 };
+/** Where he ends up, past the can. */
+export const FLAT = { x: -0.4, z: -1.2 };
 /** Where the can rolls the second time. */
-const CAN_KICKED = { x: 1.45, z: -0.55 };
-/** Rago's yaw through the lunge: north, a little toward the side lens. */
-const LUNGE_YAW = 152;
+const CAN_KICKED = { x: -1.3, z: 0.2 };
+/** Rago's yaw through the lunge. */
+const LUNGE_YAW = 339;
 
 /** Height of a key on a list of [frame, x, z] waypoints. */
 const path = (f: number, pts: [number, number, number][], e: Ease = easeInOut) => {
@@ -148,11 +148,50 @@ const RUN: [number, number, number][] = [
   [B.scoop, REST_SLIPPER.x + 0.65, REST_SLIPPER.z - 0.25],
 ];
 const routeAt = (f: number) => path(f, RUN, (t) => t);
+const linear: Ease = (t) => t;
+/**
+ * ⚠️ NOBODY STANDS AND STARES (owner, 2026-11-02: "rago shouldve been running after him the moment he got close"). Zack
+ * scoops and runs with Rago on him: out round the far side of the court and home past the can, with Rago cutting inside.
+ */
+const CHASE_Z: [number, number, number][] = [
+  [B.scoop + 12, RUN[3][1], RUN[3][2]],
+  [B.scoop + 26, 3.6, 3.4],
+  [B.scoop + 42, 1.8, 4.4],
+  [B.scoop + 60, -0.6, 4],
+  [B.scoop + 76, -2.3, 2.4],
+  [B.scoop + 90, -2.3, 0.2],
+  [B.snapBack, STAND.x, STAND.z],
+];
+const CHASE_R: [number, number, number][] = [
+  [B.reset + 24, SET.x, SET.z],
+  [B.reset + 51, 2.3, 0.9],
+  [B.reset + 75, 2.6, 3],
+  [B.reset + 96, 1, 3.4],
+  [B.commit - 9, 0.35, 1.6],
+  [B.commit, CREEP.x, CREEP.z],
+];
+const unwrapTo = (yaw: number, near: number) => yaw + 360 * Math.round((near - yaw) / 360);
+const headingTable = (pts: [number, number, number][], from: number) => {
+  const memo = new Map<number, number>();
+  let h = from;
+  for (let g = pts[0][0]; g <= pts[pts.length - 1][0]; g += 0.5) {
+    const a = path(g - 1, pts, linear);
+    const b = path(g + 1, pts, linear);
+    h = unwrapTo(yawTo(a, b), h);
+    memo.set(g, h);
+  }
+  return (f: number) => memo.get(Math.round(f * 2) / 2) ?? from;
+};
+const zackHeading = headingTable(CHASE_Z, 175);
+const ragoHeading = headingTable(CHASE_R, 139);
 
-/** ⚠️ BACKTRACK IS A YANK, NOT A TELEPORT (owner, 2026-11-01): quick, across the frame and off toward the line. */
-export const PULL = 12;
-// Straight past Rago on the far side from the lens: the way he came would swing him up against the camera.
-const pullRoute = () => [STAND, { x: -0.75, z: -0.6 }, { x: -0.75, z: -3 }, LINE];
+/**
+ * ⚠️ BACKTRACK: SLOW, THEN GONE (owner, 2026-11-02: "slow motion dapat ... they briefly lock eyes but its too late"). He drifts the
+ * first metre out of Rago's reach while the world nearly holds, then the rest of the way home in a third of a second.
+ */
+export const PULL = B.yank + 15 - B.snapBack;
+const SLOW_U = 0.13;
+const pullRoute = () => [STAND, { x: -1.9, z: -2.9 }, LINE];
 /** u 0..1 along the route home, by length. */
 export const pullAt = (u: number) => {
   const r = pullRoute();
@@ -164,14 +203,20 @@ export const pullAt = (u: number) => {
   }
   return LINE;
 };
-/** It catches him, then hauls him in: slow for two frames, then everything. */
-export const pullU = (f: number) => clamp01((f - B.snapBack) / PULL) ** 2.2;
+/** How far home he is. */
+export const pullU = (f: number) => {
+  if (f <= B.snapBack) return 0;
+  if (f < B.yank) return SLOW_U * ((f - B.snapBack) / (B.yank - B.snapBack));
+  return Math.min(1, SLOW_U + (1 - SLOW_U) * ((f - B.yank) / 15) ** 1.6);
+};
+/** When he was that far home. */
+export const pullWhen = (u: number) => (u <= SLOW_U ? B.snapBack + (u / SLOW_U) * (B.yank - B.snapBack) : B.yank + 15 * ((u - SLOW_U) / (1 - SLOW_U)) ** (1 / 1.6));
 
 const zackPlace = (f: number) => {
   if (f >= B.snapBack && f < B.snapBack + PULL) return pullAt(pullU(f));
   if (f < B.run) return LINE;
   if (f < B.scoop) return routeAt(f);
-  if (f < B.snapBack) return path(f, [[B.scoop + 8, RUN[3][1], RUN[3][2]], [B.wall + 10, STAND.x, STAND.z]]);
+  if (f < B.snapBack) return path(f, CHASE_Z, linear);
   return LINE;
 };
 
@@ -179,15 +224,14 @@ const zackPlace = (f: number) => {
 const ZI = (at: number, fade: number, pose?: Pose): Seg => ({ at, fade, clip: 'idle', abs: 0, pose });
 /** Looking toward screen right: the signal, and Rago in the hold. */
 const LOOK_UP: Pose = { torso: [-3, 10, 0], head: [-16, 28, 0] };
-const LOOK_BACK: Pose = { torso: [0, 10, 0], head: [-2, 36, 4] };
+const LOOK_BACK: Pose = { head: [-3, 0, 0] };
 const Z_TRACK: Seg[] = [
   ZI(0, 0),
-  ZI(B.lookUp, 16, LOOK_UP),
-  // Not yet: his own head-shake, slowed to read, still looking up at the light.
-  { at: B.finger, fade: 8, clip: 'emote-no', rate: 0.55, pose: { head: [-12, 16, 0] } },
-  ZI(B.amber - 8, 12, LOOK_UP),
-  // The green reaches him: his own charge, slowed, while the eyes light.
-  { at: B.eyes + 6, fade: 14, clip: 'hero-zack-charge', rate: 0.42, once: true },
+  // ⚠️ ONE LOOK (owner, 2026-11-02: "why does he stare back at the middle"). Over his shoulder at the map's real
+  // signal, behind him at screen right, and the film cuts straight to what he sees.
+  ZI(B.lookUp, 14, LOOK_UP),
+  // The green: he only lifts his chin at it.
+  ZI(B.eyes, 12, { head: [-7, 6, 3] }),
   ZI(B.wide - 10, 18),
   // The pause before the snap, held; he turns away the moment it leaves his hand.
   { at: B.snap - 28, fade: 14, pose: Z_AIM },
@@ -198,13 +242,13 @@ const Z_TRACK: Seg[] = [
   // ⚠️ RATES ARE THE PATH'S SPEED OVER THE CLIP'S STRIDE, so feet stay planted: sprint covers about 4.1 m/s at rate 1, walk 1.8.
   { at: B.run - 3, fade: 5, clip: 'sprint', rate: 1.4 },
   { at: B.scoop - 8, fade: 5, clip: 'slide', rate: 1.1, once: true },
-  { at: B.scoop + 8, fade: 10, clip: 'walk', rate: 0.9 },
-  ZI(B.wall + 6, 14, { head: [-4, 14, 8], torso: [-3, 8, 0] }),
-  // Rago's hand is nearly on him and he looks at us.
-  ZI(B.commit, 8, { head: [-8, 26, 8], torso: [-4, 14, 0] }),
+  // Up and straight into it, glancing back at Rago coming. 3.8 m/s over the sprint's 4.1.
+  { at: B.scoop + 8, fade: 6, clip: 'sprint', rate: 0.92 },
+  // He looks straight down the lens: nothing else on him changes.
+  { at: B.look, fade: 6, clip: 'sprint', rate: 0.92, pose: { head: [-5, 0, 0] } },
   // Home, already looking back to see how it went.
   // Hauled backward from the hips, arms and head left behind; then the stop arrives through him.
-  { at: B.snapBack, fade: 3, pose: Z_PULLED },
+  { at: B.snapBack, fade: 10, pose: Z_PULLED },
   { at: B.snapBack + PULL - 2, fade: 3, pose: Z_ARRIVE },
   ZI(B.snapBack + PULL + 8, 14, LOOK_BACK),
   { at: B.shake - 2, fade: 8, pose: Z_SHAKE },
@@ -221,10 +265,12 @@ const zackLayers = (f: number) => {
   return layers;
 };
 
-const zackYaw = (f: number) => kf(f, [
+const zackYaw = (f: number) => f >= B.scoop + 12 && f < B.snapBack ? zackHeading(f) : kf(f, [
     [0, 8],
     [B.lookUp, 8],
-    [B.lookUp + 14, 22],
+    [B.lookUp + 16, 118],
+    [B.amber + 2, 118],
+    [B.eyes - 4, 8],
     [B.eyes + 30, 8],
     [B.snap - 24, 8],
     [B.snap - 8, 110],
@@ -236,18 +282,17 @@ const zackYaw = (f: number) => kf(f, [
     [B.run + 34, 200],
     [B.scoop, 175],
     [B.scoop + 8, 175],
-    [B.scoop + 14, 250],
-    [B.wall + 6, 250],
-    // Square up to Rago across the can, cheated a little to the side lens.
-    [B.wall + 20, 380],
-    [B.snapBack - 1, 380],
+    [B.scoop + 12, zackHeading(B.scoop + 12)],
     // He faces where he was as he is dragged away from it, and comes round on the stop.
-    [B.snapBack, 20, () => 1], // 380 is 20: the same way round, so the settle below is short
-    [B.snapBack + PULL - 1, 20],
-    [B.snapBack + PULL + 8, 12],
-    [B.shake + 30, 28], // watching Rago
-    [B.fold, 28],
-    [B.fold + 44, 4.4], // and he turns to us: the idle starts from here
+    // Taken from behind, he comes round to face the hand that missed, and holds it.
+    [B.snapBack, zackHeading(B.snapBack - 0.5), () => 1],
+    [B.snapBack + 16, 161],
+    [B.yank, 161],
+    // ⚠️ THE TURN (owner, 2026-11-02: "make him TURN AROUND"). He lands with his back to us, still watching Rago get up and keep the score.
+    // Only when that is done does he turn all the way round to the lens.
+    [B.snapBack + PULL + 8, 175],
+    [B.fold, 175],
+    [B.fold + 44, 4.4], // the idle starts from here
     [INTRO, 4.4],
 ]);
 
@@ -256,10 +301,8 @@ export const zack = (f: number): Frame => {
   const pulling = f >= B.snapBack && f < B.snapBack + PULL + 6;
   const at = f >= INTRO ? LINE : pulling ? zackPlace(f) : { x: rounded(f, (g) => zackPlace(g).x), z: rounded(f, (g) => zackPlace(g).z) };
   const yaw = f >= INTRO ? 3 + 2.5 * idleSin(f, 2, 0.6) : rounded(f, zackYaw);
-  const glow = Math.max(
-    kf(f, [[B.eyes + 8, 0], [B.eyes + 16, 0.35], [B.eyes + 19, 0.1], [B.eyes + 26, 1], [B.snap + 14, 0.9], [B.snap + 30, 0.25], [B.stare, 0.25], [B.stare + 8, 1], [B.run, 1]]) * (f < B.run ? 1 : 0),
-    f >= B.run && f < B.land + 30 ? kf(f, [[B.run, 1], [B.scoop, 1], [B.wall + 10, 0.3], [B.commit - 6, 0.3], [B.commit, 1], [B.land, 1], [B.land + 30, 0]]) : 0,
-  );
+  // ⚠️ NO LIGHTNING EYES BEFORE THE CHASE IS DONE (owner, 2026-11-02). They catch on the look, stutter once, and hold through Backtrack.
+  const glow = f >= B.look && f < B.land + 30 ? kf(f, [[B.look + 8, 0], [B.look + 11, 0.5], [B.look + 13, 0.1], [B.look + 16, 1], [B.land, 1], [B.land + 30, 0]]) : 0;
   // On the hold his eyes answer only his biggest moment of current.
   const held = f >= INTRO ? Math.max(0, litAt(f) - 0.4) / 0.5 : 0;
   const flying = f >= B.snap + 2 && f < B.scoop + 3;
@@ -280,7 +323,8 @@ export const zack = (f: number): Frame => {
 
 /** How much current is on him, for the sparks: Momentum's three visible stages while he runs. */
 export const momentum = (f: number) => {
-  if (f < B.run || f >= B.scoop + 4) return 0;
+  if (f < B.run || f >= B.snapBack) return 0;
+  if (f >= B.scoop - 2 && f < B.scoop + 12) return 1;
   const t = (f - B.run) / (B.scoop - B.run);
   return t < 0.34 ? 1 : t < 0.68 ? 2 : 3;
 };
@@ -305,16 +349,19 @@ const R_TRACK: Seg[] = [
   { at: B.stare + 6, fade: 12, pose: { ...R_SQUARE, head: [10, 0, 0] } },
   { at: B.reset - 26, fade: 8, clip: 'walk', rate: 0.8 },
   { at: B.reset - 4, fade: 7, clip: 'pick-up', rate: 0.75, once: true },
-  { at: B.reset + 24, fade: 10, clip: 'walk', rate: 0.3, pose: { root: [5, 0, 0], armR: [-34, 0, 0], armL: [-34, 0, 0], head: [-6, 0, 0] } },
-  { at: B.commit - 10, fade: 10, pose: R_CREEP },
-  { at: B.commit, fade: 9, pose: R_REACH },
-  { at: B.trip - 1, fade: 4, pose: R_TRIP },
+  // He comes up off the can already running at Zack.
+  { at: B.reset + 22, fade: 8, clip: 'sprint', rate: 0.7, pose: { root: [6, 0, 0], head: [-6, 0, 0] } },
+  { at: B.commit - 2, fade: 8, pose: R_REACH },
+  // The hand stays where he was. The head goes after him, and when he is yanked it whips after him, too late.
+  { at: B.lockR - 8, fade: 22, pose: { ...R_REACH, head: [-26, -22, 0] } },
+  { at: B.yank - 1, fade: 4, pose: { ...R_REACH, head: [-20, -62, 0] } },
+  { at: B.trip + 2, fade: 4, pose: R_TRIP },
   { at: B.sprawl - 5, fade: 5, pose: R_SPRAWL },
   { at: B.rise, fade: 22, pose: R_UP },
   { at: B.rise + 24, fade: 12, pose: R_SQUARE },
-  { at: B.walk, fade: 10, clip: 'walk', rate: 1.2 },
+  { at: B.walk, fade: 8, clip: 'walk', rate: 1 },
   { at: B.pick - 4, fade: 8, clip: 'pick-up', rate: 0.34, once: true },
-  { at: B.pick + 22, fade: 8, clip: 'walk', rate: 0.75 },
+  { at: B.pick + 22, fade: 8, clip: 'walk', rate: 1.2 },
   { at: B.home - 6, fade: 14, pose: R_WALL },
   { at: B.one - 2, fade: 12, pose: R_ONE },
   { at: B.fold - 4, fade: 18, pose: R_WALL },
@@ -323,27 +370,26 @@ const R_TRACK: Seg[] = [
 
 const ragoLayers = (f: number) => layersAt(f, R_TRACK);
 
-const ragoPlace = (f: number) =>
-  f < B.reset - 26
-    ? POST
-    : path(f, [
-        [B.reset - 26, POST.x, POST.z],
-        [B.reset - 4, SET.x, SET.z],
-        [B.reset + 24, SET.x, SET.z],
-        // He shadows Zack along his side of the can: out with the run, back with the stroll.
-        [B.wall - 4, SET.x + 0.65, SET.z - 0.05],
-        [B.commit - 6, CREEP.x, CREEP.z],
-        [B.commit, CREEP.x, CREEP.z],
-        [B.trip, CREEP.x + 0.05, -0.55],
-        [B.sprawl, FLAT.x, FLAT.z],
-        [B.walk, FLAT.x, FLAT.z],
-        [B.pick - 4, CAN_KICKED.x - 0.1, CAN_KICKED.z - 0.75],
-        [B.pick + 22, CAN_KICKED.x - 0.1, CAN_KICKED.z - 0.75],
-        [B.home, POST.x, POST.z],
-      ]);
+const ragoPlace = (f: number) => {
+  if (f < B.reset - 26) return POST;
+  if (f < B.reset + 24) return path(f, [[B.reset - 26, POST.x, POST.z], [B.reset - 4, SET.x, SET.z]]);
+  if (f < B.commit) return path(f, CHASE_R, linear);
+  return path(f, [
+    [B.commit, CREEP.x, CREEP.z],
+    [B.snapBack, 0.12, 0.3],
+    [B.yank, 0.0, 0.05],
+    [B.trip, -0.1, -0.15],
+    [B.sprawl, FLAT.x, FLAT.z],
+    [B.walk, FLAT.x, FLAT.z],
+    [B.pick - 4, CAN_KICKED.x - 0.1, CAN_KICKED.z - 0.75],
+    [B.pick + 22, CAN_KICKED.x - 0.1, CAN_KICKED.z - 0.75],
+    [B.home, POST.x, POST.z],
+  ]);
+};
 
 const ragoYaw = (f: number) => {
-  const keyed = kf(f, [
+  if (f >= B.reset + 24 && f < B.commit) return ragoHeading(f);
+  return kf(f, [
     [0, 0],
     [B.noLook, 0],
     [B.noLook + 30, 14],
@@ -351,22 +397,16 @@ const ragoYaw = (f: number) => {
     [B.stare, 26],
     [B.stare + 16, yawTo(POST, CAN_DOWN)],
     [B.reset + 22, yawTo(POST, CAN_DOWN)],
+    [B.reset + 24, ragoHeading(B.reset + 24)],
     [B.commit, LUNGE_YAW],
     [B.rise + 20, LUNGE_YAW],
-    [B.walk + 10, 170],
-    [B.pick + 22, 200],
-    [B.pick + 34, 300],
-    [B.home - 12, 300],
-    [B.home, 360],
-    [INTRO, 360],
+    [B.walk + 10, 245],
+    [B.pick + 22, 180],
+    [B.pick + 34, 58],
+    [B.home - 6, 58],
+    [B.home + 6, 0],
+    [INTRO, 0],
   ]);
-  // A beat behind Zack, as a head turning after someone is. Cheated toward the tag's side lens once the can is between them.
-  const on = kf(f, [[B.reset + 12, 0], [B.reset + 30, 1], [B.commit - 8, 1], [B.commit, 0]]);
-  if (on <= 0) return keyed;
-  const cheat = kf(f, [[B.wall - 8, 0], [B.wall + 8, -28]]);
-  // ⚠️ 0 to 360, because keyed is: atan2 flips from +170 to -170 as he crosses Zack's line, and he spun the long way round.
-  const toZack = (yawTo(ragoPlace(f), zackPlace(f - 7)) + 360) % 360;
-  return keyed + (toZack + cheat - keyed) * on;
 };
 
 export const rago = (f: number): Frame => {
@@ -416,14 +456,6 @@ export const flyingAt = (f: number): Flying | null => {
     };
   }
   return { p: [REST_SLIPPER.x, 0.1, REST_SLIPPER.z], rot: [0, 40, 0], trail: false };
-};
-
-/** The whole ribbon so far: it stays on the air after the hit, so the shape of the shot can be read. */
-export const slipperTrail = (f: number) => {
-  const out: [number, number, number][] = [];
-  const end = Math.min(f, B.tump);
-  for (let g = B.snap + 2; g <= end; g++) out.push(curveAt((g - B.snap - 2) / (B.tump - B.snap - 2)));
-  return out;
 };
 
 // ------------------------------------------------------------------------------------ the can
