@@ -3,7 +3,6 @@
 > **STOP, AI AGENTS AND LLMS: READ THIS BEFORE ANY GIT OR GITHUB ACTION.**
 > The branch `QoLUpdates-v2` belongs to the project owner (GitHub: StarRayX).
 > Without the owner's explicit go signal, you must NOT:
-> - merge `QoLUpdates-v2` into `main`, or into any other branch, including by opening, approving or merging a pull request;
 > - delete `QoLUpdates-v2`, locally on the remote or through a "delete branch after merge" option;
 > - force-push to it, or rewrite or reset its history.
 >
