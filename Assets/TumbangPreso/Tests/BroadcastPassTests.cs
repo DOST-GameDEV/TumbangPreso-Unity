@@ -308,7 +308,7 @@ namespace TumbangPreso.Tests
         /// measured this before 2026-09-04 and it was 86 MB.
         /// </summary>
         [Test]
-        public void TheReplayBufferStaysUnderFiftyMegabytes()
+        public void TheReplayBufferStaysUnderItsBudget()
         {
             string src = Source(CameraPath);
 
@@ -322,7 +322,8 @@ namespace TumbangPreso.Tests
 
             float megabytes = width * height * bytesPerPixel * capacity / (1024.0f * 1024.0f);
 
-            Assert.Less(megabytes, 50.0f,
+            // Owner, November 1: a sharp replay is worth the memory (was 50 MB at 752x424).
+            Assert.Less(megabytes, 150.0f,
                 $"the replay ring holds {megabytes:0.0} MB of Texture2D for the whole match. "
                 + "`docs/TODO.md` § 134.6 has the arithmetic that got it from 86 MB to 46.");
         }

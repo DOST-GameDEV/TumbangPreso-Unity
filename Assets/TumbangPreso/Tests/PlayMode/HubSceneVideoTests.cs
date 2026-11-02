@@ -18,7 +18,7 @@ namespace TumbangPreso.PlayTests
     /// </summary>
     public sealed class HubSceneVideoTests
     {
-        [UnitySetUp] public IEnumerator Before() { HubSceneVideo.ForcedHero = null; yield return PlayModeWorld.Reset(); }
+        [UnitySetUp] public IEnumerator Before() { HubSceneVideo.ForcedHero = null; HubSceneVideo.FilmsSeen.Clear(); yield return PlayModeWorld.Reset(); }
         [UnityTearDown] public IEnumerator After() { HubSceneVideo.ForcedHero = null; yield return PlayModeWorld.Reset(); }
 
         [UnityTest, Timeout(30000)]
@@ -206,6 +206,56 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual("zack", HubSceneVideo.Pick(n => 0, _ => false), "With no clip anywhere the pick did not fall back to Zack.");
         }
 
+        /// <summary>
+        /// 🧑 2026-11-01: the animation plays, settles into the idle, and does not restart. Asks the
+        /// decoders: the film ends, the on-screen player becomes the looping idle and keeps advancing,
+        /// the film's decoder is gone, and the next hub skips the film.
+        /// </summary>
+        [UnityTest, Timeout(120000)]
+        public IEnumerator ZacksFilmPlaysOnceThenHoldsTheIdle()
+        {
+            bool reduced = Settings.SettingsStore.Current.ReducedUiMotion;
+            GameObject parent = null, second = null;
+            try
+            {
+                Settings.SettingsStore.Current.ReducedUiMotion = false;
+                HubSceneVideo.ForcedHero = "zack";
+                parent = new GameObject("FilmHome", typeof(RectTransform));
+                var home = HubSceneVideo.Install((RectTransform)parent.transform);
+                float until = Time.realtimeSinceStartup + 20;
+                while (!(home.FirstFrameReady && home.Player.isPlaying) && Time.realtimeSinceStartup < until) yield return null;
+                var film = home.Player;
+                Assert.IsFalse(film.isLooping, "The film would restart.");
+                Assert.AreSame(Resources.Load<VideoClip>(HubSceneVideo.IntroPathFor("zack")), film.clip);
+                yield return new WaitForSecondsRealtime(2f); // the idle's decoder opens behind it
+                film.time = film.clip.length - 1.0;
+                until = Time.realtimeSinceStartup + 20;
+                while (!home.HoldingIdle && Time.realtimeSinceStartup < until) yield return null;
+                Assert.IsTrue(home.HoldingIdle, "The film never handed over to the idle.");
+                yield return null;
+                Assert.IsTrue(film == null, "The film's decoder survived the hand-over.");
+                Assert.AreSame(Resources.Load<VideoClip>(HubSceneVideo.ClipPathFor("zack")), home.Player.clip);
+                Assert.IsTrue(home.ShowingVideo, "The idle is not what is on screen.");
+                long frame = home.Player.frame;
+                yield return new WaitForSecondsRealtime(.6f);
+                Assert.Greater(home.Player.frame, frame, "The idle is not advancing.");
+                Assert.IsTrue(HubSceneVideo.FilmsSeen.Contains("zack"));
+                Object.Destroy(parent); parent = null;
+                yield return null;
+                second = new GameObject("SecondHome", typeof(RectTransform));
+                var next = HubSceneVideo.Install((RectTransform)second.transform);
+                until = Time.realtimeSinceStartup + 20;
+                while (!next.FirstFrameReady && Time.realtimeSinceStartup < until) yield return null;
+                Assert.IsTrue(next.Player.isLooping, "The film played a second time in one run.");
+            }
+            finally
+            {
+                if (parent != null) Object.Destroy(parent);
+                if (second != null) Object.Destroy(second);
+                Settings.SettingsStore.Current.ReducedUiMotion = reduced;
+            }
+        }
+
         /// <summary>Phaister's loop, picked, prepares and advances in the real hub exactly as Zack's does.</summary>
         [UnityTest, Timeout(240000)]
         public IEnumerator PhaistersLoopPlaysWhenPicked()
@@ -226,6 +276,19 @@ namespace TumbangPreso.PlayTests
             Assert.Greater(scene.Player.frame, first, "Phaister's loop is not advancing.");
             yield return TumpUiCapture.Capture("Hub-HomeScene-Phaister-1920x1080", hub.Canvas, 1920, 1080, checkPalette: false);
             yield return TumpUiCapture.Capture("Hub-HomeScene-Phaister-1600x680", hub.Canvas, 1600, 680, checkPalette: false);
+            // The whole film and the hold under the real board, for a person to look at.
+            foreach (var at in new[] { 5.5, 10.5, 14.0, 17.0, 23.0, 27.0, 30.0, 33.0, 36.5 })
+            {
+                scene.Player.time = at;
+                yield return new WaitForSecondsRealtime(0.5f);
+                yield return TumpUiCapture.Capture($"Hub-HomeScene-Phaister-Film-{at:00.0}", hub.Canvas, 1920, 1080, checkPalette: false);
+            }
+            scene.Player.time = scene.Player.length - 0.5;
+            float settled = Time.realtimeSinceStartup + 20;
+            while (!scene.HoldingIdle && Time.realtimeSinceStartup < settled) yield return null;
+            Assert.IsTrue(scene.HoldingIdle, "Her film never handed over to the idle under the real board.");
+            yield return new WaitForSecondsRealtime(0.5f);
+            yield return TumpUiCapture.Capture("Hub-HomeScene-Phaister-Hold", hub.Canvas, 1920, 1080, checkPalette: false);
         }
 
         [UnityTest, Timeout(240000)]
@@ -253,7 +316,21 @@ namespace TumbangPreso.PlayTests
             yield return TumpUiCapture.Capture("Hub-HomeScene-1920x1080", hub.Canvas, 1920, 1080, checkPalette: false);
             yield return TumpUiCapture.Capture("Hub-HomeScene-1600x680", hub.Canvas, 1600, 680, checkPalette: false);
 
+            // The whole film and the hold under the real board, for a person to look at.
+            foreach (var at in new[] { 6.0, 18.5, 26.5, 28.5, 32.0, 33.2, 34.0, 37.0 })
+            {
+                scene.Player.time = at;
+                yield return new WaitForSecondsRealtime(0.5f);
+                yield return TumpUiCapture.Capture($"Hub-HomeScene-Film-{at:00.0}", hub.Canvas, 1920, 1080, checkPalette: false);
+            }
+            scene.Player.time = scene.Player.length - 0.5;
+            float settled = Time.realtimeSinceStartup + 20;
+            while (!scene.HoldingIdle && Time.realtimeSinceStartup < settled) yield return null;
+            Assert.IsTrue(scene.HoldingIdle, "The film never handed over to the idle under the real board.");
+            yield return new WaitForSecondsRealtime(0.5f);
+            yield return TumpUiCapture.Capture("Hub-HomeScene-Hold", hub.Canvas, 1920, 1080, checkPalette: false);
             yield return HubFlowTests.Press("HeroButton");
+            yield return HubFlowTests.AwaitDeferredHero();
             Assert.IsInstanceOf<HubHero>(hub.Top);
             yield return new WaitForSecondsRealtime(0.5f);
             Assert.IsFalse(scene.Player.isPlaying, "The loop kept playing behind HERO.");

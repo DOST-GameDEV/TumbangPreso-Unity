@@ -22,6 +22,11 @@ namespace TumbangPreso.CameraSystem
         // Amihan's Storm Surge: the fan while it gathers and the wall it releases (replay only;
         // a rejoiner mid-gather misses the telegraph, the host's push still lands).
         public const WorldEffectSnapshot.Kind Storm=(WorldEffectSnapshot.Kind)108;
+        // Clip 18 (owner, November 1: "dapat recorded na ren yan"). What a body wears that its bones do not record:
+        // Dante's mountain on its own clock, and the taya's headband with its exact fit in `Path` (`TayaIdentity.TryRecorded`).
+        public const WorldEffectSnapshot.Kind Mountain=(WorldEffectSnapshot.Kind)109;
+        public const WorldEffectSnapshot.Kind TayaBand=(WorldEffectSnapshot.Kind)110;
+        public static bool CarriesPath(WorldEffectSnapshot.Kind kind)=>WorldEffectSnapshot.UsesDynamicIdentity(kind)||kind==TayaBand;
         public static List<WorldEffectSnapshot.Field> Capture()
         {
             var fields=WorldEffectSnapshot.Capture();
@@ -61,6 +66,16 @@ namespace TumbangPreso.CameraSystem
                 fields.Add(new WorldEffectSnapshot.Field{Type=Storm,Source=storm.gameObject,Position=storm.Origin,Forward=storm.Forward,
                     Radius=1,Duration=life,Remaining=life-storm.Age,Owner=storm.OwnerSlot});
             }
+            foreach(var mountain in Object.FindObjectsByType<DanteMountainArmour>())
+            {
+                var owner=mountain.RecordedOwner;
+                if(owner==null||!mountain.isActiveAndEnabled||mountain.Orphaned||mountain.Age>=mountain.GoneAt||mountain.GoneAt>60)continue;
+                fields.Add(new WorldEffectSnapshot.Field{Type=Mountain,Source=mountain.gameObject,Position=owner.transform.position,Forward=owner.transform.forward,
+                    Radius=1,Duration=mountain.GoneAt,Remaining=mountain.GoneAt-mountain.Age,FirstScale=mountain.EndAt,Owner=owner.PlayerSlot});
+            }
+            if(TayaIdentity.TryRecorded(out var taya,out var band,out var fit))
+                fields.Add(new WorldEffectSnapshot.Field{Type=TayaBand,Source=band,Position=taya.transform.position,Forward=taya.transform.forward,
+                    Radius=1,Duration=60,Remaining=60,Owner=taya.PlayerSlot,Path=fit});
             return fields;
         }
         public static MeshFilter[] PropMeshes(GameObject root)=>MatchPoseHistory.StableTransforms(root).Select(t=>t.GetComponent<MeshFilter>()).Where(m=>m!=null).ToArray();
@@ -73,12 +88,14 @@ namespace TumbangPreso.CameraSystem
         public static bool Valid(WorldEffectSnapshot.Field f)
         {
             if(WorldEffectSnapshot.Valid(f))return true;
-            if(f.Type!=Coven&&f.Type!=Kuro&&f.Type!=Seismic&&f.Type!=Nova&&f.Type!=Ward&&f.Type!=Ignition&&f.Type!=Charge&&f.Type!=Storm)return false;
+            if(f.Type!=Coven&&f.Type!=Kuro&&f.Type!=Seismic&&f.Type!=Nova&&f.Type!=Ward&&f.Type!=Ignition&&f.Type!=Charge&&f.Type!=Storm&&f.Type!=Mountain&&f.Type!=TayaBand)return false;
             bool Finite(float n)=>!float.IsNaN(n)&&!float.IsInfinity(n);
             if(!Finite(f.Position.x)||!Finite(f.Position.y)||!Finite(f.Position.z)||f.Position.sqrMagnitude>10000*10000
                 ||!Finite(f.Forward.sqrMagnitude)||(f.Type==Kuro?f.Forward.sqrMagnitude>10000*10000:f.Forward.sqrMagnitude<.5f||f.Forward.sqrMagnitude>1.5f)
                 ||!Finite(f.Duration)||f.Duration<=0||f.Duration>60||!Finite(f.Remaining)||f.Remaining<0||f.Remaining>f.Duration+.05f
                 ||!Finite(f.Radius)||f.Radius<0||(f.Radius==0&&(f.Type!=Seismic||!f.Split))||f.Radius>15||!Finite(f.FirstScale)||!Finite(f.SecondScale)||f.Owner< -1||f.Owner>=4)return false;
+            if(f.Type==Mountain)return f.Owner>=0&&f.FirstScale>0&&f.FirstScale<=f.Duration;
+            if(f.Type==TayaBand)return f.Owner>=0&&f.Path!=null&&f.Path.Length==TayaIdentity.RecordedPathLength;
             if(f.Type==Coven)return f.FirstScale>=0&&f.FirstScale<=3&&f.FirstScale<f.Duration;
             if(f.Type==Kuro)return f.Owner>=0;
             if(f.Type==Ignition||f.Type==Charge)return f.Owner>=0&&f.FirstScale>=0&&f.FirstScale<=600&&f.SecondScale>=0&&f.SecondScale<128&&f.SecondScale==(int)f.SecondScale;

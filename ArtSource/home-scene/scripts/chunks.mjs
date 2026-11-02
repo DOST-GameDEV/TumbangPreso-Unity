@@ -15,6 +15,7 @@
 // 224. A `renderMedia` call opens its own browser, so rendering a chunk as 45-frame pieces gives
 // every 45 frames a clean tab; each piece took ~10 s. Do not raise `piece` or `concurrency` to go
 // faster without re-measuring a close-up stretch.
+import './platesrv.mjs';
 import { bundle } from '@remotion/bundler';
 import { renderMedia, selectComposition } from '@remotion/renderer';
 import { execFileSync } from 'node:child_process';
@@ -51,7 +52,7 @@ const renderPiece = async (file, a, b) => {
       const watch = setInterval(() => { if (Date.now() - last > 90000) cancel.abort(); }, 2000);
       try {
         await renderMedia({
-          serveUrl, composition, codec: 'h264', outputLocation: file + '.tmp.mp4', frameRange: [a, b], scale, crf,
+          serveUrl, composition, codec: 'h264', outputLocation: file + '.tmp.mp4', frameRange: [a, b], scale, crf, jpegQuality: 100,
           pixelFormat: 'yuv420p', concurrency, chromiumOptions: { gl: 'angle' }, timeoutInMilliseconds: 60000,
           cancelSignal: (cb) => cancel.signal.addEventListener('abort', cb),
           onProgress: () => { last = Date.now(); },

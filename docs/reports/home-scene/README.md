@@ -1,5 +1,8 @@
 # HOME background scene: Zack at Sa Bubong
 
+> **Superseded 2026-11-01:** Sa Bubong is disabled and Zack's HOME scene is now [Green Light at BGC](zack-bgc.md).
+> This file is the old loop's record.
+
 > **Since 2026-09-24 HOME shows one of several hero loops, picked at random** (`HubSceneVideo.Pick`).
 > This file is Zack's; Phaister's is [phaister.md](phaister.md). Both come from the same
 > `ArtSource/home-scene/` project and share `src/three/actor.tsx`.

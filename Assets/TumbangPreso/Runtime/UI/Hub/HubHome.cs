@@ -78,6 +78,9 @@ namespace TumbangPreso.UI.Hub
             _xpFill = fill.GetComponent<Image>();
             _xpFill.type = Image.Type.Filled; _xpFill.fillMethod = Image.FillMethod.Horizontal;
             _xpFill.fillOrigin = (int)Image.OriginHorizontal.Left;
+            // The stripes run like a barber's pole, and the bar stays still (owner, 2026-11-02). Reduced motion keeps them still.
+            var barber = Resources.Load<Shader>("Shaders/XpBarber");
+            if (barber != null && !HubStyle.ReducedMotion) _xpFill.material = new Material(barber);
             _xpLabel = HubBoard.Lettering(plateFace, plateGroup, "xp", "XpLabel");
             HubBoard.Feel(plate, plateFace, HubBoard.Depth("name_plate"), 0.3f, false, hex);
             HubSlap.On(plate.transform, 0.04f, -2);

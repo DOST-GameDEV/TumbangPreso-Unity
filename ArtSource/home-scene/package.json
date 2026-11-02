@@ -2,10 +2,11 @@
   "name": "tump-home-scene",
   "private": true,
   "version": "1.0.0",
-  "description": "HOME screen background scenes (Zack at Sa Bubong, Phaister under the tulay), each rendered to a seamless loop for the Unity HOME background layer.",
+  "description": "HOME screen films: Zack at BGC and Phaister at Ermita. Start with README.md.",
   "scripts": {
     "studio": "remotion studio src/index.ts",
     "refs": "node scripts/refs.mjs",
+    "film": "node scripts/film.mjs",
     "stills": "node scripts/stills.mjs",
     "sheet": "node scripts/sheet.mjs",
     "draft": "remotion render src/index.ts HomeScene out/draft_half.mp4 --scale=0.5 --concurrency=6 --crf=20 --gl=angle",

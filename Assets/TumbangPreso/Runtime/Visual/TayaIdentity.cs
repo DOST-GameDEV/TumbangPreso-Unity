@@ -537,6 +537,88 @@ namespace TumbangPreso.Visual
             PlaceTails(Time.unscaledTime, Settings.SettingsStore.Current.ReducedUiMotion);
         }
 
+        /// <summary>
+        /// The band as it is on the head right now, for the recording: the exact fit measured above, in the head's own frame, and
+        /// what moves it. False when no one wears one. Replays draw from this and never measure a copy's posed mesh.
+        /// </summary>
+        public static bool TryRecorded(out CharacterMotor taya, out GameObject source, out Vector3[] path)
+        {
+            taya = null; source = null; path = null;
+            var live = _live;
+            if (live == null || live._band == null || live._taya == null) return false;
+            var band = live._band.transform;
+            taya = live._taya; source = live._band;
+            float armed = live._disarmed ? 1 - Mathf.Clamp01((Time.unscaledTime - live._disarmedSince) / .25f) : 1;
+            path = new[]
+            {
+                band.localPosition, band.localEulerAngles, band.localScale, live._tailRoot,
+                new Vector3(live._tailLength, live._tailWidth, 0),
+                new Vector3(live._taya.Velocity.magnitude, armed, Time.unscaledTime % 1000f),
+            };
+            return true;
+        }
+        public const int RecordedPathLength = 6;
+
+        /// <summary>The headband of a recorded body, on its copied head bone, from <see cref="TryRecorded"/>'s numbers.</summary>
+        public sealed class RecordedBand : MonoBehaviour
+        {
+            private Transform[] _tails;
+            private Transform _head;
+            private Material _material;
+            private Mesh _ring;
+            private Vector3 _tailRoot;
+            private float _length, _width;
+
+            public static RecordedBand Build(GameObject body, Vector3[] path)
+            {
+                Transform head = null;
+                foreach (var node in body.GetComponentsInChildren<Transform>(true)) if (node.name == "head") { head = node; break; }
+                if (head == null) return null;
+                var go = new GameObject("RecordedTayaBand");
+                go.transform.SetParent(head, false);
+                var view = go.AddComponent<RecordedBand>();
+                view._head = head; view._tailRoot = path[3]; view._length = path[4].x; view._width = path[4].y;
+                var ring = new GameObject("TayaHeadband");
+                ring.transform.SetParent(go.transform, false);
+                ring.transform.localPosition = path[0]; ring.transform.localEulerAngles = path[1]; ring.transform.localScale = path[2];
+                view._ring = VfxShapes.Collar(4, 1f, .86f, 0, Mathf.PI * .25f);
+                ring.AddComponent<MeshFilter>().sharedMesh = view._ring;
+                var renderer = ring.AddComponent<MeshRenderer>();
+                VfxMaterial.Solid(renderer, UI.UiTheme.Taya, .6f);
+                view._material = renderer.sharedMaterial;
+                ShadowsOff(ring);
+                view._tails = new Transform[2];
+                for (int k = 0; k < 2; k++)
+                {
+                    var tail = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    tail.name = "TayaHeadbandTail" + k;
+                    var collider = tail.GetComponent<Collider>(); collider.enabled = false; Destroy(collider);
+                    tail.transform.SetParent(go.transform, false);
+                    tail.GetComponent<Renderer>().sharedMaterial = view._material;
+                    VfxRenderTag.Attach(tail);
+                    ShadowsOff(tail);
+                    view._tails[k] = tail.transform;
+                }
+                return view;
+            }
+
+            public void Pose(Vector3 forward, Vector3 state, float elapsed)
+            {
+                bool still = Settings.SettingsStore.Current.ReducedUiMotion;
+                float t = state.z + elapsed, armed = state.y;
+                float glow = (still ? .85f : .7f + .3f * Mathf.Sin(t * 3.1f)) * Mathf.Lerp(.35f, 1, armed);
+                SetGlow(_material, Color.Lerp(Disarmed, UI.UiTheme.Taya, armed), 1f, .55f * glow);
+                Vector3 flat = Vector3.ProjectOnPlane(forward, Vector3.up).normalized;
+                PoseTails(_tails, _head.TransformPoint(_tailRoot), -flat, Vector3.Cross(Vector3.up, flat), state.x, t, still, _length, _width);
+            }
+
+            private void OnDestroy()
+            {
+                if (_material != null) Destroy(_material);
+                if (_ring != null) Destroy(_ring);
+            }
+        }
+
         /// <summary>For tests: the band's half width and half depth round the head, and its depth, metres.</summary>
         public static Vector2 BandHalf { get; private set; }
         public static float BandDepth { get; private set; }
@@ -549,25 +631,27 @@ namespace TumbangPreso.Visual
             if (_tails == null || _band == null || _taya == null) return;
             var head = _band.transform.parent;
             Vector3 root = head.TransformPoint(_tailRoot);
-            Vector3 back = -_taya.transform.forward, right = _taya.transform.right;
+            PoseTails(_tails, root, -_taya.transform.forward, _taya.transform.right, _taya.Velocity.magnitude, t, still, _tailLength, _tailWidth);
+        }
+
+        private static void PoseTails(Transform[] tails, Vector3 root, Vector3 back, Vector3 right, float speed, float t, bool still, float tailLength, float tailWidth)
+        {
             // Hangs at a slant behind the head; running lifts it toward level, a flutter on top.
-            var motor = _taya;
-            float speed = motor.Velocity.magnitude;
             float lift = Mathf.Clamp01(speed / 4f);
-            for (int k = 0; k < _tails.Length; k++)
+            for (int k = 0; k < tails.Length; k++)
             {
-                if (_tails[k] == null) continue;
+                if (tails[k] == null) continue;
                 float side = k == 0 ? -1 : 1;
                 float flutter = still ? 0 : Mathf.Sin(t * (9f + 3f * k) + k) * (6f + 14f * lift);
                 float droop = Mathf.Lerp(62f, 18f, lift) + flutter;
                 Vector3 along = Quaternion.AngleAxis(droop, right) * back;
                 along = Quaternion.AngleAxis(side * 16f, Vector3.up) * along;
-                _tails[k].SetPositionAndRotation(root + along * (_tailLength * .5f) + right * side * _tailWidth * .6f,
+                tails[k].SetPositionAndRotation(root + along * (tailLength * .5f) + right * side * tailWidth * .6f,
                     Quaternion.LookRotation(along, Vector3.Cross(along, right)));
-                _tails[k].localScale = Vector3.one;
-                var world = new Vector3(_tailWidth * 1.1f, _tailWidth * .35f, _tailLength);
-                var parent = _tails[k].parent != null ? _tails[k].parent.lossyScale : Vector3.one;
-                _tails[k].localScale = new Vector3(world.x / Mathf.Max(.0001f, parent.x), world.y / Mathf.Max(.0001f, parent.y), world.z / Mathf.Max(.0001f, parent.z));
+                tails[k].localScale = Vector3.one;
+                var world = new Vector3(tailWidth * 1.1f, tailWidth * .35f, tailLength);
+                var parent = tails[k].parent != null ? tails[k].parent.lossyScale : Vector3.one;
+                tails[k].localScale = new Vector3(world.x / Mathf.Max(.0001f, parent.x), world.y / Mathf.Max(.0001f, parent.y), world.z / Mathf.Max(.0001f, parent.z));
             }
         }
 

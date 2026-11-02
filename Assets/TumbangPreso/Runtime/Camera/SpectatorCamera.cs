@@ -279,8 +279,8 @@ namespace TumbangPreso.CameraSystem
         // what RGB565 would take; a player's camera never records. The readback paths stay for a device without such targets.
         private const float ReplaySampleInterval = 0.10f;
         private const int ReplayFrameCapacity = 80;
-        private const int ReplayWidth = 752;
-        private const int ReplayHeight = 424;
+        private const int ReplayWidth = 1280;
+        private const int ReplayHeight = 720;
 
         /// <summary>
         /// How many readbacks may be in flight at once.
@@ -1402,6 +1402,7 @@ namespace TumbangPreso.CameraSystem
                 return;
             }
 
+            _pendingReplayReason = reason;
             if (TryStartRecordedReplay()) return;
 
             // ⚠️⚠️ READY FRAMES, NOT FRAMES. Since the readback became asynchronous the newest
@@ -1496,7 +1497,7 @@ namespace TumbangPreso.CameraSystem
 
             _replayClock = 0.0f;
             _replayEventClock = marked >= 0 && _markedAt >= 0 ? Mathf.Max(0.0f, _markedAt - _replayClip[0].CapturedAt) : -1.0f;
-            _replayWipe = UI.ReplayStinger.Cover(transform, UI.HudDraw.Honey);
+            _replayWipe = TakeReplayWipe();
             _replayExit = null;
             _replaying = true;
             _replayReason = string.IsNullOrEmpty(title) ? "LAST PLAY" : title;
