@@ -34,7 +34,7 @@ namespace TumbangPreso.EditorTools
         /// <summary>One person in the film: who, where their eye paint is, and what colour it lights. No atlas means no glow.</summary>
         [Serializable] class Member { public string id; public bool slipper; public string atlas; public float eyeLow, eyeHigh, lashTop, lashOuter; public Color32 glow; }
         /// <summary>`floor` is the court's surface in this map. `green` winds the signals and `train` the LRT, in seconds after the first plate; negative leaves them alone.</summary>
-        [Serializable] class Track { public string map; public float floor; public Member[] cast; public bool kuro; public string[] bones; public int warm; public float green; public float train = -1f; public int trainDir = 1; public Shot[] frames; }
+        [Serializable] class Track { public string map; public float floor; public Member[] cast; public bool kuro; public string[] bones; public int warm; public float green; public float train = -1f; public int trainDir = 1; public int film; public Shot[] frames; }
 
         static HomeFilmPlateRecorder()
         {
@@ -149,6 +149,8 @@ namespace TumbangPreso.EditorTools
             var previous = RenderTexture.active;
             bool srgb = GL.sRGBWrite;
             var clock = Stopwatch.StartNew();
+            var filmEnd = new List<(Vector3 p, Quaternion q)[]>();
+            LoopedCars looped = null;
             try
             {
                 for (int n = 0; n < track.frames.Length; n++)
@@ -159,6 +161,14 @@ namespace TumbangPreso.EditorTools
                     if (n % 120 == 0)
                         Debug.Log("[HomeFilmPlates] clock " + n + " road=" + (traffic != null && traffic.DriverCount > 0 ? traffic.DriverPosition(0).ToString("F1") : "none") + " train=" + (flyby != null ? flyby.transform.position.ToString("F1") : "none"));
                     if (s.skip) { yield return null; continue; }
+                    if (traffic != null && track.film > 0 && s.clip.EndsWith("-intro") && s.i >= track.film - LoopedCars.FilmSeconds * 60 && s.i % 2 == 0) filmEnd.Add(LoopedCars.Snap(traffic));
+                    if (traffic != null && track.film > 0 && looped == null && s.clip.EndsWith("-idle"))
+                    {
+                        camera.transform.SetPositionAndRotation(new Vector3(s.x, s.y, s.z), Quaternion.Euler(s.pitch, s.yaw, s.roll));
+                        camera.fieldOfView = 2f * Mathf.Atan(540f / s.f) * Mathf.Rad2Deg;
+                        looped = new LoopedCars(traffic, filmEnd, camera);
+                    }
+                    if (looped != null && s.clip.EndsWith("-idle")) looped.Show(s.i);
                     camera.transform.SetPositionAndRotation(new Vector3(s.x, s.y, s.z), Quaternion.Euler(s.pitch, s.yaw, s.roll));
                     camera.fieldOfView = 2f * Mathf.Atan(540f / s.f) * Mathf.Rad2Deg;
                     first.Apply(s.a); second.Apply(s.b); PlaceCan(can, s.can);
@@ -512,6 +522,93 @@ namespace TumbangPreso.EditorTools
                     m.body.localScale = Vector3.one * d[o + 6];
                     if (m.l != null) m.l.localRotation = m.restL * Quaternion.Euler(0f, 0f, d[o + 5]);
                     if (m.r != null) m.r.localRotation = m.restR * Quaternion.Euler(0f, 0f, -d[o + 5]);
+                }
+            }
+        }
+
+        /// <summary>
+        /// ⚠️ THE IDLE'S CARS REALLY LOOP (owner, 2026-11-02: at the end of the loop the cars "randomly teleport"). A live street is not periodic, and
+        /// crossfading its end to another moment made every car fade or jump. So the idle's whole street is worked out first and then shown: a car that
+        /// would still be in frame when the loop ends is never shown coming in, and the cars the film left in frame arrive, from out of frame, on the
+        /// paths they took at the end of the film. Frame 719 then leads straight into frame 0, which is the film's last frame leading into it.
+        /// </summary>
+        sealed class LoopedCars
+        {
+            public const int FilmSeconds = 14;
+            const int Idle = 720;
+            readonly List<(Vector3 p, Quaternion q)[]> _end, _idle = new List<(Vector3, Quaternion)[]>();
+            readonly Transform[] _bodies, _copies;
+            readonly int[] _hiddenFrom, _copyFrom;
+
+            public static (Vector3 p, Quaternion q)[] Snap(KantoTraffic t)
+            {
+                var row = new (Vector3, Quaternion)[t.Drivers.Length];
+                for (int i = 0; i < row.Length; i++) if (t.Drivers[i].Body != null) row[i] = (t.Drivers[i].Body.position, t.Drivers[i].Body.rotation);
+                return row;
+            }
+
+            static bool InView(Camera c, Vector3 at)
+            {
+                var v = c.WorldToViewportPoint(at);
+                return v.z > 0f && v.z < 170f && v.x > -0.35f && v.x < 1.35f;
+            }
+
+            public LoopedCars(KantoTraffic t, List<(Vector3 p, Quaternion q)[]> filmEnd, Camera lens)
+            {
+                _end = filmEnd;
+                var update = typeof(KantoTraffic).GetMethod("Update", BindingFlags.Instance | BindingFlags.NonPublic);
+                // The film runs at 60 a second, so this frame's delta is one sixtieth: two steps to each idle frame.
+                for (int i = 0; i < Idle; i++)
+                {
+                    _idle.Add(Snap(t));
+                    update.Invoke(t, null);
+                    update.Invoke(t, null);
+                }
+                t.enabled = false;
+                int n = t.Drivers.Length, stuck = 0, hidden = 0, copied = 0;
+                _bodies = new Transform[n]; _copies = new Transform[n]; _hiddenFrom = new int[n]; _copyFrom = new int[n];
+                for (int d = 0; d < n; d++)
+                {
+                    _bodies[d] = t.Drivers[d].Body;
+                    _hiddenFrom[d] = Idle; _copyFrom[d] = int.MaxValue;
+                    if (_bodies[d] == null) continue;
+                    if (InView(lens, _idle[Idle - 1][d].p))
+                    {
+                        int from = Idle - 1;
+                        while (from > 0 && InView(lens, _idle[from - 1][d].p)) from--;
+                        // In frame the whole 24 s, standing in a queue: it has nowhere to come from. Leave it be, and say so.
+                        if (from == 0) { stuck++; } else { _hiddenFrom[d] = from; hidden++; }
+                    }
+                    if (InView(lens, _idle[0][d].p) && _end.Count > 0)
+                    {
+                        int from = _end.Count - 1;
+                        while (from > 0 && InView(lens, _end[from - 1][d].p)) from--;
+                        if (from == 0 && InView(lens, _end[0][d].p)) stuck++;
+                        _copyFrom[d] = from;
+                        var copy = Object.Instantiate(_bodies[d].gameObject, _bodies[d].parent);
+                        copy.name = _bodies[d].name + " (loop)";
+                        foreach (var b in copy.GetComponentsInChildren<Behaviour>(true)) b.enabled = false;
+                        _copies[d] = copy.transform;
+                        copied++;
+                    }
+                }
+                Debug.Log("[HomeFilmPlates] looped cars: " + hidden + " hidden before the end, " + copied + " arriving for the start, " + stuck + " with nowhere to come from, of " + n + "; film end " + _end.Count + " frames");
+            }
+
+            public void Show(int i)
+            {
+                for (int d = 0; d < _bodies.Length; d++)
+                {
+                    var body = _bodies[d];
+                    if (body == null) continue;
+                    body.gameObject.SetActive(i < _hiddenFrom[d]);
+                    body.SetPositionAndRotation(_idle[i][d].p, _idle[i][d].q);
+                    var copy = _copies[d];
+                    if (copy == null) continue;
+                    int at = _end.Count - (Idle - i);
+                    bool on = at >= _copyFrom[d];
+                    copy.gameObject.SetActive(on);
+                    if (on) copy.SetPositionAndRotation(_end[at][d].p, _end[at][d].q);
                 }
             }
         }

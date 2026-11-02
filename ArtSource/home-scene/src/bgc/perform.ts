@@ -3,6 +3,7 @@ import { Ease, kf, outCubic, outQuad } from '../lib/kf';
 import { clamp01, easeInOut, idleSin, INTRO } from './time';
 import { B } from './beats';
 import { litAt } from './light';
+import { calmLayer } from '../lib/calm';
 
 /**
  * Zack and Rago, KEYED BY HAND on the real rigs. No game clips (method § 7, and the owner again on
@@ -262,6 +263,7 @@ const zackLayers = (f: number) => {
   const tap = f >= B.feet && f < B.lookUp ? Math.max(0, Math.sin((((f - B.feet) % 18) / 18) * Math.PI * 2 + 1.2)) : 0;
   const layers = layersAt(f, Z_TRACK);
   if (tap > 0) layers[layers.length - 1] = { ...layers[layers.length - 1], pose: { ...(layers[layers.length - 1].pose ?? {}), legR: [-11 * tap, 0, 0] } };
+  if (f >= B.fold) layers.push(calmLayer(f, { hold: 0, ramp: [B.fold, B.fold + 45] }));
   return layers;
 };
 
@@ -296,7 +298,7 @@ const zackYaw = (f: number) => f >= B.scoop + 12 && f < B.snapBack ? zackHeading
 ]);
 
 export const zack = (f: number): Frame => {
-  const layers = f >= INTRO ? [{ clip: 'idle', t: (f - INTRO) / 30, w: 1 }] : zackLayers(f);
+  const layers = f >= INTRO ? [{ clip: 'idle', t: (f - INTRO) / 30, w: 1 }, calmLayer(f, { hold: 0 })] : zackLayers(f);
   const pulling = f >= B.snapBack && f < B.snapBack + PULL + 6;
   const at = f >= INTRO ? LINE : pulling ? zackPlace(f) : { x: rounded(f, (g) => zackPlace(g).x), z: rounded(f, (g) => zackPlace(g).z) };
   // ⚠️ THE JOIN: the film's last second is already the idle's own motion, unsmoothed, so nothing changes on the frame the clips swap.
@@ -368,7 +370,7 @@ const R_TRACK: Seg[] = [
   { at: B.fold + 24, fade: 30, clip: 'idle', abs: RAGO_PHASE },
 ];
 
-const ragoLayers = (f: number) => layersAt(f, R_TRACK);
+const ragoLayers = (f: number) => (f >= B.fold + 54 ? [...layersAt(f, R_TRACK), calmLayer(f, { hold: RAGO_PHASE, move: [80, 240], phase: 1.7, ramp: [B.fold + 54, B.fold + 80] })] : layersAt(f, R_TRACK));
 
 const ragoPlace = (f: number) => {
   if (f < B.reset - 26) return POST;
@@ -411,7 +413,7 @@ const ragoYaw = (f: number) => {
 };
 
 export const rago = (f: number): Frame => {
-  const layers = f >= INTRO ? [{ clip: 'idle', t: (f - INTRO) / 30 + RAGO_PHASE, w: 1 }] : ragoLayers(f);
+  const layers = f >= INTRO ? [{ clip: 'idle', t: (f - INTRO) / 30 + RAGO_PHASE, w: 1 }, calmLayer(f, { hold: RAGO_PHASE, move: [80, 240], phase: 1.7 })] : ragoLayers(f);
   const at = f >= INTRO ? POST : { x: rounded(f, (g) => ragoPlace(g).x), z: rounded(f, (g) => ragoPlace(g).z) };
   const yaw = f >= INTRO ? 0 + 1.5 * idleSin(f, 3) : rounded(f, ragoYaw);
   // The hop out of his skin; the bounce off the floor.

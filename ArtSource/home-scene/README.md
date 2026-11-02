@@ -40,8 +40,8 @@ node scripts/plates.mjs phaister
 Each takes about 8 minutes and writes about 2.4 GB to `plates/`, which git ignores. Run it after changing `camera.ts`, `perform.ts`, `beats.ts` or the map, because the cast is in the plates; only effects never need it. `node scripts/plates.mjs phaister 300 1000` records just those
 film frames for checking an angle, with the street's clock still running between them, and `node scripts/platesheet.mjs phaister-intro scratch/p.png 300 1000` shows them. `SCOUT=lenses.json node scripts/plates.mjs phaister` looks round a map from a list of lenses.
 Whatever in the map would stand in front of the cast or against the lens draws only its shadow for those frames
-(`HomeFilmPlateRecorder.Clear`). The idle's last 2 s crossfade to pictures of the same street leading into its first
-frame, so its loop has no seam; a vehicle crossing then shows doubled for that moment. The signals are wound so the
+(`HomeFilmPlateRecorder.Clear`). The idle's cars really loop (`HomeFilmPlateRecorder.LoopedCars`), and its last 2 s crossfade to pictures of the same street, with the same cars, leading into its first
+frame, so only what is not a car (people on the pavement) ever fades. The picture is warmed to sit in HOME's colours (`lib/grade.tsx`). The signals are wound so the
 green lands on `B.green`.
 
 ## The everyday loop

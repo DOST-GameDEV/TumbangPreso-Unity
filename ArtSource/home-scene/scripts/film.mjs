@@ -15,6 +15,6 @@ fs.mkdirSync('scratch', { recursive: true });
 const node = (...a) => execFileSync(process.execPath, a, { stdio: 'inherit' });
 for (const [id, out] of [[`${Hero}Intro`, `out/${hero}_intro_1080p60.mp4`], [`${Hero}Idle`, `out/${hero}_idle_1080p30.mp4`]]) {
   if (!keep) fs.rmSync(path.join('scratch', `chunks_${id}_1`), { recursive: true, force: true });
-  node('scripts/chunks.mjs', id, out, '1', '17', '270', '2', '45');
+  node('scripts/chunks.mjs', id, out, '1', '14', '270', '2', '45');
 }
 node('scripts/ship-zack.mjs', hero);

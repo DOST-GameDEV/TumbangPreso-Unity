@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { AbsoluteFill, continueRender, delayRender, Img, random, staticFile, useCurrentFrame } from 'remotion';
 import { Defs } from '../lib/Defs';
+import { GRADE_STYLE, GradeCorners, GradeDefs } from '../lib/grade';
 import { Bolt, boltPoints, Crackle, Pt } from '../lib/bolt';
 import { kf } from '../lib/kf';
 import { env, INTRO, IDLE, ph } from './time';
@@ -498,6 +499,7 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
     <AbsoluteFill style={{ backgroundColor: '#C86A5C' }}>
       <svg width={1920} height={1080} viewBox="0 0 1920 1080">
         <Defs frame={f} />
+        <GradeDefs />
         <defs>
           {/* The owner's approved Backtrack look: transparent faces, a hot thin contour (zack-kit-2026-10-25). */}
           <filter id="contour" x="-20%" y="-20%" width="140%" height="140%">
@@ -522,9 +524,9 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
         {/* The real map, recorded through this same camera (scripts/plates.mjs). It already carries the roll. */}
         <g transform={`translate(960 540) scale(${punch}) translate(-960 -540)`}>
         <g filter={hit.stage === 1 ? 'url(#impactA)' : hit.stage === 2 ? 'url(#impactB)' : blur ? 'url(#whip)' : undefined} style={hush > 0 ? { filter: `saturate(${1 - 0.35 * hush}) contrast(${1 + 0.08 * hush})` } : undefined}>
-          <foreignObject width={1920} height={1080}><Img src={plateAt(part, frame)} style={{ width: 1920, height: 1080, display: 'block' }} /></foreignObject>
+          <foreignObject width={1920} height={1080}><Img src={plateAt(part, frame)} style={{ width: 1920, height: 1080, display: 'block', ...GRADE_STYLE }} /></foreignObject>
           {/* The idle's end fades to the street that leads into its start, so the loop has no seam. */}
-          {part === 'idle' && frame >= IDLE - BLEND && <foreignObject width={1920} height={1080} opacity={(frame - (IDLE - BLEND) + 1) / BLEND}><Img src={preAt(frame - (IDLE - BLEND))} style={{ width: 1920, height: 1080, display: 'block' }} /></foreignObject>}
+          {part === 'idle' && frame >= IDLE - BLEND && <foreignObject width={1920} height={1080} opacity={(frame - (IDLE - BLEND) + 1) / BLEND}><Img src={preAt(frame - (IDLE - BLEND))} style={{ width: 1920, height: 1080, display: 'block', ...GRADE_STYLE }} /></foreignObject>}
         </g>
         <g transform={`rotate(${v.roll} 960 540)`} filter={blur ? 'url(#whip)' : undefined}>
           {under}
@@ -541,6 +543,7 @@ export const BgcScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
           return <path key={i} d={`M${960 + Math.cos(ang - 0.016) * r1} ${540 + Math.sin(ang - 0.016) * r1}L${960 + Math.cos(ang) * r0} ${540 + Math.sin(ang) * r0}L${960 + Math.cos(ang + 0.016) * r1} ${540 + Math.sin(ang + 0.016) * r1}Z`} />;
         })}</g>}
         {eyes.map(([x, y], i) => <circle key={i} cx={x} cy={y} r={24} fill="#FFFBD0" />)}
+         <GradeCorners />
         <rect width={1920} height={1080} fill="url(#vignette)" opacity={0.14 + 0.5 * hush} />
         {/* ⚠️ THE MOMENT OF IMPACT: everything holds for STOP frames. A flash, ink, then the burst. */}
         {f >= B.tump && f < B.tump + 2 && <rect width={1920} height={1080} fill="#FFFBD0" />}

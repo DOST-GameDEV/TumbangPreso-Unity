@@ -12,15 +12,17 @@ const home = path.resolve('../../Assets/TumbangPreso/Resources/UI/home');
 fs.mkdirSync(path.resolve('renders'), { recursive: true });
 const hero = process.argv[2] ?? 'zack';
 const Hero = hero[0].toUpperCase() + hero.slice(1);
+// ⚠️ ONE CRF FOR BOTH CLIPS, so nothing changes at the swap. 20 and no animation tune (owner: "medyo blurry"): the tune's heavy deblocking softened the map's fine detail.
+const CRF = 20;
 const parts = [
-  { master: `out/${hero}_intro_1080p60.mp4`, clip: `${hero}-home-intro.mp4`, poster: `${hero}-home-intro-poster.png`, id: `${Hero}Intro`, crf: 24 },
-  { master: `out/${hero}_idle_1080p30.mp4`, clip: `${hero}-home-loop.mp4`, poster: `${hero}-home-poster.png`, id: `${Hero}Idle`, crf: 24 },
+  { master: `out/${hero}_intro_1080p60.mp4`, clip: `${hero}-home-intro.mp4`, poster: `${hero}-home-intro-poster.png`, id: `${Hero}Intro`, crf: CRF },
+  { master: `out/${hero}_idle_1080p30.mp4`, clip: `${hero}-home-loop.mp4`, poster: `${hero}-home-poster.png`, id: `${Hero}Idle`, crf: CRF },
 ];
 const serveUrl = await bundle({ entryPoint: path.resolve('src/index.ts') });
 fs.mkdirSync(path.resolve('scratch'), { recursive: true });
 for (const p of parts) {
   execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', path.resolve(p.master),
-    '-c:v', 'libx264', '-preset', 'slow', '-tune', 'animation', '-crf', String(p.crf),
+    '-c:v', 'libx264', '-preset', 'slow', '-x264-params', 'deblock=-1,-1', '-crf', String(p.crf),
     '-profile:v', 'high', '-level', '4.1', '-pix_fmt', 'yuv420p', '-g', '60',
     '-movflags', '+faststart', '-an', path.join(home, p.clip)], { stdio: 'inherit' });
   const composition = await selectComposition({ serveUrl, id: p.id });

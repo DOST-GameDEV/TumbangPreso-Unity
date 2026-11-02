@@ -39,19 +39,7 @@ namespace TumbangPreso.UI.Hub
             HubKnit.TitlePlate(Root, null, "GAMEMODE", 520);
             HubChrome.TopRight(Root, Hub);
 
-            // ⚠️ TUTORIAL ONE PRESS FROM HERE (owner 2026-10-28, "add tutorial button here too"), a teal
-            // knit piece with a book beside the title, where a new player's eye lands first. It also
-            // stays inside PRACTICE; this is the same route.
-            var tutorial = HubKnit.Button(Root, "TutorialShortcut", "TUTORIAL", Knit.Teal, () =>
-            {
-                Hub.Host.LeaveRoom();
-                SceneFlow.StartTraining();
-            }, HubStyle.Label, HubGlyph.Mark.Book);
-            var titlePlate = (RectTransform)Root.Find("TitlePlate");
-            float afterTitle = titlePlate.anchoredPosition.x + titlePlate.sizeDelta.x + 32;
-            HubKit.Place((RectTransform)tutorial.transform, HubKit.TopLeft, new Vector2(afterTitle, -HubKit.Margin + 8), new Vector2(300, 96));
-            HubSlap.On(tutorial.transform, 0.2f, 2);
-
+            // The tutorial lives inside PRACTICE only (owner, 2026-11-02).
             var area = HubKit.Span(HubKit.Rect(Root, "Cards"), new Vector2(0, 0), new Vector2(1, 1),
                                    new Vector2(HubKit.Margin, 70), new Vector2(HubKit.Margin, 250));
 

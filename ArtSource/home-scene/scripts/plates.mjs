@@ -65,7 +65,7 @@ if (process.env.SCOUT) {
   for (let i = 0; i < IDLE; i++) frames.push(view(`${hero}-idle`, i, INTRO + i, 1 / 30));
 }
 const camFile = path.resolve('scratch', `plates_${hero}.json`);
-fs.writeFileSync(camFile, JSON.stringify({ map: P.map, floor: P.floor, cast: P.cast, kuro: P.kuro, bones: poses.bones, warm: 900, green: P.green, train: process.env.SCOUT ? -1 : P.train, trainDir: P.trainDir ?? 1, frames }));
+fs.writeFileSync(camFile, JSON.stringify({ map: P.map, floor: P.floor, cast: P.cast, kuro: P.kuro, bones: poses.bones, warm: 900, green: P.green, train: process.env.SCOUT ? -1 : P.train, trainDir: P.trainDir ?? 1, film: process.env.SCOUT || picks.length ? 0 : FILM, frames }));
 
 const repo = path.resolve('../..');
 const log = path.join(repo, 'Logs', `home-plates-${hero}.log`);

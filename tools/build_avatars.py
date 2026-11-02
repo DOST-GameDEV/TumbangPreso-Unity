@@ -43,8 +43,8 @@ MAROON = (91, 15, 15)
 # (id, ground) in picker order: the heroes first, then the street kids, then objects.
 # Grounds are chosen for contrast with each character's own dominant colour.
 SET = [
-    ("dante", GOLD), ("sean", GOLD), ("cheska", PERSIMMON), ("zack", DEEPRED), ("nemu", GOLD),
-    ("phaister", HONEY), ("rafi", PERSIMMON), ("amihan", DEEPRED), ("paete", HONEY),
+    ("dante", GOLD), ("sean", GOLD), ("cheska", DEEPRED), ("zack", PERSIMMON), ("nemu", GOLD),
+    ("phaister", HONEY), ("rafi", HONEY), ("amihan", GOLD), ("paete", HONEY),
     ("maring", PERSIMMON), ("totoy", GOLD), ("inday", PERSIMMON), ("kuya_boy", GOLD), ("ate_girlie", HONEY),
     ("tikboy", PERSIMMON), ("bebang", RIMRED), ("jun_jun", GOLD), ("lola_pacing", PERSIMMON),
     ("mang_kanor", GOLD), ("aling_nena", RIMRED),
@@ -85,34 +85,69 @@ def ground(colour):
     return img
 
 
-def bust(pid):
+# ⚠️ EVERY FACE SITS IN THE SAME PLACE (owner, 2026-11-02: "some of them look awkward"). Framing by the silhouette put a wide jacket or a hat in charge of
+# the crop, so faces came out at different sizes and heights. Each row is read off that character's portrait, in portrait pixels: the point between the
+# eyes and the width of the head with its hair. A hat or antlers are not the head: they run off the top of the tile (owner: "stop using her hat as her head"). Optional fourth: where the eyes sit in the tile, for Rago, whose muscles are the point.
+K = 640 / 290
+HEADS = {
+    "dante": (150, 185, 190), "sean": (160, 130, 172, 0.50), "cheska": (150, 180, 185), "zack": (170, 182, 190), "nemu": (165, 195, 190),
+    "phaister": (150, 190, 145), "rafi": (160, 183, 190), "amihan": (165, 180, 195), "paete": (160, 133, 140), "maring": (160, 185, 200),
+    "totoy": (155, 180, 185), "inday": (185, 200, 185), "kuya_boy": (165, 145, 190), "ate_girlie": (170, 195, 185), "tikboy": (170, 205, 190),
+    "bebang": (170, 195, 185), "jun_jun": (165, 210, 190), "lola_pacing": (165, 185, 185), "mang_kanor": (165, 175, 190), "aling_nena": (170, 165, 200),
+}
+FILL = 0.74
+EYES_AT = 0.60
+
+
+def head_middle(p, ey, fw):
+    """The middle of the head, measured from the picture: a turned face has its eyes off to one side, so centring those pushes the head off (owner: "not centered").
+    Row by row across the face, the middle of the silhouette, taking the median so a raised fist or a hat brim on a few rows cannot pull it."""
+    a = np.asarray(p)[..., 3] > 40
+    mids = []
+    for y in range(int(ey - fw * 0.12), int(ey + fw * 0.22)):
+        xs = np.nonzero(a[max(0, min(a.shape[0] - 1, y))])[0]
+        if len(xs):
+            mids.append((xs.min() + xs.max()) / 2)
+    return float(np.median(mids))
+
+
+def place(pid, img):
+    """Scale and position one portrait so its eyes and head land on the set's marks. Falls back to the whole picture for objects."""
     p = Image.open(os.path.join(PORTRAITS, pid + ".png")).convert("RGBA")
-    a = np.asarray(p)[..., 3]
-    ys, xs = np.nonzero(a > 20)
-    top, bottom, left, right = ys.min(), ys.max(), xs.min(), xs.max()
-    width = right - left
-    # the head is the top of the silhouette; frame a square from just above it
-    side = int(max(width * 1.22, (bottom - top) * 1.0))
-    cx = (left + right) / 2
-    box = (int(cx - side / 2), int(top - side * 0.08), int(cx + side / 2), int(top - side * 0.08 + side))
-    return p.crop(box)
+    head = HEADS.get(pid)
+    if head is None:
+        box = p.getbbox()
+        p = p.crop(box)
+        scale = W * 0.86 / max(p.size)
+        x, y = (W - p.width * scale) / 2, (W - p.height * scale) / 2
+    else:
+        ey, fw = head[1] * K, head[2] * K
+        ex = head_middle(p, ey, fw)
+        scale = W * FILL / fw
+        x, y = W * 0.5 - ex * scale, W * (head[3] if len(head) > 3 else EYES_AT) - ey * scale
+        # The bust runs off the bottom of the tile, never stopping short of it.
+        bottom = p.getbbox()[3] * scale + y
+        if bottom < W + 2:
+            y += W + 2 - bottom
+    figure = p.resize((int(p.width * scale), int(p.height * scale)), Image.LANCZOS)
+    pad = Image.new("RGBA", (W, W), (0, 0, 0, 0))
+    pad.alpha_composite(figure.crop((max(0, int(-x)), max(0, int(-y)), figure.width, figure.height)), (max(0, int(x)), max(0, int(y))))
+    return pad
 
 
 def compose(pid, colour):
     img = ground(colour).convert("RGBA")
-    figure = bust(pid).resize((int(W * 0.96), int(W * 0.96)), Image.LANCZOS)
+    figure = place(pid, img)
     # an ink rim around the figure, the black outline the whole game uses
     alpha = figure.split()[3]
-    rim = alpha.filter(ImageFilter.MaxFilter(9)).filter(ImageFilter.MaxFilter(9))
+    rim = alpha.filter(ImageFilter.MaxFilter(9))
     rim_img = Image.new("RGBA", figure.size, (28, 15, 6, 255))
     rim_img.putalpha(rim)
     drop = Image.new("RGBA", figure.size, (28, 15, 6, 0))
-    drop.putalpha(rim.point(lambda v: v * 90 // 255))
-    x = (W - figure.width) // 2
-    y = int(W * 0.10)
-    img.alpha_composite(drop, (x + 10, y + 14))
-    img.alpha_composite(rim_img, (x, y))
-    img.alpha_composite(figure, (x, y))
+    drop.putalpha(rim.point(lambda v: v * 80 // 255))
+    img.alpha_composite(drop, (8, 10))
+    img.alpha_composite(rim_img)
+    img.alpha_composite(figure)
     return img.convert("RGB").resize((SIZE, SIZE), Image.LANCZOS)
 
 

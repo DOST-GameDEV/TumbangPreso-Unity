@@ -2,6 +2,7 @@ import { Face, Layer, Pose, PoseSample, SlipperState } from '../three/actor';
 import { kf, outCubic, outQuad } from '../lib/kf';
 import { clamp01, easeInOut, idleSin, INTRO, ph } from './time';
 import { B } from './beats';
+import { calmLayer } from '../lib/calm';
 
 /**
  * On the models' own clips with keyed tweaks, crossfaded, each bone smoothed over neighbouring frames
@@ -163,6 +164,9 @@ const P_TRACK: Seg[] = [
 ];
 
 /** Facing the hold's lens, as the idle does. */
+const HER_CALM = { hold: 0, ramp: [B.home + 60, B.home + 100] as [number, number] };
+const NEMU_CALM = { hold: 2.6, move: [80, 240] as [number, number], phase: 1.7, ramp: [B.atCan, B.atCan + 26] as [number, number] };
+const herLayers = (f: number) => (f >= B.home + 60 ? [...layersAt(f, P_TRACK), calmLayer(f, HER_CALM)] : layersAt(f, P_TRACK));
 const IDLE_YAW = (f: number) => -8 + 2 * idleSin(f, 2, 0.4);
 const herYawKeys = (f: number) => {
   if (f >= B.chase + 1 && f < B.blink) return unwrapTo(chaseHeading(f), 150);
@@ -185,8 +189,8 @@ export const phaister = (f: number): Frame => {
     z: at.z,
     // ⚠️ THE JOIN: the last second is the idle's own motion, unsmoothed, so nothing changes on the frame the clips swap.
     yaw: f >= INTRO - 30 ? IDLE_YAW(f) : rounded(f, herYawKeys),
-    layers: f >= INTRO - 30 ? [{ clip: 'idle', t: (f - INTRO) / 30, w: 1 }] : layersAt(f, P_TRACK),
-    samples: f < INTRO - 30 ? samplesOf(f, (g) => layersAt(g, P_TRACK)) : undefined,
+    layers: f >= INTRO - 30 ? [{ clip: 'idle', t: (f - INTRO) / 30, w: 1 }, calmLayer(f, HER_CALM)] : herLayers(f),
+    samples: f < INTRO - 30 ? samplesOf(f, herLayers) : undefined,
     lift: [0, hop, 0],
     face: glow > 0.02 ? 'glow' : 'rest',
     eyeGlow: glow,
@@ -249,6 +253,7 @@ const nemuPlace = (f: number): P => {
   if (f < B.rise + 24) return path(f, [[B.drained, LUNGE_END.x, LUNGE_END.z], [B.drained + 8, FLAT.x, FLAT.z]]);
   return path(f, [[B.rise + 24, FLAT.x, FLAT.z], [B.atCan, HOLD_NEMU.x, HOLD_NEMU.z]]);
 };
+const nemuLayers = (f: number) => (f >= B.atCan ? [...layersAt(f, N_TRACK), calmLayer(f, NEMU_CALM)] : layersAt(f, N_TRACK));
 const nemuYawKeys = (f: number) => {
   if (f >= B.rights + 44 && f < B.blink) {
     const a = nemuPlace(f - 1);
@@ -269,8 +274,8 @@ export const nemu = (f: number): Frame => {
     x: at.x,
     z: at.z,
     yaw: f >= INTRO - 30 ? -6 + 1.5 * idleSin(f, 3, 1) : rounded(f, nemuYawKeys),
-    layers: f >= INTRO - 30 ? [{ clip: 'idle', t: (f - INTRO) / 30 + NEMU_PHASE, w: 1 }] : layersAt(f, N_TRACK),
-    samples: f < INTRO - 30 ? samplesOf(f, (g) => layersAt(g, N_TRACK)) : undefined,
+    layers: f >= INTRO - 30 ? [{ clip: 'idle', t: (f - INTRO) / 30 + NEMU_PHASE, w: 1 }, calmLayer(f, NEMU_CALM)] : nemuLayers(f),
+    samples: f < INTRO - 30 ? samplesOf(f, nemuLayers) : undefined,
     lift: [0, thud, 0],
     face: 'rest',
     eyeGlow: 0,
