@@ -28,7 +28,7 @@ namespace TumbangPreso.UI
             // floor, centred on the canvas like the cards it sits beside.
             _rect.anchorMin=_rect.anchorMax=new Vector2(.5f,.5f);
             _rect.pivot=new Vector2(0,1);
-            _rect.anchoredPosition=new Vector2(Hub.HubLobby.RoomChatLeft,Hub.HubLobby.CardsTop+120);
+            _rect.anchoredPosition=new Vector2(Hub.HubLobby.RoomChatLeft,Hub.HubLobby.CardsTop+80);
             _rect.sizeDelta=new Vector2(Hub.HubLobby.RoomChatWidth,_lobbyColumn?DrawerHeight:_rect.sizeDelta.y);
         }
         private void ConstructNative()

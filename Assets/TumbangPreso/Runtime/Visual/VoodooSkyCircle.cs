@@ -66,6 +66,13 @@ namespace TumbangPreso.Visual
         private readonly MaterialPropertyBlock _block = new MaterialPropertyBlock();
         private readonly List<GameObject> _owned = new List<GameObject>();
         private readonly List<LineRenderer> _pins = new List<LineRenderer>(Pins), _bolts = new List<LineRenderer>(Bolts);
+        // Direction A of her kit (`PhaisterLook`): the fine-line moth seal stands in for all of the above, in the cutscene and
+        // in play alike, so the circle she tears open is still the one hanging over the court after.
+        private PhaisterSkySeal _seal;
+        /// <summary>Whether moths and the fall of light come down out of it: in play, never in the cutscene, whose close shots of the doll they bury.</summary>
+        public bool Moths;
+        private readonly Transform _parent;
+        private readonly int _layer;
 
         public static Material ThreadMaterial
         {
@@ -115,6 +122,9 @@ namespace TumbangPreso.Visual
         public SkyCircle(Transform parent, bool world, int layer)
         {
             _world = world;
+            _parent = parent;
+            Moths = world;
+            _layer = layer;
             var shader = Resources.Load<Shader>("Shaders/VoodooCircle");
             foreach (var l in Layers)
             {
@@ -230,6 +240,14 @@ namespace TumbangPreso.Visual
         /// </summary>
         public void Pose(float age, Vector3 centre, float scale, float spin, float alpha, float detail = 1f)
         {
+            if (PhaisterLook.Direction == PhaisterLook.Style.A)
+            {
+                if (_seal == null) _seal = new PhaisterSkySeal(_world ? null : _parent, _layer);
+                Vector3 at = !_world && _parent != null ? _parent.TransformPoint(centre) : centre;
+                // The doll stands right under it: both callers hang it `VoodooSkyCircle.Height` over its feet.
+                _seal.Pose(age, at, at + Vector3.down * VoodooSkyCircle.Height, scale, spin, alpha, EyeOverride >= 0f ? Mathf.Max(EyeOverride, Seam * 0.03f) : -1f, BurstAge, Moths ? detail : 0f);
+                return;
+            }
             bool on = age > 0f && alpha > 0.01f;
             float reveal = Mathf.Clamp01(age / 0.55f);
             float flash = Mathf.Clamp01(1f - Mathf.Abs(age - 0.58f) / 0.18f);
@@ -334,11 +352,13 @@ namespace TumbangPreso.Visual
 
         public void Hide()
         {
+            _seal?.Hide();
             foreach (var go in _owned) if (go != null) { var r = go.GetComponent<Renderer>(); if (r != null) r.enabled = false; }
         }
 
         public void Destroy()
         {
+            _seal?.Destroy();
             foreach (var go in _owned) if (go != null) Object.Destroy(go);
             _owned.Clear();
             foreach (var m in _materials) if (m != null) Object.Destroy(m);
@@ -388,16 +408,48 @@ namespace TumbangPreso.Visual
             return circle;
         }
 
-        private void Awake()
+        // Direction A: the puppet's five strings and master string (`PhaisterPuppetStrings`). The film tool calls `Build` and `Step`
+        // itself, because `Awake` and `LateUpdate` do not run outside Play: it is this code that it films, on the moving doll.
+        private PhaisterPuppetStrings _puppet;
+        private Transform _leftLeg, _rightLeg;
+        private Vector3 _leftSole, _rightSole;
+        private GameObject _modelOverride;
+        private readonly Vector3[] _tops = new Vector3[PhaisterPuppetStrings.Strings], _ends = new Vector3[PhaisterPuppetStrings.Strings];
+
+        /// <summary>When a film drives it: whether the doll is tagged. A match reads its body.</summary>
+        public bool? FilmTagged;
+
+        /// <summary>For a film, which runs outside Play: everything under <paramref name="holder"/> in its preview scene.</summary>
+        public static VoodooSkyCircle BuildForFilm(GameObject doll, GameObject model, Transform holder)
         {
-            _circle = new SkyCircle(null, world: true, layer: 0);
+            var circle = doll.AddComponent<VoodooSkyCircle>();
+            circle._modelOverride = model;
+            circle._age = SkyCircle.FullyOpenAge;
+            circle._centre = doll.transform.position + Vector3.up * Height;
+            circle.Build(holder);
+            circle._circle.Moths = true;
+            return circle;
+        }
+
+        private void Awake() => Build(null);
+
+        private void Build(Transform holder)
+        {
+            _circle = new SkyCircle(holder, world: holder == null, layer: 0);
             _motor = GetComponent<CharacterMotor>();
-            _control = MarionetteControl.BuildControl(null, 0);
+            _control = MarionetteControl.BuildControl(holder, 0);
+            if (PhaisterLook.Direction == PhaisterLook.Style.A)
+            {
+                _puppet = new PhaisterPuppetStrings(holder, 0);
+                // The leg bar a real marionette control has, across the rear of the head bar: the feet's strings hang from it.
+                MarionetteControl.MapWood(MarionetteControl.Block(_control, "LegBar", new Vector3(0f, 0.0f, -MarionetteControl.HeadBarHalf), new Vector3(0.72f, 0.07f, 0.08f), MarionetteControl.Wood, 0), false);
+            }
             _control.localScale = Vector3.one * MarionetteControl.DollScale;
             _owned.Add(_control.gameObject);
             for (int i = 0; i < 3; i++)
             {
                 var go = new GameObject("DollWire" + i);
+                if (holder != null) go.transform.SetParent(holder, false);
                 _owned.Add(go);
                 var line = go.AddComponent<LineRenderer>();
                 line.useWorldSpace = true;
@@ -416,22 +468,34 @@ namespace TumbangPreso.Visual
         private void FindJoints()
         {
             var visual = GetComponent<CharacterVisual>();
-            var skinned = visual != null && visual.Model != null ? visual.Model.GetComponentInChildren<SkinnedMeshRenderer>() : null;
+            var model = _modelOverride != null ? _modelOverride : visual != null ? visual.Model : null;
+            var skinned = model != null ? model.GetComponentInChildren<SkinnedMeshRenderer>() : null;
             if (skinned == null) return;
             for (int i = 0; i < skinned.bones.Length; i++)
             {
                 var b = skinned.bones[i];
                 if (b == null) continue;
                 if (b.name == "head") _crown = b;
+                // The sole under each leg, in the leg's own space, measured from the rest pose: a leg is one straight bone, and
+                // the doll may be part way through a step when it is first asked.
+                if (b.name == "leg-left" || b.name == "leg-right")
+                {
+                    var bind = skinned.sharedMesh.bindposes[i];
+                    Vector3 hip = bind.inverse.MultiplyPoint3x4(Vector3.zero);
+                    Vector3 sole = bind.MultiplyPoint3x4(new Vector3(hip.x, skinned.sharedMesh.bounds.min.y + 0.02f, hip.z));
+                    if (b.name == "leg-left") { _leftLeg = b; _leftSole = sole; } else { _rightLeg = b; _rightSole = sole; }
+                }
             }
             // The bones her HANDS are on: the forearms on a rig with elbows (`CharacterVisual.HandBone`).
             if (CharacterVisual.HandBone(skinned, "left", out int left, out var lp)) { _leftArm = skinned.bones[left]; _leftPalm = lp; }
             if (CharacterVisual.HandBone(skinned, "right", out int right, out var rp)) { _rightArm = skinned.bones[right]; _rightPalm = rp; }
         }
 
-        private void LateUpdate()
+        private void LateUpdate() => Step(Time.deltaTime, Time.time, Camera.main != null ? Camera.main.transform.position : transform.position);
+
+        /// <summary>One step of the circle, the control and the strings. <paramref name="eye"/> is who the strings stay visible to.</summary>
+        public void Step(float dt, float t, Vector3 eye)
         {
-            float dt = Time.deltaTime;
             _age += dt;
             if (_crown == null) FindJoints();
 
@@ -451,7 +515,10 @@ namespace TumbangPreso.Visual
             var capsule = GetComponent<CharacterController>();
             float tall = capsule != null ? capsule.height * transform.lossyScale.y : 1.6f;
             Vector3 crown = _crown != null ? _crown.position + Vector3.up * 0.55f : transform.position + Vector3.up * (tall + 0.25f);
+            bool tagged = FilmTagged ?? (_motor != null && _motor.IsTagged);
             Vector3 target = crown + Vector3.up * MarionetteControl.AboveCrown;
+            // Tagged, nobody is working it: under A the control sags down with it.
+            if (_puppet != null && _slack > 0f) target += Vector3.down * 0.45f * _slack;
             if (!_placed) { _controlAt = target; _placed = true; }
             float step = Mathf.Min(dt, 0.05f);
             Vector3 pull = (target - _controlAt) * 60f - _controlVelocity * 11f;
@@ -459,16 +526,30 @@ namespace TumbangPreso.Visual
             _controlAt += _controlVelocity * step;
             Vector3 lean = transform.InverseTransformDirection(_controlVelocity);
             float yaw = transform.eulerAngles.y;
+            Vector3 footL = _leftLeg != null ? _leftLeg.TransformPoint(_leftSole) : transform.position + transform.right * -0.25f;
+            Vector3 footR = _rightLeg != null ? _rightLeg.TransformPoint(_rightSole) : transform.position + transform.right * 0.25f;
+            // The hand working it: under A the bar rocks with the step, its leg end rising over the foot that is going forward.
+            float rock = _puppet != null ? Mathf.Clamp(Vector3.Dot(footL - footR, transform.forward) * 16f, -14f, 14f) * (1f - _slack) : 0f;
             _control.SetPositionAndRotation(_controlAt,
-                Quaternion.Euler(0f, yaw, 0f) * Quaternion.Euler(Mathf.Clamp(lean.z * 9f, -25f, 25f), 0f, Mathf.Clamp(-lean.x * 9f, -25f, 25f)));
+                Quaternion.Euler(0f, yaw, 0f) * Quaternion.Euler(Mathf.Clamp(lean.z * 9f, -25f, 25f), 0f, Mathf.Clamp(-lean.x * 9f, -25f, 25f) + rock));
 
             // THE WIRES: slack while it is tagged (plan 9.9 row 8: the string goes slack), taut again after.
-            bool tagged = _motor != null && _motor.IsTagged;
             _slack = Mathf.MoveTowards(_slack, tagged ? 1f : 0f, dt * (tagged ? 3f : 8f));
             Vector3 left = _leftArm != null ? _leftArm.TransformPoint(_leftPalm) : transform.position + transform.right * -0.6f + Vector3.up * 0.9f;
             Vector3 right = _rightArm != null ? _rightArm.TransformPoint(_rightPalm) : transform.position + transform.right * 0.6f + Vector3.up * 0.9f;
+            if (_puppet != null)
+            {
+                float z = -MarionetteControl.HeadBarHalf;
+                _tops[0] = _control.TransformPoint(MarionetteControl.Anchor(0));
+                _tops[1] = _control.TransformPoint(MarionetteControl.Anchor(1));
+                _tops[2] = _control.TransformPoint(MarionetteControl.Anchor(2));
+                _tops[3] = _control.TransformPoint(new Vector3(-0.34f, -0.04f, z));
+                _tops[4] = _control.TransformPoint(new Vector3(0.34f, -0.04f, z));
+                _ends[0] = crown; _ends[1] = left; _ends[2] = right; _ends[3] = footL; _ends[4] = footR;
+                _puppet.Pose(_tops, _ends, _slack, _control.TransformPoint(new Vector3(0f, 0.2f, 0f)), _centre + Vector3.down * 0.5f, shut, t, eye);
+                return;
+            }
             var ends = new[] { crown, left, right };
-            float t = Time.time;
             for (int s = 0; s < _strings.Count; s++)
             {
                 var line = _strings[s];
@@ -491,6 +572,7 @@ namespace TumbangPreso.Visual
         private void OnDestroy()
         {
             _circle?.Destroy();
+            _puppet?.Destroy();
             foreach (var go in _owned) if (go != null) Destroy(go);
             _owned.Clear();
         }

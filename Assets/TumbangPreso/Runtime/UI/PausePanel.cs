@@ -106,7 +106,7 @@ namespace TumbangPreso.UI
                     : _pausedOffline ? "Game paused while this menu is open."
                     : "The match keeps playing while this menu is open.";
             if (_title != null)
-                _title.text = PracticeRange.Active ? "Training" : GameLaunch.Spectator ? "Broadcast Menu" : "Match Menu";
+                _title.text = PracticeRange.Active ? "TRAINING" : GameLaunch.Spectator ? "BROADCAST MENU" : "MATCH MENU";
             PaintPauseState();
 
             if (Local != null)

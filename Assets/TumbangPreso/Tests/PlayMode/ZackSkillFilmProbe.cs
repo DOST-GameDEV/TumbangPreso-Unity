@@ -260,11 +260,10 @@ namespace TumbangPreso.PlayTests
                         foreach (var look in Object.FindObjectsByType<ZackMomentumLook>(FindObjectsSortMode.None))
                         {
                             int streamers = 0;
-                            foreach (var line in look.GetComponentsInChildren<LineRenderer>())
+                            foreach (var part in look.GetComponentsInChildren<MeshRenderer>())
                             {
-                                if (!line.enabled) continue;
-                                if (line.name.StartsWith("LightningStreamer")) streamers++;
-                                arcSeen |= line.name.StartsWith("BodyArc");
+                                if (part.name.StartsWith("wake-") && !part.name.StartsWith("wake-core")) streamers++;
+                                arcSeen |= part.name.StartsWith("shift-bolt");
                             }
                             streamerSeen |= streamers > 0; threeStreamers |= streamers >= 3;
                         }

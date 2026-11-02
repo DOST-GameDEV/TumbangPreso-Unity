@@ -10,9 +10,9 @@ namespace TumbangPreso.UI
         protected override void OnPopulateMesh(VertexHelper h)
         {
             h.Clear();var r=GetPixelAdjustedRect();
-            Draw(h,r,Focused?SettingsPalette.Accent:SettingsPalette.Rule);
-            r.xMin+=2;r.xMax-=2;r.yMin+=2;r.yMax-=2;
-            Draw(h,r,Focused?SettingsPalette.Control:SettingsPalette.Surface);
+            Draw(h,r,Focused?new Color32(194,106,18,255):SettingsPalette.Rule);
+            r.xMin+=6;r.xMax-=6;r.yMin+=6;r.yMax-=6;
+            Draw(h,r,Focused?new Color32(246,188,58,255):new Color32(226,215,216,255));
         }
         private void Draw(VertexHelper h,Rect r,Color ink)
         {

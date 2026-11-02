@@ -981,6 +981,8 @@ namespace TumbangPreso.Visual
         public const float FrostThawTime = 1.2f;
 
         private float _frostLevel;
+        private bool _wasSolidIce;
+        private float _solidIceFrom;
 
         /// <summary>0 = normal, 1 = fully iced.</summary>
         private MaterialPropertyBlock _recordedAccentRead;
@@ -1024,6 +1026,7 @@ namespace TumbangPreso.Visual
             if (_motor == null) return;
 
             float target = 0.0f;
+            bool solidIce = StunCoat.SolidIce && _motor.IsStunned && !_motor.IsTripped && _motor.StunElement == StunElement.Ice;
 
             // ⚠️⚠️ A FALL IS NOT A FREEZE, AND THIS IS WHY EVERY TRIP USED TO ICE THE BODY OVER.
             // `CharacterMotor.ApplyTrip` calls `ApplyStagger` as well as setting `_tripLeft`,
@@ -1048,8 +1051,22 @@ namespace TumbangPreso.Visual
                 // `> 0` rather than a plain compare: there, the frost holds until the replicated
                 // state clears rather than thawing instantly off a number it does not have.
                 float left = _motor.StunLeft;
-                if (left > 0.0f && left < FrostThawTime) target = left / FrostThawTime;
+                // Yasmin's Frozen does not taper: the owner's blue is the same fact as the crystals round the legs, so it
+                // holds at full while they stand. It also starts with them, so a body an Absolute Zero wave has not
+                // reached yet keeps its colours until the casing's own wait is over.
+                if (solidIce)
+                {
+                    if (!_wasSolidIce) _solidIceFrom = Time.time + CheskaAbsoluteZeroLook.PendingDelay(transform.position);
+                    if (Time.time < _solidIceFrom) target = 0.0f;
+                }
+                else if (left > 0.0f && left < FrostThawTime) target = left / FrostThawTime;
             }
+
+            _wasSolidIce = solidIce;
+
+            // Routed before the level moves, so the first frame of a freeze is not one frame of the tag's grey.
+            StunElement wasElement = _stunElement;
+            if (solidIce) _stunElement = StunElement.Ice;
 
             float rate = target > _frostLevel ? FrostRampIn : FrostRampOut;
             SetFrost(Mathf.MoveTowards(_frostLevel, target, dt / Mathf.Max(rate, 0.001f)));
@@ -1063,7 +1080,14 @@ namespace TumbangPreso.Visual
             // ⚠️ THE OTHER TERM IS WRITTEN TO ZERO RATHER THAN LEFT ALONE. They are separate
             // uniforms on one property block, so a seat tagged immediately after being frozen
             // would otherwise wear both at once: a grey body with ice still on it.
-            _stunElement = _motor.StunElement;
+            //
+            // Yasmin's Frozen ends with the motor already reporting `None`, the tag's element, so the ramp-out would draw
+            // as the grey caught mark. The element stays Ice until the level is gone. `FrostRampOut` 0.45 s is the
+            // casing's crack and sink (`CheskaFrozenLook`, 0.46 s), which is how colour returns only as the ice breaks.
+            bool thawingIce = StunCoat.SolidIce && _stunElement == StunElement.Ice && !_motor.IsStunned && _frostLevel > 0.0f;
+            if (!thawingIce) _stunElement = _motor.StunElement;
+            // `SetFrost` does nothing on an unchanged level, so a freeze replaced at full level has to repaint here.
+            if (_stunElement != wasElement && (_stunElement == StunElement.Ice || wasElement == StunElement.Ice)) PushColour();
         }
 
         /// <summary>
@@ -1101,9 +1125,7 @@ namespace TumbangPreso.Visual
 
                 if (ability)
                 {
-                    var coat = StunCoat.For(_stunElement);
-                    _block.SetColor(FrostColorId, coat.Body);
-                    _block.SetColor(FrostRimColorId, coat.Rim);
+                    StunCoat.WriteBody(_block, _stunElement);
                 }
 
                 r.SetPropertyBlock(_block);

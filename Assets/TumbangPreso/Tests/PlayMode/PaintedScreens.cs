@@ -69,6 +69,9 @@ namespace TumbangPreso.PlayTests
         /// </summary>
         public static void ShowSettings()
         {
+            // The title is now the automatic Home-loading surface. After
+            // MinimumLoadingViewSeconds it loads MatchSetup, which destroys this panel.
+            Object.FindFirstObjectByType<ConvertedMainMenu>()?.StopAllCoroutines();
             Object.FindFirstObjectByType<TumpHomeView>()?.Suspend();
             var panel = Object.FindFirstObjectByType<ConvertedSettingsPanel>(FindObjectsInactive.Include);
             Assert.IsNotNull(panel, "ConvertedMainMenu must still build the settings panel.");

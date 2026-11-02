@@ -14,8 +14,10 @@ namespace TumbangPreso.PlayTests
 {
  public sealed class MapVotePreviewTests
  {
-  [UnitySetUp]public IEnumerator Before(){yield return PlayModeWorld.Reset();}
-  [UnityTearDown]public IEnumerator After(){NetSession.Instance?.Stop();yield return PlayModeWorld.Reset();}
+  bool _reduced;
+  // Reduced UI motion keeps the poster and creates no decoder, so this fixture states its setting.
+  [UnitySetUp]public IEnumerator Before(){_reduced=Settings.SettingsStore.Current.ReducedUiMotion;Settings.SettingsStore.Current.ReducedUiMotion=false;yield return PlayModeWorld.Reset();}
+  [UnityTearDown]public IEnumerator After(){NetSession.Instance?.Stop();yield return PlayModeWorld.Reset();Settings.SettingsStore.Current.ReducedUiMotion=_reduced;}
   [UnityTest,Timeout(120000)]public IEnumerator NormalHostBallotSupportsPreviewThenLock()
   {
    yield return HubFlowTests.OpenHome();
@@ -61,6 +63,8 @@ namespace TumbangPreso.PlayTests
    Assert.That(Time.realtimeSinceStartup-opened,Is.GreaterThanOrEqualTo(11).And.LessThan(15));
    Assert.AreEqual(-1,TumpHub.Current.Host.MapVoteFor(NetAuthority.LocalSlot));
    var vote=TumpHub.Current.Top as HubMapVote;Assert.IsNotNull(vote);
+   // The ballot redraws on its next hub tick. Confirm and the host both refuse a vote after the winner.
+   yield return null;
    Assert.IsFalse(vote.GetComponentsInChildren<HubButton>().Single(c=>c.name=="LockMapVote").interactable);
   }
  }

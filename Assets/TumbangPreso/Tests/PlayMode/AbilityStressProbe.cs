@@ -114,7 +114,7 @@ namespace TumbangPreso.PlayTests
             for (int sample=0;sample<2;sample++)
             {
                 if (sample>0) yield return new WaitForSeconds(1f);
-                foreach (var surface in new[] { ice.transform.Find("FrozenSkin"), fire.transform.Find("FireChar") })
+                foreach (var surface in new[] { ice.transform.Find("ColdFeetLook"), fire.transform.Find("FireChar") })
                 {
                     var mesh = surface.GetComponent<MeshFilter>().sharedMesh;
                     var vertices = mesh.vertices;

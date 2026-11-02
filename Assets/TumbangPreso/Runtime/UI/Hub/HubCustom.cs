@@ -19,17 +19,15 @@ namespace TumbangPreso.UI.Hub
     public sealed class HubHost : HubScreen
     {
         public override bool WearsBoard => true;
-        public override float CourtShade => 0.9f;
+        public override float CourtShade => 1f;
 
         private InputField _name;
         private HubButton _lan, _online, _create;
         private HubButton[] _visibility;
-        private RectTransform _lanTick, _onlineTick;
         private int _visibilityValue;
         private bool _onlineChosen;
         private Text _status;
         private bool _busy;
-        private const float Column = 1100;
 
         private static readonly string[] Visibility = { "PUBLIC", "FRIENDS ONLY", "PRIVATE" };
 
@@ -37,93 +35,58 @@ namespace TumbangPreso.UI.Hub
 
         public override void Build()
         {
-            HubChrome.Back(Root, Hub);
-            HubKnit.TitlePlate(Root, "CUSTOM", "HOST GAME", 520);
+            HubKnit.Back(Root, Hub);
+            HubKnit.Title(Root, "HOST GAME", "CUSTOM", out _);
 
             string me = GameServices.Account?.DisplayName;
             if (string.IsNullOrWhiteSpace(me)) me = Settings.SettingsStore.Current.PlayerName;
             if (string.IsNullOrWhiteSpace(me)) me = "PLAYER";
 
-            float left = -Column * .5f;
-            Caption("NameCaption", "ROOM NAME", 392);
-            _name = HubKnit.Field(Root, "LobbyName", (me + "'s room").ToUpperInvariant(), "Name your room",
-                                  Settings.GameSettings.RoomTitleMax, HubStyle.Title);
-            HubKit.Place((RectTransform)_name.transform, HubKit.Centre, new Vector2(0, 300), new Vector2(Column, 96));
-            var pencil = HubKit.Glyph(_name.transform, "Pencil", HubGlyph.Mark.Pencil, HubKnit.GoldInk, 0.1f);
-            HubKit.Place(pencil.rectTransform, HubKit.Right, new Vector2(-30, 0), new Vector2(38, 38));
+            var plate = HubKnit.At(HubKnit.Plate(Root, "HostPanel", Knit.Panel), 360, 200, 1200, 674);
+            var panel = HubKnit.FaceOf(plate);
+            HubKnit.Head(panel, "NameCaption", "ROOM NAME", 60, 52);
+            _name = HubKnit.Field(panel, "LobbyName", (me + "'s room").ToUpperInvariant(), "Name your room",
+                                  Settings.GameSettings.RoomTitleMax, 40);
+            HubKnit.In((RectTransform)_name.transform, 60, 80, 1080, 96);
 
-            Caption("NetworkCaption", "WHERE ARE YOUR FRIENDS?", 214);
-            _lan = Door("LanChoice", HubGlyph.Mark.House, "LAN", "Same Wi-Fi, no internet", left + 260, () => Network(false), out _lanTick);
-            _online = Door("OnlineChoice", HubGlyph.Mark.Globe, "ONLINE", "Anywhere, by code", -left - 260, () => Network(true), out _onlineTick);
+            HubKnit.Head(panel, "NetworkCaption", "WHERE ARE YOUR FRIENDS?", 60, 222);
+            _lan = Door(panel, "LanChoice", "LAN", "Same Wi-Fi, no internet", 60, () => Network(false));
+            _online = Door(panel, "OnlineChoice", "ONLINE", "Anywhere, by code", 620, () => Network(true));
 
-            Caption("VisibilityCaption", "WHO CAN JOIN", -178);
-            var plate = HubKnit.Plate(Root, "Visibility", Knit.Maroon);
-            HubKit.Place(plate, HubKit.Centre, new Vector2(0, -264), new Vector2(Column, 96));
-            _visibility = new HubButton[Visibility.Length];
-            float segment = (Column - 40) / Visibility.Length;
-            for (int i = 0; i < Visibility.Length; i++)
-            {
-                int index = i;
-                _visibility[i] = HubKnit.Button(HubKnit.FaceOf(plate), "Visibility" + i, Visibility[i], Knit.Gold, () => Visible(index), HubStyle.Label);
-                HubKit.Place((RectTransform)_visibility[i].transform, HubKit.Left, new Vector2(20 + i * segment, 4), new Vector2(segment - 12, 70));
-            }
+            HubKnit.Head(panel, "VisibilityCaption", "WHO CAN JOIN", 60, 502);
+            _visibility = HubKnit.Tabs(panel, "Visibility", 60, 530, 1080, 104,
+                                       new[] { "Visibility0", "Visibility1", "Visibility2" }, Visibility, Visible);
 
-            _status = HubKit.Text(Root, "Status", "", HubStyle.Floor, false, HubBoard.Colour("#FCD39F"), TextAnchor.MiddleCenter);
-            HubKit.Place(_status.rectTransform, HubKit.Centre, new Vector2(0, -338), new Vector2(Column, 44));
-            HubDepthText.On(_status, 4);
+            _status = HubKnit.Words(Root, "Status", "", HubStyle.Floor, HubKnit.KitWhite, TextAnchor.MiddleCenter, true, 3);
+            HubKnit.At(_status.rectTransform, 360, 874, 1200, 36);
 
-            _create = HubKnit.Button(Root, "CreateLobby", "CREATE ROOM", Knit.Gold, Create, 56, HubGlyph.Mark.None, primary: true);
-            HubKit.Place((RectTransform)_create.transform, HubKit.Bottom, new Vector2(0, HubKit.Margin - 26), new Vector2(520, 124));
+            _create = HubKnit.Button(Root, "CreateLobby", "CREATE ROOM", Knit.Go, Create, 56, HubGlyph.Mark.None, primary: true);
+            HubKnit.At((RectTransform)_create.transform, 690, 908, 540, 128);
 
             Network(false);
             Visible(0);
         }
 
-        private void Caption(string name, string words, float y)
+        /// <summary>A big berry door: its name, and what it means in one line.</summary>
+        private HubButton Door(RectTransform panel, string name, string title, string line, float x, System.Action pick)
         {
-            var text = HubLobby.Caption(Root, name, words, HubKnit.Honey);
-            text.rectTransform.anchorMin = text.rectTransform.anchorMax = new Vector2(.5f, .5f);
-            text.rectTransform.pivot = new Vector2(0, .5f);
-            text.rectTransform.anchoredPosition = new Vector2(-Column * .5f + 6, y);
-            text.rectTransform.sizeDelta = new Vector2(Column, 40);
-            HubDepthText.On(text, 3);
-        }
-
-        /// <summary>A big knit door: its picture, its name, and what it means in one line.</summary>
-        private HubButton Door(string name, HubGlyph.Mark mark, string title, string line, float x, System.Action pick, out RectTransform tick)
-        {
-            var door = HubKnit.Button(Root, name, null, Knit.Orange, pick);
-            HubKit.Place((RectTransform)door.transform, HubKit.Centre, new Vector2(x, 28), new Vector2(520, 290));
-            var glyph = HubKit.Glyph(door.Body, "Icon", mark, HubKnit.OrangeInk, 0.09f);
-            HubKit.Place(glyph.rectTransform, HubKit.Top, new Vector2(0, -26), new Vector2(110, 110));
-            var big = HubKit.Text(door.Body, "Label", title, HubStyle.Display, true, HubKnit.OrangeInk, TextAnchor.MiddleCenter);
-            HubKit.Place(big.rectTransform, HubKit.Bottom, new Vector2(0, 68), new Vector2(480, 80));
-            var small = HubKit.Text(door.Body, "Line", line, HubStyle.Body, false, HubKnit.OrangeInk, TextAnchor.MiddleCenter);
-            HubKit.Place(small.rectTransform, HubKit.Bottom, new Vector2(0, 26), new Vector2(480, 40));
-            door.GetComponent<HubStickerFeel>().Pictures = new[] { glyph.rectTransform };
-            tick = HubKnit.Stamp(door.transform, "Chosen", "", Knit.Teal, 6, HubGlyph.Mark.Check);
-            tick.sizeDelta = new Vector2(70, 62);
-            tick.anchorMin = tick.anchorMax = tick.pivot = new Vector2(1, 1);
-            tick.anchoredPosition = new Vector2(16, 18);
+            var door = HubKnit.Button(panel, name, null, Knit.Card, pick);
+            HubKnit.In((RectTransform)door.transform, x, 250, 520, 204);
+            var big = HubKnit.Display(door.Body, "Label", title, 70, HubKnit.KitCream, TextAnchor.MiddleCenter);
+            HubKnit.In(big.rectTransform, 0, 26, 520, 88);
+            var small = HubKnit.Words(door.Body, "Line", line, 30, HubKnit.KitTan, TextAnchor.MiddleCenter);
+            HubKnit.In(small.rectTransform, 0, 118, 520, 44);
             return door;
         }
 
         private void Network(bool online)
         {
             _onlineChosen = online;
-            // The chosen door is the gold tile; the other steps back onto a dark plate, so the choice
-            // reads at a glance instead of the unchosen orange shouting louder than the chosen gold.
-            HubKnit.Recolour(_lan.transform, online ? Knit.Maroon : Knit.Gold);
-            HubKnit.Recolour(_online.transform, online ? Knit.Gold : Knit.Maroon);
-            foreach (var door in new[] { _lan, _online })
-            {
-                var ink = door == _online == online ? HubKnit.GoldInk : new Color(HubKnit.Cream.r, HubKnit.Cream.g, HubKnit.Cream.b, 0.8f);
-                foreach (var t in door.Body.GetComponentsInChildren<Text>(true)) t.color = ink;
-                var icon = door.Body.Find("Icon")?.GetComponent<HubGlyph>();
-                if (icon != null) icon.color = ink;
-            }
-            _lanTick.gameObject.SetActive(!online);
-            _onlineTick.gameObject.SetActive(online);
+            // Lime means chosen, on the rim and on the door's name.
+            HubKnit.Recolour(_lan.transform, online ? Knit.Card : Knit.CardOn);
+            HubKnit.Recolour(_online.transform, online ? Knit.CardOn : Knit.Card);
+            HubKit.LabelOf(_lan).color = online ? HubKnit.KitCream : HubKnit.KitLime;
+            HubKit.LabelOf(_online).color = online ? HubKnit.KitLime : HubKnit.KitCream;
             // The doors already say what each means; the line is kept for opening and refusals.
             _status.text = "";
         }
@@ -131,8 +94,7 @@ namespace TumbangPreso.UI.Hub
         private void Visible(int index)
         {
             _visibilityValue = index;
-            for (int i = 0; i < _visibility.Length; i++)
-                HubKnit.Bare(_visibility[i].transform, i != index, i == index ? HubKnit.GoldInk : new Color(HubKnit.Cream.r, HubKnit.Cream.g, HubKnit.Cream.b, 0.75f));
+            HubKnit.ChooseTab(_visibility, index);
         }
 
         private async void Create()
@@ -174,7 +136,7 @@ namespace TumbangPreso.UI.Hub
     public sealed class HubJoin : HubScreen
     {
         public override bool WearsBoard => true;
-        public override float CourtShade => 0.9f;
+        public override float CourtShade => 1f;
         public string JoinCodeOnOpen { get; set; }
         private RectTransform _list;
         private Text _status, _empty;
@@ -185,7 +147,7 @@ namespace TumbangPreso.UI.Hub
         private bool _refreshShown;
         private bool _busy;
         private float _nextDraw;
-        private const float Column = 1240, RowHeight = 108, RowPitch = 126;
+        private const float Column = 1200, RowHeight = 142, RowPitch = 150;
 
         /// <summary>
         /// How long REFRESH reads as busy and ignores presses. A LAN host answers the query within a
@@ -199,7 +161,7 @@ namespace TumbangPreso.UI.Hub
 
         /// <summary>The row's tag where JOIN would be, for a host on another protocol (beacon v3).</summary>
         public const string DifferentVersionLabel = "DIFFERENT\nVERSION";
-        private const int VisibleRooms = 4;
+        private const int VisibleRooms = 3;
         private readonly List<HubRoom> _drawnRooms = new List<HubRoom>(VisibleRooms);
         private readonly List<HubRoom> _rooms = new List<HubRoom>();
         private readonly List<bool> _roomLan = new List<bool>();
@@ -210,57 +172,41 @@ namespace TumbangPreso.UI.Hub
 
         public override void Build()
         {
-            HubChrome.Back(Root, Hub);
-            HubKnit.TitlePlate(Root, "CUSTOM", "JOIN GAME", 520);
-            float left = -Column * .5f;
+            HubKnit.Back(Root, Hub);
+            HubKnit.Title(Root, "JOIN GAME", "CUSTOM", out _);
+            var plate = HubKnit.At(HubKnit.Plate(Root, "ListBoard", Knit.Panel), 360, 200, 1200, 774);
+            var panel = HubKnit.FaceOf(plate);
 
-            var codeCaption = HubLobby.Caption(Root, "CodeCaption", "GOT A CODE?", HubKnit.Honey);
-            Centre(codeCaption.rectTransform, new Vector2(left + 6, 352), new Vector2(600, 40), 0);
-            HubDepthText.On(codeCaption, 3);
-            _codeField = HubKnit.Field(Root, "CodeField", "", "ABCD or 192.168.1.20", 21, HubStyle.Display);
-            Centre((RectTransform)_codeField.transform, new Vector2(left, 262), new Vector2(Column - 330, 108), 0);
-            _codeField.textComponent.font = HubBoard.FontFor("digits");
-            _codeField.textComponent.fontSize = 56;
+            HubKnit.Head(panel, "CodeCaption", "GOT A CODE?", 60, 52);
+            _codeField = HubKnit.Field(panel, "CodeField", "", "ABCD or 192.168.1.20", 21, 44);
+            HubKnit.In((RectTransform)_codeField.transform, 60, 80, 790, 100);
             _codeField.onValidateInput += (text, index, c) => char.ToUpperInvariant(c);
             _codeField.onSubmit.AddListener(code => { if (!string.IsNullOrWhiteSpace(code)) Join(code); });
-            _joinByCode = HubKnit.Button(Root, "JoinByCode", "JOIN", Knit.Gold, () => Join(_codeField.text), 56, HubGlyph.Mark.None, primary: true);
-            Centre((RectTransform)_joinByCode.transform, new Vector2(-left - 300, 262), new Vector2(300, 112), 0);
+            _joinByCode = HubKnit.Button(panel, "JoinByCode", "JOIN", Knit.Go, () => Join(_codeField.text), 50, HubGlyph.Mark.None, primary: true);
+            HubKnit.In((RectTransform)_joinByCode.transform, 880, 80, 260, 100);
 
-            // The list stands on HOME's wine plate, so rooms and the empty line read over the street.
-            var board = HubKnit.Plate(Root, "ListBoard", Knit.Wine);
-            board.anchorMin = board.anchorMax = new Vector2(.5f, .5f);
-            board.pivot = new Vector2(.5f, 1);
-            board.anchoredPosition = new Vector2(0, 198);
-            board.sizeDelta = new Vector2(Column + 64, 198 + 430);
-            var heading = HubKit.Text(Root, "Heading", "OPEN ROOMS", HubStyle.Title, true, HubBoard.Colour("#FCD39F"), TextAnchor.MiddleLeft);
-            Centre(heading.rectTransform, new Vector2(left + 4, 156), new Vector2(600, 60), 0);
-            HubDepthText.On(heading, 6);
-            _refresh = HubKnit.Button(Root, "RefreshServers", "REFRESH", Knit.Orange, RefreshServers, HubStyle.Label);
-            Centre((RectTransform)_refresh.transform, new Vector2(-left - 260, 156), new Vector2(260, 76), 0);
+            HubKnit.Head(panel, "Heading", "OPEN ROOMS", 60, 252);
+            _refresh = HubKnit.Button(panel, "RefreshServers", "REFRESH", Knit.Plain, RefreshServers, 32);
+            HubKnit.In((RectTransform)_refresh.transform, 920, 214, 220, 76);
 
-            _list = HubKit.Rect(Root, "List");
-            _list.anchorMin = _list.anchorMax = new Vector2(.5f, .5f);
-            _list.pivot = new Vector2(.5f, 1);
-            _list.anchoredPosition = new Vector2(0, 100);
-            _list.sizeDelta = new Vector2(Column, RowPitch * VisibleRooms);
+            _list = HubKit.Rect(panel, "List");
+            HubKnit.In(_list, 60, 306, 1080, RowPitch * VisibleRooms);
             // ⚠️ ONE STATE LINE, IN THE READING FACE (2026-09-23 UI review): never "Looking for ..." and
             // "Nobody yet" at once.
-            _empty = HubKit.Text(_list, "EmptyState", "", HubStyle.Label, false, HubBoard.Colour("#FCD39F"), TextAnchor.MiddleCenter);
+            _empty = HubKnit.Words(_list, "EmptyState", "", 34, HubKnit.KitInk, TextAnchor.MiddleCenter);
             HubKit.Stretch(_empty.rectTransform, 40);
-            HubDepthText.On(_empty, 4);
             // ⚠️ AN EMPTY LIST IS A LATA STANDING ALONE IN ITS CIRCLE (2026-09-24): the game's own
             // picture of "nobody is playing yet", above the sentence, gone once rooms appear.
             _emptyCan = HubKit.Rect(_empty.transform, "EmptyCan");
             HubKit.Place(_emptyCan, HubKit.Centre, new Vector2(0, 110), new Vector2(130, 130));
             var ring = HubScenery.ChalkRing(_emptyCan, "Circle", 0.2f);
             HubKit.Place(ring.rectTransform, HubKit.Bottom, new Vector2(0, -6), new Vector2(210, 60));
-            ring.color = new Color(HubStyle.Honey.r, HubStyle.Honey.g, HubStyle.Honey.b, 0.35f);
-            var can = HubKit.Glyph(_emptyCan, "Can", HubGlyph.Mark.Can, new Color(HubStyle.Honey.r, HubStyle.Honey.g, HubStyle.Honey.b, 0.45f), 0.07f);
+            ring.color = new Color(HubKnit.KitTanDark.r, HubKnit.KitTanDark.g, HubKnit.KitTanDark.b, 0.6f);
+            var can = HubKit.Glyph(_emptyCan, "Can", HubGlyph.Mark.Can, new Color(HubKnit.KitTanDark.r, HubKnit.KitTanDark.g, HubKnit.KitTanDark.b, 0.8f), 0.07f);
             HubKit.Stretch(can.rectTransform, 12);
 
-            _status = HubKit.Text(Root, "Status", "", HubStyle.Body, false, HubBoard.Colour("#FCD39F"), TextAnchor.MiddleCenter);
-            HubKit.Place(_status.rectTransform, HubKit.Bottom, new Vector2(0, HubKit.Margin - 30), new Vector2(Column, 50));
-            HubDepthText.On(_status, 4);
+            _status = HubKnit.Words(Root, "Status", "", HubStyle.Body, HubKnit.KitWhite, TextAnchor.MiddleCenter, true, 3);
+            HubKnit.At(_status.rectTransform, 360, 990, 1200, 50);
 
             HubSlap.On(_list, 0.04f, 1);
             // Both lists, from the start: LAN and online rooms arrive in the same list.
@@ -274,14 +220,6 @@ namespace TumbangPreso.UI.Hub
                 Join(code);
             }
             Draw();
-        }
-
-        private static void Centre(RectTransform rect, Vector2 leftTop, Vector2 size, float unused)
-        {
-            rect.anchorMin = rect.anchorMax = new Vector2(.5f, .5f);
-            rect.pivot = new Vector2(0, .5f);
-            rect.anchoredPosition = leftTop;
-            rect.sizeDelta = size;
         }
 
         public override void Tick()
@@ -353,42 +291,36 @@ namespace TumbangPreso.UI.Hub
             for (int i = 0; i < visible; i++)
             {
                 var room = _rooms[i];
-                var row = HubKnit.Plate(_list, "Room" + i, Knit.Orange);
-                HubKit.Place(row, HubKit.TopLeft, new Vector2(0, -(i * RowPitch)), new Vector2(Column - 24, RowHeight));
+                var row = HubKnit.Plate(_list, "Room" + i, Knit.Card);
+                HubKnit.In(row, 0, i * RowPitch, 1080, RowHeight);
                 var face = HubKnit.FaceOf(row);
-                var name = HubKit.Text(face, "Name", room.Name, HubStyle.Title, true, HubKnit.OrangeInk, TextAnchor.LowerLeft);
-                HubKit.Place(name.rectTransform, HubKit.TopLeft, new Vector2(40, -10), new Vector2(560, 56));
-                name.horizontalOverflow = HorizontalWrapMode.Overflow;
-                HubKit.Fit(name, 560);
-                var map = HubKit.Text(face, "Map", room.Map, HubStyle.Floor, false, HubKnit.WineInk, TextAnchor.UpperLeft);
-                HubKit.Place(map.rectTransform, HubKit.BottomLeft, new Vector2(42, 8), new Vector2(560, 38));
-                HubKit.Fit(map, 560);
+                var name = HubKnit.Display(face, "Name", room.Name, 40, HubKnit.KitCream);
+                HubKnit.In(name.rectTransform, 42, 12, 440, 58);
+                HubKit.Fit(name, 440);
+                var map = HubKnit.Words(face, "Map", room.Map, HubStyle.Floor, HubKnit.KitTan);
+                HubKnit.In(map.rectTransform, 44, 70, 440, 40);
+                HubKit.Fit(map, 440);
 
-                var tag = HubKnit.Stamp(face, "Network", _roomLan[i] ? "LAN" : "ONLINE", _roomLan[i] ? Knit.Teal : Knit.Red, 0);
-                tag.anchorMin = tag.anchorMax = tag.pivot = new Vector2(1, .5f);
-                tag.anchoredPosition = new Vector2(-470, 2);
-                var who = HubKit.Glyph(face, "PlayersIcon", HubGlyph.Mark.Person, HubKnit.WineInk, 0.1f);
-                HubKit.Place(who.rectTransform, HubKit.Right, new Vector2(-388, 2), new Vector2(34, 34));
-                var players = HubKit.Text(face, "Players", room.InProgress ? "IN A MATCH" : room.Players + "/" + room.Capacity, HubStyle.Label, true, HubKnit.WineInk, TextAnchor.MiddleLeft);
-                HubKit.Place(players.rectTransform, HubKit.Right, new Vector2(-232, 2), new Vector2(150, 50));
-                players.font = room.InProgress ? HubStyle.DisplayFont : HubBoard.FontFor("digits");
-                HubKit.Fit(players, 150);
+                var tag = HubKnit.Tag(face, "Network", _roomLan[i] ? "LAN" : "ONLINE", _roomLan[i] ? Knit.PillGo : Knit.PillYellow);
+                HubKnit.In(tag, 490, 38, tag.sizeDelta.x, tag.sizeDelta.y);
+                var players = HubKnit.Display(face, "Players", room.InProgress ? "IN A MATCH" : room.Players + "/" + room.Capacity, room.InProgress ? 28 : 40, HubKnit.KitCream);
+                HubKnit.In(players.rectTransform, 640, 36, 210, 60);
+                HubKit.Fit(players, 210);
                 // ⚠️ A HOST ON ANOTHER PROTOCOL GETS NO JOIN AT ALL, NOT A GREYED ONE (LAN-VPN-JOIN-1020).
                 // Pressing it could only be refused at approval after the wait; the tag says why in the
                 // place the press would have been, and the focus path skips it.
                 if (room.DifferentVersion)
                 {
-                    var version = HubKit.Text(face, "Version", DifferentVersionLabel, HubStyle.Floor, false, HubKnit.WineInk, TextAnchor.MiddleCenter);
-                    HubKit.Place(version.rectTransform, HubKit.Right, new Vector2(-24, 0), new Vector2(190, 84));
+                    var version = HubKnit.Words(face, "Version", DifferentVersionLabel, HubStyle.Floor, HubKnit.KitTan, TextAnchor.MiddleCenter);
+                    HubKnit.In(version.rectTransform, 860, 26, 190, 84);
                     HubKit.Fit(version, 190);
-                    // A room nobody here can join steps back: its knit is faded, its words stay readable.
-                    foreach (var image in new[] { row.Find("Slab")?.GetComponent<Image>(), face.GetComponent<Image>() })
-                        if (image != null) image.color = new Color(1, 1, 1, 0.55f);
+                    // A room nobody here can join steps back: its card is faded, its words stay readable.
+                    face.GetComponent<Image>().color = new Color(1, 1, 1, 0.55f);
                     continue;
                 }
                 string key = room.Key;
-                var join = HubKnit.Button(face, "Join" + i, "JOIN", Knit.Gold, () => Join(key), HubStyle.Label);
-                HubKit.Place((RectTransform)join.transform, HubKit.Right, new Vector2(-34, 4), new Vector2(180, 76));
+                var join = HubKnit.Button(face, "Join" + i, "JOIN", Knit.Yellow, () => Join(key), 38);
+                HubKnit.In((RectTransform)join.transform, 870, 28, 180, 80);
                 join.interactable = room.IsJoinable;
             }
             Hub.RefreshFocus();
@@ -474,14 +406,14 @@ namespace TumbangPreso.UI.Hub
     public sealed class HubLobby : HubScreen
     {
         public override bool WearsBoard => true;
-        public override float CourtShade => 0.55f;
+        public override float CourtShade => 1f;
 
         // The room's measures, canvas units, centred on the canvas (y up). A taller canvas (4:3)
         // adds air above and below the middle band instead of pulling the cards from the strip.
-        public const float RoomContentWidth = 1808, CardGap = 36;
-        internal const float CardsTop = 210, CardHeight = 400, PortraitSize = 360, PortraitRise = 104;
-        internal const float StripTop = -226, StripHeight = 100;
-        internal const float ChatWidth = 640, ChatGap = 40;
+        public const float RoomContentWidth = 1800, CardGap = 40;
+        internal const float CardsTop = 230, HostSeatHeight = 454, GuestSeatHeight = 534, ChatSeatHeight = 554;
+        internal const float StripTop = -236, StripHeight = 154;
+        internal const float ChatWidth = 570, ChatGap = 50;
         /// <summary>The cards' column while the chat drawer is open, and how far it moves left.</summary>
         internal const float RoomSeatsNarrow = RoomContentWidth - ChatWidth - ChatGap;
         internal const float RoomSeatsOffset = -(RoomContentWidth - RoomSeatsNarrow) * .5f;
@@ -489,9 +421,10 @@ namespace TumbangPreso.UI.Hub
         internal const float RoomChatLeft = RoomContentWidth * .5f - ChatWidth;
         internal const float RoomChatWidth = ChatWidth;
 
-        private Text _code, _codeCaption, _address, _count, _status, _digest, _unreadCount;
+        private Text _code, _codeCaption, _address, _count, _status, _unreadCount;
         private RectTransform _seats, _playersPanel, _matchCard, _summaryStrip, _networkTag, _statusPlate, _watching;
         private HubButton _primary, _watch, _rules, _viewRules, _chatDoor, _codeChip, _modeClassic, _modeHero;
+        private HubButton[] _modeTabs;
         private Text _networkWord, _watchingLine;
         private HubArrowChoice _mapChoice;
         private GameObject _unread;
@@ -508,7 +441,7 @@ namespace TumbangPreso.UI.Hub
         // nothing, and so does an online room, a client and every non-Windows player.
         // ⚠️ IT HANGS UNDER THE HOST'S STRIP (`MatchCard`), the room's network facts, and steps
         // aside with the strip while the chat is open.
-        internal const float FirewallWidth = 1060;
+        internal const float FirewallWidth = 610;
         private RectTransform _firewall;
         private Text _firewallLine;
         private HubButton _firewallAllow;
@@ -520,9 +453,7 @@ namespace TumbangPreso.UI.Hub
 
         public override void Build()
         {
-            // The fiesta's bunting strung high, over the title and the ticket, clear of the players' heading.
-            HubScenery.Bunting(Root, 7, 4, 0.1f);
-            HubChrome.Back(Root, Hub);
+            HubKnit.Back(Root, Hub);
             BuildTitle();
             BuildTicket();
             BuildPlayers();
@@ -541,20 +472,11 @@ namespace TumbangPreso.UI.Hub
         // ------------------------------------------------------------------ top: name and code
 
         private Text _title, _titleCaption;
-        private RectTransform _titlePlate;
 
-        /// <summary>The room's name on a maroon plate, with whose room it is above it.</summary>
+        /// <summary>The room's name beside BACK, with whose room it is under it.</summary>
         private void BuildTitle()
         {
-            float x = HubKit.Margin + HubChrome.BarHeight + 24;
-            _titlePlate = HubKnit.Plate(Root, "TitlePlate", Knit.Maroon);
-            HubKit.Place(_titlePlate, HubKit.TopLeft, new Vector2(x, -HubKit.Margin + 18), new Vector2(640, 118));
-            var face = HubKnit.FaceOf(_titlePlate);
-            _titleCaption = Caption(face, "RoomOwner", "YOUR ROOM", HubKnit.Honey);
-            HubKit.Place(_titleCaption.rectTransform, HubKit.TopLeft, new Vector2(34, -12), new Vector2(560, 34));
-            _title = HubKit.Text(face, "ScreenTitle", "LOBBY", HubStyle.Title, true, HubKnit.Cream, TextAnchor.MiddleLeft);
-            HubKit.Stretch(_title.rectTransform);
-            _title.rectTransform.offsetMin = new Vector2(34, 14); _title.rectTransform.offsetMax = new Vector2(-26, -42);
+            _title = HubKnit.Title(Root, "LOBBY", "YOUR ROOM", out _titleCaption);
         }
 
         /// <summary>A small letter-spaced caption in HOME's tag face (the `#1234` lettering).</summary>
@@ -568,51 +490,47 @@ namespace TumbangPreso.UI.Hub
         }
 
         /// <summary>
-        /// The code is the one fact a host reads out loud, so it is a gold ticket, top right: the code
-        /// in HOME's digits, the network as a tag (a fact, not a setting), the LAN address under it.
+        /// The code is the one fact a host reads out loud, so it is a berry card, top right: the code
+        /// large, the network as a tag (a fact, not a setting), the LAN address beside it.
         /// Pressing it copies the code.
         /// </summary>
         private void BuildTicket()
         {
-            _codeChip = HubKnit.Button(Root, "CodeChip", null, Knit.Gold, CopyCode);
-            HubKit.Place((RectTransform)_codeChip.transform, HubKit.TopRight, new Vector2(-HubKit.Margin - 24, -HubKit.Margin + 20), new Vector2(480, 128));
+            _codeChip = HubKnit.Button(Root, "CodeChip", null, Knit.Card, CopyCode);
+            HubKit.Place((RectTransform)_codeChip.transform, HubKit.TopRight, new Vector2(-60, -30), new Vector2(460, 184));
             var face = _codeChip.Body;
-            _codeCaption = Caption(face, "CodeCaption", "ROOM CODE", HubKnit.GoldInk);
-            HubKit.Place(_codeCaption.rectTransform, HubKit.TopLeft, new Vector2(34, -14), new Vector2(260, 32));
-            _code = HubKit.Text(face, "Code", "", HubStyle.Display, true, HubKnit.WineInk, TextAnchor.MiddleLeft);
-            _code.font = HubBoard.FontFor("digits");
-            _code.fontSize = 58;
-            HubKit.Place(_code.rectTransform, HubKit.BottomLeft, new Vector2(30, 12), new Vector2(250, 72));
-            _networkTag = HubKnit.Stamp(face, "NetworkTag", "LAN", Knit.Teal, 0);
-            HubKit.Place(_networkTag, HubKit.TopRight, new Vector2(-28, -16), _networkTag.sizeDelta);
+            _codeCaption = HubKnit.Display(face, "CodeCaption", "ROOM CODE", 28, HubKnit.KitTan);
+            HubKnit.In(_codeCaption.rectTransform, 40, 26, 260, 40);
+            _code = HubKnit.Display(face, "Code", "", 60, HubKnit.KitCream);
+            HubKnit.In(_code.rectTransform, 40, 70, 170, 80);
+            _networkTag = HubKnit.Tag(face, "NetworkTag", "LAN", Knit.PillGo, 56);
+            HubKit.Place(_networkTag, HubKit.TopRight, new Vector2(-30, -20), _networkTag.sizeDelta);
             _networkWord = _networkTag.Find("Face/Label").GetComponent<Text>();
-            _address = HubKit.Text(face, "Address", "", HubStyle.Floor, false, HubKnit.GoldInk, TextAnchor.MiddleRight);
-            HubKit.Place(_address.rectTransform, HubKit.BottomRight, new Vector2(-28, 10), new Vector2(300, 50));
+            _address = HubKnit.Words(face, "Address", "", HubStyle.Floor, HubKnit.KitTan, TextAnchor.MiddleRight);
+            HubKit.Place(_address.rectTransform, HubKit.TopRight, new Vector2(-30, -92), new Vector2(240, 60));
+            _address.horizontalOverflow = HorizontalWrapMode.Overflow;
         }
 
         // ------------------------------------------------------------------ the cards
 
         private void BuildPlayers()
         {
-            _count = HubKit.Text(Root, "PlayersCount", "", HubStyle.Title, true, HubBoard.Colour("#FCD39F"), TextAnchor.MiddleLeft);
-            HubKit.Place(_count.rectTransform, HubKit.Centre, new Vector2(-RoomContentWidth * .5f + 200, CardsTop + 110), new Vector2(400, 64));
-            HubDepthText.On(_count, 6);
+            _count = HubKnit.Display(Root, "PlayersCount", "", 46, HubKnit.KitWhite, TextAnchor.MiddleLeft, 5);
+            HubKnit.At(_count.rectTransform, 60, 216, 500, 70);
 
-            // ⚠️ SPECTATE STAYS AT THE TOP RIGHT OF THE PLAYERS, LABELLED SPECTATE (owner 2026-10-28).
-            // It is a seat choice, so it sits on the line of seats; on, it turns gold with a tick.
-            _watch = HubKnit.Button(Root, "WatchToggle", "SPECTATE", Knit.Orange, () => { Hub.Host.ToggleSpectate(); _drawn = ""; },
-                                    HubStyle.Label, HubGlyph.Mark.Eye);
-            HubKit.Place((RectTransform)_watch.transform, HubKit.Centre, new Vector2(RoomContentWidth * .5f - 140, CardsTop + 110), new Vector2(280, 76));
+            // ⚠️ SPECTATE STAYS AT THE TOP RIGHT OF THE PLAYERS (owner 2026-10-28). It is a seat choice,
+            // so it sits on the line of seats; on, it is lime and says so.
+            _watch = HubKnit.Button(Root, "WatchToggle", "SPECTATE", Knit.Plain, () => { Hub.Host.ToggleSpectate(); _drawn = ""; }, 34);
 
             _playersPanel = HubKit.Rect(Root, "Players");
             _playersPanel.anchorMin = _playersPanel.anchorMax = new Vector2(.5f, .5f);
             _playersPanel.pivot = new Vector2(.5f, 1);
             _playersPanel.anchoredPosition = new Vector2(0, CardsTop);
-            _playersPanel.sizeDelta = new Vector2(RoomContentWidth, CardHeight);
+            _playersPanel.sizeDelta = new Vector2(RoomContentWidth, HostSeatHeight);
             _seats = HubKit.Stretch(HubKit.Rect(_playersPanel, "Seats"));
         }
 
-        /// <summary>The host's strip: MAP, MODE and RULES, under the cards.</summary>
+        /// <summary>The host's MAP, MODE and RULES, under the seats: each under its own white label, no strip.</summary>
         private void BuildMatchCard()
         {
             var card = _matchCard = HubKit.Rect(Root, "MatchCard");
@@ -621,53 +539,39 @@ namespace TumbangPreso.UI.Hub
             card.anchoredPosition = new Vector2(0, StripTop);
             card.sizeDelta = new Vector2(RoomContentWidth, StripHeight);
 
-            // ⚠️ THE SAME PREVIOUS/NEXT SELECTOR AS HOST GAME (`HubArrowChoice`), on its own knit
-            // plate, on the same `SelectMap` call, so the room changes map in one press.
-            var mapPlate = HubKnit.Plate(card, "MapPlate", Knit.Maroon);
-            HubKit.Place(mapPlate, HubKit.TopLeft, Vector2.zero, new Vector2(780, StripHeight));
-            var mapFace = HubKnit.FaceOf(mapPlate);
-            var mapWord = Caption(mapFace, "MapCaption", "MAP", HubKnit.Honey);
-            HubKit.Place(mapWord.rectTransform, HubKit.Left, new Vector2(34, 0), new Vector2(90, 40));
+            Label("MapCaption", "MAP", 0);
+            // ⚠️ THE SAME `SelectMap` call as ever, so the room changes map in one press.
             string[] maps = new string[SceneFlow.MapRegistry.Length];
             for (int i = 0; i < maps.Length; i++) maps[i] = SceneFlow.MapRegistry[i].Name.ToUpperInvariant();
-            _mapChoice = HubArrowChoice.BuildKnit(mapFace, "Map", maps, MapIndex());
-            HubKit.Span((RectTransform)_mapChoice.transform, Vector2.zero, Vector2.one, new Vector2(120, 6), new Vector2(0, 6));
+            _mapChoice = HubArrowChoice.BuildKnit(card, "Map", maps, MapIndex());
+            HubKnit.In((RectTransform)_mapChoice.transform, 0, 50, 580, 92);
             _mapChoice.Changed += i => { Hub.Host.SelectMap(SceneFlow.MapRegistry[i].Id); _drawn = ""; };
 
-            // MODE is chosen here and only here: two knit segments, the chosen one gold.
-            var modePlate = HubKnit.Plate(card, "ModePlate", Knit.Maroon);
-            HubKit.Place(modePlate, HubKit.TopLeft, new Vector2(816, 0), new Vector2(680, StripHeight));
-            var modeFace = HubKnit.FaceOf(modePlate);
-            var modeWord = Caption(modeFace, "ModeCaption", "MODE", HubKnit.Honey);
-            HubKit.Place(modeWord.rectTransform, HubKit.Left, new Vector2(34, 0), new Vector2(100, 40));
-            _modeClassic = HubKnit.Button(modeFace, "ModeClassic", "CLASSIC", Knit.Gold, () => PickMode(GameMode.Classic), HubStyle.Label);
-            HubKit.Place((RectTransform)_modeClassic.transform, HubKit.Left, new Vector2(140, 4), new Vector2(230, 70));
-            _modeHero = HubKnit.Button(modeFace, "ModeHeroStrike", "HERO STRIKE", Knit.Gold, () => PickMode(GameMode.HeroStrike), HubStyle.Label);
-            HubKit.Place((RectTransform)_modeHero.transform, HubKit.Left, new Vector2(384, 4), new Vector2(270, 70));
+            // MODE is chosen here and only here: the tab track, its pill lime.
+            Label("ModeCaption", "MODE", 660);
+            var modes = HubKnit.Tabs(card, "ModePlate", 660, 42, 600, 104, new[] { "ModeClassic", "ModeHeroStrike" },
+                                     new[] { "CLASSIC", "HERO STRIKE" }, i => PickMode(i == 0 ? GameMode.Classic : GameMode.HeroStrike));
+            _modeTabs = modes; _modeClassic = modes[0]; _modeHero = modes[1];
 
-            _rules = HubKnit.Button(card, "SettingsDoor", null, Knit.Orange, OpenRules, HubStyle.Label, HubGlyph.Mark.Book);
-            HubKit.Place((RectTransform)_rules.transform, HubKit.TopRight, new Vector2(-24, 0), new Vector2(276, StripHeight - 4));
-            var rulesIcon = (RectTransform)_rules.Body.Find("Icon");
-            rulesIcon.anchorMin = rulesIcon.anchorMax = rulesIcon.pivot = new Vector2(0, .5f);
-            rulesIcon.anchoredPosition = new Vector2(24, 0);
-            var rulesWord = HubKit.Text(_rules.Body, "Label", "RULES", HubStyle.Label, true, HubKnit.OrangeInk, TextAnchor.LowerLeft);
-            HubKit.Place(rulesWord.rectTransform, HubKit.TopLeft, new Vector2(80, -12), new Vector2(180, 42));
-            _digest = HubKit.Text(_rules.Body, "Digest", "", HubStyle.Floor, false, HubKnit.WineInk, TextAnchor.UpperLeft);
-            HubKit.Place(_digest.rectTransform, HubKit.BottomLeft, new Vector2(80, 8), new Vector2(186, 40));
+            Label("RulesCaption", "RULES", 1320);
+            _rules = HubKnit.Button(card, "SettingsDoor", "RULES", Knit.Plain, OpenRules, 36);
+            HubKnit.In((RectTransform)_rules.transform, 1320, 50, 480, 92);
 
+            // The host's firewall line sits in the free corner beside START GAME.
             _firewall = HubKit.Rect(card, "LanFirewall");
-            _firewall.anchorMin = _firewall.anchorMax = new Vector2(0, 0);
-            _firewall.pivot = new Vector2(0, 1);
-            _firewall.anchoredPosition = new Vector2(0, -14);
-            _firewall.sizeDelta = new Vector2(FirewallWidth, 72);
-            _firewallLine = HubKit.Text(_firewall, "Line", "", HubStyle.Floor, false, HubBoard.Colour("#FCD39F"), TextAnchor.MiddleLeft);
-            HubKit.Place(_firewallLine.rectTransform, HubKit.Left, new Vector2(8, 0), new Vector2(FirewallWidth - 340, 72));
-            HubDepthText.On(_firewallLine, 4);
-            _firewallAllow = HubKnit.Button(_firewall, "AllowLanPlay", LanFirewallRules.AllowLabel, Knit.Teal, AllowLanPlay,
-                                            HubStyle.Floor, HubGlyph.Mark.House);
-            HubKit.Place((RectTransform)_firewallAllow.transform, HubKit.Right, Vector2.zero, new Vector2(320, 68));
+            HubKnit.In(_firewall, 0, 160, FirewallWidth, 130);
+            _firewallLine = HubKnit.Words(_firewall, "Line", "", HubStyle.Floor, HubKnit.KitWhite, TextAnchor.UpperLeft, true, 3);
+            HubKnit.In(_firewallLine.rectTransform, 0, 0, FirewallWidth, 70);
+            _firewallAllow = HubKnit.Button(_firewall, "AllowLanPlay", LanFirewallRules.AllowLabel, Knit.Yellow, AllowLanPlay, HubStyle.Floor);
+            HubKnit.In((RectTransform)_firewallAllow.transform, 0, 72, 320, 60);
             HubKnit.FitLabel(_firewallAllow);
             _firewall.gameObject.SetActive(false);
+
+            void Label(string name, string words, float x)
+            {
+                var label = HubKnit.Display(card, name, words, 34, HubKnit.KitWhite, TextAnchor.MiddleLeft, 4);
+                HubKnit.In(label.rectTransform, x, 0, 300, 44);
+            }
         }
 
         private void PickMode(GameMode mode)
@@ -693,9 +597,9 @@ namespace TumbangPreso.UI.Hub
             _summaryStrip = HubKit.Rect(_playersPanel, "MatchSummary");
             _summaryStrip.anchorMin = _summaryStrip.anchorMax = new Vector2(1, 1);
             _summaryStrip.pivot = new Vector2(1, .5f);
-            _summaryStrip.anchoredPosition = new Vector2(-(280 + 20), 110);
-            _summaryStrip.sizeDelta = new Vector2(196, 76);
-            _viewRules = HubKnit.Button(_summaryStrip, "ViewRules", "RULES", Knit.Orange, OpenSettings, HubStyle.Label, HubGlyph.Mark.Book);
+            _summaryStrip.anchoredPosition = new Vector2(-(280 + 20), 58);
+            _summaryStrip.sizeDelta = new Vector2(220, 80);
+            _viewRules = HubKnit.Button(_summaryStrip, "ViewRules", "RULES", Knit.Plain, OpenSettings, 34);
             HubKit.Stretch((RectTransform)_viewRules.transform);
             HubKnit.FitLabel(_viewRules);
         }
@@ -709,42 +613,43 @@ namespace TumbangPreso.UI.Hub
 
         private void BuildBottom()
         {
-            _statusPlate = HubKnit.Plate(Root, "StatusPlate", Knit.Wine);
-            HubKit.Place(_statusPlate, HubKit.BottomLeft, new Vector2(HubKit.Margin, HubKit.Margin - 16), new Vector2(600, 100));
-            _status = HubKit.Text(HubKnit.FaceOf(_statusPlate), "Status", "", HubStyle.Floor, false, HubBoard.Colour("#F1E3C8"), TextAnchor.MiddleLeft);
+            _statusPlate = HubKnit.Plate(Root, "StatusPlate", Knit.Card);
+            HubKnit.At(_statusPlate, 60, 946, 600, 104);
+            _status = HubKnit.Words(HubKnit.FaceOf(_statusPlate), "Status", "", HubStyle.Floor, HubKnit.KitCream, TextAnchor.MiddleLeft);
             HubKit.Stretch(_status.rectTransform);
-            _status.rectTransform.offsetMin = new Vector2(30, 6); _status.rectTransform.offsetMax = new Vector2(-24, -6);
+            _status.rectTransform.offsetMin = new Vector2(30, 20); _status.rectTransform.offsetMax = new Vector2(-24, -8);
             _status.horizontalOverflow = HorizontalWrapMode.Wrap;
 
-            _primary = HubKnit.Button(Root, "StartGame", "START GAME", Knit.Gold, Primary, 56, HubGlyph.Mark.None, primary: true);
-            HubKit.Place((RectTransform)_primary.transform, HubKit.Bottom, new Vector2(0, HubKit.Margin - 26), new Vector2(500, 128));
+            _primary = HubKnit.Button(Root, "StartGame", "START GAME", Knit.Go, Primary, 54, HubGlyph.Mark.None, primary: true);
+            HubKnit.At((RectTransform)_primary.transform, 690, 936, 540, 124);
 
             // A spectator has nothing to press there, so the room's status takes the spot instead.
-            _watching = HubKnit.Plate(Root, "WatchingPlate", Knit.Wine);
-            HubKit.Place(_watching, HubKit.Bottom, new Vector2(0, HubKit.Margin - 26), new Vector2(720, 116));
-            var watchingWord = HubKit.Text(HubKnit.FaceOf(_watching), "Word", "WATCHING", HubStyle.Title, true, HubKnit.Honey, TextAnchor.MiddleCenter);
-            HubKit.Place(watchingWord.rectTransform, HubKit.Top, new Vector2(0, -10), new Vector2(680, 54));
-            _watchingLine = HubKit.Text(HubKnit.FaceOf(_watching), "Line", "", HubStyle.Floor, false, HubBoard.Colour("#F1E3C8"), TextAnchor.MiddleCenter);
-            HubKit.Place(_watchingLine.rectTransform, HubKit.Bottom, new Vector2(0, 10), new Vector2(680, 42));
+            _watching = HubKnit.Plate(Root, "WatchingPlate", Knit.Card);
+            HubKnit.At(_watching, 560, 930, 800, 134);
+            var watchingWord = HubKnit.Display(HubKnit.FaceOf(_watching), "Word", "WATCHING", 44, HubKnit.KitCream, TextAnchor.MiddleCenter);
+            HubKnit.In(watchingWord.rectTransform, 0, 12, 800, 56);
+            _watchingLine = HubKnit.Words(HubKnit.FaceOf(_watching), "Line", "", HubStyle.Floor, HubKnit.KitTan, TextAnchor.MiddleCenter);
+            HubKnit.In(_watchingLine.rectTransform, 20, 68, 760, 44);
             _watching.gameObject.SetActive(false);
 
             // CHAT carries the count of lines that arrived while it was shut; CHARACTER exists only
             // where heroes are not chosen together after START (offline rooms).
-            _chatDoor = HubKnit.Button(Root, "ChatDoor", "CHAT", Knit.Teal, () => Hub.Host.ToggleChat(), HubStyle.Title, HubGlyph.Mark.Friends);
-            HubKit.Place((RectTransform)_chatDoor.transform, HubKit.BottomRight, new Vector2(-HubKit.Margin - 24, HubKit.Margin - 14), new Vector2(270, 104));
-            var badge = HubKnit.Plate(_chatDoor.Body, "Unread", Knit.Red);
-            HubKit.Place(badge, HubKit.TopRight, new Vector2(18, 20), new Vector2(58, 54));
-            _unreadCount = HubKit.Text(HubKnit.FaceOf(badge), "Count", "", HubStyle.Floor, true, HubKnit.Cream, TextAnchor.MiddleCenter);
+            _chatDoor = HubKnit.Button(Root, "ChatDoor", "CHAT", Knit.Yellow, () => Hub.Host.ToggleChat(), 44);
+            HubKnit.At((RectTransform)_chatDoor.transform, 1560, 946, 300, 104);
+            var badge = HubKnit.Plate(_chatDoor.Body, "Unread", Knit.PillDanger);
+            HubKit.Place(badge, HubKit.TopRight, new Vector2(18, 20), new Vector2(70, 56));
+            _unreadCount = HubKit.Text(HubKnit.FaceOf(badge), "Count", "", HubStyle.Floor, true, HubKnit.KitCream, TextAnchor.MiddleCenter);
             HubKit.Stretch(_unreadCount.rectTransform);
+            _unreadCount.rectTransform.anchorMin = new Vector2(0, .06f);
             _unread = badge.gameObject;
             _unread.SetActive(false);
             _seenLines = LobbyChat.RoomLineCount;
-            _characterDoor = HubKnit.Button(Root, "CharacterDoor", "CHARACTER", Knit.Orange, () =>
+            _characterDoor = HubKnit.Button(Root, "CharacterDoor", "CHARACTER", Knit.Yellow, () =>
             {
                 if (_chatShown) Hub.Host.ToggleChat();
                 Hub.Push<HubCharacterSelect>(c => c.Timed = false);
-            }, HubStyle.Label, HubGlyph.Mark.Person);
-            HubKit.Place((RectTransform)_characterDoor.transform, HubKit.BottomRight, new Vector2(-HubKit.Margin - 330, HubKit.Margin - 14), new Vector2(300, 104));
+            }, 36);
+            HubKnit.At((RectTransform)_characterDoor.transform, 1240, 946, 300, 104);
             HubKnit.FitLabel(_characterDoor);
         }
 
@@ -783,7 +688,7 @@ namespace TumbangPreso.UI.Hub
 
         private float WidthTarget => _chatShown ? RoomSeatsNarrow : RoomContentWidth;
         private float PanelTarget => _chatShown ? RoomSeatsOffset : 0;
-        private float CardsTopForRole => CardsTop - (!_hostLayout && !_chatShown ? 76 : 0);
+        private float SeatHeight => _chatShown ? ChatSeatHeight : _hostLayout ? HostSeatHeight : GuestSeatHeight;
 
         /// <summary>Place the pieces for the role and the chat. Snaps on a rebuild, eases otherwise.</summary>
         private void Layout(bool snap)
@@ -796,28 +701,23 @@ namespace TumbangPreso.UI.Hub
             if (_characterDoor != null)
                 _characterDoor.gameObject.SetActive(!_chatShown && Hub != null && !Hub.Host.Spectating
                     && !(Net.NetSession.Instance != null && Net.NetSession.Instance.IsNetworked));
-            if (_count != null)
-                _count.rectTransform.anchoredPosition = new Vector2(-RoomContentWidth * .5f + 200, CardsTopForRole + 110);
             if (_watch != null)
-            {
-                var w = (RectTransform)_watch.transform;
-                w.anchoredPosition = new Vector2((_chatShown ? RoomSeatsOffset + RoomSeatsNarrow * .5f : RoomContentWidth * .5f) - 140, CardsTopForRole + 110);
-            }
+                HubKnit.At((RectTransform)_watch.transform, (_chatShown ? 1240 : 1860) - (_hostLayout ? 260 : 280), 212, _hostLayout ? 260 : 280, 80);
             if (snap || HubStyle.ReducedMotion) { _panelX = PanelTarget; _panelWidth = WidthTarget; }
             ApplyPanel();
             if (_statusPlate != null)
-                _statusPlate.sizeDelta = new Vector2(_chatShown ? 380 : 600, 100);
+                _statusPlate.sizeDelta = new Vector2(_chatShown ? 300 : 600, 104);
             if (_primary != null)
             {
                 var p = (RectTransform)_primary.transform;
-                p.anchoredPosition = new Vector2(_chatShown ? RoomSeatsOffset + 120 : 0, HubKit.Margin - 26);
+                p.anchoredPosition = new Vector2((_chatShown ? 650 : 960) - 270 - 960, 540 - 936);
             }
         }
 
         private void ApplyPanel()
         {
-            _playersPanel.anchoredPosition = new Vector2(_panelX, CardsTopForRole);
-            _playersPanel.sizeDelta = new Vector2(_panelWidth, CardHeight);
+            _playersPanel.anchoredPosition = new Vector2(_panelX, CardsTop);
+            _playersPanel.sizeDelta = new Vector2(_panelWidth, SeatHeight);
         }
 
         private void OnDisable()
@@ -933,15 +833,11 @@ namespace TumbangPreso.UI.Hub
 
             string title = string.IsNullOrWhiteSpace(host.RoomTitle) ? "LOBBY" : host.RoomTitle.ToUpperInvariant();
             _title.text = title;
-            _title.fontSize = HubStyle.Size(HubStyle.Title);
-            _title.horizontalOverflow = HorizontalWrapMode.Overflow;
+            _title.fontSize = 86;
+            HubKit.Fit(_title, 1120);
             string owner = "";
             foreach (var s in seats) if (s.Host && !s.Mine && s.Occupied) owner = s.Name;
-            _titleCaption.text = host.IsHost ? "YOUR ROOM" : string.IsNullOrEmpty(owner) ? "CUSTOM ROOM" : (owner + "'S ROOM").ToUpperInvariant();
-            // The plate fits its words (a short name no longer sits on a long empty plate).
-            float words = Mathf.Max(_title.preferredWidth, _titleCaption.preferredWidth);
-            _titlePlate.sizeDelta = new Vector2(Mathf.Clamp(words + 80, 420, 760), _titlePlate.sizeDelta.y);
-            HubKit.Fit(_title, _titlePlate.sizeDelta.x - 60);
+            _titleCaption.text = host.IsHost ? "YOUR ROOM" : string.IsNullOrEmpty(owner) ? "CUSTOM ROOM" : ("HOSTED BY " + owner).ToUpperInvariant();
 
             _code.text = host.RoomCode ?? "";
             string address = host.RoomAddress;
@@ -950,30 +846,25 @@ namespace TumbangPreso.UI.Hub
             if (_networkWord.text != network)
             {
                 _networkWord.text = network;
-                HubKnit.Recolour(_networkTag, host.RoomOnline ? Knit.Red : Knit.Teal);
-                _networkTag.sizeDelta = new Vector2(_networkWord.preferredWidth + 44, _networkTag.sizeDelta.y);
+                HubKnit.Recolour(_networkTag, host.RoomOnline ? Knit.PillYellow : Knit.PillGo);
+                _networkTag.sizeDelta = new Vector2(_networkWord.preferredWidth + 56, _networkTag.sizeDelta.y);
             }
 
-            // SPECTATE keeps its word (owner 2026-10-28); on, it is gold with a tick.
-            HubKnit.Recolour(_watch.transform, host.Spectating ? Knit.Gold : Knit.Orange);
-            var watchIcon = _watch.Body.Find("Icon")?.GetComponent<HubGlyph>();
-            if (watchIcon != null && watchIcon.Kind != (host.Spectating ? HubGlyph.Mark.Check : HubGlyph.Mark.Eye))
-            {
-                watchIcon.Kind = host.Spectating ? HubGlyph.Mark.Check : HubGlyph.Mark.Eye;
-                watchIcon.SetVerticesDirty();
-            }
+            // Lime means on.
+            HubKnit.Recolour(_watch.transform, host.Spectating ? Knit.Go : Knit.Plain);
+            HubKnit.Say(_watch, host.Spectating ? "SPECTATING" : "SPECTATE");
+            HubKnit.FitLabel(_watch);
 
             if (_mapChoice != null && _mapChoice.Value != MapIndex()) _mapChoice.Set(MapIndex(), false);
             bool classic = SceneFlow.SelectedMode == GameMode.Classic;
-            Segment(_modeClassic, classic);
-            Segment(_modeHero, !classic);
-            _digest.text = rules != null ? rules.Rounds + " rounds · " + rules.RoundSeconds + " s" : "";
-            HubKit.Fit(_digest, 186);
+            HubKnit.ChooseTab(_modeTabs, classic ? 0 : 1);
+            HubKnit.Say(_rules, rules != null ? rules.Rounds + " ROUNDS · " + rules.RoundSeconds + " S" : "RULES");
+            HubKnit.FitLabel(_rules);
 
             int occupied = 0;
             foreach (var s in seats)
                 if (s.Occupied) occupied++;
-            _count.text = "PLAYERS  " + occupied + " / " + Balance.PlayerCount;
+            _count.text = "PLAYERS " + occupied + " / " + Balance.PlayerCount;
 
             DrawSeats(host, seats);
 
@@ -1027,13 +918,6 @@ namespace TumbangPreso.UI.Hub
             Hub.RefreshFocus();
         }
 
-        /// <summary>A segment of a knit switch: the chosen one is a gold tile, the other bare words on the plate.</summary>
-        private static void Segment(HubButton button, bool chosen)
-        {
-            if (button == null) return;
-            HubKnit.Bare(button.transform, !chosen, chosen ? HubKnit.GoldInk : new Color(HubKnit.Cream.r, HubKnit.Cream.g, HubKnit.Cream.b, 0.75f));
-        }
-
         private void DrawSeats(IHubHost host, HubSeat[] seats)
         {
             // Immediate outside play mode (EditMode tests and captures redraw too); deferred in play.
@@ -1053,14 +937,16 @@ namespace TumbangPreso.UI.Hub
                 slot.offsetMin = new Vector2(i == 0 ? 0 : CardGap * .5f, 0);
                 slot.offsetMax = new Vector2(i == n - 1 ? 0 : -CardGap * .5f, 0);
                 bool open = !seat.Occupied && !seat.Bot;
-                Knit kind = open ? Knit.Wine : seat.Mine ? Knit.Gold : Knit.Orange;
+                Knit kind = open ? Knit.Well : seat.Mine ? Knit.CardOn : Knit.Card;
                 int destination = seat.Slot;
                 bool editBots = host.CanEditBots && !seat.Occupied;
+                float s = (_chatShown ? 280 : 420) / 420f;
+                float cardW = 420 * s, cardH = SeatHeight - 14;
 
                 // ⚠️⚠️ THE WHOLE CARD IS THE DOOR (owner 2026-10-17: "click anywhere on their respective
-                // rectangle"). A card the player can move to is a knit button that lifts and says what
-                // a press does; one they cannot is a plate. It keeps the name `TakeSeat{n}` and the
-                // same authoritative request, re-checked on press because the room may have changed.
+                // rectangle"). A card the player can move to is a button that lifts and says what a press
+                // does; one they cannot is a plate. It keeps the name `TakeSeat{n}` and the same
+                // authoritative request, re-checked on press because the room may have changed.
                 RectTransform card, face;
                 HubButton take = null;
                 if (!seat.Mine && host.CanTakeSeat(destination))
@@ -1077,85 +963,63 @@ namespace TumbangPreso.UI.Hub
                     card = HubKit.Stretch(HubKnit.Plate(slot, "Card", kind));
                     face = HubKnit.FaceOf(card);
                 }
-                // Your own card stands a little proud of the row (the card, not its slot, so the
-                // slot keeps the row's measure).
-                if (seat.Mine) { card.offsetMin += new Vector2(0, 18); card.offsetMax += new Vector2(0, 18); }
 
-                Color ink = HubKnit.InkOf(kind);
-                // The name is the card's one fact: on your gold card it takes a deeper brown than HOME's small labels.
-                Color nameInk = kind == Knit.Gold ? HubBoard.Colour("#7A4220") : ink;
                 var person = seat.Occupied ? Roster.At(people, seat.CharacterPick) : null;
-                // The hero pops out of the top of the card, as HOME's HERO icon does off its tile. The
-                // portrait is cut flat at the chest, so it stands in a window whose lower edge fades
-                // (a soft `RectMask2D`) and the cut never reads as a line across the card.
-                var frame = HubKit.Rect(face, "Hero");
-                frame.anchorMin = frame.anchorMax = frame.pivot = new Vector2(.5f, 1);
-                frame.anchoredPosition = new Vector2(0, PortraitRise);
-                frame.sizeDelta = new Vector2(PortraitSize, PortraitSize - 40);
-                var fade = frame.gameObject.AddComponent<RectMask2D>();
-                fade.softness = new Vector2Int(0, 46);
-                var picture = HubKit.Picture(frame, "Face", HubKit.Portrait(person?.Id));
-                picture.rectTransform.anchorMin = picture.rectTransform.anchorMax = picture.rectTransform.pivot = new Vector2(.5f, 1);
-                picture.rectTransform.anchoredPosition = Vector2.zero;
-                picture.rectTransform.sizeDelta = new Vector2(PortraitSize, PortraitSize);
-                if (picture.sprite != null)
+                var number = HubKnit.Display(face, "Number", "P" + (seat.Slot + 1), Mathf.RoundToInt(30 * s), open ? HubKnit.KitSoftRed : HubKnit.KitTan);
+                HubKnit.In(number.rectTransform, 30 * s, 30 * s, 80, 40 * s);
+
+                if (open)
                 {
-                    var feel = card.GetComponent<HubStickerFeel>();
-                    if (feel != null) { feel.Pictures = new[] { frame }; }
+                    var plus = HubKit.Glyph(face, "Icon", HubGlyph.Mark.Plus, HubKnit.KitSoftRed, 0.12f);
+                    HubKnit.In(plus.rectTransform, (cardW - 70 * s) * .5f, cardH * .36f - 35 * s, 70 * s, 70 * s);
+                    var openWord = HubKnit.Display(face, "Name", "OPEN SEAT", Mathf.RoundToInt(44 * s), HubKnit.KitCream, TextAnchor.MiddleCenter);
+                    HubKnit.In(openWord.rectTransform, 0, cardH * .6f - 30, cardW, 60);
                 }
                 else
                 {
-                    // An open seat is an empty chair; a bot with no hero yet wears the bot; a person, a person.
-                    var mark = open ? HubGlyph.Mark.Plus : seat.Bot && !seat.Occupied ? HubGlyph.Mark.Bots : HubGlyph.Mark.Person;
-                    var glyph = HubKit.Glyph(face, "Icon", mark, new Color(ink.r, ink.g, ink.b, open ? 0.35f : 0.6f), 0.08f);
-                    HubKit.Place(glyph.rectTransform, HubKit.Top, new Vector2(0, -50), new Vector2(150, 150));
-                }
+                    // The portrait is cut flat at the chest, so its window fades at the lower edge.
+                    float size = Mathf.Min(cardW - 60 * s, cardH * .56f);
+                    var frame = HubKit.Rect(face, "Hero");
+                    HubKnit.In(frame, (cardW - size) * .5f, 26 * s, size, size * .92f);
+                    frame.gameObject.AddComponent<RectMask2D>().softness = new Vector2Int(0, 30);
+                    var picture = HubKit.Picture(frame, "Face", HubKit.Portrait(person?.Id));
+                    HubKnit.In(picture.rectTransform, 0, 0, size, size);
+                    if (picture.sprite != null)
+                    {
+                        var feel = card.GetComponent<HubStickerFeel>();
+                        if (feel != null) feel.Pictures = new[] { frame };
+                    }
+                    else
+                    {
+                        var glyph = HubKit.Glyph(face, "Icon", seat.Bot && !seat.Occupied ? HubGlyph.Mark.Bots : HubGlyph.Mark.Person, HubKnit.KitTan, 0.08f);
+                        HubKnit.In(glyph.rectTransform, (cardW - 150 * s) * .5f, 70 * s, 150 * s, 150 * s);
+                    }
 
-                var number = HubKnit.Stamp(face, "Number", "P" + (seat.Slot + 1), Knit.Maroon, 0);
-                HubKit.Place(number, HubKit.TopLeft, new Vector2(18, -18), number.sizeDelta);
+                    string name = seat.Occupied ? (seat.Mine ? "YOU" : seat.Name) : "BOT";
+                    var label = HubKnit.Display(face, "Name", name.ToUpperInvariant(), Mathf.RoundToInt(52 * s), seat.Mine ? HubKnit.KitLime : HubKnit.KitCream, TextAnchor.MiddleCenter);
+                    HubKnit.In(label.rectTransform, 16, cardH - 150 * s - 30, cardW - 32, 60);
+                    HubKit.Fit(label, cardW - 40);
+                    string sub = person != null ? person.Name.ToUpperInvariant() : seat.Bot ? "PLAYS THIS SEAT" : "";
+                    if (_chatShown && seat.Bot && person == null) sub = "";
+                    var under = HubKnit.Words(face, "HeroName", sub, HubStyle.Floor, HubKnit.KitTan, TextAnchor.MiddleCenter);
+                    HubKnit.In(under.rectTransform, 16, cardH - 104 * s - 20, cardW - 32, 40);
+                    under.horizontalOverflow = HorizontalWrapMode.Overflow;
+                    HubKit.Fit(under, cardW - 40);
 
-                string name = seat.Occupied ? (seat.Mine ? "YOU" : seat.Name) : seat.Bot ? "BOT" : "OPEN SEAT";
-                var label = HubKit.Text(face, "Name", name.ToUpperInvariant(), HubStyle.Title, true, nameInk, TextAnchor.MiddleCenter);
-                label.rectTransform.anchorMin = new Vector2(0, 0); label.rectTransform.anchorMax = new Vector2(1, 0);
-                label.rectTransform.pivot = new Vector2(.5f, 0);
-                label.rectTransform.offsetMin = new Vector2(20, open && editBots ? 140 : 92);
-                label.rectTransform.offsetMax = new Vector2(-20, (open && editBots ? 140 : 92) + 56);
-                label.horizontalOverflow = HorizontalWrapMode.Overflow;
-                label.alignByGeometry = true;
-                // The card's own width: with the chat open the row narrows to quarter columns of less.
-                float cardWidth = (_chatShown ? RoomSeatsNarrow : RoomContentWidth) / n - CardGap - 30;
-                HubKit.Fit(label, cardWidth);
-
-                // An open seat just says OPEN SEAT (owner 2026-10-28: drop its sub-line); a press on it says MOVE HERE.
-                string sub = person != null ? person.Name : seat.Bot ? "plays this seat" : "";
-                // A narrow card keeps its name and drops the line under it, which has no room there.
-                if (_chatShown && (open || seat.Bot)) sub = "";
-                var under = HubKit.Text(face, "Hero", sub, HubStyle.Floor, false, new Color(ink.r, ink.g, ink.b, 0.85f), TextAnchor.MiddleCenter);
-                under.rectTransform.anchorMin = new Vector2(0, 0); under.rectTransform.anchorMax = new Vector2(1, 0);
-                under.rectTransform.pivot = new Vector2(.5f, 0);
-                under.rectTransform.offsetMin = new Vector2(20, open && editBots ? 132 : 54);
-                under.rectTransform.offsetMax = new Vector2(-20, (open && editBots ? 132 : 54) + 46);
-                under.horizontalOverflow = HorizontalWrapMode.Overflow;
-                HubKit.Fit(under, cardWidth);
-
-                // One stamp per card, slapped on its lower right: who runs the room, who is set, who is not yet.
-                if (seat.Occupied || seat.Bot)
-                {
+                    // One pill per card: who runs the room, who is set, who is not yet.
                     RectTransform stamp;
-                    if (seat.Host) stamp = HubKnit.Stamp(slot, "Stamp", "HOST", Knit.Red, -6, HubGlyph.Mark.Crown);
-                    else if (seat.Ready || seat.Bot) stamp = HubKnit.Stamp(slot, "Stamp", "READY", Knit.Teal, -6, HubGlyph.Mark.Check);
-                    else stamp = HubKnit.Stamp(slot, "Stamp", "NOT READY", Knit.Maroon, -6, HubGlyph.Mark.Clock);
-                    stamp.anchorMin = stamp.anchorMax = stamp.pivot = new Vector2(1, 0);
-                    stamp.anchoredPosition = new Vector2(14, -14);
+                    if (seat.Host) stamp = HubKnit.Tag(face, "Stamp", "HOST", Knit.PillYellow, 52);
+                    else if (seat.Ready || seat.Bot) stamp = HubKnit.Tag(face, "Stamp", "READY", Knit.PillGo, 52);
+                    else stamp = HubKnit.Tag(face, "Stamp", "NOT READY", Knit.PillPlain, 52);
+                    HubKnit.In(stamp, (cardW - stamp.sizeDelta.x) * .5f, cardH - 76 * s, stamp.sizeDelta.x, 52);
                 }
 
                 if (take != null)
                 {
                     // The hint names the press, so the card reads before it is clicked. Shown on hover
                     // and on pad focus; a thumb has no hover and simply taps.
-                    var hint = HubKit.Text(face, "Label", seat.Occupied || seat.Bot ? "SWITCH" : "MOVE HERE", HubStyle.Label, true, HubKnit.Honey, TextAnchor.MiddleCenter);
-                    HubKit.Place(hint.rectTransform, HubKit.Centre, new Vector2(0, 30), new Vector2(320, 54));
-                    HubDepthText.On(hint, 5.0f);
+                    var hint = HubKnit.Display(face, "Label", seat.Occupied || seat.Bot ? "SWITCH" : "MOVE HERE", 34, HubKnit.KitWhite, TextAnchor.MiddleCenter, 4);
+                    HubKnit.In(hint.rectTransform, 0, cardH * .22f, cardW, 54);
                     hint.enabled = false;
                     take.Attention += attended => { if (hint != null) hint.enabled = attended; };
                 }
@@ -1167,17 +1031,17 @@ namespace TumbangPreso.UI.Hub
                 {
                     if (seat.Bot)
                     {
-                        var remove = HubKnit.Button(slot, "RemoveBot" + destination, null, Knit.Red,
+                        var remove = HubKnit.Button(slot, "RemoveBot" + destination, null, Knit.Danger,
                                                     () => Hub.Host.SetSeatBot(destination, false), HubStyle.Label, HubGlyph.Mark.Close);
-                        HubKit.Place((RectTransform)remove.transform, HubKit.TopRight, new Vector2(12, 14), new Vector2(66, 62));
+                        HubKit.Place((RectTransform)remove.transform, HubKit.TopRight, new Vector2(10, 14), new Vector2(84, 72));
                     }
                     else
                     {
-                        var add = HubKnit.Button(slot, "AddBot" + destination, _chatShown ? "BOT" : "ADD BOT", Knit.Orange,
-                                                 () => Hub.Host.SetSeatBot(destination, true), HubStyle.Label, HubGlyph.Mark.Plus);
+                        var add = HubKnit.Button(slot, "AddBot" + destination, _chatShown ? "+ BOT" : "+ ADD BOT", Knit.Yellow,
+                                                 () => Hub.Host.SetSeatBot(destination, true), Mathf.RoundToInt(34 * s));
                         var r = (RectTransform)add.transform;
                         r.anchorMin = new Vector2(0, 0); r.anchorMax = new Vector2(1, 0); r.pivot = new Vector2(.5f, 0);
-                        r.offsetMin = new Vector2(36, 34); r.offsetMax = new Vector2(-36, 34 + 76);
+                        r.offsetMin = new Vector2(35 * s, 14 + 46 * s); r.offsetMax = new Vector2(-35 * s, 14 + 130 * s);
                         HubKnit.FitLabel(add);
                     }
                 }
@@ -1243,28 +1107,30 @@ namespace TumbangPreso.UI.Hub
                 if (classic) facts.Add(new KeyValuePair<string, string>("SLIPPERS EACH", rules.Tsinelas.ToString()));
             }
             facts.Add(new KeyValuePair<string, string>("NETWORK", host.RoomOnline ? "ONLINE" : "LAN"));
-            float rowH = 62, height = 320 + facts.Count * rowH;
-            var panel = HubCards.KnitPanel(Root, this, "MATCH SETTINGS", "Set by the host.", new Vector2(760, height));
+            float rowH = 78, height = 370 + facts.Count * rowH;
+            var panel = HubKnit.Modal(Root, "MATCH SETTINGS", 860, height, 84);
+            var set = HubKnit.Words(panel, "Line", "Set by the host.", 30, HubKnit.KitInk, TextAnchor.MiddleCenter, false);
+            HubKnit.In(set.rectTransform, 0, 124, 860, 40);
             for (int i = 0; i < facts.Count; i++)
             {
-                float y = -170 - i * rowH;
-                var key = HubLobby.Caption(panel, "Key" + i, facts[i].Key, HubKnit.Honey);
-                HubKit.Place(key.rectTransform, HubKit.TopLeft, new Vector2(60, y), new Vector2(300, rowH));
-                var value = HubKit.Text(panel, "Value" + i, facts[i].Value, HubStyle.Label, true, HubKnit.Cream, TextAnchor.MiddleRight);
-                HubKit.Place(value.rectTransform, HubKit.TopRight, new Vector2(-60, y), new Vector2(340, rowH));
-                HubKit.Fit(value, 340);
-                if (i > 0)
+                float y = 214 + i * rowH;
+                var key = HubKnit.Display(panel, "Key" + i, facts[i].Key, 34, HubKnit.KitTanDark);
+                HubKnit.In(key.rectTransform, 70, y - 30, 360, 60);
+                var value = HubKnit.Display(panel, "Value" + i, facts[i].Value, 38, HubKnit.KitMaroon, TextAnchor.MiddleRight);
+                HubKnit.In(value.rectTransform, 430, y - 30, 360, 60);
+                HubKit.Fit(value, 360);
+                if (i < facts.Count - 1)
                 {
                     var rule = HubKit.Rect(panel, "Rule" + i).gameObject.AddComponent<Image>();
-                    rule.color = new Color(HubKnit.Cream.r, HubKnit.Cream.g, HubKnit.Cream.b, 0.12f);
+                    rule.color = HubKnit.KitTan;
                     rule.raycastTarget = false;
-                    HubKit.Place(rule.rectTransform, HubKit.TopLeft, new Vector2(60, y), new Vector2(640, 2));
+                    HubKnit.In(rule.rectTransform, 60, y + 37, 740, 4);
                 }
             }
-            _close = HubKnit.Button(panel, "CloseSettings", "GOT IT", Knit.Gold, Close, HubStyle.Title, HubGlyph.Mark.None, primary: true);
-            HubKit.Place((RectTransform)_close.transform, HubKit.BottomRight, new Vector2(-48, 36), new Vector2(260, 92));
-            var full = HubKnit.Button(panel, "FullRules", "FULL RULES", Knit.Orange, () => { Close(); Hub.Host.OpenCustomRules(); }, HubStyle.Label, HubGlyph.Mark.Book);
-            HubKit.Place((RectTransform)full.transform, HubKit.BottomLeft, new Vector2(48, 40), new Vector2(300, 84));
+            _close = HubKnit.Button(panel, "CloseSettings", "GOT IT", Knit.Go, Close, 48, HubGlyph.Mark.None, primary: true);
+            HubKit.Place((RectTransform)_close.transform, HubKit.BottomRight, new Vector2(-70, 46), new Vector2(340, 108));
+            var full = HubKnit.Button(panel, "FullRules", "FULL RULES", Knit.Yellow, () => { Close(); Hub.Host.OpenCustomRules(); }, 42);
+            HubKit.Place((RectTransform)full.transform, HubKit.BottomLeft, new Vector2(70, 46), new Vector2(340, 108));
             HubKnit.FitLabel(full);
         }
 
@@ -1292,25 +1158,18 @@ namespace TumbangPreso.UI.Hub
 
         public override void Build()
         {
-            // The room family's question card (owner 2026-10-28): HOME's wine plate, the question in
-            // honey, the safe answer in PLAY's lime with focus, leaving in the menu red.
-            var panel = HubKnit.Plate(Root, "Panel", Knit.Wine);
-            HubKit.Place(panel, HubKit.Centre, Vector2.zero, new Vector2(860, 440));
-            var face = HubKnit.FaceOf(panel);
-            var title = HubKit.Text(face, "Heading", "CLOSE ROOM?", HubStyle.Display, true, HubKnit.Honey, TextAnchor.MiddleCenter);
-            HubKit.Place(title.rectTransform, HubKit.Top, new Vector2(0, -30), new Vector2(780, 96));
+            // The question on a cream popup: the safe answer in lime with focus, leaving in red.
+            var panel = HubKnit.Modal(Root, "CLOSE ROOM?", 860, 400);
             string who = Others <= 0 ? "Nobody else is in it yet."
                 : Others == 1 ? "The other player in it goes back to the menu."
                 : "The " + Others + " other players in it go back to the menu.";
-            var message = HubKit.Text(face, "Consequence", "Leaving closes this room. " + who,
-                                      HubStyle.Body, false, HubKnit.Cream, TextAnchor.MiddleCenter);
-            HubKit.Place(message.rectTransform, HubKit.Top, new Vector2(0, -136), new Vector2(740, 100));
-            _keep = HubKnit.Button(face, "KeepRoom", "KEEP ROOM", Knit.Gold, Close, HubStyle.Title, HubGlyph.Mark.None, primary: true);
-            HubKit.Place((RectTransform)_keep.transform, HubKit.BottomLeft, new Vector2(50, 44), new Vector2(360, 112));
-            var close = HubKnit.Button(face, "CloseRoom", "CLOSE ROOM", Knit.Red, CloseRoom, HubStyle.Title, HubGlyph.Mark.Exit);
-            HubKit.Place((RectTransform)close.transform, HubKit.BottomRight, new Vector2(-50, 50), new Vector2(360, 104));
+            var message = HubKnit.Words(panel, "Consequence", "Leaving closes this room. " + who, 30, HubKnit.KitInk, TextAnchor.MiddleCenter, false);
+            HubKnit.In(message.rectTransform, 50, 136, 760, 80);
+            _keep = HubKnit.Button(panel, "KeepRoom", "KEEP ROOM", Knit.Go, Close, 46, HubGlyph.Mark.None, primary: true);
+            HubKnit.In((RectTransform)_keep.transform, 70, 240, 340, 112);
+            var close = HubKnit.Button(panel, "CloseRoom", "CLOSE ROOM", Knit.Danger, CloseRoom, 46);
+            HubKnit.In((RectTransform)close.transform, 450, 240, 340, 112);
             HubKnit.FitLabel(close);
-            HubSlap.On(panel, 0, -1.5f);
         }
 
         private void CloseRoom()

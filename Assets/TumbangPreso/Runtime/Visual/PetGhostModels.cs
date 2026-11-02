@@ -4,7 +4,7 @@ using UnityEngine;
 namespace TumbangPreso.Visual
 {
     /// <summary>
-    /// ⚠️⚠️ NEMU'S PET GHOSTS, BEHIND A SWITCH THAT IS OFF (owner, 2026-10-19: *"start remodelling nemu's new ghosts. they should
+    /// ⚠️⚠️ NEMU'S PET GHOSTS, BEHIND A SWITCH (owner, 2026-10-19: *"start remodelling nemu's new ghosts. they should
     /// follow the same cutesy style like you did for kuro"*, then, of the boards, *"cocoa bear / scrap the rabbit"*). DON'T LOOK is
     /// a mint mouse with a cloth over its eyes, SKITTER a cocoa bear that carries the slipper under its muzzle, LOOKOUT a butter owl
     /// with big eyes and a lantern. Each is Kuro's family: one rounded block, his bead tail, an ink face, one colour.
@@ -13,6 +13,8 @@ namespace TumbangPreso.Visual
     /// these attach points instead of ASTRA's voxels, and `NemuGhostBody` / `NemuBlindfold` draw them with `Shaders/PetGhost`
     /// (ASTRA's fade, sway, rim, flash and glow, from the painted atlas). No rule, timing, number, snapshot or message changes,
     /// so nothing goes on the wire and the protocol does not move. Off, nothing here is even loaded.
+    /// PEEKER (signature, was DON'T LOOK) is the mouse, FETCHER (attacking, was SKITTER) the bear, KEEPER (defending, was
+    /// LOOKOUT) the owl: the ids, the classes and the jobs stayed, only the names and numbers moved.
     ///
     /// Models: `Resources/Models/NemuGhosts/nemu_petghost_{mouse,bear,owl,lantern}.glb` and their atlases, written by
     /// `tools/build_nemu_ghosts_simple.py --final` (one mesh per node, so nothing is combined at run time). The numbers below are
@@ -20,8 +22,13 @@ namespace TumbangPreso.Visual
     /// </summary>
     public static class PetGhostModels
     {
-        /// <summary>OFF until the owner approves the pet ghosts in game. ASTRA's voxel ghosts play while this is false.</summary>
-        public static bool PetGhosts = false;
+        /// <summary>
+        /// ON since the reworked kit's look pass (2026-10-29): PEEKER is the mouse, FETCHER the bear, KEEPER the owl, and their
+        /// painted puffs (`NemuGhostLook`) are made for these bodies. The skills were renamed and retuned (2026-10-21) but each
+        /// ghost still does its old job (hide and lunge at the eyes; fetch the slipper; mind and lift the can), so the set the
+        /// owner chose for those jobs still fits. False puts ASTRA's voxel ghosts back, exactly as before.
+        /// </summary>
+        public static bool PetGhosts = true;
 
         public const string Folder = "Models/NemuGhosts";
         /// <summary>The models are exported at 1.35 times the board size (`EXPORT_SCALE` in the builder); the numbers below are

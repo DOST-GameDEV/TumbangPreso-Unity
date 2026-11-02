@@ -194,7 +194,7 @@ namespace TumbangPreso.Visual
             bool aloft = gap > 0.05f;
             bool holding = left >= 0f;
             // The hold's strength: up with the gust, full while held, thinning as she comes down, gone at the court.
-            float strength = holding ? FxStudyKit.Ease(FxStudyKit.Run(sinceLaunch, 0.05f, 0.40f)) : 0.45f * Mathf.Clamp01(gap / 1.2f);
+            float strength = holding ? FxStudyKit.Ease(FxStudyKit.Run(sinceLaunch, 0.05f, 0.40f)) : 0.55f * Mathf.Clamp01(gap / High);
             // In the last second the air begins to give: the hold breathes thinner.
             if (holding) strength *= Mathf.Lerp(0.55f, 1f, FxStudyKit.Ease(left * Hold));
 
@@ -209,8 +209,12 @@ namespace TumbangPreso.Visual
             // across the court it is a line. So the updraft itself runs out: its foot lets go of the court and climbs
             // toward her soles as the seconds go, a full column at take-off and a short stub under her at the end, and as
             // she comes down what is left of it goes with her.
-            float spent = holding ? 0.85f * (1f - left) : 0.85f;
-            _skin.Open(spent - 0.1f, drawn); _skinBack.Open(spent - 0.1f, drawn);
+            // ⚠️ IT NO LONGER SHORTENS ON ITS OWN. The owner, of the version whose foot let go of the court and climbed toward
+            // her soles as the seconds went: "the trail suddenly shortens". The column now always stands from the court to
+            // her soles (its length is the gap under her, so it grows and shrinks only as she rises and comes down) and the
+            // time left is read from the ring under her soles alone; at the end it thins and dissolves (`strength`), never
+            // jumps.
+            _skin.Open(-0.1f, drawn); _skinBack.Open(-0.1f, drawn);
             _skin.Frame(a, aloft ? 0.75f * strength : 0f, 0.15f + 0.6f * (1f - strength));
             _skinBack.Frame(a, aloft ? 0.45f * strength : 0f, 0.25f + 0.6f * (1f - strength));
 
@@ -230,7 +234,7 @@ namespace TumbangPreso.Visual
             {
                 float on = FxStudyKit.Ease(FxStudyKit.Run(sinceLaunch, 0.10f + 0.08f * i, 0.55f + 0.08f * i));
                 _tape[i].Open(holding ? 0f : FxStudyKit.Ease(1f - Mathf.Clamp01(gap / High)) * 1.1f - 0.1f, on * 1.08f);
-                _tape[i].Frame(a, aloft ? 0.8f * strength : 0f, holding ? 0.1f : 0.5f);
+                _tape[i].Frame(a, aloft ? 0.8f * strength : 0f, holding ? 0.1f : Mathf.Lerp(0.1f, 0.5f, 1f - Mathf.Clamp01(gap / High)));
             }
 
             // The gust: blown up out of the court in a third of a second, then torn away.

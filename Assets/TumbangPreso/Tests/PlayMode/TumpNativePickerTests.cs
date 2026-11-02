@@ -196,7 +196,7 @@ namespace TumbangPreso.PlayTests
             float until = Time.realtimeSinceStartup + 15;
             while (!(TumpHub.Current.Top is HubLobby) && Time.realtimeSinceStartup < until) yield return null;
             Assert.IsInstanceOf<HubLobby>(TumpHub.Current.Top);
-            yield return HubFlowTests.Press("CharacterDoor");
+            yield return HubFlowTests.OpenRoomPicker();
             var choices = TumpHub.Current.Top.GetComponentsInChildren<Button>().Where(b => b.name.StartsWith("Portrait")).ToArray();
             Assert.AreEqual(Roster.ClassicPeople.Count, choices.Length);
             foreach (var button in choices)
@@ -214,6 +214,7 @@ namespace TumbangPreso.PlayTests
             Press(Find("SelectButton")); yield return null;
             Assert.IsInstanceOf<HubLobby>(TumpHub.Current.Top);
             TumpHub.Current.Back(); yield return null;
+            yield return HubFlowTests.Press("CloseRoom"); // Leaving a room asks first.
             yield return HubFlowTests.Press("LoadoutButton");
             foreach (bool can in new[] { false, true })
             {

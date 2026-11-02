@@ -36,7 +36,8 @@ namespace TumbangPreso.Core.Tests
             Assert.True(RafiRules.BahaCrosses(0,0,4,3.8f,4.1f,10,true));
             Assert.False(RafiRules.BahaCrosses(0,.1f,4,3.8f,4.1f,10,false));
             Assert.False(RafiRules.BahaCrosses(0,0,4,3.8f,4.1f,3.9f,true));
-            Assert.False(RafiRules.BahaCrosses(3.1f,0,4,3.8f,4.1f,10,true));
+            Assert.True(RafiRules.BahaCrosses(RafiRules.BahaHalfWidth-.1f,0,4,3.8f,4.1f,10,true));
+            Assert.False(RafiRules.BahaCrosses(RafiRules.BahaHalfWidth+.1f,0,4,3.8f,4.1f,10,true));
             Assert.False(RafiRules.BahaCrosses(0,1,4,3.8f,4.1f,10,true));
         }
         [Fact] public void BahaSweepRejectsBacktrackingAndBadNumbers()

@@ -148,8 +148,20 @@ namespace TumbangPreso.Abilities
 
                 // She bursts into moths here, they stream along the aim and knit her back at the far end (`PhaisterSwarm`); the
                 // arrival sigil burns out under her. Every peer runs this cast, so every screen sees the same act.
-                PhaisterSwarm.Play(ctx.Motor.transform, startPos, destination, facing);
-                PhaisterArrivalSeal.Create(destination, facing);
+                // ⚠️ The look is the owner's pending pick (`PhaisterLook`, 2026-10-29); `Current` until he chooses.
+                switch (PhaisterLook.Direction)
+                {
+                    case PhaisterLook.Style.A:
+                        PhaisterMothRibbon.Play(PhaisterLook.ModelOf(ctx.Motor.transform), PhaisterProp.OnCourt(startPos), PhaisterProp.OnCourt(destination));
+                        break;
+                    case PhaisterLook.Style.B:
+                        PhaisterCosmosPortal.Play(PhaisterLook.ModelOf(ctx.Motor.transform), PhaisterProp.OnCourt(startPos), PhaisterProp.OnCourt(destination));
+                        break;
+                    default:
+                        PhaisterSwarm.Play(ctx.Motor.transform, startPos, destination, facing);
+                        PhaisterArrivalSeal.Create(destination, facing);
+                        break;
+                }
 
                 ctx.Motor.Teleport(destination);
                 NetCue.Play("sfx_phaister_swarm_knit", destination);

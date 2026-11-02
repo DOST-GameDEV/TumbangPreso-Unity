@@ -12,7 +12,7 @@ namespace TumbangPreso.Visual
         private static Material _material;
         private static readonly int FadeId = Shader.PropertyToID("_Fade"), FlashId = Shader.PropertyToID("_Flash"),
             ClockId = Shader.PropertyToID("_Clock"), SwayId = Shader.PropertyToID("_Sway"), RimId = Shader.PropertyToID("_Rim"),
-            TrailId = Shader.PropertyToID("_Trail");
+            TrailId = Shader.PropertyToID("_Trail"), ShadeKeepId = Shader.PropertyToID("_ShadeKeep");
 
         private readonly MeshRenderer _renderer;
         private readonly MaterialPropertyBlock _block = new MaterialPropertyBlock();
@@ -21,6 +21,9 @@ namespace TumbangPreso.Visual
         /// <summary>How far its tail lags behind its flight (its own space, metres at the tip): `PetGhostFlight.TrailLocal`. Only
         /// `Shaders/PetGhost` reads it; ASTRA's voxel shader ignores it.</summary>
         public Vector3 Trail;
+        /// <summary>Its one-piece mesh is not drawn: a parts rig (`PetGhostRig`) hung under <see cref="Transform"/> draws the body
+        /// instead, and anything else hung there (the bear's arms) is posed as before.</summary>
+        public bool MeshHidden;
 
         public NemuGhostBody(Transform parent, string name, Mesh mesh, Color rim)
         {
@@ -67,13 +70,15 @@ namespace TumbangPreso.Visual
 
         private void Shade(float fade, float clock, float sway, float flash)
         {
-            _renderer.enabled = fade > .005f && _renderer.sharedMaterial != null;
+            _renderer.enabled = !MeshHidden && fade > .005f && _renderer.sharedMaterial != null;
             _block.SetFloat(FadeId, Mathf.Clamp01(fade));
             _block.SetFloat(FlashId, flash);
             _block.SetFloat(ClockId, clock);
             _block.SetFloat(SwayId, sway);
             _block.SetColor(RimId, _rim);
             _block.SetVector(TrailId, Trail);
+            // The pet's shade keeps its paint's hue under the painted look (`NemuGhostLook`); 0 is the old cool shade.
+            _block.SetFloat(ShadeKeepId, NemuGhostLook.On ? 1f : 0f);
             _renderer.SetPropertyBlock(_block);
         }
     }

@@ -45,6 +45,7 @@ namespace TumbangPreso.Visual
             if (state.Type == WorldEffectSnapshot.Kind.Mirrorwake) visual.BuildEcho();
             else if(state.Type==WorldEffectSnapshot.Kind.Waterwall) visual.BuildWall();
             else if (state.Type == WorldEffectSnapshot.Kind.Current && NewCurrent) visual._stream = RafiCurrentStream.Build(visual, state);
+            else if (state.Type == WorldEffectSnapshot.Kind.Baha && NewBaha) visual._flood = RafiBahaFlood.Build(visual.transform, state);
             else visual.BuildCrest();
             return visual;
         }
@@ -95,6 +96,17 @@ namespace TumbangPreso.Visual
         /// it in". K10 stays selectable and draws exactly as first approved. Read every frame. Look only.
         /// </summary>
         public static WallGlowLook WallGlowVariant = WallGlowLook.K11;
+        /// <summary>
+        /// ⚠️ ONE SWITCH BETWEEN TWO BAHAS (its live look in the match, not its cutscene). Off, Baha is the pale glassy crest
+        /// built below (`BuildCrest`), as it has shipped; on, it is a painted flood of the wall's water (`RafiBahaFlood`),
+        /// lane by lane where the rule's own nine lanes run and stop. ON IN THIS DRAFT so the owner can judge it in a match;
+        /// false gives today's look exactly. Read when a Baha is built. Look only: the rule, the timing and the wire are
+        /// untouched. (`UltimateLiveLook.RafiBaha` is a separate quick pass laid OVER the old crest, still off.)
+        /// </summary>
+        public static bool NewBaha = true;
+        private RafiBahaFlood _flood;
+        /// <summary>The new Baha, when this one was built as it.</summary>
+        public RafiBahaFlood Flood => _flood;
         private RafiWallCurtain _curtain;
         /// <summary>The new wall, when this one was built as it (a film poses its fall and splash through this).</summary>
         public RafiWallCurtain Curtain => _curtain;
@@ -259,6 +271,7 @@ namespace TumbangPreso.Visual
             if (_state.Type == WorldEffectSnapshot.Kind.Mirrorwake) { Echo(age, fade); return; }
             if (_state.Type == WorldEffectSnapshot.Kind.Waterwall) { Wall(age,fade); return; }
             if (_stream != null) { _stream.Pose(age, _state); return; }
+            if (_flood != null) { _flood.Pose(age, RafiWaterPaint.Eye(RafiBahaFlood.StagedEye, transform.position)); return; }
             if (_mesh == null) return;
             bool wave = (_state.Type == WorldEffectSnapshot.Kind.Breakwater || _state.Type == WorldEffectSnapshot.Kind.Baha);
             float gather = RafiWaterField.Gather(_state.Type);
@@ -367,6 +380,7 @@ namespace TumbangPreso.Visual
         {
             if (_curtain != null) _curtain.Release(_sampleAge, _state);
             if (_stream != null) _stream.Release(_sampleAge, _state);
+            _flood?.Dispose();
             if (_mesh != null) Destroy(_mesh);
         }
     }

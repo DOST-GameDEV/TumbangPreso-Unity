@@ -53,11 +53,12 @@ namespace TumbangPreso.UI
             for(int i=0;i<_tabs.Count;i++)
             {
                 _tabs[i].transform.Find("SelectedSection").gameObject.SetActive(i==_tab);
-                var tabFace=_tabs[i].transform.Find("TabFace")?.GetComponent<HudCard>();if(tabFace!=null)tabFace.enabled=i==_tab;
-                var colours=_tabs[i].colors; colours.normalColor=i==_tab?(tabFace!=null?SettingsPalette.OnAccent:SettingsPalette.Accent):SettingsPalette.Ink;
-                _tabs[i].colors=colours;
+                var tabFace=_tabs[i].transform.Find("TabFace")?.GetComponent<Image>();
+                var kind=i==_tab?Hub.Knit.Go:Hub.Knit.Plain;
+                if(tabFace!=null)Hub.HubKnit.KitFace(tabFace,kind);
+                SettingsWorkspaceRows.Inks(_tabs[i],Hub.HubKnit.InkOf(kind));
             }
-            _heading.text=Sections[_tab];
+            _heading.text=Sections[_tab].ToUpperInvariant();
             if (_deviceMenu != null) _deviceMenu.gameObject.SetActive(_tab == 0);
             switch(_tab){case 0:Controls();break;case 1:Audio();break;case 2:Graphics();break;case 3:Player();break;case 4:Accessibility();break;}
             _list.GetComponentInParent<ScrollRect>().verticalNormalizedPosition=1;
@@ -83,7 +84,7 @@ namespace TumbangPreso.UI
         /// </summary>
         private void Note(string words)
         {
-            var text=OwnerUiLayout.Text(_list,"Note",words,28);text.color=SettingsPalette.Muted;
+            var text=OwnerUiLayout.Text(_list,"Note",words,28);text.color=SettingsPalette.PanelInk;text.font=Hub.HubKnit.SentenceFont(false);
             text.alignment=TextAnchor.UpperLeft;text.verticalOverflow=VerticalWrapMode.Overflow;
             var box=text.gameObject.AddComponent<LayoutElement>();box.minHeight=67;box.preferredHeight=-1;
         }
@@ -128,7 +129,7 @@ namespace TumbangPreso.UI
             _ownerFrameCap=SettingsOptionMenu.Create(Row("FrameRate","Frame rate limit"),"FrameRateValue",
                 FrameRateOptions.All.Select(FrameRateOptions.Label).ToArray(),Array.IndexOf(FrameRateOptions.All,s.FrameRateLimit),
                 v=>{s.FrameRateLimit=FrameRateOptions.All[v];FrameRateOptions.Apply(s.FrameRateLimit);_session.Preview();});
-            _frameReason=OwnerUiLayout.Text(_list,"FrameRateReason","",28);_frameReason.color=SettingsPalette.Muted;
+            _frameReason=OwnerUiLayout.Text(_list,"FrameRateReason","",28);_frameReason.color=SettingsPalette.PanelInk;_frameReason.font=Hub.HubKnit.SentenceFont(false);
             _frameReason.gameObject.AddComponent<LayoutElement>().preferredHeight=67;UpdateFrameCapState();
         }
         private void UpdateFrameCapState()
@@ -239,12 +240,12 @@ namespace TumbangPreso.UI
         {
             if(_decision!=null){_decision.SetActive(true);return;}
             var root=OwnerUiLayout.Rect(_canvas.transform,"UnsavedDecision");OwnerUiLayout.Fill(root);_decision=root.gameObject;
-            var dim=root.gameObject.AddComponent<Image>();dim.color=new Color(0,0,0,.72f);
-            var paper=OwnerUiLayout.Rect(root,"DecisionPaper").gameObject.AddComponent<Image>();paper.color=SettingsPalette.Surface;
+            var dim=root.gameObject.AddComponent<Image>();dim.color=new Color(.157f,.031f,.055f,.6f);
+            var paper=OwnerUiLayout.Rect(root,"DecisionPaper").gameObject.AddComponent<Image>();Hub.HubKnit.KitFace(paper,Hub.Knit.Panel);
             paper.rectTransform.anchorMin=paper.rectTransform.anchorMax=paper.rectTransform.pivot=new Vector2(.5f,.5f);
             paper.rectTransform.sizeDelta=new Vector2(950,_touchLayout ? 760 : 604);paper.raycastTarget=true;
-            var title=OwnerUiLayout.Text(paper.transform,"DecisionHeading","KEEP YOUR CHANGES?",50,OwnerUiLayout.TypeRole.Display);
-            OwnerUiLayout.Place(title.rectTransform,65,51,828,108);title.alignment=TextAnchor.MiddleCenter;title.color=SettingsPalette.Ink;
+            var title=OwnerUiLayout.Text(paper.transform,"DecisionHeading","KEEP YOUR CHANGES?",56,OwnerUiLayout.TypeRole.Display);
+            OwnerUiLayout.Place(title.rectTransform,65,51,828,108);title.alignment=TextAnchor.MiddleCenter;title.color=SettingsPalette.PanelAccent;
             // ⚠️ THREE BUTTONS THAT LOOK LIKE BUTTONS AND RANK THEMSELVES (2026-09-23 UI review). The
             // three choices were floating words at three different widths and indents, so nothing
             // said which one was the expected answer. Now one column of equal slabs: SAVE & BACK is

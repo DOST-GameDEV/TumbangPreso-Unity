@@ -411,7 +411,9 @@ namespace TumbangPreso.Tests
             //184 keeps Live Wire on the court with a reel-in request, adds Zack's Overclock zap messages and his Charge rates.
             //185 lengthens Basilio's ultimate introduction to the 4.86 s longhorn cutscene.
             //186 records Dante's mountain and the taya's headband in clip version 18.
-            Assert.AreEqual(186, NetSession.ProtocolVersion,
+            //186 widens Ilyas's Baha to a 4.2 m half width, which the field check compares.
+            //187 merges those two 186 changes, so neither kind of 186 build meets a merged one.
+            Assert.AreEqual(187, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");

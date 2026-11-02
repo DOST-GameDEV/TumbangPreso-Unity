@@ -1,0 +1,1 @@
+Voodoo Doll model v06 installed with the locked effects, round r11, owner 2026-10-31: "looks good, lock it in". Films: Logs/paete-ability-film/phaisterdollcourt_r11_small.mp4, introfx_phaister_r11.mp4. Known: screen-right hand string misses the mitten, as in r10b. Not run in Play or a player build.

@@ -57,10 +57,26 @@ namespace TumbangPreso.PlayTests
                     var frame = ring[i];
                     var type = frame.GetType();
                     Assert.IsFalse((bool)type.GetField("Pending").GetValue(frame));
+                    // The frames stay on the GPU where the device allows (`SpectatorCamera._gpuRing`), so read one back here.
                     var texture = (Texture2D)type.GetField("Image").GetValue(frame);
-                    Assert.AreEqual(TextureFormat.RGB565, texture.format);
-                    Assert.AreEqual(640 * 360 * 2, texture.GetRawTextureData<byte>().Length);
-                    var pixel = texture.GetPixel(320, 180);
+                    var live = (RenderTexture)type.GetField("Live").GetValue(frame);
+                    Color pixel;
+                    if (live != null)
+                    {
+                        Assert.AreEqual(RenderTextureFormat.ARGB32, live.format);
+                        var active = RenderTexture.active; RenderTexture.active = live;
+                        var probe = new Texture2D(1, 1, TextureFormat.RGB24, false, true);
+                        probe.ReadPixels(new Rect(320, 180, 1, 1), 0, 0); probe.Apply();
+                        RenderTexture.active = active;
+                        pixel = probe.GetPixel(0, 0);
+                        Object.Destroy(probe);
+                    }
+                    else
+                    {
+                        Assert.AreEqual(TextureFormat.RGB565, texture.format);
+                        Assert.AreEqual(640 * 360 * 2, texture.GetRawTextureData<byte>().Length);
+                        pixel = texture.GetPixel(320, 180);
+                    }
                     Assert.That(Vector3.Distance(new Vector3(pixel.r, pixel.g, pixel.b), new Vector3(colours[i].r, colours[i].g, colours[i].b)), Is.LessThan(.08f));
                 }
                 Assert.AreEqual(0, spectator.FailedReadbacks);

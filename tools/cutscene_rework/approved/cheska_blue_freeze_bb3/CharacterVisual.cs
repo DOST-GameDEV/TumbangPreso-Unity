@@ -1,0 +1,1135 @@
+// V2 owner map: identity | authored body | cast palette | world body; powers
+// retain their own coat/rim. Catchable | upper rim | Defense | taya camera only.
+// Camera overrides are restored before recording the underlying body state.
+﻿using System.Collections.Generic;
+using UnityEngine;
+
+namespace TumbangPreso.Visual
+{
+    /// <summary>
+    /// Instances the picked model on a unit, tints it, and flashes it when it is hit.
+    ///
+    /// ⚠️⚠️ IT MEASURES THE INSTANCED MODEL RATHER THAN ASSUMING ITS HEIGHT, and that is the
+    /// property that must survive the art replacement. Because a roster character is a rig plus
+    /// a palette, every character has to sit on the capsule floor without per-character setup;
+    /// the moment this file assumes a height, a new model floats or sinks and it reads as an
+    /// art bug rather than a code one. Measure, always.
+    ///
+    /// ⚠️⚠️ THE FLASH AND THE TINT ARE SEPARATE CHANNELS, DELIBERATELY. The tint writes base
+    /// colour, because that is what "what colour am I" means. The hit flash drives its own
+    /// property. If the flash were implemented by writing base colour, then tinting a prop
+    /// would break the flash, and worse, a flash mid-tint would leave the prop the wrong colour
+    /// permanently. Two concerns, two channels, and they must not be merged for tidiness.
+    ///
+    /// ⚠️ THE ART HERE IS ALL PLACEHOLDER (docs/Port_Plan.md section 8). Invest in the
+    /// MECHANISM, which survives the swap, not in matching the current look.
+    /// </summary>
+    public sealed partial class CharacterVisual : MonoBehaviour
+    {
+        /// <summary>
+        /// ⚠️⚠️ FOUR SPELLINGS, AND WRITING ONLY TWO OF THEM MADE EVERY CHARACTER TINT A SILENT
+        /// NO-OP. A property block writes a NAMED property and is discarded without an error
+        /// when the shader has none by that name — the same failure that shipped both arenas in
+        /// the kit's factory colours while the log reported the pass had run.
+        ///
+        /// The character models are `.glb` and are claimed by glTFast, whose shader names its
+        /// albedo **`baseColorFactor`**. `_BaseColor` is URP's, `_Color` is the built-in
+        /// pipeline's, and `_TintColor` is what older kit materials answer to. Writing all four
+        /// costs four dictionary entries in a block that is already being built and is the only
+        /// way to be right without knowing which shader an imported model arrived on.
+        /// </summary>
+        private static readonly int[] ColourIds =
+        {
+            Shader.PropertyToID("_BaseColor"),
+            Shader.PropertyToID("_Color"),
+            Shader.PropertyToID("baseColorFactor"),
+            Shader.PropertyToID("_TintColor"),
+        };
+
+        /// <summary>
+        /// ⚠️⚠️ THE FLASH IS ITS OWN UNIFORM AND WRITING IT AS A COLOUR CANNOT WORK ON A
+        /// TEXTURED MODEL. Checklist 7.1 in the Godot repo split these for a measured reason: a
+        /// kit mesh's resting tint is white, so lerping the base colour toward white is a no-op
+        /// and a hit on the lata showed nothing at all. It is worse here, because the toon
+        /// material now carries the model's real albedo in `_Color` and a block that wrote white
+        /// into it would erase the character's colours outright for the duration of the flash.
+        /// </summary>
+        private static readonly int FlashAmountId = Shader.PropertyToID("_FlashAmount");
+
+        /// <summary>
+        /// § THE CAUGHT MARK — the body half. See the block comment on <see cref="ProcessFrost"/>
+        /// for why a tag stopped being drawn as ice on 2026-08-26.
+        ///
+        /// ⚠️ `_FrostAmount` IS NO LONGER WRITTEN FROM HERE AND THE SHADER TERM STILL EXISTS.
+        /// Ice belongs to Cheska; see the note above `_FrostAmount` in `Toon.shader`.
+        /// </summary>
+        private static readonly int CaughtAmountId = Shader.PropertyToID("_CaughtAmount");
+
+        /// <summary>§ THE ELEMENT STUN. The frost term is now the ABILITY coat, recoloured per
+        /// element from <see cref="StunCoat"/>; only the taya's tag uses the caught mark.</summary>
+        private static readonly int FrostAmountId = Shader.PropertyToID("_FrostAmount");
+
+        private static readonly int FrostColorId = Shader.PropertyToID("_FrostColor");
+
+        private static readonly int FrostRimColorId = Shader.PropertyToID("_FrostRimColor");
+
+        private StunElement _stunElement = StunElement.None;
+
+        public event System.Action ModelApplied;
+        public int ModelVersion { get; private set; }
+
+        public GhostPetCompanion Companion { get; private set; }
+
+        /// <summary>
+        /// ⚠️⚠️ THE KENNEY RIG IS AUTHORED ~0.67 UNITS TALL AND NOTHING HERE WAS SCALING IT.
+        /// `character_visual.gd:714` runs `model.scale = Vector3.ONE * PERSON_SCALE` on every
+        /// Person, which is what lifts the rig to the ~1.6 units of the capsule it is supposed to
+        /// fill. The port instanced the prefab and wrote only position and rotation, so all
+        /// twelve people walked around the street at 42% of their height: reported as *"the
+        /// characters are way too small"*, and visible against the Godot build's own capture
+        /// where a figure beside the lata is half again as tall as the one here.
+        ///
+        /// ⚠️ IT IS THE MODEL THAT SCALES, NEVER THE SEAT. The CharacterController capsule, the
+        /// contact distances and every number in the Core package are authored in world units
+        /// and are already correct; scaling the body would retune all of them at once. This
+        /// writes `_instance`, which is the instanced mesh under `_modelRoot`, and
+        /// `AlignToCapsuleFloor` then re-measures the scaled bounds and drops the feet onto the
+        /// capsule floor, so the two agree by construction rather than by a second constant.
+        ///
+        /// ⚠️ 2.38 IS MEASURED, NOT CHOSEN. The Godot constant records that it came from the
+        /// imported model's AABB rather than from taste, so it transcribes as a number and must
+        /// not be re-derived by eye against a screenshot.
+        /// </summary>
+        public const float PersonScale = 2.38f;
+
+        /// <summary>
+        /// ⚠️⚠️ ONE CHARACTER'S OWN SIZE ON TOP OF `PersonScale`, SET BY HAND PER BODY, NEVER A SWEEP (CLAUDE.md section 0).
+        /// Owner, 2026-09-26 and 27: *"can u make the size paete bigger he looks so small and scuffed"*, *"supposed to be larger
+        /// than sean"*, *"can u make Paete like bigger already"*. Measured on the bind poses: Paete stands 0.594 mesh units to
+        /// Sean's 0.518 (1.41 m to 1.23 m in play), under 15 per cent taller, and the antlers are most of that, so beside Sean he
+        /// read as the same size. 1.3 puts him at 1.84 m, half a head over Sean: the guardian of a mountain. It is VISUAL: the
+        /// capsule, the reach and every rule stay the cast's, so a bigger tree is not a bigger target or a longer arm in the
+        /// rules (`Core` never sees this). Used by the match body and by `ModelPreview`, so the screens show the size he plays at.
+        /// </summary>
+        public static float BodyScaleFor(string modelName)
+        {
+            string name = string.IsNullOrEmpty(modelName) ? "" : modelName.Replace("(Clone)", "").Trim();
+            switch (name)
+            {
+                // His redesign is the same tree at the same size (`paete-redesign.glb`, 2026-10-05).
+                case "team-paete": case "paete-redesign": return 1.3f;
+                default: return 1f;
+            }
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ RE-MEASURED 2026-08-18 AND IT IS 0, NOT 180. `character_visual.gd:54` carries
+        /// `PERSON_MODEL_YAW_DEG = 180.0`, and this constant was transcribed from it on the
+        /// assumption that the same number holds across engines. It does not: Godot's glTF
+        /// importer and glTFast (what this project uses) do not perform the same axis
+        /// conversion on import, so "the rig wears its face on -Z" being true of the source file
+        /// does not mean it is still true of the GameObject glTFast hands back in Unity.
+        ///
+        /// Reported as *"cans are floating [and] when you emote, the character turns around
+        /// instead of the original view they are facing towards"*. The cans were a separate,
+        /// unrelated bug (see CharacterNameplate.Build); the emote camera turned out to be
+        /// working exactly as designed; it opens BEHIND the body on purpose. A screenshot of
+        /// that real, in-game camera showed the FACE where the back of the head belonged, which
+        /// only happens if the model is mounted backward on the seat.
+        ///
+        /// ⚠️ MEASURED, NOT INFERRED, AND THE OLD MEASUREMENT WAS CONFOUNDED. `ModelFacingProbe`
+        /// pins a seat to yaw 0 and photographs it from both sides. Its first version picked
+        /// "the first visible bot" and never disabled that bot's AI, so `Steer()` (which
+        /// re-derives the body's rotation from the AI's own move axis every physics step) could
+        /// silently undo the yaw-0 pin in the few frames between setting it and taking the
+        /// photo. Repeating the same two shots against a single AI-disabled seat, held still,
+        /// gives the opposite reading from the one recorded here before:
+        ///     camera at +Z (this rig's own forward) -> the FACE
+        ///     camera at -Z (this rig's own back)     -> the back of the head
+        /// which is what "the model faces the way the body walks" actually requires. Do not
+        /// restore 180 without repeating this measurement with the AI disabled; that is almost
+        /// certainly how it was wrong the first time.
+        ///
+        /// ⚠️ IT IS APPLIED TO THE MODEL, NEVER TO THE SEAT. Rotating the seat would fix the
+        /// render and break everything derived from the body basis at once: the melee reach is
+        /// measured off `transform.forward`, the first-person camera looks down it, and the AI's
+        /// own lunge cone is an angle against it.
+        ///
+        /// ⚠️ AND THE HAND ANCHOR RIDES UNDER THE MODEL, so a carried tsinelas moves to the
+        /// correct side with it. The first-person arms hang off the camera rather than the
+        /// skeleton and are untouched.
+        /// </summary>
+        public const float PersonModelYaw = 0.0f;
+
+        [SerializeField] private Transform _modelRoot;
+        [SerializeField] private float _flashTime = 0.12f;
+
+        private readonly List<Renderer> _renderers = new List<Renderer>();
+        private MaterialPropertyBlock _block;
+
+        private Color _tint = Color.white;
+        private float _flashLeft;
+        private GameObject _instance;
+        private GameObject _petInstance;
+        private GameObject _sourcePetModel;
+        private AnimationClip[] _sourceClips;
+        private Color[] _sourcePalette;
+        private bool _sourcePerson;
+        private static bool SameValues<T>(T[] a,T[] b)
+        {
+            if(ReferenceEquals(a,b))return true;
+            if(a==null || b==null || a.Length!=b.Length)return false;
+            for(int i=0;i<a.Length;i++)if(!EqualityComparer<T>.Default.Equals(a[i],b[i]))return false;
+            return true;
+        }
+
+
+        /// <summary>The instanced rig, or null before a model has been applied. Read-only:
+        /// <see cref="ApplyModel"/> is the one writer, and the facing correction lives on this
+        /// transform rather than on the seat.</summary>
+        public GameObject Model => _instance;
+
+        /// <summary>The instanced companion pet, or null if this character has none.</summary>
+        public GameObject Pet => _petInstance;
+
+        private void Awake()
+        {
+            _block = new MaterialPropertyBlock();
+            if (_modelRoot == null) _modelRoot = transform;
+            _alignedLocal=_modelRoot==transform?Vector3.zero:_modelRoot.localPosition;
+        }
+
+        private void OnDestroy()
+        {
+            if (_petInstance != null) Destroy(_petInstance);
+        }
+
+        /// <summary>
+        /// The node the model hangs under, and the node the smoothing moves.
+        ///
+        /// ⚠️⚠️ IT MUST NOT BE THE SEAT ITSELF, AND IT DEFAULTED TO EXACTLY THAT. Two things
+        /// write to this transform: `AlignToCapsuleFloor` drops it so the rig's feet meet the
+        /// capsule floor, and the remote smoothing lags it behind the body. With the seat as
+        /// its own model root, the first of those moves the CharacterController along with the
+        /// mesh, which quietly re-sinks the capsule it was measuring against, and the second
+        /// cannot run at all. `MatchInstaller` already builds a `Visual` child for this and
+        /// nothing was pointing at it.
+        ///
+        /// ⚠️ CALL IT BEFORE ApplyModel. The model is instanced under whatever this is at the
+        /// moment it runs.
+        /// </summary>
+        public void SetModelRoot(Transform root)
+        {
+            if (root == null) return;
+
+            _modelRoot = root;
+            _alignedLocal=root==transform?Vector3.zero:root.localPosition;
+        }
+
+        /// <summary>Swap in the model for a roster pick.</summary>
+        public void ApplyModel(GameObject prefab, Color tint) => ApplyModel(prefab, tint, null);
+
+        /// <summary>
+        /// ⚠️ THE CLIPS TRAVEL WITH THE MODEL. They are sub-assets of the `.glb` and nothing
+        /// else references them, so they have to be passed from the roster asset or they are
+        /// stripped from the build and the character never moves.
+        /// </summary>
+        public void ApplyModel(GameObject prefab, Color tint, AnimationClip[] clips)
+            => ApplyModel(prefab, tint, clips, null, null);
+
+        public void ApplyModel(GameObject prefab, Color tint, AnimationClip[] clips, Color[] palette)
+            => ApplyModel(prefab, tint, clips, palette, null);
+
+        /// <summary>
+        /// ⚠️ THE PALETTE TRAVELS WITH THE MODEL TOO. The twelve people share twelve rigs and
+        /// differ only by which sixteen colours their atlas is remapped to; a seat handed the
+        /// model and no palette is a character wearing somebody else's clothes.
+        /// </summary>
+        public void ApplyModel(GameObject prefab, Color tint, AnimationClip[] clips, Color[] palette, GameObject petModel)
+        {
+            var motor = GetComponent<CharacterMotor>();
+            bool person = motor == null || motor.IsPerson;
+            // Roster snapshots repeat unchanged picks. Rebuilding those models
+            // destroyed an active Kuro and interrupted every observer's animation.
+            // Compare the actual assets and palette, not just a mode-relative index.
+            if(_instance!=null && SourceModel==prefab && _sourcePetModel==petModel &&
+                _sourcePerson==person && _tint==tint && SameValues(_sourceClips,clips) &&
+                SameValues(_sourcePalette,palette) && (petModel==null || (_petInstance!=null && Companion!=null)))return;
+            _sourcePetModel=petModel;_sourcePerson=person;
+            _sourceClips=clips!=null?(AnimationClip[])clips.Clone():null;
+            _sourcePalette=palette!=null?(Color[])palette.Clone():null;
+            AppliedPalette = palette;
+            SourceModel = prefab;
+            if (_instance != null) Destroy(_instance);
+            if (_petInstance != null) Destroy(_petInstance);
+
+            _tint = tint;
+
+            // Asked before the model is instanced, because a Person is the only thing that takes
+            // PERSON_SCALE and the scale has to be on the transform before `CacheRenderers` and
+            // `AlignToCapsuleFloor` measure the bounds it produces.
+
+
+            if (prefab != null)
+            {
+                _instance = Instantiate(prefab, _modelRoot);
+                _instance.transform.localPosition = Vector3.zero;
+
+                // ⚠️⚠️ THE RIG'S FACE IS ON -Z AND UNITY'S FORWARD IS +Z. See PersonModelYaw.
+                // Applied to the MODEL, never to the seat, so nothing derived from the body
+                // basis moves with it.
+                _instance.transform.localRotation = person
+                    ? Quaternion.Euler(0.0f, PersonModelYaw, 0.0f)
+                    : Quaternion.identity;
+
+                // See PersonScale. A Prop is authored at its own size and keeps it, exactly as
+                // `character_visual.gd` only scales the branch it took for a Person.
+                _instance.transform.localScale = person ? Vector3.one * (PersonScale * BodyScaleFor(prefab.name)) : Vector3.one;
+            }
+
+            CacheRenderers();
+
+            // ⚠️⚠️ THE TOON PASS AND THE INK OUTLINE, WHICH THE PORT HAD NO EQUIVALENT OF.
+            // `character_visual.gd` puts a toon material with an inverted-hull outline on every
+            // Prop, and a Person gets the same two things from its palette `.tres`. Nothing here
+            // did either, so the whole cast rendered on the stock lit shader with no border. See
+            // ToonSkin: it is the largest single difference between the two builds.
+            //
+            // ⚠️ BEFORE PushColour, because the tint and the flash are written as property
+            // blocks ONTO these materials and a block set before the material exists is
+            // discarded.
+            // A Person's border is the one `person_outline.tres` carries; everything else takes
+            // the prop width. Asked of the motor rather than stored, so the two cannot drift.
+            //
+            // ⚠️ THE WIDTH PASSED HERE IS A WORLD WIDTH AND MUST STAY ONE. `ToonSkin.Apply`
+            // divides by the renderer's own measured scale, so the value does NOT get corrected
+            // for PERSON_SCALE at this call site. `PersonOutlineWidth` already carries the 2.38
+            // inside it, as its own comment records.
+            ToonSkin.Apply(_instance, person ? ToonSkin.PersonOutlineWidth
+                                             : ToonSkin.PropOutlineWidth, palette);
+            // Phaister's voodoo doll carries its light as two meshes of its own; the toon paint above treats them as cloth.
+            // Only renderers by those names are touched, so every other model passes through unchanged.
+            PhaisterDollArt.ApplyGlow(_instance);
+
+            if (petModel != null)
+            {
+                var petParent = _modelRoot != null && _modelRoot.parent != null ? _modelRoot.parent : transform;
+                _petInstance = Instantiate(petModel, petParent);
+                _petInstance.transform.localScale = Vector3.one * PersonScale;
+                var companion = _petInstance.AddComponent<GhostPetCompanion>();
+                companion.Bind(_instance != null ? _instance.transform : transform, new Vector3(-0.52f, 0.50f, -0.05f), PersonScale);
+                Companion = companion;
+                // The familiar has its own authored materials. Applying Nemu's person
+                // palette mapped its plain face parts through an unrelated atlas slot.
+                GhostPetCompanion.ApplyAppearance(_petInstance,palette);
+                _renderers.AddRange(_petInstance.GetComponentsInChildren<Renderer>(includeInactive: true));
+            }
+
+            BuildHandAnchor();
+            PushColour();
+
+            // ⚠️ BOUND HERE, NOT IN Awake. The model is instanced at this moment, and an
+            // Animator bound before its rig exists silently drives nothing at all: the
+            // character simply stands still and no error is ever logged.
+            var anim = GetComponent<CharacterAnimator>();
+            if (anim == null) anim = gameObject.AddComponent<CharacterAnimator>();
+            anim.GaitSource = prefab != null ? prefab.name : null;
+            if (_instance != null) anim.Bind(_instance, clips);
+            AlignToCapsuleFloor();
+
+            // ⚠️⚠️ NO SECONDARY CLOTH SOLVER ON THE BODY EITHER. DELETED 2026-08-27 along with
+            // `BaggyClothingPhysics` and the first-person `ViewmodelClothPhysics`.
+            //
+            // 🧑, on Nemu: *"her sleeves are phasing and looks weird ... maybe js remove the
+            // physics on her sleeves bcz it looks so ugly, js show me cute blocky sleeves"*.
+            //
+            // ⚠️ THIS ONE POST-MULTIPLIED A ROTATION ONTO `arm-left` AND `arm-right` AFTER the
+            // animator had written them, up to 6 degrees. On a rig whose sleeve, lining and cuff
+            // are three separate boxes sharing a volume, rotating the arm bone under only one of
+            // the three sets is how a cuff ends up inside a forearm. The gain was a sway nobody
+            // asked for on a cast whose whole look is rigid voxels.
+
+            // Procedural cartoon squash-and-stretch
+            var squash = GetComponent<CharacterSquashStretch>();
+            if (squash == null) squash = gameObject.AddComponent<CharacterSquashStretch>();
+            if (_instance != null) squash.BindModel(_instance.transform);
+
+            ModelVersion++;
+            ModelApplied?.Invoke();
+        }
+
+        public Color[] AppliedPalette { get; private set; }
+        public GameObject SourceModel { get; private set; }
+
+        /// <summary>
+        /// The point a carried tsinelas sits on, riding the hand bone through every clip.
+        ///
+        /// ⚠️⚠️ NULL UNTIL A MODEL EXISTS, and callers must treat that as "not ready yet"
+        /// rather than as "no hand". Same contract `get_hand_attachment()` carries.
+        /// </summary>
+        public Transform HandAnchor { get; private set; }
+
+        /// <summary>
+        /// The rig's `torso` bone, or null. HERO-10 v3: a carried slipper tucked into the belt while a cast needs the hand
+        /// (`Carrier`, `CharacterMotor.StowsCarriedSlipper`) rides the waist through the torso's own lean. Found with the hand.
+        /// </summary>
+        public Transform TorsoBone { get; private set; }
+
+        /// <summary>
+        /// The node the model hangs under. Exposed so `Carrier` has something body-shaped to
+        /// hang a held slipper off while <see cref="HandAnchor"/> is still null — see its
+        /// `CarryAnchor`. Read-only on purpose: <see cref="SetModelRoot"/> is the one writer.
+        /// </summary>
+        public Transform ModelRoot => _modelRoot;
+        public Vector3 AlignedLocalPosition => _alignedLocal;
+
+        /// <summary>
+        /// Where <see cref="Model"/> stands with no replica interpolation lag: the body's own
+        /// pose plus floor alignment and ground contact, as <see cref="SnapForCinematic"/> would
+        /// place it. Read-only, so a downed tilt or airborne pitch on the live mesh survives.
+        /// </summary>
+        public Vector3 RestModelPosition
+        {
+            get
+            {
+                if (_instance == null) return transform.position;
+                if (_modelRoot == null || _modelRoot == transform) return _instance.transform.position;
+                var rest = transform.TransformPoint(_alignedLocal + transform.InverseTransformVector(Vector3.down * _groundContact));
+                return _instance.transform.position + (rest - _modelRoot.position);
+            }
+        }
+
+        /// <summary>`character_visual.gd::HAND_BONE_CANDIDATES`. The right arm first, because
+        /// the rig ships `holding-right` and `holding-right-shoot` and nothing for the left.
+        ///
+        /// ⚠️ THE FOREARM FIRST, WHERE A RIG HAS ONE. The redesign prototypes add an elbow
+        /// (`forearm-right`, `forearm-left`) and their hand is skinned to it, so on those rigs
+        /// `arm-right` is only the upper arm: measuring the palm there parks a carried tsinelas
+        /// at the elbow, and it then ignores the bend. A cast rig has no such bone and falls
+        /// through to `arm-right` exactly as before.</summary>
+        private static readonly string[] HandBones = { "forearm-right", "arm-right", "forearm-left", "arm-left" };
+
+        /// <summary>
+        /// How far above the measured palm centre the carried shoe's ORIGIN sits, along the
+        /// bone's own +Y.
+        ///
+        /// ⚠️ IT SITS ON THE HAND, NOT IN A GRIP. The Godot measure put the palm centre at
+        /// bone-local y -0.0062 and the hand's TOP SURFACE at +0.0555, and +0.0400 was tried
+        /// first and reported as "its almost on the arm, js phasing a bit thru it" because it
+        /// is inside the hand box. This is that difference.
+        ///
+        /// ⚠️ Y IS THE ONE AXIS NEITHER IMPORTER FLIPS, which is why the lift transcribes as a
+        /// bare number while the palm centre below has to be measured rather than copied.
+        /// </summary>
+        public const float HandTopLift = 0.0617f;
+
+        /// <summary>
+        /// The bone that carries one side's HAND (`side` is "left" or "right") and the palm centre in that bone's space.
+        ///
+        /// ⚠️ ASK THIS, NOT `arm-left` BY NAME. On a rig with elbows the hand is skinned to `forearm-<side>` and the far end
+        /// of `arm-<side>` is the ELBOW, so anything that measured its palm on the arm bone put its prop, its grip or its
+        /// wire on the elbow (2026-10-05). A seven-bone cast rig has no forearm and gets its arm bone, exactly as before.
+        /// </summary>
+        public static bool HandBone(SkinnedMeshRenderer skinned, string side, out int bone, out Vector3 palm)
+        {
+            bone = -1; palm = Vector3.zero;
+            if (skinned == null || skinned.sharedMesh == null || skinned.bones == null) return false;
+            foreach (string wanted in new[] { "forearm-" + side, "arm-" + side })
+                for (int i = 0; i < skinned.bones.Length; i++)
+                    if (skinned.bones[i] != null && skinned.bones[i].name == wanted && PalmCentre(skinned, i, out palm))
+                    { bone = i; return true; }
+            return false;
+        }
+
+        /// <summary>
+        /// Finds the hand bone and parks an anchor on the top of its hand.
+        ///
+        /// ⚠️⚠️ THE OFFSET IS MEASURED FROM THE SKIN, NOT TRANSCRIBED, AND THAT IS NOT
+        /// PEDANTRY. The Godot side records eight guessed values that each came back wrong in a
+        /// different category, in the chest, under the arm, inside the forearm, on the neck, on
+        /// the face, because every one of them was measured in the wrong frame. Copying its
+        /// final number here would repeat that once more: Godot's glTF importer keeps the
+        /// file's right-handed axes and glTFast negates X, so the same three numbers do not
+        /// mean the same place in the two engines and nothing about them says so.
+        ///
+        /// The frame that is not a matter of opinion is the one both engines skin in:
+        ///
+        ///     skinned_vertex = boneMatrix[b] * bindpose[b] * v
+        ///
+        /// and a child of the bone at local position `p` lands on vertex `v` when
+        /// `p == bindpose[b] * v`, for every pose of every clip, because the animated half
+        /// cancels out of both sides. So push the arm's own weighted vertices through the bind
+        /// pose and the hand's coordinates fall out.
+        ///
+        /// ⚠️ AND IT IS A CHILD OF THE BONE, never a write onto the bone. The bone's transform
+        /// is overwritten from the pose every frame and anything written onto it is discarded.
+        /// </summary>
+        private void BuildHandAnchor()
+        {
+            HandAnchor = null;
+            TorsoBone = null;
+            if (_instance == null) return;
+
+            var skinned = _instance.GetComponentInChildren<SkinnedMeshRenderer>();
+            if (skinned == null || skinned.sharedMesh == null || skinned.bones == null) return;
+
+            foreach (var b in skinned.bones)
+                if (b != null && string.Equals(b.name, "torso", System.StringComparison.OrdinalIgnoreCase)) { TorsoBone = b; break; }
+
+            int bone = -1;
+
+            foreach (string wanted in HandBones)
+            {
+                for (int i = 0; i < skinned.bones.Length; i++)
+                {
+                    if (skinned.bones[i] == null) continue;
+                    if (!string.Equals(skinned.bones[i].name, wanted,
+                                       System.StringComparison.OrdinalIgnoreCase)) continue;
+
+                    bone = i;
+                    break;
+                }
+
+                if (bone >= 0) break;
+            }
+
+            if (bone < 0)
+            {
+                Debug.LogWarning($"[Visual] {name}: no hand bone on this rig (looked for " +
+                                 "arm-right then arm-left); a carried slipper cannot follow the arm.");
+                return;
+            }
+
+            // Every current rig has a different hand thickness and some have
+            // separated fingers. Fit the support to actual weighted triangles,
+            // not a height copied from an older human model.
+            if (!PalmCentre(skinned, bone, out Vector3 palm)) return;
+            if (!PalmSurface(skinned, bone, palm, out palm)) return;
+            palm.y += .003f / Mathf.Max(.001f, skinned.bones[bone].TransformVector(Vector3.up).magnitude);
+
+            var anchorGo = new GameObject("HandAnchor");
+            anchorGo.transform.SetParent(skinned.bones[bone], false);
+            anchorGo.transform.localPosition = palm;
+            anchorGo.transform.localRotation = Quaternion.identity;
+
+            HandAnchor = anchorGo.transform;
+        }
+
+        /// <summary>
+        /// The centre of the hand blob in the bone's own space.
+        ///
+        /// ⚠️ THE FAR EIGHTH OF THE LIMB, NOT THE WHOLE BONE. Everything the arm bone owns is
+        /// weighted to it, shoulder included, so averaging all of it lands the shoe in the
+        /// armpit. The hand is the far end, and "far" is measured along whichever axis the limb
+        /// actually runs down rather than assumed to be one of them.
+        ///
+        /// ⚠️ PUBLIC SO `PersonSwapProbe` CAN ASK THE GAME WHERE THE HAND IS, rather than
+        /// carrying a copy of this. A replacement rig has to be checked for exactly this, and a
+        /// probe that reimplemented the search would be measuring its own opinion: the eight
+        /// wrong values the Godot side recorded all came from measuring in a frame nobody else
+        /// was measuring in. It is a read with no side effects, so exposing it costs nothing.
+        /// </summary>
+        public static bool PalmCentre(SkinnedMeshRenderer skinned, int bone, out Vector3 palm, bool onSurface = false)
+        {
+            palm = Vector3.zero;
+
+            var mesh = skinned.sharedMesh;
+            var weights = mesh.boneWeights;
+            var vertices = mesh.vertices;
+            var binds = mesh.bindposes;
+            var uv = mesh.uv;
+
+            if (weights == null || weights.Length != vertices.Length ||
+                binds == null || bone >= binds.Length) return false;
+
+            var local = new List<Vector3>();
+            var skin = new List<Vector3>();
+
+            for (int i = 0; i < vertices.Length; i++)
+            {
+                var w = weights[i];
+
+                float weight = (w.boneIndex0 == bone ? w.weight0 : 0.0f)
+                             + (w.boneIndex1 == bone ? w.weight1 : 0.0f)
+                             + (w.boneIndex2 == bone ? w.weight2 : 0.0f)
+                             + (w.boneIndex3 == bone ? w.weight3 : 0.0f);
+
+                if (weight < 0.5f) continue;
+
+                var point=binds[bone].MultiplyPoint3x4(vertices[i]);
+                local.Add(point);
+                if(uv.Length==vertices.Length)
+                {
+                    int row=Mathf.FloorToInt(uv[i].y*16),column=Mathf.FloorToInt(uv[i].x*16);
+                    if(row>=0&&row<=3&&column>=10&&column<=15)skin.Add(point);
+                }
+            }
+
+            if (local.Count < 8) return false;
+
+            // Which way the limb runs, taken from the spread of what is weighted to it.
+            Vector3 min = local[0], max = local[0];
+
+            foreach (var v in local)
+            {
+                min = Vector3.Min(min, v);
+                max = Vector3.Max(max, v);
+            }
+
+            Vector3 size = max - min;
+            int axis = size.x >= size.y && size.x >= size.z ? 0 : (size.y >= size.z ? 1 : 2);
+
+            // Restored outfits may carry long props on the arm bone. They are
+            // not the palm. Prefer a substantial longitudinal skin region;
+            // a thin skin-coloured gauntlet inset is not a hand either.
+            if(skin.Count>=8)
+            {
+                var skinMin=skin[0];var skinMax=skin[0];
+                foreach(var point in skin){skinMin=Vector3.Min(skinMin,point);skinMax=Vector3.Max(skinMax,point);}
+                var span=skinMax-skinMin;
+                if(span[axis]>=Mathf.Max(span[(axis+1)%3],span[(axis+2)%3])*.5f)
+                {local=skin;min=skinMin;max=skinMax;size=span;}
+            }
+
+            // The far end is whichever end is further from the bone's own origin, because the
+            // bone sits at the shoulder and the hand does not.
+            bool towardMax = Mathf.Abs(max[axis]) > Mathf.Abs(min[axis]);
+            float cut = towardMax ? max[axis] - size[axis] * 0.125f : min[axis] + size[axis] * 0.125f;
+
+            var blob = new List<Vector3>();
+
+            foreach (var v in local)
+                if (towardMax ? v[axis] >= cut : v[axis] <= cut) blob.Add(v);
+
+            if (blob.Count == 0) return false;
+
+            foreach (var v in blob) palm += v;
+            palm /= blob.Count;
+            if (onSurface)
+            {
+                float top = float.NegativeInfinity;
+                foreach (var v in blob) top = Mathf.Max(top, v.y);
+                palm.y = top;
+            }
+
+            return true;
+        }
+
+        private static bool PalmSurface(SkinnedMeshRenderer skin, int bone, Vector3 target, out Vector3 surface)
+        {
+            var mesh = skin.sharedMesh; var vertices = mesh.vertices;
+            var weights = mesh.boneWeights; var triangles = mesh.triangles;
+            var local = new Vector3[vertices.Length]; var valid = new bool[vertices.Length];
+            for (int i = 0; i < vertices.Length; i++)
+            {
+                var w = weights[i];
+                float influence = (w.boneIndex0 == bone ? w.weight0 : 0) + (w.boneIndex1 == bone ? w.weight1 : 0)
+                    + (w.boneIndex2 == bone ? w.weight2 : 0) + (w.boneIndex3 == bone ? w.weight3 : 0);
+                valid[i] = influence >= .5f;
+                local[i] = mesh.bindposes[bone].MultiplyPoint3x4(vertices[i]);
+            }
+            surface = target; float nearest = float.PositiveInfinity; bool found = false;
+            for (int i = 0; i < triangles.Length; i += 3)
+            {
+                int ia = triangles[i], ib = triangles[i + 1], ic = triangles[i + 2];
+                if (!valid[ia] || !valid[ib] || !valid[ic]) continue;
+                Vector3 a = local[ia], b = local[ib], c = local[ic];
+                float den = (b.z-c.z)*(a.x-c.x)+(c.x-b.x)*(a.z-c.z);
+                if (Mathf.Abs(den) < .00000001f) continue;
+                float u = ((b.z-c.z)*(target.x-c.x)+(c.x-b.x)*(target.z-c.z))/den;
+                float v = ((c.z-a.z)*(target.x-c.x)+(a.x-c.x)*(target.z-c.z))/den;
+                Vector3 hit;
+                if (u >= 0 && v >= 0 && u+v <= 1) hit = u*a+v*b+(1-u-v)*c;
+                else
+                {
+                    hit = PalmEdge(a,b,target);
+                    var bc = PalmEdge(b,c,target); var ca = PalmEdge(c,a,target);
+                    if (PalmDistance(bc,target) < PalmDistance(hit,target)) hit = bc;
+                    if (PalmDistance(ca,target) < PalmDistance(hit,target)) hit = ca;
+                }
+                float distance = PalmDistance(hit,target);
+                if (distance > nearest + .00000001f) continue;
+                if (Mathf.Abs(distance-nearest) <= .00000001f && found && hit.y <= surface.y) continue;
+                nearest = distance; surface = hit; found = true;
+            }
+            return found;
+        }
+
+        private static float PalmDistance(Vector3 a, Vector3 b)
+            => (a.x-b.x)*(a.x-b.x)+(a.z-b.z)*(a.z-b.z);
+
+        private static Vector3 PalmEdge(Vector3 a, Vector3 b, Vector3 target)
+        {
+            var d = b-a; float length = d.x*d.x+d.z*d.z;
+            float t = length > .00000001f ? Mathf.Clamp01(((target.x-a.x)*d.x+(target.z-a.z)*d.z)/length) : 0;
+            return Vector3.Lerp(a,b,t);
+        }
+
+        /// <summary>
+        /// How fast the rendered mesh closes the gap on the body it belongs to, for a unit this
+        /// peer does not simulate. Higher closes faster, hiding less jitter.
+        /// </summary>
+        public const float RemoteSmoothRate = 18.0f;
+
+        /// <summary>Where the floor alignment left the model root. See AlignToCapsuleFloor.</summary>
+        private Vector3 _alignedLocal;
+
+        private CharacterMotor _motor;
+        private CharacterController _supportController;
+        private readonly RaycastHit[] _supportHits=new RaycastHit[16];
+        private float _groundContact;
+
+        private Vector3 _smoothedWorld;
+        private float _smoothedYawDeg;
+        private bool _smoothing;
+
+        /// <summary>
+        /// Whether this visual should lag its body. Set by whatever knows the unit is remote.
+        ///
+        /// ⚠️⚠️ NOT DERIVED FROM THE NETWORK LAYER HERE, AND THAT IS DELIBERATE. This file has
+        /// no business asking who owns what: `NetAuthority` already answers that question once,
+        /// and a second implementation of it is a second thing to get wrong when host migration
+        /// lands. Off is the correct default, so a single-player match is bit-for-bit unchanged.
+        /// </summary>
+        public bool SmoothRemote
+        {
+            get => _smoothRemote;
+            set
+            {
+                if (_smoothRemote == value) return;
+
+                _smoothRemote = value;
+
+                // Turning it off returns the mesh to the body immediately; leaving the offset
+                // behind would park every character permanently beside itself.
+                if (!_smoothRemote) SnapRemotePose(false);
+            }
+        }
+
+        private bool _smoothRemote;
+
+        /// <summary>
+        /// Resets the smoothing to "caught up, right now".
+        ///
+        /// ⚠️⚠️ CALL THIS AFTER ANY TELEPORT. A round reset and a kill-plane respawn both move
+        /// the body without walking it, and a visual that glides to the new spot crosses the
+        /// whole arena in front of everybody. The Godot side records this as its own rule.
+        /// </summary>
+        public void SnapRemoteTransform() => SnapRemotePose(true);
+        public void SnapForCinematic() => SnapRemotePose(false);
+
+        private void SnapRemotePose(bool reseatGround)
+        {
+            // A teleport must sample its new surface. Merely changing who owns
+            // smoothing keeps the current foot seating instead of popping upward.
+            if(reseatGround)_groundContact=0;
+            _smoothedWorld = transform.position;
+            _smoothedYawDeg = transform.eulerAngles.y;
+            _smoothing = true;
+
+            if (_modelRoot == null || _modelRoot == transform) return;
+
+            _modelRoot.localPosition = _alignedLocal+transform.InverseTransformVector(Vector3.down*_groundContact);
+            _modelRoot.localRotation = Quaternion.identity;
+        }
+
+        /// <summary>
+        /// Lags a world-space copy of the body behind it and renders the mesh from that.
+        ///
+        /// ⚠️⚠️ THE BODY KEEPS SNAPPING AND ONLY THE MESH GLIDES, WHICH IS THE WHOLE POINT. A
+        /// replicated update is written straight onto the body every time one lands, because
+        /// collision, the hitbox offset and every directional verb read the body transform
+        /// directly. Smoothing the BODY would make the gameplay lag; smoothing the mesh means
+        /// what you see glides while what the rules read stays exact.
+        ///
+        /// ⚠️ AND THE GAP IS ROTATED INTO THE BODY'S OWN FRAME. The model root is a child of
+        /// the body, so a world-space offset written as a local one reads as the wrong
+        /// direction the instant the body turns.
+        ///
+        /// ⚠️ ONLY YAW. Airborne pitch and the downed tilt are somebody else's to write.
+        /// </summary>
+        private void StepRemoteSmoothing(float dt)
+        {
+            if (_modelRoot == null || _modelRoot == transform) return;
+
+            if (!SmoothRemote)
+            {
+                _modelRoot.localPosition = _alignedLocal + GroundContactOffset(transform.position,dt);
+                if(_smoothing)_modelRoot.localRotation = Quaternion.identity;
+                _smoothing = false;
+                return;
+            }
+
+            if (!_smoothing) { SnapRemoteTransform(); return; }
+
+            Vector3 body = transform.position;
+            float bodyYaw = transform.eulerAngles.y;
+
+            // ⚠️ FRAMERATE-INDEPENDENT, NOT A BARE LERP. `1 - exp(-rate * dt)` closes the same
+            // fraction of the gap per SECOND whatever the frame time is; a raw `lerp(a, b, rate
+            // * dt)` closes more of it on a slow frame and the lag visibly changes with the
+            // framerate.
+            float t = 1.0f - Mathf.Exp(-RemoteSmoothRate * dt);
+
+            _smoothedWorld = Vector3.Lerp(_smoothedWorld, body, t);
+            if (_motor == null) _motor = GetComponent<CharacterMotor>();
+            // Ground contact follows the replicated body; only airborne height keeps a visual lag.
+            if (_motor != null && _motor.IsGrounded && !_motor.IsFlying) _smoothedWorld.y = body.y;
+            _smoothedYawDeg = Mathf.LerpAngle(_smoothedYawDeg, bodyYaw, t);
+
+            // ⚠️⚠️ ADDED TO THE FLOOR ALIGNMENT, NEVER WRITTEN OVER IT. 
+            // already owns this transform: it drops the rig so its feet meet the bottom of the
+            // capsule, and that offset has to survive. Writing the lag as the whole local
+            // position throws the alignment away and the character rides up out of the ground
+            // the moment smoothing turns on.
+            _modelRoot.localPosition = _alignedLocal
+                                       + transform.InverseTransformVector(_smoothedWorld - body)
+                                       + GroundContactOffset(_smoothedWorld,dt);
+            _modelRoot.localRotation = Quaternion.Euler(
+                0.0f, Mathf.DeltaAngle(bodyYaw, _smoothedYawDeg), 0.0f);
+        }
+
+        private Vector3 GroundContactOffset(Vector3 drawnBody,float dt)
+        {
+            if(_motor==null)_motor=GetComponent<CharacterMotor>();
+            if(_supportController==null)_supportController=GetComponent<CharacterController>();
+            float target=0;
+            if(_motor!=null && _motor.IsPerson && _motor.IsGrounded && _supportController!=null)
+            {
+                // PhysX skin keeps the capsule above support. Keep that collision
+                // tolerance; only compensate the rendered model, within that skin.
+                // The short downward query cannot select a roof above the player.
+                var feet=drawnBody+transform.TransformVector(_supportController.center-Vector3.up*(_supportController.height*.5f));
+                float skin=_supportController.skinWidth;
+                int count=Physics.RaycastNonAlloc(feet+Vector3.up*.02f,Vector3.down,_supportHits,skin+.05f,~0,QueryTriggerInteraction.Ignore);
+                float nearest=float.PositiveInfinity;
+                for(int i=0;i<count;i++)
+                {
+                    var hit=_supportHits[i];
+                    if(hit.collider==null || hit.normal.y<.5f || hit.distance>=nearest)continue;
+                    if(hit.collider.GetComponentInParent<CharacterMotor>()!=null || hit.collider.GetComponentInParent<Slipper>()!=null)continue;
+                    nearest=hit.distance;target=Mathf.Clamp(feet.y-hit.point.y,0,skin+.002f);
+                }
+            }
+            _groundContact=Mathf.MoveTowards(_groundContact,target,Mathf.Max(0,dt)*2f);
+            return transform.InverseTransformVector(Vector3.down*_groundContact);
+        }
+
+        private void CacheRenderers()
+        {
+            _renderers.Clear();
+            _renderers.AddRange(_modelRoot.GetComponentsInChildren<Renderer>(includeInactive: true));
+
+            // ⚠️⚠️ § THE STUN FROST — RESET, OR THE FIRST STUN AFTER A MODEL SWAP DOES NOTHING.
+            // The level is cached to make `SetFrost` a no-op on unchanged frames, and a fresh
+            // renderer arrives with an empty property block reading frost 0. Leaving the cached
+            // level at whatever the OLD model was showing means the equality guard rejects the
+            // write that would have re-established it, and the body stays unfrosted for the
+            // whole stun. Godot clears its per-unit material list at the same two points and
+            // zeroes the level beside it for exactly this reason.
+            _frostLevel = 0.0f;
+        }
+
+        /// <summary>
+        /// ⚠️ MEASURED, NOT ASSUMED. Combine the instanced renderers' bounds and drop the model
+        /// so its lowest point sits on the capsule's base. A model authored with its origin at
+        /// the hips, or at the head, or scaled differently, all land correctly.
+        ///
+        /// ⚠️ IT USES bounds, WHICH ARE WORLD SPACE, so this must run AFTER the instance is
+        /// parented and positioned. Running it during instantiation reads bounds from the
+        /// prefab's own transform and silently offsets every character by the same wrong
+        /// amount, which looks like a deliberate art choice rather than a bug.
+        /// </summary>
+        public void AlignToCapsuleFloor()
+        {
+            if (_renderers.Count == 0) return;
+            // Remote smoothing temporarily offsets the rendered root. It must
+            // never become the permanent alignment when a roster model rebinds.
+            if(_modelRoot!=transform)
+            {
+                _modelRoot.localPosition=_alignedLocal;
+                _modelRoot.localRotation=Quaternion.identity;
+            }
+
+            bool any = false;
+            Bounds combined = default;
+
+            foreach (var r in _renderers)
+            {
+                if (r == null) continue;
+
+                if (!any) { combined = r.bounds; any = true; }
+                else combined.Encapsulate(r.bounds);
+            }
+
+            if (!any) return;
+
+            float capsuleBase = transform.position.y;
+            float sole=AnimatedSoleHeight();
+            float drop = (float.IsPositiveInfinity(sole)?combined.min.y:sole) - capsuleBase;
+
+            if (Mathf.Abs(drop) > 0.0005f)
+                _modelRoot.position -= new Vector3(0.0f, drop, 0.0f);
+
+            // The alignment is the model root's resting place, and the remote smoothing offsets
+            // from it rather than replacing it. See StepRemoteSmoothing.
+            _alignedLocal = _modelRoot == transform ? Vector3.zero : _modelRoot.localPosition;
+        }
+
+        private float AnimatedSoleHeight()
+        {
+            if(_instance==null)return float.PositiveInfinity;
+            float sole=float.PositiveInfinity;var baked=new Mesh();
+            try
+            {
+                foreach(var skin in _instance.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+                {
+                    if(skin.sharedMesh==null)continue;
+                    var bones=skin.bones;var weights=skin.sharedMesh.boneWeights;
+                    if(weights.Length==0)continue;
+                    skin.BakeMesh(baked,true);var vertices=baked.vertices;
+                    if(weights.Length!=vertices.Length)continue;
+                    bool Leg(int index)=>index>=0&&index<bones.Length&&bones[index]!=null&&(bones[index].name=="leg-left"||bones[index].name=="leg-right");
+                    for(int i=0;i<vertices.Length;i++)
+                    {
+                        var w=weights[i];float leg=(Leg(w.boneIndex0)?w.weight0:0)+(Leg(w.boneIndex1)?w.weight1:0)
+                            +(Leg(w.boneIndex2)?w.weight2:0)+(Leg(w.boneIndex3)?w.weight3:0);
+                        if(leg>.5f)sole=Mathf.Min(sole,skin.transform.TransformPoint(vertices[i]).y);
+                    }
+                }
+            }
+            finally{if(Application.isPlaying)Destroy(baked);else DestroyImmediate(baked);}
+            return sole;
+        }
+
+        /// <summary>
+        /// ⚠️ THE HIT FLASH IS A SEPARATE CHANNEL FROM THE TINT. See the class note: merging
+        /// them means a tint breaks the flash, and a flash interrupted mid-tint leaves the
+        /// wrong colour permanently.
+        /// </summary>
+        public void FlashHit()
+        {
+            _flashLeft = _flashTime;
+            PushColour();
+        }
+
+        public void SetTint(Color tint)
+        {
+            _tint = tint;
+            PushColour();
+        }
+
+        private void Update()
+        {
+            // ⚠️⚠️ ASKED EVERY FRAME RATHER THAN SET ONCE, AND THAT IS NOT LAZINESS. Who
+            // simulates a seat changes at runtime: the debug player switcher hands a seat over,
+            // a peer joins, and host migration moves the whole set. A flag written at spawn
+            // would be stale the first time any of those happened, and the symptom is a
+            // character that renders permanently beside itself with nothing in the log.
+            //
+            // ⚠️ AND IT IS OFF IN SINGLE PLAYER BY CONSTRUCTION. `IsNetworked` is false with no
+            // transport running, so an offline match is bit-for-bit what it was.
+            //
+            // ⚠️ AND IT IS ONLY DRIVEN WHILE A TRANSPORT IS RUNNING. Offline the flag is left
+            // exactly as it was, which is off, so a single-player match is bit-for-bit what it
+            // was and nothing here has to know that single player is "a host with no peers".
+            if (NetAuthority.IsNetworked)
+            {
+                if (_motor == null) _motor = GetComponent<CharacterMotor>();
+
+                SmoothRemote = _motor != null && _motor.PlayerSlot != NetAuthority.LocalSlot;
+            }
+
+            StepRemoteSmoothing(Time.deltaTime);
+            ProcessFrost(Time.deltaTime);
+
+            if (_flashLeft <= 0.0f) return;
+
+            _flashLeft = Mathf.Max(0.0f, _flashLeft - Time.deltaTime);
+            PushColour();
+        }
+
+        // -------------------------------------------------------------------
+        // § THE STUN FROST — the body half.
+        //
+        // 🧑 2026-08-06, on the Godot build: *"can we have like a frost effect to indicate that
+        // an attacker is stunned after getting tagged?"*
+        //
+        // ⚠️ THIS HALF IS FOR EVERYBODY ELSE. The screen vignette in `Hud` is the victim's own,
+        // and the split is the danger vignette's rule applied again: a screen effect tells
+        // nobody anything about anyone else. The taya who just spent their one scoring verb on
+        // a tag needs to SEE the attacker freeze, and the other two attackers need to know that
+        // seat is out of the round for five seconds.
+        //
+        // ⚠️ IT RAMPS RATHER THAN SNAPS, AND ON A REMOTE PEER THE RAMP IS THE WHOLE EFFECT.
+        // Stun STATE replicates; the remaining stun does not, and it deliberately is not going
+        // to: it changes every physics step, so replicating it is a float per character per
+        // tick forever to drive a cosmetic taper. On the machine that owns the countdown the
+        // ice additionally thaws over the last `FrostThawTime`; everywhere else it simply holds
+        // until the state clears and the ramp-out smooths the handover.
+        //
+        // ⚠️ NOT REPLICATED AND NOT NEEDING TO BE. Every peer sees the same seat enter the
+        // stunned state and drives this from it, the same way the landed-slipper highlight
+        // derives itself from already-replicated state instead of adding a packet.
+        // -------------------------------------------------------------------
+
+        public const float FrostRampIn = 0.18f;
+        public const float FrostRampOut = 0.45f;
+
+        /// <summary>How long before the stun ends the body starts thawing, where the countdown
+        /// is known. Zero on a peer that is not simulating this body.</summary>
+        public const float FrostThawTime = 1.2f;
+
+        private float _frostLevel;
+        private bool _wasSolidIce;
+        private float _solidIceFrom;
+
+        /// <summary>0 = normal, 1 = fully iced.</summary>
+        private MaterialPropertyBlock _recordedAccentRead;
+        public bool CaptureRecordedAccent(out float strength,out Color colour)
+        {
+            strength=0;colour=Color.white;if(_renderers==null)return false;
+            _recordedAccentRead??=new MaterialPropertyBlock();
+            foreach(var renderer in _renderers)
+            {
+                if(renderer==null)continue;renderer.GetPropertyBlock(_recordedAccentRead);
+                if(!_recordedAccentRead.HasFloat("_RimStrength"))continue;
+                strength=_recordedAccentRead.GetFloat("_RimStrength");
+                colour=_recordedAccentRead.HasColor("_RimColor")?_recordedAccentRead.GetColor("_RimColor"):Color.white;return true;
+            }
+            return false;
+        }
+        public float FrostLevel => _frostLevel;
+        public void CaptureRecordedCoat(out float frost,out float flash,out StunElement element)
+        {frost=_frostLevel;flash=_flashTime<=0?0:Mathf.Clamp01(_flashLeft/_flashTime);element=_stunElement;}
+
+        /// <summary>
+        /// ⚠️ WRITTEN THROUGH THE SAME PROPERTY BLOCK AS THE TINT AND THE FLASH, which is what
+        /// makes this per-body for free. The Godot version needs a hand-rolled per-unit material
+        /// duplicate here, because a Person's palette `.tres` is one shared resource across every
+        /// Person wearing that character and writing frost into it would freeze all of them at
+        /// once, including the one posing on the CHARACTER screen. A property block is
+        /// per-renderer by construction, so that whole mechanism has no counterpart.
+        /// </summary>
+        public void SetFrost(float amount)
+        {
+            float clamped = Mathf.Clamp01(amount);
+            if (Mathf.Approximately(clamped, _frostLevel)) return;
+
+            _frostLevel = clamped;
+            PushColour();
+        }
+
+        private void ProcessFrost(float dt)
+        {
+            if (_motor == null) _motor = GetComponent<CharacterMotor>();
+            if (_motor == null) return;
+
+            float target = 0.0f;
+            bool solidIce = StunCoat.SolidIce && _motor.IsStunned && !_motor.IsTripped && _motor.StunElement == StunElement.Ice;
+
+            // ⚠️⚠️ A FALL IS NOT A FREEZE, AND THIS IS WHY EVERY TRIP USED TO ICE THE BODY OVER.
+            // `CharacterMotor.ApplyTrip` calls `ApplyStagger` as well as setting `_tripLeft`,
+            // deliberately and correctly: a player on the floor must not be able to act. But
+            // `IsStunned` was the only thing this read, so tripping over a kerb rendered exactly
+            // like being tagged, and the body froze solid on the way down. 🧑: *"i dont want the
+            // effect to be ice too when i fell down it feels weird"*.
+            //
+            // ⚠️ THE FROST MEANS ONE SPECIFIC THING AND THAT IS THE WHOLE VALUE OF IT. Its own
+            // note above: the taya who spent their one scoring verb on a tag needs to SEE the
+            // attacker freeze, and the other two need to know that seat is out for five seconds.
+            // A trip is a 2.5 s stumble nobody scored for. Firing the same signal for both makes
+            // the signal mean "something happened to that player", which is not worth a channel.
+            //
+            // ⚠️ THE TRIP HAS ITS OWN READ ALREADY: the knockdown clip, the get-up clip, and the
+            // mash card `Hud.BuildGetUpCard` puts on screen. It does not need this one too.
+            if (_motor.IsStunned && !_motor.IsTripped)
+            {
+                target = 1.0f;
+
+                // `StunLeft` is 0 on any peer that is not simulating this body, so the guard is
+                // `> 0` rather than a plain compare: there, the frost holds until the replicated
+                // state clears rather than thawing instantly off a number it does not have.
+                float left = _motor.StunLeft;
+                // Yasmin's Frozen does not taper: the owner's blue is the same fact as the crystals round the legs, so it
+                // holds at full while they stand. It also starts with them, so a body an Absolute Zero wave has not
+                // reached yet keeps its colours until the casing's own wait is over.
+                if (solidIce)
+                {
+                    if (!_wasSolidIce) _solidIceFrom = Time.time + CheskaAbsoluteZeroLook.PendingDelay(transform.position);
+                    if (Time.time < _solidIceFrom) target = 0.0f;
+                }
+                else if (left > 0.0f && left < FrostThawTime) target = left / FrostThawTime;
+            }
+
+            _wasSolidIce = solidIce;
+
+            // Routed before the level moves, so the first frame of a freeze is not one frame of the tag's grey.
+            StunElement wasElement = _stunElement;
+            if (solidIce) _stunElement = StunElement.Ice;
+
+            float rate = target > _frostLevel ? FrostRampIn : FrostRampOut;
+            SetFrost(Mathf.MoveTowards(_frostLevel, target, dt / Mathf.Max(rate, 0.001f)));
+
+            // ⚠️⚠️ THE ELEMENT DECIDES WHICH OF THE TWO SHADER TERMS THIS LEVEL DRIVES, and it
+            // is one level either way because a body is only ever held by one thing at a time.
+            // `StunElement.None` is the taya's tag and goes to § THE CAUGHT MARK, which drains
+            // colour. Everything else is a hero ability and goes to the frost term, recoloured
+            // per element from `StunCoat`. See `Toon.shader` for why ice kept its own channel.
+            //
+            // ⚠️ THE OTHER TERM IS WRITTEN TO ZERO RATHER THAN LEFT ALONE. They are separate
+            // uniforms on one property block, so a seat tagged immediately after being frozen
+            // would otherwise wear both at once: a grey body with ice still on it.
+            //
+            // Yasmin's Frozen ends with the motor already reporting `None`, the tag's element, so the ramp-out would draw
+            // as the grey caught mark. The element stays Ice until the level is gone. `FrostRampOut` 0.45 s is the
+            // casing's crack and sink (`CheskaFrozenLook`, 0.46 s), which is how colour returns only as the ice breaks.
+            bool thawingIce = StunCoat.SolidIce && _stunElement == StunElement.Ice && !_motor.IsStunned && _frostLevel > 0.0f;
+            if (!thawingIce) _stunElement = _motor.StunElement;
+            // `SetFrost` does nothing on an unchanged level, so a freeze replaced at full level has to repaint here.
+            if (_stunElement != wasElement && (_stunElement == StunElement.Ice || wasElement == StunElement.Ice)) PushColour();
+        }
+
+        /// <summary>
+        /// ⚠️ A MaterialPropertyBlock, NOT `renderer.material`. Touching `.material` on a shared
+        /// material CLONES it per renderer, which quietly multiplies draw calls and leaks a
+        /// material instance for every character in every round. A property block writes
+        /// per-renderer overrides without instancing anything.
+        /// </summary>
+        private void PushColour()
+        {
+            float flash = _flashTime <= 0.0f ? 0.0f : Mathf.Clamp01(_flashLeft / _flashTime);
+
+            // ⚠️⚠️ WHITE MEANS "DO NOT TINT", MATCHING `lata.gd` AND `slipper.gd`. Writing white
+            // into the albedo is a no-op on a textured prop and a repaint on an untextured one,
+            // and since ToonSkin now bakes each model's real albedo into `_Color`, an
+            // unconditional white write would flatten every character to a blank silhouette. The
+            // Godot original guards on exactly this and says so.
+            bool tinted = _tint != Color.white;
+
+            foreach (var r in _renderers)
+            {
+                if (r == null) continue;
+
+                r.GetPropertyBlock(_block);
+
+                if (tinted)
+                    foreach (int id in ColourIds) _block.SetColor(id, _tint);
+
+                _block.SetFloat(FlashAmountId, flash * Settings.SettingsStore.Current.EffectiveFlashIntensity);
+                // ⚠️ ONE LEVEL, ROUTED BY ELEMENT. See the note at the end of `ProcessFrost`.
+                bool ability = _stunElement != StunElement.None;
+
+                _block.SetFloat(CaughtAmountId, ability ? 0.0f : _frostLevel);
+                _block.SetFloat(FrostAmountId, ability ? _frostLevel : 0.0f);
+
+                if (ability)
+                {
+                    StunCoat.WriteBody(_block, _stunElement);
+                }
+
+                r.SetPropertyBlock(_block);
+            }
+        }
+    }
+}

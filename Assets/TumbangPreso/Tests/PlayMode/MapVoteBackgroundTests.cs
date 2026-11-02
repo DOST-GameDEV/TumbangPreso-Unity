@@ -15,8 +15,10 @@ namespace TumbangPreso.PlayTests
 {
  public sealed class MapVoteBackgroundTests
  {
-  [UnitySetUp]public IEnumerator Before(){yield return PlayModeWorld.Reset();}
-  [UnityTearDown]public IEnumerator After(){NetSession.Instance?.Stop();yield return PlayModeWorld.Reset();}
+  bool _reduced;
+  // Reduced UI motion keeps the poster and creates no decoder, so this fixture states its setting.
+  [UnitySetUp]public IEnumerator Before(){_reduced=Settings.SettingsStore.Current.ReducedUiMotion;Settings.SettingsStore.Current.ReducedUiMotion=false;yield return PlayModeWorld.Reset();}
+  [UnityTearDown]public IEnumerator After(){NetSession.Instance?.Stop();yield return PlayModeWorld.Reset();Settings.SettingsStore.Current.ReducedUiMotion=_reduced;}
   [UnityTest,Timeout(180000)]public IEnumerator BrowsingChangesTheBackgroundBeforeExplicitVoteConfirmation()
   {
    yield return HubFlowTests.OpenHome();
@@ -37,7 +39,7 @@ namespace TumbangPreso.PlayTests
    foreach(var size in new[]{new Vector2Int(1920,1080),new Vector2Int(1280,720),new Vector2Int(1600,680)})
     yield return TumpUiCapture.Capture("MapVote-background-"+size.x+"x"+size.y,TumpHub.Current.Canvas,size.x,size.y,false,checkActionBounds:true);
    yield return HubFlowTests.Press("VoteMap1");Assert.AreEqual(-1,TumpHub.Current.Host.MapVoteFor(seat),"Choosing a thumbnail must only preview it.");
-   Assert.AreEqual(SceneFlow.BayanPlaza,background.GetComponent<MapPreviewVideo>().Map);
+   Assert.AreEqual(SceneFlow.Maps[1],background.GetComponent<MapPreviewVideo>().Map);
    yield return HubFlowTests.Press("LockMapVote");Assert.AreEqual(1,TumpHub.Current.Host.MapVoteFor(seat));
    var confirm=cards.Single(c=>c.name=="LockMapVote");Assert.IsFalse(confirm.interactable);
    yield return HubFlowTests.Press("VoteMap"+arena);Assert.AreEqual(1,TumpHub.Current.Host.MapVoteFor(seat),"Browsing after a vote must not silently change it.");

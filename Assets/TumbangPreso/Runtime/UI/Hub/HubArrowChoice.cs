@@ -34,23 +34,25 @@ namespace TumbangPreso.UI.Hub
         }
 
         /// <summary>
-        /// The same selector in the room family (`HubKnit`): the value in cream display lettering
-        /// between two small gold knit arrow buttons, for a caller that seats it on its own knit plate.
+        /// The same selector in the boot kit: yellow arrow keys either side of a field showing the value.
         /// </summary>
-        public static HubArrowChoice BuildKnit(Transform parent,string name,string[] options,int value,int step=HubStyle.Title)
+        public static HubArrowChoice BuildKnit(Transform parent,string name,string[] options,int value,int step=44)
         {
             var root=HubKit.Rect(parent,name+"Choice");
             var choice=root.gameObject.AddComponent<HubArrowChoice>();
             choice.Options=options ?? Array.Empty<string>();
             choice._step=step;
-            choice._label=HubKit.Text(root,"CurrentValue","",step,true,HubKnit.Cream,TextAnchor.MiddleCenter);
+            var well=HubKnit.Plate(root,"Value",Knit.BootField);
+            HubKit.Stretch(well); well.offsetMin=new Vector2(110,0); well.offsetMax=new Vector2(-110,0);
+            choice._label=HubKit.Text(HubKnit.FaceOf(well),"CurrentValue","",step,true,HubKnit.KitInk,TextAnchor.MiddleLeft);
             HubKit.Stretch(choice._label.rectTransform);
-            choice._label.rectTransform.offsetMin=new Vector2(96,4);
-            choice._label.rectTransform.offsetMax=new Vector2(-96,-4);
-            choice.Previous=HubKnit.Button(root,name+"Previous",null,Knit.Gold,()=>choice.Step(-1),HubStyle.Label,HubGlyph.Mark.Left);
-            choice.Next=HubKnit.Button(root,name+"Next",null,Knit.Gold,()=>choice.Step(1),HubStyle.Label,HubGlyph.Mark.Right);
-            HubKit.Place((RectTransform)choice.Previous.transform,HubKit.Left,new Vector2(6,4),new Vector2(78,70));
-            HubKit.Place((RectTransform)choice.Next.transform,HubKit.Right,new Vector2(-22,4),new Vector2(78,70));
+            choice._label.rectTransform.anchorMin=new Vector2(0,.04f);
+            choice._label.rectTransform.offsetMin=new Vector2(38,0);
+            choice._label.rectTransform.offsetMax=new Vector2(-24,0);
+            choice.Previous=HubKnit.Button(root,name+"Previous",null,Knit.Yellow,()=>choice.Step(-1),HubStyle.Label,HubGlyph.Mark.Left);
+            choice.Next=HubKnit.Button(root,name+"Next",null,Knit.Yellow,()=>choice.Step(1),HubStyle.Label,HubGlyph.Mark.Right);
+            HubKit.Place((RectTransform)choice.Previous.transform,HubKit.Left,Vector2.zero,new Vector2(100,92));
+            HubKit.Place((RectTransform)choice.Next.transform,HubKit.Right,Vector2.zero,new Vector2(100,92));
             choice.Set(value,false);
             return choice;
         }

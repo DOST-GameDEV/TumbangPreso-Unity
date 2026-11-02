@@ -22,6 +22,10 @@ namespace TumbangPreso.Visual
 
         public static void Ensure(MeshFilter target,Slipper shoe,RafiHeroKit kit)
         {
+            // ⚠️ With SKIM's rework on (`RafiSkimWater.Painted`) every caller of this line coat, the cast, a joiner's
+            // restore and the first-person copy of the held shoe, gets the painted coat instead, so no path is left drawing
+            // the old look beside the new one. Off, this is the shipped coat, untouched.
+            if(RafiSkimWater.Painted){RafiSkimPainted.Ensure(target,shoe,kit);return;}
             if(target==null||target.sharedMesh==null||shoe==null||kit==null||!kit.IsSkimLoadedFor(shoe))return;
             var existing=target.GetComponentInChildren<RafiSkimCoating>(true);
             if(existing!=null)

@@ -270,6 +270,13 @@ namespace TumbangPreso.CameraSystem
         // that costs what it used to. `docs/TODO.md` § 134.12.
         // -------------------------------------------------------------------
 
+        // ⚠️⚠️ THE FRAMES NOW STAY ON THE GPU, 2026-11-01 (owner, 2026-10-31: "go ahead", the uneven frames). Measured in a build
+        // at 1440p, this capture was most of the slow frames on most maps, one every 0.1 s, even asynchronously: worst frames
+        // (p99) with it off went from 18 to 7 ms on Lagoon, 18 to 9 on Ilalim and 12 to 5 on Payo. A replay only has to show the
+        // pictures again, never read them on the CPU, so a capture is now one small blit into a kept render target
+        // (`_gpuRing`). The target is ARGB32 sRGB, not RGB565: a render target has no sRGB 565, so its 5 bits held linear
+        // light and crushed the Arena's dark stands to black blocks. So about 127 MB of video memory a spectator, double
+        // what RGB565 would take; a player's camera never records. The readback paths stay for a device without such targets.
         private const float ReplaySampleInterval = 0.10f;
         private const int ReplayFrameCapacity = 80;
         private const int ReplayWidth = 1280;
@@ -342,6 +349,9 @@ namespace TumbangPreso.CameraSystem
         private sealed class ReplayFrame
         {
             public Texture2D Image;
+            /// <summary>The frame on the GPU (`_gpuRing`), never read back; `Image` is then null.</summary>
+            public RenderTexture Live;
+            public Texture Shown => Live != null ? Live : (Texture)Image;
             // Storage stays fixed-size; playback restores the captured viewport's
             // proportions instead of treating its storage texture as the camera aspect.
             public float Aspect;
@@ -458,6 +468,20 @@ namespace TumbangPreso.CameraSystem
         /// synchronous copy, which is slower and correct.
         /// </summary>
         private bool _asyncReadbackWorks;
+        private bool _gpuRing;
+        /// <summary>Benchmark only: the next capture writes its source and its stored picture here, the same instant, to compare colours.</summary>
+        internal static string BenchCompareTo;
+        private static void SaveForCompare(Texture picture, string path)
+        {
+            var rt = RenderTexture.GetTemporary(ReplayWidth, ReplayHeight, 0, RenderTextureFormat.ARGB32);
+            Graphics.Blit(picture, rt);
+            var previous = RenderTexture.active; RenderTexture.active = rt;
+            var read = new Texture2D(ReplayWidth, ReplayHeight, TextureFormat.RGB24, false);
+            read.ReadPixels(new Rect(0, 0, ReplayWidth, ReplayHeight), 0, 0); read.Apply();
+            RenderTexture.active = previous; RenderTexture.ReleaseTemporary(rt);
+            System.IO.File.WriteAllBytes(path, read.EncodeToPNG());
+            Destroy(read);
+        }
         private Texture2D _synchronousReadback;
 
         /// <summary>
@@ -580,6 +604,7 @@ namespace TumbangPreso.CameraSystem
             // Render support alone does not guarantee readback support. Linux OpenGL can
             // render RGB565 while rejecting every async readback of it. Keep the bounded
             // two-byte ring and use the existing synchronous conversion on those devices.
+            _gpuRing = SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.ARGB32);
             var replayFormat = GraphicsFormatUtility.GetGraphicsFormat(ReplayScratchFormat, false);
             _asyncReadbackWorks = SystemInfo.supportsAsyncGPUReadback &&
                                   SystemInfo.SupportsRenderTextureFormat(ReplayScratchFormat) &&
@@ -1021,7 +1046,7 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         private void PrewarmAsyncReadback()
         {
-            if (_readbackPrewarmed || !_asyncReadbackWorks) return;
+            if (_gpuRing || _readbackPrewarmed || !_asyncReadbackWorks) return;
             _readbackPrewarmed = true;
 
             _prewarmAskedAt = Time.realtimeSinceStartup;
@@ -1044,9 +1069,12 @@ namespace TumbangPreso.CameraSystem
             });
         }
 
+        /// <summary>Benchmark only (`-tp-no-replay`): an A/B for the uneven frames (owner, 2026-10-31).</summary>
+        internal static bool BenchNoReplayCapture;
+
         private void RecordReplayFrame()
         {
-            if (_broadcastPaused) return;
+            if (_broadcastPaused || BenchNoReplayCapture) return;
 
             _replayRecordAccum += Time.unscaledDeltaTime;
             if (_replayRecordAccum < ReplaySampleInterval) return;
@@ -1078,6 +1106,15 @@ namespace TumbangPreso.CameraSystem
             var frame = ReserveFrame();
             if (frame == null) return;
             frame.Aspect = source.width / (float)source.height;
+
+            if (_gpuRing)
+            {
+                Graphics.Blit(source, frame.Live);
+                if (BenchCompareTo != null) { SaveForCompare(source, BenchCompareTo + "_source.png"); SaveForCompare(frame.Live, BenchCompareTo + "_stored.png"); BenchCompareTo = null; }
+                frame.Pending = false;
+                _landedReadbacks++;
+                return;
+            }
 
             if (!_asyncReadbackWorks)
             {
@@ -1208,14 +1245,15 @@ namespace TumbangPreso.CameraSystem
         {
             var frame = new ReplayFrame
             {
-                Image = TakeTexture(),
+                Image = _gpuRing ? null : TakeTexture(),
+                Live = _gpuRing ? TakeTarget() : null,
                 CapturedAt = Time.unscaledTime,
                 Sequence = _replaySequence++,
                 Slot = -1,
                 Pending = true,
             };
 
-            if (frame.Image == null) return null;
+            if (frame.Shown == null) return null;
 
             // ⚠️⚠️ THE MARKER IS STAMPED ONTO THE FRAME AT CAPTURE, NOT SEARCHED FOR LATER,
             // AND THAT IS WHAT MAKES EXPIRY FREE. A marker held in a separate list has to be
@@ -1274,6 +1312,24 @@ namespace TumbangPreso.CameraSystem
 
         private readonly Stack<Texture2D> _texturePool = new Stack<Texture2D>();
 
+        private readonly Stack<RenderTexture> _targetPool = new Stack<RenderTexture>();
+
+        private RenderTexture TakeTarget()
+        {
+            while (_targetPool.Count > 0)
+            {
+                var pooled = _targetPool.Pop();
+                if (pooled != null) return pooled;
+            }
+
+            return new RenderTexture(ReplayWidth, ReplayHeight, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB)
+            {
+                name = "SpectatorReplayFrame",
+                filterMode = FilterMode.Bilinear,
+                wrapMode = TextureWrapMode.Clamp,
+            };
+        }
+
         private Texture2D TakeTexture()
         {
             while (_texturePool.Count > 0)
@@ -1293,7 +1349,14 @@ namespace TumbangPreso.CameraSystem
 
         private void RecycleFrame(ReplayFrame frame)
         {
-            if (frame == null || frame.Image == null) return;
+            if (frame == null) return;
+            if (frame.Live != null)
+            {
+                if (_targetPool.Count < ReplayFrameCapacity + 8) _targetPool.Push(frame.Live);
+                else Destroy(frame.Live);
+                frame.Live = null;
+            }
+            if (frame.Image == null) return;
 
             // ⚠️ A PENDING FRAME'S TEXTURE GOES BACK IN THE POOL AND ITS CALLBACK IS ALREADY
             // GUARDED. The callback checks `_replayFrames.Contains(frame)` before writing, and
@@ -1722,7 +1785,7 @@ namespace TumbangPreso.CameraSystem
                 _replayBlend.enabled = hasNext;
                 if (hasNext)
                 {
-                    _replayBlend.texture = _replayClip[localIndex + 1].Image;
+                    _replayBlend.texture = _replayClip[localIndex + 1].Shown;
                     _replayBlend.color = new Color(1.0f, 1.0f, 1.0f, sample - Mathf.Floor(sample));
                 }
             }
@@ -1748,7 +1811,7 @@ namespace TumbangPreso.CameraSystem
         private void ShowReplayFrame(ReplayFrame frame)
         {
             if (_replayImage == null) return;
-            _replayImage.texture = frame.Image;
+            _replayImage.texture = frame.Shown;
             if (_replayFit != null)
                 _replayFit.aspectRatio = frame.Aspect > 0 ? frame.Aspect : ReplayWidth / (float)ReplayHeight;
         }
@@ -2245,6 +2308,7 @@ namespace TumbangPreso.CameraSystem
         private void DestroyFrame(ReplayFrame frame)
         {
             if (frame != null && frame.Image != null) Destroy(frame.Image);
+            if (frame != null && frame.Live != null) Destroy(frame.Live);
         }
 
         /// <summary>
@@ -2281,6 +2345,11 @@ namespace TumbangPreso.CameraSystem
             while (_texturePool.Count > 0)
             {
                 var pooled = _texturePool.Pop();
+                if (pooled != null) Destroy(pooled);
+            }
+            while (_targetPool.Count > 0)
+            {
+                var pooled = _targetPool.Pop();
                 if (pooled != null) Destroy(pooled);
             }
 

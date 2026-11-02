@@ -495,7 +495,7 @@ namespace TumbangPreso.PlayTests
                 float until = Time.realtimeSinceStartup + 15;
                 while (!(TumpHub.Current.Top is HubLobby) && Time.realtimeSinceStartup < until) yield return null;
                 Assert.IsInstanceOf<HubLobby>(TumpHub.Current.Top);
-                yield return HubFlowTests.Press("CharacterDoor");
+                yield return HubFlowTests.OpenRoomPicker();
                 var picker = TumpHub.Current.Top;
                 Assert.IsTrue(picker.GetComponentsInChildren<UnityEngine.UI.Text>().Any(t => t.name == "Heading" && t.text == "BERTO"));
                 var preview = picker.GetComponentInChildren<ModelPreview>();

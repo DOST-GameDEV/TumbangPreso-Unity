@@ -2498,16 +2498,72 @@ namespace TumbangPreso.Visual
             return !float.IsNegativeInfinity(height);
         }
 
+        /// <summary>A face turned up: its height, and whether it is one of the court groups.</summary>
+        public readonly struct Surface
+        {
+            public readonly float Y; public readonly bool Court, Stage;
+            public Surface(float y, bool court, bool stage = false) { Y = y; Court = court; Stage = stage; }
+        }
+
+        /// <summary>
+        /// EVERY face turned up under a point, by the same test as the ground rule and its same list of what is not ground, with
+        /// no preference and no limit on height: for an effect that has to know the levels of a map, which decides itself what
+        /// a body can reach (`CheskaIceFloorMap`). The rule itself is unchanged.
+        /// </summary>
+        public static void WalkableSurfaces(Vector3 from, float distance, System.Collections.Generic.List<Surface> into)
+        {
+            int count = GroundScene.HasValue
+                ? GroundScene.Value.Raycast(from, Vector3.down, GroundSceneHits, distance, ~0, QueryTriggerInteraction.Ignore)
+                : Physics.RaycastNonAlloc(from, Vector3.down, GroundSceneHits, distance, ~0, QueryTriggerInteraction.Ignore);
+            for (int h = 0; h < count; h++)
+            {
+                var hit = GroundSceneHits[h];
+                if (hit.normal.y < .65f) continue;
+                var kind = ClassifyGroundSurface(hit.collider);
+                if (kind != GroundSurfaceKind.Ignore)
+                {
+                    bool stage = hit.collider.GetComponentInParent<Map.ArenaStage>() != null;
+                    into.Add(new Surface(hit.point.y, kind == GroundSurfaceKind.Court || stage, stage));
+                }
+            }
+        }
+
+        /// <summary>The highest face turned up that is not above a body's feet here (a body stands a little sunk): her own surface,
+        /// platform or lane.</summary>
+        public static bool SurfaceUnderFeet(Vector3 at, out float height)
+        {
+            var found = new System.Collections.Generic.List<Surface>();
+            WalkableSurfaces(at + Vector3.up * 0.6f, 40f, found);
+            height = float.NegativeInfinity;
+            foreach (var s in found) if (s.Y > height) height = s.Y;
+            return !float.IsNegativeInfinity(height);
+        }
+
+        /// <summary>Which physics scene the ground rules ask. Null, the only value a match ever has, is the game's own; a
+        /// film tool working in a preview scene points this at that scene so it proves these rules and no copy of them.</summary>
+        public static PhysicsScene? GroundScene;
+        private static readonly RaycastHit[] GroundSceneHits = new RaycastHit[64];
+
         private static float GroundUnder(Vector3 at, float searchAbove, float searchBelow,
             System.Collections.Generic.Dictionary<Collider, GroundSurfaceKind> surfaces = null)
         {
             var from = new Vector3(at.x, at.y + searchAbove, at.z);
-            var hits = Physics.RaycastAll(from, Vector3.down, searchAbove + searchBelow, ~0,
-                QueryTriggerInteraction.Ignore);
+            RaycastHit[] hits; int count;
+            if (GroundScene.HasValue)
+            {
+                hits = GroundSceneHits;
+                count = GroundScene.Value.Raycast(from, Vector3.down, hits, searchAbove + searchBelow, ~0, QueryTriggerInteraction.Ignore);
+            }
+            else
+            {
+                hits = Physics.RaycastAll(from, Vector3.down, searchAbove + searchBelow, ~0, QueryTriggerInteraction.Ignore);
+                count = hits.Length;
+            }
             float court = float.NegativeInfinity;
             float fallback = float.NegativeInfinity;
-            foreach (var hit in hits)
+            for (int h = 0; h < count; h++)
             {
+                var hit = hits[h];
                 var collider = hit.collider;
                 if (hit.normal.y < .65f) continue;
                 if (surfaces == null || !surfaces.TryGetValue(collider, out var kind))

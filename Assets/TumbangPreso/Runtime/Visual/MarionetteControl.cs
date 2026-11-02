@@ -49,9 +49,56 @@ namespace TumbangPreso.Visual
             Block(root, "Peg", new Vector3(0f, 0.14f, 0f), new Vector3(0.05f, 0.1f, 0.05f), WoodDark, layer);
             foreach (float x in new[] { -1f, 1f })
                 Block(root, "Cap", new Vector3(x * (BarHalf + 0.06f), 0f, 0f), new Vector3(0.05f, 0.1f, 0.12f), WoodDark, layer);
+            // Direction A of her kit. The owner: "just use the same texture we use for wood in the maps". Painted in `Current`.
+            if (PhaisterLook.Direction == PhaisterLook.Style.A)
+                foreach (Transform block in root) MapWood(block, block.name == "Peg" || block.name == "Cap");
             for (int i = 0; i < 4; i++)
                 Block(root, "WirePoint" + i, Anchor(i) + Vector3.up * 0.02f, Vector3.one * 0.07f, SkyCircle.Violet, layer, 1.6f);
             return root;
+        }
+
+        private static Material _mapWood, _mapWoodDark;
+        private static readonly System.Collections.Generic.Dictionary<Vector3, Mesh> _woodMeshes = new System.Collections.Generic.Dictionary<Vector3, Mesh>();
+        // How many metres one repeat of the map's wood covers on the control, at its size over the doll.
+        private const float WoodRepeatMetres = 1.6f;
+
+        /// <summary>
+        /// Dresses a block in the wood Eskinita's props wear: `ekp_wood` and `ekp_wood_dark`, copied under Resources so a player can load them,
+        /// on the same shader, albedo and normal map. The same cube, with its texture coordinates in metres and the grain along
+        /// each face's long side: a cube's own 0 to 1 per face would squeeze the whole picture down a 2 m bar.
+        /// </summary>
+        public static void MapWood(Transform block, bool dark)
+        {
+            var filter = block.GetComponent<MeshFilter>();
+            var renderer = block.GetComponent<Renderer>();
+            if (filter == null || renderer == null) return;
+            Material m = dark ? (_mapWoodDark != null ? _mapWoodDark : _mapWoodDark = Resources.Load<Material>("Materials/PhaisterControlWoodDark"))
+                              : (_mapWood != null ? _mapWood : _mapWood = Resources.Load<Material>("Materials/PhaisterControlWood"));
+            if (m == null) return;
+            Vector3 size = block.localScale;
+            if (!_woodMeshes.TryGetValue(size, out var mesh) || mesh == null)
+            {
+                mesh = Object.Instantiate(filter.sharedMesh);
+                mesh.name = "MarionetteWoodBlock";
+                var v = mesh.vertices; var n = mesh.normals; var uv = new Vector2[v.Length];
+                float k = DollScale / WoodRepeatMetres;
+                for (int i = 0; i < v.Length; i++)
+                {
+                    int across = Mathf.Abs(n[i].x) > 0.5f ? 0 : Mathf.Abs(n[i].y) > 0.5f ? 1 : 2;
+                    int a = (across + 1) % 3, b = (across + 2) % 3;
+                    if (size[b] > size[a]) { int s = a; a = b; b = s; }
+                    uv[i] = new Vector2(v[i][a] * size[a] * k, v[i][b] * size[b] * k + (size[a] + size[b]));
+                }
+                // It hangs over everyone's heads, so what they see is its underside, which the sun never reaches: on the plain cube's
+                // normals the map's wood went nearly black and read as a shop's beam. Every face leans up toward the sun. The shape is the same.
+                for (int i = 0; i < n.Length; i++) n[i] = (n[i] * 0.6f + Vector3.up * 0.8f).normalized;
+                mesh.normals = n;
+                mesh.uv = uv;
+                mesh.RecalculateTangents();
+                _woodMeshes[size] = mesh;
+            }
+            filter.sharedMesh = mesh;
+            renderer.sharedMaterial = m;
         }
 
         /// <summary>
@@ -78,7 +125,7 @@ namespace TumbangPreso.Visual
             var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
             go.name = name;
             var collider = go.GetComponent<Collider>();
-            if (collider != null) { collider.enabled = false; Object.Destroy(collider); }
+            if (collider != null) { collider.enabled = false; if (Application.isPlaying) Object.Destroy(collider); else Object.DestroyImmediate(collider); }
             go.layer = layer;
             go.transform.SetParent(parent, false);
             go.transform.localPosition = at;

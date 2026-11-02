@@ -9,6 +9,9 @@ namespace TumbangPreso.Visual
         public float Duration = 5.0f;
         public float LifeSeconds => Duration;
         private Material _skin, _veins, _edge;
+        private CheskaColdFeetLook _look;
+        /// <summary>The reworked look this field draws, or null for the old one (for a film's report).</summary>
+        public CheskaColdFeetLook Look => _look;
         private float _elapsed;
         private bool _nova;
         private float _radius;
@@ -20,6 +23,14 @@ namespace TumbangPreso.Visual
         {
             var effect = parent.gameObject.AddComponent<FrostSurfacePresentation>();
             effect.Duration = duration;
+            // COLD FEET's reworked look (`CheskaColdFeetLook`). Built here, behind this component, so the cast, the
+            // rejoin snapshot and the replay view, which all build and step this component, draw it with no other change.
+            if (CheskaColdFeetLook.Enabled)
+            {
+                effect._look = CheskaColdFeetLook.Build(parent, radius);
+                effect.StepTo(0);
+                return effect;
+            }
             effect._skin = Part(parent, "FrozenSkin", "permafrost_skin", radius,
                 new Color(.38f,.73f,.82f,.16f), 1, 0);
             effect._veins = Part(parent, "FrostVeins", "permafrost_veins", radius,
@@ -89,6 +100,7 @@ namespace TumbangPreso.Visual
                 Set(_edge,2,Mathf.Clamp01((.44f-seconds)/.22f));
                 return;
             }
+            if (_look != null) { _look.Pose(seconds, Duration); return; }
             float growth = Mathf.Lerp(.03f,1.12f,Mathf.SmoothStep(0,1,seconds/.28f));
             float remaining = Mathf.Max(0,Duration-seconds);
             float thaw = Mathf.Clamp01(1-remaining/.7f);

@@ -514,6 +514,9 @@ namespace TumbangPreso
                 slippers[slot] = BuildSlipper(slot);
             }
 
+            // After the seats: it asks whether any of them is her, and bakes nothing if none is.
+            Visual.CheskaAbsoluteZeroLook.PrepareFloor();
+
             // ⚠️ THE HOST TELLS ITS LOBBY WHICH SEATS HAVE NO BODY, so nobody joining mid-match is
             // put in one (`LobbySession.BenchSeats`). Every peer reached the same answer above
             // from the same roster and rules; only the host decides who sits where.

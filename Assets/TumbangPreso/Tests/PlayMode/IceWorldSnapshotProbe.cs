@@ -288,7 +288,8 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(2,restoredWall.GetComponentsInChildren<MeshCollider>().Length);
             Assert.IsTrue(restoredWall.Split);Assert.AreEqual(1.4f,restoredWall.SpanScale,.001f);
             var surface=restoredSheet.GetComponent<FrostSurfacePresentation>();Assert.AreEqual(5,surface.Duration);
-            Assert.Greater(restoredSheet.transform.Find("FrozenSkin").GetComponent<Renderer>().sharedMaterial.GetFloat("_Growth"),1,
+            var sheetClock=new MaterialPropertyBlock();surface.Look.Parts[0].GetPropertyBlock(sheetClock);
+            Assert.Greater(sheetClock.GetFloat("_Age"),1,
                 "An already formed sheet replayed its initial growth.");
             Assert.AreEqual(skill1Charges,system.Kit.Skill1.ChargesRemaining);Assert.AreEqual(skill2Charges,system.Kit.Skill2.ChargesRemaining);
             Assert.AreEqual(skill1Cooldown,system.Kit.Skill1.CooldownRemaining,.1f);

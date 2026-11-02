@@ -328,6 +328,11 @@ namespace TumbangPreso.Visual
         /// mask (R) covers the cast, and the world's kernel where <see cref="LiveAOProps"/> are drawn (G); every other pixel
         /// returns clean at once, since the static world carries its occlusion in its vertices.</summary>
         public static bool BakedWorldAO;
+        /// <summary>Benchmark only (`-tp-no-rescan`): scans once, an A/B for the uneven frames (owner, 2026-10-31).</summary>
+        internal static bool BenchNoRescan;
+        /// <summary>Benchmark only: the look tests for the plant outlines showing through walls (owner, 2026-10-31).</summary>
+        internal static bool BenchNoExcluded;
+        internal static float BenchMaskTolerance = -1f;
         /// <summary>
         /// DETAILED PROPS KEEP THE LIVE CREASE AO ON A BAKED MAP (owner, 2026-10-30, of the bake beside the screen AO: "no ao
         /// on the creases of the statue face", then "continue with these fixes"). A vertex bake is only as fine as the mesh,
@@ -810,7 +815,7 @@ namespace TumbangPreso.Visual
                 return;
             }
 
-            if (Time.unscaledTime >= _nextScan)
+            if (Time.unscaledTime >= _nextScan && (!BenchNoRescan || _nextScan == 0f))
             {
                 _nextScan = Time.unscaledTime + Mathf.Max(0.1f, _rescanSeconds);
                 Rescan();
@@ -829,7 +834,7 @@ namespace TumbangPreso.Visual
             // 3 m BEHIND a platform passed as visible and cut its shape out of the platform's AO (owner, 2026-10-19: "the AO
             // of the vines across the basin are visible through the platforms"). Past the fine-depth far plane it is held
             // to `MaskToleranceMetres`; every other map keeps exactly its old value.
-            float tolerance = _maskDepthTolerance;
+            float tolerance = BenchMaskTolerance >= 0f ? BenchMaskTolerance : _maskDepthTolerance;
             if (FineDepth) tolerance = Mathf.Min(tolerance, MaskToleranceMetres / _camera.farClipPlane);
             _maskMaterial.SetFloat(MaskToleranceId, tolerance);
             _maskBuffer.SetGlobalVector(NearFadeMaskId,Vector4.zero);NearFadeMaskDraws=0;
@@ -838,6 +843,7 @@ namespace TumbangPreso.Visual
 
             foreach (var renderer in _excluded)
             {
+                if (BenchNoExcluded) break;
                 if (renderer == null || !renderer.enabled || !renderer.gameObject.activeInHierarchy)
                     continue;
 

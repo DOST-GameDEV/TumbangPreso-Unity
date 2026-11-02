@@ -4,7 +4,8 @@ namespace TumbangPreso.Core
 {
     public static class RafiRules
     {
-        public const float BahaWarning=.8f, BahaHalfWidth=3f, BahaSpeed=5f;
+        // Half width 4.2 m (was 3), the owner: "a bit underwhelming, can you increase the width?". Nine lanes, 1.05 m apart.
+        public const float BahaWarning=.8f, BahaHalfWidth=4.2f, BahaSpeed=5f;
         public const float BahaCarryDistance=3f, BahaCarryTail=BahaCarryDistance/BahaSpeed;
         public const float BahaMaximumRange=64f, BahaCost=15f;
         public static float BahaDuration(float distance) => BahaWarning+distance/BahaSpeed+BahaCarryTail;

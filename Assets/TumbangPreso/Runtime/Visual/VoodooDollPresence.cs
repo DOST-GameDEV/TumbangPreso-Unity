@@ -27,6 +27,9 @@ namespace TumbangPreso.Visual
         private TextMesh _popText;
         private float _popAge = -1f, _xAge = -1f;
         private bool _wasTagged;
+        // Direction A of her kit: the effects that say its rules (`PhaisterDollLook`), which replace the X.
+        private PhaisterDollLook _look;
+        private float _lookClock, _tagAge = -1f, _scoreAge = -1f;
 
         private void Awake()
         {
@@ -89,6 +92,27 @@ namespace TumbangPreso.Visual
             if (points <= 0) return;
             _popText.text = "+" + points;
             _popAge = 0f;
+            _scoreAge = 0f;
+        }
+
+        private void PoseLook(Vector3 over)
+        {
+            if (_look == null) _look = new PhaisterDollLook(null);
+            float dt = Time.deltaTime;
+            _lookClock += dt;
+            if (_tagAge >= 0f) _tagAge += dt;
+            if (_scoreAge >= 0f) _scoreAge += dt;
+            var round = GameServices.Round;
+            var her = round != null ? round.BodyAt(CompanionSeats.OwnerOf(_body.PlayerSlot)) : null;
+            _look.Pose(_lookClock, transform.position, over, _tagAge, StatusRules.TaggedSeconds, _scoreAge, her != null ? her.transform.position : transform.position);
+        }
+
+        private void OnDestroy()
+        {
+            _look?.Destroy();
+            // Taken away at the round's end, not by the map unloading (nothing may be spawned then).
+            if (_look != null && Application.isPlaying && gameObject.scene.isLoaded && GameServices.Round != null)
+                PhaisterDollLook.PlayExit(transform.position);
         }
 
         private void LateUpdate()
@@ -107,9 +131,11 @@ namespace TumbangPreso.Visual
 
             // The grey stitched X: pops in when it is tagged, holds for the stun, shrinks away when it gets back up.
             bool tagged = _body.IsTagged;
-            if (tagged && !_wasTagged) _xAge = 0f;
+            if (tagged && !_wasTagged) { _xAge = 0f; _tagAge = 0f; }
             _wasTagged = tagged;
-            if (_xAge >= 0f)
+            bool lookA = PhaisterLook.Direction == PhaisterLook.Style.A;
+            if (lookA) PoseLook(over);
+            if (_xAge >= 0f && !lookA)
             {
                 _xAge += Time.deltaTime;
                 float grow = Mathf.Clamp01(_xAge / 0.18f);

@@ -44,12 +44,11 @@ namespace TumbangPreso.PlayTests
                 yield return SceneManager.LoadSceneAsync(SceneFlow.MainMenu);
                 yield return new WaitForSecondsRealtime(.4f);
                 Assert.IsFalse(Net.NetIdentity.IsOnline, "No live matchmaking identity in this check.");
-                var prompt = Object.FindFirstObjectByType<OwnerMenuPrompt>(); Assert.IsNotNull(prompt);
+                // The title is the automatic Home-loading surface and has nothing to press.
                 Submit(true);
-                prompt.SendMessage("Update");
                 yield return new WaitForSecondsRealtime(.4f);
                 Assert.AreEqual(SceneFlow.MainMenu, SceneManager.GetActiveScene().name,
-                    "The opening Submit must finish on the title, before Home installs its selected PLAY.");
+                    "A held Submit must not skip the title's loading view.");
                 Submit(false);
                 float until = Time.realtimeSinceStartup + 60;
                 while ((SceneManager.GetActiveScene().name != SceneFlow.MatchSetup || TumpHub.Current == null || HubLoading.Visible)
@@ -83,7 +82,7 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(90000)]
-        public IEnumerator OrdinaryKeyboardKeyEntersHomeAndBackKeepsItsBackground()
+        public IEnumerator TitleArrivesHomeByItselfAndBackKeepsItsBackground()
         {
             var settings = InputSystem.settings;
             var background = settings.backgroundBehavior;
@@ -96,11 +95,11 @@ namespace TumbangPreso.PlayTests
                 SceneFlow.Networked = false;
                 yield return SceneManager.LoadSceneAsync(SceneFlow.MainMenu);
                 yield return new WaitForSecondsRealtime(.4f);
-                var prompt = Object.FindFirstObjectByType<OwnerMenuPrompt>(); Assert.IsNotNull(prompt);
-                Assert.IsTrue(prompt.Press.isActiveAndEnabled && prompt.Press.IsInteractable());
                 InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.Period)); InputSystem.Update();
                 Assert.IsTrue(TumbangPreso.InputLayer.MenuNav.KeyboardAnyPressed);
-                prompt.SendMessage("Update");
+                yield return new WaitForSecondsRealtime(.4f);
+                Assert.AreEqual(SceneFlow.MainMenu, SceneManager.GetActiveScene().name, "A key must not skip the title's loading view.");
+                InputSystem.QueueStateEvent(keyboard, new KeyboardState()); InputSystem.Update();
                 float until = Time.realtimeSinceStartup + 60;
                 while ((SceneManager.GetActiveScene().name != SceneFlow.MatchSetup || TumpHub.Current == null || HubLoading.Visible)
                     && Time.realtimeSinceStartup < until) yield return null;

@@ -72,8 +72,9 @@ namespace TumbangPreso.Visual
 
         public FxStudyAirburst(Transform parent) : this(parent, false) { }
 
-        /// <summary>`day` films it on a pale warm floor, a stand-in for the sunlit court (as `dantebastionb6day`).</summary>
-        public FxStudyAirburst(Transform parent, bool above, bool day = false) : base("airburst", parent)
+        /// <summary>`day` films it on a pale warm floor, a stand-in for the sunlit court (as `dantebastionb6day`). `court` is a
+        /// match's (`AmihanAirburstLook`): she is on the court herself, so the bench's grey post is not built. Nothing else differs.</summary>
+        public FxStudyAirburst(Transform parent, bool above, bool day = false, bool court = false) : base("airburst", parent)
         {
             _above = above; _day = day;
             float R = Radius;
@@ -83,7 +84,7 @@ namespace TumbangPreso.Visual
 
             // Her, for scale: a grey post her height.
             var plain = Shader.Find("Unlit/Color");
-            if (plain != null)
+            if (plain != null && !court)
             {
                 var grey = new Material(plain) { hideFlags = HideFlags.HideAndDontSave, color = new Color(0.36f, 0.37f, 0.40f) };
                 var post = Add("stand-in", FxStudyKit.Square(false), grey, 0, Group("her"));

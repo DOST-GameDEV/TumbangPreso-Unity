@@ -38,7 +38,9 @@ namespace TumbangPreso.Visual
     public sealed class FxStudyLotus : FxStudyEffect
     {
         private const float BloomAt = 1.95f, ShatterAt = 5.20f, OrbHeight = 1.55f;
-        private static readonly Color Ice = new Color(0.62f, 0.86f, 1f), IceDeep = new Color(0.16f, 0.36f, 0.86f), IceHot = new Color(0.92f, 0.98f, 1f);
+        // Public for the floor's users (`FxStudyLotusFrost`, and through it ABSOLUTE ZERO): the floor wears these.
+        public static readonly Color Ice = new Color(0.62f, 0.86f, 1f), IceDeep = new Color(0.16f, 0.36f, 0.86f), IceHot = new Color(0.92f, 0.98f, 1f);
+        private static readonly Color MistDeep = new Color(0.26f, 0.42f, 0.82f), MistBody = new Color(0.52f, 0.72f, 0.98f), MistPale = new Color(0.86f, 0.95f, 1f);
         private static readonly Color[] Tones = { new Color(0.70f, 0.90f, 1f), Color.white, new Color(0.50f, 0.78f, 1f), new Color(0.84f, 0.95f, 1f), new Color(0.60f, 0.70f, 1f) };
 
         private readonly struct Petal
@@ -109,6 +111,7 @@ namespace TumbangPreso.Visual
         private readonly FxPiece[] _arc = new FxPiece[2];
         private readonly Transform _arcs;
         private readonly FxFlecks _chips;
+        private readonly bool _flowerOnly;
         private readonly FxPiece[] _mist = new FxPiece[Sheets.Length];
         private readonly FxPiece _mistBurst;
         private readonly Transform[] _piece = new Transform[Pieces];
@@ -124,64 +127,37 @@ namespace TumbangPreso.Visual
         public override void Shot(float age, out Vector3 eye, out Vector3 focus, out float fov)
         { eye = new Vector3(0f, 3.5f, -4.5f); focus = new Vector3(0f, 0.55f, 0f); fov = 40f; }
 
-        public FxStudyLotus(Transform parent) : base("lotus", parent)
+        /// <summary>The bench's clock: the flower starts up at this age, snaps at this one, and its pieces are down by this one.</summary>
+        public const float BloomAge = BloomAt, ShatterAge = ShatterAt, PiecesDownAge = 6.65f;
+
+        public FxStudyLotus(Transform parent) : this(parent, false) { }
+
+        /// <summary>The flower alone, for whoever stands it somewhere else (ABSOLUTE ZERO): the spikes, their heart and the
+        /// pieces they break into, posed by `PoseFlower`. No orb, frost, mist or chips.</summary>
+        public FxStudyLotus(Transform parent, bool flowerOnly) : base("lotus", parent)
         {
+            _flowerOnly = flowerOnly;
+            if (flowerOnly) { BuildFlower(); return; }
             _pool = AddGlow("pool", 1, IceHot, IceDeep, lying: true);
             _pool.At.localPosition = new Vector3(0f, 0.01f, 0f);
             // The frost on the floor: a fern, and its light.
             _fernGlow = AddGlow("fern-glow", 2, Ice, IceDeep, lying: true);
             _fernGlow.At.localPosition = new Vector3(0f, 0.012f, 0f);
-            _fern = AddFlat("fern", 3, "frost_fern", lying: true, erode: "erode_cloud");
-            // Pale blue-white line art, under the flower and never over it: it was near white and a good deal brighter than
-            // the crystals standing on it. It glows at the strike and at no other time (`Sample` sets its gain and emit).
-            _fern.Colours(IceDeep, new Color(0.50f, 0.74f, 0.98f), new Color(0.78f, 0.91f, 1f), Ice).Set("_Cut", 0.10f, 0.55f).Set("_Soft", 0.16f).Set("_Burn", 0.6f).Set("_Emit", 0f).Set("_Hue", 12f, 0f, 0.4f, 1f);
+            _fern = DressFern(AddFlat("fern", 3, "frost_fern", lying: true, erode: "erode_cloud"));
             _fern.At.localPosition = new Vector3(0f, 0.016f, 0f);
-            _burst = AddFlat("burst", 4, "erode_radial", lying: true, erode: "erode_cloud");
-            _burst.Colours(IceDeep, Ice, IceHot, Ice).Set("_Cut", 0.56f, 0.86f).Set("_Soft", 0.2f).Set("_Emit", 0.25f);
+            _burst = DressBurst(AddFlat("burst", 4, "erode_radial", lying: true, erode: "erode_cloud"));
             _burst.At.localPosition = new Vector3(0f, 0.02f, 0f);
 
-            // The mist: low shells round the flower, the cloud map their picture and the cloud map what eats them. Thin,
-            // pale, mostly covering and only a little light, and never over white: mist does not glow.
-            Color mistDeep = new Color(0.26f, 0.42f, 0.82f), mistBody = new Color(0.52f, 0.72f, 0.98f), mistPale = new Color(0.86f, 0.95f, 1f);
+            // The mist: low shells round the flower (`DressMist`).
             for (int i = 0; i < Sheets.Length; i++)
             {
                 var m = Sheets[i];
-                var profile = new[] { new Vector2(m.From, 0.05f), new Vector2(Mathf.Lerp(m.From, m.To, 0.35f), 0.17f), new Vector2(Mathf.Lerp(m.From, m.To, 0.70f), 0.12f), new Vector2(m.To, 0.04f) };
-                _mist[i] = Add("mist-" + i, FxStudyKit.Shell(profile, m.Around, m.Span, 12f, 26, 22), FxStudyKit.Ribbon("erode_cloud", "erode_cloud"), 6);
-                _mist[i].Colours(mistDeep, mistBody, mistPale, mistBody).Set("_Halo", 0f).Set("_Add", 0.35f).Set("_Emit", 0f).Set("_Gain", 1f)
-                        .Set("_Cut", 0.36f, 0.82f).Set("_Stops", 0.52f, 0.72f, 0.98f).Set("_Curve", 1.3f)
-                        .Set("_Ends", 0.30f, 0.40f, 0.28f).Set("_Scroll", 0f, 0f).Set("_Soft", 0.30f)
-                        .Set("_ErodeTile", 1.3f, 0.9f, m.Seed, m.Seed * 1.7f).Set("_ErodeScroll", 0.10f, 0.03f)
-                        .Set("_Hue", 6f, 0f, m.Seed, 1f).Set("_Warp", 0.05f, 1.5f, m.Seed * 6f, 0.8f);
+                _mist[i] = DressMist(Add("mist-" + i, MistSheet(m.Around, m.Span, m.From, m.To), FxStudyKit.Ribbon("erode_cloud", "erode_cloud"), 6), m.Seed);
             }
             // And the breath of mist the shatter throws: one shell all the way round, pushed outward.
-            _mistBurst = Add("mist-burst", FxStudyKit.Shell(new[] { new Vector2(0.4f, 0.08f), new Vector2(1.2f, 0.32f), new Vector2(2.2f, 0.24f), new Vector2(3.2f, 0.05f) }, 0f, 360f, 0f, 24, 48),
-                             FxStudyKit.Ribbon("erode_cloud", "erode_cloud"), 7);
-            _mistBurst.Colours(mistDeep, mistBody, mistPale, mistBody).Set("_Halo", 0f).Set("_Add", 0.40f).Set("_Emit", 0f).Set("_Gain", 1f)
-                      .Set("_Cut", 0.30f, 0.78f).Set("_Stops", 0.50f, 0.70f, 0.98f).Set("_Curve", 1.2f)
-                      // It closes on itself, so nothing fades toward its sides and both maps go round it a whole number of times.
-                      .Set("_Ends", 0.25f, 0.40f, 0f).Set("_Scroll", 0f, 0f).Set("_Soft", 0.30f).Set("_ErodeTile", 1.2f, 3f, 0.3f, 0.6f).Set("_ErodeScroll", 0.25f, 0f)
-                      .Set("_Hue", 6f, 0f, 0.5f, 1f);
+            _mistBurst = DressMistRing(Add("mist-burst", MistRing(), FxStudyKit.Ribbon("erode_cloud", "erode_cloud"), 7));
 
-            // The crystals. A missing model leaves a gap; nothing throws.
-            for (int i = 0; i < Petals.Length; i++)
-            {
-                var crystal = IceCrystalKit.Spawn(Petals[i].Model, Root, out float tall, out _);
-                if (crystal == null) continue;
-                crystal.hideFlags = HideFlags.DontSave;
-                _petal[i] = crystal.transform; _parts[i] = IceCrystalKit.Parts(crystal); _tall[i] = Mathf.Max(0.01f, tall);
-                crystal.SetActive(false);
-            }
-            for (int k = 0; k < Pieces; k++)
-            {
-                var piece = IceCrystalKit.Spawn(k % 3 == 0 ? IceCrystalKit.Shard : IceCrystalKit.Spike, Root, out float tall, out _);
-                if (piece == null) continue;
-                piece.hideFlags = HideFlags.DontSave;
-                _piece[k] = piece.transform; _pieceParts[k] = IceCrystalKit.Parts(piece); _pieceTall[k] = Mathf.Max(0.01f, tall);
-                piece.SetActive(false);
-            }
-            var heart = IceCrystalKit.Spawn(IceCrystalKit.Cluster, Root, out float heartTall, out _);
-            if (heart != null) { heart.hideFlags = HideFlags.DontSave; _heart = heart.transform; _heartParts = IceCrystalKit.Parts(heart); _heart.localScale = Vector3.one * (0.8f / Mathf.Max(0.01f, heartTall)); heart.SetActive(false); }
+            BuildFlower();
 
             // The charge: the orb, and two strokes that run round it on a shell.
             _orbGlow = AddGlow("orb-glow", 8, Color.white, Ice);
@@ -202,8 +178,32 @@ namespace TumbangPreso.Visual
             _chips.Piece.Colours(IceDeep, Ice, IceHot, Ice).Set("_Gain", 1.0f).Set("_Stops", 0.38f, 0.62f, 0.96f).Set("_Cut", 0.10f, 0.75f).Set("_Emit", 0.6f);
         }
 
+        // The crystals. A missing model leaves a gap; nothing throws.
+        private void BuildFlower()
+        {
+            for (int i = 0; i < Petals.Length; i++)
+            {
+                var crystal = IceCrystalKit.Spawn(Petals[i].Model, Root, out float tall, out _);
+                if (crystal == null) continue;
+                crystal.hideFlags = HideFlags.DontSave;
+                _petal[i] = crystal.transform; _parts[i] = IceCrystalKit.Parts(crystal); _tall[i] = Mathf.Max(0.01f, tall);
+                crystal.SetActive(false);
+            }
+            for (int k = 0; k < Pieces; k++)
+            {
+                var piece = IceCrystalKit.Spawn(k % 3 == 0 ? IceCrystalKit.Shard : IceCrystalKit.Spike, Root, out float tall, out _);
+                if (piece == null) continue;
+                piece.hideFlags = HideFlags.DontSave;
+                _piece[k] = piece.transform; _pieceParts[k] = IceCrystalKit.Parts(piece); _pieceTall[k] = Mathf.Max(0.01f, tall);
+                piece.SetActive(false);
+            }
+            var heart = IceCrystalKit.Spawn(IceCrystalKit.Cluster, Root, out float heartTall, out _);
+            if (heart != null) { heart.hideFlags = HideFlags.DontSave; _heart = heart.transform; _heartParts = IceCrystalKit.Parts(heart); _heart.localScale = Vector3.one * (0.8f / Mathf.Max(0.01f, heartTall)); heart.SetActive(false); }
+        }
+
         public override void Sample(float age, Vector3 eye)
         {
+            if (_flowerOnly) { PoseFlower(age); return; }
             // ---- the charge: an orb in the air that swells and steadies, two strokes running round it, chips drawn in.
             float charged = FxStudyKit.Run(age, 0.05f, 1.45f);
             float fall = FxStudyKit.EaseIn(FxStudyKit.Run(age, 1.68f, 1.90f));
@@ -234,18 +234,43 @@ namespace TumbangPreso.Visual
             _flash.Face(eye); _flash.Frame(age, flash);
 
             // ---- frost strikes the floor a moment before the ice, stays under it, and is eaten after the shatter.
-            float struck = FxStudyKit.Pop(FxStudyKit.Run(age, 1.90f, 2.20f), 0.12f);
-            _fern.At.localScale = Vector3.one * (5.4f * Mathf.Lerp(0.2f, 1f, struck)); _fern.At.localRotation = Quaternion.Euler(0f, 15f, 0f);
-            _fern.Frame(age, age < 1.90f ? 0f : 1f, FxStudyKit.Run(age, ShatterAt + 0.7f, 7.3f));
-            float strike = FxStudyKit.Envelope(age, 1.90f, 0.03f, 1.96f, 0.26f);
-            _fern.Set("_Gain", 0.46f + 0.50f * strike).Set("_Emit", 0.45f * strike);
-            _fernGlow.At.localScale = Vector3.one * 6.5f;
-            _fernGlow.Frame(age, (0.12f + 0.18f * strike) * FxStudyKit.Envelope(age, 1.90f, 0.10f, ShatterAt + 0.3f, 0.6f));
+            PoseFern(_fern, age, 5.4f, 15f, 1.90f, FxStudyKit.Run(age, ShatterAt + 0.7f, 7.3f));
+            PoseFernGlow(_fernGlow, age, 6.5f, 1.90f, ShatterAt + 0.3f, 0.6f);
             // The radial burst is the shatter's alone. Under the eruption it was pale grey fingers lying across the frost.
-            _burst.At.localScale = Vector3.one * Mathf.Lerp(3f, 8f, FxStudyKit.EaseOut(FxStudyKit.Run(age, ShatterAt, ShatterAt + 0.40f)));
-            float shatterBurst = FxStudyKit.Envelope(age, ShatterAt + 0.02f, 0.03f, ShatterAt + 0.12f, 0.30f);
-            _burst.Frame(age, 0.34f * shatterBurst, 0.3f + 0.5f * FxStudyKit.Run(age, ShatterAt + 0.1f, ShatterAt + 0.45f));
+            PoseBurst(_burst, age, ShatterAt, 3f, 8f);
 
+            PoseFlower(age);
+
+            // ---- mist. While the flower stands it lies low round it: each sheet is let in by the cloud map, drifts outward
+            // (its picture travels along it and it widens a little) and is eaten by the same map, more and more, until it
+            // is gone. Nothing fades as a whole.
+            for (int i = 0; i < _mist.Length; i++) PoseMist(_mist[i], age, BloomAt + Sheets[i].Delay, Sheets[i].Life, Sheets[i].Seed);
+            {
+                float start = ShatterAt + 0.22f, push = FxStudyKit.EaseOut(FxStudyKit.Run(age, start, start + 0.9f));
+                float wide = Mathf.Lerp(0.45f, 1.45f, push);
+                _mistBurst.At.localScale = new Vector3(wide, Mathf.Lerp(0.7f, 1.7f, push), wide);
+                _mistBurst.Set("_Tile", 0.9f, 3f, 0.2f - (age - start) * 0.35f, 0.4f);
+                _mistBurst.Frame(age, age < start || age > start + 1.5f ? 0f : 0.46f, Mathf.Lerp(0.12f, 1f, Mathf.Pow(FxStudyKit.Run(age, start + 0.15f, start + 1.5f), 1.3f)));
+            }
+
+            // ---- chips: drawn in to the orb, thrown out by the bloom, thrown wide by the shatter.
+            _chips.Begin(eye);
+            for (int i = 0; i < 18; i++)
+            {
+                float from = 0.15f + 1.2f * FxStudyKit.Hash(i, 1), life = FxStudyKit.Run(age, from, from + 0.42f);
+                float turn = FxStudyKit.Hash(i, 2) * Mathf.PI * 2f + age * 2.5f, far = Mathf.Lerp(1.1f, 0.15f, FxStudyKit.EaseIn(life));
+                var off = new Vector3(Mathf.Cos(turn), 0.6f * (FxStudyKit.Hash(i, 3) - 0.5f), Mathf.Sin(turn)) * far;
+                _chips.Add(new Vector3(0f, OrbHeight, 0f) + off, -off, 0.10f + 0.10f * FxStudyKit.Hash(i, 4), 0.05f + 0.03f * FxStudyKit.Hash(i, 5),
+                           age > 1.5f ? 0f : 0.85f * FxStudyKit.Envelope(age, from, 0.05f, from + 0.30f, 0.12f), i * 5 + 1, Tones[i % Tones.Length]);
+            }
+            Burst(age, BloomAt + 0.02f, 22, 2.2f, 30);
+            Burst(age, ShatterAt + 0.28f, 34, 3.4f, 60);
+            _chips.End(age);
+        }
+
+        /// <summary>The flower at this age of the bench's clock. The bench calls it from `Sample`; ABSOLUTE ZERO drives its own.</summary>
+        public void PoseFlower(float age)
+        {
             // ---- the flower. Each spike comes up through the floor past its length and back, opening as it comes; stands;
             // then trembles and SNAPS, the outer ring first: it is gone in a tenth of a second and its pieces are in the air.
             for (int i = 0; i < Petals.Length; i++)
@@ -323,42 +348,95 @@ namespace TumbangPreso.Visual
                 _piece[k].localPosition = middle - facing * Vector3.up * (length * 0.5f * (1f - gone));
                 IceCrystalKit.Dress(_pieceParts[k], age + k * 0.23f, 1f + 0.7f * FxStudyKit.Envelope(t, 0f, 0.03f, 0.10f, 0.35f));
             }
-
-            // ---- mist. While the flower stands it lies low round it: each sheet is let in by the cloud map, drifts outward
-            // (its picture travels along it and it widens a little) and is eaten by the same map, more and more, until it
-            // is gone. Nothing fades as a whole.
-            for (int i = 0; i < _mist.Length; i++)
-            {
-                var m = Sheets[i];
-                float start = BloomAt + m.Delay, life = FxStudyKit.Run(age, start, start + m.Life);
-                float wide = 1f + 0.22f * life;
-                _mist[i].At.localScale = new Vector3(wide, 1f + 0.5f * life, wide);
-                _mist[i].Set("_Tile", 0.8f, 1.4f, m.Seed - (age - start) * 0.10f, m.Seed * 2f);
-                float eaten = Mathf.Max(1f - 0.80f * FxStudyKit.EaseOut(FxStudyKit.Run(age, start, start + 0.7f)), Mathf.Lerp(0.20f, 1f, Mathf.Pow(FxStudyKit.Run(age, start + m.Life * 0.45f, start + m.Life), 1.5f)));
-                _mist[i].Frame(age, age < start || life >= 1f ? 0f : 0.30f, eaten);
-            }
-            {
-                float start = ShatterAt + 0.22f, push = FxStudyKit.EaseOut(FxStudyKit.Run(age, start, start + 0.9f));
-                float wide = Mathf.Lerp(0.45f, 1.45f, push);
-                _mistBurst.At.localScale = new Vector3(wide, Mathf.Lerp(0.7f, 1.7f, push), wide);
-                _mistBurst.Set("_Tile", 0.9f, 3f, 0.2f - (age - start) * 0.35f, 0.4f);
-                _mistBurst.Frame(age, age < start || age > start + 1.5f ? 0f : 0.46f, Mathf.Lerp(0.12f, 1f, Mathf.Pow(FxStudyKit.Run(age, start + 0.15f, start + 1.5f), 1.3f)));
-            }
-
-            // ---- chips: drawn in to the orb, thrown out by the bloom, thrown wide by the shatter.
-            _chips.Begin(eye);
-            for (int i = 0; i < 18; i++)
-            {
-                float from = 0.15f + 1.2f * FxStudyKit.Hash(i, 1), life = FxStudyKit.Run(age, from, from + 0.42f);
-                float turn = FxStudyKit.Hash(i, 2) * Mathf.PI * 2f + age * 2.5f, far = Mathf.Lerp(1.1f, 0.15f, FxStudyKit.EaseIn(life));
-                var off = new Vector3(Mathf.Cos(turn), 0.6f * (FxStudyKit.Hash(i, 3) - 0.5f), Mathf.Sin(turn)) * far;
-                _chips.Add(new Vector3(0f, OrbHeight, 0f) + off, -off, 0.10f + 0.10f * FxStudyKit.Hash(i, 4), 0.05f + 0.03f * FxStudyKit.Hash(i, 5),
-                           age > 1.5f ? 0f : 0.85f * FxStudyKit.Envelope(age, from, 0.05f, from + 0.30f, 0.12f), i * 5 + 1, Tones[i % Tones.Length]);
-            }
-            Burst(age, BloomAt + 0.02f, 22, 2.2f, 30);
-            Burst(age, ShatterAt + 0.28f, 34, 3.4f, 60);
-            _chips.End(age);
         }
+
+        // ================================================================ THE FLOOR, for whoever wears it
+        //
+        // The frost, its light, the burst and the mist, dressed and posed exactly as the bench does it and called by the
+        // bench itself (above), so the lotus and every user of its floor are one code. ABSOLUTE ZERO wears it through
+        // `FxStudyLotusFrost`; the owner, 2026-10-30: "for cheska, her ult can use the floor vfx used in lotus".
+        // ⚠️ Moving these out of the constructor and `Sample` changed no value and no order: `fxbench lotus` films the same.
+
+        /// <summary>The frost on the floor (`frost_fern`, eaten by `erode_cloud`). Pale blue-white line art, under the flower
+        /// and never over it: it was near white and a good deal brighter than the crystals standing on it. It glows at the
+        /// strike and at no other time (`PoseFern` sets its gain and emit).</summary>
+        public static FxPiece DressFern(FxPiece fern)
+            => fern.Colours(IceDeep, new Color(0.50f, 0.74f, 0.98f), new Color(0.78f, 0.91f, 1f), Ice).Set("_Cut", 0.10f, 0.55f).Set("_Soft", 0.16f).Set("_Burn", 0.6f).Set("_Emit", 0f).Set("_Hue", 12f, 0f, 0.4f, 1f);
+
+        /// <summary>The frost at <paramref name="age"/>: it strikes at <paramref name="at"/>, opens from a fifth of
+        /// <paramref name="size"/> metres past its size and back in 0.3 s, flares as it lands, and is eaten by
+        /// <paramref name="eaten"/> (0 whole, 1 gone). <paramref name="gain"/> scales its brightness: 1 on the bench, where
+        /// it is light on a dark floor; a sunlit road needs more, because there it covers the road.</summary>
+        public static void PoseFern(FxPiece fern, float age, float size, float yaw, float at, float eaten, float gain = 1f)
+        {
+            float struck = FxStudyKit.Pop(FxStudyKit.Run(age, at, at + 0.30f), 0.12f);
+            fern.At.localScale = Vector3.one * (size * Mathf.Lerp(0.2f, 1f, struck)); fern.At.localRotation = Quaternion.Euler(0f, yaw, 0f);
+            fern.Frame(age, age < at ? 0f : 1f, eaten);
+            float strike = FxStudyKit.Envelope(age, at, 0.03f, at + 0.06f, 0.26f);
+            fern.Set("_Gain", gain * (0.46f + 0.50f * strike)).Set("_Emit", 0.45f * strike);
+        }
+
+        /// <summary>The frost's light: a soft round glow under it, brighter at the strike, from <paramref name="at"/> until
+        /// <paramref name="outAt"/> and gone <paramref name="fall"/> seconds after.</summary>
+        public static void PoseFernGlow(FxPiece glow, float age, float size, float at, float outAt, float fall, float strength = 1f)
+        {
+            float strike = FxStudyKit.Envelope(age, at, 0.03f, at + 0.06f, 0.26f);
+            glow.At.localScale = Vector3.one * size;
+            glow.Frame(age, strength * (0.12f + 0.18f * strike) * FxStudyKit.Envelope(age, at, 0.10f, outAt, fall));
+        }
+
+        /// <summary>The radial burst (`erode_radial`): thrown out at the time given, from one size to another (metres
+        /// across) in 0.4 s, and torn away inside half a second.</summary>
+        public static FxPiece DressBurst(FxPiece burst) => burst.Colours(IceDeep, Ice, IceHot, Ice).Set("_Cut", 0.56f, 0.86f).Set("_Soft", 0.2f).Set("_Emit", 0.25f);
+
+        public static void PoseBurst(FxPiece burst, float age, float at, float from, float to)
+        {
+            burst.At.localScale = Vector3.one * Mathf.Lerp(from, to, FxStudyKit.EaseOut(FxStudyKit.Run(age, at, at + 0.40f)));
+            float shatterBurst = FxStudyKit.Envelope(age, at + 0.02f, 0.03f, at + 0.12f, 0.30f);
+            burst.Frame(age, 0.34f * shatterBurst, 0.3f + 0.5f * FxStudyKit.Run(age, at + 0.1f, at + 0.45f));
+        }
+
+        /// <summary>One sheet of ground mist: a low shell <paramref name="span"/> degrees round, centred <paramref name="around"/>
+        /// degrees, from <paramref name="from"/> to <paramref name="to"/> metres out.</summary>
+        public static Mesh MistSheet(float around, float span, float from, float to)
+        {
+            var profile = new[] { new Vector2(from, 0.05f), new Vector2(Mathf.Lerp(from, to, 0.35f), 0.17f), new Vector2(Mathf.Lerp(from, to, 0.70f), 0.12f), new Vector2(to, 0.04f) };
+            return FxStudyKit.Shell(profile, around, span, 12f, 26, 22);
+        }
+
+        /// <summary>The mist: the cloud map its picture and the cloud map what eats it. Thin, pale, mostly covering and only a
+        /// little light, and never over white: mist does not glow.</summary>
+        public static FxPiece DressMist(FxPiece mist, float seed)
+            => mist.Colours(MistDeep, MistBody, MistPale, MistBody).Set("_Halo", 0f).Set("_Add", 0.35f).Set("_Emit", 0f).Set("_Gain", 1f)
+                   .Set("_Cut", 0.36f, 0.82f).Set("_Stops", 0.52f, 0.72f, 0.98f).Set("_Curve", 1.3f)
+                   .Set("_Ends", 0.30f, 0.40f, 0.28f).Set("_Scroll", 0f, 0f).Set("_Soft", 0.30f)
+                   .Set("_ErodeTile", 1.3f, 0.9f, seed, seed * 1.7f).Set("_ErodeScroll", 0.10f, 0.03f)
+                   .Set("_Hue", 6f, 0f, seed, 1f).Set("_Warp", 0.05f, 1.5f, seed * 6f, 0.8f);
+
+        /// <summary>A sheet's life from <paramref name="start"/>: let in by the cloud map, drifting outward (its picture
+        /// travels along it and it widens a little) and eaten by the same map, more and more, until it is gone. Nothing
+        /// fades as a whole.</summary>
+        public static void PoseMist(FxPiece mist, float age, float start, float lifeSeconds, float seed)
+        {
+            float life = FxStudyKit.Run(age, start, start + lifeSeconds);
+            float wide = 1f + 0.22f * life;
+            mist.At.localScale = new Vector3(wide, 1f + 0.5f * life, wide);
+            mist.Set("_Tile", 0.8f, 1.4f, seed - (age - start) * 0.10f, seed * 2f);
+            float eaten = Mathf.Max(1f - 0.80f * FxStudyKit.EaseOut(FxStudyKit.Run(age, start, start + 0.7f)), Mathf.Lerp(0.20f, 1f, Mathf.Pow(FxStudyKit.Run(age, start + lifeSeconds * 0.45f, start + lifeSeconds), 1.5f)));
+            mist.Frame(age, age < start || life >= 1f ? 0f : 0.30f, eaten);
+        }
+
+        /// <summary>The breath of mist all the way round (the shatter's): a closed shell along a profile of (radius, height)
+        /// in metres, the bench's own when none is given.</summary>
+        public static Mesh MistRing(Vector2[] profile = null)
+            => FxStudyKit.Shell(profile ?? new[] { new Vector2(0.4f, 0.08f), new Vector2(1.2f, 0.32f), new Vector2(2.2f, 0.24f), new Vector2(3.2f, 0.05f) }, 0f, 360f, 0f, 24, 48);
+
+        public static FxPiece DressMistRing(FxPiece ring)
+            => ring.Colours(MistDeep, MistBody, MistPale, MistBody).Set("_Halo", 0f).Set("_Add", 0.40f).Set("_Emit", 0f).Set("_Gain", 1f)
+                   .Set("_Cut", 0.30f, 0.78f).Set("_Stops", 0.50f, 0.70f, 0.98f).Set("_Curve", 1.2f)
+                   // It closes on itself, so nothing fades toward its sides and both maps go round it a whole number of times.
+                   .Set("_Ends", 0.25f, 0.40f, 0f).Set("_Scroll", 0f, 0f).Set("_Soft", 0.30f).Set("_ErodeTile", 1.2f, 3f, 0.3f, 0.6f).Set("_ErodeScroll", 0.25f, 0f)
+                   .Set("_Hue", 6f, 0f, 0.5f, 1f);
 
         // When a spike snaps: the outer ring first, each a hair off the next.
         private static float BreakAt(int i) => ShatterAt + 0.30f - Petals[i].Delay * 0.9f + 0.04f * FxStudyKit.Hash(i, 3);

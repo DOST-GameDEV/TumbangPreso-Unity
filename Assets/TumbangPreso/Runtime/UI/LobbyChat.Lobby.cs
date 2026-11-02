@@ -27,7 +27,7 @@ namespace TumbangPreso.UI
 
         private RectTransform _bubbles;
         private int _bubblesDrawn = -1;
-        internal const float DrawerHeight = 840, BubbleMax = 470;
+        internal const float DrawerHeight = 844, BubbleMax = 470;
 
         private void ConstructLobbyColumn()
         {
@@ -41,20 +41,19 @@ namespace TumbangPreso.UI
             // still lands where the drawer will be.
             _sheet = HubKit.Stretch(HubKit.Rect(_rect, "ChatSheet"));
             _sheetGroup = _sheet.gameObject.AddComponent<CanvasGroup>();
-            // ⚠️ A WINE KNIT DRAWER (owner 2026-10-28: the first rebuild's brown "clashes with the
-            // maroon panels"). HOME's mode card, the room's deepest plate, so the bubbles read on it.
-            var paper = HubKnit.Plate(_sheet, "ChatPaper", Knit.Wine);
+            // A large surface, so a cream panel; the bubbles are berry on it.
+            var paper = HubKnit.Plate(_sheet, "ChatPaper", Knit.Panel);
             HubKit.Stretch(paper);
             HubKnit.FaceOf(paper).GetComponent<Image>().raycastTarget = true;
 
-            var title = HubKit.Text(_sheet, "ChatTitle", "ROOM CHAT", HubStyle.Title, true, HubKnit.Honey, TextAnchor.MiddleLeft);
-            HubKit.Place(title.rectTransform, HubKit.TopLeft, new Vector2(36, -22), new Vector2(460, 60));
-            var close = HubKnit.Button(_sheet, "CloseChatButton", null, Knit.Red, () => SetPresented(false), HubStyle.Label, HubGlyph.Mark.Close);
-            HubKit.Place((RectTransform)close.transform, HubKit.TopRight, new Vector2(-30, -20), new Vector2(72, 66));
+            var title = HubKnit.Display(_sheet, "ChatTitle", "ROOM CHAT", 48, HubKnit.KitMaroon);
+            HubKit.Place(title.rectTransform, HubKit.TopLeft, new Vector2(50, -32), new Vector2(380, 60));
+            var close = HubKnit.Button(_sheet, "CloseChatButton", null, Knit.Danger, () => SetPresented(false), HubStyle.Label, HubGlyph.Mark.Close);
+            HubKit.Place((RectTransform)close.transform, HubKit.TopRight, new Vector2(-40, -22), new Vector2(90, 80));
 
             // The conversation: newest bubble on the floor, older ones scrolling up under the title.
             var log = HubKit.Span(HubKit.Rect(_sheet, "ChatHistoryScroll"), Vector2.zero, Vector2.one,
-                                  new Vector2(24, 132), new Vector2(24, 100));
+                                  new Vector2(24, 132), new Vector2(24, 110));
             var catcher = log.gameObject.AddComponent<Image>();
             catcher.color = Color.clear;
             _historyScroll = log.gameObject.AddComponent<ScrollRect>();
@@ -70,11 +69,11 @@ namespace TumbangPreso.UI
             track.anchorMin = new Vector2(1, 0); track.anchorMax = Vector2.one; track.pivot = new Vector2(1, 0.5f);
             track.anchoredPosition = new Vector2(-4, 0); track.sizeDelta = new Vector2(10, -28);
             var rail = track.gameObject.AddComponent<Image>();
-            rail.color = new Color(HubKnit.Honey.r, HubKnit.Honey.g, HubKnit.Honey.b, 0.14f);
+            rail.color = new Color(HubKnit.KitTan.r, HubKnit.KitTan.g, HubKnit.KitTan.b, 0.4f);
             var bar = track.gameObject.AddComponent<Scrollbar>();
             bar.direction = Scrollbar.Direction.BottomToTop; bar.transition = Selectable.Transition.None;
             var handle = HubKit.Stretch(HubKit.Rect(HubKit.Stretch(HubKit.Rect(track, "SlidingArea")), "Handle")).gameObject.AddComponent<Image>();
-            handle.color = new Color(HubKnit.Honey.r, HubKnit.Honey.g, HubKnit.Honey.b, 0.6f);
+            handle.color = HubKnit.KitTanDark;
             bar.targetGraphic = handle; bar.handleRect = handle.rectTransform;
             _historyScroll.viewport = viewport; _historyScroll.content = _bubbles;
             _historyScroll.verticalScrollbar = bar;
@@ -84,19 +83,24 @@ namespace TumbangPreso.UI
             // pad. Enter sends too.
             var row = HubKit.Rect(_sheet, "ChatFieldRow");
             row.anchorMin = Vector2.zero; row.anchorMax = new Vector2(1, 0); row.pivot = new Vector2(0.5f, 0);
-            row.anchoredPosition = new Vector2(0, 30); row.sizeDelta = new Vector2(-60, 86);
+            row.anchoredPosition = new Vector2(0, 40); row.sizeDelta = new Vector2(-80, 84);
             _fieldRow = row.gameObject;
             _field = HubKnit.Field(row, "ChatInput", "", "Say something. Enter sends.", Net.MatchRpc.MaxChatLength, HubStyle.Body);
             var fieldRect = (RectTransform)_field.transform;
             fieldRect.anchorMin = Vector2.zero; fieldRect.anchorMax = Vector2.one; fieldRect.pivot = new Vector2(0.5f, 0.5f);
-            fieldRect.offsetMin = Vector2.zero; fieldRect.offsetMax = new Vector2(-112, 0);
-            _field.textComponent.font = HubStyle.ReadingFont;
-            _field.textComponent.fontSize = HubStyle.Size(HubStyle.Body);
+            fieldRect.offsetMin = Vector2.zero; fieldRect.offsetMax = new Vector2(-114, 0);
+            _field.textComponent.font = HubKnit.SentenceFont(false);
+            _field.textComponent.fontSize = HubStyle.Size(HubStyle.Floor);
+            var hintWords = (Text)_field.placeholder;
+            hintWords.fontSize = HubStyle.Size(HubStyle.Floor);
+            hintWords.horizontalOverflow = HorizontalWrapMode.Overflow;
+            _field.textComponent.rectTransform.offsetMin = hintWords.rectTransform.offsetMin = new Vector2(24, 0);
+            _field.textComponent.rectTransform.offsetMax = hintWords.rectTransform.offsetMax = new Vector2(-16, 0);
             _field.lineType = InputField.LineType.SingleLine;
             _field.onSubmit.AddListener(Submit);
-            var send = HubKnit.Button(row, "SendChat", null, Knit.Gold, () => { if (_field != null) Submit(_field.text); },
-                                      HubStyle.Label, HubGlyph.Mark.Play);
-            HubKit.Place((RectTransform)send.transform, HubKit.Right, new Vector2(-14, 2), new Vector2(92, 84));
+            var send = HubKnit.Button(row, "SendChat", null, Knit.Yellow, () => { if (_field != null) Submit(_field.text); },
+                                      HubStyle.Label, HubGlyph.Mark.Right);
+            HubKit.Place((RectTransform)send.transform, HubKit.Right, Vector2.zero, new Vector2(100, 80));
 
             _historyPanel = null;
             _historyText = null;
@@ -132,7 +136,7 @@ namespace TumbangPreso.UI
             float width = HubLobby.RoomChatWidth - 24 * 2 - 30, y = -10;
             if (_history.Count == 0)
             {
-                var empty = HubKit.Text(_bubbles, "Empty", EmptyLog, HubStyle.Body, false, new Color(HubKnit.Cream.r, HubKnit.Cream.g, HubKnit.Cream.b, 0.6f), TextAnchor.MiddleCenter);
+                var empty = HubKnit.Words(_bubbles, "Empty", EmptyLog, HubStyle.Body, HubKnit.KitTanDark, TextAnchor.MiddleCenter);
                 HubKit.Place(empty.rectTransform, HubKit.Top, new Vector2(0, -20), new Vector2(width, 60));
                 y = -80;
             }
@@ -160,7 +164,7 @@ namespace TumbangPreso.UI
             if (who == null)
             {
                 row.sizeDelta = new Vector2(0, 40);
-                var note = HubKit.Text(row, "Words", what, HubStyle.Floor, false, new Color(HubKnit.Cream.r, HubKnit.Cream.g, HubKnit.Cream.b, 0.6f), TextAnchor.MiddleCenter);
+                var note = HubKnit.Words(row, "Words", what, HubStyle.Floor, HubKnit.KitTanDark, TextAnchor.MiddleCenter);
                 note.rectTransform.anchorMin = new Vector2(0, 1); note.rectTransform.anchorMax = new Vector2(1, 1); note.rectTransform.pivot = new Vector2(.5f, 1);
                 note.rectTransform.offsetMin = new Vector2(20, -40); note.rectTransform.offsetMax = new Vector2(-20, 0);
                 // Measured at the drawer's known inner width, less a margin: on a small window the font
@@ -178,9 +182,9 @@ namespace TumbangPreso.UI
             shape.sprite = _bubbleSprite; shape.type = Image.Type.Sliced; shape.pixelsPerUnitMultiplier = 2f;
             shape.raycastTarget = false;
             // The peach well tinted: wine-dark for everyone else, persimmon for you.
-            shape.color = mine ? new Color(0.92f, 0.54f, 0.28f) : new Color(0.19f, 0.02f, 0.10f);
-            var words = HubKit.Text(shape.transform, "Words", what, HubStyle.Body, false,
-                                    mine ? HubKnit.WineInk : HubBoard.Colour("#F1E3C8"), TextAnchor.UpperLeft);
+            shape.color = mine ? HubKnit.KitLime : HubBoard.Colour("#8A2A3C");
+            var words = HubKnit.Words(shape.transform, "Words", what, HubStyle.Body,
+                                      mine ? HubKnit.GreenInk : HubKnit.KitCream, TextAnchor.UpperLeft, false);
             words.horizontalOverflow = HorizontalWrapMode.Overflow;
             // A little wider than the words measure, and measured narrower below, so a small window's
             // rounder glyphs never push a line onto a second one the bubble has no room for.
@@ -188,7 +192,7 @@ namespace TumbangPreso.UI
             Text name = null;
             if (!mine)
             {
-                name = HubKit.Text(shape.transform, "Who", who.ToUpperInvariant(), HubStyle.Floor, true, HubKnit.Honey, TextAnchor.UpperLeft);
+                name = HubKit.Text(shape.transform, "Who", who.ToUpperInvariant(), HubStyle.Floor, true, HubKnit.KitTan, TextAnchor.UpperLeft);
                 name.horizontalOverflow = HorizontalWrapMode.Overflow;
                 inner = Mathf.Max(inner, Mathf.Min(BubbleMax - pad * 2, name.preferredWidth + 2));
             }

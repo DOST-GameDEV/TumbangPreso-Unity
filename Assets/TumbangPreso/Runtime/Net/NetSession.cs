@@ -709,7 +709,12 @@ namespace TumbangPreso.Net
         // `SkillContractFingerprint`. A 184 peer would run the shorter cutscene against a 185 host's clock: the two may not meet.
         // 186 (2026-11-01): recorded clips are version 18, with Dante's mountain and the taya's headband as recorded fields. A 185
         // peer cannot read a 186 host's replay: the two may not meet.
-        public const int ProtocolVersion = 186;
+        // 186 (2026-10-31): Ilyas's Baha is wider (owner: "can you increase the width?", then "bump it"). `RafiRules.BahaHalfWidth`
+        // is 4.2 m where it was 3 m, and the field check compares the replicated Radius with that constant. A 185 peer would reject
+        // a 186 host's Baha and disagree on who is hit: the two may not meet.
+        // 187 (2026-11-02): main and QoLUpdates-v2 each spent 186 on a different change, so a build of one would have met a
+        // build of the other and disagreed. Merged, both are in, and no 186 peer of either kind may meet this.
+        public const int ProtocolVersion = 187;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

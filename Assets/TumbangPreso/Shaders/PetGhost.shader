@@ -9,8 +9,15 @@
 //  * The rim where it turns from the lens (`_Rim`), and the code's `_Flash`.
 //  * The tail sways (`_Sway`), weighted by how far BELOW `_TailTop` (metres, model space) a vertex is, and TRAILS behind
 //    the way it flies (`_Trail`, model space, set from its flight each frame): the beads lag, the body does not.
-//  * An ink line round the silhouette like the cast's (`_Outline`, metres in model space).
+//  * NO INK LINE (owner 2026-10-29 on the k2 film: *"maybe get rid of the toon outlines for the ghosts"*). The pass that
+//    drew the cast's ink round the silhouette is gone; the soft two-band shading, the rim and the fade stay. `_Outline` and
+//    `_Ink` are kept as properties so nothing that sets them breaks; nothing reads them. This shader draws only the pet
+//    ghosts (`PetGhostModels`, `PetGhostRig`); the cast and Kuro keep their outlines.
 //  * `_Fade` fades it as ONE body: a depth-only pass first, so a fading ghost never shows its own insides.
+//  * `_ShadeKeep` (0 is the old shade): the shade side keeps the paint's own hue. The court film v2 showed the mint mouse
+//    going GREY on its shaded side: `_ShadeTint` is a cool lavender step, and mint times lavender is a grey teal. At 1 the
+//    shade is the paint itself a step darker and a little richer (`NemuGhostLook`, set per body by its property block), the
+//    way a painter shades mint with deeper mint and not with grey.
 Shader "TumbangPreso/PetGhost"
 {
     Properties
@@ -28,6 +35,7 @@ Shader "TumbangPreso/PetGhost"
         _Outline ("Outline (metres)", Float) = 0.007
         _Ink ("Ink", Color) = (0.07, 0.055, 0.11, 1)
         _ShadeTint ("Shade", Color) = (0.70, 0.66, 0.78, 1)
+        _ShadeKeep ("Shade keeps the paint's hue", Range(0, 1)) = 0
     }
     SubShader
     {
@@ -60,29 +68,6 @@ Shader "TumbangPreso/PetGhost"
         }
         Pass
         {
-            // The ink line: the back faces pushed out along their normals, seen only round the edge.
-            ZWrite Off ZTest LEqual Cull Front
-            Blend SrcAlpha OneMinusSrcAlpha
-            CGPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
-            float _Outline, _Fade, _Flash;
-            fixed4 _Ink, _Rim;
-            struct appdata { float4 vertex : POSITION; float3 normal : NORMAL; };
-            struct v2f { float4 pos : SV_POSITION; };
-            v2f vert (appdata v)
-            {
-                v2f o;
-                float4 local = Sway(v.vertex);
-                local.xyz += normalize(v.normal) * _Outline;
-                o.pos = UnityObjectToClipPos(local);
-                return o;
-            }
-            fixed4 frag (v2f i) : SV_Target { return fixed4(lerp(_Ink.rgb, _Rim.rgb, _Flash), _Fade); }
-            ENDCG
-        }
-        Pass
-        {
             Tags { "LightMode" = "ForwardBase" }
             ZWrite Off ZTest LEqual Cull Back
             Blend SrcAlpha OneMinusSrcAlpha
@@ -91,7 +76,7 @@ Shader "TumbangPreso/PetGhost"
             #pragma fragment frag
             sampler2D _MainTex;
             fixed4 _Rim, _ShadeTint;
-            float _RimStrength, _Glow, _Fade, _Flash;
+            float _RimStrength, _Glow, _Fade, _Flash, _ShadeKeep;
             struct appdata { float4 vertex : POSITION; float3 normal : NORMAL; float2 uv : TEXCOORD0; };
             struct v2f { float4 pos : SV_POSITION; float2 uv : TEXCOORD0; float3 normal : TEXCOORD1; float3 view : TEXCOORD2; };
             v2f vert (appdata v)
@@ -113,8 +98,14 @@ Shader "TumbangPreso/PetGhost"
                     ? normalize(_WorldSpaceLightPos0.xyz) : normalize(float3(0.3, 1.0, 0.2));
                 // Two bands, a soft edge between them, as the cast's toon draws a lit side and a shade side.
                 float lit = smoothstep(0.02, 0.14, dot(n, sun));
-                float3 light = lerp(_ShadeTint.rgb, float3(1.0, 1.0, 1.0), lit) * 0.94;
-                float3 colour = paint.rgb * lerp(light, float3(1.0, 1.0, 1.0), glow);
+                // The shade band: the old cool tint, or (`_ShadeKeep`) the paint a step darker with its saturation pushed
+                // back up, so a pastel stays its colour in shadow. At `_ShadeKeep` 0 this is exactly the old sum.
+                float3 cool = paint.rgb * _ShadeTint.rgb * 0.94;
+                float3 deep = paint.rgb * 0.76;
+                float grey = dot(deep, float3(0.299, 0.587, 0.114));
+                deep = max(0.0, lerp(grey.xxx, deep, 1.35));
+                float3 painted = lerp(lerp(cool, deep, _ShadeKeep), paint.rgb * 0.94, lit);
+                float3 colour = lerp(painted, paint.rgb, glow);
                 float rim = pow(1.0 - saturate(dot(n, normalize(i.view))), 3.0);
                 colour += _Rim.rgb * rim * _RimStrength * (1.0 - glow);
                 colour = lerp(colour, colour * _Glow, glow);

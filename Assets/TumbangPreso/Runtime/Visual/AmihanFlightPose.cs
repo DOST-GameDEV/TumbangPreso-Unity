@@ -40,6 +40,9 @@ namespace TumbangPreso.Visual
             pose._movementEpoch = body.MovementEpoch;
             pose._landing = -1;
             pose._wasDescending = false;
+            // FEATHERFALL's revamped look (`AmihanFeatherfallLook.Enabled`, on): every caller that puts her in the air comes
+            // through here, the cast and a late joiner's restore alike, so this is the one place it is drawn from.
+            AmihanFeatherfallLook.Attach(body);
             return pose;
         }
 

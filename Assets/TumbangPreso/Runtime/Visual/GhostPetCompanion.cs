@@ -1417,9 +1417,13 @@ namespace TumbangPreso.Visual
             _lastTargetPos = _target != null ? _target.position : _lastTargetPos;
         }
 
-        // ⚠️ RETIRED 2026-10-13 (owner: "remove her fpp ghost dapat its js following her"): the sleeve Kuro is now only an
-        // unlockable (`ViewmodelArms.UnlockedHandPets`), so `For` answers null and he simply trails her in every view.
-        // What follows describes the path that still runs if that unlock is ever switched on.
+        // ⚠️ 2026-10-13 (owner: "remove her fpp ghost dapat its js following her") the perched sleeve Kuro became an unlockable
+        // (`ViewmodelArms.UnlockedHandPets`). 2026-10-28 (owner: "bring that back but make kuro more subtle (like it hides in
+        // nemu's sleeves)") the QUIET sleeve Kuro (`NemuKuroHand.InSleeve`, on) answers `For` again, so in her own first person
+        // the path below runs: he lives in her cuff, and the one in the world is not drawn for her while he is at her side.
+        // ⚠️ KEPT HIDDEN ON PURPOSE, not drawn as well: he trails behind her, so she meets him only by turning round, and there
+        // would then be two of him (the 2026-10-06 complaint below). With the switch off `For` answers null and he trails her
+        // in every view.
         // ⚠️⚠️ FOR HER OWN FIRST-PERSON VIEW HE IS ON HER SLEEVE, NOT BEHIND HER (`CameraSystem.NemuKuroHand`; owner,
         // 2026-10-06: "make it so that the fpv only sees the hand kuro. and then when casting her E ability to place kuro,
         // it looks like it moves from her hand for fpv only"). On the machine of the player who IS Nemu, in first

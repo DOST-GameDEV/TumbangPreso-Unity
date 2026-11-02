@@ -284,10 +284,14 @@ namespace TumbangPreso
 
         private IEnumerator PrepareAutomaticArrival()
         {
-            var presentation = gameObject.AddComponent<MatchArrivalPresentation>();
-            presentation.Viewer = _local;
-            yield return presentation.Run();
-            if (presentation != null) Destroy(presentation);
+            // Benchmark runs only (`FrameBudgetProbe`, owner, 2026-10-31: "for our build so its faster, skip/disable the cutscenes temporarily").
+            if (!Diagnostics.FrameBudgetProbe.SkipArrival)
+            {
+                var presentation = gameObject.AddComponent<MatchArrivalPresentation>();
+                presentation.Viewer = _local;
+                yield return presentation.Run();
+                if (presentation != null) Destroy(presentation);
+            }
             HoldUntilStart();
             MatchArrivalPresentation.Trace("opening done, waiting for the countdown");
             _introductionDone = true;

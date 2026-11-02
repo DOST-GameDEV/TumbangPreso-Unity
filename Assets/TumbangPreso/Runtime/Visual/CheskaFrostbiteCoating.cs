@@ -8,6 +8,18 @@ namespace TumbangPreso.Visual
     // A surface-bound readiness cue, with no gameplay or authored-material mutation.
     public sealed class CheskaFrostbiteCoating : MonoBehaviour
     {
+        /// <summary>
+        /// FROSTBITE, REWORKED LOOK (c1, 2026-10-29). On: the loaded shoe wears a crust of her approved GLACIAL WALL
+        /// DepthB ice (`Shaders/CheskaFrostbiteCrust`), which grows from toe and heel, KEEPS ITS CRUST IN FLIGHT (a frosted
+        /// throw is the dangerous one, and every peer already has the flying shoe's `SlipperAffinity.Frost`), and melts
+        /// back to both ends when the load ends or the hit spends it, never darkening and never cutting off. Off: the old
+        /// frost lines, held only (or the q1 crust if `CheskaPaintedFrostLook.PaintedFrostbite` is on).
+        /// </summary>
+        public static bool Crust = true;
+
+        /// <summary>Seconds the crust takes to close over the shoe, and to melt off it.</summary>
+        public const float GrowSeconds = 0.22f, MeltSeconds = 0.30f;
+
         private CheskaHeroKit _kit;
         private Slipper _shoe;
         private MeshFilter _target, _copy;
@@ -16,6 +28,7 @@ namespace TumbangPreso.Visual
         private Mesh _mesh;
         private Material _material;
         private MaterialPropertyBlock _block;
+        private bool _crust;
         public float VisibleStrength { get; private set; }
         public Slipper Shoe => _shoe;
 
@@ -36,7 +49,9 @@ namespace TumbangPreso.Visual
             effect._copy = go.AddComponent<MeshFilter>();
             effect._renderer = go.AddComponent<MeshRenderer>();
             effect._renderer.receiveShadows = false;
-            var shader = CheskaPaintedFrostLook.Coat(Resources.Load<Shader>("Shaders/FrostbiteLoad"));
+            var shader = Crust ? Resources.Load<Shader>("Shaders/CheskaFrostbiteCrust") : null;
+            effect._crust = shader != null;
+            if (shader == null) shader = CheskaPaintedFrostLook.Coat(Resources.Load<Shader>("Shaders/FrostbiteLoad"));
             if (shader == null) throw new System.InvalidOperationException("Frostbite load shader is missing.");
             effect._material = new Material(shader) { name = "Frostbite surface rime" };
             VfxRenderTag.Own(go, effect._material);
@@ -73,7 +88,17 @@ namespace TumbangPreso.Visual
                 && !_shoe.Holder.IsDefender && _shoe.Holder.AbilitySystem?.Kit == _kit;
             float remaining = _kit.AttackingSkill.DurationRemaining;
             float age = CryoRules.FrostbiteLoadSeconds - remaining;
-            VisibleStrength = held ? Mathf.SmoothStep(0, 1, Mathf.Clamp01(age / .18f)) * Mathf.Clamp01(remaining / .35f) : 0;
+            if (_crust)
+            {
+                // The crust stays on a frosted shoe in flight, and changes only at its own speed: it closes over the shoe
+                // in `GrowSeconds` and melts off in `MeltSeconds`, whether the load ends, a hit spends it or the shoe
+                // lands, so nothing about it ever cuts on or off.
+                bool flying = _shoe.State == SlipperState.InFlight && _shoe.Affinity == SlipperAffinity.Frost;
+                float target = held || flying ? Mathf.Clamp01(remaining / MeltSeconds) : 0f;
+                float step = Time.deltaTime / (target > VisibleStrength ? GrowSeconds : MeltSeconds);
+                VisibleStrength = Mathf.MoveTowards(VisibleStrength, target, step);
+            }
+            else VisibleStrength = held ? Mathf.SmoothStep(0, 1, Mathf.Clamp01(age / .18f)) * Mathf.Clamp01(remaining / .35f) : 0;
             _block.SetFloat("_Strength", VisibleStrength); _renderer.SetPropertyBlock(_block);
             _renderer.enabled = VisibleStrength > 0 && (_source == null || _source.enabled);
             if (_source != null)
