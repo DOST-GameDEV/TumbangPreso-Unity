@@ -8,9 +8,9 @@ Magnet) and the owner asked for a film that settles instead of a loop. Source is
 ## Why BGC
 
 The owner: Sa Bubong is gone, so Zack's map has to change. BGC (scene id `Kanto`) is selectable on
-main, sits next to his Pasig home, and its signals, lamps and power lines suit an electric hero. This
-was my call; `docs/CHARACTER_ORIGINS.md` and `LORE.md` still name Sa Bubong as his home court and
-have not been changed, because rewriting his lore is the owner's decision.
+main, sits next to his Pasig home, and its signals, lamps and power lines suit an electric hero. The
+owner confirmed it on 2026-11-02, and `LORE.md`, `docs/CHARACTER_ORIGINS.md` and `character-stories.json`
+now name BGC as his home court.
 
 ## The story
 

@@ -31,21 +31,22 @@ near Mayon, moved to San Fernando as a kid, and the Eskinita stays his court.
 
 ## Zack: Pasig, Metro Manila
 
-Home court: **Sa Bubong**, the condo roofdeck where he grew up playing.
+Home court: **BGC**, a fictional marked court by a park, across the river from home.
 
 Character-select line: **Finds the angle before you see the opening.**
 
 Long introduction:
 
-Zack learned tumbang preso on the roofdeck of his family's condo in Pasig. The
-court changed with laundry days, resident gatherings and whoever had claimed the
-shade, so he got good at finding an angle before anyone else settled in. Now he
-makes difficult plays look casual and casual plays unnecessarily difficult.
-Rago is usually the first to call him on it. Zack wants a national title, partly
-for himself and partly so the neighbours can say they used to beat him upstairs.
+Zack grew up in Pasig and learned his game across the river, on a marked court by
+a park in BGC. The light changed, the traffic moved and the shadows of the towers
+crossed the court, so he got good at finding an angle before anyone else settled
+in. Now he makes difficult plays look casual and casual plays unnecessarily
+difficult. Rago is usually the first to call him on it. Zack wants a national
+title, partly for himself and partly so the regulars can say they used to beat him
+at the crossing.
 
-Pasig is the fictional condo's chosen locality, not a claim that the current map
-copies a real building. Electricity belongs to Zack's talent, not a named deity.
+Owner, 2026-11-02: BGC replaces Sa Bubong as his home court. The court is fictional,
+not a claim that the map copies a real place. Electricity belongs to Zack's talent, not a named deity.
 
 ## Dante: Montalban, Rizal
 
@@ -140,7 +141,7 @@ remove existing access to manufacture a character-unlock screen. Share biography
 data with the introduction view and future genuine hero-unlock event. UI wiring
 and aspect/focus verification remain explicit tasks, not claims made by this file.
 
-The four existing map identities remain intact: Rago/Eskinita, Zack/Sa Bubong,
+The four existing map identities remain intact: Rago/Eskinita, Zack/BGC,
 Dante/Bayan, Phaister's adopted court/Ilalim. Yasmin and Nemu have off-screen home
 courts until a separately scheduled map expansion. All athletes can play all maps.
 

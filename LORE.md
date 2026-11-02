@@ -2,7 +2,7 @@
 
 **Character origins, 2026-09-14:** [Character origins and court stories](docs/CHARACTER_ORIGINS.md)
 contains the six hometowns, short selection lines and longer introduction copy.
-Zack grew up at the Pasig condo behind Sa Bubong; Cheska comes from La Trinidad,
+Zack grew up in Pasig and plays at BGC; Cheska comes from La Trinidad,
 Benguet. Sean was born at the foot of Mayon in Albay and moved to San Fernando
 as a kid; his Eskinita and Dante's Bayan Plaza are fictional home courts in
 San Fernando and Montalban. Phaister grew up on Capul and now plays at Ilalim
@@ -96,7 +96,8 @@ The maps are places with a court in them, not corridors decorated with flags.
 | Eskinita | The neighborhood court where everyone already knows who likes to throw from which side | A sari-sari frontage, homes, laundry, plants, worn street surfaces and roadside seating. Close human scale, a clear lane and warm domestic life |
 | Bayan Plaza | A public square used for local matches and community gatherings | Civic space, shade trees, a monument, familiar church/basketball vocabulary and places for a crowd to stand. More open and composed than Eskinita |
 | Ilalim ng Tulay | A marked urban court under the rail guideway, drawing on the team's Gilmore/LRT reference | The weight of the viaduct, electronics shops, pisonet, pares and the jeepney. Selective shop light, real urban depth and the occasional train overhead |
-| Sa Bubong | Zack's fictional condo roofdeck in Pasig, Metro Manila | A shared residents' court, accessible pool, shade, laundry and the city beyond. A lived-in home court rather than a professional stadium |
+| BGC | Zack's home court: a fictional marked court by a park, in a grid of towers and signalled roads | Traffic that obeys its lights, parked cars, shopfronts, benches and pigeons. Busy city life kept outside a clear court |
+| Sa Bubong | A fictional condo roofdeck in Pasig, Metro Manila, out of the map rotation | A shared residents' court, accessible pool, shade, laundry and the city beyond. A lived-in home court rather than a professional stadium |
 
 Eskinita and Bayan Plaza are composites of recognizable Philippine places, not
 claims to be exact surveyed streets. Ilalim uses its existing real-place reference;
