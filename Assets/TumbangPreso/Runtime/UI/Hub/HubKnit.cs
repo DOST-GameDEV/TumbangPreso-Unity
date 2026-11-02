@@ -276,7 +276,7 @@ namespace TumbangPreso.UI.Hub
             {"tile_hero_face", new Vector4(14, 15, 13, 14)}, {"tile_hero_slab", new Vector4(6, 6, 6, 6)},
             {"tile_task_face", new Vector4(15, 14, 14, 14)}, {"tile_task_slab", new Vector4(6, 6, 6, 6)},
             {"tile_shop_face", new Vector4(14, 14, 12, 13)}, {"tile_shop_slab", new Vector4(6, 6, 6, 6)},
-            {"play_face", new Vector4(15, 15, 15, 91)}, {"play_slab", new Vector4(15, 15, 15, 17)},
+            {"play_face", new Vector4(15, 15, 15, 91)}, {"play_slab", new Vector4(15, 15, 37, 15)},
             {"name_plate_face", new Vector4(11, 10, 10, 27)}, {"name_plate_slab", new Vector4(11, 10, 10, 9)},
             {"menu_button_face", new Vector4(10, 9, 10, 28)}, {"menu_button_slab", new Vector4(10, 9, 10, 10)},
             {"currency_field", new Vector4(6, 6, 6, 6)},

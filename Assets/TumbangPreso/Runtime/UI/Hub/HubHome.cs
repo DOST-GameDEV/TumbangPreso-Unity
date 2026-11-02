@@ -37,7 +37,9 @@ namespace TumbangPreso.UI.Hub
         private Image _xpFill, _avatar, _modePoster;
         private HubButton _play;
         private GameObject _skillNotice, _taskNotice;
-        private HubBoard.LabelSpec _nameSpec, _modeSpec, _playSpec;
+        private HubBoard.LabelSpec _nameSpec, _tagSpec, _modeSpec, _playSpec;
+        /// <summary>Board units: how far the name drops to centre on the hexagon, the tag's size, and the line's width out to the XP bar's right edge.</summary>
+        private const float NameDrop = 11f, TagSize = 18f, NameLineRoom = 208f;
 
         public override void Build()
         {
@@ -73,6 +75,13 @@ namespace TumbangPreso.UI.Hub
             _nameSpec = HubBoard.Label("Tump_ID");
             _name = HubBoard.Lettering(plateFace, plateGroup, "Tump_ID", "PlayerName");
             _tag = HubBoard.Lettering(plateFace, plateGroup, "#1234", "PlayerTag");
+            // ⚠️ NAME AND TAG SHARE ONE LINE, CENTRED ON THE HEXAGON (owner, 2026-11-02: too much empty space on the plate).
+            _name.rectTransform.anchoredPosition -= new Vector2(0, NameDrop);
+            _tag.font = _name.font;
+            var nameLine = _name.GetComponent<BoardBaseline>();
+            if (nameLine != null) _tag.GetComponent<BoardBaseline>().FromTop = nameLine.FromTop;
+            _tagSpec = new HubBoard.LabelSpec { size = TagSize, w = NameLineRoom };
+            _tag.gameObject.AddComponent<HubTagBesideName>().Name = _name;
             HubBoard.Picture(plateFace, plateGroup, "xp_track", "XpTrack");
             var fill = HubBoard.Picture(plateFace, plateGroup, "xp_fill", "XpFill");
             _xpFill = fill.GetComponent<Image>();
@@ -230,9 +239,9 @@ namespace TumbangPreso.UI.Hub
 
             string name = account != null && !string.IsNullOrWhiteSpace(account.DisplayName) ? account.DisplayName
                         : !string.IsNullOrWhiteSpace(settings.PlayerName) ? settings.PlayerName : "PLAYER";
-            HubBoard.SetWords(_name, name, _nameSpec);
             string tag = account != null ? account.Discriminator : "";
-            _tag.text = account != null && account.IsGuest ? "GUEST" : string.IsNullOrEmpty(tag) ? "OFFLINE" : "#" + tag;
+            HubBoard.SetWords(_tag, account != null && account.IsGuest ? "GUEST" : string.IsNullOrEmpty(tag) ? "OFFLINE" : "#" + tag, _tagSpec);
+            HubBoard.SetWords(_name, name, _nameSpec, NameLineRoom - HubTagBesideName.Gap - _tag.preferredWidth * 0.5f);
 
             var profile = GameServices.Career?.Profile;
             int level = profile != null ? Mathf.Max(1, profile.Level) : 1;
@@ -291,6 +300,29 @@ namespace TumbangPreso.UI.Hub
             if (HubQueueWatch.QueueRoom) { Hub.Host.CancelQueue(); return true; }
             Hub.Push<HubMenu>();
             return true;
+        }
+    }
+
+    /// <summary>Keeps the player's tag just after the name on the name's line, whatever size the name was fitted to. Never past the XP bar's right edge.</summary>
+    [RequireComponent(typeof(Text))]
+    public sealed class HubTagBesideName : MonoBehaviour
+    {
+        public const float Gap = 9f;
+        private const float RightEdge = 208f;
+        public Text Name;
+        private Text _tag;
+        private float _left;
+
+        private void Start() { _left = Name != null ? Name.rectTransform.anchoredPosition.x : 0f; }
+
+        private void LateUpdate()
+        {
+            if (Name == null) return;
+            if (_tag == null) _tag = GetComponent<Text>();
+            float tag = _tag.preferredWidth * 0.5f;
+            float x = Mathf.Min(_left + Name.preferredWidth * 0.5f + Gap, _left + RightEdge - tag);
+            var at = new Vector2(x, Name.rectTransform.anchoredPosition.y);
+            if (_tag.rectTransform.anchoredPosition != at) _tag.rectTransform.anchoredPosition = at;
         }
     }
 }

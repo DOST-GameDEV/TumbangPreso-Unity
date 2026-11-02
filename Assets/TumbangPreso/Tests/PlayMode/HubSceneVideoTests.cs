@@ -3,6 +3,7 @@ using NUnit.Framework;
 using TumbangPreso.UI.Hub;
 using UnityEngine;
 using UnityEngine.TestTools;
+using UnityEngine.UI;
 using UnityEngine.Video;
 
 namespace TumbangPreso.PlayTests
@@ -254,6 +255,28 @@ namespace TumbangPreso.PlayTests
                 if (second != null) Object.Destroy(second);
                 Settings.SettingsStore.Current.ReducedUiMotion = reduced;
             }
+        }
+
+        /// <summary>The plate's one line of name and tag, and its stripes running slowly, on a bar with some XP in it.</summary>
+        [UnityTest, Timeout(120000)]
+        public IEnumerator ThePlateKeepsItsNameLineAndSlowStripes()
+        {
+            HubSceneVideo.ForcedHero = "phaister";
+            yield return HubFlowTests.OpenHome();
+            var hub = TumpHub.Current;
+            var texts = hub.Canvas.GetComponentsInChildren<Text>();
+            var name = System.Array.Find(texts, t => t.name == "PlayerName");
+            var tag = System.Array.Find(texts, t => t.name == "PlayerTag");
+            yield return null;
+            Assert.AreEqual(name.rectTransform.anchoredPosition.y, tag.rectTransform.anchoredPosition.y, 0.01f, "The tag left the name's line.");
+            Assert.Greater(tag.rectTransform.anchoredPosition.x, name.rectTransform.anchoredPosition.x + name.preferredWidth * 0.5f - 0.5f, "The tag sits on the name.");
+            var fill = System.Array.Find(hub.Canvas.GetComponentsInChildren<Image>(), i => i.name == "XpFill");
+            Assert.AreEqual("TumbangPreso/XpBarber", fill.material.shader.name);
+            Assert.AreEqual(0.15f, fill.material.GetFloat("_Speed"), 0.001f);
+            fill.fillAmount = 0.65f;
+            yield return TumpUiCapture.Capture("Hub-Plate-Stripes-A", hub.Canvas, 1920, 1080, checkPalette: false);
+            yield return new WaitForSecondsRealtime(2f);
+            yield return TumpUiCapture.Capture("Hub-Plate-Stripes-B", hub.Canvas, 1920, 1080, checkPalette: false);
         }
 
         /// <summary>Phaister's loop, picked, prepares and advances in the real hub exactly as Zack's does.</summary>
