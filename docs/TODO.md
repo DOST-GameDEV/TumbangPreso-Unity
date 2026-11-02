@@ -11,7 +11,7 @@ All original IDs and full bodies remain in the
 
 | ID | Status | Acceptance / next action |
 |---|---|---|
-| UI-REVAMP-1029 | In game on QoLUpdates-v2 | New boards reviewed; into game next, HUD boards in progress. [Method](UI_REVAMP.md) |
+| UI-REVAMP-1029 | In game | New HUD and most menus on QoLUpdates-v2 and main. Remaining screens listed in the method's handoff state. [Method](UI_REVAMP.md) |
 | LOBBY-UI-1028 | DESKTOP FIXES integrated | Knit rules sheet, MATCH SETTINGS footer, joined-room spacing and immediate input on rules close are integrated. Evidence: Logs/lobby-ui-20261028/fixes/. Phone work excluded. |
 | ONLINE-CAST-1028 | FIXED: desktop checks passed | 73b1f403b built. Ult victims/can on own floor from host-frozen pose; GroundY ignores awnings. Delayed Payo pairs: Cheska gap 3.2 m to 0, Nemu 0.015, Paete tree grounded; EditMode 23/23. Open: victims in Paete/Amihan/Phaister reach, physical multi-PC. Logs/ult-terrain-20261029/. |
 | ZACK-SPEEDSTER-1025 | Visuals approved; SFX review open | Owner approved electrical-outline rewind `308fb345f` for publication. The skin-mounted hand zigzag overlay and its retired test are removed, with a final native capture passing 1/1. Rewind integration 23/23 plus final stroke capture 1/1 passed; both exports were reviewed at 1x. The procedural SFX challenger was rejected; source-material auditions remain separate from the installed mix. Listening acceptance and actual peers remain open. [Evidence](reports/zack-kit-2026-10-25/refinement-validation.md). |

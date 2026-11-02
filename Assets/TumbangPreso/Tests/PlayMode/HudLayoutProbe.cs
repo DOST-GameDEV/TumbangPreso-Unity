@@ -159,7 +159,8 @@ namespace TumbangPreso.PlayTests
                 }
             }
 
-            Assert.AreEqual(3, cards, "the deck should carry exactly E, Q and F.");
+            // The ultimate left this row on Oct 20 and has its own group at the bottom centre.
+            Assert.AreEqual(2, cards, "the deck should carry exactly E and Q.");
 
             // ⚠️ THE PAINTED DECK PLACES ITS DIALS RATHER THAN LAYING THEM OUT, so there is no
             // `HorizontalLayoutGroup` to read a padding off. Its chrome is zero and the width

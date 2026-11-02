@@ -39,6 +39,9 @@ namespace TumbangPreso.PlayTests
         {
             SceneFlow.PinSelectedRules(CustomGameRules.Defaults(mode));
             GameLaunch.AllBots = false; GameLaunch.Spectator = false; GameLaunch.SoloSeat = 1;
+            // The other seats are built only when bots are on, and that follows the saved difficulty, so a profile saved with
+            // no bots would leave one seat. Tests built on this fixture need the full four.
+            Settings.SettingsStore.Current.AiDifficulty = 1; AIController.BotsEnabled = true;
             yield return SceneManager.LoadSceneAsync(map);
             yield return new WaitForSeconds(.3f);
             Object.FindFirstObjectByType<SliceRunner>().Begin();

@@ -215,8 +215,9 @@ namespace TumbangPreso.PlayTests
                         string path = string.Join("/", text.GetComponentsInParent<Transform>().Reverse().Select(t => t.name));
                         if(text.name.Contains("Heading") || text.name.EndsWith("Title") || text.name=="Title"
                             || text.name=="Traits" || text.name=="TrainingWord" || text.name=="NextRole" || text.name=="AbilityName")
-                            Assert.AreEqual(Resources.Load<Font>("UI/fonts/DarumadropOne-Regular"),text.font,
-                                name+"/"+path+" must use the owner's Darumadrop heading face.");
+                            // Screen headings take Darumadrop; in-game panels take the bold DIN face (docs/FONT_USAGE.md, Oct 6).
+                            Assert.IsTrue(text.font==Resources.Load<Font>("UI/fonts/DarumadropOne-Regular") || text.font==Resources.Load<Font>("UI/fonts/DINNextLTArabic-Bold"),
+                                name+"/"+path+" must use the owner's heading face, not "+text.font.name+".");
                         int charsBefore=text.cachedTextGenerator.characterCountVisible;
                         int verticesBefore=text.canvasRenderer.GetMesh()?.vertexCount??0;
                         Assert.LessOrEqual(text.preferredHeight, text.rectTransform.rect.height + 3,

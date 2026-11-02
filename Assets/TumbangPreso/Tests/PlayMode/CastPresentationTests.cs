@@ -26,6 +26,8 @@ namespace TumbangPreso.PlayTests
         {
             SceneFlow.Networked = false; SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));
             GameLaunch.SoloSeat = 1; GameLaunch.GuidedTutorial = false;
+            // The caster is another seat, and the other seats exist only when bots are on.
+            Settings.SettingsStore.Current.AiDifficulty = 1; AIController.BotsEnabled = true;
             yield return SceneManager.LoadSceneAsync(SceneFlow.Eskinita); yield return new WaitForSeconds(.2f);
             foreach (var ai in Object.FindObjectsByType<AIController>()) ai.enabled = false;
             foreach (var input in Object.FindObjectsByType<PlayerInputReader>()) input.enabled = false;
@@ -51,9 +53,10 @@ namespace TumbangPreso.PlayTests
                 yield return null;
                 who.AbilitySystem.BindHero("zack");
                 who.Intent.Parked = false;
-                who.Intent.Set(Verb.Skill1, true);
+                // Backtrack (Skill1) refuses a body with no trail to snap back to, and this one has just been moved here.
+                who.Intent.Set(Verb.Skill2, true);
                 yield return new WaitForSeconds(.1f);
-                who.Intent.Set(Verb.Skill1, false);
+                who.Intent.Set(Verb.Skill2, false);
                 float until = Time.unscaledTime + 2;
                 while (seen == 0 && Time.unscaledTime < until) yield return null;
                 yield return null;

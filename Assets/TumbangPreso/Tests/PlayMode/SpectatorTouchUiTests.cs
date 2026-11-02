@@ -103,6 +103,9 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(_watcher.ExecuteViewCommand(SpectatorCamera.ViewCommand.Replay));Assert.IsTrue(_watcher.Replaying);
             var replay=_watcher.GetComponentsInChildren<Canvas>(true).Single(c=>c.name=="InstantReplayOverlay");
             var exit=replay.GetComponentsInChildren<Button>().Single(b=>b.name=="ReplayReturnToLive");
+            // The overlay stays off behind the opening wipe (`_replayWipe`) and comes on once the wipe covers the picture.
+            float wipeLimit=Time.unscaledTime+5;while(!replay.enabled&&_watcher.Replaying&&Time.unscaledTime<wipeLimit)yield return null;
+            Assert.IsTrue(replay.enabled,"The replay overlay never came on.");
             Assert.IsTrue(exit.IsInteractable());float before=PresentationClock.RequestedScale;
             RaycastResult HitReturn()
             {
@@ -115,6 +118,8 @@ namespace TumbangPreso.PlayTests
             yield return TumpUiCapture.Capture("spectator-touch-replay-controls",replay,1280,720,false,inspectViewport:()=>{HitReturn();});
             UnityEngine.Canvas.ForceUpdateCanvases();var hit=HitReturn();
             ExecuteEvents.ExecuteHierarchy(hit.gameObject,new PointerEventData(EventSystem.current){button=PointerEventData.InputButton.Left},ExecuteEvents.pointerClickHandler);
+            // An operator's exit leaves behind the closing wipe, so the replay ends when that has covered the picture.
+            float exitLimit=Time.unscaledTime+5;while(_watcher.Replaying&&Time.unscaledTime<exitLimit)yield return null;
             Assert.IsFalse(_watcher.Replaying);Assert.IsFalse(replay.enabled);Assert.AreEqual(before,PresentationClock.RequestedScale);
         }
         [UnityTest]public IEnumerator ResizingTheTouchSurfaceRetiresOldFingerCoordinates()

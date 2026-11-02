@@ -44,8 +44,9 @@ namespace TumbangPreso.PlayTests
                 Assert.AreEqual(match.ScoreFor(thrower).ToString(), score.text, "The label holds the true total at once.");
                 var ghost = Named(readout, "ScoreRollOut", thrower);
                 Assert.IsNotNull(ghost); Assert.IsTrue(ghost.enabled, "The old total rolls out above the new one.");
-                Assert.IsTrue(readout.Canvas.GetComponentsInChildren<Text>().Any(t => t.name == "PointsInFlight" && t.enabled),
-                    "The knockdown's points fly to the scorer's chip.");
+                // In play the chip row is off, so nothing flies and the corner and the plates tell the score.
+                Assert.IsFalse(readout.Canvas.GetComponentsInChildren<Text>().Any(t => t.name == "PointsInFlight" && t.enabled),
+                    "With the chip row off there is no chip for the points to fly to.");
                 yield return TumpUiCapture.Capture("HudMotion-roll-and-flight", readout.Canvas, 1600, 900, false, true);
                 yield return new WaitForSecondsRealtime(.8f);
                 Assert.IsFalse(ghost.enabled, "The roll settles.");

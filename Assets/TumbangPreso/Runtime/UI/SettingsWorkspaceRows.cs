@@ -79,7 +79,8 @@ namespace TumbangPreso.UI
             var knob = root.gameObject.AddComponent<Hub.KitPress>(); knob.Face = handle; knob.Visual = handle.rectTransform;
             slider.handleRect = handle.rectTransform; slider.targetGraphic = handle; slider.transition = Selectable.Transition.None;
             var text = OwnerUiLayout.Text(root, "Value", show(value), 36, OwnerUiLayout.TypeRole.Display);
-            OwnerUiLayout.Place(text.rectTransform, 508, 4, 112, 70); text.alignment = TextAnchor.MiddleCenter; text.color = SettingsPalette.PanelAccent;
+            // Taller than the row and centred on it, so Larger Text's line height fits without moving the number.
+            OwnerUiLayout.Place(text.rectTransform, 508, -11, 112, 100); text.horizontalOverflow = HorizontalWrapMode.Overflow; text.alignment = TextAnchor.MiddleCenter; text.color = SettingsPalette.PanelAccent;
             slider.SetValueWithoutNotify(value); slider.onValueChanged.AddListener(v => { text.text = show(v); changed(v); }); return slider;
         }
         public static InputField Entry(Transform parent, string name, string placeholder)

@@ -68,6 +68,15 @@ namespace TumbangPreso.UI
                 if(i==_selected)selectedButton=button;
             }
             SettingsReadingLayout.Apply(_popup, null);
+            if (touch)
+            {
+                // The touch floor can leave the rows taller than the estimate above: fit the box to what they came to.
+                LayoutRebuilder.ForceRebuildLayoutImmediate(column);
+                height=Mathf.Min(720,column.rect.height+40);box.sizeDelta=new Vector2(566,height);
+                box.anchoredPosition=new Vector2(box.anchoredPosition.x,Mathf.Clamp(local.y-height*.5f-8,bounds.yMin+height*.5f+18,bounds.yMax-height*.5f-18));
+                OwnerUiLayout.Place((RectTransform)scroll.transform,22,20,522,height-40);
+                scroll.verticalNormalizedPosition=1;
+            }
             _popup.GetComponent<InputLayer.ScreenFocus>().Rebuild();
             selectedButton?.Select();
             ScreenTakeover.Register(this,()=>_popup!=null && _popup.gameObject.activeInHierarchy);

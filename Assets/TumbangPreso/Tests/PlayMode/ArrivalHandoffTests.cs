@@ -133,6 +133,8 @@ namespace TumbangPreso.PlayTests
         [UnityTest] public IEnumerator MatchHudFadesInBeforeTheOpeningCountdown()
         {
             GameServices.Ensure();
+            // The opening ends at once when the scene has no main camera.
+            var eye = Make("Opening camera"); eye.tag = "MainCamera"; eye.AddComponent<Camera>();
             var root = Make("Opening HUD visibility");
             var readout = root.AddComponent<UI.TumpMatchReadout>(); readout.Build(root.transform);
             var gate = root.AddComponent<ReadyGate>();
@@ -142,8 +144,8 @@ namespace TumbangPreso.PlayTests
             gate.CountdownTick += tick => { ticks.Add(tick); readout.Countdown(tick); };
             gate.CountdownHidden += () => readout.Countdown("");
             // The four-chip score row is off in play, so the timer face stands for the HUD that must fade in.
-            var score = readout.Canvas.transform.Find("RoundClock/ClockFace").GetComponent<CanvasRenderer>();
-            var countdown = readout.Canvas.transform.Find("Countdown").GetComponent<Text>();
+            var score = readout.Canvas.transform.HudFind("RoundClock/ClockFace").GetComponent<CanvasRenderer>();
+            var countdown = readout.Canvas.transform.HudFind("Countdown").GetComponent<Text>();
             try
             {
                 InputLayer.TouchHud.ForceVisible = true;

@@ -124,19 +124,20 @@ namespace TumbangPreso.PlayTests
             var canvas = GameObject.Find("OwnerSettingsCanvas").GetComponent<Canvas>();
             yield return TumpUiCapture.Capture("accessibility-settings-normal-wide", canvas, 1920, 1080, false, checkActionBounds: true);
             float originalHeight = GameObject.Find("LargerText").GetComponent<LayoutElement>().preferredHeight;
+            int originalSize = GameObject.Find("LargerText").transform.Find("Label").GetComponent<Text>().fontSize;
             var toggle = GameObject.Find("LargerTextValue").GetComponent<Toggle>(); toggle.isOn = true;
             yield return null; Canvas.ForceUpdateCanvases();
             var row = GameObject.Find("LargerText");
             var label = row.transform.Find("Label").GetComponent<Text>();
             var control = (RectTransform)row.transform.Find("Control");
-            Assert.Greater(label.fontSize, 31);
+            Assert.Greater(label.fontSize, originalSize);
             Assert.Less(control.anchoredPosition.y, -70, "The large control still shares the label's line.");
             yield return TumpUiCapture.Capture("accessibility-settings-large-wide", canvas, 1920, 1080, false, checkActionBounds: true);
             yield return TumpUiCapture.Capture("accessibility-settings-large-4x3", canvas, 1280, 960, false, checkActionBounds: true);
             canvas.GetComponentInChildren<ScrollRect>().verticalNormalizedPosition = 0;
             yield return TumpUiCapture.Capture("accessibility-settings-large-bottom-4x3", canvas, 1280, 960, false, checkActionBounds: true);
             view.Session.Discard(); yield return null;
-            Assert.AreEqual(31, label.fontSize); Assert.AreEqual(0, control.anchoredPosition.y);
+            Assert.AreEqual(originalSize, label.fontSize); Assert.AreEqual(0, control.anchoredPosition.y);
             Assert.AreEqual(originalHeight, row.GetComponent<LayoutElement>().preferredHeight, "Discard must restore the original row, including the existing touch-target floor.");
         }
 
@@ -171,15 +172,18 @@ namespace TumbangPreso.PlayTests
             SettingsStore.Current.CalloutCaptions = true; SettingsStore.Current.AnnouncerVolume = 0;
             yield return Start(1, GameMode.HeroStrike);
             GameServices.Match.StartMatch(); yield return null;
-            var caption = GameObject.Find("OwnerMatchCanvas").GetComponent<CalloutCaption>();
+            var caption = GameObject.Find("OwnerMatchCanvas").GetComponentInChildren<CalloutCaption>();
             var voice = GameServices.Voice; Assert.IsNotNull(voice);
+            // The real opening has just called its own lines, and those hold the voice and start cooldowns.
+            typeof(Audio.VoiceDirector).GetField("_busyUntil", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(voice, 0f);
+            ((System.Collections.IDictionary)typeof(Audio.VoiceDirector).GetField("_cooldownUntil", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(voice)).Clear();
             voice.Play("clock_10"); yield return null;
             Assert.AreEqual("Ten seconds left!", caption.VisibleText);
             var voices = (AudioSource[])typeof(Audio.VoiceDirector).GetField("_voices", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(voice);
             Assert.IsFalse(voices.Any(source => source.isPlaying));
             SettingsStore.Current.HighContrastHud = true; SettingsStore.Current.LargerText = true;
             yield return null; yield return null;
-            var canvas = caption.GetComponent<Canvas>();
+            var canvas = caption.GetComponentInParent<Canvas>();
             yield return TumpUiCapture.Capture("accessibility-contrast-caption-wide", canvas, 1920,1080,false,true);
             voice.Play("count_go"); yield return null;
             Assert.AreEqual("Begin!", caption.VisibleText);

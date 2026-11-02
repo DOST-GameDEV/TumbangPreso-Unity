@@ -217,6 +217,11 @@ Motion for the live HUD, built with it (spring or eased, never linear; UI Motion
 - Notices: words stamp in from 1.3 with a spring and a slight per-letter stagger, the band wipes out from the centre, the `!` marks or cans pop last with a tilt wobble; out is a quick fade and rise.
 - Warning: the band pulses slowly while it stands. Others' scores slide in from the left and out after 3 s. Tab: scrim fades, the panel rises, rows stagger .04 s.
 
+### State at the 2026-11-03 handoff
+
+The UI is on `QoLUpdates-v2` and main.
+Not yet in the game: hero, story and skill tree screens, the rows in the record tabs, results, Next Court, Next Round, Halftime, and the redesigned countdown, arrival, emote wheel, ultimate card, catch replay and guided training. Phone and spectator HUDs still need redesigning. The HUD's motion, Tab and F1 have not been tried in play.
+
 ## Pipeline
 
 Run from this worktree; the owner's editor and other worktrees are never touched.

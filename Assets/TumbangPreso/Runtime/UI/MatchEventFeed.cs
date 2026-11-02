@@ -346,7 +346,7 @@ namespace TumbangPreso.UI
             var root = (RectTransform)transform;
             root.anchoredPosition = new Vector2(RailX(touch),
                 // Entry badges/score flyouts extend above the row's layout rect.
-                RailTop(touch) - (_connectionSpace ? PeerConnectionNotice.CardHeight + 40 : 0));
+                _connectionSpace ? TopFor(touch) - PeerConnectionNotice.CardHeight - 40 : RailTop(touch));
             GetComponentInParent<HudReadingLayout>()?.RebasePlacement(root);
         }
 
