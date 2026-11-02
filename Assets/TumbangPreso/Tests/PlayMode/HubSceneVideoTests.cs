@@ -272,6 +272,10 @@ namespace TumbangPreso.PlayTests
             Assert.Greater(tag.rectTransform.anchoredPosition.x, name.rectTransform.anchoredPosition.x + name.preferredWidth * 0.5f - 0.5f, "The tag sits on the name.");
             var fill = System.Array.Find(hub.Canvas.GetComponentsInChildren<Image>(), i => i.name == "XpFill");
             Assert.AreEqual("TumbangPreso/XpBarber", fill.material.shader.name);
+            var images = hub.Canvas.GetComponentsInChildren<Image>();
+            var track = System.Array.Find(images, i => i.name == "XpTrack").rectTransform;
+            var label = System.Array.Find(hub.Canvas.GetComponentsInChildren<Text>(), t => t.name == "XpLabel").rectTransform;
+            Assert.AreEqual(track.TransformPoint(track.rect.center).x, label.TransformPoint(label.rect.center).x, 0.5f, "XP sits in the middle of its bar");
             Assert.AreEqual(0.15f, fill.material.GetFloat("_Speed"), 0.001f);
             var fit = hub.Canvas.GetComponentInChildren<HubPlateFit>();
             HubBoard.SetWords(name, "Al", HubBoard.Label("Tump_ID"));
