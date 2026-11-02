@@ -309,8 +309,6 @@ namespace TumbangPreso.PlayTests
             Assert.IsNotNull(face.material.GetTexture("_Knit"), "The yarn layer did not load.");
             Assert.AreEqual(0.08f, HubPlayStripes.SpeedFor(0f), 0.001f);
             Assert.Greater(HubPlayStripes.SpeedFor(1f), HubPlayStripes.SpeedFor(0f) * 2f, "Highlighting PLAY should speed its stripes up.");
-            var avatarFace = System.Array.Find(hub.Canvas.GetComponentsInChildren<Image>(), i => i.name == "Backing");
-            Assert.AreEqual(Avatars.Get(Avatars.Mine()), avatarFace.sprite, "The profile's backing is not the player's picture.");
             float phase = Shader.GetGlobalFloat("_PlayStripePhase");
             yield return TumpUiCapture.Capture("Hub-Play-Stripes-A", hub.Canvas, 1920, 1080, checkPalette: false);
             yield return new WaitForSecondsRealtime(5f);
@@ -322,6 +320,25 @@ namespace TumbangPreso.PlayTests
             Settings.SettingsStore.Current.ReducedUiMotion = true;
             try { Assert.IsNull(HubHome.PlayStripesMaterial(), "Reduced motion must keep the plain art."); }
             finally { Settings.SettingsStore.Current.ReducedUiMotion = reduced; }
+        }
+
+        /// <summary>The picker's heroes and HOME's profile draw the figure with no sunburst, filling their frames.</summary>
+        [UnityTest, Timeout(120000)]
+        public IEnumerator PickerFacesFillTheirFrames()
+        {
+            HubSceneVideo.ForcedHero = "phaister";
+            yield return HubFlowTests.OpenHome();
+            var hub = TumpHub.Current;
+            var profile = System.Array.Find(hub.Canvas.GetComponentsInChildren<HubButton>(), b => b.name == "AvatarButton").GetComponentInChildren<Mask>().transform.Find("Face").GetComponent<Image>();
+            Assert.AreEqual(Avatars.Cut(Avatars.Mine()), profile.sprite, "HOME's profile still has the sunburst.");
+            yield return TumpUiCapture.Capture("Hub-Profile-Cut", hub.Canvas, 1920, 1080, checkPalette: false);
+            yield return HubFlowTests.OpenRoomPicker();
+            yield return null;
+            var tile = System.Array.Find(hub.Canvas.GetComponentsInChildren<HubButton>(), b => b.name == "Portrait0").transform;
+            var face = tile.GetComponentInChildren<Mask>().transform.Find("Face").GetComponent<Image>();
+            Assert.AreEqual(Avatars.Cut("avatar_" + Core.Roster.GetPeople(SceneFlow.SelectedMode)[0].Id), face.sprite, "The tile lost its picture.");
+            yield return TumpUiCapture.Capture("Hub-Picker-Faces-1920", hub.Canvas, 1920, 1080, checkPalette: false);
+            yield return TumpUiCapture.Capture("Hub-Picker-Faces-Phone", hub.Canvas, 844, 390, checkPalette: false);
         }
 
         /// <summary>Phaister's loop, picked, prepares and advances in the real hub exactly as Zack's does.</summary>

@@ -35,7 +35,6 @@ namespace TumbangPreso.UI.Hub
     {
         private Text _name, _tag, _level, _modeTitle, _playLabel, _xpLabel;
         private Image _xpFill, _avatar, _modePoster;
-        private Image _avatarBacking;
         private HubButton _play;
         private GameObject _skillNotice, _taskNotice;
         private HubPlateFit _plateFit;
@@ -63,12 +62,6 @@ namespace TumbangPreso.UI.Hub
             var wellPicture = HubBoard.Picture(avatarFace, avatarGroup, "avatar_well", "Well");
             wellPicture.gameObject.AddComponent<Mask>().showMaskGraphic = true;
             var well = HubBoard.Spec("avatar_well");
-            // The same picture, still, behind the one that lifts on hover: a gap shows the profile, not the peach well (owner, 2026-11-02).
-            var backing = HubKit.Rect(avatarFace, "Backing");
-            HubBoard.At(backing, avatarGroup, new Rect(well.x, well.y, well.w, well.h));
-            backing.SetParent(wellPicture, true);
-            _avatarBacking = backing.gameObject.AddComponent<Image>();
-            _avatarBacking.raycastTarget = false; _avatarBacking.preserveAspect = true;
             var pic = HubKit.Rect(avatarFace, "Face");
             HubBoard.At(pic, avatarGroup, new Rect(well.x, well.y, well.w, well.h));
             pic.SetParent(wellPicture, true);
@@ -289,10 +282,8 @@ namespace TumbangPreso.UI.Hub
             float into = profile != null ? ProgressionRules.XpIntoLevel(profile.Xp) / (float)ProgressionRules.XpPerLevel : 0;
             _plateFit.Into = Mathf.Clamp01(into);
 
-            _avatar.sprite = Avatars.Get(Avatars.Mine());
+            _avatar.sprite = Avatars.Cut(Avatars.Mine());
             _avatar.color = _avatar.sprite != null ? Color.white : new Color(0, 0, 0, 0);
-            _avatarBacking.sprite = _avatar.sprite;
-            _avatarBacking.color = _avatar.color;
 
             RefreshModeCard();
             RefreshNotices();

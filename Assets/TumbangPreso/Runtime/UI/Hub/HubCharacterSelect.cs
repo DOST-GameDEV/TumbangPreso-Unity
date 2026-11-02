@@ -268,13 +268,32 @@ namespace TumbangPreso.UI.Hub
                 int index = i;
                 var tile = HubKnit.Button(grid, "Portrait" + i, null, Knit.Card, () => Pick(index));
                 HubKnit.In((RectTransform)tile.transform, (i % columns) * (cell + Gap), (i / columns) * (cell + Gap), cell, cell + 14);
-                var face = HubKit.Picture(tile.Body, "Face", HubKit.Portrait(People[i].Id));
-                HubKit.Stretch(face.rectTransform, 14); face.rectTransform.offsetMin = new Vector2(14, 28);
+                var face = FramedFace(tile.Body, People[i].Id);
+                var window = (RectTransform)face.rectTransform.parent;
+                HubKit.Stretch(window, 12); window.offsetMin = new Vector2(12, 26);
                 _portraitFaces.Add(face);
                 _portraitColors.Add(face.color);
                 _cells.Add(tile);
             }
             return grid;
+        }
+
+        /// <summary>
+        /// A hero's picture the way HOME's profile button draws it: the figure with no sunburst, filling the
+        /// rounded well, so no one floats on the card (owner, 2026-11-03). Returns the picture; its parent is the well.
+        /// </summary>
+        private static Image FramedFace(RectTransform parent, string id)
+        {
+            var well = HubKit.Rect(parent, "Well");
+            var wellImage = well.gameObject.AddComponent<Image>();
+            wellImage.sprite = HubBoard.Art("avatar_well");
+            wellImage.raycastTarget = false;
+            well.gameObject.AddComponent<Mask>().showMaskGraphic = true;
+            var sprite = Avatars.Cut("avatar_" + id);
+            var face = HubKit.Picture(well, "Face", sprite != null ? sprite : HubKit.Portrait(id));
+            HubKit.Stretch(face.rectTransform);
+            face.preserveAspect = true;
+            return face;
         }
 
         private bool Usable(int index)
@@ -662,11 +681,18 @@ namespace TumbangPreso.UI.Hub
                 }
                 else
                 {
-                    var face = HubKit.Picture(cardFace, "Face", HubKit.Portrait(person?.Id));
-                    HubKnit.In(face.rectTransform, 26, 14, 104, 104);
-                    // Everyone else's pick is faint until they lock it; your own face stays whole.
-                    if (face.sprite != null && Timed && !locked && !seat.Mine) face.color = new Color(1, 1, 1, 0.5f);
-                    if (face.sprite == null)
+                    if (person != null)
+                    {
+                        var face = FramedFace(cardFace, person.Id);
+                        HubKnit.In((RectTransform)face.rectTransform.parent, 26, 14, 104, 104);
+                        // Everyone else's pick is faint until they lock it; your own face stays whole.
+                        if (Timed && !locked && !seat.Mine)
+                        {
+                            face.color = new Color(1, 1, 1, 0.5f);
+                            face.rectTransform.parent.GetComponent<Image>().color = new Color(1, 1, 1, 0.5f);
+                        }
+                    }
+                    else
                     {
                         var mark = HubKit.Glyph(cardFace, "Bot", seat.Occupied ? HubGlyph.Mark.Person : HubGlyph.Mark.Bots, HubKnit.KitTan);
                         HubKnit.In(mark.rectTransform, 40, 28, 72, 72);
