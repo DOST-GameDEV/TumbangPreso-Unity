@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace TumbangPreso.UI.Hub
@@ -67,7 +68,7 @@ namespace TumbangPreso.UI.Hub
                     cut = new Cut { Face = KitArt + "field", FaceBorder = new Vector4(70, 0, 70, 0), SourceHeight = 156, Ink = KitInk, Kit = true };
                     return true;
                 case Knit.Panel:
-                    cut = new Cut { Face = KitArt + "panel", FaceBorder = new Vector4(60, 74, 60, 60), Density = 1, Tiled = true, Ink = KitMaroon, Kit = true };
+                    cut = new Cut { Face = KitArt + "panel", FaceBorder = new Vector4(60, 74, 60, 60), Density = 1, Ink = KitMaroon, Kit = true };
                     return true;
                 case Knit.Card: cut = KitCard(KitArt + "card", KitCream); return true;
                 case Knit.CardOn: cut = KitCard(KitArt + "card-on", KitCream); return true;
@@ -76,7 +77,7 @@ namespace TumbangPreso.UI.Hub
                 case Knit.PillBlue: cut = KitPill(KitArt + "pill-blue", HubBoard.Colour("#0A3E4C")); return true;
                 // Dark pieces for the berry ground: words are cream, never a cream border.
                 case Knit.DarkPanel:
-                    cut = new Cut { Face = KitArt + "dark-panel", FaceBorder = new Vector4(60, 74, 60, 60), Density = 1, Tiled = true, Ink = KitCream, Kit = true };
+                    cut = new Cut { Face = KitArt + "dark-panel", FaceBorder = new Vector4(60, 74, 60, 60), Density = 1, Ink = KitCream, Kit = true };
                     return true;
                 case Knit.DarkCard: cut = KitCard(KitArt + "dark-card", KitCream); return true;
                 case Knit.DarkCardOn: cut = KitCard(KitArt + "dark-card-on", KitCream); return true;
@@ -224,6 +225,19 @@ namespace TumbangPreso.UI.Hub
 
         // ------------------------------------------------------------------ tabs
 
+        /// <summary>The bot on a seat: antennae and a big grin, in the cards' tan.</summary>
+        public static Image BotFace(Transform parent, string name)
+        {
+            var bot = HubKit.Rect(parent, name).gameObject.AddComponent<Image>();
+            bot.sprite = Knitted("UI/boot-kit/bot-face", Vector4.zero); bot.color = KitTan;
+            bot.preserveAspect = true; bot.raycastTarget = false;
+            return bot;
+        }
+
+        /// <summary>How a pill sits in the track, as parts of the track's height, measured from the log-in's own art
+        /// (`login3-tabs`, 89 tall): it rests in the well with its slab on the lip, 18 in from each end.</summary>
+        public const float PillTop = 13f / 89, PillHeight = 61f / 89, PillInset = 18f / 89;
+
         /// <summary>The SIGN UP / SIGN IN track: a sunk track holding one lime pill.</summary>
         public static HubButton[] Tabs(RectTransform parent, string name, float x, float y, float w, float h,
                                        string[] objects, string[] labels, Action<int> pick)
@@ -231,12 +245,12 @@ namespace TumbangPreso.UI.Hub
             var track = Plate(parent, name, Knit.Track);
             In(track, x, y, w, h);
             var buttons = new HubButton[labels.Length];
-            float cell = (w - 40) / labels.Length;
+            float inset = h * PillInset, cell = (w - inset * 2) / labels.Length;
             for (int i = 0; i < labels.Length; i++)
             {
                 int index = i;
                 buttons[i] = Button(track, objects[i], labels[i], Knit.PillGo, () => pick(index), Mathf.RoundToInt(h * 0.32f));
-                In((RectTransform)buttons[i].transform, 20 + i * cell, h * 0.05f, cell, h * 0.74f);
+                In((RectTransform)buttons[i].transform, inset + i * cell, h * PillTop, cell, h * PillHeight);
             }
             return buttons;
         }
@@ -247,12 +261,9 @@ namespace TumbangPreso.UI.Hub
             for (int i = 0; i < tabs.Length; i++)
             {
                 Bare(tabs[i].transform, i != chosen, i == chosen ? InkOf(Knit.PillGo) : KitSoftRed);
-                // The pill stands raised in the track, so a bare word sits lower, centred on the track.
-                var label = HubKit.LabelOf(tabs[i]);
-                if (label == null) continue;
-                float drop = i == chosen ? 0 : ((RectTransform)tabs[i].transform).sizeDelta.y * .098f;
-                label.rectTransform.offsetMin = new Vector2(label.rectTransform.offsetMin.x, -drop);
-                label.rectTransform.offsetMax = new Vector2(label.rectTransform.offsetMax.x, -drop);
+                var hover = tabs[i].GetComponent<KitTabHover>();
+                if (hover == null) hover = tabs[i].gameObject.AddComponent<KitTabHover>();
+                hover.Set(i != chosen, KitSoftRed);
             }
         }
 
@@ -294,6 +305,26 @@ namespace TumbangPreso.UI.Hub
                 new Vector2(uv.x + uv.width * x / r.width, uv.y + uv.height * y / r.height));
             Add(0, 0); Add(0, r.height - Cut); Add(Cut, r.height); Add(r.width, r.height); Add(r.width, 0);
             vh.AddTriangle(0, 1, 2); vh.AddTriangle(0, 2, 3); vh.AddTriangle(0, 3, 4);
+        }
+    }
+
+    /// <summary>A tab that is not chosen shows white words under the pointer or a pad's focus.</summary>
+    public sealed class KitTabHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ISelectHandler, IDeselectHandler
+    {
+        private bool _bare, _hover, _focus;
+        private Color _rest;
+
+        public void Set(bool bare, Color rest) { _bare = bare; _rest = rest; Paint(); }
+        public void OnPointerEnter(PointerEventData e) { _hover = true; Paint(); }
+        public void OnPointerExit(PointerEventData e) { _hover = false; Paint(); }
+        public void OnSelect(BaseEventData e) { _focus = TumbangPreso.InputLayer.LastInputDevice.Current == TumbangPreso.InputLayer.InputDeviceKind.Gamepad; Paint(); }
+        public void OnDeselect(BaseEventData e) { _focus = false; Paint(); }
+        private void OnDisable() { _hover = _focus = false; Paint(); }
+
+        private void Paint()
+        {
+            if (!_bare) return;
+            foreach (var t in GetComponentsInChildren<Text>(true)) if (t.name == "Label") t.color = _hover || _focus ? HubKnit.KitWhite : _rest;
         }
     }
 

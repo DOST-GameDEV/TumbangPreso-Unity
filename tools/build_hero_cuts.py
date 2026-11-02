@@ -1,14 +1,13 @@
 """The avatars' figures with no sunburst, for the profile and character select (owner, 2026-11-03).
 
 Same placement and ink rim as build_avatars.py, on a transparent ground. Writes Resources/UI/hero-cuts/<id>.png.
-The avatars themselves are only read. Phaister sits lower and closer here (owner).
+The avatars themselves are only read.
 """
 import os
 import build_avatars as avatars
 from PIL import Image, ImageFilter
 
 OUT = os.path.join(avatars.ROOT, "Assets", "TumbangPreso", "Resources", "UI", "hero-cuts")
-avatars.HEADS["phaister"] = (150, 190, 130, 0.66)
 
 
 def cut(pid):

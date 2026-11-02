@@ -98,7 +98,7 @@ namespace TumbangPreso.UI
             int into=ProgressionRules.XpIntoLevel(xp);_xpCount.text=into+" / "+ProgressionRules.XpPerLevel+" XP";
             _xpFill.rectTransform.anchorMax=new Vector2(Mathf.Clamp01(into/(float)ProgressionRules.XpPerLevel),1);_xpFill.enabled=into>0;
             // The same picture as HOME's profile button (owner, 2026-11-02: "profiles dont match").
-            _ownerPortrait.sprite=Avatars.Cut(Avatars.Mine());
+            _ownerPortrait.sprite=Avatars.Get(Avatars.Mine());
         }
         private bool Group(string title,string subtitle,bool openByDefault=true)
         {

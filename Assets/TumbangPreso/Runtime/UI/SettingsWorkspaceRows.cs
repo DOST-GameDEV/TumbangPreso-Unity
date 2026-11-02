@@ -42,13 +42,12 @@ namespace TumbangPreso.UI
             void Show(bool value)
             {
                 Hub.HubKnit.KitFace(pill, value ? Hub.Knit.PillGo : Hub.Knit.PillPlain);
-                OwnerUiLayout.Place(pill.rectTransform, value ? 120 : 20, 4, 100, 59);
+                OwnerUiLayout.Place(pill.rectTransform, value ? 120 : 16, 12, 104, 55);
                 pill.GetComponent<Hub.KitSlice>().Apply();
                 on.color = value ? Hub.HubKnit.GreenInk : Hub.HubKnit.KitSoftRed;
                 off.color = value ? Hub.HubKnit.KitSoftRed : Hub.HubKnit.KitMaroon;
-                // The word on the raised pill sits higher than the bare one, centred on the track.
-                OwnerUiLayout.Place(on.rectTransform, 120, value ? 4 : 10, 100, 54);
-                OwnerUiLayout.Place(off.rectTransform, 20, value ? 10 : 4, 100, 54);
+                OwnerUiLayout.Place(on.rectTransform, 120, 12, 104, 50);
+                OwnerUiLayout.Place(off.rectTransform, 16, 12, 104, 50);
                 text.text = value ? "ON" : "OFF";
             }
             Show(current);
@@ -69,7 +68,7 @@ namespace TumbangPreso.UI
             root.gameObject.AddComponent<SettingsControlFocus>();
             var track = OwnerUiLayout.Rect(root, "Track").gameObject.AddComponent<Image>();
             OwnerUiLayout.Place(track.rectTransform, 0, 10, 500, 58); Hub.HubKnit.KitFace(track, Hub.Knit.Track);
-            var fillArea = OwnerUiLayout.Rect(root, "FillArea"); OwnerUiLayout.Place(fillArea, 18, 18, 464, 36);
+            var fillArea = OwnerUiLayout.Rect(root, "FillArea"); OwnerUiLayout.Place(fillArea, 12, 18.5f, 476, 40);
             var fill = OwnerUiLayout.Rect(fillArea, "Fill").gameObject.AddComponent<Image>();
             OwnerUiLayout.Fill(fill.rectTransform); Hub.HubKnit.KitFace(fill, Hub.Knit.PillGo); slider.fillRect = fill.rectTransform;
             var handles = OwnerUiLayout.Rect(root, "HandleArea"); OwnerUiLayout.Place(handles, 18, 0, 464, 78);

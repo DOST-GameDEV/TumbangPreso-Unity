@@ -989,9 +989,14 @@ namespace TumbangPreso.UI.Hub
                         var feel = card.GetComponent<HubStickerFeel>();
                         if (feel != null) feel.Pictures = new[] { frame };
                     }
+                    else if (seat.Bot && !seat.Occupied)
+                    {
+                        var bot = HubKnit.BotFace(face, "Icon");
+                        HubKnit.In(bot.rectTransform, (cardW - 150 * s) * .5f, 70 * s, 150 * s, 150 * s);
+                    }
                     else
                     {
-                        var glyph = HubKit.Glyph(face, "Icon", seat.Bot && !seat.Occupied ? HubGlyph.Mark.Bots : HubGlyph.Mark.Person, HubKnit.KitTan, 0.08f);
+                        var glyph = HubKit.Glyph(face, "Icon", HubGlyph.Mark.Person, HubKnit.KitTan, 0.08f);
                         HubKnit.In(glyph.rectTransform, (cardW - 150 * s) * .5f, 70 * s, 150 * s, 150 * s);
                     }
 

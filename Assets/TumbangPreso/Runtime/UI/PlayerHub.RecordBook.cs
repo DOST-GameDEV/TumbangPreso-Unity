@@ -54,7 +54,7 @@ namespace TumbangPreso.UI
             _xpFill = HubKit.Rect(track, "XpFill").gameObject.AddComponent<Image>();
             HubKnit.KitFace(_xpFill, Knit.PillGo);
             _xpFill.rectTransform.anchorMin = Vector2.zero; _xpFill.rectTransform.anchorMax = Vector2.one;
-            _xpFill.rectTransform.offsetMin = new Vector2(6, 4); _xpFill.rectTransform.offsetMax = new Vector2(-6, -8);
+            _xpFill.rectTransform.offsetMin = new Vector2(10, 8.5f); _xpFill.rectTransform.offsetMax = new Vector2(-10, -7);
 
             var names = new[] { "PROFILE", "FRIENDS", "CAREER", "HISTORY", "REPLAYS", "ACCOUNT" };
             var objects = new string[TabOrder.Length];

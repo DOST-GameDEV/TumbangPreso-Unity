@@ -131,6 +131,9 @@ namespace TumbangPreso.UI
             // Live HUD: everything hangs from under the timer and its round count (board y 130). A warning keeps
             // the top spot, a moment sits below it, and the toast under whichever is above it.
             float top = 130 * s;
+            // The big stamps stand on their own canvases and last a moment, so they hold the top and the rest step down.
+            if (TayaReveal.Showing) { TayaReveal.SetLaneTop(top); top += TayaReveal.LaneHeight; }
+            if (CanDownStamp.Showing) { CanDownStamp.SetLaneTop(top); top += CanDownStamp.LaneHeight; }
             if (warning)
             {
                 _warning.Rest = new Vector2(_warningRoot.anchoredPosition.x, -(top + 46 * s));

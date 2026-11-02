@@ -327,13 +327,13 @@ namespace TumbangPreso.PlayTests
             yield return HubFlowTests.OpenHome();
             var hub = TumpHub.Current;
             var profile = System.Array.Find(hub.Canvas.GetComponentsInChildren<HubButton>(), b => b.name == "AvatarButton").GetComponentInChildren<Mask>().transform.Find("Face").GetComponent<Image>();
-            Assert.AreEqual(Avatars.Cut(Avatars.Mine()), profile.sprite, "HOME's profile still has the sunburst.");
+            Assert.AreEqual(Avatars.Get(Avatars.Mine()), profile.sprite, "HOME's profile is not the approved avatar.");
             yield return TumpUiCapture.Capture("Hub-Profile-Cut", hub.Canvas, 1920, 1080, checkPalette: false);
             yield return HubFlowTests.OpenRoomPicker();
             yield return null;
             var tile = System.Array.Find(hub.Canvas.GetComponentsInChildren<HubButton>(), b => b.name == "Portrait0").transform;
             var face = tile.GetComponentInChildren<Mask>().transform.Find("Face").GetComponent<Image>();
-            Assert.AreEqual(Avatars.Cut("avatar_" + Core.Roster.GetPeople(SceneFlow.SelectedMode)[0].Id), face.sprite, "The tile lost its picture.");
+            Assert.AreEqual(Avatars.Cut("avatar_" + Core.Roster.GetPeople(SceneFlow.SelectedMode)[0].Id), face.sprite, "The tile is not the figure with no background.");
             yield return TumpUiCapture.Capture("Hub-Picker-Faces-1920", hub.Canvas, 1920, 1080, checkPalette: false);
             yield return TumpUiCapture.Capture("Hub-Picker-Faces-Phone", hub.Canvas, 844, 390, checkPalette: false);
         }
