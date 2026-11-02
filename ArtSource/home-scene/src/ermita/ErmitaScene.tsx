@@ -3,7 +3,7 @@ import { AbsoluteFill, continueRender, delayRender, Img, random, staticFile, use
 import { Defs } from '../lib/Defs';
 import { GRADE_STYLE, GradeCorners, GradeDefs } from '../lib/grade';
 import { kf } from '../lib/kf';
-import { BLEND, platesOf } from '../lib/plates';
+import { platesOf } from '../lib/plates';
 import { env, IDLE } from './time';
 import { B } from './beats';
 import { ActorImage, drawActor, Light, useActor } from '../three/actor';
@@ -14,6 +14,8 @@ import { camAt, panSpeed } from './camera';
 import { ARRIVE, canAt, FLAT, Frame, kuroAt, nemu, phaister, SLIP_REST, STOP } from './perform';
 
 const { plateAt, preAt } = platesOf('phaister');
+/** No crossfade at the idle's end: nothing in her hold moves but the cast and the cars, and those really loop (`LoopedCars`). */
+const BLEND = 0;
 
 const useFonts = () => {
   const [handle] = useState(() => delayRender('fonts'));

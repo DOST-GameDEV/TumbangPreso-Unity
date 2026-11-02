@@ -37,7 +37,10 @@ namespace TumbangPreso.UI.Hub
         private Image _xpFill, _avatar, _modePoster;
         private HubButton _play;
         private GameObject _skillNotice, _taskNotice;
-        private HubBoard.LabelSpec _nameSpec, _modeSpec, _playSpec;
+        private HubPlateFit _plateFit;
+        private HubBoard.LabelSpec _nameSpec, _tagSpec, _modeSpec, _playSpec;
+        /// <summary>Board units: how far the name drops to centre on the hexagon, the tag's size, and the line's width out to the XP bar's right edge.</summary>
+        private const float NameDrop = 11f, TagSize = 18f, NameLineRoom = 208f;
 
         public override void Build()
         {
@@ -55,11 +58,13 @@ namespace TumbangPreso.UI.Hub
         {
             // AVATAR: the frame, the peach well, the player's picture inset in the well.
             var avatar = HubBoard.Sticker(Root, "AvatarButton", HubKit.TopLeft, "avatar_frame", () => Hub.Push<HubAvatar>(), out var avatarFace, out var avatarGroup);
-            HubBoard.Picture(avatarFace, avatarGroup, "avatar_well", "Well");
+            // The picture fills the well, cut to its rounded corners, with no second frame inside the box (owner, 2026-11-02).
+            var wellPicture = HubBoard.Picture(avatarFace, avatarGroup, "avatar_well", "Well");
+            wellPicture.gameObject.AddComponent<Mask>().showMaskGraphic = true;
             var well = HubBoard.Spec("avatar_well");
             var pic = HubKit.Rect(avatarFace, "Face");
-            HubBoard.At(pic, avatarGroup, new Rect(well.x + 9, well.y + 9, well.w - 18, well.h - 18));
-            pic.SetParent(avatarFace, true);
+            HubBoard.At(pic, avatarGroup, new Rect(well.x, well.y, well.w, well.h));
+            pic.SetParent(wellPicture, true);
             _avatar = pic.gameObject.AddComponent<Image>();
             _avatar.raycastTarget = false; _avatar.preserveAspect = true;
             HubBoard.Feel(avatar, avatarFace, HubBoard.Depth("avatar_frame"), 0.1f, false, pic);
@@ -73,6 +78,12 @@ namespace TumbangPreso.UI.Hub
             _nameSpec = HubBoard.Label("Tump_ID");
             _name = HubBoard.Lettering(plateFace, plateGroup, "Tump_ID", "PlayerName");
             _tag = HubBoard.Lettering(plateFace, plateGroup, "#1234", "PlayerTag");
+            // ⚠️ NAME AND TAG SHARE ONE LINE, CENTRED ON THE HEXAGON (owner, 2026-11-02: too much empty space on the plate).
+            _name.rectTransform.anchoredPosition -= new Vector2(0, NameDrop);
+            _tag.font = _name.font;
+            var nameLine = _name.GetComponent<BoardBaseline>();
+            if (nameLine != null) _tag.GetComponent<BoardBaseline>().FromTop = nameLine.FromTop;
+            _tagSpec = new HubBoard.LabelSpec { size = TagSize, w = NameLineRoom };
             HubBoard.Picture(plateFace, plateGroup, "xp_track", "XpTrack");
             var fill = HubBoard.Picture(plateFace, plateGroup, "xp_fill", "XpFill");
             _xpFill = fill.GetComponent<Image>();
@@ -82,6 +93,8 @@ namespace TumbangPreso.UI.Hub
             var barber = Resources.Load<Shader>("Shaders/XpBarber");
             if (barber != null && !HubStyle.ReducedMotion) _xpFill.material = new Material(barber);
             _xpLabel = HubBoard.Lettering(plateFace, plateGroup, "xp", "XpLabel");
+            _plateFit = plate.gameObject.AddComponent<HubPlateFit>();
+            _plateFit.Bind(_name, _tag, plate.GetComponent<RectTransform>(), plateFace, plate.transform.Find("Slab") as RectTransform, plateFace.Find("XpTrack") as RectTransform, _xpFill, _xpLabel.rectTransform);
             HubBoard.Feel(plate, plateFace, HubBoard.Depth("name_plate"), 0.3f, false, hex);
             HubSlap.On(plate.transform, 0.04f, -2);
 
@@ -230,15 +243,15 @@ namespace TumbangPreso.UI.Hub
 
             string name = account != null && !string.IsNullOrWhiteSpace(account.DisplayName) ? account.DisplayName
                         : !string.IsNullOrWhiteSpace(settings.PlayerName) ? settings.PlayerName : "PLAYER";
-            HubBoard.SetWords(_name, name, _nameSpec);
             string tag = account != null ? account.Discriminator : "";
-            _tag.text = account != null && account.IsGuest ? "GUEST" : string.IsNullOrEmpty(tag) ? "OFFLINE" : "#" + tag;
+            HubBoard.SetWords(_tag, account != null && account.IsGuest ? "GUEST" : string.IsNullOrEmpty(tag) ? "OFFLINE" : "#" + tag, _tagSpec);
+            HubBoard.SetWords(_name, name, _nameSpec, NameLineRoom - HubPlateFit.Gap - _tag.preferredWidth * 0.5f);
 
             var profile = GameServices.Career?.Profile;
             int level = profile != null ? Mathf.Max(1, profile.Level) : 1;
             _level.text = level.ToString("00");
             float into = profile != null ? ProgressionRules.XpIntoLevel(profile.Xp) / (float)ProgressionRules.XpPerLevel : 0;
-            _xpFill.fillAmount = Mathf.Clamp01(into);
+            _plateFit.Into = Mathf.Clamp01(into);
 
             _avatar.sprite = Avatars.Get(string.IsNullOrEmpty(settings.AvatarId) ? Avatars.DefaultFor(name) : settings.AvatarId);
             _avatar.color = _avatar.sprite != null ? Color.white : new Color(0, 0, 0, 0);
@@ -291,6 +304,72 @@ namespace TumbangPreso.UI.Hub
             if (HubQueueWatch.QueueRoom) { Hub.Host.CancelQueue(); return true; }
             Hub.Push<HubMenu>();
             return true;
+        }
+    }
+
+    /// <summary>
+    /// ⚠️ THE NAME PLATE IS AS LONG AS THE NAME (owner, 2026-11-02: a short name left a big empty space). The tag follows the name on its line, and the plate and XP bar end
+    /// the same distance past the tag. Plate and track are sliced so their corners keep their shape. The stripes are not, or they would squeeze: the fill keeps its size and only fills less of it.
+    /// </summary>
+    public sealed class HubPlateFit : MonoBehaviour
+    {
+        public const float Gap = 9f;
+        /// <summary>Board units: the name line's longest run, and the most the plate may shrink, so the XP bar stays readable.</summary>
+        private const float LongestLine = 208f, MostShrink = 90f;
+        private const float CornerClear = 6f;
+        /// <summary>The XP bar's fill, 0 to 1, along the bar as it now is.</summary>
+        public float Into { get => _into; set { _into = value; Apply(); } }
+        public float Shrink { get; private set; }
+        private float _into;
+        private Text _name, _tag;
+        private RectTransform _root, _face, _slab, _track, _label;
+        private Image _fill;
+        private float _left, _rootWidth, _faceWidth, _slabWidth, _trackWidth, _labelX;
+        private string _seenName, _seenTag;
+        private int _seenSize = -1;
+
+        public void Bind(Text name, Text tag, RectTransform root, RectTransform face, RectTransform slab, RectTransform track, Image fill, RectTransform label)
+        {
+            _name = name; _tag = tag; _root = root; _face = face; _slab = slab; _track = track; _fill = fill; _label = label;
+            _left = name.rectTransform.anchoredPosition.x; _labelX = label.anchoredPosition.x;
+            _rootWidth = root.sizeDelta.x;
+            _faceWidth = Stretch(face, "name_plate_face", 80f); _slabWidth = Stretch(slab, "name_plate_slab", 80f); _trackWidth = Stretch(track, "xp_track", 30f);
+        }
+
+        /// <summary>Slices a board picture and holds it by its left edge, so it shortens from the right.</summary>
+        private static float Stretch(RectTransform rect, string sprite, float border)
+        {
+            var image = rect.GetComponent<Image>();
+            var art = HubBoard.Art(sprite);
+            image.sprite = Sprite.Create(art.texture, art.rect, new Vector2(0.5f, 0.5f), art.pixelsPerUnit, 0, SpriteMeshType.FullRect, Vector4.one * border);
+            image.type = Image.Type.Sliced;
+            float width = rect.sizeDelta.x;
+            rect.anchoredPosition -= new Vector2(width * rect.pivot.x, 0);
+            rect.pivot = new Vector2(0, rect.pivot.y);
+            return width;
+        }
+
+        private void LateUpdate()
+        {
+            if (_name == null || (_seenName == _name.text && _seenTag == _tag.text && _seenSize == _name.fontSize)) return;
+            _seenName = _name.text; _seenTag = _tag.text; _seenSize = _name.fontSize;
+            Apply();
+        }
+
+        private void Apply()
+        {
+            if (_name == null) return;
+            float name = _name.preferredWidth * 0.5f, tag = _tag.preferredWidth * 0.5f;
+            Shrink = Mathf.Clamp(LongestLine - (name + Gap + tag), 0f, MostShrink);
+            float x = Mathf.Min(_left + name + Gap, _left + LongestLine - tag);
+            _tag.rectTransform.anchoredPosition = new Vector2(x, _name.rectTransform.anchoredPosition.y);
+            _root.sizeDelta = new Vector2(_rootWidth - Shrink, _root.sizeDelta.y);
+            _face.sizeDelta = new Vector2(_faceWidth - Shrink, _face.sizeDelta.y);
+            _slab.sizeDelta = new Vector2(_slabWidth - Shrink, _slab.sizeDelta.y);
+            _track.sizeDelta = new Vector2(_trackWidth - Shrink, _track.sizeDelta.y);
+            _label.anchoredPosition = new Vector2(_labelX - Shrink * 0.5f, _label.anchoredPosition.y);
+            float bar = _trackWidth - Shrink;
+            _fill.fillAmount = Mathf.Min(_into * bar, bar - CornerClear) / _trackWidth;
         }
     }
 }

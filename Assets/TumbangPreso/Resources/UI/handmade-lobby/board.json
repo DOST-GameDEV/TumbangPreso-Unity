@@ -328,7 +328,7 @@
    "key": "play",
    "text": "play",
    "x": 1524.5,
-   "y": 899.4,
+   "y": 893.4,
    "w": 324.2,
    "h": 109.4,
    "size": 92.15,
@@ -336,7 +336,7 @@
    "align": "center",
    "font": "display",
    "upper": true,
-   "baseline": 993.56
+   "baseline": 987.56
   },
   {
    "key": "shop",

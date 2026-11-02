@@ -130,7 +130,8 @@ namespace TumbangPreso.EditorTools
 
             // ⚠️ THE MAP'S FLOCK WANDERS ON TO THE COURT AND THE LENS (owner, 2026-11-02: "dont put them there"). Not in the film.
             foreach (var t in Object.FindObjectsByType<Transform>(FindObjectsSortMode.None))
-                if (t.name == "Pigeons" && t.gameObject.scene.name == track.map) t.gameObject.SetActive(false);
+                // Nor her pavement people: they walk out on to the lot, cannot be looped, and ghosted through each other at the hold's seam.
+                if ((t.name == "Pigeons" || t.name == "SidewalkLife") && t.gameObject.scene.name == track.map) t.gameObject.SetActive(false);
 
             var first = Figure.Build(track.cast[0], track.bones, track.floor);
             var second = Figure.Build(track.cast[1], track.bones, track.floor);

@@ -8,7 +8,7 @@ Shader "TumbangPreso/XpBarber"
         _Color ("Tint", Color) = (1,1,1,1)
         _Period ("One stripe, in the sprite's width", Float) = 0.14931
         _From ("Where the wrap starts", Float) = 0.25
-        _Speed ("Stripes a second", Float) = 0.45
+        _Speed ("Stripes a second", Float) = 0.15
         _StencilComp ("Stencil Comparison", Float) = 8
         _Stencil ("Stencil ID", Float) = 0
         _StencilOp ("Stencil Operation", Float) = 0
