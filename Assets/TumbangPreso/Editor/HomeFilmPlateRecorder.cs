@@ -32,7 +32,7 @@ namespace TumbangPreso.EditorTools
         /// <summary>One picture. `dt` is how far the street then runs; 0 takes another picture of the same moment.</summary>
         [Serializable] class Shot { public string clip; public int i; public bool skip; public float x, y, z, yaw, pitch, roll, f, dt; public Vector3[] subjects; public float[] a, b, kuro, can, moths; }
         /// <summary>One person in the film: who, where their eye paint is, and what colour it lights. No atlas means no glow.</summary>
-        [Serializable] class Member { public string id; public bool slipper; public string atlas; public float eyeLow, eyeHigh; public Color32 glow; }
+        [Serializable] class Member { public string id; public bool slipper; public string atlas; public float eyeLow, eyeHigh, lashTop, lashOuter; public Color32 glow; }
         /// <summary>`floor` is the court's surface in this map. `green` winds the signals and `train` the LRT, in seconds after the first plate; negative leaves them alone.</summary>
         [Serializable] class Track { public string map; public float floor; public Member[] cast; public bool kuro; public string[] bones; public int warm; public float green; public float train = -1f; public int trainDir = 1; public Shot[] frames; }
 
@@ -282,12 +282,14 @@ namespace TumbangPreso.EditorTools
                     // A rigid head mesh is in the head bone's space, a skinned one in the model's.
                     float up = r is SkinnedMeshRenderer ? 0f : (_body.InverseTransformPoint(r.transform.position).y);
                     int marked = 0;
+                    float vUp = 0f;
                     for (int t = 0; t < tri.Length; t += 3)
                     {
                         Vector3 a = v[tri[t]], b = v[tri[t + 1]], c = v[tri[t + 2]];
                         float low = Mathf.Min(a.y, b.y, c.y) + up, high = Mathf.Max(a.y, b.y, c.y) + up;
                         if (high < who.eyeLow || low > who.eyeHigh || Mathf.Min(a.z, b.z, c.z) < 0.1f) continue;
                         Vector2 p = uv[tri[t]], q = uv[tri[t + 1]], w = uv[tri[t + 2]];
+                        vUp += (a.y - b.y) * (p.y - q.y) + (b.y - c.y) * (q.y - w.y);
                         int x0 = Mathf.FloorToInt(Mathf.Min(p.x, q.x, w.x) * rest.width), x1 = Mathf.CeilToInt(Mathf.Max(p.x, q.x, w.x) * rest.width);
                         int y0 = Mathf.FloorToInt(Mathf.Min(p.y, q.y, w.y) * rest.height), y1 = Mathf.CeilToInt(Mathf.Max(p.y, q.y, w.y) * rest.height);
                         for (int y = Mathf.Max(0, y0); y < Mathf.Min(rest.height, y1); y++)
@@ -298,6 +300,7 @@ namespace TumbangPreso.EditorTools
                                 eye[y * rest.width + x] = true; marked++;
                             }
                     }
+                    if (who.lashTop > 0f) marked = KeepLashesDark(eye, rest.width, rest.height, vUp >= 0f, who.lashTop, who.lashOuter);
                     Debug.Log("[HomeFilmPlates] eye texels=" + marked + " on " + r.name);
                     _head = r;
                     _lit = new Texture2D[6];
@@ -312,6 +315,63 @@ namespace TumbangPreso.EditorTools
                     return;
                 }
                 Debug.LogWarning("[HomeFilmPlates] no readable head mesh for the eyes");
+            }
+
+            /// <summary>
+            /// ⚠️ THE EYE AND THE LASH ARE ONE BLACK SHAPE ON THE ATLAS (owner: "differentiate her eyes from her eyelashes"). Of each of the two
+            /// eye shapes, the top edge and the outer wing stay dark as the lash, and only what is under them lights. The shape never changes.
+            /// </summary>
+            static int KeepLashesDark(bool[] eye, int w, int h, bool vUp, float top, float outer)
+            {
+                var seen = new bool[eye.Length];
+                var blobs = new List<List<int>>();
+                var stack = new Stack<int>();
+                for (int s = 0; s < eye.Length; s++)
+                {
+                    if (!eye[s] || seen[s]) continue;
+                    var blob = new List<int>();
+                    seen[s] = true; stack.Push(s);
+                    while (stack.Count > 0)
+                    {
+                        int i = stack.Pop(); blob.Add(i);
+                        int x = i % w, y = i / w;
+                        if (x > 0 && eye[i - 1] && !seen[i - 1]) { seen[i - 1] = true; stack.Push(i - 1); }
+                        if (x < w - 1 && eye[i + 1] && !seen[i + 1]) { seen[i + 1] = true; stack.Push(i + 1); }
+                        if (y > 0 && eye[i - w] && !seen[i - w]) { seen[i - w] = true; stack.Push(i - w); }
+                        if (y < h - 1 && eye[i + w] && !seen[i + w]) { seen[i + w] = true; stack.Push(i + w); }
+                    }
+                    blobs.Add(blob);
+                }
+                blobs.Sort((a, b) => b.Count.CompareTo(a.Count));
+                Array.Clear(eye, 0, eye.Length);
+                if (blobs.Count < 2) { Debug.LogWarning("[HomeFilmPlates] expected two eye shapes, found " + blobs.Count); return 0; }
+                float Mean(List<int> b) { float m = 0f; foreach (int i in b) m += i % w; return m / b.Count; }
+                float middle = (Mean(blobs[0]) + Mean(blobs[1])) / 2f;
+                Debug.Log("[HomeFilmPlates] eye shapes " + blobs[0].Count + " and " + blobs[1].Count + " of " + blobs.Count);
+                int lit = 0;
+                for (int n = 0; n < 2; n++)
+                {
+                    int x0 = w, x1 = 0, y0 = h, y1 = 0;
+                    foreach (int i in blobs[n]) { x0 = Mathf.Min(x0, i % w); x1 = Mathf.Max(x1, i % w); y0 = Mathf.Min(y0, i / w); y1 = Mathf.Max(y1, i / w); }
+                    bool outward = Mean(blobs[n]) > middle;
+                    float cutX = outward ? x1 - outer * (x1 - x0) : x0 + outer * (x1 - x0);
+                    int rows = Mathf.CeilToInt(top * (y1 - y0 + 1));
+                    // The top of this column of the shape, whichever way the atlas runs.
+                    var edge = new Dictionary<int, int>();
+                    foreach (int i in blobs[n])
+                    {
+                        int x = i % w, y = i / w;
+                        if (!edge.TryGetValue(x, out int e) || (vUp ? y > e : y < e)) edge[x] = y;
+                    }
+                    foreach (int i in blobs[n])
+                    {
+                        int x = i % w, y = i / w;
+                        if (outward ? x > cutX : x < cutX) continue;
+                        if (Mathf.Abs(y - edge[x]) < rows) continue;
+                        eye[i] = true; lit++;
+                    }
+                }
+                return lit;
             }
 
             // A row: x z yaw glow, slipper state, position 3, rotation 4, scale, then each bone's position 3 and rotation 4.

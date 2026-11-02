@@ -46,7 +46,7 @@ const SHOTS: Shot[] = [
   // The taya. Low and looking up. She is doing nothing, and she will go on doing it.
   { at: B.nemu, in: 0, cam: (f) => { const q = ei(u(f, B.nemu, B.twirl)); return { p: [GUARD.x + 0.45, 0.72, GUARD.z - 3.9 + 0.55 * q], t: [GUARD.x + 0.2, 1.22, GUARD.z], f: 1180, roll: -1 }; } },
   // A slipper going round a finger; the lens climbs her arm to the brim and the grin.
-  { at: B.twirl, in: 0, cam: (f) => { const q = ei(u(f, B.twirl + 24, B.walk - 8)); const z = phaister(f); return { p: [z.x + 0.75, 1.3, z.z - 2.15], t: [z.x + 0.1, 1.05 + 0.75 * q, z.z], f: 1300 - 60 * q, roll: 2 - 3 * q }; } },
+  { at: B.twirl, in: 0, cam: (f) => { const q = ei(u(f, B.twirl + 24, B.walk - 8)); const z = phaister(f); return { p: [z.x + 0.75, 1.3, z.z - 2.15], t: [z.x + 0.1, 1.05 + 0.42 * q, z.z], f: 1300 - 120 * q, roll: 2 - 3 * q }; } },
   // She walks on with the lens going backward in front of her, Taft's traffic far behind the lens side.
   { at: B.walk, in: 0, cam: (f) => { const z = phaister(f); return { p: [z.x + 3.5, 0.9, z.z - 1.25], t: [z.x, 1.18, z.z], f: 1050, roll: 1.2 }; } },
   // She points. Three-quarters, so her face and the arm both read.
@@ -62,9 +62,9 @@ const SHOTS: Shot[] = [
   // Ta-da.
   { at: B.tada, in: 0, cam: (f) => { const q = outCubic(u(f, B.tada, B.tada + 14)); return { p: [POST.x - 0.55, 0.95, POST.z - 3.4], t: [POST.x, 1.3, POST.z], f: 1050 * (1 + 0.14 * q), roll: 1.5 }; } },
   // She runs, the lens running ahead and beside her. The lot goes by; the viaduct comes up behind her.
-  { at: B.run, in: 4, cam: (f) => { const z = phaister(f); return { p: [z.x + 2.7, 0.85, z.z - 2.6], t: [z.x + 0.2, 1.08, z.z], f: 1000, roll: 2.6 }; } },
+  { at: B.run, in: 4, cam: (f) => { const z = phaister(f); return { p: [z.x + 3.3, 0.85, z.z + 0.9], t: [z.x + 0.2, 1.1, z.z], f: 1000, roll: 2.6 }; } },
   // Nemu's hand on the can, the whole of it: the walk, the stoop, the hand, up and running.
-  { at: B.rights - 4, in: 0, cam: (f) => { const q = ei(u(f, B.rights, B.rights + 44)); return { p: [2.75 - 0.2 * q, 0.62, -3.05], t: [1.85, 0.72 + 0.4 * q, -0.65], f: 1300, roll: -1.2 }; } },
+  { at: B.rights - 4, in: 0, cam: (f) => { const q = ei(u(f, B.rights, B.rights + 44)); return { p: [4.6 - 0.2 * q, 0.62, -2.1], t: [1.9, 0.72 + 0.4 * q, -0.65], f: 1300, roll: -1.2 }; } },
   // The slide, low, the slipper on the floor, her hand taking it: and Nemu already coming over her shoulder.
   { at: B.scoop - 22, in: 0, cam: () => ({ p: [8.6, 0.55, -0.5], t: [4.5, 0.75, 2.5], f: 1050, roll: 1.2 }) },
   // The chase: the lens running backward ahead of her, low, Nemu right behind.
@@ -97,7 +97,7 @@ const SHOTS: Shot[] = [
   // ⚠️ THE GULP: a crash zoom on to her palm.
   { at: B.gulp, in: 0, cam: (f) => { const q = outCubic(u(f, B.gulp, B.gulp + 7)); return { p: [-8.4, 1.1, -4.7], t: [-4.75, 1.42, -4.55], f: 1000 * (1 + 0.85 * q), roll: 2.4 * q }; } },
   // Real time, and the hand is still coming. Close, at the height of the brim. It gets an inch away.
-  { at: B.hand, in: 0, cam: (f) => { const q = ei(u(f, B.hand, B.drained)); return { p: [-7.1, 1.65, -5.05], t: [-4.7, 1.58, -4.85], f: 1000 + 280 * q, roll: -1 }; } },
+  { at: B.hand, in: 0, cam: (f) => { const q = ei(u(f, B.hand, B.drained)); return { p: [-7.1, 1.4, -5.05], t: [-4.7, 1.32, -4.85], f: 1000 + 280 * q, roll: -1 }; } },
   // And she drops, the lens going down with her.
   { at: B.drained, in: 0, cam: (f) => { const q = ei(u(f, B.drained, B.drained + 12)); return { p: [-7.4, 1.25 - 0.5 * q, -5.2], t: [-4.6, 1.3 - 0.75 * q, -4.9], f: 1120 - 80 * q, roll: 1.4 * q }; } },
   // The best thing that has ever happened to her. Nemu flat in the foreground of it.

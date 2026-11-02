@@ -6,7 +6,7 @@ here needs remaking from scratch, on any branch that has this folder.
 | Hero | Film | Source | Notes |
 |---|---|---|---|
 | Zack | "Green Light", on the real BGC map, composited over recorded plates | `src/bgc/` | [zack-bgc.md](../../docs/reports/home-scene/zack-bgc.md) |
-| Phaister | "Showtime", Ermita at night under the LRT | `src/ermita/` | [phaister-ermita.md](../../docs/reports/home-scene/phaister-ermita.md) |
+| Phaister | "Drained", on the real Ermita map, composited over recorded plates | `src/ermita/` | [phaister-ermita.md](../../docs/reports/home-scene/phaister-ermita.md) |
 
 Each hero has two clips on one clock: a 45 s film at 60 fps that plays once per run of the game, and a 24 s idle at
 30 fps that loops. The idle's first frame continues the film's last, so the join cannot show.
@@ -23,19 +23,22 @@ npm run refs
 `refs` copies the game's models, can and slipper from `Assets/` into `public/ref/`. Run it again if a model changes.
 `node_modules/`, `public/ref/`, `out/` and `scratch/` are ignored by git on purpose: all of them can be rebuilt.
 
-## Zack's plates: the real map
+## The plates: the real map
+
+Each film has a `film.ts` beside its beats: its map, cast, eyes, floor and clocks. `scripts/plates.mjs <hero>` and `three/PoseDump.tsx` read that and nothing else. Phaister's stands on `IlalimNgTulay`, with Nemu, Kuro and her moths in the plate, and the LRT wound to cross during her crux.
 
 Zack's film stands on the real BGC map (`Kanto`), recorded through the film's own camera in Play mode, so everything the
 game shows is in it: shaders, ink, grade, traffic and signals. Zack, Rago, the can and the slipper are the game's own models on
-the game's own skin in that same recording, wearing the film's acting (`src/bgc/PoseDump.tsx`), so they cast real shadows
+the game's own skin in that same recording, wearing the film's acting (`src/three/PoseDump.tsx`), so they cast real shadows
 and get the real ink. Only the effects are drawn over it. The map's pigeons are left out on purpose. Close the Editor and the game's project, then:
 
 ```
-node scripts/plates.mjs
+node scripts/plates.mjs zack
+node scripts/plates.mjs phaister
 ```
 
-That takes about 8 minutes and writes 2.4 GB to `plates/`, which git ignores. Run it after changing `camera.ts`, `perform.ts`, `beats.ts` or the map, because the cast is in the plates; only effects never need it. `node scripts/plates.mjs 300 1000` records just those
-film frames for checking an angle, and `node scripts/platesheet.mjs zack-intro scratch/p.png 300 1000` shows them.
+Each takes about 8 minutes and writes about 2.4 GB to `plates/`, which git ignores. Run it after changing `camera.ts`, `perform.ts`, `beats.ts` or the map, because the cast is in the plates; only effects never need it. `node scripts/plates.mjs phaister 300 1000` records just those
+film frames for checking an angle, with the street's clock still running between them, and `node scripts/platesheet.mjs phaister-intro scratch/p.png 300 1000` shows them. `SCOUT=lenses.json node scripts/plates.mjs phaister` looks round a map from a list of lenses.
 Whatever in the map would stand in front of the cast or against the lens draws only its shadow for those frames
 (`HomeFilmPlateRecorder.Clear`). The idle's last 2 s crossfade to pictures of the same street leading into its first
 frame, so its loop has no seam; a vehicle crossing then shows doubled for that moment. The signals are wound so the
@@ -80,9 +83,9 @@ The same files exist in `src/bgc/` and `src/ermita/`.
 | How someone moves | `perform.ts` | Each hero has a track of the model's own clips and keyed poses (`Z_TRACK`, `P_TRACK`). Add `{ at, fade, clip, rate, pose }`. Walking paths and facing are the `place` and `yaw` functions below it |
 | A shot | `camera.ts` | `SHOTS` is the shot list: `at` the start, `in` the blend (0 is a cut), `p` the lens, `t` what it looks at, `f` the zoom |
 | The frame the player lives with | `camera.ts`, `landing` | Keep the hero in the gap between the tiles and the mode card |
-| Effects | `BgcScene.tsx`, `ErmitaScene.tsx` | Burst, rings, body arcs, Backtrack's streak, ghost frames and landing ring (`lib/bolt.tsx` draws the bolts); Phaister's sigils, rifts and the blast |
+| Effects | `BgcScene.tsx`, `ErmitaScene.tsx` | Burst, rings, body arcs, Backtrack's streak, ghost frames and landing ring (`lib/bolt.tsx` draws the bolts); Phaister's Curse: Drain ghost, motes and knot, her smoke and bloom. Her moths and Kuro are rows in `perform.ts` and live in the plate |
 | When his current lights things, and the hold's sparks | `bgc/light.ts` | `IDLE_SPARKS` is the hold's few moments on its 24 s clock; `litAt` drives his rim and the pool on the floor. Keep them rare |
-| The place | Zack: the map itself, then `plates.mjs`. Phaister: `ermita/set.tsx` | Buildings, lamps, trees, colours. Phaister's palette is the `C` block at the top |
+| The place | The map itself, then `plates.mjs` | Whatever the game shows |
 
 `pose` values are degrees added to a bone: `root`, `torso`, `head`, `armL`, `armR`, `foreL`, `foreR`, `legL`, `legR`.
 The clips each model has can be listed from its glb; the common ones are `idle`, `walk`, `sprint`, `slide`, `pick-up`,
@@ -103,10 +106,13 @@ The clips each model has can be listed from its glb; the common ones are `idle`,
 - After `landing` there are no cuts, and everything in the idle repeats exactly on its 24 s clock.
 - Nothing important goes under a button, in any shot.
 - Tagalog names are not used for skills, ghosts or statuses.
+- A straight arm is a model's own `holding-*-shoot` clip held still (`rate: 0`). Keyed from rest, these rigs' arms swing out sideways.
+- Eyes and lashes are different things, even where the atlas paints them as one shape (`lashTop`, `lashOuter` in `film.ts`).
+- From the lot, the deck's parapet hides the LRT's far track: Phaister's film uses the near one.
 
 ## Add another hero
 
-1. Copy `src/ermita/` to `src/<place>/`, and change the models in its scene file. Add the new `*-redesign.glb` to `scripts/refs.mjs`, and to the model list in `useActor` in `src/three/actor.tsx`.
+1. Copy `src/ermita/` to `src/<place>/`, and change the models in its scene file and `film.ts`, and add it to `DIRS` in `scripts/plates.mjs`. Add the new `*-redesign.glb` to `scripts/refs.mjs`, and to the model list in `useActor` in `src/three/actor.tsx`.
 2. Register `<Hero>Intro` and `<Hero>Idle` in `src/Root.tsx`, as the others are.
 3. Rewrite `beats.ts` first, then `camera.ts` starting from `landing`, then `perform.ts`.
 4. Run `node scripts/film.mjs <hero>`, and add the hero to `HubSceneVideo.Heroes` if it is new.

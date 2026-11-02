@@ -2,7 +2,7 @@
 
 Updated 2026-11-01. [TODO](TODO.md) is the only active queue.
 
-- HOME-FILMS-1101, on main: Zack (BGC), Phaister (Ermita). [Edit guide](../ArtSource/home-scene/README.md). Next: owner in game.
+- HOME-FILMS-1101, on main: Zack (BGC), Phaister ("Drained", real Ermita map). [Edit guide](../ArtSource/home-scene/README.md). Next: owner in game.
 - FEEL-1031, on main: replay wipes, spectator 3D replay, break card, impact, 0.6 m knockback,
   SFX. Film: run_ui_player_review.py --feel-only. Next: owner review.
 - TAG-FEEL-1031, on main: one tag live and in replay (spacing, reach, shared shove), FPP swing, replay impact on hand

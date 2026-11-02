@@ -98,6 +98,18 @@ export const ErmitaScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
     palmWorld = [P.x + (ax / al) * 0.8, 1.2, P.z + (az / al) * 0.8];
   }
 
+  // ⚠️ HER EYES ARE LIGHT, NOT PAINT (owner: "what are those glowing eyes", on a mid pink that read as eyeshadow). The plate turns her own eye paint
+  // hot white and never changes its shape; this is the light coming off it. Her witch's magenta only, and only while she is casting.
+  if (P.eyeGlow > 0.02 && pb && inFront([P.x, 1.4, P.z])) {
+    const d = figure(pb, v, P, 0.3);
+    const q = scaleAt(v, [P.x, 1.4, P.z]);
+    // Read off her glb: the middle of each eye, in the head bone's space.
+    ([[0.066, 0.106, 0.135], [-0.066, 0.106, 0.135]] as [number, number, number][]).forEach((e, i) => {
+      const [x, y] = d.img.at('head', e);
+      fx.push(<ellipse key={`eye${i}`} cx={x} cy={y} rx={q * 0.13} ry={q * 0.065} fill="url(#eyeglow)" opacity={0.75 * P.eyeGlow} style={{ mixBlendMode: 'screen' }} />);
+    });
+  }
+
   // ⚠️ THE EFFECTS ARE OVER THE PICTURE, SO THEY CANNOT PASS BEHIND ANYONE. What Phaister or Nemu stands in front of is left out while they cover it.
   const covers = (who: { x: number; z: number }, p: V3) => {
     if (depth(v, p) <= depth(v, [who.x, 1, who.z])) return false;
@@ -204,11 +216,11 @@ export const ErmitaScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
     const t = (f - at) / 20;
     if (t < 0 || t >= 1 || !inFront([x0, 1, z0])) return;
     const q = scaleAt(v, [x0, 1, z0]);
-    for (let i = 0; i < 7; i++) {
-      const a = (i / 7) * 6.283 + random(`${key}${i}`);
+    for (let i = 0; i < 5; i++) {
+      const a = (i / 5) * 6.283 + random(`${key}${i}`);
       const r = q * (0.2 + 0.7 * t) * (0.7 + 0.5 * random(`${key}r${i}`));
       const [x, y] = project(v, [x0, 0.2 + (i % 4) * 0.42 + t * 0.5, z0]);
-      if (!covered([x0, 1, z0], true)) fx.push(<circle key={`${key}${i}`} cx={x + Math.cos(a) * r} cy={y + Math.sin(a) * r * 0.5} r={q * (0.18 + 0.2 * t)} fill={SMOKE} opacity={0.62 * (1 - t)} />);
+      if (!covered([x0, 1, z0], true)) fx.push(<circle key={`${key}${i}`} cx={x + Math.cos(a) * r} cy={y + Math.sin(a) * r * 0.5} r={q * (0.18 + 0.2 * t)} fill={SMOKE} opacity={0.34 * (1 - t)} />);
     }
   };
   smoke('sa', P.visible > 0 ? P.x : 0.8, P.visible > 0 ? P.z : -6.6, B.blink);
@@ -230,18 +242,18 @@ export const ErmitaScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
   puff('candn', C.x, C.z, B.canDown, 14, 0.2);
   puff('arrive', ARRIVE.x, ARRIVE.z, B.arrive, 14, 0.3);
   puff('skid', -4.9, -5.2, B.cutOff, 16, 0.34);
-  puff('flat', FLAT.x, FLAT.z - 0.2, B.drained + 5, 30, 0.7);
+  puff('flat', FLAT.x, FLAT.z - 0.2, B.drained + 5, 24, 0.42);
   const bang = (key: string, x: number, y: number, z: number, at: number, until: number, h: number) => {
     if (f < at || f >= until || !inFront([x, y, z])) return;
     const [bx, by] = project(v, [x, y, z]);
     const q = scaleAt(v, [x, y, z]);
     fx.push(<g key={key} transform={`translate(${bx} ${by}) rotate(10) scale(${kf(f, [[at, 0.2], [at + 4, 1.2], [at + 8, 1]])})`}><Word text="!" h={q * h} fill="#FFE27A" /></g>);
   };
-  bang('kb', K[0] + 0.5, K[1] + 0.7, K[2], B.klang + 2, B.tada - 6, 0.6);
+  bang('kb', K[0] + 0.5, K[1] + 0.7, K[2], B.klang + 2, B.tada - 6, 0.95);
   bang('pb', P.x + 0.7, 2.3, P.z, B.notice, B.bolt + 2, 0.62);
   bang('kc', K[0] + 0.45, K[1] + 0.6, K[2], B.kuroFace + 2, B.full, 0.5);
 
-  const klangWord = env(f, B.klang + 5, B.klang + 6, B.reactN - 2, B.reactN);
+  const klangWord = env(f, B.klang + 5, B.klang + 6, B.canDown - 4, B.canDown);
   const drainedWord = env(f, B.drained + 8, B.drained + 9, B.joy - 4, B.joy);
   const [icx, icy] = project(v, [0, 0.42, 0]);
   const sp = panSpeed(f);
@@ -270,6 +282,7 @@ export const ErmitaScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
           </filter>
           <filter id="impactA" colorInterpolationFilters="sRGB"><feColorMatrix type="saturate" values="0" /><feComponentTransfer><feFuncR type="discrete" tableValues="0.09 0.09 1 1" /><feFuncG type="discrete" tableValues="0.02 0.02 0.9 0.9" /><feFuncB type="discrete" tableValues="0.08 0.08 0.88 0.88" /></feComponentTransfer></filter>
           <filter id="impactB" colorInterpolationFilters="sRGB"><feColorMatrix type="saturate" values="0" /><feComponentTransfer><feFuncR type="discrete" tableValues="1 1 0.09 0.09" /><feFuncG type="discrete" tableValues="0.22 0.22 0.02 0.02" /><feFuncB type="discrete" tableValues="0.3 0.3 0.08 0.08" /></feComponentTransfer></filter>
+          <radialGradient id="eyeglow"><stop offset="0" stopColor="#FFF0FA" stopOpacity={0.95} /><stop offset="0.35" stopColor="#FF4FD0" stopOpacity={0.7} /><stop offset="1" stopColor="#FF4FD0" stopOpacity={0} /></radialGradient>
           <radialGradient id="drainglow"><stop offset="0" stopColor={DRAIN_CORE} stopOpacity={0.95} /><stop offset="0.4" stopColor={DRAIN} stopOpacity={0.55} /><stop offset="1" stopColor={DRAIN} stopOpacity={0} /></radialGradient>
           {blur && <filter id="whip" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation={`${bx} ${by}`} /></filter>}
         </defs>
@@ -297,8 +310,8 @@ export const ErmitaScene: React.FC<{ part: 'intro' | 'idle' }> = ({ part }) => {
         {f >= B.klang && f < B.klang + 2 && <rect width={1920} height={1080} fill={DRAIN_CORE} />}
         {stopped && f >= B.klang + 4 && <Burst x={icx} y={icy} s={300} c="#F444D4" />}
         {f >= B.gulp && f < B.gulp + 1 && <rect width={1920} height={1080} fill={DRAIN_CORE} />}
-        {klangWord > 0 && <g opacity={klangWord} transform={`translate(1000 300) rotate(-7) scale(${kf(f, [[B.klang + 5, 0.4], [B.klang + 9, 1.15], [B.klang + 13, 1]])})`}><Word text="KLANG!" h={190} /></g>}
-        {drainedWord > 0 && <g opacity={drainedWord} transform={`translate(1060 300) rotate(-5) scale(${kf(f, [[B.drained + 8, 0.4], [B.drained + 12, 1.15], [B.drained + 16, 1]])})`}><Word text="DRAINED!" h={170} fill={DRAIN} /></g>}
+        {klangWord > 0 && <g opacity={klangWord} transform={`translate(520 300) rotate(-7) scale(${kf(f, [[B.klang + 5, 0.4], [B.klang + 9, 1.15], [B.klang + 13, 1]])})`}><Word text="KLANG!" h={190} /></g>}
+        {drainedWord > 0 && <g opacity={drainedWord} transform={`translate(1240 300) rotate(-5) scale(${kf(f, [[B.drained + 8, 0.4], [B.drained + 12, 1.15], [B.drained + 16, 1]])})`}><Word text="DRAINED!" h={170} fill={DRAIN} /></g>}
       </svg>
     </AbsoluteFill>
   );

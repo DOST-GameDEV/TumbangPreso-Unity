@@ -26,7 +26,7 @@ export const PLATES = {
   /** The lot's surface: the map's origin sits on it (ilalim_layout.json, originY). Measured in the batch log. */
   floor: 0,
   cast: [
-    { id: 'phaister', slipper: true, atlas: 'Assets/TumbangPreso/Art/CharacterRedesign/phaister/phaister-redesign-atlas.png', eyeLow: 0.46, eyeHigh: 0.52, glow: { r: 255, g: 96, b: 214, a: 255 } },
+    { id: 'phaister', slipper: true, atlas: 'Assets/TumbangPreso/Art/CharacterRedesign/phaister/phaister-redesign-atlas.png', eyeLow: 0.44, eyeHigh: 0.475, lashTop: 0.34, lashOuter: 0.24, glow: { r: 255, g: 226, b: 246, a: 255 } },
     { id: 'nemu', slipper: false },
   ],
   kuro: true,

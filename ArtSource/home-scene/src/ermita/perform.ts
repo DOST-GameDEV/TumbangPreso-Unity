@@ -91,7 +91,8 @@ export const LUNGE_END = { x: -4.65, z: -5.2 };
 export const FLAT = { x: -4.5, z: -5.1 };
 
 const SCOOP_AT = { x: SLIP_REST.x + 0.5, z: SLIP_REST.z - 0.3 };
-const RUN_OUT: Key[] = [[B.run, POST.x, POST.z], [B.scoop - 6, SCOOP_AT.x, SCOOP_AT.z]];
+// Wide of the can and of Nemu, round the east side.
+const RUN_OUT: Key[] = [[B.run, POST.x, POST.z], [B.run + 42, 5.6, -4.4], [B.run + 66, 6.9, 0], [B.scoop - 6, SCOOP_AT.x, SCOOP_AT.z]];
 const CHASE: Key[] = [[B.chase, SCOOP_AT.x, SCOOP_AT.z], [B.chase + 39, 6.2, -2], [B.chase + 72, 4.2, -6], [B.blink, GONE.x, GONE.z]];
 const BOLT: Key[] = [[B.bolt, ARRIVE.x, ARRIVE.z], [B.cutOff, -4.9, -5.2]];
 
@@ -120,7 +121,7 @@ const TWIRL: Pose = { torso: [-3, -6, 2], head: [-5, -8, 0], armR: [-112, 0, 30]
 const WINDUP: Pose = { root: [4, 0, 0], torso: [2, 24, 0], head: [-6, -22, 0], armR: [28, 0, 42], foreR: [0, 74, 0], armL: [-30, 0, 40] };
 const FLICK: Pose = { root: [2, 0, 0], torso: [0, -24, 0], head: [-6, 18, 0], armR: [66, 0, 36], foreR: [0, 8, 0], armL: [-46, 0, 46] };
 const TADA: Pose = { root: [-3, 0, 0], torso: [-5, 0, 0], head: [-5, 0, 0], armR: [-60, 0, 90], armL: [-60, 0, 90], foreR: [0, 22, 0], foreL: [0, -22, 0], legL: [-8, 0, 12], legR: [6, 0, -12] };
-const LANDED: Pose = { root: [24, 0, 0], torso: [8, 0, 0], head: [-16, 0, 0], armR: [-20, 0, 74], armL: [-20, 0, 74], legL: [-44, 0, 14], legR: [18, 0, -14] };
+const LANDED: Pose = { root: [10, 0, 0], torso: [4, 0, 0], head: [-6, 0, 0], armR: [-20, 0, 74], armL: [-20, 0, 74], legL: [-44, 0, 14], legR: [18, 0, -14] };
 const SMUG: Pose = { torso: [-3, 0, 2], head: [-7, 10, 3], armL: [-30, 0, 40], foreL: [0, -96, 0] };
 const FRIGHT: Pose = { root: [-8, 0, 0], torso: [-8, 0, 0], head: [-6, 0, 0], armR: [-60, 0, 66], armL: [-60, 0, 66], foreR: [0, 50, 0], foreL: [0, -50, 0] };
 /** Curse: Drain's reach, without the doll: a palm out at them on the lens's side, the slipper at her belt as in the game, her hat level so the face stays clear of the brim. */
@@ -143,7 +144,7 @@ const P_TRACK: Seg[] = [
   PI(B.flick - 24, 16, WINDUP),
   { at: B.flick, fade: 3, clip: 'idle', abs: 0, pose: FLICK },
   { at: B.tada - 3, fade: 6, pose: TADA },
-  { at: B.run - 3, fade: 4, clip: 'sprint', rate: 1.32 },
+  { at: B.run - 3, fade: 4, clip: 'sprint', rate: 1.45 },
   { at: B.scoop - 8, fade: 4, clip: 'slide', rate: 1.2, once: true },
   { at: B.chase - 2, fade: 4, clip: 'sprint', rate: 1 },
   { at: B.blink, fade: 0, clip: 'hero-phaister-blink', rate: 1, once: true },
@@ -167,7 +168,7 @@ const herYawKeys = (f: number) => {
   if (f >= B.chase + 1 && f < B.blink) return unwrapTo(chaseHeading(f), 150);
   return kf(f, [
     [0, 20], [B.walk - 3, 20], [B.walk + 2, 90], [B.dare - 8, 90], [B.dare + 2, 140], [B.noLook - 6, 140], [B.noLook + 6, -8], [B.tada, -8],
-    [B.run - 4, -8], [B.run + 3, 130], [B.scoop - 8, 130], [B.scoop, 170], [B.chase, 170],
+    [B.run - 4, -8], [B.run + 3, 102], [B.run + 40, 102], [B.run + 46, 163], [B.run + 64, 163], [B.run + 70, 207], [B.scoop - 8, 207], [B.scoop, 170], [B.chase, 170],
     [B.blink, 300], [B.arrive, -100], [B.notice - 4, -100], [B.notice + 3, 90], [B.bolt, 90], [B.bolt + 4, 10], [B.cutOff, 10],
     [B.turn, -55], [B.drained + 8, -55], [B.joy, -20], [B.home - 2, -20], [B.home + 4, 60], [B.home + 30, 20], [B.home + 58, -10], [B.settled - 30, IDLE_YAW(INTRO - 30)], [B.settled, IDLE_YAW(INTRO - 30)],
   ]);
