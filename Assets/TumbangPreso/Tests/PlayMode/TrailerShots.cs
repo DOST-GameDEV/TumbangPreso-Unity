@@ -271,8 +271,16 @@ namespace TumbangPreso.PlayTests
                 s.Note($"RAGO's COME AT ME: {comeOn.name}, {comeOn.length:F2} s, from shot {EmoteFrom:F3} s (frame {EmoteFrom * 60.0f:F1}), arms wide at frame {PeakAt * 60.0f:F0}");
             };
             bool framed = false;
+            Renderer[] tags = null;
             shot.Pose = (s, t) =>
             {
+                // No "P1 · TAYA" over his head (owner, 2026-11-03): the trailer's UI stays hidden. The nameplates' words are
+                // `TextMesh`es the nameplate shows again every frame, so they go off here, just before each frame is taken.
+                // The role ring at his feet stays: it is on the court, not text.
+                if (tags == null)
+                    tags = Object.FindObjectsByType<CharacterNameplate>().SelectMany(n => n.GetComponentsInChildren<TextMesh>(true))
+                        .Select(m => (Renderer)m.GetComponent<MeshRenderer>()).Where(r => r != null).ToArray();
+                foreach (var tag in tags) if (tag != null) tag.enabled = false;
                 // His body: the rig's idle until the beat, then COME ON, a six-frame blend between, on the shot clock.
                 float into = t - EmoteFrom;
                 float w = Smooth((into + 0.05f) / 0.1f);
