@@ -14,6 +14,7 @@ Do not read every report or historical queue at session start.
 | UI, input, typography | [UI method](UI_DESIGN_METHOD.md), [owner artwork](OWNER_UI_AUTHORING.md), [fonts](FONT_USAGE.md), [revamp artboards](UI_REVAMP.md) | Current screen/theme, InputCatalogue, ScreenInputCatalogue |
 | Character art and motion | [Character method](CHARACTER_MODEL_METHOD.md), [art direction](Art_Direction.md), [clothing](CAST_CLOTHING_STYLE.md) | Per-character source, current rig, authored clips |
 | Skills, VFX, SFX, ultimates | [Hero method](HERO_KIT_METHOD.md), [VFX method](VFX_BENCH_METHOD.md), network contract | HeroAbilitySystem, kit, shared presentation; `.claude/skills/tump-sfx/SKILL.md` for audio |
+| Gameplay trailer | [Trailer draft](TRAILER_DRAFT.md) | Owner WAV, replay viewer, map films |
 | Map films and previews | [Films](MAP_FILM_METHOD.md), [recording](MAP_PREVIEW_RECORDING.md) | MapFilm, MapPreviewVideo, source receipts |
 | Maps and source art | [Reference index](REFERENCE_INDEX.md) | Current scene, builder, authored sources |
 | Recorded matches | [Local replays](LOCAL_REPLAYS.md) | RecordedMatchClip, RecordedWorldView, replay codecs |
