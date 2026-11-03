@@ -40,6 +40,7 @@ The text cards in `cards/` are ProRes 4444 with alpha, each as long as its shot.
 | 35 | RAGO, MAYON AWAKENS | 0:48.03 | 90 frames | `shot-35.mov` |
 | 36 | YASMIN, ABSOLUTE ZERO | 0:49.53 | 90 frames | `shot-36.mov` |
 | 37 | AMIHAN, AIRBURST | 0:51.03 | 90 frames | `shot-37.mov` |
+| 38 | PAETE, MAKILING'S EMBRACE | 0:52.53 | 90 frames | `shot-38.mov` |
 | 48 | Logo and key art | 1:00.80 | 139 frames | `shot-48.mov`, `shot-48-plate.mov`, `shot-48-cta.mov` |
 
 **01, Studio badge.** The BH studios mark in white on black, at 60% of its menu size. It fades in over
@@ -65,6 +66,12 @@ builds and she lands her release pose. Frame 45 is the hit: it cuts to a high wi
 shoulder, so the wind fan sweeps left to right. All three rivals are thrown, two of them off the stilt
 court into the lagoon, and both loose slippers fly toward the edge.
 
+**38, PAETE, MAKILING'S EMBRACE.** Live on BANAUE. Frames 0 to 21 are from his cutscene: the guardian
+tree rises out of the court and opens its face. Frame 22 cuts to a high three-quarter wide as the pull
+starts: YASMIN, NEMU and ILYAS slide in from three sides and are Rooted at the tree's foot.
+Differs from the prompt: the game roots them on frames 51 to 58, not 67, because the pull is that fast.
+Captured only; nothing in his kit or art was changed.
+
 **48, Logo and key art.** The nine heroes around the can on Tondo at dusk, each with their slipper.
 - `shot-48.mov`: plate, logo and COMING SOON together.
 - `shot-48-plate.mov`: the plate only.
@@ -78,5 +85,5 @@ court into the lagoon, and both loose slippers fly toward the edge.
 - 10, "Taya!" in the black: blocked. The kid's "Taya!" in the game is a synthesized sound, not a real
   recording, so it needs a recorded voice first.
 - 20, 27, 28, 33: UI captures, still to do.
-- 38 to 43: the other ultimates, being recorded one at a time.
+- 39 to 43: the other ultimates, being recorded one at a time.
 - 47: the contact flash. It depends on shot 46's replay.
