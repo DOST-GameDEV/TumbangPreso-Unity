@@ -56,7 +56,8 @@ namespace TumbangPreso.Visual
     public static partial class HeroAbilityClips
     {
 #if UNITY_EDITOR
-        public static AnimationClip[] BuildEmotes(Transform root)
+        /// <summary>`id` picks a hero's own take where one exists (RAGO's COME AT ME); every other emote is the shared set.</summary>
+        public static AnimationClip[] BuildEmotes(Transform root, string id = null)
         {
             var paths = ResolvePaths(root);
             if (paths == null) throw new System.InvalidOperationException("The rig is missing a required bone for the emotes.");
@@ -70,7 +71,9 @@ namespace TumbangPreso.Visual
                 Grounded(EmoteTooEasy(paths, fit), root, paths, t => 0.05f * Bump(t, 0.04f, 0.28f)),
                 Grounded(EmoteLaugh(paths, fit), root, paths, t => 0.025f * Mathf.Abs(Mathf.Sin(Mathf.PI * t / 0.3f))),
                 Grounded(EmoteDance(paths, fit), root, paths, t => 0.045f * Mathf.Abs(Mathf.Sin(Mathf.PI * t / DanceBeat))),
-                Grounded(EmoteComeOn(paths, fit), root, paths, t => 0.05f * Bump(t, 0.62f, 0.86f) + 0.03f * Bump(t, 0.86f, 1.06f)),
+                id == "sean"
+                    ? Grounded(EmoteComeOnBrawler(paths, fit), root, paths, t => 0.08f * Bump(t, 0.6f, 0.76f) + 0.035f * Bump(t, 0.86f, 1.02f))
+                    : Grounded(EmoteComeOn(paths, fit), root, paths, t => 0.05f * Bump(t, 0.62f, 0.86f) + 0.03f * Bump(t, 0.86f, 1.06f)),
                 Grounded(EmoteGoodGame(paths, fit), root, paths, null),
             };
         }
@@ -391,6 +394,44 @@ namespace TumbangPreso.Visual
             PoseKey(b, 0.76f, 0, V(chest - 6, 0, 0), V(-20, 0, 10), wideL, wideR, V(-12, 0, 8), V(10, 0, 8), Fore(30), Fore(30));
             PoseKey(b, 0.96f, 0, V(chest - 4, 0, 0), V(-18, 0, -8), wideL, wideR, V(-8, 0, 8), V(8, 0, 8), Fore(36), Fore(36));
             PoseKey(b, 1.20f, 0, V(chest, 0, 0), V(-14, 0, 0), reachL, reachR, V(-8, 0, 6), V(8, 0, 6), Fore(20), Fore(20));
+            return b.Build();
+        }
+
+        /// <summary>
+        /// RAGO'S COME AT ME (owner, 2026-11-03: the trailer's taya taunt; "make new animations"). The shared COME ON is a
+        /// beckon and a spread, and on RAGO's block arms the spread hardly opened. He is the magma brawler, so his taunt is
+        /// a boxer's: guard up, the knuckles slammed together on the first beat, a grind of the shoulders, a sink, then
+        /// the arms thrown wide and high with a stomp, chest out and chin up, "bring it", and a curl of the right
+        /// forearm back into the guard. Same length and the same strongest pose time (0.76 s) as the shared clip, so a
+        /// cut timed to one is timed to the other. Loops: the seam is the guard.
+        /// </summary>
+        private static AnimationClip EmoteComeOnBrawler(Dictionary<string, string> paths, EmoteFit fit)
+        {
+            var b = new ClipBuilder(EmoteMotion.ComeOn, paths);
+            // Fists at the chest are hanging arms twisted 60 in (the elbow's hinge then folds across); knuckles meeting in
+            // front of the sternum are GG's palm-and-fist twist, both as fists.
+            Vector3 guardL = V(-34, 60, 12), guardR = V(-34, -60, -12);
+            Vector3 slamL = V(-40, 72, 8), slamR = V(-40, -72, -8);
+            Vector3 dropL = V(20, 0, 24), dropR = V(20, 0, -24);
+            float wide = fit.Push(112, 14), arch = fit.Push(-16, -8), chin = fit.Push(-24, -8);
+            Vector3 wideL = V(-22, 0, wide), wideR = V(-22, 0, -wide);
+            Vector3 stance = V(-14, 0, 6), set = V(-24, 0, 9), planted = V(6, 0, 11);
+            PoseKey(b, 0.00f, 0, V(10, 0, 0), V(6, 0, 0), guardL, guardR, stance, stance, Fore(120), Fore(120));
+            // The wind: the fists pull apart, the chest opens.
+            PoseKey(b, 0.11f, 0, V(2, 0, 0), V(-4, 0, 0), V(-44, 20, 40), V(-44, -20, -40), stance, stance, Fore(96), Fore(96));
+            b.PunchAt(0.22f);
+            PoseKey(b, 0.22f, 0, V(18, 0, 0), V(12, 0, 0), slamL, slamR, stance, stance, Fore(104), Fore(104));
+            // The grind: knuckles held together, shoulders rolled, a look up from under the brow.
+            PoseKey(b, 0.40f, 0, V(14, 9, 3), V(4, -8, 0), slamL, slamR, stance, stance, Fore(108), Fore(108));
+            // The sink before the big one: low, arms swung back.
+            PoseKey(b, 0.60f, 0, V(24, 0, 0), V(16, 0, 0), dropL, dropR, set, set, Fore(26), Fore(26));
+            b.PunchAt(0.76f);
+            PoseKey(b, 0.76f, 0, V(arch, 0, 0), V(chin, 0, 0), wideL, wideR, planted, planted, Fore(22), Fore(22));
+            PoseKey(b, 0.96f, 0, V(arch + 4, 0, 0), V(chin + 6, 6, 0), V(-18, 0, wide - 8), V(-18, 0, -(wide - 8)), planted, planted, Fore(30), Fore(30));
+            // The beckon: the right forearm curls twice toward him on the way back to the guard.
+            PoseKey(b, 1.06f, 0, V(4, -6, 0), V(-6, 4, 0), V(-30, 30, 30), V(-70, 0, -24), stance, stance, Fore(80), Fore(124));
+            PoseKey(b, 1.13f, 0, V(6, -6, 0), V(-4, 4, 0), V(-32, 44, 22), V(-70, 0, -24), stance, stance, Fore(100), Fore(60));
+            PoseKey(b, 1.20f, 0, V(10, 0, 0), V(6, 0, 0), guardL, guardR, stance, stance, Fore(120), Fore(120));
             return b.Build();
         }
 

@@ -18,8 +18,10 @@ namespace TumbangPreso.EditorTools
     // outer node, so a clip baked on one hero does not bind on another.
     public static class EmoteMotionAuthor
     {
-        /// <summary>The playable heroes the emotes are baked for; every other rig keeps the pack's clips down its chain.</summary>
-        public static readonly string[] Heroes = { "nemu", "paete", "phaister", "amihan", "dante" };
+        /// <summary>The playable heroes the emotes are baked for; every other rig keeps the pack's clips down its chain.
+        /// All nine (owner, 2026-11-03): RAGO, YASMIN, ZACK and ILYAS were left on the pack's clips by the October 23 set,
+        /// so their COME AT ME was the bare T-pose and their HA HA a crouch.</summary>
+        public static readonly string[] Heroes = { "nemu", "paete", "phaister", "amihan", "dante", "sean", "cheska", "zack", "rafi" };
 
         public static bool Covers(string id) => Array.IndexOf(Heroes, id) >= 0;
 
@@ -37,7 +39,7 @@ namespace TumbangPreso.EditorTools
             {
                 var animator = copy.GetComponentInChildren<Animator>(true);
                 var root = animator != null ? animator.transform : copy.transform;
-                generated = HeroAbilityClips.BuildEmotes(root);
+                generated = HeroAbilityClips.BuildEmotes(root, id);
                 var saved = new AnimationClip[generated.Length];
                 for (int i = 0; i < generated.Length; i++)
                 {
@@ -64,10 +66,15 @@ namespace TumbangPreso.EditorTools
 
         /// <summary>Bake and put the emotes on each hero's roster entry without a whole roster build (batchmode: -executeMethod).</summary>
         [MenuItem("TUMP/Authoring/Bake Emotes")]
-        public static void Wire()
+        public static void Wire() => Wire(Heroes);
+
+        /// <summary>Bake only `ids` (batch `-heroes a,b`): Paete's and Phaister's finished clips are not rewritten by a
+        /// bake that is for someone else.</summary>
+        public static void Wire(string[] ids)
         {
-            foreach (string id in Heroes)
+            foreach (string id in ids)
             {
+                if (!Covers(id)) throw new InvalidOperationException(id + " is not one of the emote heroes.");
                 var roster = AssetDatabase.LoadAssetAtPath<RosterEntryAsset>("Assets/TumbangPreso/Resources/Roster/person_" + id + ".asset");
                 if (roster == null || roster.Model == null) throw new InvalidOperationException("No " + id + " roster entry or model.");
                 var baked = Bake(id, roster.Model);
@@ -154,7 +161,6 @@ namespace TumbangPreso.EditorTools
             bool ok = true;
             try
             {
-                Wire();
                 string[] args = Environment.GetCommandLineArgs();
                 string[] heroes = Heroes, emotes = { "yes", "no", "sit", "crouch", "dance", "tpose", "bow" };
                 for (int i = 0; i + 1 < args.Length; i++)
@@ -162,6 +168,7 @@ namespace TumbangPreso.EditorTools
                     if (args[i] == "-heroes") heroes = args[i + 1].Split(',');
                     if (args[i] == "-emotes") emotes = args[i + 1].Split(',');
                 }
+                Wire(heroes);
                 foreach (string id in heroes)
                     foreach (string emote in emotes)
                         ok &= ClipMotionStrip.Execute(id, "emote." + emote, 8, null, "quarter");
