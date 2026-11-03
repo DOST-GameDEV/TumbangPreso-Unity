@@ -1345,6 +1345,59 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(120000)]
+        public IEnumerator OvertakingPlateSwingsOverTheOneItPassed()
+        {
+            bool reduced = SettingsStore.Current.ReducedUiMotion; int solo = GameLaunch.SoloSeat;
+            try
+            {
+                Settings.SettingsStore.Current.AiDifficulty = 1; AIController.BotsEnabled = true;
+                GameLaunch.SoloSeat = (MatchRules.DefenderSlotFor(1) + 1) % 4;
+                yield return UiArtboardShots.Match("Eskinita", GameMode.HeroStrike);
+                SettingsStore.Current.ReducedUiMotion = false;
+                var local = GameServices.Round.PlayerAt(GameLaunch.SoloSeat);
+                var view = Object.FindFirstObjectByType<TumpMatchReadout>();
+                var flags = BindingFlags.Instance | BindingFlags.NonPublic;
+                int other = -1;
+                for (int seat = 0; seat < 4; seat++)
+                    if (seat != local.PlayerSlot && GameServices.Round.PlayerAt(seat) != null && other < 0) other = seat;
+                if (other < 0) Assert.Ignore("This profile builds no other seats, so nobody can overtake.");
+                var scores = (Scoreboard)typeof(MatchDirector).GetField("_scores", flags).GetValue(GameServices.Match);
+                var scoreAt = typeof(TumpMatchReadout).GetField("_scoreAt", flags);
+                var values = new int[4]; values[local.PlayerSlot] = 1000; values[other] = 500;
+                scores.SetAll(values); scoreAt.SetValue(view, 0f);
+                view.Tick(local, false, false, false, false);
+                yield return new WaitForSecondsRealtime(1.2f);
+                view.Tick(local, false, false, false, false); yield return null;
+
+                var plates = view.Canvas.transform.HudFind("OtherScores");
+                var climber = (RectTransform)plates.Find("ScorePlate" + other);
+                var passed = (RectTransform)plates.Find("ScorePlate" + local.PlayerSlot);
+                Assert.AreEqual(-220, climber.anchoredPosition.y, .5f, "Second before the overtake.");
+
+                values[other] = 1500; scores.SetAll(values); scoreAt.SetValue(view, 0f);
+                view.Tick(local, false, false, false, false);
+                float furthest = 0, pushed = 0; bool between = false;
+                float until = Time.realtimeSinceStartup + 1.2f;
+                while (Time.realtimeSinceStartup < until)
+                {
+                    yield return null;
+                    furthest = Mathf.Max(furthest, climber.anchoredPosition.x);
+                    pushed = Mathf.Min(pushed, passed.anchoredPosition.x);
+                    float y = climber.anchoredPosition.y;
+                    between |= y > -215 && y < -155;
+                }
+                Assert.IsTrue(between, "The plate travels between the rows instead of jumping.");
+                Assert.Greater(furthest, 15, "The overtaker swings out to the right.");
+                Assert.Less(pushed, -3, "The one passed is pushed back against the edge.");
+                Assert.AreEqual(-150, climber.anchoredPosition.y, .5f, "It lands first.");
+                Assert.AreEqual(-220, passed.anchoredPosition.y, .5f, "And the one passed lands second.");
+                Assert.AreEqual(0, climber.anchoredPosition.x, .5f, "Flush with the edge again.");
+                Assert.AreEqual(1, climber.localScale.x, .001f, "Back to its size.");
+            }
+            finally { SettingsStore.Current.ReducedUiMotion = reduced; GameLaunch.SoloSeat = solo; }
+        }
+
+        [UnityTest, Timeout(120000)]
         public IEnumerator PlatesIncludingYoursSlideInWhenAnySeatScoresAndTabListsEveryone()
         {
             bool reduced = SettingsStore.Current.ReducedUiMotion; int solo = GameLaunch.SoloSeat;

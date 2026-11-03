@@ -14,7 +14,8 @@ namespace TumbangPreso.UI
     /// on the screen edge, a nearly solid section holding the hero (every hero the same height, centred by
     /// its own ink), the score, a crown on the unique leader and, for a moment, the points the seat just
     /// won on a green tag. Your own plate is underlined in lime. The plates slide in from the
-    /// left when any seat scores or the lead changes and slide out three seconds later.
+    /// left when any seat scores or the lead changes and slide out three seconds later. When places
+    /// change the plates trade rows in the open: the overtaker swings out and over the one it passed.
     ///
     /// ⚠️ HOLD TAB FOR THE TABLE. The same plates with rank numbers, staying up as long as it is held;
     /// no panel and no dim behind them, so the court stays in view. `Scoreboard` is
@@ -29,6 +30,7 @@ namespace TumbangPreso.UI
     {
         private const float BoardTop = 150, BoardWidth = 276, BoardHeight = 58, BoardStep = 70;
         private const float BoardHold = 3f, BoardIn = .3f, BoardOut = .22f, BoardStagger = .04f;
+        private const float BoardSwap = .7f, BoardSwapClimb = 44, BoardSwapSink = 16, BoardSwapSwell = .07f, BoardCrownPop = .4f;
 
         private sealed class BoardPlate
         {
@@ -44,6 +46,8 @@ namespace TumbangPreso.UI
             public bool Want;
             public int ShownScore = int.MinValue, ShownRank = -1, ShownGain;
             public bool ShownCrown, ShownLocal;
+            public int LastRank = -1, SwapDirection;
+            public float SwapAt = -10, SwapFrom, CrownAt = -10;
         }
 
         private RectTransform _boardRoot;
@@ -193,6 +197,15 @@ namespace TumbangPreso.UI
                 if (rank >= 0)
                 {
                     slot = rank;
+                    // A change of place: the plates arrive in the old order first, then trade rows.
+                    if (p.LastRank >= 0 && rank != p.LastRank && !still)
+                    {
+                        p.SwapFrom = p.Amount > 0 && !float.IsNaN(p.Y) ? p.Y : BoardTop + p.LastRank * BoardStep;
+                        p.SwapAt = now + (p.Amount < 1 ? BoardIn : 0);
+                        p.SwapDirection = rank < p.LastRank ? 1 : -1;
+                        if (p.SwapDirection > 0) p.Root.SetAsLastSibling();
+                    }
+                    p.LastRank = rank;
                 }
                 bool want = rank >= 0 && (tab || pop);
                 if (want && !p.Want) { p.Want = true; p.Delay = tab ? slot * BoardStagger : 0; if (p.Amount <= 0) p.Y = float.NaN; }
@@ -233,6 +246,7 @@ namespace TumbangPreso.UI
                         p.Rank.color = rank == 0 ? BoardAmber : BoardCream;
                     }
                     bool crown = _boardLeader == seat;
+                    if (p.ShownCrown != crown && crown) p.CrownAt = now;
                     if (p.ShownCrown != crown) { p.ShownCrown = crown; p.Crown.Show(crown ? HudBadge.Glyph.Crown : HudBadge.Glyph.None, HudDraw.Honey, Color.clear); }
                     int gain = !tab && now - _boardGainAt[seat] < BoardHold ? _boardGain[seat] : 0;
                     bool tagged = gain > 0;
@@ -247,10 +261,19 @@ namespace TumbangPreso.UI
 
                 // Pose: the row eases to its place, the plate slides from the screen's edge (a fade under Reduced UI Motion).
                 float target = BoardTop + slot * BoardStep;
-                if (slot >= 0) p.Y = float.IsNaN(p.Y) || still ? target : Mathf.Lerp(p.Y, target, 1 - Mathf.Exp(-14 * dt));
+                // A plate changing places swings out on an arc: the climber to the right and over the top, the one passed back against the edge.
+                float swap = still ? 1 : (now - p.SwapAt) / BoardSwap;
+                float swing = swap > 0 && swap < 1 ? Mathf.Sin(swap * Mathf.PI) : 0;
+                if (slot >= 0 && swap < 1) p.Y = Mathf.Lerp(p.SwapFrom, target, Mathf.SmoothStep(0, 1, Mathf.Clamp01(swap)));
+                else if (slot >= 0) p.Y = float.IsNaN(p.Y) || still ? target : Mathf.Lerp(p.Y, target, 1 - Mathf.Exp(-14 * dt));
                 float e = LiveHud.EaseOut(p.Amount);
                 float x = still ? 0 : -(p.Width + 24) * (1 - e);
+                x += swing * (p.SwapDirection > 0 ? BoardSwapClimb : -BoardSwapSink);
                 p.Root.anchoredPosition = new Vector2(x, -(float.IsNaN(p.Y) ? target : p.Y));
+                float swell = p.SwapDirection > 0 ? 1 + swing * BoardSwapSwell : 1;
+                if (p.Root.localScale.x != swell) p.Root.localScale = new Vector3(swell, swell, 1);
+                float crownPop = still ? 1 : LiveHud.Pop((now - p.CrownAt) / BoardCrownPop);
+                if (p.Crown.rectTransform.localScale.x != crownPop) p.Crown.rectTransform.localScale = new Vector3(crownPop, crownPop, 1);
                 p.Group.alpha = still ? p.Amount : Mathf.Clamp01(p.Amount * 3);
             }
         }
