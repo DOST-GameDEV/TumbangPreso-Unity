@@ -1,8 +1,9 @@
 # Gameplay trailer: draft flow
 
 Draft 1, 2026-11-03. The owner's track `TUMP TRAILER.wav` is the master: picture
-follows its beat grid and the audio is never retimed. Playable version with the
-track and a live playhead: [TUMP Trailer Flow](https://claude.ai/artifact/AGUTLFTxkW29wdP75cKeEP).
+follows its beat grid and the audio is never retimed. A reference copy for timing is
+`ArtSource/trailer/tump-trailer-reference.mp3`. Prompts for every animation and cutscene
+shot: [TRAILER_PROMPTS](TRAILER_PROMPTS.md).
 
 ## The track
 
