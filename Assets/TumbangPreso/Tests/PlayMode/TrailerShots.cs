@@ -64,6 +64,7 @@ namespace TumbangPreso.PlayTests
 
         [UnityTest, Timeout(1800000)] public IEnumerator Shot01DuskInTondo() => Record(DuskInTondo());
         [UnityTest, Timeout(1800000)] public IEnumerator Shot05TayaTaunts() => Record(TayaTaunts());
+        [UnityTest, Timeout(2400000)] public IEnumerator Shot48KeyArt() => Record(KeyArt());
 
         // ------------------------------------------------------------------ 01 DUSK IN TONDO
         //
@@ -324,6 +325,86 @@ namespace TumbangPreso.PlayTests
             return shot;
         }
 
+        // ------------------------------------------------------------------ 48 THE KEY ART PLATE (docs/TRAILER_PROMPTS.md)
+        //
+        // Trailer 1:00.80 to 1:03.12, 139 frames, under the logo (tools/render_trailer_logo.py lays the logo, the white and the
+        // call to action over this plate). The nine heroes on TONDO at dusk, in a loose arc round the can on its chalk, RAGO
+        // in the taya's place by the can, each in a pose from their own emote set and each with the game's slipper in the
+        // hand the game holds it in (`CharacterVisual`'s palm fit). Their current models and materials, through the roster.
+        // The seats are Classic street players, out of sight under TondoFilm's SAMPAY (so no hero is a seat and every hero
+        // can stand here). The light is the film's dusk held at film age 3.0. A very slow push for the whole plate, and a
+        // 4K still of its middle. Paete and Phaister take their emote set's authored poses, nothing more.
+
+        private static readonly (string id, string clip, float at)[] KeyArtCast =
+        {
+            // Roster.HeroPeople order, left to right on screen, RAGO taken out to the middle.
+            ("dante", "emote-goodgame", 1.90f), ("cheska", "emote-cheer", 0.62f), ("zack", "emote-streetdance", 1.20f), ("nemu", "emote-cheer", 0.94f),
+            ("phaister", "emote-goodgame", 1.90f), ("rafi", "emote-cheer", 0.20f), ("amihan", "emote-streetdance", 1.50f), ("paete", "emote-goodgame", 1.90f),
+        };
+
+        private static Shot KeyArt()
+        {
+            var shot = new Shot { Number = 48, Slug = "key-art", Map = SceneFlow.Eskinita, Length = 139.0f / 60.0f, HandleFrames = 12,
+                                  FilmIn = 3.0f, FilmRate = 0.0f, Mode = GameMode.Classic, Titled = MapFilm.OverlayPart.None, Still4KAt = 1.15f,
+                                  Source = "TondoFilm's dusk held at film age 3.0 (SAMPAY: seats out of sight); nine roster heroes posed from their emote sets" };
+            var cast = new List<(Staging.Extra hero, Vector3 at, float yaw, AnimationClip clip, float t, string id)>();
+            Vector3 startEye = default, endEye = default, aim = default;
+            const float Fov = 38.0f;
+            shot.Prepare = s =>
+            {
+                s.Hide<Renderer>("_chalkLine");
+                var line = s.Field<Renderer>("_realLine"); if (line != null) line.enabled = true;
+                // Low and looking a little up: the nine in the lower half of the frame, the bunting and the sky over
+                // them for the logo (r1 put their heads where the logo goes).
+                startEye = s.Centre + new Vector3(0.0f, 1.25f, 8.4f);
+                endEye = s.Centre + new Vector3(0.0f, 1.2f, 7.5f);
+                aim = s.Centre + new Vector3(0.0f, 1.75f, -1.0f);
+                var book = RosterBook.Load();
+                var slipper = Object.FindObjectsByType<Slipper>().FirstOrDefault();
+                // A wide, shallow arc that opens toward the lens: RAGO by the can on its south side, four either side,
+                // each a step nearer the lens than the one inside, so nobody stands behind anybody (r1's tight arc hid two).
+                var places = new List<(string id, string clip, float t, Vector3 at)>();
+                places.Add(("sean", EmoteMotion.ComeOn, 0.80f, s.Centre + new Vector3(0.0f, 0.0f, -0.65f)));
+                float[] across = { 4.5f, 3.4f, 2.3f, 1.2f }, deep = { -0.25f, -0.75f, -1.25f, -1.75f };   // outer first
+                for (int k = 0; k < 8; k++)
+                {
+                    int i = k < 4 ? k : 7 - k;          // the right side mirrors the left, inner to outer
+                    float side = k < 4 ? 1.0f : -1.0f;   // +x is screen left from the north
+                    places.Add((KeyArtCast[k].id, KeyArtCast[k].clip, KeyArtCast[k].at, s.Centre + new Vector3(side * across[i], 0.0f, deep[i])));
+                }
+                foreach (var (id, clipName, t, at0) in places)
+                {
+                    var hero = s.Person("Key art " + id, 1.0f, id);
+                    if (hero == null) { s.Note($"{id}: no roster rig, left out"); continue; }
+                    Vector3 at = at0; at.y = s.Floor(at);
+                    Vector3 toLens = Vector3.ProjectOnPlane(startEye - at, Vector3.up).normalized;
+                    float yaw = Quaternion.LookRotation(toLens).eulerAngles.y;
+                    var clip = book.FindPersonArt(id).Clips.FirstOrDefault(c => c != null && c.name == clipName);
+                    if (clip == null) s.Note($"{id}: no {clipName}");
+                    hero.Pose(at, yaw);
+                    if (clip != null) clip.SampleAnimation(hero.Model, t);
+                    var hand = s.HandAnchor(hero);
+                    if (hand != null && slipper != null) s.Hold(slipper, hand, id);
+                    s.Note($"{id} at {at:F2}, {clipName} at {t:F2} s, hand {(hand != null ? "fitted" : "none")}");
+                    cast.Add((hero, at, yaw, clip, t, id));
+                }
+            };
+            shot.Pose = (s, t) =>
+            {
+                foreach (var c in cast)
+                {
+                    c.hero.Show(true);
+                    c.hero.Pose(c.at, c.yaw);
+                    if (c.clip != null) c.clip.SampleAnimation(c.hero.Model, c.t);
+                }
+                // A very slow push the whole plate long: linear, so it never seems to stop under the logo.
+                float u = Mathf.Clamp01((t + 0.2f) / (139.0f / 60.0f + 0.4f));
+                Vector3 eye = Vector3.Lerp(startEye, endEye, u);
+                s.Shoot(eye, Quaternion.LookRotation(aim - eye), Fov);
+            };
+            return shot;
+        }
+
         // ------------------------------------------------------------------ the harness
 
         internal sealed class Shot
@@ -353,6 +434,8 @@ namespace TumbangPreso.PlayTests
             public GameMode Mode = GameMode.HeroStrike;
             /// <summary>For a match shot: the human's seat and roster pick (the bots' picks follow from it).</summary>
             public int HumanSeat = 1; public string HumanPick;
+            /// <summary>Also take one 3840x2160 still at this shot time, after the passes (the key art).</summary>
+            public float Still4KAt = float.NaN;
             public string Folder => Path.Combine("Logs", "trailer", $"{Number:00}_{Slug}");
             public float FilmAt(float t) => Mathf.Max(0.0f, FilmIn + t * FilmRate);
         }
@@ -374,7 +457,7 @@ namespace TumbangPreso.PlayTests
 
             MapFilm film = null;
             if (shot.Match) yield return LoadMatch(shot);
-            else yield return MapFilmTests.Load(shot.Map, false);
+            else yield return MapFilmTests.Load(shot.Map, false, shot.Mode);
             var camera = Camera.main;
             var rig = camera.GetComponent<CameraSystem.CameraRig>();
             if (rig != null) rig.SetActive(false);
@@ -490,6 +573,19 @@ namespace TumbangPreso.PlayTests
                 Assert.AreEqual(count, Directory.GetFiles(into, "*.png").Length, $"{pass}: frames missing");
             }
 
+            if (!float.IsNaN(shot.Still4KAt))
+            {
+                // One 4K frame, the scene through its grade, no canvas: posed at its own instant like every frame.
+                now = shot.Still4KAt;
+                if (film != null) film.HeldAge = shot.FilmAt(now);
+                _frames = new FilmFrames(camera, 3840, 2160, 1);
+                _frames.Before = () => shot.Pose?.Invoke(staging, now);
+                yield return null; yield return null;
+                yield return _frames.Take(Path.Combine(folder, "still-4k.png"), false);
+                _frames.Dispose(); _frames = null;
+                report.AppendLine($"4K still at shot {now:F3} s: {Path.Combine(folder, "still-4k.png")}");
+            }
+
             int noted = staging.Notes.Count;
             shot.Done?.Invoke(staging);
             for (int n = noted; n < staging.Notes.Count; n++) report.AppendLine("  " + staging.Notes[n]);
@@ -587,6 +683,57 @@ namespace TumbangPreso.PlayTests
                     var can = GameServices.Round != null && GameServices.Round.Lata != null ? GameServices.Round.Lata : Object.FindFirstObjectByType<Lata>();
                     Centre = can != null ? can.transform.position : Vector3.zero;
                 }
+            }
+
+            /// <summary>
+            /// A hand anchor on an extra, fitted the way `CharacterVisual.BuildHandAnchor` fits a seat's: the palm's centre on
+            /// the first hand bone the rig has (forearm-right, arm-right, ...), out to its surface.
+            /// </summary>
+            public Transform HandAnchor(Extra hero)
+            {
+                var skinned = hero.Model != null ? hero.Model.GetComponentInChildren<SkinnedMeshRenderer>() : null;
+                if (skinned == null || skinned.bones == null) return null;
+                int bone = -1;
+                foreach (string wanted in new[] { "forearm-right", "arm-right" })
+                {
+                    for (int i = 0; i < skinned.bones.Length && bone < 0; i++)
+                        if (skinned.bones[i] != null && string.Equals(skinned.bones[i].name, wanted, System.StringComparison.OrdinalIgnoreCase)) bone = i;
+                    if (bone >= 0) break;
+                }
+                if (bone < 0) return null;
+                var centre = typeof(CharacterVisual).GetMethod("PalmCentre", BindingFlags.Static | BindingFlags.Public);
+                var surface = typeof(CharacterVisual).GetMethod("PalmSurface", BindingFlags.Static | BindingFlags.NonPublic);
+                var args = new object[] { skinned, bone, Vector3.zero, false };
+                if (centre == null || !(bool)centre.Invoke(null, args)) return null;
+                Vector3 palm = (Vector3)args[2];
+                if (surface != null)
+                {
+                    var more = new object[] { skinned, bone, palm, Vector3.zero };
+                    if ((bool)surface.Invoke(null, more)) palm = (Vector3)more[3];
+                }
+                var anchor = new GameObject("Key art hand").transform;
+                anchor.SetParent(skinned.bones[bone], false);
+                anchor.localPosition = palm;
+                return anchor;
+            }
+
+            /// <summary>A drawn copy of the game's slipper (`MapFilm.Ghost`, gone at `End`) held at `hand`: the sole along the
+            /// forearm, out past the fist, as a carried slipper hangs.</summary>
+            public void Hold(Slipper source, Transform hand, string who)
+            {
+                var copy = (GameObject)typeof(MapFilm).GetMethod("Ghost", Inside).Invoke(Film, new object[] { source.gameObject, "Key art slipper " + who });
+                if (copy == null) return;
+                copy.SetActive(true);
+                foreach (var r in copy.GetComponentsInChildren<Renderer>(true)) r.enabled = true;
+                // Kept at its own world size (r1 parented it into the rig's scale and the slippers came out head-sized).
+                copy.transform.SetParent(hand, true);
+                // The copy's longest side is the sole's length: lay it along the bone, out of the hand.
+                var bounds = copy.GetComponentsInChildren<MeshFilter>(true).Where(f => f.sharedMesh != null).Select(f => f.sharedMesh.bounds).FirstOrDefault();
+                Vector3 size = bounds.size;
+                Vector3 length = size.x >= size.y && size.x >= size.z ? Vector3.right : size.y >= size.z ? Vector3.up : Vector3.forward;
+                Vector3 along = hand.parent != null ? (hand.position - hand.parent.position).normalized : Vector3.down;
+                copy.transform.rotation = Quaternion.FromToRotation(copy.transform.rotation * length, along) * copy.transform.rotation;
+                copy.transform.position = hand.position + along * Mathf.Max(size.x, size.y, size.z) * source.transform.lossyScale.x * 0.35f;
             }
 
             /// <summary>The seat's model as drawn this frame.</summary>
@@ -705,6 +852,7 @@ namespace TumbangPreso.PlayTests
                 public void Pose(Vector3 at, float yaw, float lean = 0.0f, float roll = 0.0f) => Call("Pose", at, yaw, lean, roll);
                 public void Play(string clip, float time) => Call("Play", clip, time);
                 public void Show(bool shown) => Call("Show", shown);
+                public GameObject Model => (GameObject)_extra.GetType().GetField("Model").GetValue(_extra);
             }
         }
     }

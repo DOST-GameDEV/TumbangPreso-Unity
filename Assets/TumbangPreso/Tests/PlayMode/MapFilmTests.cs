@@ -121,11 +121,14 @@ namespace TumbangPreso.PlayTests
 
         // ------------------------------------------------------------------ the beats
 
-        internal static IEnumerator Load(string map, bool reduced)
+        internal static IEnumerator Load(string map, bool reduced) => Load(map, reduced, GameMode.HeroStrike);
+
+        /// <summary>`mode` Classic puts street characters in the seats (the trailer's key art builds the heroes itself).</summary>
+        internal static IEnumerator Load(string map, bool reduced, GameMode mode)
         {
             LogAssert.ignoreFailingMessages = true;
             SceneFlow.Networked = false;
-            SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));
+            SceneFlow.SetSelectedRules(CustomGameRules.Defaults(mode));
             GameLaunch.SoloSeat = 1; GameLaunch.GuidedTutorial = false; GameLaunch.Spectator = false; GameLaunch.AllBots = false;
             Settings.SettingsStore.Current.CinematicCameraMotion = true;
             Settings.SettingsStore.Current.ReducedUiMotion = reduced;
