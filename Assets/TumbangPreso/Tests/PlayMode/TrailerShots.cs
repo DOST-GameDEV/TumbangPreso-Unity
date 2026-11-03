@@ -69,6 +69,7 @@ namespace TumbangPreso.PlayTests
         [UnityTest, Timeout(1800000)] public IEnumerator Shot05TayaTaunts() => Record(TayaTaunts());
         [UnityTest, Timeout(2400000)] public IEnumerator Shot48KeyArt() => Record(KeyArt());
         [UnityTest, Timeout(3600000)] public IEnumerator Ult35RagoMayonAwakens() => RecordUltimate(RagoMayon());
+        [UnityTest, Timeout(3600000)] public IEnumerator Ult36YasminAbsoluteZero() => RecordUltimate(YasminAbsoluteZero());
 
         // ------------------------------------------------------------------ 01 DUSK IN TONDO
         //
@@ -433,6 +434,8 @@ namespace TumbangPreso.PlayTests
             /// <summary>The spectator camera at `t` seconds after the press, given the can: eye, look-at, vertical field of view.</summary>
             public System.Func<float, Vector3, CharacterMotor, CharacterMotor[], (Vector3 eye, Vector3 look, float fov)> Wide;
             public System.Action<CharacterMotor, CharacterMotor[]> Setup;
+            /// <summary>Every game step before it runs, at `t` seconds from the press: the rivals' own input (a run, a turn).</summary>
+            public System.Action<float, CharacterMotor, CharacterMotor[]> Drive;
             /// <summary>The shot's own event column in events.csv (RAGO's: lava bombs in the air), read once a frame.</summary>
             public System.Func<string> Probe;
             public string Folder => Path.Combine("Logs", "trailer", $"{Number:00}_{Slug}");
@@ -546,11 +549,15 @@ namespace TumbangPreso.PlayTests
                         float t = step / (60.0f * UltShutter) - shot.Lead;   // seconds from the press
                         hero.Intent.AimPoint = aim;
                         hero.Intent.Set(Verb.Ultimate, t >= 0.0f && t < 0.25f);
+                        shot.Drive?.Invoke(t, hero, rivals.ToArray());
                         yield return null;
                         // No "P1 · TAYA" or names over heads: the nameplates show their words again every frame (shot 5).
                         foreach (var plate in Object.FindObjectsByType<CharacterNameplate>())
                             foreach (var words in plate.GetComponentsInChildren<TextMesh>(true))
                                 if (words.TryGetComponent<MeshRenderer>(out var mesh)) mesh.enabled = false;
+                        // Nor the status icons over heads (`StatusOverhead`): take 1 of shot 36 had black discs over the rivals.
+                        foreach (var over in Object.FindObjectsByType<StatusOverhead>())
+                            foreach (var badge in over.GetComponentsInChildren<SpriteRenderer>(true)) badge.enabled = false;
                         var phase = SharedUltimatePhase.Instance;
                         phaseUp |= phase != null && phase.Active;
                         RawImage scene = null;
@@ -633,6 +640,53 @@ namespace TumbangPreso.PlayTests
                     return (eye, centre + Vector3.up * 2.3f, 50.0f);
                 },
                 Probe = () => Object.FindObjectsByType<SeanVolcanicBomb>().Length.ToString(),
+            };
+        }
+
+        // ---- 36 YASMIN, ABSOLUTE ZERO: BGC (Kanto); three rivals mid-run across the court, an attacker sprinting back in with
+        // his slipper; every one Frozen in the same frame (the hand-back), then a slow push on the frozen tableau.
+        private static UltShot YasminAbsoluteZero()
+        {
+            Vector3 centre = default, toEye = default;
+            bool locked = false; float lockedAt = float.NaN, spread = 0.0f;
+            var heading = new[] { new Vector3(1.0f, 0.0f, 0.15f), new Vector3(-0.35f, 0.0f, -1.0f), new Vector3(-1.0f, 0.0f, 0.4f) };
+            return new UltShot
+            {
+                Number = 36, Slug = "yasmin-absolute-zero", Map = SceneFlow.Kanto, Hero = "cheska", Rivals = new[] { "sean", "zack", "dante" },
+                HeroAt = new Vector3(0.0f, 0.0f, -7.0f), Aim = new Vector3(0.0f, 0.0f, 0.0f),
+                RivalsAt = new[] { new Vector3(-5.5f, 0.0f, 1.5f), new Vector3(1.2f, 0.0f, 5.5f), new Vector3(5.0f, 0.0f, -1.0f) },
+                // Her authored cutscene is 11.9 s (Resources/UltimateIntros/cheska.txt); the freeze lands as it hands back.
+                Seconds = 14.5f,
+                // Every rival sprints along its own line the whole take; the freeze stops them wherever the stride is.
+                Drive = (t, hero, rivals) =>
+                {
+                    for (int i = 0; i < rivals.Length; i++)
+                    {
+                        if (rivals[i].IsFrozen) continue;
+                        rivals[i].transform.rotation = Quaternion.LookRotation(heading[i]);
+                        rivals[i].Intent.Move = Vector2.up; rivals[i].Intent.Set(Verb.Sprint, true);
+                    }
+                },
+                // Three-quarter high on the three, locked on the frame they freeze, then a slow push in. Take 2's 8 to 10 m
+                // from their centre put the nearest frozen body across the lens, so the distance follows their spread.
+                Wide = (t, can, hero, rivals) =>
+                {
+                    bool frozen = rivals.All(x => x.IsFrozen);
+                    if (!locked || !frozen)
+                    {
+                        centre = rivals.Aggregate(Vector3.zero, (sum, x) => sum + x.transform.position) / rivals.Length;
+                        spread = rivals.Max(x => Vector3.ProjectOnPlane(x.transform.position - centre, Vector3.up).magnitude);
+                        Vector3 fromHero = Vector3.ProjectOnPlane(centre - hero.transform.position, Vector3.up).normalized;
+                        toEye = (Quaternion.AngleAxis(40.0f, Vector3.up) * fromHero).normalized;
+                        locked = frozen;
+                    }
+                    if (frozen && float.IsNaN(lockedAt)) lockedAt = t;
+                    float k = locked ? Smooth((t - lockedAt) / 1.4f) : 0.0f;
+                    float far = 8.0f + spread * 1.6f, near = far * 0.82f;
+                    float d = Mathf.Lerp(far, near, k);
+                    return (centre + toEye * d + Vector3.up * d * 0.62f, centre + Vector3.up * 0.7f, 42.0f);
+                },
+                Probe = () => GameServices.Round.Players.Count(x => x != null && x.IsFrozen).ToString(),
             };
         }
 
