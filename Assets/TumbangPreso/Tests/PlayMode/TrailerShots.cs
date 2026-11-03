@@ -71,6 +71,7 @@ namespace TumbangPreso.PlayTests
         [UnityTest, Timeout(3600000)] public IEnumerator Ult35RagoMayonAwakens() => RecordUltimate(RagoMayon());
         [UnityTest, Timeout(3600000)] public IEnumerator Ult36YasminAbsoluteZero() => RecordUltimate(YasminAbsoluteZero());
         [UnityTest, Timeout(3600000)] public IEnumerator Ult37AmihanAirburst() => RecordUltimate(AmihanAirburst());
+        [UnityTest, Timeout(3600000)] public IEnumerator Ult38PaeteMakilingsEmbrace() => RecordUltimate(PaeteMakilingsEmbrace());
 
         // ------------------------------------------------------------------ 01 DUSK IN TONDO
         //
@@ -748,6 +749,50 @@ namespace TumbangPreso.PlayTests
                 },
                 // Slippers by state: Held, Loose, in Flight.
                 Probe = () => { var all = Object.FindObjectsByType<Slipper>(); return $"H{all.Count(x => x.State == SlipperState.Held)}L{all.Count(x => x.State == SlipperState.Loose)}F{all.Count(x => x.State == SlipperState.InFlight)}"; },
+            };
+        }
+
+        // ---- 38 PAETE, MAKILING'S EMBRACE: BANAUE (Payo); capture only (his kit, tree, rig and materials are protected).
+        // The guardian tree comes up where he looks, clear of the can; on the hand-back it pulls the three rivals in and Roots them.
+        private static UltShot PaeteMakilingsEmbrace()
+        {
+            Vector3 tree = default, toEye = default; bool locked = false; float lockedAt = float.NaN;
+            return new UltShot
+            {
+                Number = 38, Slug = "paete-makilings-embrace", Map = SceneFlow.Payo, Hero = "paete", Rivals = new[] { "cheska", "nemu", "rafi" },
+                // Marks from the can: PAETE 8 m behind it looking at a spot 3 m short of it (the tree goes 5 m ahead of him, clear of
+                // the can); the three 5 to 7 m from that spot on three sides, so each slides in from its own direction.
+                HeroAt = new Vector3(0.0f, 0.0f, -8.0f), Aim = new Vector3(0.0f, 0.0f, -3.0f),
+                RivalsAt = new[] { new Vector3(-5.2f, 0.0f, -1.5f), new Vector3(5.0f, 0.0f, -2.0f), new Vector3(1.0f, 0.0f, 3.8f) },
+                // His authored cutscene is 9 s (Resources/UltimateIntros/paete.txt); 2.5 s after the hand-back for the pull and roots.
+                Seconds = 11.5f,
+                // The rivals stand still, facing the tree's spot, and let the pull take them.
+                Drive = (t, hero, rivals) =>
+                {
+                    Vector3 spot = GameServices.Round.Lata.transform.position + new Vector3(0.0f, 0.0f, -3.0f);
+                    foreach (var x in rivals)
+                    {
+                        x.Intent.Clear();
+                        if (t < 0.0f) x.transform.rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(spot - x.transform.position, Vector3.up));
+                    }
+                },
+                // Three-quarter high, wide enough for the tree and all three rivals: set once the tree stands (its own Centre), from
+                // the side of the court away from PAETE, then a slow push as the roots close.
+                Wide = (t, can, hero, rivals) =>
+                {
+                    var sentry = Object.FindFirstObjectByType<PaeteSentry>();
+                    if (!locked)
+                    {
+                        tree = sentry != null ? sentry.Centre : can + new Vector3(0.0f, 0.0f, -3.0f);
+                        Vector3 back = Vector3.ProjectOnPlane(tree - hero.transform.position, Vector3.up).normalized;
+                        toEye = (Quaternion.AngleAxis(35.0f, Vector3.up) * back).normalized;
+                        if (sentry != null) { locked = true; lockedAt = t; }
+                    }
+                    float k = locked ? Smooth((t - lockedAt - 0.4f) / 1.6f) : 0.0f;
+                    float d = Mathf.Lerp(15.0f, 12.5f, k);
+                    return (tree + toEye * d + Vector3.up * d * 0.55f, tree + Vector3.up * 1.2f, 45.0f);
+                },
+                Probe = () => GameServices.Round.Players.Count(x => x != null && x.IsRooted).ToString(),
             };
         }
 

@@ -15,6 +15,8 @@ status) and shot.txt.
   --handles N       frames added either side (default 12, docs/TRAILER_PROMPTS.md).
   --views SPEC      which view plays from which SHOT frame on: "owner@0,wide@31" plays owner/ from the first frame
                     (the in handle included) and wide/ from shot frame 31 on. Default: wide throughout.
+                    "owner@-12=446,wide@22" jumps: owner/ plays recorded frame 446 at shot frame -12 and on from
+                    there, so a view can come from another part of the take (shot 38's tree rising, mid-cutscene).
   --deliver DIR     write DIR/shot-NN.mov: picture only, ProRes 422 HQ, 60 fps, handles included.
 
 Writes cut/frame_00000.png onward and cut.json (the source of every output frame) beside the recording.
@@ -78,10 +80,12 @@ def print_events(folder):
 
 
 def parse_views(spec):
+    """[(shot frame, view, recorded frame at that shot frame or None)], in shot order."""
     out = []
     for part in spec.split(","):
         view, _, at = part.strip().partition("@")
-        out.append((int(at or "-100000"), view))
+        at, _, src = at.partition("=")
+        out.append((int(at or "-100000"), view, int(src) if src else None))
     out.sort()
     return out
 
@@ -105,7 +109,7 @@ def main():
         raise SystemExit("--zero and --frames are needed to cut")
     number = args.number if args.number is not None else int(re.match(r"(\d+)", folder.name).group(1))
     views = parse_views(args.views)
-    first_view = views[0][1]
+    first_view = views[0]
 
     cut = folder / "cut"
     if cut.exists():
@@ -113,15 +117,16 @@ def main():
     cut.mkdir()
     sources = []
     for i, shot_frame in enumerate(range(-args.handles, args.frames + args.handles)):
-        view = first_view
-        for at, v in views:
-            if shot_frame >= at:
-                view = v
-        src = folder / view / f"frame_{args.zero + shot_frame:05d}.png"
+        at, view, start = first_view
+        for entry in views:
+            if shot_frame >= entry[0]:
+                at, view, start = entry
+        recorded = args.zero + shot_frame if start is None else start + (shot_frame - at)
+        src = folder / view / f"frame_{recorded:05d}.png"
         if not src.exists():
             raise SystemExit(f"shot frame {shot_frame} needs {src}, which is not on disk")
         shutil.copyfile(src, cut / f"frame_{i:05d}.png")
-        sources.append({"shot_frame": shot_frame, "view": view, "recorded_frame": args.zero + shot_frame})
+        sources.append({"shot_frame": shot_frame, "view": view, "recorded_frame": recorded})
     receipt = {"number": number, "zero": args.zero, "frames": args.frames, "handles": args.handles, "fps": FPS,
                "views": args.views, "sources": sources}
     (folder / "cut.json").write_text(json.dumps(receipt, indent=1), encoding="utf-8")
