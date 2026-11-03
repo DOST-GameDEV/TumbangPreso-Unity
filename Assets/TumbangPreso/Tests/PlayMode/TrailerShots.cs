@@ -10,6 +10,9 @@ using TumbangPreso.Map;
 using TumbangPreso.UI;
 using UnityEngine;
 using UnityEngine.TestTools;
+using UnityEngine.SceneManagement;
+using TumbangPreso.Visual;
+using TumbangPreso.UI.Hub;
 using Object = UnityEngine.Object;
 
 namespace TumbangPreso.PlayTests
@@ -60,6 +63,7 @@ namespace TumbangPreso.PlayTests
         // ------------------------------------------------------------------ the shots
 
         [UnityTest, Timeout(1800000)] public IEnumerator Shot01DuskInTondo() => Record(DuskInTondo());
+        [UnityTest, Timeout(1800000)] public IEnumerator Shot05TayaTaunts() => Record(TayaTaunts());
 
         // ------------------------------------------------------------------ 01 DUSK IN TONDO
         //
@@ -220,6 +224,98 @@ namespace TumbangPreso.PlayTests
         /// <summary>0 to 1 past the mark and back (a reach that overshoots and settles).</summary>
         private static float Overshoot(float t) { t = Mathf.Clamp01(t) - 1.0f; const float k = 1.4f; return 1.0f + t * t * ((k + 1.0f) * t + k); }
 
+        // ------------------------------------------------------------------ 05 THE TAYA TAUNTS (docs/TRAILER_PROMPTS.md)
+        //
+        // Trailer 0:04.53 to 0:06.03, 90 frames. The cold open's match on TONDO (scene Eskinita), RAGO as taya: the human
+        // in seat 1 as YASMIN, which puts RAGO in seat 0, round 1's taya, so his TAYA tag and ring show as an attacker
+        // sees them. He stands beside the can and plays COME AT ME (`tpose`, his own fitted EmoteMotion.ComeOn) at the
+        // lens. The clip's strongest pose, the arms thrown wide (0.76 s into it), lands on frame 68 (the 5.66 beat): the
+        // clip starts on frame 22.4, the first beat, never sped up. A 35 mm equivalent (32.3 degrees vertical) at his
+        // chest height; frames 0 to 15 still, then a push from a medium shot to a medium close-up that eases in and is
+        // still moving at the cut. The attackers stand on their marks behind the lens, out of frame.
+        // NOT AS WRITTEN: the throw line is 8 m from the can, where a 35 mm lens at chest height makes a full shot and
+        // the line itself falls below the frame, so the slippers on it cannot be in this frame. Reported, not faked.
+
+        private static Shot TayaTaunts()
+        {
+            var shot = new Shot { Number = 5, Slug = "taya-taunts", Map = SceneFlow.Eskinita, Length = 1.5f, HandleFrames = 12, FilmIn = 1.0f,
+                                  Match = true, Mode = GameMode.HeroStrike, HumanSeat = 1, HumanPick = "cheska",
+                                  Source = "live Hero Strike match on Eskinita, round 1, clock held; RAGO's COME AT ME (EmoteMotion.ComeOn) sampled on the shot clock" };
+            const float Fov = 32.3f, StillUntil = 16.0f / 60.0f, PushTo = 89.0f / 60.0f, PeakAt = 68.0f / 60.0f, PeakInClip = 0.76f;
+            const float EmoteFrom = PeakAt - PeakInClip;   // 0.373 s, frame 22.4: the first beat
+            int taya = 0;
+            Animator rago = null; AnimationClip idle = null, comeOn = null;
+            Transform[] bones = null;
+            Vector3 startEye = default, endEye = default, startAim = default, endAim = default;
+            shot.Prepare = s =>
+            {
+                taya = MatchRules.DefenderSlotFor(1);
+                var body = s.Players[taya];
+                s.Note($"taya seat {taya}: {body.CharacterName()}");
+                // Guarding: beside the can on the attackers' side of it, facing them and the lens, so the can stands just
+                // behind his legs (r1 put him behind it, and from his chest height the nearer can fell under the frame).
+                Vector3 at = s.Centre + new Vector3(0.7f, 0.0f, 0.55f); at.y = body.transform.position.y;
+                Vector3 toLens = new Vector3(-0.12f, 0.0f, 1.0f).normalized;
+                // The motor's own move (its CharacterController fights a transform write: r1 and r2 stayed on the mark).
+                body.Teleport(at);
+                body.transform.rotation = Quaternion.LookRotation(toLens);
+                body.GetComponent<CharacterVisual>()?.SnapRemoteTransform();
+                s.Note($"RAGO moved to {body.transform.position:F2}, the can at {s.Centre:F2}");
+                var model = body.GetComponent<CharacterVisual>().Model;
+                rago = model.GetComponentInChildren<Animator>(true);
+                var art = RosterBook.Load().FindPersonArt("sean");
+                comeOn = art.Clips.FirstOrDefault(c => c != null && c.name == EmoteMotion.ComeOn);
+                idle = art.Clips.FirstOrDefault(c => c != null && c.name == "idle");
+                Assert.IsNotNull(comeOn, "RAGO has no " + EmoteMotion.ComeOn + ": bake the emotes (EmoteMotionAuthor) first");
+                bones = rago.GetComponentsInChildren<Transform>(true);
+                s.Note($"RAGO's COME AT ME: {comeOn.name}, {comeOn.length:F2} s, from shot {EmoteFrom:F3} s (frame {EmoteFrom * 60.0f:F1}), arms wide at frame {PeakAt * 60.0f:F0}");
+            };
+            bool framed = false;
+            shot.Pose = (s, t) =>
+            {
+                // His body: the rig's idle until the beat, then COME ON, a six-frame blend between, on the shot clock.
+                float into = t - EmoteFrom;
+                float w = Smooth((into + 0.05f) / 0.1f);
+                if (w <= 0.0f) idle.SampleAnimation(rago.gameObject, Mathf.Repeat(t + 1.0f, idle.length));
+                else if (w >= 1.0f) comeOn.SampleAnimation(rago.gameObject, Mathf.Repeat(into, comeOn.length));
+                else
+                {
+                    idle.SampleAnimation(rago.gameObject, Mathf.Repeat(t + 1.0f, idle.length));
+                    var pose = bones.Select(b => (b.localPosition, b.localRotation)).ToArray();
+                    comeOn.SampleAnimation(rago.gameObject, Mathf.Max(0.0f, into));
+                    for (int i = 0; i < bones.Length; i++)
+                    {
+                        bones[i].localPosition = Vector3.Lerp(pose[i].localPosition, bones[i].localPosition, w);
+                        bones[i].localRotation = Quaternion.Slerp(pose[i].localRotation, bones[i].localRotation, w);
+                    }
+                }
+                if (!framed)
+                {
+                    // Framed once off his drawn height (idle): from a medium shot with his TAYA tag over him, to a medium
+                    // close-up from mid-chest to just over the tag.
+                    framed = true;
+                    var b = s.Drawn(taya);
+                    Vector3 feet = s.Players[taya].transform.position;
+                    Vector3 toLens = s.Players[taya].transform.forward;
+                    float height = b.max.y - feet.y, tag = b.max.y + 0.45f;
+                    float half = Mathf.Tan(Fov * 0.5f * Mathf.Deg2Rad);
+                    float fromWide = feet.y - 0.15f, fromClose = feet.y + 0.42f * height;
+                    startAim = new Vector3(b.center.x, (fromWide + tag) * 0.5f, b.center.z);
+                    endAim = new Vector3(b.center.x, (fromClose + tag) * 0.5f, b.center.z);
+                    float chest = feet.y + 0.6f * height;
+                    startEye = new Vector3(startAim.x, chest, startAim.z) + toLens * ((tag - fromWide) * 0.5f / half);
+                    endEye = new Vector3(endAim.x, chest, endAim.z) + toLens * ((tag - fromClose) * 0.5f / half);
+                    s.Note($"RAGO {height:F2} m tall; eye {startEye:F2} ({Vector3.Distance(startEye, startAim):F2} m) to {endEye:F2} ({Vector3.Distance(endEye, endAim):F2} m), chest height {chest - feet.y:F2} m");
+                }
+                // Still to frame 15; from 16 the push eases in and is still moving into the cut (it ends on frame 89).
+                float u = Mathf.Clamp01((t - StillUntil) / (PushTo - StillUntil));
+                float push = u * u * (3.0f - u) * 0.5f;
+                Vector3 eye = Vector3.Lerp(startEye, endEye, push), aim = Vector3.Lerp(startAim, endAim, push);
+                s.Shoot(eye, Quaternion.LookRotation(aim - eye), Fov);
+            };
+            return shot;
+        }
+
         // ------------------------------------------------------------------ the harness
 
         internal sealed class Shot
@@ -239,6 +335,16 @@ namespace TumbangPreso.PlayTests
             public System.Action<Staging, float> Pose;
             /// <summary>After the last frame, before the report is written: the staging's own notes.</summary>
             public System.Action<Staging> Done;
+            /// <summary>Handles either side of the shot, in frames (the October draft's shots: 30; docs/TRAILER_PROMPTS.md: 12).</summary>
+            public int HandleFrames = 30;
+            public float Handle => HandleFrames / Fps;
+            /// <summary>The shot's own frames, handles excluded: frame 0 is its first frame, as the prompts count.</summary>
+            public int Frames => Mathf.RoundToInt(Length * Fps);
+            /// <summary>A shot shot in a live match on its map (no film): the round goes live, then the clock is held.</summary>
+            public bool Match;
+            public GameMode Mode = GameMode.HeroStrike;
+            /// <summary>For a match shot: the human's seat and roster pick (the bots' picks follow from it).</summary>
+            public int HumanSeat = 1; public string HumanPick;
             public string Folder => Path.Combine("Logs", "trailer", $"{Number:00}_{Slug}");
             public float FilmAt(float t) => Mathf.Max(0.0f, FilmIn + t * FilmRate);
         }
@@ -258,43 +364,58 @@ namespace TumbangPreso.PlayTests
             var disk = new DriveInfo(Path.GetPathRoot(Path.GetFullPath("Logs")));
             Assert.Greater(disk.AvailableFreeSpace, 2L << 30, "under 2 GB free: a 60 fps 1080p pass takes several hundred MB");
 
-            yield return MapFilmTests.Load(shot.Map, false);
+            MapFilm film = null;
+            if (shot.Match) yield return LoadMatch(shot);
+            else yield return MapFilmTests.Load(shot.Map, false);
             var camera = Camera.main;
             var rig = camera.GetComponent<CameraSystem.CameraRig>();
             if (rig != null) rig.SetActive(false);
             var players = GameServices.Round.Players.OrderBy(p => p.PlayerSlot).ToArray();
-            var film = MatchOpening.For(shot.Viewer) as MapFilm;
-            Assert.IsNotNull(film, shot.Map + " has no film");
-            MapFilmTests.ArrivalActive(true);
-            Assert.IsTrue(film.Begin(camera, players, camera.transform.position, camera.transform.rotation, camera.fieldOfView, false), shot.Map + "'s film refused to begin");
+            if (!shot.Match)
+            {
+                film = MatchOpening.For(shot.Viewer) as MapFilm;
+                Assert.IsNotNull(film, shot.Map + " has no film");
+                MapFilmTests.ArrivalActive(true);
+                Assert.IsTrue(film.Begin(camera, players, camera.transform.position, camera.transform.rotation, camera.fieldOfView, false), shot.Map + "'s film refused to begin");
+            }
 
             string folder = shot.Folder;
             Directory.CreateDirectory(folder);
-            var staging = new Staging(film, camera);
+            var staging = new Staging(film, camera, players);
             shot.Prepare?.Invoke(staging);
+            if (shot.Match)
+            {
+                // The staging moved bodies: let the visuals settle on them, then hold everything still.
+                for (int i = 0; i < 20; i++) yield return null;
+                MapFilmTests.HoldClock(true);
+                yield return null;
+            }
 
             // The sound: every cue the film calls (first pass only: a second pass would hear them again), and the map's
-            // ambience beds, which play under any film in a match.
+            // ambience beds, which play under any film in a match. A match shot is picture only.
             var cues = new List<string> { "shot_time,film_time,clip,gain,pitch,kind" };
             bool listening = true;
-            MapFilm.Heard = (clip, age, volume, pitch) =>
+            float now = -shot.Handle;
+            if (!shot.Match)
             {
-                if (!listening) return;
-                float t = (age - shot.FilmIn) / shot.FilmRate;
-                cues.Add(string.Join(",", F(t), F(age), clip.name, F(volume), F(pitch), "cue"));
-            };
-            foreach (var (clip, gain) in Beds()) cues.Add(string.Join(",", F(-Handle), F(shot.FilmAt(-Handle)), clip, F(gain), F(1.0f), "bed"));
+                MapFilm.Heard = (clip, age, volume, pitch) =>
+                {
+                    if (!listening) return;
+                    cues.Add(string.Join(",", F(now), F(age), clip.name, F(volume), F(pitch), "cue"));
+                };
+                foreach (var (clip, gain) in Beds()) cues.Add(string.Join(",", F(-shot.Handle), F(shot.FilmAt(-shot.Handle)), clip, F(gain), F(1.0f), "bed"));
+            }
 
             var passes = new List<(string name, MapFilm.OverlayPart parts)> { ("clean", MapFilm.OverlayPart.None) };
-            if (shot.Titled != MapFilm.OverlayPart.None) passes.Add(("titled", shot.Titled));
-            int count = Mathf.RoundToInt((shot.Length + 2.0f * Handle) * Fps) + 1;
+            if (!shot.Match && shot.Titled != MapFilm.OverlayPart.None) passes.Add(("titled", shot.Titled));
+            int count = shot.Frames + 2 * shot.HandleFrames;
             var report = new System.Text.StringBuilder();
-            report.AppendLine($"shot {shot.Number:00} {shot.Slug}: {shot.Map}, {shot.Length:F2} s + {Handle:F1} s handles, {count} frames at {Fps:F0} fps, {Width}x{Height} from {Width * Supersample}x{Height * Supersample}, {Shutter} sub-frames over a {ShutterOpen * 360.0f:F0} degree shutter");
+            report.AppendLine($"shot {shot.Number:00} {shot.Slug}: {shot.Map}, {shot.Frames} frames ({shot.Length:F3} s) + {shot.HandleFrames} frames of handles either side, {count} frames at {Fps:F0} fps, {Width}x{Height} from {Width * Supersample}x{Height * Supersample}, {Shutter} sub-frames over a {ShutterOpen * 360.0f:F0} degree shutter");
             report.AppendLine($"source: {shot.Source}");
-            report.AppendLine($"film ages {shot.FilmAt(-Handle):F3} to {shot.FilmAt(shot.Length + Handle):F3} (in point {shot.FilmIn:F3}, rate {shot.FilmRate:F3}); film length {film.Duration:F2}; viewer seat {shot.Viewer}, taya seat {MatchRules.DefenderSlotFor(1)}");
+            if (film != null) report.AppendLine($"film ages {shot.FilmAt(-shot.Handle):F3} to {shot.FilmAt(shot.Length + shot.Handle):F3} (in point {shot.FilmIn:F3}, rate {shot.FilmRate:F3}); film length {film.Duration:F2}; viewer seat {shot.Viewer}, taya seat {MatchRules.DefenderSlotFor(1)}");
+            else report.AppendLine($"live match, {shot.Mode}, human seat {shot.HumanSeat} ({shot.HumanPick}), taya seat {MatchRules.DefenderSlotFor(1)}: " + string.Join(", ", players.Select(p => $"seat {p.PlayerSlot} {p.CharacterName()}")));
             foreach (var line in staging.Notes) report.AppendLine("  " + line);
 
-            float now = -Handle;
             float drawnAge = -1.0f;
             _frames = null;
             foreach (var (pass, parts) in passes)
@@ -303,13 +424,16 @@ namespace TumbangPreso.PlayTests
                 if (Directory.Exists(into)) foreach (var old in Directory.GetFiles(into, "*.png")) File.Delete(old);
                 Directory.CreateDirectory(into);
                 _frames = new FilmFrames(camera, Width, Height, Supersample);
-                film.OverlayParts = parts;
-                film.HeldAge = shot.FilmAt(-Handle);
-                film.Roll();
+                if (film != null)
+                {
+                    film.OverlayParts = parts;
+                    film.HeldAge = shot.FilmAt(-shot.Handle);
+                    film.Roll();
+                }
                 yield return null; yield return null;
                 if (pass != "clean") _frames.Flip();
                 yield return null;
-                _frames.Before = () => { drawnAge = film.Age; shot.Pose?.Invoke(staging, now); };
+                _frames.Before = () => { drawnAge = film != null ? film.Age : shot.FilmAt(now); shot.Pose?.Invoke(staging, now); };
 
                 var ages = new float[count];
                 var wall = new List<float>();
@@ -323,12 +447,12 @@ namespace TumbangPreso.PlayTests
                 float last = Time.realtimeSinceStartup, drift = 0.0f;
                 for (int i = 0; i < count; i++)
                 {
-                    float centre = -Handle + i / Fps, aged = 0.0f;
+                    float centre = (i - shot.HandleFrames) / Fps, aged = 0.0f;
                     System.Array.Clear(sum, 0, sum.Length);
                     for (int k = 0; k < Shutter; k++)
                     {
                         now = centre + ((k + 0.5f) / Shutter - 0.5f) * ShutterOpen / Fps;
-                        film.HeldAge = shot.FilmAt(now);
+                        if (film != null) film.HeldAge = shot.FilmAt(now);
                         yield return null;
                         // Clean: no overlay canvas is composited at all (`Take` would put the film's own on the frame).
                         if (pass == "clean") yield return TakeClean("sub");
@@ -347,14 +471,14 @@ namespace TumbangPreso.PlayTests
                 listening = false;
                 _frames.Dispose(); _frames = null;
 
-                // The frame timing: every sub-frame drawn at the film age it asked for, the frames 1/60 s apart (the first
+                // The frame timing: every sub-frame drawn at the clock age it asked for, the frames 1/60 s apart (the first
                 // frame's earliest sub-frames sit before film age 0 when the in point is that early, so its own step is not
                 // counted), and the wall clock per frame.
                 float worst = 0.0f;
                 for (int i = 2; i < count; i++) worst = Mathf.Max(worst, Mathf.Abs(ages[i] - ages[i - 1] - shot.FilmRate / Fps));
-                report.AppendLine($"{pass}: {count} frames, film ages {ages[0]:F4} to {ages[count - 1]:F4}, worst step error {worst * 1000.0f:F3} ms, worst drawn-vs-asked {drift * 1000.0f:F3} ms of film time; wall {wall.Average() * 1000.0f:F0} ms a frame (max {wall.Max() * 1000.0f:F0})");
-                Assert.Less(drift, 0.0001f, $"{pass}: a sub-frame was drawn at another film age than it asked for");
-                Assert.Less(worst, 0.0005f, $"{pass}: a frame's film age was off its 1/{Fps:F0} s step");
+                report.AppendLine($"{pass}: {count} frames (shot frame 0 is file {shot.HandleFrames}), clock {ages[0]:F4} to {ages[count - 1]:F4}, worst step error {worst * 1000.0f:F3} ms, worst drawn-vs-asked {drift * 1000.0f:F3} ms; wall {wall.Average() * 1000.0f:F0} ms a frame (max {wall.Max() * 1000.0f:F0})");
+                Assert.Less(drift, 0.0001f, $"{pass}: a sub-frame was drawn at another clock age than it asked for");
+                Assert.Less(worst, 0.0005f, $"{pass}: a frame was off its 1/{Fps:F0} s step");
                 Assert.AreEqual(count, Directory.GetFiles(into, "*.png").Length, $"{pass}: frames missing");
             }
 
@@ -365,20 +489,49 @@ namespace TumbangPreso.PlayTests
             File.WriteAllText(Path.Combine(folder, "shot.txt"), report.ToString());
             File.WriteAllText(Path.Combine(folder, "shot.json"), JsonUtility.ToJson(new Receipt
             {
-                number = shot.Number, slug = shot.Slug, map = shot.Map, length = shot.Length, handle = Handle, fps = Fps,
-                frames = count, filmIn = shot.FilmIn, filmRate = shot.FilmRate, passes = passes.Select(p => p.name).ToArray(),
+                number = shot.Number, slug = shot.Slug, map = shot.Map, length = shot.Length, handle = shot.Handle, fps = Fps,
+                frames = count, handleFrames = shot.HandleFrames, filmIn = shot.FilmIn, filmRate = shot.FilmRate, passes = passes.Select(p => p.name).ToArray(),
             }, true));
             Debug.Log("[TrailerShots] " + report);
 
             MapFilmTests.ArrivalActive(false);
             MapFilm.Heard = null;
-            film.HeldAge = -1.0f; film.End();
+            if (film != null) { film.HeldAge = -1.0f; film.End(); }
+            yield return null;
+        }
+
+        /// <summary>
+        /// A live match on the shot's map, as a player gets it: no map film (camera motion off), the arrival and the
+        /// ready gate run, the round goes live with the HUD and the nameplates up; then the bots and the input stop.
+        /// The clock is held by `Record` once the staging is placed.
+        /// </summary>
+        private static IEnumerator LoadMatch(Shot shot)
+        {
+            LogAssert.ignoreFailingMessages = true;
+            SceneFlow.Networked = false;
+            SceneFlow.SetSelectedRules(CustomGameRules.Defaults(shot.Mode));
+            GameLaunch.SoloSeat = shot.HumanSeat; GameLaunch.GuidedTutorial = false; GameLaunch.Spectator = false; GameLaunch.AllBots = false;
+            var people = Roster.GetPeople(shot.Mode);
+            int pick = -1;
+            for (int i = 0; i < people.Count; i++) if (people[i].Id == shot.HumanPick) pick = i;
+            Assert.GreaterOrEqual(pick, 0, shot.HumanPick + " is not in the " + shot.Mode + " roster");
+            Settings.SettingsStore.Current.CharacterPick = pick;
+            Settings.SettingsStore.Current.CinematicCameraMotion = false;
+            Settings.SettingsStore.Current.ReducedUiMotion = false;
+            yield return SceneManager.LoadSceneAsync(shot.Map);
+            while (HubLoading.Preparing) yield return null;
+            var round = GameServices.Round;
+            float waited = 0.0f;
+            while (waited < 60.0f && (round == null || !round.RoundActive)) { waited += Time.unscaledDeltaTime; yield return null; round = GameServices.Round; }
+            Assert.IsTrue(round != null && round.RoundActive, shot.Map + ": no live round after 60 s");
+            foreach (var ai in Object.FindObjectsByType<AIController>()) ai.enabled = false;
+            foreach (var reader in Object.FindObjectsByType<PlayerInputReader>()) reader.enabled = false;
             yield return null;
         }
 
         [System.Serializable] private sealed class Receipt
         {
-            public int number; public string slug; public string map; public float length, handle, fps; public int frames;
+            public int number; public string slug; public string map; public float length, handle, fps; public int frames, handleFrames;
             public float filmIn, filmRate; public string[] passes;
         }
 
@@ -414,12 +567,28 @@ namespace TumbangPreso.PlayTests
             public readonly MapFilm Film;
             public readonly Camera Camera;
             public readonly Vector3 Centre;
+            public readonly CharacterMotor[] Players;
             public readonly List<string> Notes = new List<string>();
 
-            public Staging(MapFilm film, Camera camera)
+            public Staging(MapFilm film, Camera camera, CharacterMotor[] players)
             {
-                Film = film; Camera = camera;
-                Centre = (Vector3)typeof(MapFilm).GetProperty("Centre", Inside).GetValue(film);
+                Film = film; Camera = camera; Players = players;
+                if (film != null) Centre = (Vector3)typeof(MapFilm).GetProperty("Centre", Inside).GetValue(film);
+                else
+                {
+                    var can = GameServices.Round != null && GameServices.Round.Lata != null ? GameServices.Round.Lata : Object.FindFirstObjectByType<Lata>();
+                    Centre = can != null ? can.transform.position : Vector3.zero;
+                }
+            }
+
+            /// <summary>The seat's model as drawn this frame.</summary>
+            public Bounds Drawn(int seat)
+            {
+                var model = Players[seat].GetComponent<CharacterVisual>()?.Model;
+                Bounds drawn = default; bool found = false;
+                if (model != null)
+                    foreach (var r in model.GetComponentsInChildren<Renderer>()) { if (!r.enabled) continue; if (!found) { drawn = r.bounds; found = true; } else drawn.Encapsulate(r.bounds); }
+                return found ? drawn : new Bounds(Players[seat].transform.position + Vector3.up * 0.7f, Vector3.one * 1.4f);
             }
 
             public void Note(string line) => Notes.Add(line);

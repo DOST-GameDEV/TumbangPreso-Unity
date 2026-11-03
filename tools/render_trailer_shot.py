@@ -13,6 +13,10 @@ handle, passes) and cues.csv (shot_time, film_time, clip, gain, pitch, kind). Th
   * <pass>.mp4 for each pass: H.264, CRF 14, yuv420p, 60 fps, with the stem as AAC (a reference for the edit;
     the editor takes the PNGs and the WAV).
 
+  --deliver DIR   also write the trailer's delivery (docs/TRAILER_PROMPTS.md, shared rules): DIR/shot-NN.mov,
+                  picture only, ProRes 422 HQ (well over the 40 Mbps floor), 60 fps, handles included; and for a
+                  titled pass DIR/shot-NN-titled.mov; and DIR/shot-NN-stem.wav when the shot has any sound.
+
 Needs ffmpeg on PATH and numpy. Deterministic: a bed starts at its own first sample.
 """
 import argparse
@@ -60,6 +64,7 @@ def load(path, tmp):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("folder")
+    parser.add_argument("--deliver", default="")
     args = parser.parse_args()
     folder = Path(args.folder).resolve()
     shot = json.loads((folder / "shot.json").read_text(encoding="utf-8"))
@@ -113,6 +118,17 @@ def main():
                         "-c:v", "libx264", "-crf", "14", "-preset", "slow", "-pix_fmt", "yuv420p", "-r", f"{fps:g}",
                         "-c:a", "aac", "-b:a", "256k", "-shortest", "-movflags", "+faststart", str(out)], check=True)
         print(f"wrote {out}  ({count} frames, {count / fps:.3f} s)")
+        if args.deliver:
+            deliver = Path(args.deliver)
+            deliver.mkdir(parents=True, exist_ok=True)
+            mov = deliver / (f"shot-{int(shot['number']):02d}" + ("" if name == "clean" else f"-{name}") + ".mov")
+            subprocess.run([ffmpeg(), "-y", "-loglevel", "error", "-framerate", f"{fps:g}", "-i", str(pngs / "frame_%05d.png"),
+                            "-c:v", "prores_ks", "-profile:v", "3", "-pix_fmt", "yuv422p10le", "-vendor", "apl0", "-r", f"{fps:g}", "-an", str(mov)], check=True)
+            print(f"delivered {mov}")
+    if args.deliver and placed:
+        stem_out = Path(args.deliver) / f"shot-{int(shot['number']):02d}-stem.wav"
+        shutil.copyfile(folder / "cues.wav", stem_out)
+        print(f"delivered {stem_out}")
 
 
 if __name__ == "__main__":
