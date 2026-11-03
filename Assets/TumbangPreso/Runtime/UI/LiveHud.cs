@@ -93,6 +93,8 @@ namespace TumbangPreso.UI
             var rect = OwnerUiLayout.Rect(parent, name);
             var face = rect.gameObject.AddComponent<Image>();
             HubKnit.KitFace(face, knit);
+            // A short tag squeezes the long button's middle to almost nothing, which draws as a smear down the centre, so these use the two ends alone.
+            if (knit == Knit.ThinGo || knit == Knit.ThinYellow) face.sprite = HubKnit.Knitted(Folder + (knit == Knit.ThinGo ? "tag-go" : "tag-yellow"), new Vector4(235, 0, 235, 0));
             var label = OwnerUiLayout.Text(rect, "Label", words, size, OwnerUiLayout.TypeRole.Reading);
             label.font = HubKnit.SentenceFont(true); label.fontSize = size; label.color = ink; label.alignment = TextAnchor.MiddleCenter;
             label.horizontalOverflow = HorizontalWrapMode.Overflow; label.verticalOverflow = VerticalWrapMode.Overflow;

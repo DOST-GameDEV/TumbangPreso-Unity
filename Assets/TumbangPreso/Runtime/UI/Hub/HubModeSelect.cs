@@ -140,18 +140,18 @@ namespace TumbangPreso.UI.Hub
         /// <summary>A door on the dark panel: an icon and name on one line, what it does, and the action at its foot. The whole card is the door.</summary>
         public static HubButton DoorCard(Transform panel, string name, string title, string line, string action, HubGlyph.Mark mark, float x, float y, System.Action onClick)
         {
-            var card = HubKnit.Button(panel, name, null, Knit.DarkCard, onClick);
+            var card = HubKnit.Button(panel, name, null, Knit.Card, onClick);
             HubKnit.In((RectTransform)card.transform, x, y, 540, 410 + HubKnit.SlabHeight);
             var face = card.Body;
-            var glyph = HubKit.Glyph(face, "Icon", mark, HubKnit.KitTan, 0.09f);
-            HubKnit.In(glyph.rectTransform, 52, 36, 80, 80);
+            var glyph = HubKit.Glyph(face, "Icon", mark, HubKnit.KitTan, 0.13f);
+            HubKnit.In(glyph.rectTransform, 42, 26, 100, 100);
             var heading = HubKnit.Display(face, "Heading", title, 66, HubKnit.KitCream, TextAnchor.MiddleLeft);
             HubKnit.In(heading.rectTransform, 150, 36, 360, 80);
             var words = HubKnit.Words(face, "Line", line, 32, HubKnit.KitCream, TextAnchor.UpperLeft, true);
-            HubKnit.In(words.rectTransform, 50, 126, 440, 140);
+            HubKnit.In(words.rectTransform, 50, 142, 440, 130); words.lineSpacing = 1.38f;
             // The card's own call to action is drawn, not a second button: the whole card is the door.
             var act = HubKnit.Plate(face, "Action", Knit.Yellow);
-            HubKnit.In(act, 36, 278, 468, 104 + HubKnit.SlabHeight);
+            HubKnit.In(act, 36, 278, 468, 104);
             var label = HubKnit.Display(HubKnit.FaceOf(act), "ActionLabel", action, 46, HubKnit.InkOf(Knit.Yellow), TextAnchor.MiddleCenter);
             HubKit.Stretch(label.rectTransform);
             label.rectTransform.anchorMin = new Vector2(0, .10f);

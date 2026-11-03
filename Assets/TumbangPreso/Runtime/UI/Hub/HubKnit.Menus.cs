@@ -129,6 +129,26 @@ namespace TumbangPreso.UI.Hub
         }
 
         /// <summary>
+        /// The board's `framed` card at a size it was drawn for (116 or 460): the picture clipped to the frame's opening
+        /// and that size's own rim over it, so nothing passes the border. Fills <paramref name="parent"/>.
+        /// </summary>
+        public static KitCutPicture FramedPicture(Transform parent, Texture picture, int size, out Image rim)
+        {
+            var window = HubKit.Stretch(HubKit.Rect(parent, "FrameWindow")).gameObject.AddComponent<Image>();
+            window.sprite = Knitted("UI/boot-kit/frame-mask-" + size, Vector4.zero); window.raycastTarget = false;
+            window.gameObject.AddComponent<Mask>().showMaskGraphic = false;
+            var art = Picture(window.transform, "Picture", picture, 0, 0, size, size, .5f, 0);
+            rim = HubKit.Stretch(HubKit.Rect(parent, "Rim")).gameObject.AddComponent<Image>();
+            rim.raycastTarget = false;
+            SetFrameOn(rim, size, false);
+            return art;
+        }
+
+        /// <summary>Lime when chosen, the berry rim otherwise.</summary>
+        public static void SetFrameOn(Image rim, int size, bool on) =>
+            rim.sprite = Knitted("UI/boot-kit/frame-rim-" + size + (on ? "-on" : ""), Vector4.zero);
+
+        /// <summary>
         /// A button card whose opening is a picture (a sunburst, a portrait): the picture covers the top
         /// <paramref name="pictureH"/> units, the caller adds art over it, and <see cref="RimOver"/> closes it.
         /// Hover darkens the picture slightly, since the card's own face is under it.
@@ -170,6 +190,19 @@ namespace TumbangPreso.UI.Hub
             return picture;
         }
 
+        /// <summary>The border of a paint card alone, in white, laid exactly over its own (`paint-*-rim`). Null for art without one.</summary>
+        private static GameObject WhiteBorder(RectTransform face, Knit k)
+        {
+            var cut = CutOf(k);
+            var sprite = Knitted(cut.Face + "-rim", cut.FaceBorder);
+            if (sprite == null) return null;
+            var paint = face.GetComponent<Image>();
+            var rim = HubKit.Stretch(HubKit.Rect(face, "WhiteBorder")).gameObject.AddComponent<Image>();
+            rim.sprite = sprite; rim.type = paint.type; rim.pixelsPerUnitMultiplier = paint.pixelsPerUnitMultiplier; rim.raycastTarget = false;
+            rim.gameObject.SetActive(false);
+            return rim.gameObject;
+        }
+
         /// <summary>A mode poster from the authored cards, as a texture.</summary>
         public static Texture Poster(string name)
         {
@@ -191,21 +224,118 @@ namespace TumbangPreso.UI.Hub
             In((RectTransform)card.transform, x, y, w, h + SlabHeight);
             var face = card.Body;
             var art = Picture(face, "Poster", picture, 24, 24, w - 48, pictureH, focus);
-            var shade = HubKit.Rect(art.transform, "Hover").gameObject.AddComponent<Image>();
+            // Sunk into the card the way the card's own paint is: a hard shadow along the top and left, a soft one at the bottom and right.
+            var sunk = HubKit.Rect(art.transform, "PosterInnerShadow").gameObject.AddComponent<KitCutPicture>();
+            HubKit.Stretch(sunk.rectTransform);
+            sunk.Cut = art.Cut; sunk.raycastTarget = false;
+            sunk.texture = KitCardReveal.InnerShadow(Mathf.RoundToInt(w - 48), Mathf.RoundToInt(pictureH), art.Cut);
+            sunk.color = Color.black;
+            // The picture's own cut shape, so the darkening stays inside it: clear at the top, semi-transparent at the bottom.
+            var shade = HubKit.Rect(art.transform, "Hover").gameObject.AddComponent<KitCutPicture>();
             HubKit.Stretch(shade.rectTransform);
-            shade.color = new Color(0.19f, 0.02f, 0.08f, 0.84f);
+            shade.Cut = art.Cut;
+            shade.texture = KitCardReveal.Gradient();
             shade.raycastTarget = false;
+            RectTransform slide = null;
             if (!string.IsNullOrEmpty(description))
             {
-                var words = Words(shade.transform, "Description", description, HubStyle.Body, HubBoard.Colour("#FCD39F"), TextAnchor.LowerLeft, true);
+                // The words slide up from under the picture's bottom edge, so they are clipped to the picture.
+                var clip = HubKit.Stretch(HubKit.Rect(shade.transform, "DescriptionClip"));
+                clip.gameObject.AddComponent<RectMask2D>();
+                var words = Words(clip, "Description", description, HubStyle.Body, HubBoard.Colour("#FCD39F"), TextAnchor.LowerLeft, true);
                 HubKit.Span(words.rectTransform, Vector2.zero, Vector2.one, new Vector2(28, 28), new Vector2(28, 28));
+                slide = words.rectTransform;
             }
             shade.gameObject.SetActive(false);
+            // On hover the card's own border turns white, in place of the paint's darkening.
+            var press = card.GetComponent<KitPress>();
+            if (press != null) press.HoverPaint = false;
+            var reveal = art.gameObject.AddComponent<KitCardReveal>();
+            reveal.Shade = shade.gameObject; reveal.Words = slide; reveal.Border = WhiteBorder(face, k);
             var label = Display(face, "Label", title, titleSize, ink, TextAnchor.MiddleCenter);
             In(label.rectTransform, 16, h - 94, w - 32, 90);
             HubKit.Fit(label, w - 40);
-            card.Attention += on => shade.gameObject.SetActive(on);
+            card.Attention += reveal.Attend;
             return card;
+        }
+    }
+
+    /// <summary>A picture card answering attention: the border shows at once, the darkening fades in and the words slide up.</summary>
+    public sealed class KitCardReveal : MonoBehaviour
+    {
+        private const float Seconds = .2f;
+        public GameObject Shade;
+        public RectTransform Words;
+        public GameObject Border;
+        private static Texture2D _gradient;
+        private CanvasGroup _group;
+        private bool _on;
+        private float _u;
+
+        private static readonly System.Collections.Generic.Dictionary<Vector3Int, Texture2D> Shadows = new System.Collections.Generic.Dictionary<Vector3Int, Texture2D>();
+
+        /// <summary>White with the shadow in its alpha, for a picture of this size, to be tinted black.</summary>
+        public static Texture2D InnerShadow(int w, int h, float cut)
+        {
+            var key = new Vector3Int(w, h, Mathf.RoundToInt(cut));
+            if (Shadows.TryGetValue(key, out var known) && known != null) return known;
+            const float HardLeft = 8, HardTop = 10, HardAlpha = .35f, Soft = 34, SoftPeak = .4f;
+            var pixels = new Color32[w * h];
+            for (int y = 0; y < h; y++)
+            {
+                for (int x = 0; x < w; x++)
+                {
+                    float fromTop = h - 1 - y, fromRight = w - 1 - x;
+                    bool hard = x < HardLeft || fromTop < HardTop || x + fromTop < cut + HardLeft * 1.41f;
+                    float soft = Mathf.Max(Mathf.Clamp01(1 - fromRight / Soft), Mathf.Clamp01(1 - y / Soft));
+                    float a = Mathf.Max(hard ? HardAlpha : 0, soft * soft * SoftPeak);
+                    pixels[y * w + x] = new Color32(255, 255, 255, (byte)Mathf.RoundToInt(a * 255));
+                }
+            }
+            var texture = new Texture2D(w, h, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Bilinear, name = "PosterInnerShadow" };
+            texture.SetPixels32(pixels); texture.Apply(false, true);
+            return Shadows[key] = texture;
+        }
+
+        /// <summary>Dark berry, clear at the top, deepening to semi-transparent by a little under halfway down.</summary>
+        public static Texture2D Gradient()
+        {
+            if (_gradient != null) return _gradient;
+            const int height = 64;
+            _gradient = new Texture2D(2, height, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Bilinear, name = "CardShade" };
+            for (int y = 0; y < height; y++)
+            {
+                float fromTop = 1 - y / (height - 1f);
+                var c = new Color(0.19f, 0.02f, 0.08f, Mathf.SmoothStep(0, .82f, fromTop / .6f));
+                _gradient.SetPixel(0, y, c); _gradient.SetPixel(1, y, c);
+            }
+            _gradient.Apply(false, true);
+            return _gradient;
+        }
+
+        public void Attend(bool on)
+        {
+            _on = on;
+            if (Border != null) Border.SetActive(on);
+            if (on) Shade.SetActive(true);
+            if (_group == null) _group = Shade.AddComponent<CanvasGroup>();
+            if (HubStyle.ReducedMotion) { _u = on ? 1 : 0; Pose(); }
+            else if (on && _u <= 0) Pose();
+        }
+
+        private void Update()
+        {
+            if (_group == null || (_u <= 0 && !_on) || (_u >= 1 && _on)) return;
+            _u = Mathf.MoveTowards(_u, _on ? 1 : 0, Time.unscaledDeltaTime / Seconds);
+            Pose();
+        }
+
+        private void Pose()
+        {
+            float eased = 1 - (1 - _u) * (1 - _u);
+            _group.alpha = eased;
+            if (Words != null) Words.anchoredPosition = new Vector2(Words.anchoredPosition.x, -(1 - eased) * ((RectTransform)transform).rect.height * .6f);
+            if (_u <= 0 && !_on) Shade.SetActive(false);
         }
     }
 

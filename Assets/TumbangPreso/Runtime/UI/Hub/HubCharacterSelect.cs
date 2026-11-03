@@ -279,8 +279,7 @@ namespace TumbangPreso.UI.Hub
         }
 
         /// <summary>
-        /// A hero's picture the way HOME's profile button draws it: the figure with no sunburst, filling the
-        /// rounded well, so no one floats on the card (owner, 2026-11-03). Returns the picture; its parent is the well.
+        /// A hero's figure with no background, on the approved framing and lighting, kept inside the rounded well (owner, 2026-11-03). Returns the picture; its parent is the well.
         /// </summary>
         private static Image FramedFace(RectTransform parent, string id)
         {
@@ -288,7 +287,7 @@ namespace TumbangPreso.UI.Hub
             var wellImage = well.gameObject.AddComponent<Image>();
             wellImage.sprite = HubBoard.Art("avatar_well");
             wellImage.raycastTarget = false;
-            well.gameObject.AddComponent<Mask>().showMaskGraphic = true;
+            well.gameObject.AddComponent<Mask>().showMaskGraphic = false;
             var sprite = Avatars.Cut("avatar_" + id);
             var face = HubKit.Picture(well, "Face", sprite != null ? sprite : HubKit.Portrait(id));
             HubKit.Stretch(face.rectTransform);
@@ -694,7 +693,7 @@ namespace TumbangPreso.UI.Hub
                     }
                     else
                     {
-                        var mark = HubKit.Glyph(cardFace, "Bot", seat.Occupied ? HubGlyph.Mark.Person : HubGlyph.Mark.Bots, HubKnit.KitTan);
+                        Graphic mark = seat.Occupied ? HubKit.Glyph(cardFace, "Bot", HubGlyph.Mark.Person, HubKnit.KitTan) : HubKnit.BotFace(cardFace, "Bot");
                         HubKnit.In(mark.rectTransform, 40, 28, 72, 72);
                     }
                     var name = HubKnit.Display(cardFace, "Name", title, 40, seat.Mine ? HubKnit.KitLime : HubKnit.KitCream);

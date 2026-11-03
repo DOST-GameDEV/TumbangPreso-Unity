@@ -117,16 +117,19 @@ namespace TumbangPreso.UI.Hub
             // units from a 256 px avatar, the largest the board draws.
             var frame = HubKit.Rect(panel, "BigFrame");
             HubKnit.In(frame, 60, 250, 460, 460 + HubKnit.SlabHeight);
-            _big = HubKnit.Picture(frame, "Picture", null, 0, 0, 460, 460, .5f, 0);
-            HubKnit.RimOver(frame, true);
+            _big = HubKnit.FramedPicture(frame, null, 460, out var bigRim);
+            HubKnit.SetFrameOn(bigRim, 460, true);
 
             // Six across, as the board lays them: 116 units a tile, 132 apart.
             for (int i = 0; i < Avatars.Ids.Length; i++)
             {
                 string id = Avatars.Ids[i];
                 int col = i % 6, row = i / 6;
-                var tile = HubKnit.ShowCard(panel, "Avatar_" + id, Avatars.Get(id)?.texture, 580 + col * 132, 230 + row * 132, 116, 116, 116, () => Choose(id));
-                _rims.Add(HubKnit.RimOver(tile.Body));
+                var tile = HubKnit.ShowCard(panel, "Avatar_" + id, null, 580 + col * 132, 230 + row * 132, 116, 116, 116, () => Choose(id));
+                // The board's card is its picture and its rim, with no card face or slab of its own.
+                HubKnit.Bare(tile.transform, true, HubKnit.KitCream);
+                HubKnit.FramedPicture(tile.Body, Avatars.Get(id)?.texture, 116, out var rim);
+                _rims.Add(rim);
                 _tiles.Add(tile);
             }
             Show();
@@ -153,7 +156,7 @@ namespace TumbangPreso.UI.Hub
             string current = Current;
             _big.Fit(Avatars.Get(current)?.texture, 460, 460);
             for (int i = 0; i < _tiles.Count; i++)
-                HubKnit.KitFace(_rims[i], Avatars.Ids[i] == current ? Knit.CardRimOn : Knit.CardRim);
+                HubKnit.SetFrameOn(_rims[i], 116, Avatars.Ids[i] == current);
         }
     }
 

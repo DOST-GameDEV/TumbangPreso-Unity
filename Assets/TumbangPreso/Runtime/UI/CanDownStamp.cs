@@ -26,6 +26,12 @@ namespace TumbangPreso.UI
         private Color _seat;
         private float _born, _life;
 
+        /// <summary>True while the notice stands, so the HUD's message lanes can make room for it.</summary>
+        public static bool Showing => _live != null;
+        /// <summary>The room it takes under the timer, measured from its top.</summary>
+        public const float LaneHeight = 100;
+        public static void SetLaneTop(float top) { if (_live != null) _live._notice.Rest = new Vector2(0, -(top + 46)); }
+
         public static void Play(int throwerSlot)
         {
             var round = GameServices.Round;

@@ -144,8 +144,8 @@ namespace TumbangPreso.UI.Hub
             {
                 var fill = HubKit.Rect(track, "Fill").gameObject.AddComponent<Image>();
                 HubKnit.KitFace(fill, task.Done ? Knit.PillGo : Knit.PillYellow);
-                float width = Mathf.Max(70, 428 * ratio);
-                HubKnit.In(fill.rectTransform, 6, 5, width, 40);
+                float width = Mathf.Max(70, 418 * ratio);
+                HubKnit.In(fill.rectTransform, 11, 8, width, 38);
             }
             var count = HubKnit.Words(card, "Count", task.Progress + " / " + task.Def.Target, 32, ink, TextAnchor.MiddleLeft, true);
             HubKnit.In(count.rectTransform, 470, 74, 160, 56);

@@ -102,7 +102,9 @@ namespace TumbangPreso.UI
         // permanent Hero Strike HUD under 8 per cent of the frame and a 210 chip measured 8.0006.
         // The bar is 1060 wide against the old 1306, whose HUD measured 10.8 on the same check.
         private const float ChipWidth = 200, ChipHeight = 58, ClockWidth = 200, ClockHeight = 58, BarTop = 22;
-        private const float TimerWidth = 380, TimerHeight = 74, TimerTop = 8, TimerInset = 11;
+        private const float TimerWidth = 380, TimerHeight = 74, TimerTop = 8, TimerInset = 15;
+        // The log-in's own fit (`login3-tabs`): the pill rests in the well, its slab on the lip. 13 down and 61 tall of that art's 89.
+        private const float TimerFillTop = 11, TimerFillHeight = 51;
         /// <summary>
         /// ⚠️ ONE NAMED SWITCH FOR THE OLD FOUR-PLAYER ROW. The live HUD moved your own score to the bottom-left
         /// corner, and the other scores are plates on the left edge that slide in when they change and a table held
@@ -156,13 +158,14 @@ namespace TumbangPreso.UI
             // The fill and its dark copy of the time sit in one clip as wide as the fill is.
             _timerFillMask = OwnerUiLayout.Rect(_clockRoot, "TimeFillClip");
             _timerFillMask.gameObject.AddComponent<RectMask2D>();
-            OwnerUiLayout.Place(_timerFillMask, TimerInset, 9, TimerWidth - TimerInset * 2, TimerHeight - 22);
-            var fill = LiveHud.Sliced(_timerFillMask, "TimeFill", "timer-fill", 76);
+            OwnerUiLayout.Place(_timerFillMask, TimerInset, TimerFillTop, TimerWidth - TimerInset * 2, TimerFillHeight);
+            var fill = OwnerUiLayout.Rect(_timerFillMask, "TimeFill").gameObject.AddComponent<Image>();
+            Hub.HubKnit.KitFace(fill, Hub.Knit.PillGo); fill.raycastTarget = false;
             _timerFill = fill.rectTransform;
-            OwnerUiLayout.Place(_timerFill, 0, 0, TimerWidth - TimerInset * 2, TimerHeight - 22);
+            OwnerUiLayout.Place(_timerFill, 0, 0, TimerWidth - TimerInset * 2, TimerFillHeight);
             _clockOnFill = OwnerUiLayout.Text(_timerFillMask, "TimeLeftOnFill", "", 44, OwnerUiLayout.TypeRole.Display);
             if (InGameTypography.Clock != null) _clockOnFill.font = InGameTypography.Clock;
-            OwnerUiLayout.Place(_clockOnFill.rectTransform, -TimerInset, -9, TimerWidth, TimerHeight - 8);
+            OwnerUiLayout.Place(_clockOnFill.rectTransform, -TimerInset, -TimerFillTop, TimerWidth, TimerHeight - 8);
             _clockOnFill.alignment = TextAnchor.MiddleCenter; _clockOnFill.verticalOverflow = VerticalWrapMode.Overflow;
             _clockOnFill.horizontalOverflow = HorizontalWrapMode.Overflow;
             _clockOnFill.color = LiveHud.GoInk;
@@ -367,8 +370,8 @@ namespace TumbangPreso.UI
             _timerShown = LiveHud.Still || want > _timerShown + .2f ? want : Mathf.Lerp(_timerShown, want, 1 - Mathf.Exp(-14 * Time.unscaledDeltaTime));
             float full = TimerWidth - TimerInset * 2, fw = Mathf.Round(full * _timerShown);
             _timerFillMask.gameObject.SetActive(fw > 0.5f);
-            _timerFillMask.sizeDelta = new Vector2(fw, TimerHeight - 22);
-            _timerFill.sizeDelta = new Vector2(Mathf.Max(70, fw), TimerHeight - 22);
+            _timerFillMask.sizeDelta = new Vector2(fw, TimerFillHeight);
+            _timerFill.sizeDelta = new Vector2(Mathf.Max(72, fw), TimerFillHeight);
             if (_clockOnFill.text != _clock.text) _clockOnFill.text = _clock.text;
             // Under ten seconds the bar swells a little once a second and eases back. The reading scale
             // is `HudReadingLayout`'s, which owns this group's size.

@@ -32,6 +32,58 @@ namespace TumbangPreso.PlayTests
             File.Copy("Logs/shots-native-ui/" + name + ".png", Folder + "/" + name + ".png", true);
         }
 
+        private static Canvas HoldStamp(System.Type stamp)
+        {
+            var live = (Component)stamp.GetField("_live", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null);
+            Assert.IsNotNull(live, stamp.Name + " did not play.");
+            stamp.GetField("_life", Priv).SetValue(live, 60f);
+            return live.GetComponent<Canvas>();
+        }
+
+        private static (float Top, float Bottom) Span(Canvas canvas, params string[] names)
+        {
+            var scale = canvas.transform.lossyScale.y;
+            float top = float.MinValue, bottom = float.MaxValue; var corners = new Vector3[4];
+            foreach (var rect in canvas.GetComponentsInChildren<RectTransform>())
+            {
+                if (System.Array.IndexOf(names, rect.name) < 0) continue;
+                rect.GetWorldCorners(corners);
+                top = Mathf.Max(top, corners[1].y / scale); bottom = Mathf.Min(bottom, corners[0].y / scale);
+            }
+            Assert.Greater(top, bottom, "None of " + string.Join(",", names) + " is showing.");
+            return (top, bottom);
+        }
+
+        /// <summary>Every centre message up at once: each keeps its own lane under the timer, none drawn over another.</summary>
+        [UnityTest, Timeout(300000)]
+        public IEnumerator CentreMessagesDoNotOverlap()
+        {
+            GameLaunch.SoloSeat = (MatchRules.DefenderSlotFor(1) + 1) % 4;
+            yield return UiArtboardShots.Match("Eskinita", GameMode.HeroStrike);
+            var round = GameServices.Round; var local = round.PlayerAt(GameLaunch.SoloSeat);
+            var view = Object.FindFirstObjectByType<TumpMatchReadout>();
+            TayaReveal.Play(0); CanDownStamp.Play(0);
+            var taya = HoldStamp(typeof(TayaReveal)); var can = HoldStamp(typeof(CanDownStamp));
+            view.Toast("OUT OF BOUNDS", 30);
+            for (int i = 0; i < 4; i++)
+            {
+                view.Refuse("CANNOT RUN - STAMINA MUST BE REPLENISHED FIRST"); view.Tick(local, false, false, false, false);
+                yield return new WaitForSecondsRealtime(.25f);
+            }
+            var lanes = new[]
+            {
+                Span(taya, "TayaRevealWord", "TayaRevealWho"), Span(can, "CanDownPlate"),
+                Span(view.Canvas, "WarningMessage", "WarningReasonPlate"), Span(view.Canvas, "MatchToast")
+            };
+            for (int i = 1; i < lanes.Length; i++)
+                Debug.Log("[Lanes] " + i + " " + lanes[i].Top + " to " + lanes[i].Bottom);
+            yield return TumpUiCapture.Capture("live-hud-lanes", view.Canvas, 1920, 1080, false, true, new[] { taya, can });
+            Directory.CreateDirectory(Folder);
+            File.Copy("Logs/shots-native-ui/live-hud-lanes.png", Folder + "/live-hud-lanes.png", true);
+            for (int i = 1; i < lanes.Length; i++)
+                Assert.LessOrEqual(lanes[i].Top, lanes[i - 1].Bottom + 12, "Message lane " + i + " runs into the one above it.");
+        }
+
         [UnityTest, Timeout(600000)]
         public IEnumerator LiveHudStills()
         {

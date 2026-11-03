@@ -43,6 +43,14 @@ def main():
     lo, hi = float(bm.np.percentile(a_, 3)), float(bm.np.percentile(a_, 97))
     lum = src.point(lambda v: int(28 + max(0, min(1, (v - lo) / max(1, hi - lo))) * 92))
     save("timer-track", bm.Image.merge("RGBA", (lum, lum, lum.point(lambda v: min(255, v + 5)), t.getchannel("A"))))
+    # Short tags: the thin button's two ends, cross-faded over a little middle, because squeezing its long middle smears.
+    for kind in ("go", "yellow"):
+        im = bm.np.asarray(bm.Image.open(OUT.parent / "boot-kit" / ("thin-%s.png" % kind)).convert("RGBA")).astype(float)
+        w, cap, mid = im.shape[1], 235, 40
+        fade = bm.np.linspace(0, 1, mid)[None, :, None]
+        middle = im[:, cap:cap + mid] * (1 - fade) + im[:, w - cap - mid:w - cap] * fade
+        row = bm.np.concatenate([im[:, :cap], middle, im[:, w - cap:]], axis=1)
+        save("tag-" + kind, bm.Image.fromarray(row.round().astype("uint8"), "RGBA"))
     # One soft band for every notice and for the score corner.
     save("band", bm.glow_band_art(1024, 128, peak=255, colour=WHITE))
     save("ring-glow-skill", bm.ring_glow_art(352, 192, colour=WHITE, peak=255))

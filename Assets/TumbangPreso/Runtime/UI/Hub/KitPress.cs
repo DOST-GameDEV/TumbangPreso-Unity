@@ -28,6 +28,8 @@ namespace TumbangPreso.UI.Hub
         public bool Sound = true;
         /// <summary>A berry card answers by darkening slightly; a button's paint brightens.</summary>
         public bool Darken;
+        /// <summary>False when the piece answers a hover some other way (a picture card's white border).</summary>
+        public bool HoverPaint = true;
 
         private const float LiftK = 300f, LiftC = 19f, PressK = 900f, PressC = 34f, PopK = 420f, PopC = 15f;
         private const float HoverSheen = .16f, PressSheen = .08f, FlashSheen = .5f;
@@ -110,7 +112,7 @@ namespace TumbangPreso.UI.Hub
             {
                 _lift = attended ? 1 : 0; _press = pressed ? 1 : 0; _pop = 0;
             }
-            Paint(_lift * HoverSheen + _press * PressSheen + _flash * _flash * FlashSheen);
+            Paint(_lift * (HoverPaint ? HoverSheen : 0) + _press * PressSheen + _flash * _flash * FlashSheen);
         }
 
         private RectTransform Mover => Visual != null ? Visual : (RectTransform)transform;

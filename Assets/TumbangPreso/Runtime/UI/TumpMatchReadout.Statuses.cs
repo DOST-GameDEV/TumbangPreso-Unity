@@ -172,6 +172,15 @@ namespace TumbangPreso.UI
                 _chipWas[i] = on;
             }
 
+            // The catch replay covers the screen for about three of Tagged's five seconds, so the words wait for it to end
+            // and then start from the beginning.
+            bool replaying = CameraSystem.CatchReconstruction.AnyPlaying;
+            if (replaying && _statusLanding >= 0)
+            {
+                if (_statusQueued < _statusQueue.Length) _statusQueue[_statusQueued++] = _statusLanding;
+                _statusLanding = -1;
+            }
+
             // Whose words are up: the current one until its time is out or its effect is, then the waiting effect that expires first.
             if (_statusLanding >= 0)
             {
@@ -179,7 +188,7 @@ namespace TumbangPreso.UI
                 float span = _statusQueued > 0 ? QueuedSeconds : LandSeconds;
                 if (!_chipWas[_statusLanding] || local.StatusLeft(kind) <= 0 || now - _statusLandingAt >= span) _statusLanding = -1;
             }
-            while (_statusLanding < 0 && _statusQueued > 0)
+            while (!replaying && _statusLanding < 0 && _statusQueued > 0)
             {
                 int best = -1; float soonest = float.MaxValue;
                 for (int k = 0; k < _statusQueued; k++)
