@@ -277,7 +277,7 @@ namespace TumbangPreso.UI
                 if (!_hasScoreValue[i] || _lastScoreValues[i] != score)
                 {
                     if (_hasScoreValue[i]) StartScoreRoll(i, _scores[i].text);
-                    if (!spectating && local != null) NoteBoardScore(slot, score, _lastScoreValues[i], _hasScoreValue[i], slot == local.PlayerSlot);
+                    if (!spectating && local != null) NoteBoardScore(slot, score, _lastScoreValues[i], _hasScoreValue[i]);
                     _hasScoreValue[i] = true;
                     _lastScoreValues[i] = score;
                     PaintScoreValue(_scores[i], score);

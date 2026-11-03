@@ -300,22 +300,64 @@ namespace TumbangPreso.UI.Hub
     /// <summary>
     /// Keeps a kit piece's painted ends in proportion to its height, the way the mock-ups scale them:
     /// the slice density follows the rect, so a tall button's corners are as round as a small one's.
+    ///
+    /// ⚠️ THE LINE DOWN A SHORT PILL (owner 2026-11-03: +10, -15, the loading bar's first moments). A pill
+    /// barely wider than its two ends squeezes the art's whole long middle into a few screen pixels, so
+    /// the GPU samples a tiny mip there, the slab and the lime averaged, and it shows as a pale stripe from
+    /// top to bottom. <see cref="NarrowCentre"/> gives that quad only as much art as it has room for, at the
+    /// ends' density. The middle of a kit piece repeats along its length, so this is the same picture.
     /// </summary>
     [RequireComponent(typeof(Image))]
-    public sealed class KitSlice : MonoBehaviour
+    public sealed class KitSlice : BaseMeshEffect
     {
         public float SourceHeight;
         private Image _image;
 
-        private void OnEnable() => Apply();
-        private void Start() => Apply();
-        private void OnRectTransformDimensionsChange() => Apply();
+        protected override void OnEnable() { base.OnEnable(); Apply(); }
+        protected override void Start() { base.Start(); Apply(); }
+        protected override void OnRectTransformDimensionsChange() { base.OnRectTransformDimensionsChange(); Apply(); }
 
         public void Apply()
         {
             if (_image == null) _image = GetComponent<Image>();
             float h = ((RectTransform)transform).rect.height;
             if (SourceHeight > 0 && h > 1) _image.pixelsPerUnitMultiplier = SourceHeight / h;
+        }
+
+        public override void ModifyMesh(VertexHelper vh)
+        {
+            if (!IsActive() || SourceHeight <= 0) return;
+            if (_image == null) _image = GetComponent<Image>();
+            var sprite = _image.sprite;
+            float h = ((RectTransform)transform).rect.height;
+            if (_image.type != Image.Type.Sliced || sprite == null || h <= 1) return;
+            var inner = UnityEngine.Sprites.DataUtility.GetInnerUV(sprite);
+            NarrowCentre(vh, inner.x, inner.z, SourceHeight / h / sprite.texture.width);
+        }
+
+        /// <summary>Shortens the UV span of the quad running from u <paramref name="left"/> to <paramref name="right"/> to <paramref name="uvPerUnit"/> times its width.</summary>
+        public static void NarrowCentre(VertexHelper vh, float left, float right, float uvPerUnit)
+        {
+            const float Near = 1e-5f;
+            var v = new UIVertex();
+            for (int quad = 0; quad + 3 < vh.currentVertCount; quad += 4)
+            {
+                float uMin = float.MaxValue, uMax = float.MinValue, xMin = float.MaxValue, xMax = float.MinValue;
+                for (int i = 0; i < 4; i++)
+                {
+                    vh.PopulateUIVertex(ref v, quad + i);
+                    uMin = Mathf.Min(uMin, v.uv0.x); uMax = Mathf.Max(uMax, v.uv0.x);
+                    xMin = Mathf.Min(xMin, v.position.x); xMax = Mathf.Max(xMax, v.position.x);
+                }
+                if (Mathf.Abs(uMin - left) > Near || Mathf.Abs(uMax - right) > Near) continue;
+                float span = (xMax - xMin) * uvPerUnit;
+                if (span >= uMax - uMin) continue;
+                for (int i = 0; i < 4; i++)
+                {
+                    vh.PopulateUIVertex(ref v, quad + i);
+                    if (v.uv0.x > uMin + Near) { var uv = v.uv0; uv.x = uMin + span; v.uv0 = uv; vh.SetUIVertex(v, quad + i); }
+                }
+            }
         }
     }
 

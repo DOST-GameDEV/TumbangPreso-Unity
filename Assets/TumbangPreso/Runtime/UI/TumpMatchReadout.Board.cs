@@ -6,18 +6,18 @@ using UnityEngine.UI;
 namespace TumbangPreso.UI
 {
     /// <summary>
-    /// § THE OTHER PLAYERS' SCORES, flush with the left screen edge (live HUD, 2026-11-01;
+    /// § THE PLAYERS' SCORES, flush with the left screen edge (live HUD, 2026-11-01;
     /// `boot_match.others_pop`, `tab_board` and `score_plate`).
     ///
-    /// Your own score lives in the bottom-left corner, so the other seats only need to speak when
-    /// something changed. Each is a grey woven plate with its seat colour as a strip on the screen
-    /// edge, a nearly solid section holding the hero (every hero the same height, centred by its own
-    /// ink), the score, a crown on the unique leader and, for a moment, the points the seat just won
-    /// on a green tag. The plates slide in from the left when another seat scores or the lead changes
-    /// and slide out three seconds later.
+    /// Every seat in the match, yours included and ranked with the rest, so you can read your score
+    /// against the others (owner, 2026-11-03). Each is a grey woven plate with its seat colour as a strip
+    /// on the screen edge, a nearly solid section holding the hero (every hero the same height, centred by
+    /// its own ink), the score, a crown on the unique leader and, for a moment, the points the seat just
+    /// won on a green tag. Your own plate is underlined in lime. The plates slide in from the
+    /// left when any seat scores or the lead changes and slide out three seconds later.
     ///
-    /// ⚠️ HOLD TAB FOR THE TABLE. The same plates for every seat, ranked, with your own longer and
-    /// underlined in lime; no panel and no dim behind them, so the court stays in view. `Scoreboard` is
+    /// ⚠️ HOLD TAB FOR THE TABLE. The same plates with rank numbers, staying up as long as it is held;
+    /// no panel and no dim behind them, so the court stays in view. `Scoreboard` is
     /// its own rebindable key; ability details moved to F1 (owner, 2026-11-02). A pad and a touch screen
     /// have no spare control for it, so there the board still opens on the info hold.
     ///
@@ -27,7 +27,7 @@ namespace TumbangPreso.UI
     /// </summary>
     public sealed partial class TumpMatchReadout
     {
-        private const float BoardTop = 150, BoardWidth = 276, BoardHeight = 58, BoardStep = 70, BoardYouExtra = 36;
+        private const float BoardTop = 150, BoardWidth = 276, BoardHeight = 58, BoardStep = 70;
         private const float BoardHold = 3f, BoardIn = .3f, BoardOut = .22f, BoardStagger = .04f;
 
         private sealed class BoardPlate
@@ -119,10 +119,10 @@ namespace TumbangPreso.UI
             p.Rank.horizontalOverflow = HorizontalWrapMode.Overflow; p.Rank.verticalOverflow = VerticalWrapMode.Overflow;
             OwnerUiLayout.Place(p.Rank.rectTransform, BoardWidth - 34 - 30, 0, 60, BoardHeight - 4);
 
-            // Your own plate is underlined in lime at the Tab table.
+            // Your own plate is underlined in lime, so you find yourself among the others.
             p.You = OwnerUiLayout.Rect(p.Root, "You").gameObject.AddComponent<Image>();
             p.You.raycastTarget = false; p.You.color = LiveHud.Lime;
-            OwnerUiLayout.Place(p.You.rectTransform, 0, BoardHeight - 2, BoardWidth + BoardYouExtra - 12, 4);
+            OwnerUiLayout.Place(p.You.rectTransform, 0, BoardHeight - 2, BoardWidth - 12, 4);
             p.You.enabled = false;
 
             p.Crown = OwnerUiLayout.Rect(p.Root, "LeaderCrown").gameObject.AddComponent<HudBadge>();
@@ -137,12 +137,12 @@ namespace TumbangPreso.UI
         }
 
         /// <summary>
-        /// Names the changes that make the plates appear: another seat's score moving, or the lead changing hands.
+        /// Names the changes that make the plates appear: any seat's score moving, or the lead changing hands.
         /// Called from <see cref="Scores"/> with the numbers the match already published.
         /// </summary>
-        private void NoteBoardScore(int slot, int score, int previous, bool known, bool mine)
+        private void NoteBoardScore(int slot, int score, int previous, bool known)
         {
-            if (!known || mine || score == previous) return;
+            if (!known || score == previous) return;
             _boardGain[slot] = score - previous; _boardGainAt[slot] = Time.unscaledTime;
             _boardPopUntil = Time.unscaledTime + BoardHold;
         }
@@ -192,10 +192,9 @@ namespace TumbangPreso.UI
                 for (int r = 0; r < n; r++) if (_boardOrder[r] == seat) { rank = r; break; }
                 if (rank >= 0)
                 {
-                    slot = tab ? rank : 0;
-                    if (!tab) for (int r = 0; r < rank; r++) if (_boardOrder[r] != mine) slot++;
+                    slot = rank;
                 }
-                bool want = rank >= 0 && (tab || (pop && seat != mine));
+                bool want = rank >= 0 && (tab || pop);
                 if (want && !p.Want) { p.Want = true; p.Delay = tab ? slot * BoardStagger : 0; if (p.Amount <= 0) p.Y = float.NaN; }
                 else if (!want && p.Want) { p.Want = false; p.Delay = 0; }
                 if (p.Delay > 0) p.Delay -= dt;
@@ -223,14 +222,9 @@ namespace TumbangPreso.UI
                     int score = _boardScore[seat];
                     if (p.ShownScore != score) { p.ShownScore = score; p.Score.text = ScoreTextForChip(score); }
                     bool local = seat == mine;
-                    float width = tab && local ? BoardWidth + BoardYouExtra : BoardWidth;
-                    if (!Mathf.Approximately(p.Width, width))
-                    {
-                        p.Width = width;
-                        p.Root.sizeDelta = new Vector2(width, BoardHeight + 5);
-                        OwnerUiLayout.Place(p.Body.rectTransform, 0, 0, width, BoardHeight + 5);
-                    }
-                    if (p.You.enabled != (tab && local)) p.You.enabled = tab && local;
+                    float width = BoardWidth;
+                    p.Width = width;
+                    if (p.You.enabled != local) p.You.enabled = local;
                     bool rankShown = tab;
                     if (p.Rank.enabled != rankShown) p.Rank.enabled = rankShown;
                     if (rankShown && p.ShownRank != rank)

@@ -1345,7 +1345,7 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(120000)]
-        public IEnumerator OtherPlayersPlatesSlideInWhenAnotherSeatScoresAndTabListsEveryone()
+        public IEnumerator PlatesIncludingYoursSlideInWhenAnySeatScoresAndTabListsEveryone()
         {
             bool reduced = SettingsStore.Current.ReducedUiMotion; int solo = GameLaunch.SoloSeat;
             try
@@ -1375,10 +1375,13 @@ namespace TumbangPreso.PlayTests
                 int won = GameServices.Match.ScoreFor(other) - scoreBefore;
                 scoreAt.SetValue(view, 0f); view.Tick(local, false, false, false, false); yield return new WaitForSecondsRealtime(.5f);
                 view.Tick(local, false, false, false, false); yield return null;
-                Assert.AreEqual(others, view.BoardPlatesShown, "Another seat scoring brings in the plates of the other seats.");
+                Assert.AreEqual(others + 1, view.BoardPlatesShown, "Another seat scoring brings in every plate, yours too.");
                 var plates = view.Canvas.transform.HudFind("OtherScores");
                 Assert.IsNotNull(plates);
-                Assert.IsFalse(plates.Find("ScorePlate" + local.PlayerSlot).gameObject.activeSelf, "Your own score is in the corner, not on a plate.");
+                var mine = (RectTransform)plates.Find("ScorePlate" + local.PlayerSlot);
+                Assert.IsTrue(mine.gameObject.activeSelf, "Your own score sits among the others, to compare.");
+                Assert.IsTrue(mine.Find("You").GetComponent<Image>().enabled, "Your own plate has the lime line.");
+                Assert.Less(mine.anchoredPosition.y, -150 + .5f - 1, "You rank below the seat that just scored.");
                 var first = (RectTransform)plates.Find("ScorePlate" + other);
                 Assert.AreEqual(0, first.anchoredPosition.x, .5f, "Flush with the screen edge.");
                 Assert.AreEqual(-150, first.anchoredPosition.y, .5f, "The leader is the first plate.");
@@ -1390,6 +1393,14 @@ namespace TumbangPreso.PlayTests
                 typeof(TumpMatchReadout).GetField("_boardPopUntil", flags).SetValue(view, Time.unscaledTime - .1f);
                 view.Tick(local, false, false, false, false); yield return new WaitForSecondsRealtime(.5f); view.Tick(local, false, false, false, false); yield return null;
                 Assert.AreEqual(0, view.BoardPlatesShown, "And slide out again.");
+
+                // Your own points bring the plates in as well.
+                GameServices.Match.AddScore(local.PlayerSlot, ScoreEvent.LataKnocked);
+                scoreAt.SetValue(view, 0f); view.Tick(local, false, false, false, false); yield return new WaitForSecondsRealtime(.5f);
+                view.Tick(local, false, false, false, false); yield return null;
+                Assert.AreEqual(others + 1, view.BoardPlatesShown, "Your own score moving brings in every plate.");
+                typeof(TumpMatchReadout).GetField("_boardPopUntil", flags).SetValue(view, Time.unscaledTime - .1f);
+                view.Tick(local, false, false, false, false); yield return new WaitForSecondsRealtime(.5f); view.Tick(local, false, false, false, false); yield return null;
 
                 // Holding the table shows every seat that is in the match, yours too.
                 view.HoldBoardForCapture(true);
