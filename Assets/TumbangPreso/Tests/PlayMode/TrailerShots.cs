@@ -70,6 +70,7 @@ namespace TumbangPreso.PlayTests
         [UnityTest, Timeout(2400000)] public IEnumerator Shot48KeyArt() => Record(KeyArt());
         [UnityTest, Timeout(3600000)] public IEnumerator Ult35RagoMayonAwakens() => RecordUltimate(RagoMayon());
         [UnityTest, Timeout(3600000)] public IEnumerator Ult36YasminAbsoluteZero() => RecordUltimate(YasminAbsoluteZero());
+        [UnityTest, Timeout(3600000)] public IEnumerator Ult37AmihanAirburst() => RecordUltimate(AmihanAirburst());
 
         // ------------------------------------------------------------------ 01 DUSK IN TONDO
         //
@@ -431,6 +432,8 @@ namespace TumbangPreso.PlayTests
             /// mark (the Arena's court is raised over a pit, so a world height is never right on every map).</summary>
             public Vector3 HeroAt, Aim; public Vector3[] RivalsAt;
             public float Lead = 0.6f, Seconds = 11.0f;
+            /// <summary>Physics steps a second while recording; at least 60 so every frame gets one (see `RecordUltimate`).</summary>
+            public float PhysicsHz = 60.0f * UltShutter;
             /// <summary>The spectator camera at `t` seconds after the press, given the can: eye, look-at, vertical field of view.</summary>
             public System.Func<float, Vector3, CharacterMotor, CharacterMotor[], (Vector3 eye, Vector3 look, float fov)> Wide;
             public System.Action<CharacterMotor, CharacterMotor[]> Setup;
@@ -534,7 +537,7 @@ namespace TumbangPreso.PlayTests
             Time.captureFramerate = 60 * UltShutter;
             // Physics on the step too: at the game's 50 Hz a 60 fps frame of three 180 Hz steps sometimes got no physics
             // tick at all, and every thrown body stood still for that frame (take 2's judder).
-            Time.fixedDeltaTime = 1.0f / (60.0f * UltShutter);
+            Time.fixedDeltaTime = 1.0f / shot.PhysicsHz;
             int step = 0; double clockBase = Time.realtimeSinceStartupAsDouble;
             SharedUltimatePhase.FilmClock = () => clockBase + step / (60.0 * UltShutter);
             int frames = Mathf.RoundToInt((shot.Lead + shot.Seconds) * 60.0f);
@@ -687,6 +690,64 @@ namespace TumbangPreso.PlayTests
                     return (centre + toEye * d + Vector3.up * d * 0.62f, centre + Vector3.up * 0.7f, 42.0f);
                 },
                 Probe = () => GameServices.Round.Players.Count(x => x != null && x.IsFrozen).ToString(),
+            };
+        }
+
+        // ---- 37 AMIHAN, AIRBURST: SITANGKAI (LagoonCove); three rivals in front of her and two loose slippers on the court.
+        // The monsoon is released in her cutscene and play resumes on the hit, so the throw lands on the hand-back.
+        private static UltShot AmihanAirburst()
+        {
+            Vector3 look = default; bool started = false, dropped = false;
+            return new UltShot
+            {
+                Number = 37, Slug = "amihan-airburst", Map = SceneFlow.LagoonCove, Hero = "amihan", Rivals = new[] { "sean", "nemu", "phaister" },
+                // Marks from the can: AMIHAN 6 m behind it facing through it; the three inside her 60 degree fan, 7 to 10 m out.
+                HeroAt = new Vector3(0.0f, 0.0f, -6.0f), Aim = new Vector3(0.0f, 0.0f, 4.0f),
+                RivalsAt = new[] { new Vector3(-2.2f, 0.0f, 1.5f), new Vector3(2.4f, 0.0f, 2.5f), new Vector3(0.3f, 0.0f, 4.2f) },
+                // Her authored cutscene is 5.9 s (Resources/UltimateIntros/amihan.txt); 3 s of flight after the hand-back.
+                Seconds = 9.0f,
+                // AIRBURST lifts a resting slipper at 7 m/s: one 180 Hz step rises 3.9 cm, under its 4.5 cm rest height
+                // (`Balance.SlipperRestHeight`), so takes 1 to 3 landed both on their first step. 90 Hz rises 7.8 cm (the game's 50, 14).
+                PhysicsHz = 90.0f,
+                // The rivals stand facing her until the wind takes them. Take 1 dropped the slippers before the take's 30 settling
+                // frames and the bots had them back in hand by the cast (none flew), so they go down here, once, with the rivals held.
+                Drive = (t, hero, rivals) =>
+                {
+                    if (!dropped)
+                    {
+                        dropped = true;
+                        Vector3 can = GameServices.Round.Lata.transform.position;
+                        var marks = new[] { new Vector3(-1.2f, 0.0f, -1.8f), new Vector3(1.4f, 0.0f, -0.6f) };
+                        int n = 0;
+                        foreach (var shoe in Object.FindObjectsByType<Slipper>().Where(x => x.Holder != hero && x.gameObject.activeInHierarchy).Take(2))
+                        {
+                            shoe.HostSnatch();
+                            shoe.HostFinishMapRecoveryAt(OnCourt(can, marks[n++]));
+                        }
+                    }
+                    foreach (var x in rivals) if (!x.IsWhirled) { x.Intent.Clear(); x.transform.rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(hero.transform.position - x.transform.position, Vector3.up)); }
+                    // She faces the can through the press: the fan's direction is her body's facing (`AbilityContext.Forward`).
+                    Vector3 lata = GameServices.Round.Lata.transform.position;
+                    if (t < 0.3f) hero.transform.rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(lata - hero.transform.position, Vector3.up));
+                },
+                // Behind, above and to her left, so the fan crosses the frame left to right; after the hit the look follows the
+                // thrown bodies out, lagging, so at least one crosses the frame edge.
+                Wide = (t, can, hero, rivals) =>
+                {
+                    Vector3 at = hero.transform.position;
+                    Vector3 fwd = Vector3.ProjectOnPlane(GameServices.Round.Lata.transform.position - at, Vector3.up).normalized;
+                    if (fwd.sqrMagnitude < 0.01f) fwd = hero.transform.forward;
+                    Vector3 right = Vector3.Cross(Vector3.up, fwd);
+                    Vector3 bodies = rivals.Aggregate(Vector3.zero, (sum, x) => sum + x.transform.position) / rivals.Length;
+                    Vector3 want = Vector3.Lerp(at, bodies, 0.55f) + Vector3.up * 1.2f;
+                    if (!started) { look = want; started = true; }
+                    look = Vector3.Lerp(look, want, 0.04f);
+                    // The eye stays put: take 1's pull back after the hit brought a court pole across the left of the frame.
+                    Vector3 eye = at - fwd * 5.0f - right * 5.5f + Vector3.up * 4.5f;
+                    return (eye, look, 50.0f);
+                },
+                // Slippers by state: Held, Loose, in Flight.
+                Probe = () => { var all = Object.FindObjectsByType<Slipper>(); return $"H{all.Count(x => x.State == SlipperState.Held)}L{all.Count(x => x.State == SlipperState.Loose)}F{all.Count(x => x.State == SlipperState.InFlight)}"; },
             };
         }
 
