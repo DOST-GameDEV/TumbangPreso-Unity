@@ -10,6 +10,9 @@ using TumbangPreso.Map;
 using TumbangPreso.UI;
 using UnityEngine;
 using UnityEngine.TestTools;
+using UnityEngine.UI;
+using TumbangPreso.CameraSystem;
+using TumbangPreso.Abilities;
 using UnityEngine.SceneManagement;
 using TumbangPreso.Visual;
 using TumbangPreso.UI.Hub;
@@ -65,6 +68,7 @@ namespace TumbangPreso.PlayTests
         [UnityTest, Timeout(1800000)] public IEnumerator Shot01DuskInTondo() => Record(DuskInTondo());
         [UnityTest, Timeout(1800000)] public IEnumerator Shot05TayaTaunts() => Record(TayaTaunts());
         [UnityTest, Timeout(2400000)] public IEnumerator Shot48KeyArt() => Record(KeyArt());
+        [UnityTest, Timeout(3600000)] public IEnumerator Ult35RagoMayonAwakens() => RecordUltimate(RagoMayon());
 
         // ------------------------------------------------------------------ 01 DUSK IN TONDO
         //
@@ -403,6 +407,233 @@ namespace TumbangPreso.PlayTests
                 s.Shoot(eye, Quaternion.LookRotation(aim - eye), Fov);
             };
             return shot;
+        }
+
+        // ------------------------------------------------------------------ THE ULTIMATES, LIVE (shots 35 to 43)
+        //
+        // docs/TRAILER_PROMPTS.md: every ultimate captured live, the whole cast recorded first, from the press to the hand-back,
+        // then cut to the shot's window (tools/cut_trailer_shot.py). A real Hero Strike round on the shot's map: the hero in
+        // the human seat, the rivals' seats bound to the shot's heroes (kit and body, as the kit probes do), everyone placed,
+        // the bar filled, the ultimate pressed through the hero's own Intent. Game time is stepped at 60 x `UltShutter` a
+        // second (`Time.captureFramerate`) and the cutscene's clock is the frame clock (`SharedUltimatePhase.FilmClock`), so
+        // it all plays at true speed however slowly the editor draws; every output frame is the average of `UltShutter`
+        // steps across a 180 degree shutter. Two views of the one cast, each 1920x1080 from 3840x2160:
+        //   owner/  the hero's screen: the cutscene's own picture ("UltimateScene") while it is up, the live camera otherwise;
+        //   wide/   a spectator camera the shot directs.
+        // events.csv logs, per output frame, the cutscene's state and each rival's height, speed and status, to find the
+        // frames the prompt syncs to.
+
+        internal sealed class UltShot
+        {
+            public int Number; public string Slug, Map, Hero; public string[] Rivals;
+            /// <summary>Marks on the court, as offsets from the can (`Round.Lata`): each body is dropped onto the floor under its
+            /// mark (the Arena's court is raised over a pit, so a world height is never right on every map).</summary>
+            public Vector3 HeroAt, Aim; public Vector3[] RivalsAt;
+            public float Lead = 0.6f, Seconds = 11.0f;
+            /// <summary>The spectator camera at `t` seconds after the press, given the can: eye, look-at, vertical field of view.</summary>
+            public System.Func<float, Vector3, CharacterMotor, CharacterMotor[], (Vector3 eye, Vector3 look, float fov)> Wide;
+            public System.Action<CharacterMotor, CharacterMotor[]> Setup;
+            /// <summary>The shot's own event column in events.csv (RAGO's: lava bombs in the air), read once a frame.</summary>
+            public System.Func<string> Probe;
+            public string Folder => Path.Combine("Logs", "trailer", $"{Number:00}_{Slug}");
+        }
+
+        private const int UltShutter = 3;
+
+        /// <summary>The floor under a mark (`can` + `offset`): the first surface below 6 m over it that is not a body.</summary>
+        private static Vector3 OnCourt(Vector3 can, Vector3 offset)
+        {
+            Vector3 at = can + new Vector3(offset.x, 0.0f, offset.z);
+            foreach (var hit in Physics.RaycastAll(at + Vector3.up * 6.0f, Vector3.down, 20.0f, ~0, QueryTriggerInteraction.Ignore).OrderBy(h => h.distance))
+                if (hit.collider.GetComponentInParent<CharacterMotor>() == null) return hit.point + Vector3.up * (0.02f + offset.y);
+            return at + Vector3.up * offset.y;
+        }
+
+        private static CharacterMotor BindSeat(int slot, string hero, Vector3 at, Vector3 face)
+        {
+            var who = GameServices.Round.PlayerAt(slot);
+            who.CharacterIndex = Roster.IndexIn(Roster.HeroPeople, hero);
+            who.AbilitySystem.BindHero(hero);
+            var art = RosterBook.Load().FindPersonArt(hero);
+            who.GetComponent<CharacterVisual>().ApplyModel(art.Model, art.Tint, art.Clips, art.Palette, art.PetModel);
+            if (slot == GameLaunch.SoloSeat)
+                foreach (var arms in Object.FindObjectsByType<ViewmodelArms>()) arms.MatchCharacter(who);
+            who.Teleport(at);
+            Vector3 to = Vector3.ProjectOnPlane(face - at, Vector3.up);
+            if (to.sqrMagnitude > 0.01f) who.transform.rotation = Quaternion.LookRotation(to);
+            who.Intent.Clear(); who.Intent.Parked = false;
+            return who;
+        }
+
+        private IEnumerator RecordUltimate(UltShot shot)
+        {
+            var disk = new DriveInfo(Path.GetPathRoot(Path.GetFullPath("Logs")));
+            Assert.Greater(disk.AvailableFreeSpace, 8L << 30, "under 8 GB free: two 1080p views of an 11 s cast");
+            yield return LoadMatch(new Shot { Map = shot.Map, Mode = GameMode.HeroStrike, HumanSeat = 1, HumanPick = shot.Hero });
+            foreach (var switcher in Object.FindObjectsByType<DebugPlayerSwitcher>()) switcher.enabled = false;
+            var round = GameServices.Round;
+            Vector3 can = round.Lata != null ? round.Lata.transform.position : Object.FindFirstObjectByType<Lata>().transform.position;
+            Vector3 heroAt = OnCourt(can, shot.HeroAt), aim = OnCourt(can, shot.Aim);
+            var hero = BindSeat(1, shot.Hero, heroAt, aim);
+            var rivals = new List<CharacterMotor>();
+            int r = 0;
+            foreach (int slot in new[] { 0, 2, 3 })
+            {
+                rivals.Add(BindSeat(slot, shot.Rivals[r], OnCourt(can, shot.RivalsAt[r]), heroAt));
+                rivals[r].IsBot = true;
+                r++;
+            }
+            hero.IsBot = false;
+            hero.Intent.AimPoint = aim;
+            shot.Setup?.Invoke(hero, rivals.ToArray());
+            for (int i = 0; i < 30; i++) yield return null;
+            hero.AbilitySystem.Kit.AddUltimateCharge(100);
+
+            string folder = shot.Folder;
+            foreach (string view in new[] { "owner", "wide" })
+            {
+                string into = Path.Combine(folder, view);
+                if (Directory.Exists(into)) foreach (var old in Directory.GetFiles(into, "*.png")) File.Delete(old);
+                Directory.CreateDirectory(into);
+            }
+            var wideCam = new GameObject("~TrailerWide").AddComponent<Camera>();
+            wideCam.CopyFrom(Camera.main); wideCam.enabled = false; wideCam.tag = "Untagged"; wideCam.cullingMask &= ~(1 << 5);
+            wideCam.gameObject.AddComponent<ColourGrade>().AdoptFromScene();
+            var hdr = new RenderTexture(Width * 2, Height * 2, 24, RenderTextureFormat.DefaultHDR, RenderTextureReadWrite.Linear);
+            hdr.filterMode = FilterMode.Bilinear;
+            var ldr = new RenderTexture(Width, Height, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
+            var read = new Texture2D(Width, Height, TextureFormat.RGB24, false);
+            var image = new Texture2D(Width, Height, TextureFormat.RGB24, false);
+            var sums = new[] { new int[Width * Height * 3], new int[Width * Height * 3] };
+            var average = new Color32[Width * Height];
+            void Add(Texture source, int view)
+            {
+                Graphics.Blit(source, ldr);
+                var active = RenderTexture.active; RenderTexture.active = ldr;
+                read.ReadPixels(new Rect(0, 0, Width, Height), 0, 0); read.Apply(false); RenderTexture.active = active;
+                var px = read.GetPixels32(); var sum = sums[view];
+                for (int p = 0, q = 0; p < px.Length; p++, q += 3) { sum[q] += px[p].r; sum[q + 1] += px[p].g; sum[q + 2] += px[p].b; }
+            }
+            void Write(int view, string path)
+            {
+                var sum = sums[view];
+                for (int p = 0, q = 0; p < average.Length; p++, q += 3)
+                    average[p] = new Color32((byte)((sum[q] + UltShutter / 2) / UltShutter), (byte)((sum[q + 1] + UltShutter / 2) / UltShutter), (byte)((sum[q + 2] + UltShutter / 2) / UltShutter), 255);
+                image.SetPixels32(average); image.Apply(false);
+                File.WriteAllBytes(path, image.EncodeToPNG());
+                System.Array.Clear(sum, 0, sum.Length);
+            }
+
+            var events = new System.Text.StringBuilder("frame,seconds_from_press,scene_up,phase_up,ult_active,phase_shot,phase_age,probe,ult_charge," + string.Join(",", rivals.Select((x, i) => $"r{i}_y,r{i}_speed,r{i}_status")) + "\n");
+            var lastAt = rivals.Select(x => x.transform.position).ToArray();
+            int previousRate = Time.captureFramerate;
+            float previousFixed = Time.fixedDeltaTime;
+            Time.captureFramerate = 60 * UltShutter;
+            // Physics on the step too: at the game's 50 Hz a 60 fps frame of three 180 Hz steps sometimes got no physics
+            // tick at all, and every thrown body stood still for that frame (take 2's judder).
+            Time.fixedDeltaTime = 1.0f / (60.0f * UltShutter);
+            int step = 0; double clockBase = Time.realtimeSinceStartupAsDouble;
+            SharedUltimatePhase.FilmClock = () => clockBase + step / (60.0 * UltShutter);
+            int frames = Mathf.RoundToInt((shot.Lead + shot.Seconds) * 60.0f);
+            int sceneFrames = 0;
+            try
+            {
+                for (int f = 0; f < frames; f++)
+                {
+                    bool sceneUp = false, phaseUp = false;
+                    for (int k = 0; k < UltShutter; k++, step++)
+                    {
+                        float t = step / (60.0f * UltShutter) - shot.Lead;   // seconds from the press
+                        hero.Intent.AimPoint = aim;
+                        hero.Intent.Set(Verb.Ultimate, t >= 0.0f && t < 0.25f);
+                        yield return null;
+                        // No "P1 · TAYA" or names over heads: the nameplates show their words again every frame (shot 5).
+                        foreach (var plate in Object.FindObjectsByType<CharacterNameplate>())
+                            foreach (var words in plate.GetComponentsInChildren<TextMesh>(true))
+                                if (words.TryGetComponent<MeshRenderer>(out var mesh)) mesh.enabled = false;
+                        var phase = SharedUltimatePhase.Instance;
+                        phaseUp |= phase != null && phase.Active;
+                        RawImage scene = null;
+                        foreach (var picture in Object.FindObjectsByType<RawImage>())
+                            if (picture.name == "UltimateScene" && picture.isActiveAndEnabled && picture.texture != null) scene = picture;
+                        if (scene != null) { Add(scene.texture, 0); sceneUp = true; }
+                        else { PaeteKitPlayProbe.RenderFilmView(Camera.main, hdr); Add(hdr, 0); }
+                        var (eye, look, fov) = shot.Wide(t, can, hero, rivals.ToArray());
+                        wideCam.transform.SetPositionAndRotation(eye, Quaternion.LookRotation(look - eye)); wideCam.fieldOfView = fov;
+                        PaeteKitPlayProbe.RenderFilmView(wideCam, hdr); Add(hdr, 1);
+                    }
+                    Write(0, Path.Combine(folder, "owner", $"frame_{f:00000}.png"));
+                    Write(1, Path.Combine(folder, "wide", $"frame_{f:00000}.png"));
+                    if (sceneUp) sceneFrames++;
+                    float now = f / 60.0f - shot.Lead;
+                    var line = new List<string> { f.ToString(), F(now), sceneUp ? "1" : "0", phaseUp ? "1" : "0",
+                                                   hero.AbilitySystem.Kit.Ultimate.IsActive ? "1" : "0", UltimatePhaseView.LastShot.ToString(), F(UltimatePhaseView.LastAge), shot.Probe != null ? shot.Probe() : "-",
+                                                   F(hero.AbilitySystem.Kit.UltimateCharge) };
+                    for (int i = 0; i < rivals.Count; i++)
+                    {
+                        var x = rivals[i];
+                        float speed = (x.transform.position - lastAt[i]).magnitude * 60.0f; lastAt[i] = x.transform.position;
+                        string status = x.IsFrozen ? "frozen" : x.IsRooted ? "rooted" : x.IsWhirled ? "whirled" : x.IsPossessed ? "possessed" : x.IsZapped ? "zapped" : x.IsTagged ? "tagged" : "-";
+                        line.Add(F(x.transform.position.y)); line.Add(F(speed)); line.Add(status);
+                    }
+                    events.AppendLine(string.Join(",", line));
+                }
+            }
+            finally
+            {
+                SharedUltimatePhase.FilmClock = null;
+                Time.captureFramerate = previousRate; Time.fixedDeltaTime = previousFixed;
+                Object.Destroy(wideCam.gameObject); hdr.Release(); ldr.Release();
+                Object.Destroy(read); Object.Destroy(image);
+            }
+            File.WriteAllText(Path.Combine(folder, "events.csv"), events.ToString());
+            string report = $"ult {shot.Number:00} {shot.Slug}: {shot.Map}, {shot.Hero} vs {string.Join(", ", shot.Rivals)}; {frames} frames at 60 fps " +
+                            $"(press on frame {Mathf.RoundToInt(shot.Lead * 60.0f)}), {UltShutter} steps a frame; the cutscene up for {sceneFrames} frames\n" +
+                            "shots: " + UltimatePhaseView.LastShotReport + "\n";
+            File.WriteAllText(Path.Combine(folder, "shot.txt"), report);
+            Debug.Log("[TrailerShots] " + report);
+            Assert.Greater(sceneFrames + frames, 0);
+        }
+
+        // ---- 35 RAGO, MAYON AWAKENS: PHILIPPINE ARENA, three rivals within 9 m; the burst, then a lava bomb on frame 67.
+        private static UltShot RagoMayon()
+        {
+            // The mountain comes up where RAGO looks, pushed clear of the can (`SeanVolcano.SpotFor`), and the cutscene gathers
+            // everyone before the hand-back, so take 3's fixed camera had it at the frame's edge. The camera is set from the
+            // scene instead: just before the burst (5.0 s after the press; take 2 and 3 burst at 5.25) it takes the mountain's
+            // spot (the live one if it is up, else the game's own SpotFor) and the gathered bodies, and stands off to the
+            // court side of them, low, square to the line from the mountain to the rivals, so the throw reads across the frame.
+            Vector3 spot = default, centre = default, side = default;
+            bool locked = false, real = false;
+            return new UltShot
+            {
+                Number = 35, Slug = "rago-mayon-awakens", Map = SceneFlow.Arena, Hero = "sean", Rivals = new[] { "cheska", "zack", "paete" },
+                // Marks from the can: RAGO 4 m behind the volcano's spot, looking at it; the three within 3 m of the spot.
+                HeroAt = new Vector3(0.0f, 0.0f, -5.0f), Aim = new Vector3(0.0f, 0.0f, -1.0f),
+                RivalsAt = new[] { new Vector3(-2.5f, 0.0f, 0.2f), new Vector3(2.6f, 0.0f, -0.3f), new Vector3(0.4f, 0.0f, 1.8f) },
+                Seconds = 11.0f,
+                Wide = (t, can, hero, rivals) =>
+                {
+                    var volcano = Object.FindFirstObjectByType<SeanVolcano>();
+                    if ((!locked && t >= 5.0f) || (volcano != null && !real))
+                    {
+                        spot = volcano != null ? volcano.Foot : SeanVolcano.SpotFor(hero.transform.position, hero.transform.forward, hero.Intent.AimPoint, GameServices.Round.Lata);
+                        real = volcano != null;
+                        Vector3 bodies = rivals.Aggregate(Vector3.zero, (sum, x) => sum + x.transform.position) / rivals.Length;
+                        if (!locked) centre = (spot * 2.0f + bodies + hero.transform.position) / 4.0f;
+                        Vector3 across = Vector3.ProjectOnPlane(bodies - spot, Vector3.up);
+                        if (across.sqrMagnitude < 0.01f) across = Vector3.right;
+                        Vector3 normal = Vector3.Cross(Vector3.up, across.normalized);
+                        if (!locked) side = Vector3.Dot(normal, can - centre) >= 0.0f ? normal : -normal;
+                        locked = true;
+                    }
+                    if (!locked) return (can + new Vector3(11.0f, 1.3f, -3.0f), can + new Vector3(0.0f, 2.0f, -1.0f), 52.0f);
+                    float k = Smooth((t - 4.9f) / 2.6f);
+                    Vector3 eye = centre + side * Mathf.Lerp(11.5f, 9.5f, k) + Vector3.up * Mathf.Lerp(1.3f, 1.15f, k);
+                    return (eye, centre + Vector3.up * 2.3f, 50.0f);
+                },
+                Probe = () => Object.FindObjectsByType<SeanVolcanicBomb>().Length.ToString(),
+            };
         }
 
         // ------------------------------------------------------------------ the harness
