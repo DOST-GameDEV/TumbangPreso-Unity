@@ -121,7 +121,7 @@ namespace TumbangPreso.PlayTests
 
         // ------------------------------------------------------------------ the beats
 
-        private IEnumerator Load(string map, bool reduced)
+        internal static IEnumerator Load(string map, bool reduced)
         {
             LogAssert.ignoreFailingMessages = true;
             SceneFlow.Networked = false;
@@ -144,7 +144,7 @@ namespace TumbangPreso.PlayTests
             yield return null;
         }
 
-        private static void HoldClock(bool on) =>
+        internal static void HoldClock(bool on) =>
             typeof(PresentationClock).GetMethod(on ? "Hold" : "Release", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, null);
 
         /// <summary>Renderers that toggle themselves on the game's own state (status badges, the can's clock), not the film's.</summary>
@@ -292,7 +292,7 @@ namespace TumbangPreso.PlayTests
 
         private static MatchArrivalPresentation _standIn;
         /// <summary>Marks an arrival as playing (the nameplates' labels hide under one), without running it.</summary>
-        private static void ArrivalActive(bool on)
+        internal static void ArrivalActive(bool on)
         {
             var field = typeof(MatchArrivalPresentation).GetField("_active", BindingFlags.Static | BindingFlags.NonPublic);
             if (on)
@@ -424,12 +424,15 @@ namespace TumbangPreso.PlayTests
         private readonly RenderTexture _priorTarget;
         private readonly int _width, _height;
 
-        public FilmFrames(Camera camera, int width, int height)
+        /// <summary>`supersample` 2 renders the scene at twice the size and box-filters it down (the trailer's frames).</summary>
+        public FilmFrames(Camera camera, int width, int height, int supersample = 1)
         {
             _camera = camera; _width = width; _height = height;
             _priorTarget = camera.targetTexture;
-            _target = new RenderTexture(width, height, 24, camera.allowHDR ? RenderTextureFormat.DefaultHDR : RenderTextureFormat.ARGB32,
+            supersample = Mathf.Clamp(supersample, 1, 2);
+            _target = new RenderTexture(width * supersample, height * supersample, 24, camera.allowHDR ? RenderTextureFormat.DefaultHDR : RenderTextureFormat.ARGB32,
                 camera.allowHDR ? RenderTextureReadWrite.Linear : RenderTextureReadWrite.Default);
+            _target.filterMode = FilterMode.Bilinear;
             _target.Create();
             _resolved = new RenderTexture(width, height, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
             _resolved.Create();
@@ -441,6 +444,10 @@ namespace TumbangPreso.PlayTests
             _late = new GameObject("~FilmLateShot").AddComponent<LateFrameShot>();
             _late.Shoot = Shoot;
         }
+
+        /// <summary>Runs after every LateUpdate, the film's included, just before a frame is taken (the trailer's own
+        /// camera and extras are posed here, over what the film drew).</summary>
+        public System.Action Before { set => _late.Each = value; }
 
         /// <summary>Every overlay canvas onto the UI camera (call after the film has built its own).</summary>
         public void Flip()
@@ -456,20 +463,27 @@ namespace TumbangPreso.PlayTests
             }
         }
 
-        public IEnumerator Take(string path) { Flip(); return _late.Take(path); }
+        public IEnumerator Take(string path) => Take(path, true);
+
+        /// <summary>When set, a frame taken is handed over as pixels (bottom row first) instead of written to its path.</summary>
+        public System.Action<Color32[]> Pixels;
+
+        /// <summary>`overlay` false: the scene through its grade alone, no canvas composited (a trailer's clean pass).</summary>
+        public IEnumerator Take(string path, bool overlay) { if (overlay) Flip(); _overlay = overlay; return _late.Take(path); }
+        private bool _overlay = true;
 
         private void Shoot(string path)
         {
             _camera.Render();
             Graphics.Blit(_target, _resolved);
-            Canvas.ForceUpdateCanvases();
-            _ui.Render();
+            if (_overlay) { Canvas.ForceUpdateCanvases(); _ui.Render(); }
             var prior = RenderTexture.active;
             RenderTexture.active = _resolved;
             var image = new Texture2D(_width, _height, TextureFormat.RGB24, false);
             image.ReadPixels(new Rect(0, 0, _width, _height), 0, 0); image.Apply();
             RenderTexture.active = prior;
-            File.WriteAllBytes(path, image.EncodeToPNG());
+            if (Pixels != null) Pixels(image.GetPixels32());
+            else File.WriteAllBytes(path, image.EncodeToPNG());
             Object.Destroy(image);
         }
 

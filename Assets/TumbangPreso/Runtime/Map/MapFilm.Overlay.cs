@@ -61,6 +61,15 @@ namespace TumbangPreso.Map
         private readonly HubGlyph[] _chipMarks = new HubGlyph[Seats];
         /// <summary>Whether the chips show each seat's role pictogram yet (a film that reveals the taya later hides it until then).</summary>
         protected bool ChipRoles = true;
+
+        /// <summary>The pieces of the overlay a trailer pass draws (`Tests/PlayMode/TrailerShots.cs`).</summary>
+        [System.Flags] public enum OverlayPart { None = 0, Title = 1, Taya = 2, Chips = 4, Words = 8, Caption = 16, Letterbox = 32, Ink = 64, Skip = 128, All = 255 }
+        /// <summary>
+        /// FOR THE TRAILER CAPTURE ONLY. The game never sets it: `Begin` puts it back to `All`, which changes nothing.
+        /// A titled trailer pass keeps only the pieces its shot names (the map title, the TAYA plate) and none of the
+        /// film's frame around them (the letterbox, the ink of its cuts, the skip ring).
+        /// </summary>
+        public OverlayPart OverlayParts { get; set; } = OverlayPart.All;
         private readonly Dictionary<string, Stamp> _words = new Dictionary<string, Stamp>();
         private RectTransform _skip;
         private CanvasGroup _skipFade;
@@ -70,7 +79,7 @@ namespace TumbangPreso.Map
 
         private void BuildOverlay()
         {
-            _cuts.Clear(); _words.Clear(); ChipRoles = true;
+            _cuts.Clear(); _words.Clear(); ChipRoles = true; OverlayParts = OverlayPart.All;
             for (int s = 0; s < Seats; s++) { _chipAt[s] = -99.0f; _chipLife[s] = 2.0f; }
             _titleAt = -99.0f; _tayaAt = -99.0f;
             _overlay = OwnerUiLayout.Canvas(transform, "Map film overlay", 151);
@@ -275,6 +284,20 @@ namespace TumbangPreso.Map
             _skipFade.alpha = open ? Mathf.Lerp(0.5f, 1.0f, progress) * Span(age, 1.0f, 1.4f) : 0.0f;
             _skipFill.fillAmount = progress;
             _skip.localScale = Vector3.one * (1.0f + 0.12f * progress);
+            if (OverlayParts != OverlayPart.All) Trim();
+        }
+
+        private void Trim()
+        {
+            bool Has(OverlayPart part) => (OverlayParts & part) != 0;
+            if (!Has(OverlayPart.Letterbox)) { _barTop.rectTransform.sizeDelta = Vector2.zero; _barBottom.rectTransform.sizeDelta = Vector2.zero; }
+            if (!Has(OverlayPart.Ink)) { _ink.color = Color.clear; _veil.color = Color.clear; }
+            _title.Group.gameObject.SetActive(Has(OverlayPart.Title));
+            _taya.Group.gameObject.SetActive(Has(OverlayPart.Taya));
+            _caption.Group.gameObject.SetActive(Has(OverlayPart.Caption));
+            foreach (var chip in _chips) if (chip != null) chip.Group.gameObject.SetActive(Has(OverlayPart.Chips));
+            foreach (var word in _words.Values) word.Group.gameObject.SetActive(Has(OverlayPart.Words));
+            _skip.gameObject.SetActive(Has(OverlayPart.Skip));
         }
 
         private float ReferenceWidth => Screen.height > 0 ? 1080.0f * Screen.width / Screen.height : 1920.0f;

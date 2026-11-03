@@ -109,6 +109,24 @@ Fresh XML must contain nonzero expected cases and the actual failures/skips.
 Exit0 and `result="Passed" total="0"` are not a pass. Missing/stale XML is not a
 result. Preserve logs and exact input hashes with the claim.
 
+## Running the trailer harness
+
+Each trailer animation shot is one PlayMode case in
+`Assets/TumbangPreso/Tests/PlayMode/TrailerShots.cs`, named `Shot<NN><Slug>`. Run one
+shot at a time, by its full name, as the one heavy job on the machine. On Windows:
+
+```powershell
+python tools/run_unity_guarded.py -batchmode -force-d3d11 -tp-profile compile-check-1022 -runTests -testPlatform PlayMode -testFilter "TumbangPreso.PlayTests.TrailerShots.Shot01DuskInTondo" -testResults Logs/trailer/run01.xml -logFile Logs/trailer/run01.log
+python tools/render_trailer_shot.py Logs/trailer/01_dusk-in-tondo
+```
+
+On another OS, drop `-force-d3d11` and use that machine's graphics API. The shot writes
+`Logs/trailer/<NN>_<slug>/`: `clean/` (and `titled/` when the shot names overlay pieces)
+PNGs at 1920x1080, 60 fps of shot time with 0.5 s handles, `cues.csv`, `shot.txt` (source
+times, frame timing) and `shot.json`. The render step adds `cues.wav` (the game's own cues
+and ambience beds, no music) and `<pass>.mp4` (H.264, CRF 14, yuv420p). A 3 s pass is
+about 180 frames and several hundred MB; frames stay out of Git.
+
 ## Integration, Not Per-Edit Ritual
 
 ```powershell
