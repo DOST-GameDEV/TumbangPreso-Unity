@@ -1472,6 +1472,7 @@ namespace TumbangPreso
             // it with `FindFirstObjectByType`, so a second copy would take half the votes and
             // neither would reach the total. See `BufferSkipVote`.
             gameObject.AddComponent<BufferSkipVote>();
+            gameObject.AddComponent<OpeningSkipVote>();
 
             var gate = gameObject.AddComponent<ReadyGate>();
 

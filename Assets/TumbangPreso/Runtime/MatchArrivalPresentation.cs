@@ -64,9 +64,18 @@ namespace TumbangPreso
         internal static void Trace(string text) =>
             Debug.Log("[Arrival] " + (NetAuthority.IsNetworked ? NetAuthority.IsHost ? "host" : "client" : "offline") + ": " + text);
 
+        /// <summary>True while a film or the arrival is on the screen with its clock running.</summary>
+        public static bool Rolling => _active != null && _active._shownAt >= 0;
+
+        /// <summary>Ends what is on the screen at the next frame, as if it had run out. See `OpeningSkipVote`.</summary>
+        public static void SkipFilm() { if (_active != null) _active._skip = true; }
+
+        private bool _skip;
+
         public IEnumerator Run()
         {
             Cancel();
+            _skip = false;
             _shownBeat = -2; System.Array.Clear(_players, 0, _players.Length);
             int generation = _runGeneration;
             var playback = RunCurrent(generation);
@@ -141,7 +150,7 @@ namespace TumbangPreso
                 Trace("map opening rolling");
                 while (opening != null && opening.Playing)
                 {
-                    if (!Current(generation)) yield break;
+                    if (!Current(generation) || _skip) yield break;
                     // The same single handoff as below: the rig is live again for the last of the return.
                     if (opening.Age >= Mathf.Lerp(opening.Handoff, opening.Duration, .7f) && MayReturnToGameplay()) _rig.SetActive(true);
                     yield return null;
@@ -160,7 +169,7 @@ namespace TumbangPreso
             Trace("arrival playing");
             for (float age = 0; age < Duration; age += Time.unscaledDeltaTime)
             {
-                if (!Current(generation)) yield break;
+                if (!Current(generation) || _skip) yield break;
                 Sample(age, reduced, map);
                 yield return null;
             }

@@ -714,7 +714,9 @@ namespace TumbangPreso.Net
         // a 186 host's Baha and disagree on who is hit: the two may not meet.
         // 187 (2026-11-02): main and QoLUpdates-v2 each spent 186 on a different change, so a build of one would have met a
         // build of the other and disagreed. Merged, both are in, and no 186 peer of either kind may meet this.
-        public const int ProtocolVersion = 187;
+        // 188 (2026-11-03): `SkipOpening` and `OpeningVotes`, the vote to skip the match opening. A 187 peer would never
+        // vote or hear the result, so a mixed match could hold a button that cannot finish: the two may not meet.
+        public const int ProtocolVersion = 188;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

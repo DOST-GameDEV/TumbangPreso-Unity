@@ -199,11 +199,14 @@ namespace TumbangPreso.CameraSystem
             _pendingStun = victim.StunLeft;
             TryPending();
         }
+        /// <summary>True from the first commit of a shared ultimate until its picture has handed back.</summary>
+        public static bool UltimateOwnsScreen => SharedUltimatePhase.Instance != null &&
+            (SharedUltimatePhase.Instance.Active || SharedUltimatePhase.CinematicShowing);
         private void TryPending()
         {
             if (!_pending) return;
             var round = GameServices.Round; var match = GameServices.Match;
-            if (round == null || match == null || !round.RoundActive || match.RoundNumber != _pendingRound ||
+            if (UltimateOwnsScreen || round == null || match == null || !round.RoundActive || match.RoundNumber != _pendingRound ||
                 match.PresentationMatchId != _pendingMatchId ||
                 Time.unscaledTime > _pendingUntil || Panel.AnyOpen || Settings.SettingsStore.Current.ReducedUiMotion ||
                 !Settings.SettingsStore.Current.CinematicCameraMotion)
@@ -603,7 +606,9 @@ namespace TumbangPreso.CameraSystem
             float elapsed = Time.unscaledTime - _began;
             bool victimGone = _spectatorView ? !Watching
                 : _rig == null || !_rig.IsFollowing(_victim) || _victim.StunLeft <= .18f || _victim.CanAct();
-            if (_victim == null || victimGone || Panel.AnyOpen || !Settings.SettingsStore.Current.CinematicCameraMotion ||
+            // ⚠️ THE ULTIMATE WINS THE SCREEN (owner, 2026-11-03: "i cant tell whats happening when i get tagged and then
+            // someone ults"). It is shared and decides play; this replay is one player's and skippable. It ends, and does not return.
+            if (UltimateOwnsScreen || _victim == null || victimGone || Panel.AnyOpen || !Settings.SettingsStore.Current.CinematicCameraMotion ||
                 Settings.SettingsStore.Current.ReducedUiMotion || GameServices.Round == null || !GameServices.Round.RoundActive ||
                 GameServices.Match == null || GameServices.Match.RoundNumber != _round ||
                 GameServices.Match.PresentationMatchId != _matchId || elapsed >= _duration)

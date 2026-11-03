@@ -85,6 +85,26 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(round, _match.RoundNumber);
             Assert.AreEqual(fresh ? previous + 1 : previous, _match.PresentationMatchId);
         }
+        private static void SetUltimate(bool active) =>
+            typeof(SharedUltimatePhase).GetProperty("Active").SetValue(SharedUltimatePhase.Ensure(), active);
+        [UnityTest] public IEnumerator AnUltimateEndsTheTagReplayAndAPendingTagNeverStartsOne()
+        {
+            Catch(); float stun = _victim.StunLeft;
+            try
+            {
+                SetUltimate(true);
+                _view.SendMessage("LateUpdate");
+                Assert.IsFalse(_view.Playing, "The ultimate owns the screen: the tag replay ends.");
+                Assert.AreEqual(stun, _victim.StunLeft, "Only the picture goes; the tag's recovery stands.");
+                MatchFlair.Play(MatchFlair.Kind.Tag, 0, 1, _victim.transform.position);
+                _view.SendMessage("LateUpdate");
+                Assert.IsFalse(_view.Playing, "A tag during an ultimate starts no replay over it.");
+            }
+            finally { SetUltimate(false); }
+            _view.SendMessage("LateUpdate");
+            Assert.IsFalse(_view.Playing, "And it does not come back when the ultimate ends.");
+            yield return null;
+        }
         [UnityTest] public IEnumerator FreshSameRoundIdentityRetiresAnActiveCatchBeforeOldRecoveryArrives()
         {
             Catch(); float stun = _victim.StunLeft; Adopt(true);
