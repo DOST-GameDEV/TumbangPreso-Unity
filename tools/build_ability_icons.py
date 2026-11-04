@@ -1238,7 +1238,9 @@ def main():
     os.makedirs(STATUS_OUT, exist_ok=True)
     only = [a for a in sys.argv[1:] if a in GLYPHS or a in STATUSES]
     icons = {}
-    for n in (only or list(GLYPHS) + list(STATUSES)):
+    # The statuses are now cut from the owner's sheet by tools/cut_status_icons.py (2026-11-04); the old ones
+    # draw only when named.
+    for n in (only or list(GLYPHS)):
         a = Art()
         (GLYPHS.get(n) or STATUSES[n])(a)
         icons[n] = a.render()

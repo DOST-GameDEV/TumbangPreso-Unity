@@ -35,7 +35,7 @@ namespace TumbangPreso.UI
         private const float RowHeight = 58, RowStep = 70, Width = 450;
         // The dark section holds the actor at 64, the glyph at 124 and the other player at 184; a row with no
         // other player closes the section 60 earlier. The points get their own part with 24 round them.
-        private const float SectionTwo = 232, SectionOne = 172, GlyphBox = 30, HeroOne = 64, GlyphCentre = 124, HeroTwo = 184, TagHeight = 44, Room = 24;
+        private const float SectionTwo = 232, SectionOne = 172, GlyphBox = 40, HeroOne = 64, GlyphCentre = 124, HeroTwo = 184, TagHeight = 44, Room = 24;
         private const float PlateCapRight = 12;
         private static readonly Color GlowTint = new Color(1, 1, 1, 125 / 255f);
 
@@ -109,7 +109,8 @@ namespace TumbangPreso.UI
                 row.Tag[k] = tag;
             }
             row.Glyph = OwnerUiLayout.Rect(row.Root, "EventGlyph").gameObject.AddComponent<HudBadge>();
-            row.Glyph.Detail = HudDraw.GlassDeep; row.Glyph.raycastTarget = false;
+            // Solid ink, so the can's bands and the shield's cross never show the plate through them (owner, 2026-11-04).
+            row.Glyph.Detail = HudDraw.Shadow; row.Glyph.raycastTarget = false;
             // A cast row shows the ability's own icon where an event row shows its glyph.
             row.Ability = OwnerUiLayout.Rect(row.Root, "EventAbility").gameObject.AddComponent<Image>();
             row.Ability.raycastTarget = false; row.Ability.preserveAspect = true; row.Ability.enabled = false;
