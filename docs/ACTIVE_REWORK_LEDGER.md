@@ -1,21 +1,25 @@
 # Current checkpoint
 
-MULTI-FIX-1104 is active on main, including owner icons at `4769d9ba7`.
+MULTI-FIX-1104 implementation and qualification are complete on main.
 [TODO](TODO.md) remains the only active queue.
 
-- All reported implementation is done. [Fixes and exact current evidence](reports/multiplayer-fixes-2026-11-04/README.md).
-  Eleven EditMode and twelve distinct exact native cases passed. No broad PlayMode.
-  No Unity job currently running.
-- Next: commit the candidate locally, build with the canonical helper, exercise
-  actual local Windows host/client journeys for Phaister and Banaue/Yasmin,
-  finalize evidence, push main and verify the fresh final build/launch.
-- Evidence and original settings: `Logs/multiplayer-fixes-20261104/`.
-  Latest renderer check is render-isolation-current-state.xml. Source is mutable
-  again because the actual guarded Editor terminated and restored its inputs.
-- Owner is asleep: finish the whole task without questions. Claude receives a
-  review/refinement handoff in chat after completion, with no implementation debt.
-  No paid services/agents, reset, clean, force push or other-chat messages.
-- Keep the canonical checkout on main so its latest-build shortcut works. The
-  original trailer/capture-harness branch and unrelated work remain preserved.
-- [Previous checkpoint, preserved verbatim](reports/multiplayer-fixes-2026-11-04/checkpoint-before.md)
-  retains earlier work and qualification limits.
+- [Fixes, evidence and coverage limits](reports/multiplayer-fixes-2026-11-04/README.md).
+  Eleven EditMode and twelve distinct exact native cases passed; no broad PlayMode.
+  Five motion-review unit checks reject frozen, missing or divergent doll evidence.
+- Built-player QA at `f341ea52b`: actual impaired host/client Phaister motion passed;
+  Banaue/Yasmin staged agreement passed at 0 m, including the 4.2 m terrace.
+  Latest owner icon/feed update `d82d2c150` is integrated, with the real doll-tag
+  native case passing afterward. No Unity test or temporary peer is running.
+- Delivery receipt: `Logs/windows-build-current.json` and that job's job.json.
+  The final publish/build/launch operation is the current remaining delivery step.
+  If the receipt says building, monitor that owned job; require launched and verify
+  its source SHA/protocol 189 against the published main before finishing the chat.
+- Root evidence: `Logs/multiplayer-fixes-20261104/`. Original ProjectSettings are
+  in source-before/ until exact restoration and final cleanup are verified.
+- Keep canonical checkout on main. Preserve the original trailer branch, profiles,
+  authored assets and unrelated processes. No reset, clean, force push, paid agents
+  or other-chat messages. Owner is asleep; no further questions.
+- Give a copyable Claude review/refinement handoff in chat after final delivery.
+  All requested code is implemented; do not delegate completion to Claude.
+- [Previous checkpoint](reports/multiplayer-fixes-2026-11-04/checkpoint-before.md)
+  retains earlier authored work and qualification limits.

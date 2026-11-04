@@ -73,20 +73,36 @@ The repaired old fixtures now include SearedLeft in their packet, assert Yasmin'
 real instant freeze instead of an active timer, and stage only currently aimed
 ultimates instead of assuming the retired aimed OMEN behavior.
 
-## Release checkpoint
+## Built-player and integration evidence
 
-No Unity job is running. Implementation and the targeted checks above are done.
-Current agent is preparing a Windows candidate and actual local host/client checks,
-then final publication/build verification. No requested implementation is delegated
-to Claude. User is asleep; do not ask more questions or invoke paid services/agents.
-Leave canonical checkout on main so the desktop latest-build helper remains usable.
-The existing trailer/capture-harness branch is preserved.
+Windows candidate f341ea52b built and launched through the canonical helper:
+Logs/windows-build-20261105-005222/job.json. Exit 0, protocol 189, source/settings
+preserved, responsive player window. The interim player was closed gracefully
+before final packaging. Original and subsequent owner icon updates are preserved;
+d82d2c150 was merged normally, and doll-tag-new-owner-icons.xml passed afterward.
 
-Original ProjectSettings bytes are retained at source-before/ under the evidence
-root until final cleanup. Native guards preserve the named test profile and shared
-Editor input preferences. Restore task-owned settings differences before release.
-A later result section will record native-player receipts and final publication.
+Both actual local host/client runs used 80 ms one-way UDP delay, 10 ms jitter
+and 1% packet loss, separate task profiles and matching immutable player artifacts.
 
-Physical separate-PC/WAN/mobile play and every possible skill combination are
-separate claims from this bounded Windows evidence. Final Claude handoff is for
-review/refinement of completed work and should cite the final receipts.
+- native-phaister/companion-motion-review.json: passed. Host/client doll horizontal
+  spans 11.07/9.21 m; 102 matched samples; median gap 0.063 m, p95 0.319 m.
+  No runtime exceptions, floating suspects, input changes or artifact changes.
+  The original generic tool exit 1 expected staged victim copies that Phaister
+  does not use. Its corrected criterion requires actual companion motion and
+  bounded position agreement. Five unit tests accept delayed matching motion
+  and refuse the original frozen-client bug, absent/wrong dolls and divergence.
+  The original run/result remains preserved; no failed product assertion was removed.
+- native-banaue-yasmin/acceptance-review.json and result.json: passed. Both players
+  exited 0, no runtime exceptions or floating suspects, three matching staged
+  victims at 0 m start gap, with a 4.2 m terrace victim. Both entered real play
+  and the shared ultimate. Shared input and the packaged artifact stayed unchanged.
+
+Final published source and launch are owned by the current windows-build receipt;
+verify its launched status, SHA and protocol against main. The runtime code fixes
+are in f341ea52b, with the later owner icon/feed integration tested separately.
+Failed attempts and the source-before settings snapshot remain evidence until
+final restoration/cleanup is verified. User profiles and authored source are preserved.
+
+Physical separate-PC/WAN/mobile play and every possible skill combination remain
+separate claims from this bounded Windows evidence. The final Claude handoff is
+for review/refinement of completed fixes, with no required implementation left.
