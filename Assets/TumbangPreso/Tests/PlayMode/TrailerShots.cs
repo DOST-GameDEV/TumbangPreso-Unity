@@ -76,6 +76,7 @@ namespace TumbangPreso.PlayTests
         [UnityTest, Timeout(3600000)] public IEnumerator Ult40NemuLetThemIn() => RecordUltimate(NemuLetThemIn());
         [UnityTest, Timeout(3600000)] public IEnumerator Ult41PhaisterVoodooDoll() => RecordUltimate(PhaisterVoodooDoll());
         [UnityTest, Timeout(3600000)] public IEnumerator Ult42DanteContinentalDrift() => RecordUltimate(DanteContinentalDrift());
+        [UnityTest, Timeout(3600000)] public IEnumerator Ult43IlyasBaha() => RecordUltimate(IlyasBaha());
 
         // ------------------------------------------------------------------ 01 DUSK IN TONDO
         //
@@ -722,6 +723,7 @@ namespace TumbangPreso.PlayTests
                     {
                         dropped = true;
                         Vector3 can = GameServices.Round.Lata.transform.position;
+                        Debug.Log($"[TrailerShots] 43 court x {AIController.PlayableMinX:0.0}..{AIController.PlayableMaxX:0.0}, z {AIController.PlayableMinZ:0.0}..{AIController.PlayableMaxZ:0.0}; can {can}; ILYAS {hero.transform.position}");
                         var marks = new[] { new Vector3(-1.2f, 0.0f, -1.8f), new Vector3(1.4f, 0.0f, -0.6f) };
                         int n = 0;
                         foreach (var shoe in Object.FindObjectsByType<Slipper>().Where(x => x.Holder != hero && x.gameObject.activeInHierarchy).Take(2))
@@ -934,6 +936,57 @@ namespace TumbangPreso.PlayTests
                 },
                 // Waves up, and every body's x/y/z from the can.
                 Probe = () => Object.FindObjectsByType<DanteDriftWave>().Length + " " + string.Join(" ", GameServices.Round.Players.Where(x => x != null).Select(x => { var d = x.transform.position - GameServices.Round.Lata.transform.position; return $"s{x.PlayerSlot}({d.x:0.0};{d.y:0.0};{d.z:0.0})"; })),
+            };
+        }
+
+        // ---- 43 ILYAS, BAHA: SITANGKAI (LagoonCove). After his cutscene the flood front leaves him at 5 m/s, 8.4 m wide
+        // (`RafiWaterField.CastBaha`), carries loose slippers up to 3 m and nudges each grounded rival once. Two slippers and two
+        // rivals wait on the camera side of the court; the lens is at ankle height there, looking back at the coming front.
+        private static UltShot IlyasBaha()
+        {
+            bool dropped = false;
+            return new UltShot
+            {
+                Number = 43, Slug = "ilyas-baha", Map = SceneFlow.LagoonCove, Hero = "rafi", Rivals = new[] { "sean", "zack", "cheska" },
+                // Marks from the can: ILYAS 4 m behind it, sending the flood through it; RAGO and ZACK in its path past the can,
+                // YASMIN off to the side, out of it. Take 1 stood him 7 m back and no flood came: the lane is measured from him to
+                // the court's edge, so he has to stand on the court (the take now logs its bounds).
+                HeroAt = new Vector3(0.0f, 0.0f, -4.0f), Aim = new Vector3(0.0f, 0.0f, 0.0f),
+                RivalsAt = new[] { new Vector3(-1.8f, 0.0f, 1.2f), new Vector3(2.0f, 0.0f, 2.8f), new Vector3(-6.0f, 0.0f, -3.5f) },
+                // His authored cutscene is 9.2 s (Resources/UltimateIntros/rafi.txt); then the 0.8 s warning and about 2 s of front.
+                Seconds = 13.0f,
+                Drive = (t, hero, rivals) =>
+                {
+                    // Two match slippers, out of any rival's hand, loose in the front's path just past the can (shot 37's lesson:
+                    // dropped here, with the rivals held, not before the settling frames).
+                    if (!dropped)
+                    {
+                        dropped = true;
+                        Vector3 can = GameServices.Round.Lata.transform.position;
+                        Debug.Log($"[TrailerShots] 43 court x {AIController.PlayableMinX:0.0}..{AIController.PlayableMaxX:0.0}, z {AIController.PlayableMinZ:0.0}..{AIController.PlayableMaxZ:0.0}; can {can}; ILYAS {hero.transform.position}");
+                        var marks = new[] { new Vector3(0.6f, 0.0f, 1.6f), new Vector3(-0.9f, 0.0f, 3.2f) };
+                        int n = 0;
+                        foreach (var shoe in Object.FindObjectsByType<Slipper>().Where(x => x.Holder != hero && x.gameObject.activeInHierarchy).Take(2))
+                        {
+                            shoe.HostSnatch();
+                            shoe.HostFinishMapRecoveryAt(OnCourt(can, marks[n++]));
+                        }
+                    }
+                    foreach (var x in rivals)
+                    {
+                        x.Intent.Clear();
+                        if (t < 0.0f) x.transform.rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(hero.transform.position - x.transform.position, Vector3.up));
+                    }
+                },
+                // Ankle height (0.25 m over the court) 7 m past the can on his line, looking back at him, a touch down, so the front
+                // fills the lower half as it arrives.
+                Wide = (t, can, hero, rivals) =>
+                {
+                    Vector3 floor = OnCourt(can, new Vector3(0.0f, 0.0f, 7.0f));
+                    return (floor + new Vector3(0.7f, 0.25f, 0.0f), can + new Vector3(0.0f, 0.15f, -3.0f), 50.0f);
+                },
+                // Fields up, then each slipper's state and distance past the can.
+                Probe = () => Object.FindObjectsByType<RafiWaterField>().Length + " " + string.Join(" ", Object.FindObjectsByType<Slipper>().Select(x => $"{x.State.ToString()[0]}{(x.transform.position - GameServices.Round.Lata.transform.position).z:0.0}")),
             };
         }
 

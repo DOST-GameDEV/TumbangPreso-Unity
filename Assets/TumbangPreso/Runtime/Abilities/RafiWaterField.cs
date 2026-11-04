@@ -120,7 +120,9 @@ namespace TumbangPreso.Abilities
             if (!IsWater(f.Type) || f.EventId <= 0 || f.Owner < 0 || f.Owner >= Core.Balance.PlayerCount
                 || f.Forward.sqrMagnitude < .99f || f.Forward.sqrMagnitude > 1.01f || Mathf.Abs(f.Forward.y) > .01f
                 || (f.Type != WorldEffectSnapshot.Kind.Baha && (f.Duration > RafiRules.WallSeconds || (f.Type != WorldEffectSnapshot.Kind.Waterwall && f.Duration > 3)))
-                || f.Radius <= 0 || f.Radius > 3
+                // Baha's own branch below holds its radius to `RafiRules.BahaHalfWidth` (4.2 m since 0c3ae5458); the 3 m cap is
+                // the other water's, and it refused every Baha, so the flood never came after the cutscene.
+                || f.Radius <= 0 || (f.Type != WorldEffectSnapshot.Kind.Baha && f.Radius > 3)
                 || (f.Type != WorldEffectSnapshot.Kind.Baha && f.SecondScale != 0 && f.SecondScale != 1) || f.Path == null || f.Path.Length > MaxPathPoints) return false;
             if(f.Type==WorldEffectSnapshot.Kind.Baha)
             {
