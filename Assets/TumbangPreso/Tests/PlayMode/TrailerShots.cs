@@ -74,6 +74,7 @@ namespace TumbangPreso.PlayTests
         [UnityTest, Timeout(3600000)] public IEnumerator Ult38PaeteMakilingsEmbrace() => RecordUltimate(PaeteMakilingsEmbrace());
         [UnityTest, Timeout(3600000)] public IEnumerator Ult39ZackOverclock() => RecordUltimate(ZackOverclock());
         [UnityTest, Timeout(3600000)] public IEnumerator Ult40NemuLetThemIn() => RecordUltimate(NemuLetThemIn());
+        [UnityTest, Timeout(3600000)] public IEnumerator Ult41PhaisterVoodooDoll() => RecordUltimate(PhaisterVoodooDoll());
 
         // ------------------------------------------------------------------ 01 DUSK IN TONDO
         //
@@ -870,6 +871,32 @@ namespace TumbangPreso.PlayTests
                 // Possessed count, the taya's seat, and every body's x/z from the can (where the cutscene's hand-back left them).
                 Probe = () => GameServices.Round.Players.Count(x => x != null && x.IsPossessed).ToString() + (GameServices.Round.Players.FirstOrDefault(x => x != null && x.IsDefender) is CharacterMotor taya ? $"t{taya.PlayerSlot}" : "")
                               + " " + string.Join(" ", GameServices.Round.Players.Where(x => x != null).Select(x => { var d = x.transform.position - GameServices.Round.Lata.transform.position; return $"s{x.PlayerSlot}({d.x:0.0};{d.z:0.0})"; })),
+            };
+        }
+
+        // ---- 41 PHAISTER, VOODOO DOLL: ERMITA (IlalimNgTulay), under the viaduct; capture only (her kit and art are protected).
+        // Her cutscene wakes the doll; play hands back with it standing beside her as its own fighter (`VoodooDollBody.HostSpawn`).
+        // The cut is her cutscene alone (recorded frames 224 to 268): its giant hands lower the doll on strings beside her and the
+        // two stand side by side at the lens. Take 1's live wide after the hand-back had the doll's back to it and hid her.
+        private static UltShot PhaisterVoodooDoll()
+        {
+            return new UltShot
+            {
+                Number = 41, Slug = "phaister-voodoo-doll", Map = SceneFlow.IlalimNgTulay, Hero = "phaister", Rivals = new[] { "sean", "zack", "amihan" },
+                // Marks from the can: PHAISTER 5 m behind it facing it; the rivals well away on the far side.
+                HeroAt = new Vector3(0.0f, 0.0f, -5.0f), Aim = new Vector3(0.0f, 0.0f, 0.0f),
+                RivalsAt = new[] { new Vector3(-5.0f, 0.0f, 6.0f), new Vector3(5.0f, 0.0f, 6.0f), new Vector3(0.0f, 0.0f, 8.0f) },
+                // Her authored cutscene is 6 s (Resources/UltimateIntros/phaister.txt); 1.5 s after the hand-back.
+                Seconds = 7.5f,
+                Drive = (t, hero, rivals) => { foreach (var x in rivals) x.Intent.Clear(); },
+                // In front of her, 3.4 m, at doll height (0.75 m), looking at the gap between her and the doll on her right.
+                Wide = (t, can, hero, rivals) =>
+                {
+                    Vector3 at = hero.transform.position, fwd = Vector3.ProjectOnPlane(hero.transform.forward, Vector3.up).normalized, right = hero.transform.right;
+                    Vector3 mid = at + right * (VoodooDollBody.BesideHer * 0.5f);
+                    return (mid + fwd * 3.4f + Vector3.up * 0.75f, mid + Vector3.up * 0.7f, 40.0f);
+                },
+                Probe = () => Object.FindObjectsByType<CharacterMotor>().Any(x => x.name.StartsWith("VoodooDoll")) ? "doll" : "-",
             };
         }
 
