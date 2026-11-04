@@ -43,6 +43,7 @@ The text cards in `cards/` are ProRes 4444 with alpha, each as long as its shot.
 | 38 | PAETE, MAKILING'S EMBRACE | 0:52.53 | 90 frames | `shot-38.mov` |
 | 39 | ZACK, OVERCLOCK | 0:54.03 | 45 frames | `shot-39.mov` |
 | 40 | NEMU, LET THEM IN | 0:54.78 | 45 frames | `shot-40.mov` |
+| 41 | PHAISTER, VOODOO DOLL | 0:55.53 | 45 frames | `shot-41.mov` |
 | 48 | Logo and key art | 1:00.80 | 139 frames | `shot-48.mov`, `shot-48-plate.mov`, `shot-48-cta.mov` |
 
 **01, Studio badge.** The BH studios mark in white on black, at 60% of its menu size. It fades in over
@@ -83,6 +84,13 @@ ZACK and YASMIN in the same frame: purple eyes and a ghost riding each one. From
 all three the same way, down the alley toward the low camera. NEMU stands small and still at the far
 end of the alley.
 
+**41, PHAISTER, VOODOO DOLL.** From her cutscene, under the ERMITA viaduct. Frames 0 to 21: PHAISTER
+waits as giant hands lower the puppet strings, with a white flash around frame 12. Frames 18 to 22: the
+doll drops in on its strings and lands standing beside her. From there to the cut, the doll and
+PHAISTER stand side by side facing the camera.
+Differs from the prompt: her cutscene lowers the doll on strings instead of showing it lying still, and
+its slipper is not visible yet. Captured only; nothing in her kit or art was changed.
+
 **48, Logo and key art.** The nine heroes around the can on Tondo at dusk, each with their slipper.
 - `shot-48.mov`: plate, logo and COMING SOON together.
 - `shot-48-plate.mov`: the plate only.
@@ -96,5 +104,5 @@ end of the alley.
 - 10, "Taya!" in the black: blocked. The kid's "Taya!" in the game is a synthesized sound, not a real
   recording, so it needs a recorded voice first.
 - 20, 27, 28, 33: UI captures, still to do.
-- 41 to 43: the other ultimates, being recorded one at a time.
+- 42 and 43: the last two ultimates, being recorded one at a time.
 - 47: the contact flash. It depends on shot 46's replay.
