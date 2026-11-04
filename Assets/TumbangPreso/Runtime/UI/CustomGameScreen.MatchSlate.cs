@@ -39,7 +39,7 @@ namespace TumbangPreso.UI
             SlateRule(_ownerMatchPage, "Seconds", "ROUND LENGTH", 270, d => { _editing.RoundSeconds = SecondsOptions[Cycle(SecondsIndex(_editing.RoundSeconds), d, SecondsOptions.Length)]; Apply(); }, "Time allowed for each round.");
             SlateRule(_ownerMatchPage, "Target", "SCORE TARGET", 360, d => { _editing.ScoreTarget = TargetOptions[Cycle(TargetIndex(_editing.ScoreTarget), d, TargetOptions.Length)]; Apply(); }, "Reach this score to finish early. OFF plays every round.");
             SlateRule(_ownerMatchPage, "Stock", "SLIPPERS EACH", 450, d => { _editing.Tsinelas = CustomGameRules.MinTsinelas + Cycle(_editing.Tsinelas - CustomGameRules.MinTsinelas, d, TsinelasOptionCount); Apply(); }, "Starting slippers in Last Tsinelas Standing.");
-            SlateRule(_ownerRoomPage, "Bots", "BOTS", 0, d => SetBots(Cycle(BotIndex(_editing), d, DifficultyCount + 1)), "Fill empty seats, or choose NONE to play with people only.");
+            SlateRule(_ownerRoomPage, "Bots", "BOTS", 0, d => SetBots(Cycle(BotIndex(_editing), d, DifficultyCount)), "Choose the difficulty of bots filling empty seats.");
             SlateRule(_ownerRoomPage, "Private", "PRIVATE ROOM", 100, d => { _editing.Private = !_editing.Private; Apply(); }, "Hide this room from the online room list.");
             SlateRule(_ownerRoomPage, "MapVote", "MAP VOTE", 200, d => { _editing.MapVote = !_editing.MapVote; Apply(); }, "ON lets players vote after character select. OFF uses the host-selected court.");
             _passwordRow = OwnerUiLayout.Rect(_ownerRoomPage, "PasswordRow").gameObject;

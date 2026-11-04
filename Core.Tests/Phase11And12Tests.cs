@@ -155,6 +155,7 @@ namespace TumbangPreso.Core.Tests
 
             Assert.Equal(MatchRules.RoundCountFor(GameMode.Classic), classic.Rounds);
             Assert.Equal(MatchRules.RoundCountFor(GameMode.HeroStrike), hero.Rounds);
+            Assert.Equal(hero.Rounds, new CustomRules().Rounds);
             Assert.Equal((int)Balance.RoundTime, classic.RoundSeconds);
             Assert.Equal(MatchFormat.Standard, classic.Format);
             Assert.Equal(0, classic.Bots);

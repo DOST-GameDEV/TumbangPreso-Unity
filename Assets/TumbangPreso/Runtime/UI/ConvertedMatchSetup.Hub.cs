@@ -166,8 +166,8 @@ namespace TumbangPreso.UI
             SelectMap(map);
             SelectMode(mode);
             // ⚠️ A NEW ROOM OPENS FULL OF BOTS, owner 2026-10-19, whatever the last room or the
-            // RULES preference left behind: every empty seat shows a bot, the host removes the
-            // ones they do not want, and a player who joins simply takes a bot's seat
+            // RULES preference left behind: every empty seat shows a bot, and a player who joins
+            // simply takes a bot's seat
             // (`CustomGameRules.FillEmptySeatsWithBots` says why that needs no other code).
             //
             // ⚠️⚠️ SAVED, NOT ONLY ADOPTED. The menu scene that comes back after every match
@@ -313,7 +313,7 @@ namespace TumbangPreso.UI
         }
 
         /// <summary>
-        /// ADD BOT and REMOVE BOT. Only the host of a custom room decides, and only before the
+        /// ADD BOT only. Custom room filler bots cannot be removed. Only before the
         /// match: a queued room's bots are the queue's offer, not a seat-by-seat choice.
         /// </summary>
         public bool CanEditBots => IsHost && !MatchInProgress && !HubQueueWatch.QueueRoom;
@@ -327,12 +327,10 @@ namespace TumbangPreso.UI
         /// match reloads the menu from `settings.json`. A new room refills every seat anyway
         /// (`HostRoom`), so a saved pick never leaks into the next room.
         ///
-        /// ⚠️ THE SEATS PLAYERS ARE IN ARE PASSED IN, so removing the last bot from the EMPTY
-        /// seats turns bots off even though the host's own seat still carries its bit.
         /// </summary>
         public void SetSeatBot(int seat, bool bot)
         {
-            if (!CanEditBots || seat < 0 || seat >= Balance.PlayerCount) return;
+            if (!bot || !CanEditBots || seat < 0 || seat >= Balance.PlayerCount) return;
             int occupied = 0;
             foreach (var s in Seats())
                 if (s.Occupied) occupied |= 1 << s.Slot;

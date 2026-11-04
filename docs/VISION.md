@@ -8,7 +8,7 @@ preserves the team's original reasoning and old measurements.
 ## Two first-class modes
 
 Classic is the street game without hero powers. Hero Strike adds distinct kits,
-timing and counterplay. Both normally play eight rounds: each seat defends twice.
+timing and counterplay. Both normally play four rounds: each seat defends once.
 Custom lengths are configurable. Neither mode is permission to neglect the other.
 Street Hype was removed; do not restore its mechanic or meter.
 

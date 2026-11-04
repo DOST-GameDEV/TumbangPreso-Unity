@@ -80,7 +80,7 @@ namespace TumbangPreso.Core
     /// desyncs the moment one peer misses one call. "Everyone defends exactly once,
     /// clockwise" is true here BY CONSTRUCTION. The 2v2 format this replaced needed a
     /// whole paired-set system to reach the same property. Both default modes now get
-    /// two complete rotations in eight rounds.
+    /// one complete rotation in four rounds.
     /// </summary>
     public static class MatchRules
     {

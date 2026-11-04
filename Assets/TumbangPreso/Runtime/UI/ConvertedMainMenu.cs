@@ -39,6 +39,7 @@ namespace TumbangPreso.UI
         private bool _homeAssetsStarted, _homeAssetsReady;
         private float _homeAssetsProgress;
         private bool _homeArrival;
+        private bool _loginStepPending;
         public const float MinimumLoadingViewSeconds = 5;
         private float _loadingViewBegan;
         private ThreadPriority _previousLoadingPriority;
@@ -198,7 +199,7 @@ namespace TumbangPreso.UI
 
         private void BeginHomeArrival()
         {
-            if(_homeArrival) return;
+            if(_homeArrival || _loginStepPending) return;
             _homeArrival=true;
             _nativeHome.SetLoading(true);
             BeginHomePreload();
@@ -316,34 +317,30 @@ namespace TumbangPreso.UI
             OfferTheLoginStep();
         }
 
-        /// <summary>
-        /// LOGIN, step 3 of five. See `SignInScreen.OpenAtBoot`.
-        ///
-        /// ⚠️⚠️ GATED ON `SceneFlow.BootedThroughSplash`, WHICH IS A LAUNCH RATHER THAN A SCENE
-        /// LOAD, AND THAT DISTINCTION COST A RED PROBE TO LEARN. That flag's own note carries it
-        /// in full: this scene is reached from the splash, from `LeaveMatchToMainMenu` and from
-        /// any test that loads it by name, and `UiClickProbe.EveryButtonIsReachable` once came
-        /// back with every settings control blocked by `SignInCanvas` because the question opened
-        /// over a menu a probe had loaded directly and nothing was ever going to answer it.
-        ///
-        /// ⚠️ IT IS NO LONGER GATED ON `GameSettings.AccountChoiceMade`. That made it a
-        /// once-per-machine event; 🧑 asked for it on every launch, with a returning player
-        /// passed through automatically. `docs/TODO.md` § 114.5.
-        /// </summary>
+        /// <summary>Restore the account before deciding whether boot needs a login form.</summary>
         private void OfferTheLoginStep()
         {
-            if (!SceneFlow.BootedThroughSplash) return;
-
-            // ⚠️⚠️ ONCE PER LAUNCH, NOT ONCE PER VISIT TO THIS SCENE. See
-            // `SceneFlow.LoginStepOffered`: the flag above is never cleared, so every return to
-            // the main menu in one process re-asked a question the player had already answered,
-            // and 🧑 met it coming back out of the character maker.
-            if (SceneFlow.LoginStepOffered) return;
+            if (!SceneFlow.BootedThroughSplash || SceneFlow.LoginStepOffered) return;
             SceneFlow.LoginStepOffered = true;
+            _loginStepPending = true;
+            StartCoroutine(RestoreBootAccount());
+        }
+
+        private IEnumerator RestoreBootAccount()
+        {
+            var account = GameServices.Account;
+            var restore = account?.InitializeAsync();
+            // PlayerAccount already bounds this wait and preserves offline fallback.
+            while (restore != null && !restore.IsCompleted) yield return null;
+            _loginStepPending = false;
+            if (SignInScreen.HasRestoredBootAccount(account))
+            {
+                BeginHomeArrival();
+                yield break;
+            }
 
             var signIn = gameObject.GetComponent<SignInScreen>();
             if (signIn == null) signIn = gameObject.AddComponent<SignInScreen>();
-
             signIn.Install();
             signIn.OpenAtBoot();
         }

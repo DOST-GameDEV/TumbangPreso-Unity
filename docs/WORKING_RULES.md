@@ -9,9 +9,13 @@ and [earlier full rules](archive/CLAUDE_full_2026-09-24.md). New owner instructi
 
 - This Unity repository is the game. The Godot repository is frozen reference;
   never edit it or copy its versions over live Unity documents/source.
-- Classic and Hero Strike are both first-class modes,defaulting to eight rounds.
+- Classic and Hero Strike are both first-class modes,defaulting to four rounds.
   Classic people are cosmetic with neutral stats. No Street Hype mechanic/meter.
   Preserve throwing,retrieval,restoring the can,chasing,escape and tagging.
+- Custom matches retain filler bots in vacant seats; players can take bot seats.
+  Bot controls select difficulty and do not offer removal or NONE.
+- Startup restores the account before admission; restored linked accounts skip the
+  login/signup form, while guests retain the account choice.
 - Core stays engine-free. `Core/TumbangPreso.Core.csproj` compiles the embedded
   package sources in place; do not create another copy or add UnityEngine to it.
 - The host resolves outcomes and `MatchDirector.AddScore` owns every point.

@@ -19,15 +19,9 @@ namespace TumbangPreso.Core
         // MATCH STRUCTURE — match_manager.gd, round_manager.gd
         // -------------------------------------------------------------------
 
-        /// <summary>Both normal Classic and Hero Strike play two full defender rotations.</summary>
-        public const int Rounds = 8;
-
-        /// <summary>
-        /// Hero Strike runs two complete role rotations. Eight rounds gives every seat the
-        /// attacker and defender matchup twice, which is the requested competitive format,
-        /// matching the owner's eight-round Classic default.
-        /// </summary>
-        public const int HeroStrikeRounds = 8;
+        /// <summary>Both default modes play one complete defender rotation.</summary>
+        public const int Rounds = 4;
+        public const int HeroStrikeRounds = 4;
         public const int PlayerCount = 4;
         public const float RoundTime = 90.0f;
         public const float IntermissionDuration = 3.0f;
@@ -109,14 +103,14 @@ namespace TumbangPreso.Core
 
         /// <summary>
         /// Owner, October 22 tournament feedback: *"ults were rarely cast in 4 round games"*. The
-        /// ultimate costs are priced for the eight-round default, so a shorter match pays every
+        /// ultimate costs are priced for an eight-round match, so a shorter match pays every
         /// objective point proportionally more (four rounds: double) and each player can still
         /// reach an ultimate. Eight rounds or more are unchanged.
         /// </summary>
         public static float UltimateChargeScale(int totalRounds)
         {
-            if (totalRounds <= 0 || totalRounds >= HeroStrikeRounds) return 1.0f;
-            return System.Math.Min(3.0f, HeroStrikeRounds / (float)totalRounds);
+            if (totalRounds <= 0 || totalRounds >= 8) return 1.0f;
+            return System.Math.Min(3.0f, 8 / (float)totalRounds);
         }
 
         // Pektus (Curve Spin) Throwing

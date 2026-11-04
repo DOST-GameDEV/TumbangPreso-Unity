@@ -1029,26 +1029,17 @@ namespace TumbangPreso.UI.Hub
                     take.Attention += attended => { if (hint != null) hint.enabled = attended; };
                 }
 
-                // ⚠️ ADD BOT IN THE EMPTY CHAIR, A SMALL X ON A BOT'S CORNER, for the host of a custom
+                // ADD BOT in an empty chair; bot seats have no removal control in a custom
                 // room only. ⚠️ SIBLINGS OF THE CARD'S BUTTON, NOT CHILDREN OF ITS FACE: a child would
                 // lift the card and show SWITCH while the pointer is on the bot control.
-                if (editBots)
+                if (editBots && !seat.Bot)
                 {
-                    if (seat.Bot)
-                    {
-                        var remove = HubKnit.Button(slot, "RemoveBot" + destination, null, Knit.Danger,
-                                                    () => Hub.Host.SetSeatBot(destination, false), HubStyle.Label, HubGlyph.Mark.Close);
-                        HubKit.Place((RectTransform)remove.transform, HubKit.TopRight, new Vector2(10, 14), new Vector2(84, 72));
-                    }
-                    else
-                    {
-                        var add = HubKnit.Button(slot, "AddBot" + destination, _chatShown ? "+ BOT" : "+ ADD BOT", Knit.Yellow,
-                                                 () => Hub.Host.SetSeatBot(destination, true), Mathf.RoundToInt(34 * s));
-                        var r = (RectTransform)add.transform;
-                        r.anchorMin = new Vector2(0, 0); r.anchorMax = new Vector2(1, 0); r.pivot = new Vector2(.5f, 0);
-                        r.offsetMin = new Vector2(35 * s, 14 + 46 * s); r.offsetMax = new Vector2(-35 * s, 14 + 130 * s);
-                        HubKnit.FitLabel(add);
-                    }
+                    var add = HubKnit.Button(slot, "AddBot" + destination, _chatShown ? "+ BOT" : "+ ADD BOT", Knit.Yellow,
+                                             () => Hub.Host.SetSeatBot(destination, true), Mathf.RoundToInt(34 * s));
+                    var r = (RectTransform)add.transform;
+                    r.anchorMin = new Vector2(0, 0); r.anchorMax = new Vector2(1, 0); r.pivot = new Vector2(.5f, 0);
+                    r.offsetMin = new Vector2(35 * s, 14 + 46 * s); r.offsetMax = new Vector2(-35 * s, 14 + 130 * s);
+                    HubKnit.FitLabel(add);
                 }
             }
         }

@@ -551,7 +551,7 @@ namespace TumbangPreso.Core
     {
         public GameMode Mode = GameMode.HeroStrike;
         public MatchFormat Format = MatchFormat.Standard;
-        public int Rounds = 8;
+        public int Rounds = Balance.HeroStrikeRounds;
         public int RoundSeconds = 90;
 
         /// <summary>0 means "play every round", which is how the game ships.</summary>

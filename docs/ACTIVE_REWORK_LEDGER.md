@@ -1,8 +1,11 @@
 # Current checkpoint
 
-Updated 2026-11-01. [TODO](TODO.md) is the only active queue.
+Updated 2026-11-04. [TODO](TODO.md) is the only active queue.
 
-- HOME-FILMS-1101, on main: Zack (BGC), Phaister ("Drained", real Ermita map). [Edit guide](../ArtSource/home-scene/README.md). Next: owner in game.
+- MATCH-DEFAULT-1104, main: four rounds; existing ultimate charge scaling retained.
+- CUSTOM-LOGIN-1104, main: no custom bot removal/NONE; restored linked accounts skip
+  boot login. Direct compiler checks only; native/peer behavior remains unverified.
+- HOME-FILMS-1101, on main: Zack (BGC), Phaister ("Drained", real Ermita map). [Edit guide](../ArtSource/home-scene/README.md). Next: owner.
 - FEEL-1031, on main: replay wipes, spectator 3D replay, break card, impact, 0.6 m knockback,
   SFX. Film: run_ui_player_review.py --feel-only. Next: owner review.
 - TAG-FEEL-1031, on main: one tag live and in replay (spacing, reach, shared shove), FPP swing, replay impact on hand
@@ -18,17 +21,11 @@ Updated 2026-11-01. [TODO](TODO.md) is the only active queue.
   source has picker clipping failing and no APK. Jobs stopped.
 - Keep `mobile+network` separate from main; current main is included.
   Preserve owner metadata/settings and stage only explicit owned paths.
-- Desktop spectator is on main: grouped live controls, calmer camera, actual
-  player eyes/hands/lens,21 bodies/six maps/private cues.
-  [Evidence](reports/spectator-2026-10-25/README.md).
-- Network/mobile code0d8 passed recorded Windows/Android view transfer, same-seat
-  outage/background reconnect, manual spectator pause/card, host-loss stop,
-  six map scenes and Classic HUD. Core841/841 and focused native groups passed.
-  Old broad failures and emulator RTT-recovery limits stay explicit.
-  [Evidence/build hashes](reports/mobile-2026-10-26/README.md).
-- Zack's approved electrical-outline Backtrack308fb345f and hand-zigzag removal
+- Desktop spectator is on main. [Evidence](reports/spectator-2026-10-25/README.md).
+- Network/mobile code0d8: recorded Windows/Android checks passed within documented
+  limits; physical peers remain separate. [Evidence](reports/mobile-2026-10-26/README.md).
+- Zack's approved Backtrack308fb345f and hand-zigzag removal
   remain intact. SFX listening review is still open; rejected sounds were not
   installed. [Evidence](reports/zack-kit-2026-10-25/refinement-validation.md).
 
-Unrelated future sessions do not automatically owe mobile updates.
 [Earlier checkpoints](archive/cleanup-2026-10-25/docs/ACTIVE_REWORK_LEDGER.md) are history.

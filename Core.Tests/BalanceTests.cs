@@ -845,14 +845,14 @@ namespace TumbangPreso.Core.Tests
         [Fact]
         public void MatchLengthFollowsTheSelectedMode()
         {
-            Assert.Equal(8, MatchRules.RoundCountFor(GameMode.Classic));
-            Assert.Equal(8, MatchRules.RoundCountFor(GameMode.HeroStrike));
+            Assert.Equal(4, MatchRules.RoundCountFor(GameMode.Classic));
+            Assert.Equal(4, MatchRules.RoundCountFor(GameMode.HeroStrike));
 
             var defended = new int[Balance.PlayerCount];
             for (int round = 1; round <= MatchRules.RoundCountFor(GameMode.HeroStrike); round++)
                 defended[MatchRules.DefenderSlotFor(round)]++;
 
-            foreach (int turns in defended) Assert.Equal(2, turns);
+            foreach (int turns in defended) Assert.Equal(1, turns);
         }
 
         /// <summary>Defensive against a caller passing round 0 or negative.</summary>
