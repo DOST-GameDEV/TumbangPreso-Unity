@@ -147,8 +147,8 @@ namespace TumbangPreso.Core
         // picks and both modes. Active statuses, abilities and terrain remain separate.
         public const float AttackerWalkSpeed = 2.5f;
         public const float DefenderWalkSpeed = 3.75f;
-        public const float AttackerRunSpeed = 5.0f;
-        public const float DefenderRunSpeed = 7.5f;
+        public const float AttackerRunSpeed = 3.75f;
+        public const float DefenderRunSpeed = 5.625f;
 
         public const float SprintScale = 1.50f;
         public const float Friction = 30.0f;
@@ -250,7 +250,8 @@ namespace TumbangPreso.Core
         /// <summary>You cannot START a sprint below this, so the bar cannot be feathered.</summary>
         public const float StaminaSprintFloor = 50.0f;
 
-        public const float FatigueTime = 2.5f;
+        // November 4 owner revision: empty stamina adds no exhaustion lockout.
+        public const float FatigueTime = 0.0f;
         public const float FatigueSpeedScale = 1.0f;
 
         // -------------------------------------------------------------------

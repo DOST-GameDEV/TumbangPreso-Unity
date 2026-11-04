@@ -111,10 +111,10 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(x.actor.Intent.Pressed(Verb.Sprint), "The second Drive cleared sprint demand every frame and prevented commitment.");
         }
 
-        [TestCase(10f, 0f), TestCase(100f, .5f)]
-        public void LongHeldChaseRespectsStaminaReserveAndFatigue(float stamina, float fatigue)
+        [TestCase(10f), TestCase(49f)]
+        public void LongHeldChaseRespectsStaminaReserve(float stamina)
         {
-            var x = Chase(); x.actor.Stamina.ApplyNetworkSnapshot(stamina, 0, fatigue);
+            var x = Chase(); x.actor.Stamina.ApplyNetworkSnapshot(stamina, 0, 0);
             Tick(x);
             Assert.IsFalse(x.actor.Intent.Pressed(Verb.Sprint)); Assert.IsFalse(x.actor.Stamina.IsSprinting);
             Assert.IsTrue(x.actor.Intent.Pressed(Verb.Lunge)); Assert.Zero(x.verbs.LungeCooldownLeft);

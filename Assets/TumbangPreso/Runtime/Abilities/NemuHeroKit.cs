@@ -219,7 +219,7 @@ namespace TumbangPreso.Abilities
         {
             public DontLook()
                 : base("nemu_skill1", "PEEKER",
-                       "Hide a ghost at a spot. The first player to step inside its ring is blinded and slowed by 25% for 2.5 s. Lasts 15 s, then lies dormant until you retrieve it.",
+                       "HOLD {KEY} to aim. RELEASE to hide a ghost that fades from sight. The first player to step into its ring is Blinded and slowed.",
                        NecroRules.DontLookCooldown, 0.0f, AbilityGlyph.NemuDontLook,
                        summary: "Hide a ghost. The first to step in its ring is blinded and slowed.",
                        castAction: "hero-nemu-dontlook", viewmodelAction: "dontlook-hush",
@@ -265,7 +265,7 @@ namespace TumbangPreso.Abilities
 
             public Skitter()
                 : base("nemu_skill2", "FETCHER",
-                       "Attacking. A ghost fetches your loose slipper and waits by you until you take it. Then it lies dormant until you retrieve it.",
+                       "PRESS {KEY} to send a ghost after your loose slipper. It carries the slipper back and holds it out until you take it with {Interact}.",
                        NecroRules.FetchCooldown, NecroRules.FetchSeconds, AbilityGlyph.NemuSkitter,
                        summary: "A ghost brings your slipper back and waits for you.",
                        castAction: "hero-nemu-skitter", viewmodelAction: "skitter-flick",
@@ -422,7 +422,7 @@ namespace TumbangPreso.Abilities
 
             public Lookout()
                 : base("nemu_skill2d", "KEEPER",
-                       "Defending. A lantern ghost guards the can for 15 s, standing it back up 1.5 s after every knockdown. Then it lies dormant until you retrieve it.",
+                       "PRESS {KEY} to post a lantern ghost by the can. Each time the can is knocked down, the ghost stands it back up, and attackers cannot scare it off.",
                        NecroRules.LookoutCooldown, NecroRules.LookoutSeconds, AbilityGlyph.NemuLookout,
                        summary: "A ghost guards the can and keeps lifting it back up.",
                        castAction: "hero-nemu-lookout", viewmodelAction: "lookout-release",
@@ -544,7 +544,7 @@ namespace TumbangPreso.Abilities
 
             public NightmareSeanceVoidAbility()
                 : base("nemu_ultimate", "LET THEM IN",
-                       "Every other player is Possessed for 15 s: the soul inside drags their steering toward danger. Push against it.",
+                       "PRESS {KEY} to let the dead into every other player, Possessing them. The souls drag their steering toward danger, and fighting back loosens the grip.",
                        0, NemuRules.PossessedSeconds, AbilityGlyph.NemuSeanceVoid,
                        summary: "Every other player is Possessed for 15 s.",
                        castAction: "hero-nemu-seance", viewmodelAction: "seance-channel",

@@ -91,7 +91,7 @@ namespace TumbangPreso.Abilities
 
             public ColdFeet()
                 : base("cheska_skill1", "COLD FEET",
-                       "Hold to aim, release to freeze a patch of street for 7.5 s. Anyone standing in it is Chilled: half speed, and it lingers.",
+                       "HOLD {KEY} to aim. RELEASE to frost over a patch of street. Players on the ice are Chilled, and the slow lingers after they step off.",
                        CryoRules.ColdFeetCooldown, 0.0f, AbilityGlyph.CheskaFrostSheet,
                        summary: "Freeze a patch of street. Anyone in it is Chilled.",
                        telegraphRadius: CryoRules.ColdFeetRadius, telegraphRange: CryoRules.ColdFeetMaxRange,
@@ -123,7 +123,7 @@ namespace TumbangPreso.Abilities
 
             public Frostbite(CheskaHeroKit kit)
                 : base("cheska_skill2", "FROSTBITE",
-                       "Attacking. Frost your slipper for 15 s. Every throw during that window inflicts Frozen on a player hit: no moving, no grabbing, for 2.5 s.",
+                       "PRESS {KEY} while holding your slipper to coat it in frost. Until it wears off, every throw that hits a player Freezes them in place.",
                        CryoRules.FrostbiteCooldown, CryoRules.FrostbiteLoadSeconds, AbilityGlyph.CheskaFrostbite,
                        summary: "For 15 s, every throw can freeze a player.",
                        castAction: "hero-cheska-frostbite", viewmodelAction: "frost-load",
@@ -160,7 +160,7 @@ namespace TumbangPreso.Abilities
 
             public GlacialWall()
                 : base("cheska_skill2d", "GLACIAL WALL",
-                       "Defending. Hold to aim, release to raise an arc of icicles. Bodies and slippers stop at it; three slipper hits shatter it, or it expires after 10 s.",
+                       "HOLD {KEY} to aim. RELEASE to raise an arc of icicles that stops players and slippers alike. Shatters after a few slipper hits.",
                        CryoRules.GlacialWallCooldown, 0.0f, AbilityGlyph.CheskaBarricade,
                        summary: "Raise an icicle wall. Three slipper hits break it.",
                        telegraphRadius: CryoRules.GlacialWallArcLength * 0.5f, telegraphRange: CryoRules.GlacialWallMaxRange,
@@ -193,7 +193,7 @@ namespace TumbangPreso.Abilities
             protected override bool IntroductionIsTheWindup => true;
             public AbsoluteZero()
                 : base("cheska_ultimate", "ABSOLUTE ZERO",
-                       "Every other player is Frozen for 2.5 s, then Chilled for 5 s as they thaw.",
+                       "PRESS {KEY} to unleash a cold snap that encases every other player in ice, Freezing them. As the ice melts, they are left Chilled.",
                        0.0f, 0.0f, AbilityGlyph.CheskaNova,
                        summary: "Freeze every player on the map, then chill them.",
                        castAction: "hero-cheska-nova", viewmodelAction: "nova-burst",

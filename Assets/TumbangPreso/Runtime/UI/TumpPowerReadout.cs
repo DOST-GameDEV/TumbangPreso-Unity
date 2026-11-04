@@ -16,8 +16,22 @@ namespace TumbangPreso.UI
         private readonly TumpSurface[] _keycaps = new TumpSurface[3];
         private readonly TumpAbilitySymbol[] _detailSymbols = new TumpAbilitySymbol[3];
         private RectTransform _deck, _detail;
-        private Text _hint;
-        private InputAction _inspect;
+        private Text _hint, _pageTitle;
+        private InlinePromptText _pageHint;
+        private InputAction _inspect, _turnPage;
+        /// <summary>Top of the power cards inside the held reference, under its page header.</summary>
+        private const float PowerTop = 92;
+        /// <summary>The role page the held reference shows: null follows the role you are playing.</summary>
+        private bool? _pageDefending;
+        private bool _wasHeld, _wasDefending;
+        /// <summary>
+        /// True while the held reference is open. Its page key (Interact, F by default) then turns the page instead of
+        /// interacting, so `PlayerInputReader` reads Interact as released.
+        /// </summary>
+        public static bool ReferenceOpen { get; private set; }
+        private void OnDisable() { ReferenceOpen = false; _pageDefending = null; _wasHeld = false; }
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetReference() => ReferenceOpen = false;
         private HeroKit _shownKit;
         private string _shownSignature;
         private bool _ultimateReady;
@@ -84,6 +98,7 @@ namespace TumbangPreso.UI
             var asset = Resources.Load<InputActionAsset>("TumbangPreso");
             _inspect = asset?.FindActionMap("Player", false)?.FindAction("AbilityInfo", false);
             _inspect?.Enable();
+            _turnPage = asset?.FindActionMap("Player", false)?.FindAction("Interact", false); _turnPage?.Enable();
         }
         private void BuildPreviousDetails(Transform root)
         {
@@ -118,7 +133,7 @@ namespace TumbangPreso.UI
             var kit = system != null ? system.Kit : null;
             visible &= kit != null;
             _deck.gameObject.SetActive(visible);
-            if (!visible) { _detail.gameObject.SetActive(false); return; }
+            if (!visible) { _detail.gameObject.SetActive(false); TurnPages(null, false); return; }
             _skills[0] = kit.Skill1; _skills[1] = kit.Skill2; _skills[2] = kit.Ultimate;
             var skills = _skills;
             var f = TumpUiTheme.Current;
@@ -156,34 +171,58 @@ namespace TumbangPreso.UI
             _ultimateReady = kit.IsUltimateReady && !kit.PracticeMode;
             _hint.text = Hud.OnTouch ? "Hold info for skills" : "Hold " + Hud.KeyLabelFor("AbilityInfo") + " for skills";
             bool held = _captureReference || InputLayer.TouchInput.ScreenHeld("AbilityInfo") || (_inspect != null && _inspect.IsPressed());
+            TurnPages(kit, held);
             _detail.gameObject.SetActive(held);
             if (held) Describe(kit, skills);
         }
+        /// <summary>
+        /// Turns the held reference between its attacking and defending pages (owner, 2026-11-05: "press like F to toggle
+        /// between attacking and defending ability descriptions" instead of both crammed in one card). Opening it, or
+        /// your role changing, shows your own role's page again.
+        /// </summary>
+        private void TurnPages(HeroKit kit, bool held)
+        {
+            bool roles = kit != null && kit.HasRoleAbilities;
+            if (!held || !_wasHeld || !roles || kit.IsDefending != _wasDefending) _pageDefending = null;
+            if (held && roles && _turnPage != null && _turnPage.WasPressedThisFrame())
+                _pageDefending = !(_pageDefending ?? kit.IsDefending);
+            _wasHeld = held; _wasDefending = kit != null && kit.IsDefending;
+            ReferenceOpen = held && !_captureReference;
+        }
+
         private void Describe(HeroKit kit, HeroAbility[] skills)
         {
-            string signature = string.Join("|", System.Array.ConvertAll(skills, a => a == null ? ""
+            bool roles = kit.HasRoleAbilities;
+            bool defending = _pageDefending ?? kit.IsDefending;
+            var shown = (HeroAbility[])skills.Clone();
+            if (roles) shown[1] = defending ? kit.DefendingSkill : kit.AttackingSkill;
+            bool touch = LastInputDevice.Current == InputDeviceKind.Touch;
+            string signature = string.Join("|", System.Array.ConvertAll(shown, a => a == null ? ""
                 : a.Id + a.EffectiveName + a.EffectiveDescription + "/" + a.Cooldown + "/" + a.Duration + "/" + a.MaxCharges + "/" + (int)a.Glyph))
-                + "/" + kit.UltimateCost;
+                + "/" + kit.UltimateCost + "/" + roles + defending + "/" + Hud.KeyLabelFor("Interact") + string.Join("", System.Array.ConvertAll(Actions, Hud.KeyLabelFor));
             if (_shownKit == kit && _shownSignature == signature) return;
             _shownKit = kit; _shownSignature = signature;
+            if (_pageTitle != null)
+            {
+                _pageTitle.text = roles ? (defending ? "DEFENDING" : "ATTACKING") : "YOUR POWERS";
+                _pageHint.Show(!roles ? "" : "{Interact} " + (defending ? "ATTACKING POWERS" : "DEFENDING POWERS"), "Interact");
+            }
             for (int i = 0; i < 3; i++)
             {
-                var skill = skills[i]; if (skill == null) continue;
+                var skill = shown[i]; if (skill == null) continue;
                 _detailSymbols[i].Glyph = skill.Glyph; _detailSymbols[i].SetVerticesDirty();
-                _names[i].text = skill.EffectiveName; _bodies[i].text = skill.EffectiveDescription;
-                _timings[i].text = skill.UsesCharges ? skill.MaxCharges + (skill.MaxCharges == 1 ? " use" : " uses")
-                    : skill.Cooldown > 0 ? skill.Cooldown.ToString("0.#") + "s cooldown" : "";
-                if (skill.Duration > 0) _timings[i].text += " · " + skill.Duration.ToString("0.#") + "s duration";
-                if (i == 2) _timings[i].text = kit.UltimateCost.ToString("0.#") + " charge needed";
-                // ⚠️ A ROLE KIT'S MIDDLE COLUMN NAMES ITS ROLE AND THE OTHER ROLE'S ABILITY, so the
-                // one reference screen answers "what do I get when I defend" without a fourth column.
-                if (i == 1 && kit.HasRoleAbilities && kit.IdleRoleSkill != null)
-                {
-                    _timings[i].text = (kit.IsDefending ? "Defending" : "Attacking") + " · " + _timings[i].text;
-                    _bodies[i].text = skill.EffectiveDescription + "\n\n" + (kit.IsDefending ? "Attacking: " : "Defending: ")
-                        + kit.IdleRoleSkill.EffectiveName + ". " + kit.IdleRoleSkill.EffectiveSummary;
-                }
+                _names[i].text = skill.EffectiveName.ToUpperInvariant(); _bodies[i].text = skill.EffectiveDescription;
+                // The chip carries the cost alone (owner, 2026-11-05: no duration, no key; the sentence shows the key).
+                string cost = skill.UsesCharges ? skill.MaxCharges + (skill.MaxCharges == 1 ? " USE" : " USES")
+                    : skill.Cooldown > 0 ? skill.Cooldown.ToString("0.#") + "s COOLDOWN" : "";
+                if (i == 2) cost = kit.UltimateCost.ToString("0.#") + " CHARGE";
+                _timings[i].text = cost;
+                if (_inlineBodies[i] == null) continue;
+                // The sentence with the key's own icon in it (a variant keeps its own words).
+                _inlineCosts[i].Show(cost, Actions[i]);
+                _inlineBodies[i].Show(string.IsNullOrEmpty(skill.VariantSummary) ? skill.Description : skill.VariantSummary, Actions[i]);
             }
+            LayoutReference();
         }
         public void OpenForCapture(HeroKit kit)
         {

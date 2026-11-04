@@ -108,24 +108,29 @@ namespace TumbangPreso.PlayTests
             {yield return new WaitForFixedUpdate();Assert.AreEqual(-25,_actor.Velocity.y,.001f);}
             TestContext.WriteLine($"Actual terminal fall speed {-_actor.Velocity.y:F4} m/s.");
         }
-        [UnityTest] public IEnumerator FatigueKeepsWalkSpeedWithoutSprintOrRegeneration()
+        [UnityTest] public IEnumerator EmptyBarKeepsWalkSpeedAndResumesSprintWithoutExhaustionLockout()
         {
             Assert.IsTrue(_actor.Stamina.Spend(Balance.StaminaMax)); _actor.Intent.Move = Vector2.up; _actor.Intent.Set(Verb.Sprint, true);
             Vector3 start = _actor.transform.position; float began = Time.fixedTime;
             for (int i = 0; i < 20; i++) yield return new WaitForFixedUpdate();
             float measured = Vector3.Distance(start, _actor.transform.position) / (Time.fixedTime - began);
-            Assert.AreEqual(2.5f, measured, .08f); Assert.IsTrue(_actor.Stamina.IsFatigued);
+            Assert.AreEqual(2.5f, measured, .08f); Assert.IsFalse(_actor.Stamina.IsFatigued);
             Assert.IsFalse(_actor.Stamina.IsSprinting); Assert.AreEqual(0, _actor.Stamina.Current);
+            float until = Time.fixedTime + 1.3f;
+            while (!_actor.Stamina.IsSprinting && Time.fixedTime < until) yield return new WaitForFixedUpdate();
+            Assert.IsTrue(_actor.Stamina.IsSprinting, "Sprint must resume after the normal regen delay and start floor.");
+            Assert.IsFalse(_actor.Stamina.IsFatigued);
+            Assert.That(new Vector2(_actor.Velocity.x, _actor.Velocity.z).magnitude, Is.EqualTo(3.75f).Within(.08f));
         }
-        [UnityTest] public IEnumerator ShoveAndLungeWorkWithZeroStaminaAndFatigue()
+        [UnityTest] public IEnumerator ShoveAndLungeWorkWithZeroStamina()
         {
             var verbs = _actor.gameObject.AddComponent<CombatVerbs>();
             Assert.IsTrue(_actor.Stamina.Spend(Balance.StaminaMax));
             _actor.Intent.Set(Verb.Lunge, true); _actor.Intent.BufferPress(Verb.Lunge);
             float until = Time.time + .25f;
             while (verbs.ShoveCooldownLeft <= 0 && Time.time < until) yield return null;
-            Assert.Greater(verbs.ShoveCooldownLeft, 0, "Real shove input must work during fatigue.");
-            Assert.AreEqual(0, _actor.Stamina.Current); Assert.IsTrue(_actor.Stamina.IsFatigued);
+            Assert.Greater(verbs.ShoveCooldownLeft, 0, "Real shove input must work with empty stamina.");
+            Assert.AreEqual(0, _actor.Stamina.Current); Assert.IsFalse(_actor.Stamina.IsFatigued);
             _actor.Intent.Clear();
             // Reset only the cooldown so the authoritative replica path gets the same state.
             typeof(CombatVerbs).GetField("_shoveCooldown", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(verbs, 0f);
@@ -133,7 +138,7 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(0, _actor.Stamina.Current);
             SetRole(true);
             Assert.IsTrue(verbs.HostResolveLunge(_actor.transform.position, Vector3.forward, 1));
-            Assert.AreEqual(0, _actor.Stamina.Current); Assert.IsTrue(_actor.Stamina.IsFatigued);
+            Assert.AreEqual(0, _actor.Stamina.Current); Assert.IsFalse(_actor.Stamina.IsFatigued);
         }
 
         [UnityTest] public IEnumerator RealLungeInputUsesTapAndFullHoldCooldowns()

@@ -152,6 +152,7 @@ namespace TumbangPreso.UI
             BuildDetails(root);
             var asset = Resources.Load<InputActionAsset>("TumbangPreso");
             _inspect = asset?.FindActionMap("Player", false)?.FindAction("AbilityInfo", false); _inspect?.Enable();
+            _turnPage = asset?.FindActionMap("Player", false)?.FindAction("Interact", false); _turnPage?.Enable();
         }
 
         private void PlaceDeck(bool touch)
@@ -197,7 +198,7 @@ namespace TumbangPreso.UI
             _system = system;
             var kit = system != null ? system.Kit : null; visible &= kit != null; _deck.gameObject.SetActive(visible);
             _ultimate.gameObject.SetActive(visible);
-            if (!visible) { _detail.gameObject.SetActive(false); return; }
+            if (!visible) { _detail.gameObject.SetActive(false); TurnPages(kit, false); return; }
             PlaceDeck(Hud.OnTouch);
             _skills[0] = kit.Skill1; _skills[1] = kit.Skill2; _skills[2] = kit.Ultimate;
             PaintRole(kit);
@@ -263,6 +264,7 @@ namespace TumbangPreso.UI
             var match = GameServices.Match;
             _hint.text = Hud.OnTouch ? "Hold info for skills" : "Hold " + Hud.KeyLabelFor("AbilityInfo") + " for skills";
             _hint.enabled = false; // Current Feedback removes the extra instruction above the deck.
+            TurnPages(kit, held);
             _detail.gameObject.SetActive(held); if (held) Describe(kit, _skills);
         }
 

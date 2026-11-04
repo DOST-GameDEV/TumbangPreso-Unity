@@ -91,7 +91,7 @@ namespace TumbangPreso.Abilities
 
             public KapitBaging()
                 : base("paete_skill1", "LIANA LEAP",
-                       "Vines lash from both arms to where you aim and haul you after them. An escape that works with a slipper in hand.",
+                       "PRESS {KEY} to lash vines toward where you aim and swing after them, slipper in hand. Aim at a player to yank the two of you together.",
                        PaeteRules.VineCooldown, 0.0f, AbilityGlyph.PaeteVine,
                        summary: "Swing to where you aim on vines from both arms.",
                        castAction: "hero-paete-vine", viewmodelAction: "vine-reach",
@@ -193,7 +193,7 @@ namespace TumbangPreso.Abilities
 
             public PunlangTsinelas()
                 : base("paete_skill2", "BAKYA BLOOM",
-                       "Attacking. Plant a sapling that lobs up to 3 wooden slippers at the upright lata at random moments over 30 s. Its aim is wild. Uprootable after 15 s.",
+                       "PRESS {KEY} to plant a sapling that grows wooden slippers. REACTIVATE to have it throw one where you aim. Once grown, opponents can uproot it.",
                        PaeteRules.PlantCooldown, PaeteRules.PlantLifeSeconds, AbilityGlyph.PaeteSprout,
                        summary: "A sapling grows wooden slippers and throws them for you.",
                        telegraphRadius: 0.6f, telegraphRange: PaeteRules.PlantThrowRange,
@@ -294,7 +294,7 @@ namespace TumbangPreso.Abilities
 
             public Bawi()
                 : base("paete_skill2d", "THORN HARVEST",
-                       "Defending. Hold to place it: thorns race there, snatch every slipper within 7 m, even out of hands, and drag them in.",
+                       "HOLD {KEY} to aim. RELEASE to send thorns racing to that spot. They snatch every nearby slipper, even ones in players' hands, and drag them in.",
                        PaeteRules.ThornCooldown, 0.0f, AbilityGlyph.PaeteThorn,
                        summary: "Placed thorns snatch every slipper near, even from hands.",
                        // The ring is the construct itself, not its 7 m reach: the reach is caught in one frame and
@@ -344,7 +344,7 @@ namespace TumbangPreso.Abilities
             }
             public YakapNgMakiling()
                 : base("paete_ultimate", "MAKILING'S EMBRACE",
-                       "Place a guardian tree. It pulls everyone within 9 m into roots; they can still throw. Hold Interact for 7 s to escape.",
+                       "HOLD {KEY} to aim. RELEASE to raise a guardian tree that drags nearby players into its roots. Rooted players can still throw, and HOLD {Interact} to break free.",
                        0.0f, 0.0f, AbilityGlyph.PaeteSentry,
                        summary: "Place a tree that pulls and roots everyone within 9 m.",
                        telegraphRadius: PaeteRules.SentryRadius, telegraphRange: PaeteRules.SentryThrowRange,

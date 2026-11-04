@@ -87,7 +87,7 @@ namespace TumbangPreso.Abilities
 
             public Teleport()
                 : base("phaister_skill1", "TELEPORT",
-                       "Hold to pick a spot and let go: a swarm of moths carries you there at once, slipper still in hand.",
+                       "HOLD {KEY} to mark a spot. RELEASE to scatter into a swarm of moths and INSTANTLY reappear there, slipper still in hand.",
                        VoodooRules.TeleportCooldown, 0.4f, AbilityGlyph.PhaisterShadowBlink,
                        summary: "Aim a spot, let go, and you are there.",
                        telegraphRadius: ArrivalMark,
@@ -325,7 +325,7 @@ namespace TumbangPreso.Abilities
         {
             public CurseDrain()
                 : base(VoodooMarkKind.Drain, "phaister_skill2", "CURSE: DRAIN",
-                       "Attacking. Reach for the player you face for 2 s to curse them. 1.5 s later they are Drained: no stamina, no refill.",
+                       "PRESS {KEY} to reach for the player you face and bind them to your doll. Keep them in sight to finish the curse. Moments later, they are Drained of all stamina.",
                        VoodooRules.DrainCooldown, VoodooRules.ReachSeconds + VoodooRules.DrainDelaySeconds,
                        AbilityGlyph.PhaisterCursedDoll,
                        "Curse a player; 1.5 s later their stamina is gone.",
@@ -366,7 +366,7 @@ namespace TumbangPreso.Abilities
 
             public CurseHex()
                 : base(VoodooMarkKind.Hex, "phaister_skill2d", "CURSE: HEX",
-                       "Defending. Reach for the player you face for 2 s to curse them. From 10 s on, press again: they see phantom slippers.",
+                       "PRESS {KEY} to reach for the player you face and bind them to your doll. Once the curse ripens, REACTIVATE to Hex them with phantom slippers.",
                        VoodooRules.HexCooldown, VoodooRules.ReachSeconds + VoodooRules.HexMarkLifeSeconds,
                        AbilityGlyph.PhaisterVulnerable,
                        "Curse a player; after 10 s, recast to haunt their eyes.",
@@ -446,7 +446,7 @@ namespace TumbangPreso.Abilities
 
             public VoodooDoll()
                 : base("phaister_ultimate", "VOODOO DOLL",
-                       "Your voodoo doll wakes beside you as its own fighter for the round, with its own slipper. Its points are yours.",
+                       "PRESS {KEY} to bring your voodoo doll to life. It fights beside you for the rest of the round with its own slipper, and every point it scores is yours.",
                        // Its own glyph: the doll hung on three strings from THE CIRCLE (it borrowed OMEN's eclipse until 2026-09-29).
                        0.0f, 0.0f, AbilityGlyph.PhaisterVoodooDoll,
                        summary: "Wake the voodoo doll to fight on your side for the round.",

@@ -95,7 +95,7 @@ namespace TumbangPreso.Abilities
         {
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.HostConfirmed;
             public Crosscurrent() : base("rafi_skill1", "CROSSCURRENT",
-                "Aim a narrow current to bend one flying slipper. Its thrower keeps the credit; later throws pass through.",
+                "PRESS {KEY} to send a narrow current where you aim. It bends the first flying slipper it meets, and the thrower keeps the credit. Walls stop it.",
                 RafiRules.CurrentCooldown, glyph: AbilityGlyph.RafiCrosscurrent,
                 summary: "Bend one flying slipper. Its thrower keeps the credit.",
                 telegraphRadius: RafiRules.CurrentRadius, telegraphRange: RafiRules.CurrentRange,
@@ -115,7 +115,7 @@ namespace TumbangPreso.Abilities
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             private readonly RafiHeroKit _kit;
             public Skim(RafiHeroKit kit) : base("rafi_skill2", "SKIM",
-                "Coat your held slipper for 8 seconds. Its next throw skims up to 2 metres after first ground contact, then rests for normal retrieval.",
+                "PRESS {KEY} while holding your slipper to coat it in water. Your next throw skips along the ground after it lands instead of stopping dead.",
                 RafiRules.SkimCooldown, RafiRules.SkimLoadSeconds, glyph: AbilityGlyph.RafiSkim,
                 summary: "Your next throw skims on landing. Bodies and the can consume it normally.",
                 castAction: "hero-rafi-skim", viewmodelAction: "skim-coat", castCue: "sfx_cast_rafi_mirror")
@@ -143,7 +143,7 @@ namespace TumbangPreso.Abilities
         {
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.HostConfirmed;
             public Waterwall() : base("rafi_skill2d", "WATER WALL",
-                "Raise a thin 4-metre water curtain for 4 seconds. People pass through; its first flying slipper drops on the approach side and breaks it.",
+                "HOLD {KEY} to aim. RELEASE to raise a thin water curtain. Players walk through it, but the first slipper to hit it drops and bursts the curtain.",
                 RafiRules.WallCooldown, glyph: AbilityGlyph.RafiWaterwall,
                 summary: "Place a single-use curtain. People pass through.",
                 telegraphRadius: RafiRules.WallHalfWidth, telegraphRange: RafiRules.WallRange,
@@ -162,7 +162,7 @@ namespace TumbangPreso.Abilities
         {
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.SharedUltimate;
             public Breakwater() : base("rafi_ultimate", "BAHA",
-                "After a 0.8-second warning, send a low flood front across the court. It carries loose slippers up to 3 metres and nudges each grounded rival once. Jump or use cover; held slippers and the can are unaffected.",
+                "PRESS {KEY} to send a low flood rushing across the court after a brief warning. It sweeps loose slippers along and shoves anyone on the ground. {Jump} to ride it out.",
                 0, glyph: AbilityGlyph.RafiBreakwater,
                 summary: "Send a low wave. Rivals can jump, sidestep or use cover.",
                 telegraphRadius: 3, telegraphRange: 8,
