@@ -37,6 +37,9 @@ The text cards in `cards/` are ProRes 4444 with alpha, each as long as its shot.
 |---|---|---|---|---|
 | 01 | Studio badge | 0:00.00 | 59 frames | `shot-01.mov` |
 | 05 | The taya taunts | 0:04.53 | 90 frames | `shot-05.mov` |
+| 20 | Nine heroes (hero select) | 0:25.53 | 90 frames | `shot-20.mov` |
+| 27 | Four seats fill (the room) | 0:36.03 | 90 frames | `shot-27.mov` |
+| 33 | The overtake (score board) | 0:45.03 | 90 frames | `shot-33.mov` |
 | 35 | RAGO, MAYON AWAKENS | 0:48.03 | 90 frames | `shot-35.mov` |
 | 36 | YASMIN, ABSOLUTE ZERO | 0:49.53 | 90 frames | `shot-36.mov` |
 | 37 | AMIHAN, AIRBURST | 0:51.03 | 90 frames | `shot-37.mov` |
@@ -54,6 +57,21 @@ frames 0 to 12 and is gone by frame 53.
 **05, The taya taunts.** RAGO as taya beside the can in a live Tondo match, doing his COME AT ME taunt
 at the lens. The arms-wide pose lands on frame 68 (the 5.66 beat). The camera holds still to frame 15,
 then pushes in from medium to medium close-up. No slippers and no UI text in frame.
+
+**20, Nine heroes.** The live hero select screen, with all nine heroes in the grid. In the handles the
+cursor touches NEMU, then RAGO. On frame 0 TALA's RAGO locks in with the screen's own flash and LOCKED IN
+stamp. BUNSO (YASMIN), KUYA (ZACK) and ATE (PAETE) lock along the seat strip on frames 23, 45 and 68, and
+each taken hero greys out in the grid. A seat that has not locked yet shows a placeholder face. The
+LOCKED IN stamp sits low in the centre.
+
+**27, Four seats fill.** The game's room screen, with TALA (RAGO), BUNSO (YASMIN), KUYA (ZACK) and ATE
+(PAETE) taking a seat on frames 0, 23, 45 and 68 while PLAYERS counts 1/4 to 4/4. Staged locally: no
+real players, no network address on screen, chat closed. The seat cards fill the centre of the frame,
+which is how the screen is laid out.
+
+**33, The overtake.** The in-match score board, cropped tight from a 4K render. 700 leads and 640 is
+second. On frame 23 the 640 scores +100, and its 740 plate swings out over the 700 and settles on top
+with the crown, by about frame 50. The board's own +100 pop does not show in this state.
 
 **35, RAGO, MAYON AWAKENS.** Live on the PHILIPPINE ARENA. The volcano bursts on frame 0 and throws all
 three rivals out across frames 0 to 30, with motion blur. RAGO stands Molten beside the mountain the
@@ -117,5 +135,7 @@ either side.
 
 - 10, "Taya!" in the black: blocked. The kid's "Taya!" in the game is a synthesized sound, not a real
   recording, so it needs a recorded voice first.
-- 20, 27, 28, 33: UI captures, still to do.
+- 28, the taya rotating: not captured yet. The in-match bar no longer shows a taya chip, the round break
+  card would not render in a capture, and the over-head TAYA tags only face the gameplay camera, so it
+  needs a purpose-built capture scene.
 - 47: the contact flash. It depends on shot 46's replay.
