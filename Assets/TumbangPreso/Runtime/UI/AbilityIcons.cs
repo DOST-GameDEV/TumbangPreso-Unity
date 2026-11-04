@@ -254,6 +254,33 @@ namespace TumbangPreso.UI
         private static readonly Dictionary<AbilityGlyph, Sprite> Drawn = new Dictionary<AbilityGlyph, Sprite>();
 
         /// <summary>
+        /// The icon without its black outline, for the match feed (owner, 2026-11-05: "don't add the black outlines
+        /// when they show on the match feed"). `tools/cut_ability_icons.py` writes it beside the outlined one.
+        /// </summary>
+        public static Sprite Plain(AbilityGlyph glyph)
+        {
+            if (!PlainDrawn.TryGetValue(glyph, out var sprite))
+            {
+                sprite = Resources.Load<Sprite>("UI/ability-icons-plain/" + glyph);
+                PlainDrawn[glyph] = sprite;
+            }
+            return sprite != null ? sprite : For(glyph);
+        }
+
+        private static readonly Dictionary<AbilityGlyph, Sprite> PlainDrawn = new Dictionary<AbilityGlyph, Sprite>();
+
+        /// <summary>
+        /// ⚠️ The project enters Play mode without a domain reload, so these caches outlive a play session. Without
+        /// this, a glyph looked up before its drawing existed kept "no drawing" for good: Phaister's ultimate showed
+        /// the old baked lines after its picture landed (2026-11-05).
+        /// </summary>
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetCaches()
+        {
+            Cache.Clear(); Drawn.Clear(); PlainDrawn.Clear();
+        }
+
+        /// <summary>
         /// The colour an Image showing an ability icon should wear.
         ///
         /// ⚠️ A DRAWN ICON CARRIES ITS OWN COLOURS, SO IT IS NEVER HUE-TINTED. Every call site used
