@@ -81,7 +81,9 @@ namespace TumbangPreso.PlayTests
                 yield return TumpUiCapture.Capture("CastCallout-zack-sprint", callouts.GetComponent<Canvas>(), 1280, 720, false, true);
 
                 Assert.AreEqual(rows + 1, feed.Count, "One feed row per accepted cast.");
-                Assert.IsTrue(feed.GetComponentsInChildren<Image>().Any(i => i.name == "EventAbility" && i.enabled && i.sprite == icon),
+                // The feed shows the icon without its black outline (owner, 2026-11-05).
+                var plain = AbilityIcons.Plain(cast.Glyph);
+                Assert.IsTrue(feed.GetComponentsInChildren<Image>().Any(i => i.name == "EventAbility" && i.enabled && i.sprite == plain),
                     "The feed row carries the ability's icon.");
                 var hud = Object.FindAnyObjectByType<TumpMatchReadout>();
                 yield return TumpUiCapture.Capture("CastFeed-zack-sprint", hud.Canvas, 1280, 720, false, true);
