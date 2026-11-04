@@ -75,6 +75,7 @@ namespace TumbangPreso.PlayTests
         [UnityTest, Timeout(3600000)] public IEnumerator Ult39ZackOverclock() => RecordUltimate(ZackOverclock());
         [UnityTest, Timeout(3600000)] public IEnumerator Ult40NemuLetThemIn() => RecordUltimate(NemuLetThemIn());
         [UnityTest, Timeout(3600000)] public IEnumerator Ult41PhaisterVoodooDoll() => RecordUltimate(PhaisterVoodooDoll());
+        [UnityTest, Timeout(3600000)] public IEnumerator Ult42DanteContinentalDrift() => RecordUltimate(DanteContinentalDrift());
 
         // ------------------------------------------------------------------ 01 DUSK IN TONDO
         //
@@ -897,6 +898,42 @@ namespace TumbangPreso.PlayTests
                     return (mid + fwd * 3.4f + Vector3.up * 0.75f, mid + Vector3.up * 0.7f, 40.0f);
                 },
                 Probe = () => Object.FindObjectsByType<CharacterMotor>().Any(x => x.name.StartsWith("VoodooDoll")) ? "doll" : "-",
+            };
+        }
+
+        // ---- 42 DANTE, CONTINENTAL DRIFT: PHILIPPINE ARENA. His cutscene ends on the slam; play starts the five bands down the lane
+        // from his fists, `GeoRules.DriftInterval` (0.3 s) apart, and each throws whoever stands in it down the lane. Three rivals
+        // stand in the first three bands; the lens is low at the lane's far end looking back at him, so the bands come at it.
+        private static UltShot DanteContinentalDrift()
+        {
+            return new UltShot
+            {
+                Number = 42, Slug = "dante-continental-drift", Map = SceneFlow.Arena, Hero = "dante", Rivals = new[] { "zack", "cheska", "amihan" },
+                // Marks from the can: DANTE 6 m behind it facing down the court through it; the rivals 3, 6 and 8.5 m down his lane,
+                // inside the court shot 35 stood on (take 1's mark at (-1.3, -5) dropped ZACK into the pit under the Arena court).
+                HeroAt = new Vector3(0.0f, 0.0f, -6.0f), Aim = new Vector3(0.0f, 0.0f, 0.0f),
+                RivalsAt = new[] { new Vector3(0.8f, 0.0f, -3.0f), new Vector3(-1.6f, 0.0f, 0.0f), new Vector3(1.4f, 0.0f, 2.5f) },
+                // His authored cutscene is 3.61 s (Resources/UltimateIntros/dante.txt); 2.5 s of the cascade after the slam.
+                Seconds = 6.2f,
+                Drive = (t, hero, rivals) =>
+                {
+                    foreach (var x in rivals)
+                    {
+                        x.Intent.Clear();
+                        if (t < 0.0f) x.transform.rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(hero.transform.position - x.transform.position, Vector3.up));
+                    }
+                },
+                // 16 m down his lane and 2.6 m over his feet, looking back up it at him, so the bands come at the lens without burying
+                // it. Take 1 took its height from a floor test at the can and stood under the court; take 2 stood 0.6 m up at 13 m,
+                // inside the lane, and the rubble filled the frame.
+                Wide = (t, can, hero, rivals) =>
+                {
+                    Vector3 feet = hero.transform.position, fwd = Vector3.ProjectOnPlane(can - feet, Vector3.up).normalized;
+                    Vector3 eye = feet + fwd * 16.0f + Vector3.Cross(Vector3.up, fwd) * 0.8f + Vector3.up * 2.6f;
+                    return (eye, feet + fwd * 3.0f + Vector3.up * 0.9f, 44.0f);
+                },
+                // Waves up, and every body's x/y/z from the can.
+                Probe = () => Object.FindObjectsByType<DanteDriftWave>().Length + " " + string.Join(" ", GameServices.Round.Players.Where(x => x != null).Select(x => { var d = x.transform.position - GameServices.Round.Lata.transform.position; return $"s{x.PlayerSlot}({d.x:0.0};{d.y:0.0};{d.z:0.0})"; })),
             };
         }
 
