@@ -41,6 +41,7 @@ The text cards in `cards/` are ProRes 4444 with alpha, each as long as its shot.
 | 36 | YASMIN, ABSOLUTE ZERO | 0:49.53 | 90 frames | `shot-36.mov` |
 | 37 | AMIHAN, AIRBURST | 0:51.03 | 90 frames | `shot-37.mov` |
 | 38 | PAETE, MAKILING'S EMBRACE | 0:52.53 | 90 frames | `shot-38.mov` |
+| 39 | ZACK, OVERCLOCK | 0:54.03 | 45 frames | `shot-39.mov` |
 | 48 | Logo and key art | 1:00.80 | 139 frames | `shot-48.mov`, `shot-48-plate.mov`, `shot-48-cta.mov` |
 
 **01, Studio badge.** The BH studios mark in white on black, at 60% of its menu size. It fades in over
@@ -72,6 +73,10 @@ starts: YASMIN, NEMU and ILYAS slide in from three sides and are Rooted at the t
 Differs from the prompt: the game roots them on frames 51 to 58, not 67, because the pull is that fast.
 Captured only; nothing in his kit or art was changed.
 
+**39, ZACK, OVERCLOCK.** Live on BGC, in daylight (the map has no night version). From frame 0 ZACK is
+already Overclocked and holding the zap, the bolt arcing from his hands to DANTE 5 m away. On frame 22
+the zap connects and DANTE is Zapped. A tight two-shot from ZACK's right side, ZACK in the foreground.
+
 **48, Logo and key art.** The nine heroes around the can on Tondo at dusk, each with their slipper.
 - `shot-48.mov`: plate, logo and COMING SOON together.
 - `shot-48-plate.mov`: the plate only.
@@ -85,5 +90,5 @@ Captured only; nothing in his kit or art was changed.
 - 10, "Taya!" in the black: blocked. The kid's "Taya!" in the game is a synthesized sound, not a real
   recording, so it needs a recorded voice first.
 - 20, 27, 28, 33: UI captures, still to do.
-- 39 to 43: the other ultimates, being recorded one at a time.
+- 40 to 43: the other ultimates, being recorded one at a time.
 - 47: the contact flash. It depends on shot 46's replay.
