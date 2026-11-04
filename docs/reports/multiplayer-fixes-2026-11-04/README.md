@@ -106,3 +106,16 @@ final restoration/cleanup is verified. User profiles and authored source are pre
 Physical separate-PC/WAN/mobile play and every possible skill combination remain
 separate claims from this bounded Windows evidence. The final Claude handoff is
 for review/refinement of completed fixes, with no required implementation left.
+
+## First retained camera follow-up
+
+Paired-player image review exposed one overlap: playback starts at 9.18 s, while
+the overhead heart shot ends at 9.2 s. That partially retained shot could appear
+on frame zero or be borrowed when another shot was blocked. The new predicate
+keeps only whole shots beginning at/after the trim, and LastShot now reports the
+actual selected fallback camera. Body timing, shared duration and protocol do
+not change. first-retained-shot-before.xml reproduces camera 4 where 5+ is required.
+first-retained-shot-after.xml passed 2/2. The actual frame-zero camera is now a
+complete post-heart shot, with effect isolation/restoration and the Banaue real
+freeze/footing/HUD assertions retained. Shared simulation timing and protocol stay
+unchanged. The final delivery receipt must include this camera follow-up.

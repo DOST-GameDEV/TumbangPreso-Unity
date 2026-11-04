@@ -68,7 +68,9 @@ namespace TumbangPreso.PlayTests
         [UnityTest, Timeout(120000)]
         public IEnumerator LiveBlindfoldSkillsAndCompanionsCannotObscureTheUltimatePicture()
         {
-            yield return MapRetrievalProbe.Load(SceneFlow.Eskinita,GameMode.HeroStrike);
+            yield return MapRetrievalProbe.Load(SceneFlow.Payo,GameMode.HeroStrike);
+            Settings.SettingsStore.Current.CinematicCameraMotion=true;
+            Settings.SettingsStore.Current.ReducedUiMotion=false;
             var actor = GameServices.Round.PlayerAt(1); Hero(actor,"cheska");
             Camera.main.GetComponent<CameraRig>().Follow(actor,true);
             var ghost = NemuBlindfold.Place(actor.transform.position+Vector3.forward,Vector3.back,0);
@@ -99,8 +101,11 @@ namespace TumbangPreso.PlayTests
                 var original=live.Select(r=>r.forceRenderingOff).ToArray();
                 var originallyEnabled=live.Select(r=>r.enabled).ToArray();
                 Camera.onPreCull+=Inspect;
-                view.Draw(.45f);
+                view.Draw(0);
                 Assert.IsTrue(saw,"The actual ultimate camera must have rendered.");
+                Assert.GreaterOrEqual(UltimatePhaseView.LastShot,
+                    UltimatePerformance.For("cheska").Shots.FindIndex(s=>s.Start>=9.2f),
+                    "The very first retained frame must use a complete post-heart camera shot.");
                 Assert.IsTrue(hidden,"Live blindfold, skill and companion renderers obscured the ultimate picture.");
                 Assert.IsTrue(lightOff,"The hidden skill's light must not contaminate the authored ultimate lighting.");
                 for(int i=0;i<live.Length;i++)

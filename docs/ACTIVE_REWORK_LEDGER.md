@@ -3,6 +3,10 @@
 MULTI-FIX-1104 implementation and qualification are complete on main.
 [TODO](TODO.md) remains the only active queue.
 
+- The final camera follow-up excludes the partially cut heart shot, including
+  fallback borrowing. first-retained-shot-after.xml passed 2/2: actual frame-zero
+  post-heart camera, live-effect restoration, Banaue footing, freeze and HUD.
+  Shared duration/protocol remain 2.72 s/189. No native test is running.
 - [Fixes, evidence and coverage limits](reports/multiplayer-fixes-2026-11-04/README.md).
   Eleven EditMode and twelve distinct exact native cases passed; no broad PlayMode.
   Five motion-review unit checks reject frozen, missing or divergent doll evidence.

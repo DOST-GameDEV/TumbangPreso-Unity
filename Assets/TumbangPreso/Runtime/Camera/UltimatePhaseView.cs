@@ -210,12 +210,13 @@ namespace TumbangPreso.CameraSystem
             _picture.enabled=SystemInfo.graphicsDeviceType!=GraphicsDeviceType.Null &&
                 (moving?_safeShot:_stillSafe) && _camera!=null && _primary?.Scene!=null;
             if (!_picture.enabled) return;
-            Vector3 eye, target; float fov;
+            Vector3 eye, target; float fov; int drawnShot = -2;
             if(moving)
             {
                 float contentAge = age + _primary.StartAt;
                 int shot=_primary.Scene.ShotIndexAt(contentAge);
                 int use=_useShot!=null&&shot>=0?_useShot[shot]:shot;
+                drawnShot=use;
                 _primary.Scene.ShotAt(use,contentAge,out eye,out target,out fov,_camera.aspect);
                 if(_mirror!=null&&use>=0&&_mirror[use])eye=target+Vector3.Reflect(eye-target,_primary.Actor.transform.right);
                 if(_pull!=null&&use>=0)eye=target+(eye-target)*_pull[use];
@@ -228,7 +229,7 @@ namespace TumbangPreso.CameraSystem
                 if(_stillMirror)eye=target+Vector3.Reflect(eye-target,_primary.Actor.transform.right);
             }
             _camera.transform.position=eye; _camera.transform.LookAt(target); _camera.fieldOfView=fov;
-            LastAge=age;LastShot=moving?_primary.Scene.ShotIndexAt(age+_primary.StartAt):-2;LastEye=eye;
+            LastAge=age;LastShot=drawnShot;LastEye=eye;
             RestoreLiveVisibility();
             try
             {
@@ -294,7 +295,9 @@ namespace TumbangPreso.CameraSystem
             var clear=new bool[Mathf.Max(0,count)];bool any=false;
             for(int i=0;i<count;i++)
             {
-                if (scene.ShotEnd(i) <= _primary.StartAt) continue;
+                // A trim may sit just before the next editorial cut. Never borrow
+                // the overlapping old shot (Yasmin's overhead heart) as a fallback.
+                if (scene.ShotStart(i) < _primary.StartAt) continue;
                 float at=Mathf.Max(scene.ShotStart(i),scene.ShotEnd(i)-.05f);
                 _primary.Clip.SampleAnimation(_primary.Body.Root,at);scene.Sample(at,false);
                 scene.ShotAt(i,at,out var eye,out var target,out _,_camera.aspect);
