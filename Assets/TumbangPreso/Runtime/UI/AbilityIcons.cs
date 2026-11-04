@@ -232,9 +232,9 @@ namespace TumbangPreso.UI
             if (Cache.TryGetValue(glyph, out var cached) && cached != null) return cached;
 
             // ⚠️⚠️ THE DRAWN SET WINS OVER THE BAKE (2026-09-23). The owner asked for every skill
-            // icon to be improved, then for "a drawing for all": `tools/build_ability_icons.py`
-            // draws each one as a coloured, cel-shaded illustration with an ink keyline, into
-            // `Resources/UI/ability-icons/<AbilityGlyph>.png`. This is the swap the header above
+            // icon to be improved, then for "a drawing for all". Since 2026-11-05 the set is the
+            // owner's own sheet (`ArtSource/ui/ability-icons`), cut by `tools/cut_ability_icons.py`
+            // into `Resources/UI/ability-icons/<AbilityGlyph>.png`. This is the swap the header above
             // always anticipated ("when real icons land, replace Bake and nothing else changes").
             // The bake stays as the fallback for a glyph added before its drawing exists.
             var sprite = Illustration(glyph) ?? Bake(glyph);
