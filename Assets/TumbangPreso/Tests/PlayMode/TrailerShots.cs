@@ -73,6 +73,7 @@ namespace TumbangPreso.PlayTests
         [UnityTest, Timeout(3600000)] public IEnumerator Ult37AmihanAirburst() => RecordUltimate(AmihanAirburst());
         [UnityTest, Timeout(3600000)] public IEnumerator Ult38PaeteMakilingsEmbrace() => RecordUltimate(PaeteMakilingsEmbrace());
         [UnityTest, Timeout(3600000)] public IEnumerator Ult39ZackOverclock() => RecordUltimate(ZackOverclock());
+        [UnityTest, Timeout(3600000)] public IEnumerator Ult40NemuLetThemIn() => RecordUltimate(NemuLetThemIn());
 
         // ------------------------------------------------------------------ 01 DUSK IN TONDO
         //
@@ -834,6 +835,41 @@ namespace TumbangPreso.PlayTests
                     return (at - fwd * 0.9f + right * 2.9f + Vector3.up * 1.25f, look, 42.0f);
                 },
                 Probe = () => { var kit = Object.FindObjectsByType<CharacterMotor>().Select(x => x.AbilitySystem?.Kit).OfType<ZackHeroKit>().FirstOrDefault(); return kit == null ? "-" : $"{(kit.IsOverclocked ? "OC" : "no")}{(kit.Zapping ? "Z" : "")}{kit.ZapTarget}"; },
+            };
+        }
+
+        // ---- 40 NEMU, LET THEM IN: TONDO (Eskinita). Every rival is Possessed on the hand-back, and the ghost drags each one's
+        // steering (`CharacterMotor.PossessionPull`): an attacker toward the taya, the taya away from the can. Round 1's taya is
+        // seat 0 (rival 0), so the taya stands 6 m out past the can and the two attackers between: all three lurch down the alley
+        // the same way, at a low lens at its far end, with NEMU small and still at the other end behind them.
+        private static UltShot NemuLetThemIn()
+        {
+            return new UltShot
+            {
+                Number = 40, Slug = "nemu-let-them-in", Map = SceneFlow.Eskinita, Hero = "nemu", Rivals = new[] { "sean", "cheska", "zack" },
+                // Marks from the can, down the alley's long axis (z, walls at 8.6 m either side in x).
+                // NEMU off the centre line so the taya does not hide her (take 1).
+                HeroAt = new Vector3(-2.5f, 0.0f, -9.0f), Aim = new Vector3(0.0f, 0.0f, 0.0f),
+                // ZACK wide on the left: take 2 had him at -2.4 and the taya hid him.
+                RivalsAt = new[] { new Vector3(1.2f, 0.0f, 5.0f), new Vector3(-4.6f, 0.0f, 3.0f), new Vector3(3.6f, 0.0f, 1.6f) },
+                // Her authored cutscene is 7 s (Resources/UltimateIntros/nemu.txt); 2.5 s of possession after the hand-back.
+                Seconds = 9.5f,
+                // No input of their own: what moves them is the ghost's pull, added to an empty stick. They face the lens (take 1
+                // had their backs to it), the way the pull takes them.
+                Drive = (t, hero, rivals) =>
+                {
+                    foreach (var x in rivals)
+                    {
+                        x.Intent.Clear();
+                        if (t < 0.0f) x.transform.rotation = Quaternion.LookRotation(Vector3.forward);
+                    }
+                },
+                // Low (0.6 m), 10 m past the can, looking back up the alley at NEMU over the three. Take 1 stood at 13 m, the alley's
+                // end, and its kerb filled the bottom third of the frame.
+                Wide = (t, can, hero, rivals) => (can + new Vector3(0.0f, 0.6f, 10.0f), can + new Vector3(0.0f, 1.3f, -2.0f), 50.0f),
+                // Possessed count, the taya's seat, and every body's x/z from the can (where the cutscene's hand-back left them).
+                Probe = () => GameServices.Round.Players.Count(x => x != null && x.IsPossessed).ToString() + (GameServices.Round.Players.FirstOrDefault(x => x != null && x.IsDefender) is CharacterMotor taya ? $"t{taya.PlayerSlot}" : "")
+                              + " " + string.Join(" ", GameServices.Round.Players.Where(x => x != null).Select(x => { var d = x.transform.position - GameServices.Round.Lata.transform.position; return $"s{x.PlayerSlot}({d.x:0.0};{d.z:0.0})"; })),
             };
         }
 
