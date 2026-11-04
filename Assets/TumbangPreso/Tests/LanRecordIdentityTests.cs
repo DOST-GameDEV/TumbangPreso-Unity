@@ -20,11 +20,13 @@ namespace TumbangPreso.Tests
         private PlayerAccount _account, _previousAccount;
         private string _settings;
         private string _previousOverride;
-        [Serializable] private sealed class Hello { public string AccountPlayerId; public string Token; }
+        private string _previousRoomTitle;
+        [Serializable] private sealed class Hello { public string AccountPlayerId; public string Token; public string Name; }
 
         [SetUp] public void Before()
         {
             _settings = JsonUtility.ToJson(SettingsStore.Current);
+            _previousRoomTitle = NetSession.RoomTitle;
             _previousOverride=(string)typeof(NetIdentity).GetField("_overrideTokenForTesting",BindingFlags.Static|BindingFlags.NonPublic).GetValue(null);
             SettingsStore.Current.AccountPlayerId = "cached-profile-id";
             _previousAccount = GameServices.Account;
@@ -43,6 +45,7 @@ namespace TumbangPreso.Tests
             Object.DestroyImmediate(_root);
             JsonUtility.FromJsonOverwrite(_settings, SettingsStore.Current);
             NetIdentity.OverrideForTesting(_previousOverride);
+            NetSession.RoomTitle = _previousRoomTitle;
         }
 
         private Hello Serialize(bool relay, bool signedIn)
@@ -51,6 +54,27 @@ namespace TumbangPreso.Tests
             typeof(PlayerAccount).GetProperty("IsSignedIn").SetValue(_account, signedIn);
             typeof(NetSession).GetMethod("ConfigureClientHello", Hidden).Invoke(_session, null);
             return JsonUtility.FromJson<Hello>(Encoding.UTF8.GetString(_network.NetworkConfig.ConnectionData));
+        }
+
+        [TestCase(true, "Maria Clara's room")]
+        [TestCase(true, "Friday games")]
+        [TestCase(false, "Maria Clara's room")]
+        [TestCase(false, "Friday games")]
+        public void CustomRoomTitleDoesNotReplaceThePlayerName(bool relay, string title)
+        {
+            SettingsStore.Current.PlayerName = "Maria Clara";
+            SettingsStore.Current.AccountDiscriminator = "4417";
+            NetSession.RoomTitle = title;
+            var hello = Serialize(relay, relay);
+            Assert.AreEqual(_account.LobbyName, hello.Name,
+                "A connection introduces the player, not the room they named.");
+            var room = new LobbySession();
+            var peer = room.Admit(0, hello.Token, hello.Name);
+            Assert.AreEqual(_account.LobbyName, peer.Name,
+                "The name used by lobby cards and match bodies must survive admission.");
+            var titleForBrowser = typeof(NetSession).GetMethod("LocalLobbyName",
+                BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, null);
+            Assert.AreEqual(title, titleForBrowser, "Room discovery still uses the chosen room title.");
         }
 
         [Test] public void LanHelloCarriesTheCachedLocalProfileWithoutSigningIn()
