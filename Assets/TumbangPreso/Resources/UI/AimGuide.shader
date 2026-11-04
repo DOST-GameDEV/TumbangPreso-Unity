@@ -8,6 +8,7 @@ Shader "TumbangPreso/AimGuide"
             Cull Off
             ZWrite Off
             ZTest LEqual
+            Offset -1, -1
             Blend SrcAlpha OneMinusSrcAlpha
             CGPROGRAM
             #pragma vertex vert

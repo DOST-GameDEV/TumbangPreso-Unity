@@ -868,9 +868,8 @@ namespace TumbangPreso.Core.Tests
             int ticks = (int)(Balance.RoundTime / Balance.DefenseTickInterval);
             Assert.Equal(900, ticks * Balance.ScoreDefensePerTick);
 
-            // ⚠️ AND THE ROTATION CAPS IT STRUCTURALLY. Everyone is taya twice in the default match, so
-            // the passive ceiling spans two defender rounds.
-            Assert.Equal(2, CountRoundsDefending(slot: 0));
+            // Each player is taya once in the four-round default match.
+            Assert.Equal(1, CountRoundsDefending(slot: 0));
         }
 
         // ===================================================================

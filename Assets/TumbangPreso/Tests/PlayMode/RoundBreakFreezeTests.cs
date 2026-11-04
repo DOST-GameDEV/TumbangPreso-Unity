@@ -24,6 +24,32 @@ namespace TumbangPreso.PlayTests
         }
 
         int _mip;
+        [UnityTest, Timeout(120000)]
+        public IEnumerator ClientRoundSnapshotRetiresTheBanaueCardAndRestoresItsHud()
+        {
+            yield return MapRetrievalProbe.Load(UI.SceneFlow.Payo, GameMode.HeroStrike);
+            var previous = NetAuthority.Provider;
+            try
+            {
+                NetAuthority.Provider = new Client();
+                var match = GameServices.Match;
+                var phase = HalftimePresentation.Ensure();
+                int completed = match.RoundNumber;
+                Assert.IsTrue(phase.Receive(match.PresentationMatchId, completed,
+                    MatchRules.DefenderSlotFor(completed+1), SharedUltimatePhase.Now, 0, false, 1));
+                yield return null;
+                Assert.IsTrue(UI.RoleSwapCard.Showing, "The client received its between-round card.");
+                match.ApplySnapshot(new int[4], completed+1, true);
+                yield return null; yield return null;
+                Assert.IsFalse(phase.Active, "The next host round ended the old break.");
+                Assert.IsFalse(UI.RoleSwapCard.Showing, "A faded old card must not keep hiding Banaue's HUD.");
+                var canvas = UI.Hud.Instance.GetComponent<UI.TumpMatchReadout>().Canvas;
+                Assert.IsTrue(canvas.isActiveAndEnabled);
+                Assert.AreEqual(1, canvas.GetComponent<CanvasGroup>().alpha, .001f);
+            }
+            finally { NetAuthority.Provider = previous; }
+        }
+
         [UnitySetUp] public IEnumerator Before()
         {
             _mip = QualitySettings.globalTextureMipmapLimit;

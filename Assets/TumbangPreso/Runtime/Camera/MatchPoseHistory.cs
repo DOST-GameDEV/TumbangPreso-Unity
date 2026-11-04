@@ -11,7 +11,7 @@ namespace TumbangPreso.CameraSystem
         public const int Samples = 160;
         public const float Interval = .05f;
         public const int TransformLimit = 256;
-        private readonly Track[] _tracks = new Track[Core.Balance.PlayerCount];
+        private readonly Track[] _tracks = new Track[Core.CompanionSeats.BodyCount];
         private float _next;
         private long _match;
         private int _round;
@@ -35,7 +35,7 @@ namespace TumbangPreso.CameraSystem
             if (Time.time >= _next) _next = Time.time + Interval;
             for (int i = 0; i < _tracks.Length; i++)
             {
-                var actor = round.PlayerAt(i); var visual = actor != null ? actor.GetComponent<CharacterVisual>() : null;
+                var actor = round.BodyAt(i); var visual = actor != null ? actor.GetComponent<CharacterVisual>() : null;
                 if (visual == null || visual.Model == null) { _tracks[i] = null; continue; }
                 // A bone destroyed under the model (something parented in and taken away) empties the track; start
                 // again rather than leave the seat with no history, and so no replay, for the rest of the round.
@@ -46,7 +46,7 @@ namespace TumbangPreso.CameraSystem
             Sampled?.Invoke(Time.time);
         }
 
-        private readonly bool[] _touchTaken = new bool[Core.Balance.PlayerCount];
+        private readonly bool[] _touchTaken = new bool[Core.CompanionSeats.BodyCount];
         private bool TouchDue(RoundDirector round)
         {
             bool due = false;

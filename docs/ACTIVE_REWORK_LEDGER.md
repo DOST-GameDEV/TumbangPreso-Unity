@@ -1,35 +1,25 @@
 # Current checkpoint
 
-Updated 2026-11-04. [TODO](TODO.md) is the only active queue.
+Updated 2026-11-05. [TODO](TODO.md) is the only active queue.
 
-- MOVEMENT-1104, main fa985abf2 + local: sprint attacker3.75/taya5.625 m/s;
-  walk unchanged; no depletion lockout. Core compiled; managed98/99, unchanged
-  default-rounds assertion failed. Logs/movement-1104/movement-1104-final.trx.
-  No native/player/peer run.
-  Next: owner review.
-- MATCH-DEFAULT-1104, main: four rounds; existing ultimate charge scaling retained.
-- CUSTOM-LOGIN-1104, main: no custom bot removal/NONE; restored linked accounts skip
-  boot login. Direct compiler checks only; native/peer behavior remains unverified.
-- HOME-FILMS-1101, main: Zack/BGC, Phaister/Ermita. [Guide](../ArtSource/home-scene/README.md). Next: owner.
-- FEEL-1031, main: replay wipes/3D, break card, impact, 0.6 m knockback, SFX.
-  Film: run_ui_player_review.py --feel-only. Next: owner review.
-- TAG-FEEL-1031, main: live/replay tag, FPP swing, timed impact, taya warnings,
-  moments/feed. Open: tag replay arm spin. Next: owner review.
-- REPLAY-LIMITS-1101, main: clip18/protocol187 mountain/headband. Next: owner.
-- UI-REVAMP-1029, main: Settings, Room, match menu; review open. [Method](UI_REVAMP.md).
-- TAG-PHASE-1031, main: ult replay visuals open. Next: owner review.
-- ONLINE-CAST-1028: 73b1f403b pushed/built. Ult victims stand on own floor from the
-  host-frozen pose; GroundY ignores awnings. Payo delayed pairs: Cheska gap 0, Nemu 0.015,
-  Paete tree grounded. Next: victims in Paete/Amihan/Phaister reach, then multi-PC.
-  Logs/ult-terrain-20261029/. Preserve six owner files.
-- Unfinished mobile UI: [resume here](reports/mobile-ui-2026-10-26/HANDOFF.md). ff9 candidate built; newer
-  source has picker clipping failing and no APK. Jobs stopped.
-- Keep `mobile+network` separate from main; current main is included.
-  Preserve owner metadata/settings; stage owned paths only.
-- Desktop spectator is on main. [Evidence](reports/spectator-2026-10-25/README.md).
-- Network/mobile code0d8: recorded Windows/Android checks passed within documented
-  limits; physical peers remain separate. [Evidence](reports/mobile-2026-10-26/README.md).
-- Zack: approved Backtrack/zigzag cleanup retained; SFX review open.
-  [Evidence](reports/zack-kit-2026-10-25/refinement-validation.md).
-
-[Earlier checkpoints](archive/cleanup-2026-10-25/docs/ACTIVE_REWORK_LEDGER.md) are history.
+- Publication: local movement, ability reference and tooltip work a6d8367b is
+  integrated with origin/main 1cf46fdd7. Evidence: Logs/publish-20261105/.
+  Focused managed checks passed 86/86; merged runtime compiled directly.
+  Native/player/peer checks do not qualify these new local changes.
+  Next: owner review of the published candidate.
+- MOVEMENT-1104: sprint attacker 3.75/taya 5.625 m/s; walk unchanged; no depletion
+  lockout. The stale two-turn test now expects one taya turn in four rounds.
+- POWER-REFERENCE-1105: live binding icons in ability text and revised held-reference
+  layout. Source and assets retained; owner visual review remains separate.
+- STATUS-1104: updated tooltip wording only; gameplay effects unchanged.
+- MULTI-FIX-1104: camera follow-up excludes Yasmin's cut heart shot and fallback
+  borrowing. Prior exact native cases and actual impaired Phaister/Banaue peer
+  evidence: [report](reports/multiplayer-fixes-2026-11-04/README.md).
+  These results apply to their recorded revisions, not the new local changes.
+- Build receipt: Logs/windows-build-current.json and its job.json. Prior delivery
+  instructions and original settings preservation remain in the multiplayer report.
+  No build or launch was requested for this publication.
+- Keep mobile+network separate. Preserve profiles, authored assets, original trailer
+  branch, settings and unrelated processes. No reset, clean or force push.
+- [Previous checkpoint](reports/multiplayer-fixes-2026-11-04/checkpoint-before.md)
+  retains earlier authored work and evidence limits, including unfinished mobile UI.

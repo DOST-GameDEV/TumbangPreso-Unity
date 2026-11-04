@@ -1,5 +1,5 @@
 """Observe one visible-lobby host/client journey in matching native Windows players."""
-import argparse,datetime as dt,hashlib,json,os,re,socket,subprocess,sys,time,uuid
+import argparse,datetime as dt,hashlib,json,math,os,re,socket,statistics,subprocess,sys,time,uuid
 from pathlib import Path
 from run_unity_guarded import player_profile,unity_environment
 from run_ui_player_review import read_input_preferences
@@ -76,6 +76,36 @@ def staged_agreement(host,client):
     for copy in sorted(set(a)&set(b)):
         p,q=a[copy]['at'],b[copy]['at'];gaps[copy]=round(((p['x']-q['x'])**2+(p['y']-q['y'])**2+(p['z']-q['z'])**2)**.5,3)
     return {'copies':gaps,'maxStartGap':max(gaps.values()) if gaps else float('inf'),'hostOnly':sorted(set(a)-set(b)),'clientOnly':sorted(set(b)-set(a))}
+
+def companion_motion_agreement(host_rows, client_rows, slot=4):
+    """Phaister stages no victims: validate the actual live doll on both peers."""
+    def samples(rows):
+        found=[]
+        for row in rows:
+            if row.get('phase')!='play':continue
+            for actor in row.get('companions',[]):
+                if actor.get('slot')!=slot:continue
+                point=actor.get('body',{})
+                values=[row.get('serverTime')]+[point.get(k) for k in ('x','y','z')]
+                if all(isinstance(v,(int,float)) and math.isfinite(v) for v in values):
+                    found.append((values[0],row.get('round'),tuple(values[1:])))
+        return found
+    host,client=samples(host_rows),samples(client_rows)
+    def span(points):
+        return math.hypot(max(p[2][0] for p in points)-min(p[2][0] for p in points),
+                          max(p[2][2] for p in points)-min(p[2][2] for p in points)) if points else 0
+    gaps=[]
+    for stamp,round_number,point in client:
+        candidates=[p for p in host if p[1]==round_number]
+        if not candidates:continue
+        other=min(candidates,key=lambda p:abs(p[0]-stamp))
+        if abs(other[0]-stamp)<=.3:gaps.append(math.dist(point,other[2]))
+    gaps.sort();median=statistics.median(gaps) if gaps else None
+    p95=gaps[int((len(gaps)-1)*.95)] if gaps else None
+    result={'slot':slot,'hostSamples':len(host),'clientSamples':len(client),'matchedSamples':len(gaps),
+        'hostHorizontalSpan':span(host),'clientHorizontalSpan':span(client),'medianGap':median,'p95Gap':p95}
+    result['passed']=len(gaps)>=5 and min(span(host),span(client))>=1 and median<=.75 and p95<=1.5
+    return result
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
@@ -159,16 +189,25 @@ def main():
         result={'scope':'Actual local Windows host/client through visible lobby; no physical-input, WAN or phone claim',
             'map':args.map,'onlineRelay':args.online,'legacyMirrorPreference':args.legacy_mirror,'sharedInputUnchanged':unchanged,'artifactUnchanged':True,'peers':results}
         (out/'result.json').write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8');save('complete')
-        print(json.dumps({r:{k:v for k,v in x.items() if k!='suspects'}|{'suspectCount':len(x['suspects'])} for r,x in results.items()}),flush=True)
+        print(json.dumps({r:{k:v for k,v in x.items() if k not in ('suspects','stagedCopies')}|
+            {'suspectCount':len(x['suspects']),'stagedCopySamples':len(x['stagedCopies'])} for r,x in results.items()}),flush=True)
         passed=unchanged and all(x['frames'] and 'play' in x['phases'] and x['exitCode']==0 and not x['error']
             and not x['runtimeExceptions'] and not x['suspects'] and x['distinctRoster'] and x['reportedFormat']==0 and args.map in x['scenes'] for x in results.values())
-        if args.cast:
+        if args.cast=='phaister':
+            rows={role:[json.loads(line) for line in (out/role/'frames.jsonl').read_text().splitlines()] for role in results}
+            motion=companion_motion_agreement(rows['host'],rows['client'])
+            result['companionMotion']=motion;(out/'result.json').write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8')
+            print(json.dumps({'companionMotion':motion}),flush=True)
+            passed=passed and motion['passed']
+        elif args.cast:
             agreement=staged_agreement(results['host']['stagedCopies'],results['client']['stagedCopies'])
             result['stagedAgreement']=agreement;(out/'result.json').write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8')
             print(json.dumps({'stagedAgreement':agreement,'stagedSuspects':{r:len(x['stagedSuspects']) for r,x in results.items()},
                 'constructs':{r:[x['constructs'],len(x['constructSuspects'])] for r,x in results.items()}}),flush=True)
             passed=passed and all(x['stagedCopies'] and not x['stagedSuspects'] and not x['constructSuspects'] for x in results.values()) and agreement['maxStartGap']<.35
         if args.cast:passed=passed and results['host']['ultimateThresholdObserved'] and all('ultimate' in x['phases'] for x in results.values())
+        result['passed']=bool(passed)
+        (out/'result.json').write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8')
         return 0 if passed else 1
     finally:
         for process in children:

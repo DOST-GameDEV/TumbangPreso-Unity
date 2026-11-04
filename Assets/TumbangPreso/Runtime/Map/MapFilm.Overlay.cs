@@ -270,7 +270,7 @@ namespace TumbangPreso.Map
             else _caption.Pose(-1, 1);
 
             // The skip ring: shown once the film is under way and until its close; full while held.
-            bool open = !double.IsNaN(Began) && age > 1.0f && age < t.Close - 0.3f && HeldAge < 0.0f;
+            bool open = !MatchArrivalPresentation.Rolling && !double.IsNaN(Began) && age > 1.0f && age < t.Close - 0.3f && HeldAge < 0.0f;
             float progress = Mathf.Clamp01(SkipProgress);
             _skipFade.alpha = open ? Mathf.Lerp(0.5f, 1.0f, progress) * Span(age, 1.0f, 1.4f) : 0.0f;
             _skipFill.fillAmount = progress;

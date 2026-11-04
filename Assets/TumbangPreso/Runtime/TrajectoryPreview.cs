@@ -12,7 +12,7 @@ namespace TumbangPreso
     [DefaultExecutionOrder(900)]
     public sealed class TrajectoryPreview : MonoBehaviour
     {
-        public const int Samples = 36;
+        public const int Samples = 48;
         public const float WidthPerMetre = .004f, WidthMin = .002f, WidthMax = .075f;
         public const float AlphaMax = .92f;
         public const float NearFadeStart = .12f, NearFadeEnd = .65f;
@@ -27,6 +27,9 @@ namespace TumbangPreso
         private readonly List<int> _tris = new List<int>(Samples * 12);
         private static Material _arcMaterial;
         private readonly RaycastHit[] _hits = new RaycastHit[64];
+        private readonly Vector3[] _ringInner = new Vector3[Samples], _ringOuter = new Vector3[Samples];
+        private readonly bool[] _ringSupported = new bool[Samples];
+        public const float StrokeHalfPixels = 1.6f;
         private float _nextDraw, _drawStart;
         private Vector3 _drawFrom;
         private bool _hasLanding;
@@ -123,30 +126,41 @@ namespace TumbangPreso
             bool legal = GameServices.Round.CanThrow(_motor);
             var tint = legal ? new Color(1, .92f, .58f, AlphaMax) : new Color(.72f, .72f, .68f, AlphaMax);
             for (int stroke = 0; stroke < 2; stroke++)
-            for (int i = 0; i < Samples; i++)
             {
-                float a = i * Mathf.PI * 2 / Samples, b = (i + 1) * Mathf.PI * 2 / Samples;
-                Vector3 from = landing + new Vector3(Mathf.Cos(a), 0, Mathf.Sin(a)) * CircleRadius;
-                Vector3 to = landing + new Vector3(Mathf.Cos(b), 0, Mathf.Sin(b)) * CircleRadius;
-                AddQuad(from, to, camera, stroke == 0 ? new Color(.018f, .012f, .008f, AlphaMax) : tint, stroke == 0 ? 1.7f : 1);
+                Color colour = stroke == 0 ? new Color(.018f, .012f, .008f, 1) : tint;
+                for (int i = 0; i < Samples; i++)
+                {
+                    float angle = i * Mathf.PI * 2 / Samples;
+                    var radial = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle));
+                    var centre = landing + radial * CircleRadius;
+                    float depth = Mathf.Max(camera.nearClipPlane, Vector3.Dot(centre-camera.transform.position, camera.transform.forward));
+                    float perPixel = camera.orthographic ? 2*camera.orthographicSize/Mathf.Max(1,camera.pixelHeight)
+                        : 2*depth*Mathf.Tan(camera.fieldOfView*Mathf.Deg2Rad*.5f)/Mathf.Max(1,camera.pixelHeight);
+                    float half = Mathf.Clamp(perPixel*StrokeHalfPixels, WidthMin, .18f)*(stroke == 0 ? 1.8f : 1);
+                    _ringSupported[i] = ProjectRingPoint(centre-radial*half, landing.y, out _ringInner[i])
+                        && ProjectRingPoint(centre+radial*half, landing.y, out _ringOuter[i]);
+                }
+                for (int i = 0; i < Samples; i++)
+                {
+                    int next = (i+1)%Samples;
+                    if (!_ringSupported[i] || !_ringSupported[next]) continue;
+                    // Do not bridge an open ledge with a floating diagonal ribbon.
+                    if (Mathf.Abs(_ringInner[i].y-_ringInner[next].y)>.45f || Mathf.Abs(_ringOuter[i].y-_ringOuter[next].y)>.45f) continue;
+                    AddTri(_ringInner[i], _ringOuter[i], _ringOuter[next], colour);
+                    AddTri(_ringInner[i], _ringOuter[next], _ringInner[next], colour);
+                }
             }
             _mesh.Clear(); _mesh.SetVertices(_verts); _mesh.SetColors(_colours); _mesh.SetTriangles(_tris, 0);
-            _mesh.RecalculateBounds(); _renderer.enabled = true;
+            _mesh.RecalculateBounds(); _renderer.enabled = _verts.Count > 0;
         }
 
-        private void AddQuad(Vector3 a, Vector3 b, Camera camera, Color colour, float widthScale)
+        private static bool ProjectRingPoint(Vector3 point, float referenceHeight, out Vector3 projected)
         {
-            Vector3 along = b - a;
-            if (along.sqrMagnitude < .00000001f) return;
-            along.Normalize();
-            var toEye = camera.transform.position - (a + b) * .5f;
-            var side = Vector3.Cross(along, Vector3.up);
-            if (side.sqrMagnitude < .0000001f) side = Vector3.ProjectOnPlane(camera.transform.right, along);
-            if (side.sqrMagnitude < .0000001f) side = Vector3.ProjectOnPlane(camera.transform.up, along);
-            float half = Mathf.Clamp(toEye.magnitude * WidthPerMetre, WidthMin, WidthMax) * widthScale;
-            side = side.normalized * half;
-            AddTri(a - side, a + side, b + side, colour);
-            AddTri(a - side, b + side, b - side, colour);
+            projected = point;
+            point.y = referenceHeight;
+            if (!Visual.WorldGround.TryBelow(point, 1.25f, 12f, out float floor)) return false;
+            projected.y = floor + FloorEpsilon;
+            return true;
         }
 
         private void AddTri(Vector3 a, Vector3 b, Vector3 c, Color colour)

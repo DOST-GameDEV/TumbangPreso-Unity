@@ -49,7 +49,7 @@ namespace TumbangPreso.PlayTests
                              ulong? expectedSerial = null)
         {
             using var writer = new FastBufferWriter(320, Allocator.Temp);
-            writer.WriteValueSafe(1);
+            writer.WriteValueSafe(_motor.PlayerSlot);
             writer.WriteNetworkSerializable(new GameplayActionScope { Match = 123, Round = 1, Epoch = epoch });
             writer.WriteValueSafe(serial);
             // Protocol150 distinguishes an accepted echo from a host correction.
@@ -71,15 +71,54 @@ namespace TumbangPreso.PlayTests
             writer.WriteValueSafe(0f); writer.WriteValueSafe(0f);
             writer.WriteValueSafe(possessed);
             writer.WriteValueSafe(0f); // BlindedLeft (protocol 161)
+            writer.WriteValueSafe(0f); // SearedLeft
             writer.WriteNetworkSerializable(new VoodooBodySnapshot { MarkSource = -1, ReachTarget = -1 });
             writer.WriteNetworkSerializable(default(AbilityAimSnapshot));
-            Assert.AreEqual(224 + VoodooBodySnapshot.WireBytes + (NetSession.ProtocolVersion >= 150 ? 1 : 0), writer.Length);
+            Assert.AreEqual(229 + VoodooBodySnapshot.WireBytes, writer.Length);
             using var reader = new FastBufferReader(writer, Allocator.Temp);
             typeof(MatchRpc).GetMethod("OnSyncUnitMsg", Hidden).Invoke(_rpc, new object[] { NetworkManager.ServerClientId, reader });
             Assert.AreEqual(42f, _motor.Stamina.Current, "The actual packet must be accepted, not rejected by the fixture.");
             Assert.AreEqual(expectedSerial ?? serial,
                 (ulong)typeof(CharacterMotor).GetField("_lastNetworkPoseSerial", Hidden).GetValue(_motor),
                 "Only accepted packets may advance the actual receiver serial.");
+        }
+
+        [UnityTest]
+        public IEnumerator PhaistersDollReceivesAndInterpolatesTheActualHostPosePacket()
+        {
+            _motor.PlayerSlot = CompanionSeats.For(1);
+            Assert.IsTrue(GameServices.Round.RegisterCompanion(_motor));
+            Deliver(Vector3.right*4, true);
+            Assert.AreEqual(4, _motor.transform.position.x, .01f);
+            Deliver(Vector3.right*4.7f, true, serial: 2);
+            var step = typeof(CharacterMotor).GetMethod("StepNetworkReplica", Hidden);
+            for (int i=0;i<20;i++) step.Invoke(_motor, new object[] { .02f });
+            Assert.Greater(_motor.transform.position.x, 4.5f,
+                "A non-owning client must keep the doll moving between accepted host poses.");
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator AHostCompanionTagReachesTheClientsCatchPresentation()
+        {
+            int seen = 0;
+            void Received(Visual.MatchFlair.Kind kind,int actor,int subject,Vector3 at,float strength)
+            { if (kind == Visual.MatchFlair.Kind.Tag && actor == CompanionSeats.For(0) && subject == 1) seen++; }
+            Visual.MatchFlair.Presented += Received;
+            try
+            {
+                using var writer = new FastBufferWriter(37, Allocator.Temp);
+                writer.WriteValueSafe((byte)Visual.MatchFlair.Kind.Tag);
+                writer.WriteValueSafe(CompanionSeats.For(0)); writer.WriteValueSafe(1);
+                writer.WriteValueSafe(Vector3.zero); writer.WriteValueSafe(1f);
+                writer.WriteValueSafe(123L); writer.WriteValueSafe(1);
+                using var reader = new FastBufferReader(writer, Allocator.Temp);
+                typeof(MatchRpc).GetMethod("OnFlairMsg", Hidden).Invoke(_rpc,
+                    new object[] { NetworkManager.ServerClientId, reader });
+                Assert.AreEqual(1, seen, "The host's doll tag must reach the client's replay listener.");
+            }
+            finally { Visual.MatchFlair.Presented -= Received; }
+            yield return null;
         }
 
         private IEnumerator AcceptedEcho(float travelled)
