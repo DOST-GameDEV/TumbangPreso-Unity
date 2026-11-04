@@ -238,7 +238,7 @@ namespace TumbangPreso.UI
         private void LateUpdate()
         {
             if(!_popupBuilt||Canvas==null||!Canvas.gameObject.activeSelf)return;
-            float age=Time.unscaledTime-_entered;
+            float age=LiveHud.Now-_entered;
             bool reduced=Settings.SettingsStore.Current.ReducedUiMotion;
             float appear=reduced?1:Mathf.Clamp01(age/.28f);
             float settle=1-Mathf.Pow(1-appear,3);
@@ -250,7 +250,7 @@ namespace TumbangPreso.UI
             {
                 _lowerThird=lower;
                 // Mid-card (halftime's show taking over): it comes in again where it now sits.
-                if(_halftime&&lower){_entered=Time.unscaledTime;age=0;appear=reduced?1:0;settle=appear;_popupFade.alpha=settle*exit;}
+                if(_halftime&&lower){_entered=LiveHud.Now;age=0;appear=reduced?1:0;settle=appear;_popupFade.alpha=settle*exit;}
                 _popup.anchorMin=_popup.anchorMax=new Vector2(.5f,lower?0:.5f);_popup.pivot=new Vector2(.5f,lower?0:.5f);
             }
             _popup.anchoredPosition=lower?new Vector2(0,LowerThirdMargin-(reduced?0:(1-settle)*24))

@@ -30,6 +30,14 @@ namespace TumbangPreso.UI
         /// <summary>True when Reduced UI Motion is on: fades stay, movement goes.</summary>
         public static bool Still => Settings.SettingsStore.Current.ReducedUiMotion;
 
+        /// <summary>The live HUD's clock: `Time.unscaledTime`, unless a frame-by-frame capture (the trailer's UI shots,
+        /// `TrailerShots.RecordUi`) sets `CaptureClock`, whose frames each take far longer than a 60th of a second of real
+        /// time; on the real clock the score board's 0.7 s swap finished inside two captured frames. Null in play.</summary>
+        public static System.Func<float> CaptureClock;
+        public static float Now => CaptureClock != null ? CaptureClock() : Time.unscaledTime;
+        /// <summary>The step of `Now`: a 60th of a second while a capture drives it, else `Time.unscaledDeltaTime`.</summary>
+        public static float Delta => CaptureClock != null ? 1.0f / 60.0f : Time.unscaledDeltaTime;
+
         public static Sprite Picture(string name) => OwnerPortraitArt.Get(Folder + name);
 
         /// <summary>A live-hud texture drawn at twice the board size, sliced left and right (source pixels).</summary>

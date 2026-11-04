@@ -77,6 +77,10 @@ namespace TumbangPreso.PlayTests
         [UnityTest, Timeout(3600000)] public IEnumerator Ult41PhaisterVoodooDoll() => RecordUltimate(PhaisterVoodooDoll());
         [UnityTest, Timeout(3600000)] public IEnumerator Ult42DanteContinentalDrift() => RecordUltimate(DanteContinentalDrift());
         [UnityTest, Timeout(3600000)] public IEnumerator Ult43IlyasBaha() => RecordUltimate(IlyasBaha());
+        [UnityTest, Timeout(1800000)] public IEnumerator Ui20NineHeroes() => NineHeroes();
+        [UnityTest, Timeout(1800000)] public IEnumerator Ui27FourSeatsFill() => FourSeatsFill();
+        [UnityTest, Timeout(1800000)] public IEnumerator Ui28TayaRotates() => TayaRotates();
+        [UnityTest, Timeout(1800000)] public IEnumerator Ui33Overtake() => Overtake();
 
         // ------------------------------------------------------------------ 01 DUSK IN TONDO
         //
@@ -990,6 +994,326 @@ namespace TumbangPreso.PlayTests
             };
         }
 
+        // ------------------------------------------------------------------ UI motion shots
+
+        /// <summary>
+        /// A UI shot, frame by frame: every overlay canvas flipped to the main camera (at its near plane, as
+        /// `UiRuntimeShots.Capture` does, since `Camera.Render` cannot see an overlay), then `frames` frames at 60 a second
+        /// (`Time.captureFramerate`), `act(frame)` called before each one renders. Frames go to `folder`/wide/, so
+        /// `tools/cut_trailer_shot.py` cuts them like a live take (zero = the shot's frame 0 in this numbering).
+        /// </summary>
+        private static IEnumerator RecordUi(string folder, int frames, System.Action<int> act, int width = Width, int height = Height, int first = 0,
+                                            Camera camera = null, bool flipCanvases = true)
+        {
+            string into = Path.Combine(folder, "wide");
+            if (first == 0 && Directory.Exists(into)) foreach (var old in Directory.GetFiles(into, "*.png")) File.Delete(old);
+            Directory.CreateDirectory(into);
+            var cam = camera != null ? camera : Camera.main;
+            Assert.IsNotNull(cam, "a UI shot needs the scene's main camera");
+            var rt = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32);
+            var read = new Texture2D(width, height, TextureFormat.RGB24, false);
+            var previousTarget = cam.targetTexture;
+            int previousRate = Time.captureFramerate;
+            cam.targetTexture = rt;
+            Time.captureFramerate = 60;
+            // The live HUD's own clock steps a 60th a frame (`LiveHud.CaptureClock`): it runs on unscaled time, and a 4K frame
+            // takes far longer than a 60th of a second to render and save.
+            float clockStart = Time.unscaledTime; int ticks = 0;
+            LiveHud.CaptureClock = () => clockStart + ticks / 60.0f;
+            try
+            {
+                for (int f = 0; f < frames; f++)
+                {
+                    act(f);
+                    ticks++;
+                    yield return null;
+                    if (flipCanvases)
+                    foreach (var c in Object.FindObjectsByType<Canvas>(FindObjectsInactive.Exclude))
+                    {
+                        if (c.renderMode != RenderMode.ScreenSpaceOverlay) continue;
+                        c.renderMode = RenderMode.ScreenSpaceCamera; c.worldCamera = cam; c.planeDistance = cam.nearClipPlane + 0.01f;
+                    }
+                    Canvas.ForceUpdateCanvases();
+                    cam.Render();
+                    var active = RenderTexture.active; RenderTexture.active = rt;
+                    read.ReadPixels(new Rect(0, 0, width, height), 0, 0); read.Apply(false); RenderTexture.active = active;
+                    File.WriteAllBytes(Path.Combine(into, $"frame_{first + f:00000}.png"), read.EncodeToPNG());
+                }
+            }
+            finally
+            {
+                LiveHud.CaptureClock = null;
+                Time.captureFramerate = previousRate;
+                cam.targetTexture = previousTarget; rt.Release(); Object.Destroy(read);
+            }
+        }
+
+        private static Button FindButton(string name)
+            => Object.FindObjectsByType<Button>(FindObjectsInactive.Include).FirstOrDefault(b => b.name == name);
+
+        /// <summary>
+        /// The lobby's room as a LAN host (`SceneFlow.Networked`, as `UiRuntimeShots.TheLobbyDoorsDraw` opens it; nothing reaches
+        /// UGS, Lobby or Relay), with the hub's host wrapped in a `HubStage` so the take decides who sits where. Hands back the
+        /// hub, its real host (to put back) and the stage.
+        /// </summary>
+        private static IEnumerator OpenStagedRoom(System.Action<TumpHub, IHubHost, HubStage> ready)
+        {
+            var load = SceneManager.LoadSceneAsync("MatchSetup", LoadSceneMode.Single);
+            while (!load.isDone) yield return null;
+            for (float t = 0; t < 4.0f; t += Time.unscaledDeltaTime) yield return null;
+            var hub = TumpHub.Current;
+            Assert.IsNotNull(hub, "the lobby's hub (TumpHub)");
+            var real = hub.Host;
+            var stage = (HubStage)(object)System.Reflection.DispatchProxy.Create<IHubHost, HubStage>();
+            stage.Real = real;
+            typeof(TumpHub).GetProperty("Host").SetValue(hub, stage);
+            ready(hub, real, stage);
+        }
+
+        private static void PutBackHost(TumpHub hub, IHubHost real)
+        {
+            if (hub != null && real != null) typeof(TumpHub).GetProperty("Host").SetValue(hub, real);
+        }
+
+        private static readonly string[] StagedNames = { "TALA", "BUNSO", "KUYA", "ATE" };
+        private static readonly string[] StagedHeroes = { "sean", "cheska", "zack", "paete" };
+
+        // ---- 20 NINE HEROES: the live hero select (`HubCharacterSelect`, the screen a found match opens; the room opens it
+        // untimed), all nine portraits in Roster.HeroPeople order. The cursor walks the grid in the handle, your seat (P1) picks
+        // RAGO and locks with the screen's own SELECT on frame 0, and the other three seats lock YASMIN, ZACK and PAETE on frames
+        // 23, 45 and 68 (their seat strip's own lock). The staged host mutes LockIn, so nothing starts a match.
+        private IEnumerator NineHeroes()
+        {
+            bool previousNetworked = SceneFlow.Networked; var previousMode = SceneFlow.SelectedMode;
+            SceneFlow.Networked = true; SceneFlow.SelectedMode = GameMode.HeroStrike;
+            Settings.SettingsStore.Current.CharacterPick = 0;
+            TumpHub hub = null; IHubHost real = null; HubStage stage = null;
+            try
+            {
+                yield return OpenStagedRoom((h, r, st) => { hub = h; real = r; stage = st; });
+                int[] picks = StagedHeroes.Select(x => Roster.IndexIn(Roster.HeroPeople, x)).ToArray();
+                int localPick = 0; var locked = new bool[4];
+                stage.SeatsNow = () => Enumerable.Range(0, 4).Select(i => new HubSeat
+                {
+                    // A seat shows its hero only once it locks: take 1 had YASMIN on BUNSO's seat before the beat, and the
+                    // screen refused the cursor's YASMIN ("Another player already has this hero").
+                    Slot = i, Occupied = true, Mine = i == 0, Host = false, Bot = false, Ready = locked[i],
+                    Name = StagedNames[i], CharacterPick = i == 0 ? localPick : locked[i] ? picks[i] : -1,
+                }).ToArray();
+                var select = hub.Push<HubCharacterSelect>(c => c.Timed = false);
+                Assert.IsNotNull(select, "the hero select screen");
+                for (float t = 0; t < 1.5f; t += Time.unscaledDeltaTime) yield return null;
+                const int handle = 12;
+                var beats = new[] { 0, 23, 45, 68 };
+                var log = new System.Text.StringBuilder("ui 20 nine-heroes: HubCharacterSelect (untimed, from the LAN room), Hero Strike; frame 0 of the files is shot frame -12" + System.Environment.NewLine);
+                void Click(string name, int frame)
+                {
+                    var b = FindButton(name);
+                    log.AppendLine($"shot frame {frame}: {name} {(b != null ? "pressed" : "NOT FOUND")}");
+                    b?.onClick.Invoke();
+                }
+                yield return RecordUi(Path.Combine("Logs", "trailer", "20_nine-heroes"), 90 + 2 * handle, f =>
+                {
+                    int shot = f - handle;
+                    // The cursor across the roster in the handle: NEMU, then RAGO.
+                    int nemu = Roster.IndexIn(Roster.HeroPeople, "nemu");
+                    if (shot == -9) { localPick = nemu; Click("Portrait" + nemu, shot); }
+                    if (shot == -4) { localPick = picks[0]; Click("Portrait" + picks[0], shot); }
+                    // Your lock: the screen's own celebration (`CelebrateLock`: the LOCKED IN stamp, the punch and the flash).
+                    // Not SELECT, which on the untimed screen also closes it (take 1 cut back to the room on frame 0).
+                    if (shot == 0)
+                    {
+                        locked[0] = true;
+                        typeof(HubCharacterSelect).GetMethod("CelebrateLock", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(select, null);
+                        log.AppendLine("shot frame 0: seat 0 TALA locks sean (CelebrateLock)");
+                    }
+                    for (int seat = 1; seat < 4; seat++)
+                        if (shot == beats[seat]) { locked[seat] = true; log.AppendLine($"shot frame {shot}: seat {seat} {StagedNames[seat]} locks {StagedHeroes[seat]}"); }
+                });
+                File.WriteAllText(Path.Combine("Logs", "trailer", "20_nine-heroes", "shot.txt"), log.ToString());
+                Debug.Log("[TrailerShots] " + log);
+            }
+            finally
+            {
+                PutBackHost(hub, real);
+                SceneFlow.Networked = previousNetworked; SceneFlow.SelectedMode = previousMode;
+                Net.NetSession.Instance?.Stop();
+            }
+        }
+
+        // ---- 27 FOUR SEATS FILL: the room screen (`HubCustom`) as it fills, one seat a beat (shot frames 0, 23, 45, 68): TALA
+        // (RAGO), BUNSO (YASMIN), KUYA (ZACK) and ATE (PAETE). The staged host hands the room its seats and no address (no LAN IP
+        // on screen); nobody is "YOU" or HOST, and chat stays shut.
+        private IEnumerator FourSeatsFill()
+        {
+            bool previousNetworked = SceneFlow.Networked; var previousMode = SceneFlow.SelectedMode;
+            SceneFlow.Networked = true; SceneFlow.SelectedMode = GameMode.HeroStrike;
+            TumpHub hub = null; IHubHost real = null; HubStage stage = null;
+            try
+            {
+                int seated = 0;
+                int[] picks = StagedHeroes.Select(x => Roster.IndexIn(Roster.HeroPeople, x)).ToArray();
+                yield return OpenStagedRoom((h, r, st) => { hub = h; real = r; stage = st; });
+                stage.SeatsNow = () => Enumerable.Range(0, 4).Select(i => new HubSeat
+                {
+                    Slot = i, Occupied = i < seated, Mine = false, Host = false, Bot = false, Ready = false,
+                    Name = i < seated ? StagedNames[i] : "", CharacterPick = i < seated ? picks[i] : -1,
+                }).ToArray();
+                for (float t = 0; t < 1.0f; t += Time.unscaledDeltaTime) yield return null;
+                const int handle = 12;
+                var beats = new[] { 0, 23, 45, 68 };
+                var log = new System.Text.StringBuilder("ui 27 four-seats-fill: HubCustom, the LAN room, Hero Strike, seats staged; frame 0 of the files is shot frame -12" + System.Environment.NewLine);
+                yield return RecordUi(Path.Combine("Logs", "trailer", "27_four-seats-fill"), 90 + 2 * handle, f =>
+                {
+                    int seat = System.Array.IndexOf(beats, f - handle);
+                    if (seat < 0) return;
+                    seated = seat + 1;
+                    log.AppendLine($"shot frame {f - handle}: seat {seat} {StagedNames[seat]} as {StagedHeroes[seat]}");
+                });
+                File.WriteAllText(Path.Combine("Logs", "trailer", "27_four-seats-fill", "shot.txt"), log.ToString());
+                Debug.Log("[TrailerShots] " + log);
+            }
+            finally
+            {
+                PutBackHost(hub, real);
+                SceneFlow.Networked = previousNetworked; SceneFlow.SelectedMode = previousMode;
+                Net.NetSession.Instance?.Stop();
+            }
+        }
+
+        /// <summary>A live Hero Strike match on TONDO with the bots switched off (`UiArtboardShots.Match`), the four seats as
+        /// TALA (RAGO), BUNSO (YASMIN), KUYA (ZACK) and ATE (PAETE), and the hand back on 1.</summary>
+        private static IEnumerator OpenStagedMatch()
+        {
+            GameLaunch.SoloSeat = (MatchRules.DefenderSlotFor(1) + 1) % 4;
+            yield return UiArtboardShots.Match(SceneFlow.Eskinita, GameMode.HeroStrike);
+            for (int seat = 0; seat < 4; seat++)
+            {
+                var who = GameServices.Round.PlayerAt(seat);
+                if (who == null) continue;
+                var at = who.transform.position;
+                BindSeat(seat, StagedHeroes[seat], at, at + who.transform.forward);
+                who.PlayerName = StagedNames[seat];
+                who.IsBot = seat != GameLaunch.SoloSeat;
+            }
+            for (int i = 0; i < 20; i++) yield return null;
+        }
+
+        private static void SetRound(int round)
+            => typeof(MatchDirector).GetProperty("RoundNumber").SetValue(GameServices.Match, round);
+
+        // ---- 28 THE TAYA ROTATES: the players' own nameplates (`CharacterNameplate`: "P3 · TAYA" and the taya's wider ring are
+        // on whoever `IsDefender`, read every frame). TALA, BUNSO, KUYA and ATE stand in a row on the TONDO court facing a trailer
+        // camera of their own (no HUD, no first-person arms), and the taya passes one seat a beat, P1 to P4, on shot frames 0,
+        // 23, 45 and 68 (P4 in the handle), the order the rounds hand it on ((round - 1) % 4). The round number follows.
+        // Neither the round break card (it draws inside the HUD canvas the break hides) nor the match bar (no taya chip any
+        // more) shows the handover in a capture, so this is the real view that does.
+        // NOT DELIVERED YET (take 3): the local seat's body is hidden (first person), the row did not hold, and the nameplate
+        // text faces the play camera, not this one. The brief's fallback, a composed capture scene, is what is left.
+        private IEnumerator TayaRotates()
+        {
+            int solo = GameLaunch.SoloSeat; Camera wide = null;
+            try
+            {
+                yield return OpenStagedMatch();
+                Vector3 can = GameServices.Round.Lata.transform.position;
+                var bodies = new CharacterMotor[4];
+                for (int seat = 0; seat < 4; seat++)
+                {
+                    bodies[seat] = GameServices.Round.PlayerAt(seat);
+                    var at = OnCourt(can, new Vector3(-3.3f + 2.2f * seat, 0.0f, 2.0f));
+                    bodies[seat].Teleport(at);
+                    bodies[seat].transform.rotation = Quaternion.LookRotation(Vector3.forward);
+                    bodies[seat].Intent.Clear();
+                }
+                void Taya(int seat) { for (int i = 0; i < 4; i++) bodies[i].IsDefender = i == seat; SetRound(seat + 1); }
+                Taya(3);
+                wide = new GameObject("~TrailerWide").AddComponent<Camera>();
+                wide.CopyFrom(Camera.main); wide.enabled = false; wide.tag = "Untagged"; wide.cullingMask &= ~(1 << 5);
+                wide.gameObject.AddComponent<ColourGrade>().AdoptFromScene();
+                Vector3 eye = can + new Vector3(0.0f, 1.6f, 10.5f), look = can + new Vector3(0.0f, 2.0f, 2.0f);
+                wide.transform.SetPositionAndRotation(eye, Quaternion.LookRotation(look - eye)); wide.fieldOfView = 38.0f;
+                for (int i = 0; i < 20; i++) { foreach (var x in bodies) x.Intent.Clear(); yield return null; }
+                const int handle = 12;
+                var beats = new[] { 0, 23, 45, 68 };
+                var log = new System.Text.StringBuilder("ui 28 taya-rotates: the nameplates on TONDO, Hero Strike, bots off, four in a row; frame 0 of the files is shot frame -12" + System.Environment.NewLine);
+                string folder = Path.Combine("Logs", "trailer", "28_taya-rotates");
+                yield return RecordUi(folder, 90 + 2 * handle, f =>
+                {
+                    foreach (var x in bodies) x.Intent.Clear();
+                    int hop = System.Array.IndexOf(beats, f - handle);
+                    if (hop < 0) return;
+                    Taya(hop);
+                    log.AppendLine($"shot frame {f - handle}: taya seat {hop} ({StagedNames[hop]}), round {hop + 1}");
+                }, camera: wide, flipCanvases: false);
+                File.WriteAllText(Path.Combine(folder, "shot.txt"), log.ToString());
+                Debug.Log("[TrailerShots] " + log);
+            }
+            finally
+            {
+                if (wide != null) Object.Destroy(wide.gameObject);
+                GameLaunch.SoloSeat = solo;
+            }
+        }
+
+        // ---- 33 THE OVERTAKE: the in-match score board (`TumpMatchReadout.Board`) held open (`HoldBoardForCapture`), 700 on
+        // top and 640 second; on shot frame 23 the 640 seat scores a +100 knockdown and its plate swings over the 700 (the
+        // board's own swap and "+100" tag, as `TumpNativeHudTests.OvertakingPlateSwingsOverTheOneItPassed` drives it). At 4K.
+        private IEnumerator Overtake()
+        {
+            int solo = GameLaunch.SoloSeat; bool reduced = Settings.SettingsStore.Current.ReducedUiMotion;
+            try
+            {
+                yield return OpenStagedMatch();
+                Settings.SettingsStore.Current.ReducedUiMotion = false;
+                var local = GameServices.Round.PlayerAt(GameLaunch.SoloSeat);
+                var view = Object.FindFirstObjectByType<TumpMatchReadout>();
+                var flags = BindingFlags.Instance | BindingFlags.NonPublic;
+                var scores = (Scoreboard)typeof(MatchDirector).GetField("_scores", flags).GetValue(GameServices.Match);
+                var scoreAt = typeof(TumpMatchReadout).GetField("_scoreAt", flags);
+                int leader = local.PlayerSlot, climber = (leader + 1) % 4;
+                var values = new int[4];
+                for (int seat = 0, rest = 0; seat < 4; seat++)
+                    values[seat] = seat == leader ? 700 : seat == climber ? 640 : new[] { 480, 350 }[rest++];
+                scores.SetAll(values); scoreAt.SetValue(view, 0f);
+                view.HoldBoardForCapture(true);
+                view.Tick(local, false, false, false, false);
+                for (float t = 0; t < 1.5f; t += Time.unscaledDeltaTime) yield return null;
+                const int handle = 12;
+                var log = new System.Text.StringBuilder($"ui 33 overtake: the score board on TONDO, Hero Strike, bots off; 3840x2160; seat {climber} 640 -> 740 passes seat {leader} 700; frame 0 of the files is shot frame -12" + System.Environment.NewLine);
+                string folder = Path.Combine("Logs", "trailer", "33_overtake");
+                yield return RecordUi(folder, 90 + 2 * handle, f =>
+                {
+                    if (f - handle != 23) return;
+                    values[climber] = 740; scores.SetAll(values); scoreAt.SetValue(view, 0f);
+                    view.Tick(local, false, false, false, false);
+                    log.AppendLine($"shot frame 23: seat {climber} scores +100 (740)");
+                }, 3840, 2160);
+                var board = view.Canvas.transform.HudFind("OtherScores") as RectTransform;
+                log.AppendLine("board on screen (4K pixels, from the bottom left): " + ScreenRect(board, 3840, 2160));
+                File.WriteAllText(Path.Combine(folder, "shot.txt"), log.ToString());
+                Debug.Log("[TrailerShots] " + log);
+            }
+            finally
+            {
+                var view = Object.FindFirstObjectByType<TumpMatchReadout>(); if (view != null) view.HoldBoardForCapture(false);
+                GameLaunch.SoloSeat = solo; Settings.SettingsStore.Current.ReducedUiMotion = reduced;
+            }
+        }
+
+        /// <summary>Where a HUD rect landed in the capture, in pixels of a `width` by `height` frame (the canvas is flipped to the
+        /// main camera by `RecordUi`, so the camera's own projection is the capture's).</summary>
+        private static string ScreenRect(RectTransform rect, int width, int height)
+        {
+            if (rect == null) return "not found";
+            var corners = new Vector3[4]; rect.GetWorldCorners(corners);
+            var cam = Camera.main; var canvas = rect.GetComponentInParent<Canvas>();
+            float sx = width / (float)cam.pixelWidth, sy = height / (float)cam.pixelHeight;
+            var lo = RectTransformUtility.WorldToScreenPoint(canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : cam, corners[0]);
+            var hi = RectTransformUtility.WorldToScreenPoint(canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : cam, corners[2]);
+            return $"x {lo.x * sx:0}..{hi.x * sx:0}, y {lo.y * sy:0}..{hi.y * sy:0} (camera {cam.pixelWidth}x{cam.pixelHeight})";
+        }
+
         // ------------------------------------------------------------------ the harness
 
         internal sealed class Shot
@@ -1439,6 +1763,27 @@ namespace TumbangPreso.PlayTests
                 public void Show(bool shown) => Call("Show", shown);
                 public GameObject Model => (GameObject)_extra.GetType().GetField("Model").GetValue(_extra);
             }
+        }
+    }
+
+    /// <summary>
+    /// TRAILER STAGING ONLY: the hub's host with its seats replaced. Every call goes to the real host except `Seats` (the take's
+    /// own), `RoomAddress` (blank: no LAN address in a trailer frame) and the calls that would change the real room or start a
+    /// match (LockIn, StartGame, ToggleReady, PublishPicks, SetSeatBot, TakeSeat), which do nothing.
+    /// </summary>
+    public class HubStage : System.Reflection.DispatchProxy
+    {
+        public IHubHost Real;
+        public System.Func<HubSeat[]> SeatsNow;
+        private static readonly System.Collections.Generic.HashSet<string> Muted = new System.Collections.Generic.HashSet<string>
+            { "LockIn", "StartGame", "ToggleReady", "PublishPicks", "SetSeatBot", "TakeSeat" };
+
+        protected override object Invoke(MethodInfo method, object[] args)
+        {
+            if (method.Name == "Seats" && SeatsNow != null) return SeatsNow();
+            if (method.Name == "get_RoomAddress") return "";
+            if (Muted.Contains(method.Name)) return null;
+            return method.Invoke(Real, args);
         }
     }
 }

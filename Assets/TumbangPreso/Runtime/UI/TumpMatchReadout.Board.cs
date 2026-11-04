@@ -147,13 +147,13 @@ namespace TumbangPreso.UI
         private void NoteBoardScore(int slot, int score, int previous, bool known)
         {
             if (!known || score == previous) return;
-            _boardGain[slot] = score - previous; _boardGainAt[slot] = Time.unscaledTime;
-            _boardPopUntil = Time.unscaledTime + BoardHold;
+            _boardGain[slot] = score - previous; _boardGainAt[slot] = LiveHud.Now;
+            _boardPopUntil = LiveHud.Now + BoardHold;
         }
 
         private void NoteBoardLeader(int leader)
         {
-            if (_boardLeaderSeen != -2 && leader != _boardLeaderSeen) _boardPopUntil = Time.unscaledTime + BoardHold;
+            if (_boardLeaderSeen != -2 && leader != _boardLeaderSeen) _boardPopUntil = LiveHud.Now + BoardHold;
             _boardLeaderSeen = _boardLeader = leader;
         }
 
@@ -173,7 +173,7 @@ namespace TumbangPreso.UI
             if (_boardRoot == null) return;
             var match = GameServices.Match; var round = GameServices.Round;
             bool play = _playing && match != null && round != null;
-            float now = Time.unscaledTime, dt = Time.unscaledDeltaTime;
+            float now = LiveHud.Now, dt = LiveHud.Delta;
             bool still = LiveHud.Still;
             bool tab = play && BoardHeld;
             bool pop = play && !Hud.OnTouch && now < _boardPopUntil;
