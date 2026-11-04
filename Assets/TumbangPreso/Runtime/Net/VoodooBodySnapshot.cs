@@ -23,7 +23,9 @@ namespace TumbangPreso.Net
         private static bool Timer(float value, float maximum) => !float.IsNaN(value) && !float.IsInfinity(value)
             && value >= 0 && value <= maximum + .01f;
         private static bool Seat(int value) => value >= 0 && value < Balance.PlayerCount;
-        public bool IsValid(int subject) => Seat(subject)
+        // This tail is carried by every body pose, including Phaister's doll.
+        // Curse producers remain player seats; a companion is a valid recipient.
+        public bool IsValid(int subject) => CompanionSeats.IsBody(subject)
             && Timer(Drained, StatusRules.DrainedSeconds) && Timer(Hexed, StatusRules.HexedSeconds)
             && Timer(MarkAge, VoodooRules.HexMarkLifeSeconds) && Timer(ReachElapsed, VoodooRules.ReachSeconds)
             && MarkKind <= (byte)VoodooMarkKind.Hex && ReachKind <= (byte)VoodooMarkKind.Hex

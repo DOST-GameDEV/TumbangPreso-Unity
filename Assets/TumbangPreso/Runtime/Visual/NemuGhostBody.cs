@@ -34,6 +34,7 @@ namespace TumbangPreso.Visual
                 else Debug.LogError("[NemuGhostBody] Shaders/BlindfoldGhost is missing from the build (GameBuilder).");
             }
             var go = new GameObject(name);
+            VfxRenderTag.Attach(go);
             go.transform.SetParent(parent, false);
             Transform = go.transform;
             go.AddComponent<MeshFilter>().sharedMesh = mesh;

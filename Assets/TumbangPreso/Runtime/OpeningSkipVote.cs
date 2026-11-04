@@ -32,6 +32,7 @@ namespace TumbangPreso
         private InputAction _readyUp;
         private GameObject _root;
         private Text _label;
+        private UnityEngine.UI.Button _button;
         private string _shownWords;
         private bool _votedLocally, _sendPending, _hasTally, _decided, _sawFilm;
         private float _nextSend;
@@ -182,12 +183,12 @@ namespace TumbangPreso
         {
             if (_root == null) Build();
             if (!_root.activeSelf) _root.SetActive(true);
-            string prompt = Hud.OnTouch ? "SKIP" : $"[{Hud.KeyLabelFor("ReadyUp")}] SKIP";
-            string words = _votedLocally ? "WAITING" : prompt;
-            if (VotesNeeded > 1) words += $"  {Votes}/{VotesNeeded}";
+            string tally = $"{Votes}/{Mathf.Max(1, VotesNeeded)}";
+            string words = ">>\n" + tally;
+            _button.interactable = !_votedLocally;
             if (words == _shownWords) return;
             _shownWords = words;
-            if (_label != null) _label.text = words;
+            if (_label != null) _label.text = tally;
         }
 
         private void Build()
@@ -205,10 +206,26 @@ namespace TumbangPreso
             InputLayer.UiInputModule.Ensure();
 
             var design = OwnerUiLayout.DesignArea(_root.transform, "OpeningSkipArea");
-            var button = HubKnit.Button(design, "OpeningSkip", "SKIP", Knit.PillYellow, Cast, 34);
-            OwnerUiLayout.Place((RectTransform)button.transform, 1500, 956, 372, 84);
-            _label = HubKit.LabelOf(button);
-            if (_label != null) _label.horizontalOverflow = HorizontalWrapMode.Overflow;
+            var target = OwnerUiLayout.Rect(design, "OpeningSkip");
+            OwnerUiLayout.Place(target, 1744, 900, 112, 138);
+            var hit = target.gameObject.AddComponent<UnityEngine.UI.Image>();
+            hit.color = Color.clear;
+            _button = target.gameObject.AddComponent<UnityEngine.UI.Button>();
+            _button.targetGraphic = hit;
+            _button.onClick.AddListener(Cast);
+            var navigation = _button.navigation; navigation.mode = Navigation.Mode.None; _button.navigation = navigation;
+            for (int i = 0; i < 2; i++)
+            {
+                var forward = HubKit.Glyph(target, "Forward" + i, HubGlyph.Mark.Play, Color.white, .14f);
+                OwnerUiLayout.Place(forward.rectTransform, 24 + i * 24, 25, 40, 40);
+                forward.raycastTarget = false;
+            }
+            _label = OwnerUiLayout.Text(target, "Votes", "0/1", 28, OwnerUiLayout.TypeRole.Reading);
+            _label.alignment = TextAnchor.MiddleCenter;
+            _label.color = Color.white;
+            _label.raycastTarget = false;
+            OwnerUiLayout.Place(_label.rectTransform, 0, 83, 112, 40);
+            _label.gameObject.AddComponent<UnityEngine.UI.Outline>().effectColor = UiTheme.InGameOutline;
         }
     }
 }

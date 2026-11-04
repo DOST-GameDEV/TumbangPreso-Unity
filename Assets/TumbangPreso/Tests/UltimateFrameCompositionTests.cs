@@ -8,6 +8,17 @@ namespace TumbangPreso.Tests
 {
     public sealed class UltimateFrameCompositionTests
     {
+        [Test]
+        public void YasminStartsAfterTheHeartAndKeepsTheAuthoredEnding()
+        {
+            var table = Visual.UltimatePerformance.For("cheska");
+            Assert.GreaterOrEqual(Visual.UltimatePerformance.PlaybackStartFor("cheska"), 9.16f);
+            Assert.AreEqual(table.Seconds, Visual.UltimatePerformance.PlaybackStartFor("cheska")
+                + Visual.UltimatePerformance.SecondsFor("cheska"), .001f);
+            Assert.That(Visual.UltimatePerformance.SecondsFor("cheska"), Is.InRange(2.4f, 3f));
+            Assert.AreEqual(0, Visual.UltimatePerformance.PlaybackStartFor("phaister"));
+        }
+
         [TestCase(0f)]
         [TestCase(.25f)]
         [TestCase(1f)]

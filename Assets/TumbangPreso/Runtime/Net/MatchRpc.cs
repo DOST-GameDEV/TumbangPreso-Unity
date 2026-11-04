@@ -3383,8 +3383,8 @@ namespace TumbangPreso.Net
             if (reader.Position != reader.Length || !Finite(at) || !Finite(strength)
                 || kind > (byte)Visual.MatchFlair.LastKind || match <= 0 || match != PresentationMatchId
                 || round <= 0 || round != GameServices.Match?.RoundNumber) return;
-            if (actor < -1 || actor >= Balance.PlayerCount) return;
-            if (subject < -1 || subject >= Balance.PlayerCount) return;
+            if (actor < -1 || actor >= CompanionSeats.BodyCount) return;
+            if (subject < -1 || subject >= CompanionSeats.BodyCount) return;
 
             // ⚠️ `Play`, NOT `Announce`. A replicated copy must not relay itself onward, which is
             // the same loop `NetCue.SuppressRelay` exists to break for sounds.

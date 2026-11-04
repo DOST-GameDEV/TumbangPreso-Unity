@@ -248,7 +248,7 @@ namespace TumbangPreso.Abilities
 
         private void Show(bool on)
         {
-            if (_smoke != null) _smoke.Visible = on;
+            if (_smoke != null) _smoke.Visible = on && _drawn;
             if (_body != null) _body.enabled = on && _drawn && _rig == null;
             _rig?.Visible(on && _drawn);
         }
@@ -421,6 +421,12 @@ namespace TumbangPreso.Abilities
         private void Draw()
         {
             if (_body == null) return;
+            // A reliable ghost frame can beat its victim's new movement epoch,
+            // including the teleport that freezes bodies for a shared ultimate.
+            // Keep the host-owned lifetime and retry binding; no stale face is drawn.
+            if ((_state == State.Lunging || _state == State.Covering) &&
+                (_victim == null || !_victim.gameObject.activeInHierarchy))
+            { _drawn = false; Show(false); return; }
             Vector3 at;
             Quaternion facing;
             float scale = 1f, fade = Visibility(), flash = 0f, eyes = 0f, sway = .05f;

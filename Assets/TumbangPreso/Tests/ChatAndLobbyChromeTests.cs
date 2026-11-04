@@ -414,7 +414,8 @@ namespace TumbangPreso.Tests
             //186 widens Ilyas's Baha to a 4.2 m half width, which the field check compares.
             //187 merges those two 186 changes, so neither kind of 186 build meets a merged one.
             //188 adds the vote to skip the match opening.
-            Assert.AreEqual(188, NetSession.ProtocolVersion,
+            //189 trims Yasmin's shared introduction after the heart.
+            Assert.AreEqual(189, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");

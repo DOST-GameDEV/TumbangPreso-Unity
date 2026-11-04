@@ -47,6 +47,7 @@ namespace TumbangPreso.Visual
                 _live.End();
             }
             var go = new GameObject("~DisorientedHallucinations");
+            VfxRenderTag.Attach(go);
             _live = go.AddComponent<DisorientedHallucinations>();
             _live._victim = victim;
             _live.Build();
