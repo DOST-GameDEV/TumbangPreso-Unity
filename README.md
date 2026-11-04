@@ -44,6 +44,7 @@ The text cards in `cards/` are ProRes 4444 with alpha, each as long as its shot.
 | 39 | ZACK, OVERCLOCK | 0:54.03 | 45 frames | `shot-39.mov` |
 | 40 | NEMU, LET THEM IN | 0:54.78 | 45 frames | `shot-40.mov` |
 | 41 | PHAISTER, VOODOO DOLL | 0:55.53 | 45 frames | `shot-41.mov` |
+| 42 | DANTE, CONTINENTAL DRIFT | 0:56.28 | 45 frames | `shot-42.mov` |
 | 48 | Logo and key art | 1:00.80 | 139 frames | `shot-48.mov`, `shot-48-plate.mov`, `shot-48-cta.mov` |
 
 **01, Studio badge.** The BH studios mark in white on black, at 60% of its menu size. It fades in over
@@ -91,6 +92,13 @@ PHAISTER stand side by side facing the camera.
 Differs from the prompt: her cutscene lowers the doll on strings instead of showing it lying still, and
 its slipper is not visible yet. Captured only; nothing in her kit or art was changed.
 
+**42, DANTE, CONTINENTAL DRIFT.** Live on the PHILIPPINE ARENA. Frame 0 is the slam at the end of his
+cutscene. Over frames 0 to 44 the court erupts in bands of rock down the lane toward the camera, and
+ZACK, YASMIN and AMIHAN are thrown at and past the lens. The camera looks back up the lane from its far
+end, with DANTE small behind the rubble.
+Note: the game's own "BOOM!" pop-ups appear over the hits. His rock armour (MOUNTAIN FORM) is on him
+from the slam, as the game does it.
+
 **48, Logo and key art.** The nine heroes around the can on Tondo at dusk, each with their slipper.
 - `shot-48.mov`: plate, logo and COMING SOON together.
 - `shot-48-plate.mov`: the plate only.
@@ -104,5 +112,5 @@ its slipper is not visible yet. Captured only; nothing in her kit or art was cha
 - 10, "Taya!" in the black: blocked. The kid's "Taya!" in the game is a synthesized sound, not a real
   recording, so it needs a recorded voice first.
 - 20, 27, 28, 33: UI captures, still to do.
-- 42 and 43: the last two ultimates, being recorded one at a time.
+- 43: ILYAS's BAHA, the last ultimate, being recorded.
 - 47: the contact flash. It depends on shot 46's replay.
