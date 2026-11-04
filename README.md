@@ -45,6 +45,7 @@ The text cards in `cards/` are ProRes 4444 with alpha, each as long as its shot.
 | 40 | NEMU, LET THEM IN | 0:54.78 | 45 frames | `shot-40.mov` |
 | 41 | PHAISTER, VOODOO DOLL | 0:55.53 | 45 frames | `shot-41.mov` |
 | 42 | DANTE, CONTINENTAL DRIFT | 0:56.28 | 45 frames | `shot-42.mov` |
+| 43 | ILYAS, BAHA | 0:57.03 | 45 frames | `shot-43.mov` |
 | 48 | Logo and key art | 1:00.80 | 139 frames | `shot-48.mov`, `shot-48-plate.mov`, `shot-48-cta.mov` |
 
 **01, Studio badge.** The BH studios mark in white on black, at 60% of its menu size. It fades in over
@@ -99,6 +100,11 @@ end, with DANTE small behind the rubble.
 Note: the game's own "BOOM!" pop-ups appear over the hits. His rock armour (MOUNTAIN FORM) is on him
 from the slam, as the game does it.
 
+**43, ILYAS, BAHA.** Live on SITANGKAI, with the camera at ankle height. From frame 0 the flood front is
+on the camera side of the court, with paper boats on it. It carries both loose slippers toward the
+lens, nudges ZACK on frame 14, and fills the frame by the cut. ILYAS (back to camera) and RAGO stand on
+either side.
+
 **48, Logo and key art.** The nine heroes around the can on Tondo at dusk, each with their slipper.
 - `shot-48.mov`: plate, logo and COMING SOON together.
 - `shot-48-plate.mov`: the plate only.
@@ -112,5 +118,4 @@ from the slam, as the game does it.
 - 10, "Taya!" in the black: blocked. The kid's "Taya!" in the game is a synthesized sound, not a real
   recording, so it needs a recorded voice first.
 - 20, 27, 28, 33: UI captures, still to do.
-- 43: ILYAS's BAHA, the last ultimate, being recorded.
 - 47: the contact flash. It depends on shot 46's replay.
