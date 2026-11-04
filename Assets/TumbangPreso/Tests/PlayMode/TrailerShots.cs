@@ -72,6 +72,7 @@ namespace TumbangPreso.PlayTests
         [UnityTest, Timeout(3600000)] public IEnumerator Ult36YasminAbsoluteZero() => RecordUltimate(YasminAbsoluteZero());
         [UnityTest, Timeout(3600000)] public IEnumerator Ult37AmihanAirburst() => RecordUltimate(AmihanAirburst());
         [UnityTest, Timeout(3600000)] public IEnumerator Ult38PaeteMakilingsEmbrace() => RecordUltimate(PaeteMakilingsEmbrace());
+        [UnityTest, Timeout(3600000)] public IEnumerator Ult39ZackOverclock() => RecordUltimate(ZackOverclock());
 
         // ------------------------------------------------------------------ 01 DUSK IN TONDO
         //
@@ -793,6 +794,46 @@ namespace TumbangPreso.PlayTests
                     return (tree + toEye * d + Vector3.up * d * 0.55f, tree + Vector3.up * 1.2f, 45.0f);
                 },
                 Probe = () => GameServices.Round.Players.Count(x => x != null && x.IsRooted).ToString(),
+            };
+        }
+
+        // ---- 39 ZACK, OVERCLOCK: BGC (Kanto). His cutscene hands back with him Overclocked; he then holds the ultimate (the zap,
+        // `ZackHeroKit.OwnerZap`) on DANTE 5 m in front, and one second of lock Zaps him. A tight two-shot, ZACK in the foreground.
+        private static UltShot ZackOverclock()
+        {
+            Vector3 look = default; bool started = false;
+            return new UltShot
+            {
+                Number = 39, Slug = "zack-overclock", Map = SceneFlow.Kanto, Hero = "zack", Rivals = new[] { "dante", "nemu", "amihan" },
+                // Marks from the can: ZACK 7 m behind it, DANTE 5 m in front of him; the other two out past the zap's 9 m, off his line.
+                HeroAt = new Vector3(0.0f, 0.0f, -7.0f), Aim = new Vector3(0.0f, 0.0f, -2.0f),
+                RivalsAt = new[] { new Vector3(0.4f, 0.0f, -2.0f), new Vector3(-8.0f, 0.0f, 5.0f), new Vector3(8.0f, 0.0f, 5.5f) },
+                // His authored cutscene is 4.5 s (Resources/UltimateIntros/zack.txt); the zap is held from 4.8 s, so it lands about 5.8.
+                Seconds = 8.5f,
+                Drive = (t, hero, rivals) =>
+                {
+                    foreach (var x in rivals)
+                    {
+                        x.Intent.Clear();
+                        if (t < 0.0f) x.transform.rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(hero.transform.position - x.transform.position, Vector3.up));
+                    }
+                    // The ultimate key held once he is Overclocked is the zap; the harness only presses it for the first 0.25 s.
+                    if (t >= 4.8f) hero.Intent.Set(Verb.Ultimate, true);
+                },
+                // Off his right side, a little behind, so his raised hands and DANTE 5 m on both read; the look sits between them.
+                // Take 1's over-the-shoulder (2.4 m behind) was mostly the back of his head.
+                Wide = (t, can, hero, rivals) =>
+                {
+                    Vector3 at = hero.transform.position, them = rivals[0].transform.position;
+                    Vector3 fwd = Vector3.ProjectOnPlane(them - at, Vector3.up).normalized;
+                    if (fwd.sqrMagnitude < 0.01f) fwd = hero.transform.forward;
+                    Vector3 right = Vector3.Cross(Vector3.up, fwd);
+                    Vector3 want = Vector3.Lerp(at, them, 0.5f) + Vector3.up * 1.0f;
+                    if (!started) { look = want; started = true; }
+                    look = Vector3.Lerp(look, want, 0.05f);
+                    return (at - fwd * 0.9f + right * 2.9f + Vector3.up * 1.25f, look, 42.0f);
+                },
+                Probe = () => { var kit = Object.FindObjectsByType<CharacterMotor>().Select(x => x.AbilitySystem?.Kit).OfType<ZackHeroKit>().FirstOrDefault(); return kit == null ? "-" : $"{(kit.IsOverclocked ? "OC" : "no")}{(kit.Zapping ? "Z" : "")}{kit.ZapTarget}"; },
             };
         }
 
