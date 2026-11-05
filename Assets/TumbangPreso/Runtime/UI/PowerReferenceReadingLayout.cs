@@ -35,23 +35,24 @@ namespace TumbangPreso.UI
             _known = true; _large = large; _scale = scale;
             if (_phoneScroll != null) { RefreshPhone(parentSize, large); return; }
             _rect.anchoredPosition = new Vector2(0, large ? 312 : 248);
-            float bodyHeight = 96;
+            // The hub-style reference (2026-11-05): a page header, then per power a 150-unit card tile with the name
+            // and the lime key line beside it, and the sentence under the tile.
+            float bodyTop = large ? 290 : 270, bodyHeight = 96;
             for (int i = 0; i < 3; i++)
             {
                 _shownBodies[i] = _bodies[i].text;
-                _names[i].fontSize = large ? 41 : 34;
-                _timings[i].fontSize = _bodies[i].fontSize = large ? 34 : 28;
-                _timings[i].rectTransform.sizeDelta = new Vector2(530, large ? 84 : 57);
+                _names[i].fontSize = large ? 48 : 40;
+                _timings[i].fontSize = large ? 31 : 26;
+                _bodies[i].fontSize = large ? 34 : 28;
+                _timings[i].rectTransform.sizeDelta = new Vector2(360, large ? 92 : 70);
                 var body = _bodies[i].rectTransform;
-                body.anchoredPosition = new Vector2(body.anchoredPosition.x, large ? -218 : -195);
+                body.anchoredPosition = new Vector2(body.anchoredPosition.x, -bodyTop);
                 bodyHeight = Mathf.Max(bodyHeight, _bodies[i].preferredHeight * 1.06f + 12);
             }
-            // Fit the longest actual description at every size. Normal size used to keep a fixed
-            // 211-unit box, so a role kit's middle column (its ability and the other role's)
-            // spilled out of the sheet at 960x540 while Larger Text grew correctly.
-            bodyHeight = Mathf.Max(bodyHeight, 211);
+            // Fit the longest actual description at every size, so no sentence spills out of the plate at 960x540.
+            bodyHeight = Mathf.Max(bodyHeight, 130);
             for (int i = 0; i < 3; i++) _bodies[i].rectTransform.sizeDelta = new Vector2(530, bodyHeight);
-            _rect.sizeDelta = new Vector2(1770, (large ? 218 : 195) + bodyHeight + 34);
+            _rect.sizeDelta = new Vector2(1770, bodyTop + bodyHeight + 40 + Hub.HubKnit.SlabHeight);
         }
         private void RefreshPhone(Vector2 parentSize, bool large)
         {

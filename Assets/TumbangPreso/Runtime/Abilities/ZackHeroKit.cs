@@ -632,7 +632,7 @@ namespace TumbangPreso.Abilities
 
             public BacktrackAbility(ZackHeroKit kit)
                 : base("zack_skill1", "BACKTRACK",
-                       "Snap back to where you were 3 seconds ago, keeping whatever you are holding.",
+                       "PRESS {KEY} to INSTANTLY rewind to where you were a moment ago. You keep your slipper, your facing and anything you were carrying.",
                        ZackRules.BacktrackCooldown, 0.0f, AbilityGlyph.ZackBacktrack,
                        summary: "Snap back 3 seconds, slipper and all.",
                        castAction: "hero-zack-backtrack", viewmodelAction: "backtrack-snap",
@@ -694,7 +694,7 @@ namespace TumbangPreso.Abilities
 
             public FullThrottleAbility(ZackHeroKit kit)
                 : base("zack_skill2", "FULL THROTTLE",
-                       "Attacking. Instantly reach full Momentum and full Charge. For 3 seconds only a hit can slow you down.",
+                       "PRESS {KEY} to INSTANTLY max out your Momentum and Charge. For a short time, only a hit, stun, trip or root can slow you down.",
                        ZackRules.FullThrottleCooldown, ZackRules.FullThrottleSeconds, AbilityGlyph.ZackFullThrottle,
                        summary: "Full Momentum and full Charge at once, locked in for 3 s.",
                        castAction: "hero-zack-throttle", viewmodelAction: "throttle-rev",
@@ -745,7 +745,7 @@ namespace TumbangPreso.Abilities
 
             public LiveWireAbility(ZackHeroKit kit)
                 : base("zack_skill2d", "LIVE WIRE",
-                       "Defending. String a wire up to 6 m. A crosser is Zapped; it goes dark 5 s, then rearms. Look at it and hold to reel it in.",
+                       "PRESS {KEY} to string a wire from your feet to where you look. It Zaps the first player to cross, then recharges. Look at it and HOLD {KEY} to reel it in.",
                        ZackRules.LiveWireCooldown, 0.0f, AbilityGlyph.ZackLiveWire,
                        summary: "A wire that stays. Look at it and hold to reel it in.",
                        telegraphRadius: .35f, telegraphRange: ZackRules.LiveWireMaxLength,
@@ -805,7 +805,7 @@ namespace TumbangPreso.Abilities
 
             public OverclockAbility(ZackHeroKit kit)
                 : base("zack_ultimate", "OVERCLOCK",
-                       "Overclocked on 25 s of fuel. Hold the ultimate to zap a rival within 9 m: 1 s held Zaps them. Zapping burns fuel 3x.",
+                       "PRESS {KEY} to Overclock, gaining speed and a free sprint until your fuel runs out. HOLD {KEY} on a nearby rival to Zap them at a heavy fuel cost.",
                        0.0f, 0.0f, AbilityGlyph.ZackOverclock,
                        summary: "25 s of fuel: faster, free sprint. Hold to zap a rival.",
                        castAction: "hero-zack-overclock", viewmodelAction: "overclock-take", castCue: "")

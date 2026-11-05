@@ -300,7 +300,7 @@ namespace TumbangPreso.Abilities
 
             public LavaRamAbility(SeanHeroKit kit)
                 : base("sean_skill1", "LAVA RAM",
-                    "Brace, then charge along your aim. You stop on the first player you hit and launch them. A wall stops you instead, dazed.",
+                    "PRESS {KEY} to brace, then charge where you aim. The first player you hit is launched and Seared. Charge into a wall and you are left dazed.",
                     SeanRules.RamCooldown, SeanRules.RamTravelSeconds + Recover, AbilityGlyph.SeanRush,
                     summary: "Charge; the first player you hit is launched. Walls daze you.",
                     castAction: "hero-sean-dash", viewmodelAction: "thrust-fire", castCue: "sfx_cast_sean_rush")
@@ -442,7 +442,7 @@ namespace TumbangPreso.Abilities
 
             public MoltenThrowAbility(SeanHeroKit kit)
                 : base("sean_skill2", "MOLTEN THROW",
-                       "Attacking. Coat your slipper in lava for one throw in 8 s, flat and fast. A can it hits flies off hot: no reset for 1.5 s.",
+                       "PRESS {KEY} while holding your slipper to coat it in lava for one heavy throw. A can it knocks over flies off scorching hot and cannot be reset right away.",
                        SeanRules.MoltenThrowCooldown, SeanRules.MoltenThrowLoadSeconds, AbilityGlyph.SeanIgnite,
                        summary: "One heavy throw. The can it knocks over flies and stays hot.",
                        castAction: "hero-sean-ignite", viewmodelAction: "ignite", castCue: "sfx_cast_sean_cannon")
@@ -527,7 +527,7 @@ namespace TumbangPreso.Abilities
 
             public MagmaFistAbility(SeanHeroKit kit)
                 : base("sean_skill2d", "MAGMA FIST",
-                    "Defending. Hold to pray and place it where you look; a giant lava fist punches up there and knocks their slippers loose.",
+                    "HOLD {KEY} to aim. RELEASE to open a bubbling lava pool. Moments later a giant fist erupts from it, launching players away from the can and knocking their slippers loose.",
                     SeanRules.FistCooldown, 0, AbilityGlyph.SeanCinderGate,
                     summary: "Punch them away from the can; their slippers stay on the spot.",
                     telegraphRadius: SeanRules.FistPunchRadius, telegraphRange: SeanRules.FistAimRange,
@@ -565,7 +565,7 @@ namespace TumbangPreso.Abilities
 
             public MayonAwakensAbility(SeanHeroKit kit)
                 : base("sean_ultimate", "MAYON AWAKENS",
-                       "Hold to place it where you look. A volcano bursts up there and throws everyone within 9 m out, then lobs a lava bomb at the nearest opponent every 1.2 s for 8 s. You are Molten beside it: no knockback.",
+                       "HOLD {KEY} to aim. RELEASE to raise a volcano that blasts nearby players away and bombards the nearest rival. You turn Molten, and {Skill1} hurls lava bombs.",
                        0.0f, SeanRules.MoltenSeconds, AbilityGlyph.SeanSupernova,
                        summary: "Raise a volcano that throws everyone out, then bombards your opponents for 8 s.",
                        telegraphRadius: SeanRules.VolcanoBlastRadius, telegraphRange: SeanRules.VolcanoAimMaxRange,

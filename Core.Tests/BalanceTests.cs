@@ -68,13 +68,14 @@ namespace TumbangPreso.Core.Tests
             const float dt = 1.0f / 60.0f;
             float elapsed = 0.0f;
 
-            while (!s.IsFatigued && elapsed < 10.0f)
+            while (s.Current > 0 && elapsed < 10.0f)
             {
                 s.Step(dt, moving: true, sprintHeld: true);
                 elapsed += dt;
             }
 
-            Assert.True(s.IsFatigued);
+            Assert.False(s.IsFatigued);
+            Assert.False(s.IsSprinting);
             Assert.Equal(Balance.StaminaMax / Balance.StaminaDrainRate, elapsed, 1);
 
             // ⚠️ 2.1, UP FROM 1.5, AND THE SECONDS ARE NOT THE THING BEING GUARDED. The drain
@@ -91,90 +92,54 @@ namespace TumbangPreso.Core.Tests
             Assert.Equal(2.5f, elapsed, 1);
         }
 
-        /// <summary>
-        /// ⚠️⚠️ REGEN IS LOCKED FOR THE WHOLE FATIGUE WINDOW, and this is the assertion
-        /// that guards the fix. The bar used to refill at full rate DURING the penalty, so
-        /// a player who ran themselves to zero was already recovering while "being
-        /// punished" and walked out with a usable bar. The punishment did not touch the
-        /// resource it was punishing.
-        /// </summary>
         [Fact]
-        public void Fatigue_LocksRegenForItsWholeDuration()
+        public void EmptyBarRegeneratesAfterTheNormalDelayAndCanSprintAgain()
         {
-            var s = DrainedToFatigue();
-            const float dt = 1.0f / 60.0f;
-
-            float waited = 0.0f;
-            while (s.IsFatigued && waited < 5.0f)
-            {
-                s.Step(dt, moving: false, sprintHeld: false);
-                s.StepFatigue(dt);
-                waited += dt;
-
-                if (s.IsFatigued)
-                    Assert.Equal(0.0f, s.Current, 3); // never a point of regen while locked
-            }
-
+            var s = DrainedToEmpty();
             Assert.False(s.IsFatigued);
-            Assert.Equal(Balance.FatigueTime, waited, 1);
+            s.Step(.5f, moving: true, sprintHeld: true);
+            Assert.Equal(0, s.Current);
+            Assert.False(s.IsSprinting);
+            s.Step(.5f, moving: true, sprintHeld: true);
+            Assert.Equal(50f, s.Current);
+            s.Step(.1f, moving: true, sprintHeld: true);
+            Assert.True(s.IsSprinting);
+            Assert.Equal(40f, s.Current);
         }
 
-        /// <summary>
-        /// ⚠️ THE 0.75 MULTIPLIER MUST COME OFF THE STACK. Fatigue rides the speed-zone
-        /// stack so it composes with a hazard zone rather than one silently winning, which
-        /// means the exit is the only thing that ever pops it. Zeroing the timer before
-        /// exiting orphans the multiplier for the rest of the round, and the player is
-        /// quietly 25% slower with nothing on the HUD saying why.
-        /// </summary>
         [Fact]
-        public void Fatigue_ReleasesItsSpeedZoneOnExpiry()
+        public void DepletionAndLegacySnapshotsDoNotAddFatigueZonesOrRemoveHazards()
         {
-            var s = DrainedToFatigue();
-
-            Assert.Equal(Balance.FatigueSpeedScale, s.SpeedZones.Value, 3);
-
-            const float dt = 1.0f / 60.0f;
-            for (float t = 0; t < Balance.FatigueTime + 0.5f; t += dt)
-            {
-                s.Step(dt, moving: false, sprintHeld: false);
-                s.StepFatigue(dt);
-            }
-
+            var zones = new SpeedZoneStack();
+            zones.Enter(.5f);
+            var s = new Stamina(zones);
+            Assert.True(s.Spend(Balance.StaminaMax));
             Assert.False(s.IsFatigued);
-            Assert.Equal(0, s.SpeedZones.Count);
-            Assert.Equal(1.0f, s.SpeedZones.Value, 3);
+            Assert.Equal(1, zones.Count);
+            Assert.Equal(.5f, zones.Value);
+            s.ApplyNetworkSnapshot(50, 0, 2.5f);
+            s.ApplyNetworkSnapshot(50, 0, 2.5f);
+            Assert.False(s.IsFatigued);
+            Assert.Equal(0, s.FatigueLeft);
+            Assert.Equal(1, zones.Count);
+            Assert.Equal(.5f, zones.Value);
+            s.ApplyNetworkSnapshot(50, 0, 0);
+            Assert.Equal(1, zones.Count);
         }
 
-        /// <summary>Empty to full: the pool over the regen rate, once the delay has passed.</summary>
         [Fact]
-        public void EmptyToFull_TakesPoolOverRegenRate()
+        public void EmptyToFullIncludesOnlyTheNormalRegenDelay()
         {
-            var s = DrainedToFatigue();
-            const float dt = 1.0f / 60.0f;
-
-            // Clear the fatigue window first: no regen happens inside it.
-            for (float t = 0; t < Balance.FatigueTime + dt; t += dt)
-            {
-                s.Step(dt, moving: false, sprintHeld: false);
-                s.StepFatigue(dt);
-            }
-            Assert.False(s.IsFatigued);
-
-            float refill = 0.0f;
-            while (s.Current < Balance.StaminaMax - 0.01f && refill < 10.0f)
+            var s = DrainedToEmpty();
+            const float dt = .01f;
+            float refill = 0;
+            while (s.Current < Balance.StaminaMax - .01f && refill < 10)
             {
                 s.Step(dt, moving: false, sprintHeld: false);
                 refill += dt;
             }
-
-            // ⚠️ THE REGEN DELAY IS ALREADY SPENT BY THE TIME FATIGUE ENDS, and that is
-            // the behaviour rather than an accident: the idle timer keeps counting THROUGH
-            // the fatigue window even though the bar is locked, so regen begins on the
-            // frame the lockout expires instead of a further second later. Adding the
-            // delay on top here was wrong, and Design.md's measured 2.97 s says so: the
-            // pool over the rate is 3.0 s, and it lands there directly.
-            Assert.Equal(Balance.StaminaMax / Balance.StaminaRegenRate, refill, 1);
-            Assert.Equal(2.5f, refill, 1);
+            Assert.InRange(refill, 3.48f, 3.52f);
+            Assert.False(s.IsFatigued);
         }
 
         /// <summary>
@@ -214,12 +179,12 @@ namespace TumbangPreso.Core.Tests
         }
 
         [Fact]
-        public void NetworkStaminaEmptyOrFatiguedCorrectionStillEndsSprint()
+        public void NetworkStaminaEmptyCorrectionEndsSprintWithoutFatigue()
         {
             var stamina = new Stamina();
             stamina.Step(.1f, moving: true, sprintHeld: true);
             stamina.ApplyNetworkSnapshot(0, 0, Balance.FatigueTime);
-            Assert.False(stamina.IsSprinting); Assert.True(stamina.IsFatigued);
+            Assert.False(stamina.IsSprinting); Assert.False(stamina.IsFatigued);
             stamina.ApplyNetworkSnapshot(Balance.StaminaMax, 0, 0);
             Assert.False(stamina.IsSprinting);
             stamina.Step(.1f, moving: true, sprintHeld: true);
@@ -236,8 +201,8 @@ namespace TumbangPreso.Core.Tests
         [Fact]
         public void TagPenalty_RefillsTheBarAndClearsFatigue()
         {
-            var s = DrainedToFatigue();
-            Assert.True(s.IsFatigued);
+            var s = DrainedToEmpty();
+            Assert.False(s.IsFatigued);
 
             s.RefillAndClearFatigue();
 
@@ -271,7 +236,8 @@ namespace TumbangPreso.Core.Tests
         {
             float seconds = Balance.StaminaMax / Balance.StaminaDrainRate;
             Assert.Equal(2.5f, seconds, 4);
-            Assert.Equal(12.5f, Balance.AttackerRunSpeed * seconds, 4);
+            Assert.Equal(9.375f, Balance.AttackerRunSpeed * seconds, 4);
+            Assert.Equal(14.0625f, Balance.DefenderRunSpeed * seconds, 4);
         }
 
         /// <summary>
@@ -902,9 +868,8 @@ namespace TumbangPreso.Core.Tests
             int ticks = (int)(Balance.RoundTime / Balance.DefenseTickInterval);
             Assert.Equal(900, ticks * Balance.ScoreDefensePerTick);
 
-            // ⚠️ AND THE ROTATION CAPS IT STRUCTURALLY. Everyone is taya twice in the default match, so
-            // the passive ceiling spans two defender rounds.
-            Assert.Equal(2, CountRoundsDefending(slot: 0));
+            // Each player is taya once in the four-round default match.
+            Assert.Equal(1, CountRoundsDefending(slot: 0));
         }
 
         // ===================================================================
@@ -1166,7 +1131,7 @@ namespace TumbangPreso.Core.Tests
             Assert.Equal(2.5f, Balance.TayaCampWarningTime);
             Assert.Equal(1.5f, Balance.TayaCampRadius);
             Assert.Equal(2.0f, Balance.TayaCampClearRadius);
-            Assert.Equal(2.5f, Balance.FatigueTime);
+            Assert.Equal(0f, Balance.FatigueTime);
             Assert.Equal(1f, Balance.FatigueSpeedScale);
         }
 
@@ -1254,12 +1219,12 @@ namespace TumbangPreso.Core.Tests
         // helpers
         // ===================================================================
 
-        private static Stamina DrainedToFatigue()
+        private static Stamina DrainedToEmpty()
         {
             var s = new Stamina();
             const float dt = 1.0f / 60.0f;
             int guard = 0;
-            while (!s.IsFatigued && guard++ < 2000)
+            while (s.Current > 0 && guard++ < 2000)
                 s.Step(dt, moving: true, sprintHeld: true);
             return s;
         }

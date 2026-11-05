@@ -368,7 +368,7 @@ namespace TumbangPreso.UI.Hub
             HubKit.Stretch(symbol.rectTransform, 40);
             HubKnit.RimOver(HubKnit.FaceOf(tile));
 
-            var words = HubKnit.Words(panel, "Description", string.IsNullOrEmpty(ability.Description) ? ability.Summary : ability.Description,
+            var words = HubKnit.Words(panel, "Description", string.IsNullOrEmpty(ability.Description) ? ability.Summary : ability.KeyedDescription,
                                       36, HubKnit.KitCream, TextAnchor.UpperLeft, false);
             HubKnit.In(words.rectTransform, 400, 218, 700, 220);
 

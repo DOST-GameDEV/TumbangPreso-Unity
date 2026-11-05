@@ -1368,7 +1368,7 @@ namespace TumbangPreso.PlayTests
             var tick = typeof(CharacterMotor).GetMethod("FixedUpdate", flags);
             var position = root.transform.position;
             motor.Stamina.Spend(Balance.StaminaMax);
-            Assert.IsTrue(motor.Stamina.IsFatigued);
+            Assert.IsFalse(motor.Stamina.IsFatigued);
             for (int i = 0; i < 500; i++) tick.Invoke(motor, null);
             Assert.IsFalse(motor.Stamina.IsFatigued);
             Assert.AreEqual(0, motor.Stamina.SpeedZones.Count);

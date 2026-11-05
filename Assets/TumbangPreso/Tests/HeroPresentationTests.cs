@@ -251,7 +251,12 @@ namespace TumbangPreso.Tests
                     // SUPERNOVA at 120. The hold-to-aim pass on that date pushed MAGNET to 177
                     // and HEX to 142 before this bound existed, which is a fifth line and a half
                     // drawn through the card below them.
-                    Assert.LessOrEqual(ability.Description.Length, 125,
+                    //
+                    // 175 since 2026-11-05: the owner asked for VALORANT-style lines written from what
+                    // each ability actually does, with the player's own key icons ("PRESS {KEY} to ...",
+                    // drawn by `UI.InlinePromptText`), allowed past 125 and a taller reference that grows
+                    // to fit; the longest is 170 with its marks.
+                    Assert.LessOrEqual(ability.Description.Length, 175,
                         $"{hero}: {ability.Name}'s description is {ability.Description.Length} " +
                         "characters. The inspect tray body wraps and OVERFLOWS rather than " +
                         "truncating, so anything over about four lines draws over the card " +

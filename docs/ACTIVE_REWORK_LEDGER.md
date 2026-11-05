@@ -12,3 +12,6 @@ BANAUE-PERF-1105 is complete on main. [TODO](TODO.md) remains the only active qu
   only temporarily and are deleted after; restore the four build-touched settings files after a direct build.
 - Keep canonical checkout on main. No reset, clean or force push.
 - [Previous checkpoint](reports/banaue-perf-2026-11-05/checkpoint-before.md).
+
+- Also on main: the other machine's movement, ability reference and tooltip publication (cf9cbb565); its
+  owner review is open. [Its checkpoint](reports/banaue-perf-2026-11-05/checkpoint-other-machine.md).

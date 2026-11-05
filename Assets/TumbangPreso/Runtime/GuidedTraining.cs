@@ -1199,7 +1199,7 @@ namespace TumbangPreso
         private string AbilityDescription(HeroAbilitySystem.Slot slot)
         {
             var ability = Ability(slot);
-            return ability != null ? ability.Description : "Activate the highlighted power.";
+            return ability != null ? ability.KeyedDescription : "Activate the highlighted power.";
         }
 
         private HeroAbility Ability(HeroAbilitySystem.Slot slot)

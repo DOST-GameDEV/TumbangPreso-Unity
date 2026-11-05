@@ -423,7 +423,11 @@ namespace TumbangPreso
             if (_skill2 != null) ReadHeroButton(intent, _skill2, Verb.Skill2);
             if (_ultimate != null) ReadHeroButton(intent, _ultimate, Verb.Ultimate);
             if (_interact != null)
-                intent.Set(Verb.Interact, !ConsumeReadyControl(_interact, ref _readyInteractHeld) && ReadButton(_interact,Verb.Interact));
+            {
+                bool interact = !ConsumeReadyControl(_interact, ref _readyInteractHeld) && ReadButton(_interact,Verb.Interact);
+                // While the held power reference is open, its key turns the reference's page instead (owner, 2026-11-05).
+                intent.Set(Verb.Interact, interact && !UI.TumpPowerReadout.ReferenceOpen);
+            }
 
             var visual = _motor.GetComponent<Visual.CharacterVisual>();
             if (visual != null && visual.Companion != null && visual.Companion.IsPossessed)
