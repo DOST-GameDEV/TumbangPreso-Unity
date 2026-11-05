@@ -49,9 +49,16 @@ namespace TumbangPreso.EditorTools.MapKit
             var written = new HashSet<string>();
             int groups = 0, culled = 0, land = 0, landMissing = 0; long before = 0, l1 = 0, l2 = 0;
             var cache = new Dictionary<(Mesh, int), Mesh>();
+            // ⚠️ A FAR HOUSE'S LOW COPY CAN SIT BESIDE ITS GROUP, NOT UNDER IT (FarTown parents it to the mesh's parent, which
+            // is outside the group when the mesh is on the house root). The parent check missed `house_long far`, which got a
+            // second LODGroup of its own and was then claimed by two groups (Unity warning, Banaue, 2026-11-05).
+            var grouped = new HashSet<Renderer>();
+            foreach (var existing in root.GetComponentsInChildren<LODGroup>(true))
+                foreach (var lod in existing.GetLODs()) foreach (var member in lod.renderers) if (member != null) grouped.Add(member);
             foreach (var r in root.GetComponentsInChildren<MeshRenderer>(true).ToList())
             {
                 if (r == null || !r.enabled || !r.gameObject.activeInHierarchy) continue;
+                if (grouped.Contains(r)) continue;
                 if (!GameObjectUtility.GetStaticEditorFlags(r.gameObject).HasFlag(StaticEditorFlags.BatchingStatic)) continue;
                 if (r.GetComponentInParent<LODGroup>(true) != null) continue;   // the far houses' own (FarTown) and the art's
                 if (!r.TryGetComponent<MeshFilter>(out var mf) || mf.sharedMesh == null || !mf.sharedMesh.isReadable) continue;

@@ -68,18 +68,18 @@ namespace TumbangPreso.CameraSystem
             // Keep the selected history owner for recovery, but consume no samples
             // while disabled. A new capture window must not bridge the missing time.
             if(_history!=null)_history.Sampled-=Sample;
-            _props.Clear();_desiredProps.Clear();_pending.Clear();_clips.Clear();
+            _props.Clear();_desiredProps.Clear();_pending.Clear();_clips.Clear();_encoding.Clear();
             _sounds.Clear();_fields.Clear();_fieldIds.Clear();_fieldSequence=0;
             _match=0;_round=0;_unsafeAt=-100;_propsScanAt=0;
         }
-        private void Update(){_local?.Tick();CheckIdentity();}
+        private void Update(){_local?.Tick();CheckIdentity();PublishEncoded();}
         internal void CaptureSceneryRenderFrame(float time)=>_local?.SceneryFrame(time);
         private void CheckIdentity()
         {
             var match=GameServices.Match;
             long identity=match!=null&&(match.MatchInProgress||match.RoundNumber>0)?match.PresentationMatchId:0;int round=match!=null?match.RoundNumber:0;
             bool changedMatch=identity!=_match;
-            if(changedMatch){_match=identity;_sequence=0;_clips.Clear();}
+            if(changedMatch){_match=identity;_sequence=0;_clips.Clear();_encoding.Clear();}
             if(changedMatch||round!=_round){_round=round;_props.Clear();_desiredProps.Clear();_pending.Clear();_sounds.Clear();_unsafeAt=-100;_propsScanAt=0;_fieldIds.Clear();_fields.Clear();_fieldSequence=0;}
         }
         private void RecordSound(string id,Vector3 position,float pitch,float gain)
@@ -339,16 +339,38 @@ namespace TumbangPreso.CameraSystem
                 Mode=UI.SceneFlow.SelectedMode,Map=SceneManager.GetActiveScene().name,Reason=pending.Reason,
                 Start=pending.Start,End=pending.End,Contact=pending.Contact,Objects=objects.ToArray(),FieldFrames=frames.ToArray(),
                 Sounds=_sounds.Where(c=>c.Time>=pending.Start&&c.Time<=pending.End).ToArray()};
-            try
+            // ⚠️ ENCODE OFF THE MAIN THREAD (Banaue lag spikes, 2026-11-05). `Encode` writes every recorded float and then
+            // decodes the whole clip again to prove it is valid: 70 to 90 ms and about 15 MB of garbage on the host, in
+            // one LateUpdate, 1.4 s after every catch moment. The clip is plain managed data from here on (nothing above
+            // touches it again), so a worker encodes it and `PublishEncoded` hands it on from Update.
+            var encoding=clip;
+            _encoding.Add(new ClipEncoding{Clip=clip,Importance=pending.Importance,Match=_match,Bytes=System.Threading.Tasks.Task.Run(()=>encoding.Encode())});
+        }
+        private sealed class ClipEncoding
+        {
+            public RecordedMatchClip Clip;public int Importance;public long Match;public System.Threading.Tasks.Task<byte[]> Bytes;
+        }
+        private readonly List<ClipEncoding> _encoding=new List<ClipEncoding>(Capacity);
+        private void PublishEncoded()
+        {
+            for(int i=0;i<_encoding.Count;)
             {
-                var retained=new Retained(clip,clip.Encode(),pending.Importance);
+                var item=_encoding[i];if(!item.Bytes.IsCompleted){i++;continue;}
+                _encoding.RemoveAt(i);
+                if(item.Match!=_match||_match<=0)continue;
+                if(item.Bytes.IsFaulted||item.Bytes.IsCanceled)
+                {
+                    var error=item.Bytes.Exception?.GetBaseException();
+                    if(error is System.IO.InvalidDataException){LastSkip=error.Message;continue;}
+                    LastSkip="Replay encoding failed: "+(error?.Message??"cancelled");if(error!=null)Debug.LogException(error);continue;
+                }
+                var retained=new Retained(item.Clip,item.Bytes.Result,item.Importance);
                 RecordedClip?.Invoke(retained);
                 _clips.Add(retained);_clips.Sort((a,b)=>b.Importance!=a.Importance?b.Importance.CompareTo(a.Importance):b.Clip.Id.CompareTo(a.Clip.Id));
                 // The newest moment is always kept, whatever its rank: it is the one a spectator on another machine asks to see.
                 if(_clips.Count>Capacity)_clips.RemoveAt(_clips[_clips.Count-1]==retained?_clips.Count-2:_clips.Count-1);
                 LastSkip=null;if(_clips.Contains(retained)){RetainedClip?.Invoke(retained);Net.MatchRpc.Instance?.StageReplay(retained);}
             }
-            catch(System.IO.InvalidDataException error){LastSkip=error.Message;}
         }
     }
 }

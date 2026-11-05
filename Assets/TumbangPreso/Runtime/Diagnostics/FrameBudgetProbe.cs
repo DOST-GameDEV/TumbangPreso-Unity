@@ -49,6 +49,7 @@ namespace TumbangPreso.Diagnostics
         private static string _output;
         private static string[] _maps;
         private static float _seconds = 30f;
+        private static bool _spikeScripts;
         private static bool _trace, _noWorldAO, _cascadeShots, _lookTests, _viewFps, _liveMap;
         private static int _cascades = -1, _width, _height, _tier = 2;
         /// <summary>A benchmark run goes straight to the round, without the arrival film; the game itself never sets this.</summary>
@@ -94,6 +95,7 @@ namespace TumbangPreso.Diagnostics
             _maps = maps >= 0 && maps + 1 < args.Length ? args[maps + 1].Split(',') : null;
             SkipArrival = true;
             _trace = Array.IndexOf(args, "-tp-trace") >= 0;
+            _spikeScripts = Array.IndexOf(args, "-tp-spike-scripts") >= 0; TumbangPreso.CameraSystem.MatchPoseHistory.DiagnoseSpikes = _spikeScripts;
             _noWorldAO = Array.IndexOf(args, "-tp-no-world-ao") >= 0;
             _lookTests = Array.IndexOf(args, "-tp-look-tests") >= 0;
             _liveMap = Array.IndexOf(args, "-tp-live-ao") >= 0;   // a baked map runs its screen AO instead, for an A/B
@@ -498,6 +500,22 @@ namespace TumbangPreso.Diagnostics
             var markerSum = new double[recorders.Length];
             var timings = new FrameTiming[1];
             var trace = _trace ? new List<float[]>(20000) : null;
+            // -tp-spike-scripts (Banaue lag spikes, 2026-11-05): every script invocation and coroutine marker the
+            // player has registered by now, so each frame over 35 ms names the scripts it spent its time in.
+            var scriptRecorders = new List<ProfilerRecorder>(); var scriptNames = new List<string>();
+            var spikeLog = _spikeScripts ? new StringBuilder("t,ms,gcKB | top script markers (ms)\n") : null;
+            if (spikeLog != null)
+            {
+                var handles = new List<Unity.Profiling.LowLevel.Unsafe.ProfilerRecorderHandle>(); Unity.Profiling.LowLevel.Unsafe.ProfilerRecorderHandle.GetAvailable(handles);
+                foreach (var handle in handles)
+                {
+                    var description = Unity.Profiling.LowLevel.Unsafe.ProfilerRecorderHandle.GetDescription(handle);
+                    string name = description.Name;
+                    if (name == null || !(name.EndsWith("[Invoke]") || name.Contains("[Coroutine") || name.StartsWith("TP."))) continue;
+                    scriptRecorders.Add(ProfilerRecorder.StartNew(description.Category, name, 1)); scriptNames.Add(name);
+                }
+                spikeLog.Append("# ").Append(scriptNames.Count).Append(" script markers\n");
+            }
             try
             {
                 for (float t = 0; t < _seconds; t += Time.unscaledDeltaTime)
@@ -522,6 +540,17 @@ namespace TumbangPreso.Diagnostics
                         if (timings[0].gpuFrameTime > 0) gpu.Add((float)timings[0].gpuFrameTime);
                     }
                     if (gc.Valid) { gcBytes += gc.LastValue; if (gc.LastValue > 0) gcFrames++; }
+                    if (spikeLog != null && Time.unscaledDeltaTime > .035f)
+                    {
+                        var top = new List<(double ms, string name)>();
+                        for (int i = 0; i < scriptRecorders.Count; i++)
+                            if (scriptRecorders[i].Valid && scriptRecorders[i].LastValue > 1000000) top.Add((scriptRecorders[i].LastValue * 1e-6, scriptNames[i]));
+                        top.Sort((a, b) => b.ms.CompareTo(a.ms));
+                        spikeLog.Append(t.ToString("F2")).Append(',').Append((Time.unscaledDeltaTime * 1000f).ToString("F0")).Append(',')
+                            .Append(gc.Valid ? (gc.LastValue / 1024).ToString() : "-1").Append(" |");
+                        for (int i = 0; i < Mathf.Min(8, top.Count); i++) spikeLog.Append(' ').Append(top[i].name).Append('=').Append(top[i].ms.ToString("F1"));
+                        spikeLog.Append('\n');
+                    }
                     if (setpass.Valid) sp += setpass.LastValue;
                     if (draws.Valid) dc += draws.LastValue;
                     for (int i = 0; i < recorders.Length; i++)
@@ -531,6 +560,8 @@ namespace TumbangPreso.Diagnostics
             finally
             {
                 foreach (var r in recorders) r.Dispose();
+                foreach (var r in scriptRecorders) r.Dispose();
+                if (spikeLog != null) File.WriteAllText(Path.Combine(_output, map + "-spikes.txt"), spikeLog.ToString());
                 gc.Dispose(); setpass.Dispose(); draws.Dispose();
             }
             if (trace != null)

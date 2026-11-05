@@ -439,6 +439,45 @@ namespace TumbangPreso.Visual
             }
         }
 
+        /// <summary>What comes off at each step of the peel (`PaeteRootBands.RootPeel`), stage by stage.</summary>
+        public enum Peel { Leaf, Flower, OuterRoot, InnerRoot }
+
+        /// <summary>
+        /// ONE PIECE OF THE HOLD TORN OFF, while the prisoner is still in it (owner, 2026-11-05: *"remove shit off of u"*).
+        /// Small next to the break-out (that is earned at the end): a leaf or the flower flicked off and fluttering down, or a
+        /// length of root torn loose with a few pale splinters and chips. <paramref name="size"/> is the body's girth against
+        /// Sean's (`PaeteRootBands.SetBody`); <paramref name="height"/> is where on the legs it came off, in the body's metres.
+        /// </summary>
+        public static void PeelOff(Vector3 feet, Quaternion facing, Peel what, int index, float size, float height)
+        {
+            float side = index % 2 == 0 ? 1f : -1f;
+            Vector3 dir = facing * Out(40f + 95f * index + (what == Peel.InnerRoot ? 180f : 0f));
+            Vector3 from = feet + dir * (LegHalfWidth * size) + Vector3.up * height;
+            if (what == Peel.Leaf || what == Peel.Flower)
+            {
+                var fall = PaeteLeafFall.Begin("PaeteEmbracePeelLeaf", feet.y);
+                int count = what == Peel.Flower ? 3 : 1;
+                for (int i = 0; i < count; i++)
+                    fall.Add(what == Peel.Flower ? PetalMesh(size) : LeafMesh(index + i, size), what == Peel.Flower ? Petal : (index % 2 == 0 ? Leaf : LeafDark),
+                             from + Vector3.up * (0.03f * i), dir * (1.4f + 0.3f * i) + Vector3.up * (2.4f + 0.5f * i), 0.02f * i, 1.0f + 0.2f * i, 0.18f, 1.3f * (index + i));
+                return;
+            }
+            var bits = PaeteBits.Begin("PaeteEmbracePeelRoot", feet, feet.y);
+            bool outer = what == Peel.OuterRoot;
+            var mesh = Shard(outer ? 150f : -30f, 70f, (outer ? 0.066f : 0.072f) * size, LegHalfWidth * size, LegHalfDepth * size, out Vector3 middle);
+            Vector3 outward = facing * new Vector3(middle.x, 0f, middle.z).normalized;
+            bits.Add(mesh, outer ? Bark : Wood, facing * middle + Vector3.up * height, outward * 2.2f + Vector3.up * 3.0f,
+                     new Vector3(260f, 300f * side, 120f), 0f, 0.9f, 13f, 0.7f);
+            for (int i = 0; i < 4; i++)
+            {
+                Vector3 d = facing * Out((outer ? 160f : -20f) + 25f * i * side);
+                Vector3 v = d * (2.0f + 0.4f * i) + Vector3.up * (2.8f + 0.5f * i);
+                if (i < 3) bits.Add(Splinter((0.18f + 0.03f * i) * size), Heart, d * (0.4f * size) + Vector3.up * height, v, new Vector3(560f - 60f * i, 240f, 130f), 0.01f * i, 0.7f, 13f, 0.9f);
+                else bits.Add(PaeteBloomFx.Chip(0.06f * size), Groove, d * (0.4f * size) + Vector3.up * height, v * 0.8f, new Vector3(480f, 260f, 90f), 0.02f, 0.7f, 14f, 0.6f);
+            }
+            PaeteInkRing.Spawn(from, Vector3.up, 0.20f * size, 0.55f * size, 0.025f, Dust, 0.30f, 0f, 3, Vector3.up * 0.2f, 1f, 80f * side);
+        }
+
         /// <summary>
         /// THE ROOTS LET GO (the tree sleeps, or a tag ends the hold): nothing snaps. The bands slacken off the legs and
         /// draw back down into the court where they stood (<see cref="PaeteRootRelease"/>), a ring of dust closes over the
@@ -977,6 +1016,19 @@ namespace TumbangPreso.Visual
         private readonly Transform[] _lumps = new Transform[Roots.Length * 2];
         private readonly List<Vector3> _points = new List<Vector3>();
         private readonly List<float> _radii = new List<float>();
+        // The prisoner's own legs against Sean's, which the keys were laid round (`LegHalfWidth`): wide, tall, deep, girth.
+        private float _sx = 1f, _sy = 1f, _sz = 1f, _sg = 1f;
+
+        /// <summary>
+        /// EVERY BODY IS ITS OWN SIZE (owner, 2026-11-05: *"iba iba body sizes nila and type"*). The keys were laid round
+        /// Sean's legs; <paramref name="wide"/>, <paramref name="tall"/> and <paramref name="deep"/> are this body's legs over
+        /// his (`PaeteRootCoil.MeasureLegs`), so a broad body and a slight one are each wrapped at their own trousers.
+        /// </summary>
+        public void SetBody(float wide, float tall, float deep)
+        {
+            _sx = Mathf.Clamp(wide, 0.55f, 1.9f); _sy = Mathf.Clamp(tall, 0.55f, 1.9f); _sz = Mathf.Clamp(deep, 0.55f, 1.9f);
+            _sg = Mathf.Sqrt((_sx + _sz) * 0.5f * _sy);
+        }
 
         public PaeteRootBands(Transform parent)
         {
@@ -1006,28 +1058,28 @@ namespace TumbangPreso.Visual
         }
 
         /// <summary>A root's centreline <paramref name="f"/> samples along (four to a key), drawn in by <paramref name="cinch"/> where it is on the legs.</summary>
-        private static Vector3 At(Vector4[] keys, float f, float cinch, out float girth, out Vector3 outward)
+        private Vector3 At(Vector4[] keys, float f, float cinch, out float girth, out Vector3 outward)
         {
             int k = Mathf.Clamp(Mathf.FloorToInt(f / Per), 0, keys.Length - 2);
             Vector4 a = Vector4.LerpUnclamped(keys[k], keys[k + 1], f / Per - k);
             // Its way out of the court stays planted: only what lies on the legs tightens.
             float tight = PaeteEmbraceFx.OnBody(a.y);
-            Vector3 p = PaeteEmbraceFx.Hug(a.x * Mathf.Deg2Rad, PaeteEmbraceFx.LegHalfWidth, PaeteEmbraceFx.LegHalfDepth) * (a.z * Mathf.Lerp(1f, cinch, tight));
+            Vector3 p = PaeteEmbraceFx.Hug(a.x * Mathf.Deg2Rad, PaeteEmbraceFx.LegHalfWidth * _sx, PaeteEmbraceFx.LegHalfDepth * _sz) * (a.z * Mathf.Lerp(1f, cinch, tight));
             outward = p.sqrMagnitude > 1e-6f ? p.normalized : Vector3.forward;
-            p.y = a.y;
-            girth = a.w;
+            p.y = a.y * _sy;
+            girth = a.w * _sg;
             return p;
         }
 
-        private static Vector3 CreeperAt(float u, float cinch, out Vector3 outward)
+        private Vector3 CreeperAt(float u, float cinch, out Vector3 outward)
         {
             float y = 0.04f + 0.50f * u + 0.025f * Mathf.Sin(u * 11f);
             float tight = PaeteEmbraceFx.OnBody(y);
             // It starts a step out on the court and is strung OVER the roots, a finger off the trousers between them.
             float away = 1.17f + 0.28f * (1f - Mathf.Clamp01(u * 8f));
-            Vector3 p = PaeteEmbraceFx.Hug((70f + 520f * u) * Mathf.Deg2Rad, PaeteEmbraceFx.LegHalfWidth, PaeteEmbraceFx.LegHalfDepth) * (away * Mathf.Lerp(1f, cinch, tight));
+            Vector3 p = PaeteEmbraceFx.Hug((70f + 520f * u) * Mathf.Deg2Rad, PaeteEmbraceFx.LegHalfWidth * _sx, PaeteEmbraceFx.LegHalfDepth * _sz) * (away * Mathf.Lerp(1f, cinch, tight));
             outward = p.sqrMagnitude > 1e-6f ? p.normalized : Vector3.forward;
-            p.y = y;
+            p.y = y * _sy;
             return p;
         }
 
@@ -1035,8 +1087,21 @@ namespace TumbangPreso.Visual
         /// <paramref name="age"/> is seconds since the roots took hold; <paramref name="release"/> 0 while they hold and up
         /// to 1 as they let go and draw back under the court; <paramref name="fighting"/> while the prisoner strains.
         /// </summary>
-        public void Draw(float age, float release, bool fighting)
+        public void Draw(float age, float release, bool fighting) => Draw(age, release, fighting, 0f);
+
+        // THE PEEL (owner, 2026-11-05: *"when u hold f u slowly like remove shit off of u"*). How far the prisoner has
+        // fought out of the hold, 0 to 1, tears the binding off in a readable order: the creeper and its leaves first (the
+        // light stuff), the flower, then the outer root unwinds from its tip, flailing loose, then the inner one. What is left
+        // at the top of the hold is two stubs at the shins, which the break-out snaps (`PaeteEmbraceFx.BreakOut`).
+        public const float CreeperTearFrom = 0.06f, CreeperTearTo = 0.32f, FlowerPops = 0.42f;
+        public static readonly float[] LeafPops = { 0.12f, 0.19f, 0.26f };
+        public static readonly Vector2[] RootPeel = { new Vector2(0.58f, 0.96f), new Vector2(0.34f, 0.78f) };
+        private static float Window(float p, float from, float to) => Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(from, to, p));
+
+        /// <summary><paramref name="peel"/>: how far the prisoner has fought out of the hold, 0 to 1 (see <see cref="RootPeel"/>).</summary>
+        public void Draw(float age, float release, bool fighting, float peel)
         {
+            peel = Mathf.Clamp01(peel);
             float back = Mathf.SmoothStep(0f, 1f, release);
             float squeeze = PaeteEmbraceFx.Squeeze(age) * (1f - back);
             float swell = PaeteEmbraceFx.SqueezeSwell(age);
@@ -1048,9 +1113,12 @@ namespace TumbangPreso.Visual
                 float t = age - 0.05f * r;
                 float grown = Mathf.Clamp01(t / 0.30f);
                 grown = (1f - (1f - grown) * (1f - grown)) * (1f - back);
-                float cinch = 1f + 0.30f * (1f - GrowthVfx.Pop((t - 0.24f) / 0.20f)) + 0.32f * back - 0.05f * squeeze;
+                float unwound = Window(peel, RootPeel[r].x, RootPeel[r].y);
+                float cinch = 1f + 0.30f * (1f - GrowthVfx.Pop((t - 0.24f) / 0.20f)) + 0.32f * back - 0.05f * squeeze
+                              + 0.06f * peel + 0.24f * unwound;
                 lastCinch = cinch;
-                float span = (keys.Length - 1) * Per, end = grown * span;
+                // Unwound from the tip: what lay highest round the legs comes off first; the stub in the court stays.
+                float span = (keys.Length - 1) * Per, end = grown * span * (1f - 0.68f * unwound);
                 var lumpA = _lumps[r * 2]; var lumpB = _lumps[r * 2 + 1];
                 float heaved = Mathf.Max(0.001f, GrowthVfx.Pop(t / 0.16f) * (1f - Mathf.Clamp01(release * 1.2f - 0.2f)));
                 // Where it leaves the court: just short of its first knee.
@@ -1060,7 +1128,7 @@ namespace TumbangPreso.Visual
                 lumpB.localPosition = new Vector3(exit.x, 0.02f, exit.z) - across * 0.10f + exitOut * 0.06f;
                 lumpA.localRotation = Quaternion.Euler(0f, 40f + 70f * r, 0f);
                 lumpB.localRotation = Quaternion.Euler(0f, 130f - 50f * r, 0f);
-                lumpA.localScale = lumpB.localScale = Vector3.one * heaved;
+                lumpA.localScale = lumpB.localScale = Vector3.one * (heaved * _sg);
                 if (end < 0.6f) { _roots[r].Clear(); continue; }
                 _points.Clear(); _radii.Clear();
                 int last = Mathf.CeilToInt(end);
@@ -1068,11 +1136,19 @@ namespace TumbangPreso.Visual
                 {
                     float f = Mathf.Min(s, end);
                     Vector3 p = At(keys, f, cinch, out float girth, out Vector3 outward);
-                    float held = PaeteEmbraceFx.OnBody(p.y);
+                    float held = PaeteEmbraceFx.OnBody(p.y / _sy);
                     if (fighting)
                     {
-                        p += outward * (Mathf.Sin(age * 34f + r * 2f + s) * 0.016f * held);
-                        p.y += Mathf.Sin(age * 27f + r) * 0.006f * held;
+                        float shake = 1f + 1.4f * peel;
+                        p += outward * (Mathf.Sin(age * 34f + r * 2f + s) * 0.016f * shake * held * _sg);
+                        p.y += Mathf.Sin(age * 27f + r) * 0.006f * shake * held * _sy;
+                    }
+                    // The torn end whips about, loose of the legs, the more so the further it has come off.
+                    if (unwound > 0f)
+                    {
+                        float loose = Mathf.Clamp01(1f - (end - f) / 3f) * unwound;
+                        p += (outward * (0.05f + 0.06f * Mathf.Sin(age * 21f + r * 1.7f + s * 0.9f))
+                              + Vector3.up * (0.04f * Mathf.Sin(age * 17f + s))) * loose * _sg;
                     }
                     float along = f / span;
                     float bulge = swell >= 0f ? Mathf.Exp(-Mathf.Pow((along - swell) / 0.10f, 2f)) : 0f;
@@ -1086,7 +1162,7 @@ namespace TumbangPreso.Visual
             }
 
             // The creeper, a third of a second behind the roots it climbs.
-            float crept = Mathf.Clamp01((age - 0.30f) / 0.45f) * (1f - back);
+            float crept = Mathf.Clamp01((age - 0.30f) / 0.45f) * (1f - back) * (1f - Window(peel, CreeperTearFrom, CreeperTearTo));
             float creeperCinch = 1f + 0.30f * (1f - GrowthVfx.Pop((age - 0.34f) / 0.20f)) + 0.32f * back - 0.05f * squeeze;
             float creeperEnd = crept * CreeperSamples;
             if (creeperEnd < 1f) _creeper.Clear();
@@ -1104,7 +1180,8 @@ namespace TumbangPreso.Visual
             }
             for (int i = 0; i < CreeperLeaf.Length; i++)
             {
-                float shown = GrowthVfx.Pop((age - 0.55f - 0.09f * i) / 0.22f) * Mathf.Clamp01(crept * 1.3f - CreeperLeaf[i] * 0.3f) * (1f - back);
+                float shown = GrowthVfx.Pop((age - 0.55f - 0.09f * i) / 0.22f) * Mathf.Clamp01(crept * 1.3f - CreeperLeaf[i] * 0.3f) * (1f - back)
+                              * (peel >= LeafPops[i] ? 0f : 1f) * _sg;
                 Vector3 p = CreeperAt(CreeperLeaf[i], creeperCinch, out Vector3 outward);
                 _leaves[i].localPosition = p + outward * 0.02f;
                 // It lifts as the roots bear down, and settles.
@@ -1118,11 +1195,11 @@ namespace TumbangPreso.Visual
                 var leaf = _leaves[CreeperLeaf.Length];
                 leaf.localPosition = tip + Vector3.up * 0.04f;
                 leaf.localRotation = Quaternion.LookRotation((outward + Vector3.up * 0.9f).normalized, outward);
-                leaf.localScale = Vector3.one * Mathf.Max(0f, GrowthVfx.Pop((age - 0.62f) / 0.22f) * (1f - back));
+                leaf.localScale = Vector3.one * Mathf.Max(0f, GrowthVfx.Pop((age - 0.62f) / 0.22f) * (1f - back) * (peel >= RootPeel[0].x ? 0f : _sg));
                 Vector3 knee = At(Roots[1], FlowerKey * Per, lastCinch, out float girth, out Vector3 kneeOut);
                 _flower.localPosition = knee + kneeOut * (girth + 0.012f);
                 _flower.localRotation = Quaternion.FromToRotation(Vector3.up, (kneeOut + Vector3.up * 0.35f).normalized);
-                _flower.localScale = Vector3.one * Mathf.Max(0f, GrowthVfx.Pop((age - 0.80f) / 0.25f) * (1f - back) * (1f - 0.12f * squeeze));
+                _flower.localScale = Vector3.one * Mathf.Max(0f, GrowthVfx.Pop((age - 0.80f) / 0.25f) * (1f - back) * (1f - 0.12f * squeeze) * (peel >= FlowerPops ? 0f : _sg));
             }
         }
     }

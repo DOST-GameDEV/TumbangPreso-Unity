@@ -173,7 +173,7 @@ namespace TumbangPreso.CameraSystem
                     int width=Mathf.Clamp(Screen.width,960,1920), height=Mathf.Max(540,Mathf.RoundToInt(width*Screen.height/(float)Mathf.Max(1,Screen.width)));
                     _target=new RenderTexture(width,height,24,RenderTextureFormat.ARGB32) { name="SharedUltimateFrame" };
                     _target.Create(); _camera.targetTexture=_target; _picture.texture=_target;
-                    RefreshLiveFieldRoots();
+                    CollectLiveRoots(true);
                     ChooseShot();
                     SoundPlayed=_primary.Scene.StartSound();
                 }
@@ -240,13 +240,10 @@ namespace TumbangPreso.CameraSystem
                     var pet=actor.GetComponent<CharacterVisual>()?.Companion; if(pet!=null)Hide(pet.transform);
                 }
                 foreach(var shoe in _slippers)if(shoe!=null)Hide(shoe.transform);
-                foreach(var arms in Object.FindObjectsByType<ViewmodelArms>())Hide(arms.transform);
-                foreach(var effect in Object.FindObjectsByType<VfxRenderTag>())Hide(effect.transform);
-                foreach(var particles in Object.FindObjectsByType<ParticleSystemRenderer>())Hide(particles.transform);
-                foreach(var callout in Object.FindObjectsByType<ComicPopup>())Hide(callout.transform);
+                CollectLiveRoots(false);
+                foreach(var root in _liveRoots)Hide(root);
                 // Sprung blindfolds no longer appear in the replicated trap set.
                 foreach(var ghost in Abilities.NemuBlindfold.Live)if(ghost!=null)Hide(ghost.transform);
-                RefreshLiveFieldRoots();
                 foreach(var field in _liveFieldRoots)Hide(field);
                 if(WorldContactPresentation.Current!=null)Hide(WorldContactPresentation.Current.transform);
                 _primary.Body.ShowOnlyForCapture(true);_primary.Scene.SetVisibleForCapture(true);
@@ -267,6 +264,24 @@ namespace TumbangPreso.CameraSystem
                 }
                 finally { RestoreLiveVisibility(); }
             }
+        }
+        // ⚠️ THE SCENE SCAN IS NOT PER FRAME (Banaue lag, 2026-11-05). Fourteen-odd FindObjectsByType calls, each a whole-
+        // scene walk and an array, ran for every frame of an ultimate; on Banaue's dense scene that was garbage and
+        // main-thread time for the whole stage. The bodies are frozen while it plays, so the set of live arms, effects,
+        // particles, callouts and fields barely changes: rescan at 10 Hz and hide the cached roots every frame.
+        private const float LiveRootRescan = .1f;
+        private readonly List<Transform> _liveRoots = new List<Transform>(64);
+        private float _liveRootsUntil = float.NegativeInfinity;
+        private void CollectLiveRoots(bool force)
+        {
+            if(!force && Time.unscaledTime < _liveRootsUntil)return;
+            _liveRootsUntil = Time.unscaledTime + LiveRootRescan;
+            _liveRoots.Clear();
+            foreach(var arms in Object.FindObjectsByType<ViewmodelArms>())_liveRoots.Add(arms.transform);
+            foreach(var effect in Object.FindObjectsByType<VfxRenderTag>())_liveRoots.Add(effect.transform);
+            foreach(var particles in Object.FindObjectsByType<ParticleSystemRenderer>())_liveRoots.Add(particles.transform);
+            foreach(var callout in Object.FindObjectsByType<ComicPopup>())_liveRoots.Add(callout.transform);
+            RefreshLiveFieldRoots();
         }
         private void RefreshLiveFieldRoots()
         {

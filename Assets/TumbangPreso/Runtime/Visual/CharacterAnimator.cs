@@ -537,6 +537,7 @@ namespace TumbangPreso.Visual
             RestoreArrivalPose(); _arrivalWeight = 0; _arrivalBones = null;
             ClearIntroductionPose();
             ClearTagBody();
+            ClearRootedSquirm();
             ClearSlideBody();
             ClearResetRaise();
             ClearLocomotionArms();
@@ -575,6 +576,7 @@ namespace TumbangPreso.Visual
             RestoreArrivalPose();
             RestoreEdgeRecoveryPose();
             RestoreIntroductionPose();
+            RestoreRootedSquirm();
             RestoreCaught();
             RestoreTagWin();
             RestoreTagBody();
@@ -1048,6 +1050,7 @@ namespace TumbangPreso.Visual
             RestoreArrivalPose();
             RestoreEdgeRecoveryPose();
             RestoreIntroductionPose();
+            RestoreRootedSquirm();
             RestoreCaught();
             RestoreTagWin();
             RestoreTagBody();
@@ -1096,7 +1099,7 @@ namespace TumbangPreso.Visual
                 _chargeOffsetsApplied=true;_lastThrowPose=pose;
                 ApplyThrowBody(throwing);
             }
-            finally { ApplyLocomotionWeight(); ApplyLocomotionArms(); ApplyResetRaise(); ApplyTagBody(); ApplyTagWin(); ApplyCaught(); ApplySlideBody(); ApplyIntroductionPose(); ApplyEdgeRecoveryPose(); ApplyArrivalPose(); }
+            finally { ApplyLocomotionWeight(); ApplyLocomotionArms(); ApplyResetRaise(); ApplyTagBody(); ApplyTagWin(); ApplyCaught(); ApplyRootedSquirm(); ApplySlideBody(); ApplyIntroductionPose(); ApplyEdgeRecoveryPose(); ApplyArrivalPose(); }
         }
 
         private void RestoreChargeOffsets()
@@ -1547,7 +1550,9 @@ namespace TumbangPreso.Visual
             if (_motor.IsRooted && _clips.ContainsKey(RootedMotion.Struggle))
             {
                 Play(RootedMotion.Struggle, true);
-                var front = Front(); if (front.IsValid()) front.SetSpeed(_motor.IsStruggling ? 1.25f : 0.45f);
+                // Faster the further out (owner, 2026-11-05): from 1.1 when just caught to 2.0 at the snap; the fight itself
+                // is layered over it (`ApplyRootedSquirm`).
+                var front = Front(); if (front.IsValid()) front.SetSpeed(_motor.IsStruggling ? 1.1f + 0.9f * _motor.PresentedBreakFreeProgress : 0.45f);
                 _rootedPose = true; Blend(); HoldLastFrame(); return true;
             }
             if (_rootedPose) { _rootedPose = false; _current = null; }
