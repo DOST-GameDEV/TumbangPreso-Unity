@@ -70,6 +70,7 @@ def main():
     save("rim-cut", bm.cut_rim_art(99))
     heroes()
     held()
+    abilities()
 
 
 def heroes():
@@ -100,3 +101,53 @@ def held():
 
 if __name__ == "__main__":
     main()
+
+
+def abilities():
+    """The round abilities and the F1 reference plates (owner, 2026-11-07), at twice the board size. The disc is drawn
+    grey; the game lays the coloured edge (`disc-edge-*`, white, tinted gold or lime and filled round) and the
+    cooldown's grey (`disc-inner-*`, white, filled from the bottom) over it. The plate and its header box are
+    separate so a plate of any height keeps one header: `ref-head-cut` has the clean circle taken out round the mini
+    disc (its centre 6 from the plate's left and 68 from its top, at board size), `ref-head` is whole, for the page."""
+    from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageOps
+    K = 2
+    for name, d in (("skill", 112), ("ult", 148)):
+        save("disc-" + name, bm.disc_plate_art(d * K, 0, (0, 0, 0), edge=5 * K))
+        S, D = 3, d * K * 3
+        body = Image.new("L", (D, D)); ImageDraw.Draw(body).ellipse((0, 0, D - 1, D - 1), fill=255)
+        r = 5 * K * S
+        inner = Image.new("L", (D, D)); ImageDraw.Draw(inner).ellipse((r, r, D - 1 - r, D - 1 - r), fill=255)
+        edge = Image.new("RGBA", (D, D), (255, 255, 255, 0)); edge.putalpha(ImageChops.subtract(body, inner))
+        save("disc-edge-" + name, edge.resize((d * K, d * K), Image.LANCZOS))
+        cool = Image.new("RGBA", (D, D), (255, 255, 255, 0)); cool.putalpha(inner)
+        save("disc-inner-" + name, cool.resize((d * K, d * K), Image.LANCZOS))
+    # Plates at board size: the weave is cut at its own scale, and a crop twice as tall would run off its source.
+    W, H = 600, 200
+    save("ref-plate", bm.ref_plate_art(W, H, 0))
+    save("ref-head-cut", header_box(W, bm.REF_HEAD, cut=(6, 68, bm.REF_DISC / 2 + bm.REF_GAP)))
+    save("ref-head", header_box(W, bm.REF_HEAD, whole=True))
+
+
+def header_box(w, head, cut=None, whole=False, rad=14):
+    """The plate's nearly solid dark box alone, with its inner shadow, inside the plate's 3-unit stroke. `whole` rounds
+    its bottom corners too (a plate that is all header)."""
+    from PIL import Image, ImageChops, ImageDraw, ImageFilter
+    S = 3
+    h = head + (0 if whole else 12)
+    W, H = w * S, h * S
+    inner = Image.new("L", (W, H))
+    bottom = (head if whole else head + 40) * S
+    ImageDraw.Draw(inner).rounded_rectangle((3 * S, 3 * S, W - 1 - 3 * S, bottom - 1 - 3 * S), (rad - 3) * S, fill=255)
+    bx = Image.new("L", (W, H))
+    ImageDraw.Draw(bx).rectangle((0, 0, W, head * S), fill=255)
+    if cut:
+        cx, cy, r = cut
+        ImageDraw.Draw(bx).ellipse(((cx - r) * S, (cy - r) * S, (cx + r) * S, (cy + r) * S), fill=0)
+    bx = ImageChops.multiply(bx, inner)
+    im = Image.new("RGBA", (W, H), (0x2C, 0x2B, 0x35, 0))
+    im.putalpha(bx.point(lambda v: int(v * .9)))
+    shadow = ImageChops.invert(ImageChops.offset(bx, 0, 4 * S)).filter(ImageFilter.GaussianBlur(5 * S))
+    sh = ImageChops.multiply(shadow.point(lambda v: min(255, int(v * 1.5))), bx)
+    dark = Image.new("RGBA", (W, H), (0x08, 0x07, 0x0C, 255)); dark.putalpha(sh)
+    im.alpha_composite(dark)
+    return im.resize((w, h), Image.LANCZOS)

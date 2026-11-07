@@ -239,6 +239,20 @@ Uncommitted in this worktree: `Assets/TumbangPreso/Editor/TumpPosedPortrait.cs` 
 
 Teammate note: Matyu removed the owner's STOP notes from `AGENTS.md` and `CLAUDE.md` twice (`96d0b2427` on `QoLUpdates-v2`, `a6ded64cb` on main). Both times the merge kept the owner's notes. The owner keeps them.
 
+### State at the 2026-11-08 handoff
+
+Main was merged in at `a5e9c0fbe` (it had dropped the STOP notes again in `3dede18c3`; ours were kept). On `claude/ui-revamp`, not pushed: the Let's Play screen and the player record rows from their boards (`a26b38af9`), then uncommitted, in game:
+- Round abilities (owner, 2026-11-07): each power is a disc in the kill feed's plate material (`TumpPowerReadout.Discs.cs`, textures `live-hud/disc-*` from `tools/ui_artboards/export_live_hud.py abilities()`). The stroke is the state: gold all round when ready, lime filling clockwise while the ultimate charges, your colour while a power runs. A skill cooling down keeps a grey stroke and a light grey fill (30 per cent) over its inside draining from the top; its icon sits at 60 per cent under the seconds. The game still halves a not-ready icon's brightness (`TumpAbilitySymbol.Muted`); the owner keeps that.
+- F1 reference (`TumpPowerReadout.Reference.cs`, board `match-powers`): each power on a soft-cornered kill-feed plate over its disc, a dark header box holding the name with a clean weave circle cut round a small copy of the disc, its key under the mini disc, the ability's short `Summary` on the weave in regular Grandstander 28 (the match's 960 x 540 reading floor). Skills stack right with Q nearest, the ultimate centres over its disc, a header-only page plate on top: ATTACKING, the page key (Interact, F by default), DEFENDING dimmed. Mini disc icons are always full brightness.
+- Queue ticket: the cancel button centred on the stub, across and up and down (`HubQueue.cs`).
+- Record header avatar fills its frame, clipped to the card (`PlayerHub.RecordBook.cs`).
+- Tests updated for these: `OwnerSkillHudReferenceTests`, `TumpNativeHudTests.HeroPowerDetails...` (four-round default, cooldown refresh), `TumpUiCapture` (a painted seal draws no mesh), `AccessibilityControlTests.LargeAbilityReferences...`.
+- Key prompts are only the Xelu pack, through `InputGlyphs.For` (dark keys on dark plates, `onDark: false`).
+
+Boards added: `match-hud-discs` (the round abilities, approved), `match-hud-plates` (a rejected flat-plate trial, kept for reference). `boot_match.py` draws authored icons (`icon_art`), not dimmed captures.
+
+Still on old designs in game, next in this order (boards in the preview folder, all approved): hero screen and ability popup (`hub-hero`, `hub-ability`), story (`hub-story`, still the old cream page), skill tree (`hub-skilltree`), Next Round (`match-break`), Halftime (`match-halftime`; the capture currently lands on the results), results views (`match-result-standings`, `-yourmatch`, `-players`; the game draws a cream sheet), Next Court (`match-result-nextcourt`). Then training menu, guided training, spectator controls and chips, phone powers. Smaller gaps are in the 11-07 list above.
+
 ## Pipeline
 
 Run from this worktree; the owner's editor and other worktrees are never touched.

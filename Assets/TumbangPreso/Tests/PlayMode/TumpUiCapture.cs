@@ -180,7 +180,7 @@ namespace TumbangPreso.PlayTests
                     bool symbol = graphic is UI.TumpAbilitySymbol || graphic is UI.TumpSymbol || graphic is UI.TumpVerbSymbol
                         || graphic is UI.OwnerUiGlyph || graphic is UI.OwnerUiPaper || (graphic is UI.HomeMenuStroke home && home.Primary) || graphic is UI.PlayChoiceSurface
                         || graphic is UI.PreparationBoard || graphic is UI.PreparationReadyArt || graphic is UI.SettingsSwitchFace || graphic is UI.ProfileIndexTab
-                        || graphic is UI.OwnerScoreStrip || graphic is UI.OwnerAbilitySeal;
+                        || graphic is UI.OwnerScoreStrip || (graphic is UI.OwnerAbilitySeal seal && !seal.Painted);
                     bool portrait = graphic is UI.TumpSurface surface && surface.Shape == UI.TumpSurface.Form.Portrait;
                     if (!symbol && !portrait) continue;
                     var renderer = graphic.GetComponent<CanvasRenderer>();

@@ -220,10 +220,20 @@ namespace TumbangPreso.UI
                 if (_inlineBodies[i] == null) continue;
                 // The sentence with the key's own icon in it (a variant keeps its own words).
                 _inlineCosts[i].Show(cost, Actions[i]);
-                _inlineBodies[i].Show(string.IsNullOrEmpty(skill.VariantSummary) ? skill.Description : skill.VariantSummary, Actions[i]);
+                string sentence = string.IsNullOrEmpty(skill.VariantSummary) ? skill.Description : skill.VariantSummary;
+                _inlineBodies[i].Show(sentence, Actions[i]);
+                if (_plates) _plateLines[i].text = string.IsNullOrEmpty(skill.EffectiveSummary) ? FirstSentence(skill.Description).Replace("{KEY}", Hud.KeyLabelFor(Actions[i])) : skill.EffectiveSummary;
             }
             LayoutReference();
         }
+        private static string FirstSentence(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return text;
+            for (int k = 0; k < text.Length - 1; k++)
+                if ((text[k] == '.' || text[k] == '!') && text[k + 1] == ' ') return text.Substring(0, k + 1);
+            return text;
+        }
+
         public void OpenForCapture(HeroKit kit)
         {
             _captureReference = true;

@@ -129,7 +129,10 @@ namespace TumbangPreso.UI.Hub
             HubKnit.In(plate._line.rectTransform, 20, 76, 430, 36);
 
             plate._cancel = HubKnit.Button(root, "CancelQueue", null, Knit.Danger, () => hub.Host.CancelQueue(), HubStyle.Label, HubGlyph.Mark.Close);
-            HubKnit.In((RectTransform)plate._cancel.transform, 475, 49, 100, 72);
+            // Centred up and down on the ticket's yellow face (owner, 2026-11-07), slab included: measured in a capture, the
+            // face runs 6 to 118 of the plate and the drawn button sits 4 below its rect's top, so the rect starts 24 down.
+            // Across, centred between the tear line (450 of the ticket's 600) and the bite in its end, as the board places it.
+            HubKnit.In((RectTransform)plate._cancel.transform, 464, 24, 100, 72);
 
             plate._bots = HubKnit.Button(holder, "PlayWithBots", "PLAY WITH BOTS", Knit.Yellow, () =>
             {

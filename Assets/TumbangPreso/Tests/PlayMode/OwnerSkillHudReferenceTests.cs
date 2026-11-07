@@ -51,10 +51,12 @@ namespace TumbangPreso.PlayTests
             foreach(var seal in seals)
             {
                 seal.State(1,true,false,seal==seals[2]); Canvas.ForceUpdateCanvases();
-                var mesh=seal.canvasRenderer.GetMesh(); Assert.Greater(mesh.vertexCount,0);
+                // The round abilities (2026-11-07): the disc pictures draw the power, the seal keeps its state.
+                Assert.IsTrue(seal.Painted,"The disc pictures draw the power");
+                var disc=seal.transform.Find("Disc").GetComponent<Image>(); Assert.IsNotNull(disc.sprite,"Disc picture");
                 var rect=seal.rectTransform.rect;
                 Assert.AreEqual(rect.width,rect.height,.01f,"Circular faces retain square source rectangles");
-                Assert.LessOrEqual(mesh.bounds.size.x,rect.width+.5f,"Rim must stay inside its slot");
+                Assert.AreEqual(Image.Type.Filled,seal.transform.Find("DiscEdge").GetComponent<Image>().type,"The edge fills round with the state");
             }
             readout.Tick(system,true);
             Assert.IsNotNull(canvas.transform.HudFind("RoundClock"));

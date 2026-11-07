@@ -92,6 +92,7 @@ namespace TumbangPreso.UI
                 _glows[i].sprite = LiveHud.Picture(i == 2 ? "ring-glow-ult" : "ring-glow-skill"); _glows[i].raycastTarget = false; _glows[i].enabled = false;
                 _ownerDials[i] = OwnerUiLayout.Rect(group, "Power" + i).gameObject.AddComponent<OwnerAbilitySeal>();
                 _ownerDials[i].raycastTarget = false; OwnerUiLayout.Place(_ownerDials[i].rectTransform, 0, 0, size, size);
+                BuildDisc(i);
                 _symbols[i] = OwnerUiLayout.Rect(_ownerDials[i].transform, "PowerIcon").gameObject.AddComponent<TumpAbilitySymbol>();
                 OwnerUiLayout.Fill(_symbols[i].rectTransform);
                 // VISUAL-1.18: the match weight (see `TumpAbilitySymbol.HudStyle`).
@@ -243,7 +244,9 @@ namespace TumbangPreso.UI
                 bool drawn = AbilityIcons.Illustration(skill.Glyph) != null;
                 // A charging ultimate shows its icon whole, raised, with the percentage under it; a skill's number sits over a dimmed icon.
                 bool chargeNumber = i == 2 && !string.IsNullOrEmpty(state) && !ready && !aftermath;
-                _symbols[i].canvasRenderer.SetAlpha(string.IsNullOrEmpty(state) || chargeNumber ? 1 : .3f);
+                // Under a cooldown's number the icon stays readable (owner, 2026-11-07: "make the icon less transparent").
+                _symbols[i].canvasRenderer.SetAlpha(string.IsNullOrEmpty(state) || chargeNumber ? 1 : .6f);
+                PaintDisc(i, skill, kit, ready, skill.IsActive || aftermath, aftermath ? afterLeft / Mathf.Max(.01f, afterTotal) : skill.DurationRatio);
                 _symbols[i].rectTransform.anchoredPosition = new Vector2(0, chargeNumber ? 12 : 0);
                 _states[i].rectTransform.anchoredPosition = new Vector2(0, chargeNumber ? -30 : 0);
                 string binding = Hud.KeyLabelFor(Actions[i]); _keys[i].text = Hud.OnTouch ? "" : binding;

@@ -30,6 +30,7 @@ from bootkit import (INK, BUTTONS, CARD, CREAM, DARUMA, GRAND, LIME, MAROON, ROO
 from boot_menus import tape, warning_mark
 from functools import partial
 from bootkit import paint_card as _paint_card
+from bootkit import well
 paint_card = partial(_paint_card, pattern="checker")
 from boot_record import clock_art
 from boot_record import badge, edge, face, SEATS
@@ -95,7 +96,12 @@ def trim(im):
 
 @functools.lru_cache(maxsize=None)
 def _weave(dark, lit):
-    return weave(dark, lit)
+    """The weave at its full-screen scale, three screens wide (mirrored copies), so a long plate's crop never runs
+    off the end and leaves a flat band."""
+    one = weave(dark, lit)
+    out = Image.new(one.mode, (one.width * 3, one.height))
+    out.paste(one, (0, 0)); out.paste(ImageOps.mirror(one), (one.width, 0)); out.paste(one, (one.width * 2, 0))
+    return out
 
 
 def organic_mask(w, h, S, corner, tail=None, depth=0, seed=3):
@@ -433,7 +439,7 @@ def clock(b, m, cid):
     if not t:
         return
     b.group = "Clock"
-    timer(b, t[0]["text"], min(1, seconds(t[0]["text"]) / 90), "ROUND 1 OF 8")
+    timer(b, t[0]["text"], min(1, seconds(t[0]["text"]) / 90), "ROUND 1 OF 4")
 
 
 def see_through(im, alpha=.82):
@@ -630,6 +636,14 @@ def centred_art(b, im, cx, cy, key):
 
 def powers(b, m, cid):
     if not lay(m, "Power0"):
+        return
+    if PLATE_POWERS is None:
+        return
+    if DISC_POWERS:
+        disc_powers(b, m, cid)
+        return
+    if PLATE_POWERS:
+        plate_powers(b, m, cid)
         return
     b.group = "Powers"
     gold = PAINT["yellow"][1]
@@ -1231,6 +1245,434 @@ def held_sheet(b, m, cid):
         para(b, x + 34, y + 208, wrap_lines(desc, 28, w - 74), 28, 38, fill=CREAM, weight=500)
 
 
+# Held powers reference, the game's layout (owner, 2026-11-07): one dark panel, the page title top left
+# (ATTACKING or DEFENDING) with the key that flips it top right, then a column per power: the icon in a
+# sunburst disc, its name, its number on a plain tag, and what it does in a sunk well.
+
+REFERENCE = [  # (name, chip, key, description with {K} for the key cap)
+    ("UNSTOPPABLE", "40s COOLDOWN", "E", "PRESS {K} to INSTANTLY shake off stuns and negative effects, then gain Status Immunity. "
+                                         "Works while stunned, but not while Tagged."),
+    ("BOULDER", "35s COOLDOWN", "Q", "PRESS {K} while holding your slipper to coat it in stone. Your next throw Concusses the "
+                                     "player it hits, leaving them dizzy and sluggish."),
+    ("CONTINENTAL DRIFT", "15 CHARGE", "X", "PRESS {K} to slam the court, tearing earth down the lane to knock players away "
+                                            "and Concuss them. Then take MOUNTAIN FORM for heavier throws and Status Immunity."),
+]
+
+
+def keycap_art(letter, h=36):
+    """The game's own key prompt (the Xelu pack in `Resources/UI/input/xelu`, the light key, as `InputGlyphs.For`
+    draws on a dark ground), cropped to its ink and scaled to a height."""
+    im = Image.open(UI / "input/xelu/dark" / (letter + "_Key_Dark.png")).convert("RGBA")
+    im = im.crop(im.getchannel("A").getbbox())
+    return im.resize((max(1, round(im.width * h / im.height)), h), Image.LANCZOS)
+
+
+def inline_text(b, x, y, words, key, size, pitch, maxw, fill, key_h=34):
+    """Wrapped words where {K} becomes a key cap; each line is one text layer, caps placed between."""
+    f = font(GRAND, size, 600)
+    cap = keycap_art(key, key_h)
+    space = f.getlength(" ")
+    lines, line, w = [], [], 0
+    for tok in words.split():
+        tw = cap.width if tok == "{K}" else f.getlength(tok)
+        if line and w + space + tw > maxw:
+            lines.append(line); line, w = [], 0
+        w += (space if line else 0) + tw
+        line.append(tok)
+    if line:
+        lines.append(line)
+    for i, ln in enumerate(lines):
+        cx, cy = x, y + i * pitch
+        run = []
+        def flush():
+            nonlocal cx, run
+            if run:
+                s_ = " ".join(run)
+                b.write((cx, cy), s_, f, fill, ps_name(GRAND, 600), size, name="Effect")
+                cx += f.getlength(s_ + " ")
+                run = []
+        for tok in ln:
+            if tok == "{K}":
+                flush()
+                b.place("key-%s-%d" % (key, key_h), cap, cx, cy + (size * 1.25 - key_h) / 2 - 7, "Key")
+                cx += cap.width + space
+            else:
+                run.append(tok)
+        flush()
+
+
+def disc_art(d):
+    sun = sunburst_art(d, d)
+    mask = Image.new("L", (d, d))
+    ImageDraw.Draw(mask).ellipse((6, 6, d - 7, d - 7), fill=255)
+    out = Image.new("RGBA", (d, d))
+    ImageDraw.Draw(out).ellipse((0, 0, d - 1, d - 1), fill=(0x5C, 0x14, 0x22, 255))
+    out.paste(sun, (0, 0), mask)
+    return out
+
+
+HELD = [  # (name, one line, key, which ring): the ring already shows the icon and the cooldown
+    ("UNSTOPPABLE", "Shake off stuns and debuffs, then gain Status Immunity.", "E", "skill"),
+    ("BOULDER", "Stone your held slipper. Your next hit Concusses.", "Q", "skill"),
+    ("CONTINENTAL DRIFT", "Slam the lane, knock players away, then Mountain Form.", "X", "ultimate"),
+]
+
+
+def held_plate_art(w, h, section, closed=False, alpha=.82):
+    """The kill feed's plate: grey stroke and slab, the woven grey, the lean, a nearly solid dark section at its left
+    end. `closed` leans the right end too, for a plate that stands in the middle of the screen."""
+    S, drop = 3, 5
+    W, H = w * S, (h + drop) * S
+    k = h * S * LEAN
+    right = [(W - k, 0), (W, 0)] if False else None
+    outline = [(k, 0), (W, 0), (W - k, h * S), (0, h * S)] if closed else [(k, 0), (W + S, 0), (W + S, h * S), (0, h * S)]
+    body = Image.new("L", (W, H))
+    ImageDraw.Draw(body).polygon(outline, fill=255)
+    swept = body
+    for dy in range(S, drop * S + 1, S):
+        swept = ImageChops.lighter(swept, ImageChops.offset(body, 0, dy))
+    im = Image.new("RGBA", (W, H))
+    im.paste(GLASS + (235,), (0, 0), swept)
+    im.paste((0x8C, 0x8A, 0x94, 255), (0, 0), body)
+    r = 4 * S
+    inner_pts = ([(k + r, 3 * S), (W - r, 3 * S), (W - r - k, (h - 3) * S), (r, (h - 3) * S)] if closed else
+                 [(k + r, 3 * S), (W + S, 3 * S), (W + S, (h - 3) * S), (r, (h - 3) * S)])
+    inner = Image.new("L", (W, H))
+    ImageDraw.Draw(inner).polygon(inner_pts, fill=255)
+    patch = _weave((0, 0, 0), (255, 255, 255)).crop((300, 200, 300 + int(w * WEAVE_SHRINK), 200 + int((h + drop) * WEAVE_SHRINK))).convert("L").resize((W, H), Image.LANCZOS)
+    tones = ImageOps.colorize(ImageOps.autocontrast(patch, cutoff=2), (0x18, 0x17, 0x1E), (0x56, 0x54, 0x60)).convert("RGBA")
+    tones.putalpha(215)
+    im.paste(tones, (0, 0), inner)
+    box = Image.new("L", (W, H))
+    ImageDraw.Draw(box).polygon([(k + r, 3 * S), (k + (section + 4) * S, 3 * S), ((section + 4) * S, (h - 3) * S), (r, (h - 3) * S)], fill=255)
+    im.paste((0x2C, 0x2B, 0x35, 255), (0, 0), box)
+    shadow = ImageChops.invert(ImageChops.offset(box, 0, 4 * S)).filter(ImageFilter.GaussianBlur(5 * S))
+    im.paste((0x08, 0x07, 0x0C, 255), (0, 0), ImageChops.multiply(shadow.point(lambda v: min(255, int(v * 1.5))), box))
+    plate = see_through(im.resize((w, h + drop), Image.LANCZOS), alpha)
+    plate.putalpha(ImageChops.lighter(plate.getchannel("A"), box.resize((w, h + drop), Image.LANCZOS).point(lambda v: int(v * .88))))
+    return plate
+
+
+HELD_TEXT_W, HELD_H, PLATE_H, EDGE = 380, 118, 76, 24
+PLATE_POWERS = False      # trial: the abilities as plates in place of the rings
+TRIAL_STATES = {}         # trial: a state to show in place of the capture's, by power index
+
+
+# Dante's abilities in the HUD's order (`DanteHeroKit`'s glyphs): the boards draw the authored icons at full brightness,
+# not the captured ones, which the game had dimmed (the uncharged ultimate to about a quarter).
+POWER_GLYPHS = ["DanteShield", "DanteBoulder", "DanteFissure"]
+
+
+def icon_art(i):
+    """An ability's authored icon (`Resources/UI/ability-icons`, the outlined cut the HUD loads), trimmed to its ink."""
+    return trim(Image.open(UI / "ability-icons" / (POWER_GLYPHS[i] + ".png")).convert("RGBA"))
+
+
+def power_icon(cid, m, i, size, dim=False, muted=False):
+    """`muted` is the game's not-ready look (`TumpAbilitySymbol.Muted`, half brightness); `dim` is the trial's see-through."""
+    ic = icon_art(i)
+    if muted:
+        r_, g_, b_, a_ = ic.split()
+        ic = Image.merge("RGBA", [ch.point(lambda v: v // 2) for ch in (r_, g_, b_)] + [a_])
+    k = size / max(ic.size)
+    ic = ic.resize((max(1, int(ic.width * k)), max(1, int(ic.height * k))), Image.LANCZOS)
+    if dim:
+        ic.putalpha(ic.getchannel("A").point(lambda v: int(v * .6)))
+    return stroked(ic, alpha=.35)
+
+
+def power_state(m, i):
+    if i in TRIAL_STATES:
+        return TRIAL_STATES[i]
+    st = lay(m, "PowerState", "Power%d" % i)
+    return st[0]["text"] if st else ""
+
+
+def ability_plate(b, m, cid, i, key, place, y, expanded=False, name=None, line=None, closed=False):
+    """One ability as a kill-feed plate. Compact (the live HUD): its icon in the dark section, the key, and its state:
+    a cooldown in amber, a charge in amber over a lime bar along the plate's foot, nothing when ready. Expanded (F1 held):
+    the same plate, taller, with the key and name on one row and a short line under them."""
+    h = HELD_H if expanded else PLATE_H
+    section = 104 if expanded else 88
+    lean = h * LEAN
+    state = power_state(m, i)
+    ult = state.endswith("%")
+    cooling = bool(state) and not ult
+    charge = int(state[:-1]) / 100 if ult and state[:-1].isdigit() else 1
+    cap = keycap_art(key, 34 if expanded else 40)
+    if expanded:
+        body_w = HELD_TEXT_W
+    else:
+        # One width for every plate of a kind, wide enough for READY, so a skill's plate never changes size.
+        body_w = cap.width + 16 + font(DARUMA, 30).getlength("READY")
+    w = int(section + lean / 2 + EDGE + body_w + EDGE + (lean if closed else 0))
+    x = 1920 - w if place == "right" else 960 - w / 2
+    b.place("ability-plate-%dx%d%s" % (w, h, "-c" if closed else ""), held_plate_art(w, h, section, closed), x, y, "Ability")
+    ic = power_icon(cid, m, i, 80 if expanded else 60, dim=cooling and not expanded)
+    sx = x + lean / 2 + 4 + section / 2
+    b.place("ability-icon-%d-%d-%s" % (i, ic.width, cooling), ic, sx - ic.width / 2, y + h / 2 - ic.height / 2, "Icon")
+    tx = x + section + lean / 2 + EDGE
+    if expanded:
+        b.place("key-%s-%d" % (key, cap.height), cap, tx, y + 32 - cap.height / 2, "Key")
+        left(b, tx + cap.width + 12, y + 32, name, fit_size(name, 30, HELD_TEXT_W - cap.width - 12), fill=WHITE, name="Name")
+        para(b, tx, y + 54, wrap_lines(line, 24, HELD_TEXT_W, weight=600), 24, 30, fill=WHITE, weight=600)
+    else:
+        b.place("key-%s-%d" % (key, cap.height), cap, tx, y + h / 2 - cap.height / 2, "Key")
+        ready = (ult and charge >= 1) or not state
+        words = "READY" if ready else state
+        left(b, tx + cap.width + 16, y + h / 2, words, 30, fill=PAINT["yellow"][1] if ready else LIME if ult else WHITE, name="State")
+        if ult:
+            bar_x, bar_w = x + lean * .2 + 10, w - lean * 1.4 - 20
+            b.place("ult-track-%d" % bar_w, Image.new("RGBA", (int(bar_w), 6), (0x14, 0x13, 0x1A, 220)), bar_x, y + h - 10, "Charge track")
+            if charge > 0:
+                b.place("ult-fill-%d" % int(bar_w * charge), Image.new("RGBA", (max(1, int(bar_w * charge)), 6), LIME + (255,)), bar_x, y + h - 10, "Charge")
+    return x, w
+
+
+def plate_powers(b, m, cid, expanded=False, base=1080 - EDGE, ult_base=1080 - EDGE):
+    """The abilities as plates: E and Q stacked flush right at the foot of the screen, Q at the bottom, the ultimate
+    centred at the foot. Held open (F1), the same plates grow to carry the name and a line, and a small plate above the
+    skills names the page with the other page dimmed."""
+    if not lay(m, "Power0"):
+        return
+    h = HELD_H if expanded else PLATE_H
+    y = base - h
+    skills = [(0, "E"), (1, "Q")]
+    for idx, key in reversed(skills):
+        b.group = "Ability " + key
+        name, line = HELD[idx][0], HELD[idx][1]
+        ability_plate(b, m, cid, idx, key, "right", y, expanded, name, line)
+        y -= h + 12
+    if expanded:
+        b.group = "Page"
+        ph, psec = 60, 76
+        af = font(DARUMA, 28)
+        pw = int(psec + ph * LEAN / 2 + EDGE + af.getlength("ATTACKING") + 22 + af.getlength("DEFENDING") + EDGE)
+        px, py = 1920 - pw, y + h - ph
+        b.place("page-plate-%d" % pw, held_plate_art(pw, ph, psec), px, py, "Page")
+        cap = keycap_art("F", 34)  # Interact turns the page while F1 is held
+        b.place("key-F-34", cap, px + ph * LEAN / 2 + 4 + psec / 2 - cap.width / 2, py + ph / 2 - cap.height / 2, "Key")
+        tx = px + psec + ph * LEAN / 2 + EDGE
+        left(b, tx, py + ph / 2, "ATTACKING", 28, fill=WHITE, name="Page")
+        left(b, tx + af.getlength("ATTACKING") + 22, py + ph / 2, "DEFENDING", 28, fill=(0x8C, 0x8A, 0x94), name="Other page")
+    b.group = "Ability X"
+    ability_plate(b, m, cid, 2, "X", "centre", ult_base - h, expanded, HELD[2][0], HELD[2][1], closed=True)
+
+
+def disc_plate_art(d, fill, colour, alpha=.82, edge=5):
+    """A round ability in the plates' material: the grey stroke and dark slab, the woven grey band, a nearly solid dark
+    centre with an inner shadow for the icon, and the state as an arc drawn round the woven band."""
+    S, drop = 3, 5
+    D, H = d * S, (d + drop) * S
+    body = Image.new("L", (D, H))
+    ImageDraw.Draw(body).ellipse((0, 0, D - 1, D - 1), fill=255)
+    swept = body
+    for dy in range(S, drop * S + 1, S):
+        swept = ImageChops.lighter(swept, ImageChops.offset(body, 0, dy))
+    im = Image.new("RGBA", (D, H))
+    im.paste(GLASS + (235,), (0, 0), swept)
+    im.paste((0x8C, 0x8A, 0x94, 255), (0, 0), body)
+    # The stroke itself is the state: the filled part of the edge turns gold (or lime), clockwise from the top.
+    r = edge * S
+    if fill > 0:
+        wedge = Image.new("L", (D, H))
+        if fill >= 1:
+            ImageDraw.Draw(wedge).ellipse((0, 0, D - 1, D - 1), fill=255)
+        else:
+            ImageDraw.Draw(wedge).pieslice((0, 0, D - 1, D - 1), -90, -90 + 360 * fill, fill=255)
+        im.paste(tuple(colour) + (255,), (0, 0), ImageChops.multiply(wedge, body))
+    inner = Image.new("L", (D, H))
+    ImageDraw.Draw(inner).ellipse((r, r, D - 1 - r, D - 1 - r), fill=255)
+    patch = _weave((0, 0, 0), (255, 255, 255)).crop((300, 200, 300 + int(d * WEAVE_SHRINK), 200 + int((d + drop) * WEAVE_SHRINK))).convert("L").resize((D, H), Image.LANCZOS)
+    tones = ImageOps.colorize(ImageOps.autocontrast(patch, cutoff=2), (0x18, 0x17, 0x1E), (0x56, 0x54, 0x60)).convert("RGBA")
+    tones.putalpha(215)
+    im.paste(tones, (0, 0), inner)
+    band = int(d * .06) * S
+    box = Image.new("L", (D, H))
+    c = r + band
+    ImageDraw.Draw(box).ellipse((c, c, D - 1 - c, D - 1 - c), fill=255)
+    im.paste((0x2C, 0x2B, 0x35, 255), (0, 0), box)
+    shadow = ImageChops.invert(ImageChops.offset(box, 0, 4 * S)).filter(ImageFilter.GaussianBlur(5 * S))
+    im.paste((0x08, 0x07, 0x0C, 255), (0, 0), ImageChops.multiply(shadow.point(lambda v: min(255, int(v * 1.5))), box))
+    out = see_through(im.resize((d, d + drop), Image.LANCZOS), alpha)
+    out.putalpha(ImageChops.lighter(out.getchannel("A"), box.resize((d, d + drop), Image.LANCZOS).point(lambda v: int(v * .9))))
+    return out
+
+
+def cool_fill_art(d, left_):
+    """A skill cooling down: grey over the disc's dark centre, as tall as the time still to go, so it drains from the
+    top down to nothing as the skill comes back."""
+    S = 3
+    D = d * S
+    r = 5 * S   # inside the edge: over the woven band and the centre alike
+    disc = Image.new("L", (D, D))
+    ImageDraw.Draw(disc).ellipse((r, r, D - 1 - r, D - 1 - r), fill=255)
+    top = r + (D - 2 * r) * (1 - left_)
+    level = Image.new("L", (D, D))
+    ImageDraw.Draw(level).rectangle((0, top, D, D), fill=255)
+    im = Image.new("RGBA", (D, D), (0xD8, 0xD6, 0xDE, 0))
+    im.putalpha(ImageChops.multiply(disc, level).point(lambda v: int(v * .30)))
+    return im.resize((d, d), Image.LANCZOS)
+
+
+COOLDOWNS = {"E": 40, "Q": 35}   # the trial's totals, from Dante's sheet
+
+
+DISC_POWERS = False   # trial: the abilities as round plates in place of the rings
+
+
+def disc_powers(b, m, cid):
+    """The abilities as round plates, where the rings sit: the two skills bottom right, the ultimate bottom centre.
+    Gold arc and a full icon when ready; a skill cooling down dims its icon under its seconds; the ultimate fills a
+    lime arc as it charges. The game's own dark key prompt sits under each."""
+    if not lay(m, "Power0"):
+        return
+    gold = PAINT["yellow"][1]
+    spots = [(0, "E", 1730, 962, 112), (1, "Q", 1846, 962, 112), (2, "X", 960, 952, 148)]
+    for i, key, cx, cy, d in spots:
+        b.group = "Ability " + key
+        state = power_state(m, i)
+        ult = state.endswith("%")
+        if ult:
+            fill = int(state[:-1]) / 100 if state[:-1].isdigit() else 1
+            ready, colour = fill >= 1, gold if fill >= 1 else LIME
+        else:
+            ready = not state
+            fill, colour = (1, gold) if ready else (0, gold)
+        if ready:
+            centred_art(b, ring_glow_art(int(d * 1.6), int(d * .85)), cx, cy, "disc-glow-%d" % d)
+        art = disc_plate_art(d, fill, colour)
+        b.place("disc-%d-%d-%02x" % (d, int(fill * 100), colour[0]), art, cx - d / 2, cy - d / 2, "Ability")
+        ic = power_icon(cid, m, i, int(d * (.46 if ult and not ready else .58)), dim=not ready and not ult, muted=not ready)
+        centred_art(b, ic, cx, cy - (12 if ult and not ready else 0), "disc-icon-%d-%d-%s" % (i, ic.width, ready))
+        if not ready and not ult:
+            left_ = min(1, float(state.rstrip("s")) / COOLDOWNS.get(key, 30))
+            b.place("disc-cool-%d-%d" % (d, int(left_ * 100)), cool_fill_art(d, left_), cx - d / 2, cy - d / 2, "Cooldown")
+        if not ready:
+            if ult:
+                number(b, cx, cy + d * .22, state, 22, align="c", name="Charge")
+            else:
+                number(b, cx, cy, state, 30, align="c", name="Cooldown")
+        cap = keycap_art(key, 34)
+        b.place("disc-key-%s" % key, cap, cx - cap.width / 2, cy + d / 2 + 14, "Key")
+
+
+def discs_trial(cid):
+    """Trial (owner, 2026-11-07): the live HUD with round plates for the abilities, Q shown cooling down."""
+    global DISC_POWERS, TRIAL_STATES
+    DISC_POWERS, TRIAL_STATES = True, {1: "12"}
+    try:
+        return live("match-hud-thrower")
+    finally:
+        DISC_POWERS, TRIAL_STATES = False, {}
+
+
+def ref_plate_art(w, h, head, cut=None, alpha=.82, rad=14):
+    """The F1 reference's plate (owner, 2026-11-07): the kill feed's grey stroke, dark slab and woven grey with soft
+    corners, and its nearly solid dark box as a header strip `head` tall. `cut` (cx, cy, r) takes a circle out of the
+    box so the weave shows clean round the ability's disc."""
+    S, drop = 3, 5
+    W, H = w * S, (h + drop) * S
+    body = Image.new("L", (W, H))
+    ImageDraw.Draw(body).rounded_rectangle((0, 0, W - 1, h * S - 1), rad * S, fill=255)
+    swept = body
+    for dy in range(S, drop * S + 1, S):
+        swept = ImageChops.lighter(swept, ImageChops.offset(body, 0, dy))
+    im = Image.new("RGBA", (W, H))
+    im.paste(GLASS + (235,), (0, 0), swept)
+    im.paste((0x8C, 0x8A, 0x94, 255), (0, 0), body)
+    inner = Image.new("L", (W, H))
+    ImageDraw.Draw(inner).rounded_rectangle((3 * S, 3 * S, W - 1 - 3 * S, h * S - 1 - 3 * S), (rad - 3) * S, fill=255)
+    patch = _weave((0, 0, 0), (255, 255, 255)).crop((300, 200, 300 + int(w * WEAVE_SHRINK), 200 + int((h + drop) * WEAVE_SHRINK))).convert("L").resize((W, H), Image.LANCZOS)
+    tones = ImageOps.colorize(ImageOps.autocontrast(patch, cutoff=2), (0x18, 0x17, 0x1E), (0x56, 0x54, 0x60)).convert("RGBA")
+    tones.putalpha(215)
+    im.paste(tones, (0, 0), inner)
+    bx = Image.new("L", (W, H))
+    ImageDraw.Draw(bx).rectangle((0, 0, W, head * S), fill=255)
+    if cut:
+        cx, cy, r = cut
+        ImageDraw.Draw(bx).ellipse(((cx - r) * S, (cy - r) * S, (cx + r) * S, (cy + r) * S), fill=0)
+    bx = ImageChops.multiply(bx, inner)
+    im.paste((0x2C, 0x2B, 0x35, 255), (0, 0), bx)
+    shadow = ImageChops.invert(ImageChops.offset(bx, 0, 4 * S)).filter(ImageFilter.GaussianBlur(5 * S))
+    im.paste((0x08, 0x07, 0x0C, 255), (0, 0), ImageChops.multiply(shadow.point(lambda v: min(255, int(v * 1.5))), bx))
+    plate = see_through(im.resize((w, h + drop), Image.LANCZOS), alpha)
+    plate.putalpha(ImageChops.lighter(plate.getchannel("A"), bx.resize((w, h + drop), Image.LANCZOS).point(lambda v: int(v * .88))))
+    return plate
+
+
+REF_DISC, REF_HEAD, REF_GAP, REF_TEXT_W = 88, 52, 12, 360
+
+
+def ref_mini_disc(cid, m, i, d):
+    """A small copy of the ability's disc. The icon goes on bare: the HUD's dark stroke is there to hold an icon over
+    the world, and at this size on the disc's dark centre it only darkens the icon."""
+    art = disc_plate_art(d, 0, (0, 0, 0))
+    ic = icon_art(i)
+    k = int(d * .62) / max(ic.size)
+    ic = ic.resize((max(1, int(ic.width * k)), max(1, int(ic.height * k))), Image.LANCZOS)
+    art.alpha_composite(ic, (int(d / 2 - ic.width / 2), int(d / 2 - ic.height / 2)))
+    return art
+
+
+def ref_size(i, width=REF_TEXT_W):
+    rows = wrap_lines(HELD[i][1], 24, width, 600)
+    tw = max(font(DARUMA, 28).getlength(HELD[i][0]), max(font(GRAND, 24, 600).getlength(r_) for r_ in rows))
+    w = int(6 + REF_DISC / 2 + REF_GAP + 14 + tw + 26)
+    h = REF_HEAD + 10 + len(rows) * 30 + 18
+    return rows, w, h
+
+
+def ref_card(b, cid, m, x, bottom, i, key, w=None, align="r", width=REF_TEXT_W):
+    """One power: a mini copy of its disc on the plate's left edge with its key under it (as the HUD prints the key
+    under the real disc), a clean weave circle cut from the header round the disc, the name in the header and the
+    line on the weave. Placed by its bottom edge; `x` is the right edge, or the centre. Returns the top."""
+    rows, w0, h = ref_size(i, width)
+    w = w or w0
+    top = bottom - h
+    left_ = x - w if align == "r" else x - w / 2
+    dcx, dcy, ring_r = 6, h / 2 - 2, REF_DISC / 2 + REF_GAP
+    b.place("ref-plate-%dx%d" % (w, h), ref_plate_art(w, h, REF_HEAD, cut=(dcx, dcy, ring_r)), left_, top, "Power")
+    b.place("ref-disc-%d" % i, ref_mini_disc(cid, m, i, REF_DISC), left_ + dcx - REF_DISC / 2, top + dcy - REF_DISC / 2, "Disc")
+    cap = keycap_art(key, 32)
+    b.place("ref-key-%s" % key, cap, left_ + dcx - cap.width / 2, top + dcy + REF_DISC / 2 - 6, "Key")
+    tx = left_ + dcx + ring_r + 14
+    # A few pixels under the box's middle: its inner shadow darkens the top and makes centred words read high.
+    left(b, tx, top + REF_HEAD / 2 + 3, HELD[i][0], 28, fill=WHITE, name="Name")
+    para(b, tx, top + REF_HEAD + 8, rows, 24, 30, fill=WHITE, weight=600)
+    return top
+
+
+def held_reference(b, m, cid):
+    """F1 held (owner, 2026-11-07): each power on a soft-cornered kill-feed plate over its disc, a mini copy of the disc
+    and its key on the plate's left edge. The skills stack right-aligned with Q nearest its disc and share one width;
+    the ultimate's plate centres over its own disc; a header-only plate on top names the page, with the page key and
+    the other page dimmed."""
+    b.group = "Powers"
+    right, gap = 1896, 14
+    skill_w = max(ref_size(1)[1], ref_size(0)[1])
+    y = 900
+    for idx, key in ((1, "Q"), (0, "E")):
+        b.group = "Power " + key
+        y = ref_card(b, cid, m, right, y, idx, key, w=skill_w) - gap
+    b.group = "Page"
+    cap = keycap_art("F", 30)
+    af, of = font(DARUMA, 28), font(GRAND, 24, 700)
+    pad, ph = 22, REF_HEAD
+    pw = skill_w - (6 + REF_DISC // 2 + REF_GAP)  # the skills' plates start where their discs' weave circles end
+    pw = max(pw, int(pad + af.getlength("ATTACKING") + 20 + cap.width + 10 + of.getlength("DEFENDING") + pad))
+    px, py = right - skill_w, y - ph
+    pw = skill_w
+    b.place("page-plate-%d" % pw, ref_plate_art(pw, ph, ph), px, py, "Page")
+    pad = 6 + REF_DISC // 2 + REF_GAP + 14
+    left(b, px + pad, py + ph / 2 + 3, "ATTACKING", 28, fill=WHITE, name="Page")
+    kx = px + pad + af.getlength("ATTACKING") + 20
+    b.place("page-key-F", cap, kx, py + ph / 2 + 3 - cap.height / 2, "Key")
+    left(b, kx + cap.width + 10, py + ph / 2 + 3, "DEFENDING", 24, face=GRAND, weight=700, fill=(0xB8, 0xB6, 0xC0), name="Other page")
+    b.group = "Power X"
+    ref_card(b, cid, m, 960, 952 - 148 / 2 - 24, 2, "X", align="c", width=400)
+
+
 # Ultimate card
 
 def ultimate_card(b, m, cid):
@@ -1444,7 +1886,22 @@ def arrival_screen(cid):
 
 
 def powers_screen(cid):
-    return live(cid, (held_sheet,))
+    global DISC_POWERS
+    DISC_POWERS = True    # the HUD's round abilities, with the open reference over them
+    try:
+        return live(cid, (held_reference,))
+    finally:
+        DISC_POWERS = False
+
+
+def plates_trial(cid):
+    """Trial (owner, 2026-11-07): the live HUD with its abilities as plates, Q shown cooling down."""
+    global PLATE_POWERS, TRIAL_STATES
+    PLATE_POWERS, TRIAL_STATES = True, {1: "12s"}
+    try:
+        return live("match-hud-thrower")
+    finally:
+        PLATE_POWERS, TRIAL_STATES = False, {}
 
 
 def guided_screen(cid):
@@ -1489,6 +1946,8 @@ SCREENS = {
     "match-moment-3": screen((moment,)),
     "match-emote": lambda cid: emote_screen(cid),
     "match-powers": powers_screen,
+    "match-hud-plates": plates_trial,
+    "match-hud-discs": discs_trial,
     "match-ultimate-card": screen((ultimate_card,)),
     "match-guided": guided_screen,
     "match-training-menu": training_screen,

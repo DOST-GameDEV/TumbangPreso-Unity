@@ -39,8 +39,15 @@ namespace TumbangPreso.UI
 
             var frame = HubKnit.Plate(design, "ProfileFrame", Knit.DarkCard);
             OwnerUiLayout.Place(frame, 210, 30, 156, 156 + HubKnit.SlabHeight);
-            _ownerPortrait = OwnerPortraitArt.Create(HubKnit.FaceOf(frame), "ProfilePortrait", "UI/portraits/bayan");
-            HubKnit.In(_ownerPortrait.rectTransform, 14, 14, 128, 128);
+            // The picture fills the whole card, clipped to the card's own chamfered outline (its face is the mask),
+            // and the card's rim closes over its edge: no inner ground shows and no corner pokes out.
+            var frameFace = HubKnit.FaceOf(frame);
+            frameFace.gameObject.AddComponent<Mask>().showMaskGraphic = true;
+            _ownerPortrait = OwnerPortraitArt.Create(frameFace, "ProfilePortrait", "UI/portraits/bayan");
+            HubKit.Stretch(_ownerPortrait.rectTransform);
+            _ownerPortrait.preserveAspect = false;
+            _ownerPortrait.rectTransform.offsetMin = new Vector2(0, HubKnit.SlabHeight);
+            HubKnit.RimOver(frameFace, false, true);
             _handle = HubKnit.Display(design, "AccountHandle", "", 80, HubKnit.KitWhite, TextAnchor.MiddleLeft, 6);
             OwnerUiLayout.Place(_handle.rectTransform, 400, 36, 980, 100);
             _state = HubKnit.Words(design, "AccountState", "", 34, HubKnit.KitWhite, TextAnchor.MiddleLeft, true, 3);

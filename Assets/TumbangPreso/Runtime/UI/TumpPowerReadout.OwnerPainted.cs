@@ -8,6 +8,10 @@ namespace TumbangPreso.UI
         private void BuildDetails(Transform root)
         {
             if (Application.isMobilePlatform || InputLayer.TouchHud.ForceVisible) { BuildPhoneDetails(root); return; }
+            BuildPlates(root); return;
+        }
+        private void BuildPanelDetails(Transform root)
+        {
             _detail=OwnerUiLayout.Rect(root,"HeldPowerReference");
             _detail.anchorMin=_detail.anchorMax=_detail.pivot=new Vector2(.5f,0);
             _detail.anchoredPosition=new Vector2(0,248);_detail.sizeDelta=new Vector2(ReferenceWidth,560);
@@ -85,6 +89,7 @@ namespace TumbangPreso.UI
         /// <summary>Sizes the EFFECT boxes, the column rules and the plate to the longest sentence, and sets the page key top right.</summary>
         private void LayoutReference()
         {
+            if(_plates){LayoutPlates();return;}
             if(_inlineBodies[0]==null)return;
             float body=0;
             for(int i=0;i<3;i++)body=Mathf.Max(body,_inlineBodies[i].Height);

@@ -279,15 +279,16 @@ namespace TumbangPreso.PlayTests
                 readout.OpenForCapture(kit); yield return null;
                 var names = canvas.GetComponentsInChildren<Text>().Where(t => t.name.StartsWith("PowerName")).Select(t => t.text).ToArray();
                 CollectionAssert.AreEquivalent(new[] { kit.Skill1.EffectiveName, kit.Skill2.EffectiveName, kit.Ultimate.EffectiveName }, names);
-                float duration=kit.Skill1.Duration;
-                var setter=typeof(Abilities.HeroAbility).GetProperty("Duration").GetSetMethod(true);
+                // The reference carries the cost alone (owner, 2026-11-05), so a changed cooldown is what must refresh.
+                float cooldown=kit.Skill1.Cooldown;
+                var setter=typeof(Abilities.HeroAbility).GetProperty("Cooldown").GetSetMethod(true);
                 try
                 {
-                    setter.Invoke(kit.Skill1,new object[]{duration+1});yield return null;
-                    Assert.That(canvas.GetComponentsInChildren<Text>().First(t=>t.name=="PowerTiming0").text,
-                        Does.Contain((duration+1).ToString("0.#")+"s duration"),"A live kit must refresh changed timing details.");
+                    setter.Invoke(kit.Skill1,new object[]{cooldown+1});yield return null;
+                    Assert.That(canvas.GetComponentsInChildren<Text>(true).First(t=>t.name=="PowerTiming0").text,
+                        Does.Contain((cooldown+1).ToString("0.#")+"s COOLDOWN"),"A live kit must refresh changed timing details.");
                 }
-                finally{setter.Invoke(kit.Skill1,new object[]{duration});}
+                finally{setter.Invoke(kit.Skill1,new object[]{cooldown});}
                 yield return null;
                 foreach (var size in TumpUiCapture.HudViewports)
                     yield return TumpUiCapture.Capture("CourtHud-held-skills-" + size.x + "x" + size.y,
@@ -1479,7 +1480,7 @@ namespace TumbangPreso.PlayTests
             while ((Map.ArenaIntro.HidesUi || RoleSwapCard.Showing || !GameServices.Round.RoundActive) && Time.realtimeSinceStartup < live) yield return null;
             yield return new WaitForSecondsRealtime(.5f);
             Assert.IsNotNull(Hud.Instance);
-            Assert.AreEqual(8,GameServices.Match.TotalRounds,"Normal matches must start with the owner's eight-round default.");
+            Assert.AreEqual(4,GameServices.Match.TotalRounds,"Normal matches must start with the four-round default.");
             TumpUiCapture.StageHudReview(GameServices.Round.PlayerAt(GameLaunch.SoloSeat));
             yield return null;
         }

@@ -32,6 +32,10 @@ namespace TumbangPreso.UI
         private bool _ready, _active, _ultimate;
         /// <summary>The copy drawn over the art: only the drain, the jar level and the active level.</summary>
         public bool Overlay;
+        /// <summary>The round abilities (owner, 2026-11-07): the disc pictures draw it, so the seal keeps the state and draws nothing.</summary>
+        public bool Painted;
+        /// <summary>The fill as drawn, eased toward the value.</summary>
+        public float ShownFill => _shown < 0 ? _fill : _shown;
         /// <summary>The local player's own colour: the rim and level of a power while it runs.</summary>
         public Color Accent = HudDraw.Honey;
         private const float FollowRate = 16f, TipSeconds = .45f;
@@ -66,7 +70,7 @@ namespace TumbangPreso.UI
         protected override void OnPopulateMesh(VertexHelper helper)
         {
             helper.Clear();
-            if (Overlay) return;
+            if (Overlay || Painted) return;
             Ring(helper, GetPixelAdjustedRect());
         }
 
