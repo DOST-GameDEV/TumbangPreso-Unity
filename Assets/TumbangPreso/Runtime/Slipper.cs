@@ -1062,6 +1062,13 @@ namespace TumbangPreso
                                        Vector3 velocity, float pektusSpin,
                                        SlipperAffinity affinity, int throwerSlot)
         {
+            // A pickup seen from a client: the host's grab arrives here as Loose to Held, and this is the only
+            // place a client hears about it. Where it lay is read now, before the carry moves it to the hand.
+            bool pickedUpNow = State == SlipperState.Loose && state == SlipperState.Held && holder != null
+                               && !NetAuthority.ShouldResolve() && PickupIsPresentable();
+            Vector3 layAt = transform.position;
+            Quaternion layRotation = transform.rotation;
+
             bool enteringEmpoweredFlight = state == SlipperState.InFlight
                 && (affinity == SlipperAffinity.FireExplosive || affinity == SlipperAffinity.ElectricZap)
                 && (State != SlipperState.InFlight || Affinity != affinity);
@@ -1162,8 +1169,20 @@ namespace TumbangPreso
             if (Holder != null)
             {
                 Holder.HoldingSlipper = true;
-                Holder.GetComponent<Carrier>()?.NotifyEquipped(this);
+                var carrier = Holder.GetComponent<Carrier>();
+                carrier?.NotifyEquipped(this);
+                if (pickedUpNow) carrier?.PresentPickup(this, layAt, layRotation);
             }
+        }
+
+        /// <summary>
+        /// Whether a Loose-to-Held edge on a client is a real pickup worth presenting, rather than the round-start
+        /// hand-over (`HostForceEquip`), which reaches a client through the same edge while the countdown runs.
+        /// </summary>
+        private static bool PickupIsPresentable()
+        {
+            var round = GameServices.Round;
+            return round != null && round.RoundActive && round.TimeLeft < UI.SceneFlow.SelectedRoundSeconds - 1.0f;
         }
 
         /// <summary>

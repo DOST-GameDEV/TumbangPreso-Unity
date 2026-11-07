@@ -567,10 +567,58 @@ namespace TumbangPreso
 
             // Tin contact belongs at the can, below the next retrieval sightline.
             // The accepted flair event supplies personal confirmation to the scorer.
-            // Ordinary contact adds no global pause or broadcast confetti.
             GameServices.Voice?.OnLataKnocked();
             Visual.ImpactBurst.SpawnTinContact(transform.position + Vector3.up * .18f);
             Visual.CanContactAccent.Play(transform.position, false);
+
+            // ⚠️⚠️ THE KNOCKDOWN NOW HAS A BEAT ON EVERY SCREEN (owner, 2026-11-07, from the external
+            // feedback document: *"Try adding more emphasis on when the slipper hits the can ... for hit stops,
+            // it allows all players to get a bit of a pause to calculate their next action."*). This method is
+            // reached once per peer, so every player freezes together and nobody gains a step on anybody;
+            // `Hitstop` bounds the freeze to 80 ms and Reduced Effects refuses it. It replaces the earlier
+            // decision that ordinary contact adds no global pause.
+            var round = GameServices.Round;
+            if (round != null && round.RoundActive) Hitstop.Trigger(0.07f, 0.08f);
+            BeginKnockPop();
+        }
+
+        // § THE KNOCKDOWN POP. The can itself takes the hit: it stretches up off the impact, squashes back and
+        // settles, and its rim flashes warm white for a few frames. Presentation only, on the drawn `Visual`
+        // child, so the contact shape (measured once from the meshes and cached) and the physics never see it.
+        private const float KnockPopSeconds = 0.30f, KnockFlashSeconds = 0.10f;
+        private float _knockPopLeft, _knockFlashLeft;
+        private Transform _popVisual;
+        private Vector3 _popRestScale = Vector3.one;
+
+        private void BeginKnockPop()
+        {
+            if (Settings.SettingsStore.Current.ReducedEffects) return;
+            ResolveContactHeight();
+            var visual = transform.Find("Visual");
+            if (visual == null) return;
+            if (_knockPopLeft <= 0.0f || _popVisual != visual) { _popVisual = visual; _popRestScale = visual.localScale; }
+            _knockPopLeft = KnockPopSeconds;
+            _knockFlashLeft = KnockFlashSeconds;
+        }
+
+        private void StepKnockPop()
+        {
+            if (_knockFlashLeft > 0.0f)
+            {
+                _knockFlashLeft = Mathf.Max(0.0f, _knockFlashLeft - Time.unscaledDeltaTime);
+                float f = _knockFlashLeft / KnockFlashSeconds;
+                SetRim(2.4f * f * Settings.SettingsStore.Current.EffectiveFlashIntensity, new Color(1.0f, .95f, .78f));
+                if (_knockFlashLeft <= 0.0f) SetRim(0.0f);
+            }
+
+            if (_knockPopLeft <= 0.0f || _popVisual == null) return;
+            _knockPopLeft = Mathf.Max(0.0f, _knockPopLeft - Time.unscaledDeltaTime);
+            float u = 1.0f - _knockPopLeft / KnockPopSeconds;
+            // Up to a 26 per cent stretch on the hit, a squash under rest on the rebound, then home.
+            float stretch = Mathf.Sin(u * Mathf.PI * 2.0f) * Mathf.Exp(-u * 3.2f) * 0.26f;
+            float across = 1.0f - stretch * 0.5f;
+            _popVisual.localScale = Vector3.Scale(_popRestScale, new Vector3(across, 1.0f + stretch, across));
+            if (_knockPopLeft <= 0.0f) _popVisual.localScale = _popRestScale;
         }
 
         // ------------------------------------------------------------------ Sean's MOLTEN THROW: the hot can
@@ -705,6 +753,7 @@ namespace TumbangPreso
             RestoreRaisePresentation();
             StepCarry(Time.deltaTime);
             StepStatePresentation();
+            StepKnockPop();
 
             if (_isUpright || _toppleTimer <= 0.0f) return;
 
@@ -841,7 +890,9 @@ namespace TumbangPreso
         /// project including the one posing on a menu. `Slipper` drives the landed highlight the
         /// same way and for the same reason.
         /// </summary>
-        private void SetRim(float strength)
+        private void SetRim(float strength) => SetRim(strength, UI.UiTheme.Danger);
+
+        private void SetRim(float strength, Color colour)
         {
             if (_renderers == null) CacheRenderers();
             if (_renderers.Length == 0) return;
@@ -854,7 +905,7 @@ namespace TumbangPreso
                 r.GetPropertyBlock(_rimBlock);
                 _rimBlock.SetFloat("_DepthReadability", Visual.WorldCueProfile.Current.DistanceReadability);
                 _rimBlock.SetFloat(RimStrengthId, strength);
-                _rimBlock.SetColor(RimColorId, UI.UiTheme.Danger);
+                _rimBlock.SetColor(RimColorId, colour);
                 r.SetPropertyBlock(_rimBlock);
             }
         }

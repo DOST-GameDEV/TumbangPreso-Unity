@@ -475,7 +475,10 @@ namespace TumbangPreso.UI
                     if (slipper.CanBeGrabbedBy(local))
                     {
                         BindingPrompt("Grab", "Retrieve Slipper");
-                        if (Hud.OnTouch) TouchHud.Emphasise(Verb.Grab); return;
+                        if (Hud.OnTouch) TouchHud.Emphasise(Verb.Grab);
+                        // Standing on it collects it hands-free (`Carrier.StepHandsFreePickup`); the bar says how soon.
+                        if (carrier != null && carrier.AutoPickupRatio > 0) Progress(carrier.AutoPickupRatio);
+                        return;
                     }
                     if (slipper.OwnerSlot == local.PlayerSlot && RooftopRecovery.Instance != null)
                         returning = Mathf.Max(returning, RooftopRecovery.Instance.SecondsUntilReturn(slipper));
