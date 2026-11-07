@@ -58,7 +58,7 @@ namespace TumbangPreso.UI
         private float _boardPopUntil = -10;
         private int _boardLeader = -2, _boardLeaderSeen = -2;
         private InputAction _boardKey, _boardPadKey;
-        private bool _playing;
+        private bool _playing, _watching;
         private CharacterMotor _playingAs;
         private static readonly Color BoardCream = new Color32(0xF3, 0xEA, 0xE2, 255), BoardAmber = new Color32(0xFF, 0xC4, 0x40, 255);
 
@@ -172,10 +172,10 @@ namespace TumbangPreso.UI
         {
             if (_boardRoot == null) return;
             var match = GameServices.Match; var round = GameServices.Round;
-            bool play = _playing && match != null && round != null;
+            bool play = (_playing || _watching) && match != null && round != null;
             float now = Time.unscaledTime, dt = Time.unscaledDeltaTime;
             bool still = LiveHud.Still;
-            bool tab = play && BoardHeld;
+            bool tab = play && (BoardHeld || _watching);
             bool pop = play && !Hud.OnTouch && now < _boardPopUntil;
             int mine = _playingAs != null ? _playingAs.PlayerSlot : -1;
 

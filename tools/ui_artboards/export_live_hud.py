@@ -71,6 +71,10 @@ def main():
     heroes()
     held()
     abilities()
+    panel_weave()
+    plate_frame()
+    training_boxes()
+    plate_frame_flat()
 
 
 def heroes():
@@ -151,3 +155,72 @@ def header_box(w, head, cut=None, whole=False, rad=14):
     dark = Image.new("RGBA", (W, H), (0x08, 0x07, 0x0C, 255)); dark.putalpha(sh.point(lambda v: int(v * .7)))
     im.alpha_composite(dark)
     return im.resize((w, h), Image.LANCZOS)
+
+
+def panel_weave():
+    """The plates' woven grey for a large panel, at the plates' own scale, to be cropped (never stretched) to the panel:
+    the full-screen weave mirrored two by two, shrunk as the plates shrink it, in the plates' two greys, nearly solid.
+    `ref-inner` is the plate's inside as a white rounded shape, to clip it."""
+    from PIL import Image, ImageDraw, ImageOps
+    one = bm._weave((0, 0, 0), (255, 255, 255)).crop((0, 0, 1920, 1080)).convert("L")
+    big = Image.new("L", (3840, 2160))
+    big.paste(one, (0, 0)); big.paste(ImageOps.mirror(one), (1920, 0))
+    big.paste(ImageOps.flip(one), (0, 1080)); big.paste(ImageOps.flip(ImageOps.mirror(one)), (1920, 1080))
+    # A finer weave in two close greys (owner, 2026-11-08: "the weave pattern is so prominent, it's distracting"):
+    # a large panel shows much more of it than a small plate, so it is quieter, a texture rather than a pattern.
+    k = bm.WEAVE_SHRINK * 1.5
+    small = big.resize((round(3840 / k), round(2160 / k)), Image.LANCZOS)
+    tones = ImageOps.colorize(ImageOps.autocontrast(small, cutoff=2), (0x2A, 0x29, 0x32), (0x3C, 0x3B, 0x46)).convert("RGBA")
+    save("panel-weave", tones)
+    S, r = 3, 11
+    m = Image.new("L", (64 * S, 64 * S)); ImageDraw.Draw(m).rounded_rectangle((0, 0, 64 * S - 1, 64 * S - 1), r * S, fill=255)
+    inner = Image.new("RGBA", (64 * S, 64 * S), (255, 255, 255, 0)); inner.putalpha(m)
+    save("ref-inner", inner.resize((64, 64), Image.LANCZOS))
+
+
+def plate_frame():
+    """The F1 plate's stroke and slab alone (its inside cleared), for a panel that lays `panel-weave` inside it."""
+    from PIL import Image, ImageDraw, ImageChops
+    W, H, S, r = 600, 200, 3, 11
+    plate = bm.ref_plate_art(W, H, 0)
+    hole = Image.new("L", (W * S, (H + 5) * S))
+    ImageDraw.Draw(hole).rounded_rectangle((3 * S, 3 * S, W * S - 1 - 3 * S, H * S - 1 - 3 * S), r * S, fill=255)
+    hole = hole.resize(plate.size, Image.LANCZOS)
+    plate.putalpha(ImageChops.subtract(plate.getchannel("A"), hole))
+    save("ref-frame", plate)
+
+
+def band_box(w, h, bottom=False, rad=14):
+    """The F1 header box as a band across a panel: the same dark at 75 per cent with the same inner shadow, square on
+    its inside edge and rounded only where it meets the plate's own corners (top, or bottom)."""
+    from PIL import Image, ImageChops, ImageDraw, ImageFilter
+    S = 3
+    W, H = w * S, h * S
+    inner = Image.new("L", (W, H))
+    if bottom:
+        ImageDraw.Draw(inner).rounded_rectangle((3 * S, -40 * S, W - 1 - 3 * S, H - 1 - 3 * S), (rad - 3) * S, fill=255)
+    else:
+        ImageDraw.Draw(inner).rounded_rectangle((3 * S, 3 * S, W - 1 - 3 * S, H + 40 * S), (rad - 3) * S, fill=255)
+    bx = inner
+    im = Image.new("RGBA", (W, H), (0x2C, 0x2B, 0x35, 0))
+    im.putalpha(bx.point(lambda v: int(v * .75)))
+    shadow = ImageChops.invert(ImageChops.offset(bx, 0, 4 * S)).filter(ImageFilter.GaussianBlur(5 * S))
+    if bottom:  # the band's own top edge is inside the panel: its shadow falls from there, as the header's does
+        edge = Image.new("L", (W, H)); ImageDraw.Draw(edge).rectangle((0, 0, W, 4 * S), fill=255)
+        shadow = ImageChops.lighter(ImageChops.multiply(shadow, ImageChops.invert(edge)), edge.filter(ImageFilter.GaussianBlur(5 * S)))
+    sh = ImageChops.multiply(shadow.point(lambda v: min(255, int(v * 1.5))), bx)
+    dark = Image.new("RGBA", (W, H), (0x08, 0x07, 0x0C, 255)); dark.putalpha(sh.point(lambda v: int(v * .7)))
+    im.alpha_composite(dark)
+    return im.resize((w, h), Image.LANCZOS)
+
+
+def training_boxes():
+    save("band-top-690x94", band_box(690, 94))
+    save("band-bottom-690x92", band_box(690, 92, bottom=True))
+
+
+def plate_frame_flat():
+    """The plate's stroke alone, with no drop below it, for the training panel (owner, 2026-11-08)."""
+    from PIL import Image
+    framed = Image.open(OUT / "ref-frame.png").convert("RGBA")
+    save("ref-frame-flat", framed.crop((0, 0, framed.width, 200)))

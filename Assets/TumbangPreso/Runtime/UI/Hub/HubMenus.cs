@@ -194,7 +194,9 @@ namespace TumbangPreso.UI.Hub
                 var picture = HubKit.Picture(door.Body, "Cast_" + id, HubKit.Portrait(id));
                 HubKnit.In(picture.rectTransform, cx - size / 2, cy - size / 2, size, size);
             }
-            HubKnit.RimOver(door.Body);
+            var rim = HubKnit.RimOver(door.Body);
+            // The hover line goes over the cast and the items, so its words never show behind them, and under the rim (QA, 2026-11-08).
+            door.Body.Find("Hover").SetSiblingIndex(rim.transform.GetSiblingIndex());
             var label = HubKnit.Display(door.Body, "Label", title, 76, HubKnit.KitCream, TextAnchor.MiddleCenter);
             HubKnit.In(label.rectTransform, 0, h - 130, w, 90);
             return door;

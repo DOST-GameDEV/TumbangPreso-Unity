@@ -62,19 +62,11 @@ namespace TumbangPreso.PlayTests
             var match = GameServices.Match;
             Hud.Instance.EnterSpectatorMode();
             var readout = Object.FindAnyObjectByType<TumpMatchReadout>();
-            var tracks = readout.Canvas.GetComponentsInChildren<Image>(true).Where(r => r.name == "UltTrack").ToArray();
-            Assert.AreEqual(4, tracks.Length);
-            // The meters wait on each seat's hero kit, which binds a few frames after the scene opens.
+            // A spectator reads the HUD's own score plates, standing, ranked (owner, 2026-11-08), not the old chip row.
             float until = Time.unscaledTime + 3;
-            while (!tracks.All(t => t.gameObject.activeInHierarchy) && Time.unscaledTime < until) yield return null;
-            Assert.IsTrue(tracks.All(t => t.gameObject.activeInHierarchy), "Every seat's ultimate meter shows to a spectator.");
-            var tabs = readout.Canvas.GetComponentsInChildren<RectTransform>(true).Where(r => r.name == "TayaTab").ToArray();
-            Assert.AreEqual(1, tabs.Count(t => t.gameObject.activeInHierarchy), "One TAYA tab, on the taya's chip.");
-            var tab = tabs.First(t => t.gameObject.activeInHierarchy);
-            Assert.AreEqual("ScoreRow" + match.DefenderSlot, tab.parent.name);
-            var corners = new Vector3[4]; tab.GetWorldCorners(corners);
-            var canvasRect = (RectTransform)readout.Canvas.transform; var screen = new Vector3[4]; canvasRect.GetWorldCorners(screen);
-            Assert.LessOrEqual(corners[1].y, screen[1].y + .5f, "The TAYA tab is on screen, not above its top edge.");
+            while (readout.BoardPlatesShown < 4 && Time.unscaledTime < until) yield return null;
+            Assert.AreEqual(4, readout.BoardPlatesShown, "Every seat's plate shows to a spectator.");
+            Assert.IsFalse(readout.Canvas.GetComponentsInChildren<RectTransform>().Any(r => r.name.StartsWith("ScoreRow")), "The old chip row is gone for spectators.");
             yield return new WaitForSecondsRealtime(.4f);
             yield return TumpUiCapture.Capture("HudMotion-spectator-cards", readout.Canvas, 1600, 900, false, true);
 

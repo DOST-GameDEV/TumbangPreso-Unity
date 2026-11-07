@@ -359,7 +359,9 @@ namespace TumbangPreso.UI.Hub
             HubKnit.In(_stage, 60, 230, 1260, 440 + HubKnit.SlabHeight);
             var back = HubKnit.Plate(_stage, "StagePlate", Knit.Card);
             HubKit.Stretch(back);
-            HubKit.Stretch(HubKnit.Picture(_stage, "Burst", Resources.Load<Texture2D>("UI/boot-kit/sunburst-yellow"), 0, 0, 1260, 440, .5f, 0).rectTransform);
+            // Cut at both of the kit card's chamfers, so the sunburst never shows past its corners (QA, 2026-11-08).
+            var burst = HubKnit.Picture(_stage, "Burst", Resources.Load<Texture2D>("UI/boot-kit/sunburst-yellow"), 0, 0, 1260, 440, .5f, HubKnit.ShowCardCut);
+            burst.CutEnd = HubKnit.ShowCardCut;   // on the card's face, 440 tall, not over its slab
             var model = HubKit.Stretch(HubKit.Rect(_stage, "Model"), 8);
             var preview = model.gameObject.AddComponent<ModelPreview>();
             preview.Attach(model);

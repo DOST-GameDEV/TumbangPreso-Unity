@@ -1757,7 +1757,8 @@ def guided(b, m, cid):
     body = wrap_lines(e("LessonBody")["text"], 25, x1 - x0, 550)
     extra = (len(body) - 1) * 34
     h = 366 + extra
-    b.place("guided-panel-%d" % h, see_through(clean_panel_art(w, h), .78), x, y, "Training")
+    # The HUD's grey woven plate (owner, 2026-11-08), not the maroon panel.
+    b.place("guided-panel-%d" % h, ref_plate_art(w, h, 0), x, y, "Training")
     left(b, x0, y + 52, e("TrainingWord")["text"], 28, fill=CREAM, name="Training")
     tw = font(DARUMA, 28).getlength(e("LessonCounter")["text"])
     left(b, x1 - tw, y + 52, e("LessonCounter")["text"], 28, fill=CREAM, name="Lesson count")

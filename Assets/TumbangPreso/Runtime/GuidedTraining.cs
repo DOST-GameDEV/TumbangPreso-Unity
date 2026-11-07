@@ -1479,6 +1479,7 @@ namespace TumbangPreso
         private Text _complete;
         private Image _fill;
         private RectTransform _keyRow;
+        private Image _route;
         private readonly System.Collections.Generic.List<Image> _pips =
             new System.Collections.Generic.List<Image>();
 
@@ -1849,7 +1850,8 @@ namespace TumbangPreso
             if(_ownerSkipLabel!=null)
             { _ownerSkipLabel.text=_phoneControls ? "SKIP" : "SKIP LESSON"; _ownerSkipLabel.transform.parent.gameObject.SetActive(lesson<total); }
             _body.text = body;
-            if (_ownerQuit != null && !_phoneControls) _ownerQuit.anchoredPosition = new Vector2(lesson >= total ? 0 : 320, _ownerQuit.anchoredPosition.y);
+            if (_ownerQuit != null && !_phoneControls) _ownerQuit.anchoredPosition = new Vector2(lesson >= total ? 0 : CardWidth - 64 - 260, _ownerQuit.anchoredPosition.y);
+            if (_route != null) { _route.rectTransform.anchorMax = new Vector2(Mathf.Clamp01((lesson + 1f) / Mathf.Max(1, total)), 1); _route.transform.parent.gameObject.SetActive(lesson < total); }
             _hasLessonAction = !string.IsNullOrEmpty(action);
             if (_keyRow != null) _keyRow.gameObject.SetActive(_hasLessonAction && !_inspecting);
 

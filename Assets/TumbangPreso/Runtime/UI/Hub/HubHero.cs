@@ -360,7 +360,8 @@ namespace TumbangPreso.UI.Hub
             // The ability's mark on a sunburst card, closed by the card's rim (`boot_heroes.py`).
             var tile = HubKnit.Plate(panel, "GlyphTile", Knit.Card);
             HubKnit.In(tile, 50, 210, 290, 290 + HubKnit.SlabHeight);
-            HubKnit.Picture(HubKnit.FaceOf(tile), "Burst", Resources.Load<Texture2D>("UI/boot-kit/sunburst-yellow"), 0, 0, 290, 290, .5f, 0);
+            // Cut at both of the kit card's chamfers, so the sunburst never shows past its corners (QA, 2026-11-08).
+            HubKnit.Picture(HubKnit.FaceOf(tile), "Burst", Resources.Load<Texture2D>("UI/boot-kit/sunburst-yellow"), 0, 0, 290, 290, .5f, HubKnit.ShowCardCut).CutEnd = HubKnit.ShowCardCut;
             var symbol = HubKit.Rect(HubKnit.FaceOf(tile), "Glyph").gameObject.AddComponent<TumpAbilitySymbol>();
             symbol.Glyph = ability.Glyph;
             symbol.color = HubKnit.KitInk;

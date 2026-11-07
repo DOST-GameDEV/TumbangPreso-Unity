@@ -197,9 +197,11 @@ namespace TumbangPreso.UI
             }
             var match = GameServices.Match; var round = GameServices.Round;
             _playing = !spectating && !training && local != null; _playingAs = _playing ? local : null;
+            // A spectator reads the same score plates as Tab, standing (owner, 2026-11-08), not the old chip row.
+            _watching = spectating && !training;
             _effects.Tick(local, spectating);
             if (match == null || round == null) return;
-            _clockRoot.gameObject.SetActive(!training); _scoreRoot.gameObject.SetActive(!training && (spectating || ShowScoreRowInPlay));
+            _clockRoot.gameObject.SetActive(!training); _scoreRoot.gameObject.SetActive(!training && ShowScoreRowInPlay);
             int time = Mathf.CeilToInt(Mathf.Max(0, round.TimeLeft));
             _clock.text = $"{time / 60:00}:{time % 60:00}";
             _round.text = RoundLine(match.RoundNumber, match.TotalRounds);
@@ -380,8 +382,10 @@ namespace TumbangPreso.UI
         }
         private void Prompts(CharacterMotor local, bool spectating)
         {
-            _promptRoot.gameObject.SetActive(local != null && !spectating);
-            if (local == null || spectating) return;
+            // The held reference and the emote wheel own the screen while open; the prompt drew over both (QA, 2026-11-08).
+            bool covered = TumpPowerReadout.ReferenceOpen || EmoteWheel.AnyOpen;
+            _promptRoot.gameObject.SetActive(local != null && !spectating && !covered);
+            if (local == null || spectating || covered) return;
             _prompt.text = ""; _context.text = ""; _progress.transform.parent.gameObject.SetActive(false);
             if (_bindingGlyph != null) _bindingGlyph.enabled = false;
             _prompt.color = PromptInk;

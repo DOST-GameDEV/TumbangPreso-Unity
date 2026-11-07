@@ -47,8 +47,13 @@ namespace TumbangPreso.UI.Hub
             return words;
         }
 
-        /// <summary>The wallet (coin, balance, + for tasks) and the menu button, as the boards draw them.</summary>
-        public static KitWallet TopBar(RectTransform root, TumpHub hub)
+        /// <summary>
+        /// The wallet and the menu button: HOME's own approved pieces on every screen (QA, 2026-11-08: the menus' dark
+        /// chip and HOME's cream chip did not match). The earlier dark chip is `TopBarPrevious`, not called.
+        /// </summary>
+        public static void TopBar(RectTransform root, TumpHub hub) => HubChrome.TopRight(root, hub);
+
+        public static KitWallet TopBarPrevious(RectTransform root, TumpHub hub)
         {
             var holder = Plate(root, "WalletChip", Knit.DarkCard);
             At(holder, 1290, 44, 330, 92 + SlabHeight);
@@ -153,14 +158,20 @@ namespace TumbangPreso.UI.Hub
         /// <paramref name="pictureH"/> units, the caller adds art over it, and <see cref="RimOver"/> closes it.
         /// Hover darkens the picture slightly, since the card's own face is under it.
         /// </summary>
+        /// <summary>The kit card's top left chamfer, in canvas units.</summary>
+        public const float ShowCardCut = 34;
+
         public static HubButton ShowCard(Transform parent, string name, Texture picture, float x, float y, float w, float h, float pictureH,
                                          Action onClick, bool on = false, bool dark = false, float focus = .5f, string description = null)
         {
             var card = Button(parent, name, null, on ? (dark ? Knit.DarkCardOn : Knit.CardOn) : (dark ? Knit.DarkCard : Knit.Card), onClick);
             card.RequireUserAttention = false;
             In((RectTransform)card.transform, x, y, w, h + SlabHeight);
-            if (picture != null) Picture(card.Body, "Picture", picture, 0, 0, w, pictureH, focus, 0);
-            var darken = HubKit.Rect(card.Body, "Hover").gameObject.AddComponent<Image>();
+            // Cut at the card's own chamfer, so the picture never shows past its top left corner (QA, 2026-11-08).
+            if (picture != null) Picture(card.Body, "Picture", picture, 0, 0, w, pictureH, focus, ShowCardCut);
+            // Cut like the picture, so the darkening stays inside the card's corner too.
+            var darken = HubKit.Rect(card.Body, "Hover").gameObject.AddComponent<KitCutPicture>();
+            darken.Cut = ShowCardCut;
             HubKit.Stretch(darken.rectTransform);
             darken.raycastTarget = false;
             if (string.IsNullOrEmpty(description)) darken.color = new Color(.16f, .02f, .06f, .22f);

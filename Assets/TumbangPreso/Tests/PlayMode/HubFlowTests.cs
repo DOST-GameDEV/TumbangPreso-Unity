@@ -592,9 +592,8 @@ namespace TumbangPreso.PlayTests
                 yield return Shots("Tasks");
                 yield return BackToHome();
 
-                yield return Press("EarnButton");
-                Assert.IsInstanceOf<HubTasks>(TumpHub.Current.Top, "The + beside the balance opens TASKS, never a store of currency.");
-                yield return BackToHome();
+                // The wallet has no + (QA and owner, 2026-11-08): there is no store of currency, and TASKS is its own door.
+                Assert.IsNull(GameObject.Find("EarnButton"), "The wallet carries no + button.");
 
                 yield return Press("MenuButton");
                 Assert.IsInstanceOf<HubMenu>(TumpHub.Current.Top);

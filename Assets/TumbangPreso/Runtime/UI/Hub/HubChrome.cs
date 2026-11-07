@@ -179,15 +179,11 @@ namespace TumbangPreso.UI.Hub
                 }
             }
 
-            var plus = HubBoard.Sticker(root, "EarnButton", new Vector2(0, 1), "plus_button", () => hub.Push<HubTasks>(), out var plusFace, out var plusGroup);
-            // the + hangs inside the chip: re-anchor it to the chip's own top-left
-            var plusRect = (RectTransform)plus.transform;
-            plusRect.anchoredPosition = new Vector2(plusGroup.x - group.x, -(plusGroup.y - group.y));
-            var glyph = HubBoard.Picture(plusFace, plusGroup, "glyph_plus", "Icon");
-            HubBoard.Feel(plus, plusFace, HubBoard.Depth("plus_button"), 0.7f, false, glyph);
-            chip._notice = HubKit.Notice(plusFace);
-
+            // No + (QA and owner, 2026-11-08): it only opened TASKS, and there is no store to buy TANSAN; TASKS stays on HOME.
             var coin = HubBoard.Place(root, group, "icon_coin", "CapIcon");
+            // A soft drop shadow so the coin sits on the bar rather than printed on it (QA, 2026-11-08).
+            var drop = coin.gameObject.AddComponent<UnityEngine.UI.Shadow>();
+            drop.effectColor = new Color(0.1f, 0.01f, 0.04f, 0.45f); drop.effectDistance = new Vector2(4, -6);
             coin.gameObject.AddComponent<HubCoinSpin>();
             chip.Refresh();
             return chip;

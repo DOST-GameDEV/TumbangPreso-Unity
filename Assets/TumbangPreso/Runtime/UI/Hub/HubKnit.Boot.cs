@@ -289,6 +289,8 @@ namespace TumbangPreso.UI.Hub
     public sealed class KitCutPicture : RawImage
     {
         public float Cut = 22;
+        /// <summary>The bottom right cut, for a card chamfered at both ends (the kit card). None by default.</summary>
+        public float CutEnd;
 
         /// <summary>Shows a texture covering a window of w x h, the crop sliding to focus (0 top, 1 bottom).</summary>
         public void Fit(Texture source, float w, float h, float focus = .5f)
@@ -307,8 +309,8 @@ namespace TumbangPreso.UI.Hub
             var uv = uvRect;
             void Add(float x, float y) => vh.AddVert(new Vector3(r.xMin + x, r.yMin + y), color,
                 new Vector2(uv.x + uv.width * x / r.width, uv.y + uv.height * y / r.height));
-            Add(0, 0); Add(0, r.height - Cut); Add(Cut, r.height); Add(r.width, r.height); Add(r.width, 0);
-            vh.AddTriangle(0, 1, 2); vh.AddTriangle(0, 2, 3); vh.AddTriangle(0, 3, 4);
+            Add(0, 0); Add(0, r.height - Cut); Add(Cut, r.height); Add(r.width, r.height); Add(r.width, CutEnd); Add(r.width - CutEnd, 0);
+            vh.AddTriangle(0, 1, 2); vh.AddTriangle(0, 2, 3); vh.AddTriangle(0, 3, 4); vh.AddTriangle(0, 4, 5);
         }
     }
 
