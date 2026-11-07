@@ -14,7 +14,7 @@ RULES={
  ("Abilities/AmihanHazards.cs","Release"):("EVERY-PEER","Each peer's storm releases on its own copy of the ultimate's clock; the release cue is local."),
  ("Visual/AmihanVfx.cs","LateUpdate"):("EVERY-PEER","Status marks attach on each peer from the replicated status timer; the status cue plays once per peer."),
  ("Map/MooredBoatMotion.cs","LateUpdate"):("EVERY-PEER","Each active map copy samples its moored boats with a local cooldown; ambient lap sound is not relayed."),
- ("Carrier.cs","NotifyHolding"):("EVERY-PEER","Possession snapshots and local equips use the same idempotent notification."),
+ ("Carrier.cs","PresentPickup"):("EVERY-PEER","Pickup presentation runs where the grab resolves and on clients from the snapshot Loose to Held edge."),
  ("Abilities/HeroAbilitySystem.cs","PlayUltimatePresentation"):("EVERY-PEER","Accepted cast presentation runs locally and through ApplyNetworkCast."),
  ("Abilities/HeroHazards.cs","SpawnIceBarricade"):("EVERY-PEER","Replicated kit activation builds the effect on each peer."),
  ("Abilities/HeroHazards.cs","SpawnIceSheet"):("EVERY-PEER","Replicated kit activation builds the effect on each peer."),

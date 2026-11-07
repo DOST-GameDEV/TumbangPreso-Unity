@@ -447,6 +447,10 @@ namespace TumbangPreso.Core
         /// <summary>Taya distance, flat, under which retrieving your own tsinelas is called a clutch pickup.
         /// Presentation only: it pays nothing.</summary>
         public const float ClutchPickupMetres = 2.5f;
+
+        /// <summary>Taya distance, flat, under which a pickup that makes you taggable is presented as a hot one:
+        /// a held beat and a heartbeat. Presentation only.</summary>
+        public const float HotPickupMetres = 6.0f;
         public const float MuzzleForward = 0.15f;
 
         public const float LaunchSpeed = 18.5f;

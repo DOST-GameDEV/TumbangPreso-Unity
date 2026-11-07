@@ -1101,13 +1101,24 @@ namespace TumbangPreso
             bool scoop = _motor.ReworkSliding;
             float taya = DistanceToTaya();
             var round = GameServices.Round;
-            bool clutch = what.OwnerSlot == _motor.PlayerSlot && taya >= 0.0f && taya <= Balance.ClutchPickupMetres
-                          && round != null && round.RoundActive;
+
+            // ⚠️ THE TIER IS THE DANGER THIS PICKUP JUST CREATED, NOT A DISTANCE ALONE. Holding a tsinelas inside
+            // the box with the can up is the only state in which an attacker can be tagged, so a grab that makes
+            // this body taggable with the taya close is the dangerous one. A grab while the can is down, however
+            // near the taya, is a free one, and calling it a clutch would teach the wrong thing.
+            bool live = round != null && round.RoundActive && round.Lata != null && round.Lata.IsUpright
+                        && _motor.IsTaggable();
+            bool clutch = live && what.OwnerSlot == _motor.PlayerSlot && taya >= 0.0f
+                          && taya <= Balance.ClutchPickupMetres;
+            bool hot = live && !clutch && taya >= 0.0f && taya <= Balance.HotPickupMetres;
 
             // Two layers: the rubber in the hand, and on a scoop the street under it.
             GameServices.Audio?.PlayAtVaried("pickup", transform.position,
                                              scoop ? 0.90f : 0.97f, scoop ? 1.00f : 1.09f, scoop ? 1.0f : 0.95f);
             if (scoop) GameServices.Audio?.PlayAtVaried("court_skid", transform.position, 1.05f, 1.15f, 0.55f);
+
+            // A little street dust where it lay, so a pickup across the court reads to everybody watching.
+            if (!Settings.SettingsStore.Current.ReducedEffects) Visual.CourtContactDust.Play("land", layAt);
 
             // The body reaches down; the first-person hand gets its own reach and flick (`ViewmodelArms`).
             GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction("grab", scoop ? "scoop" : "pickup");
@@ -1128,12 +1139,19 @@ namespace TumbangPreso
                 // Your own pickup: the view dips to the street and snaps back up with the shoe; a scoop kicks up
                 // and leans with the slide instead.
                 if (scoop) rig.ViewPunch(new Vector3(-2.4f, 0.0f, 2.2f), 3.5f);
+                else if (live) rig.ViewPunch(new Vector3(6.0f, 0.0f, -1.8f), 3.0f);
                 else rig.ViewPunch(new Vector3(5.0f, 0.0f, -1.4f), -2.5f);
                 InputLayer.Rumble.Pulse(scoop ? 0.28f : 0.14f, scoop ? 0.50f : 0.34f, scoop ? 0.10f : 0.07f);
 
+                // A grab with the taya bearing down: a beat of stillness, then a heartbeat. You are live now.
+                if (hot || clutch)
+                {
+                    rig.HoldFrame(clutch ? 0.05f : 0.035f);
+                    GameServices.Audio?.PlayUiVaried("sfx_arena_intro_heart", 0.98f, 1.04f, clutch ? 0.75f : 0.5f);
+                }
+
                 if (clutch)
                 {
-                    rig.HoldFrame(0.05f);
                     rig.GetComponent<Visual.ColourGrade>()?.PulseChromatic(0.22f, 0.2f);
                     InputLayer.Rumble.Pulse(0.40f, 0.65f, 0.14f);
                 }
