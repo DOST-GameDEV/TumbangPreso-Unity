@@ -12,6 +12,7 @@ namespace TumbangPreso.UI
         MapPreviewVideo _media;
         Text _name;
         HubButton[] _cards;
+        Text[] _names;
         int _candidate=-1;
 
         public static CourtPreviewPicker Open(Transform parent,int initial,Action<int> confirm,Action cancel)
@@ -22,50 +23,49 @@ namespace TumbangPreso.UI
             HubKit.Stretch(background.rectTransform);background.raycastTarget=false;
             var fit=background.gameObject.AddComponent<AspectRatioFitter>();fit.aspectMode=AspectRatioFitter.AspectMode.EnvelopeParent;fit.aspectRatio=16f/9;
             picker._media=background.gameObject.AddComponent<MapPreviewVideo>();
-            Scrim(root,"TopReadability",new Vector2(0,.72f),Vector2.one,.52f);
-            Scrim(root,"BottomReadability",Vector2.zero,new Vector2(1,.38f),.76f);
-            var title=HubKit.Text(root,"CourtPickerTitle","NEXT COURT",HubStyle.Display,true,HubStyle.Paper);
-            HubKit.Place(title.rectTransform,HubKit.TopLeft,new Vector2(220,-56),new Vector2(1450,120));
-            var back=HubKit.Button(root,"CancelCourtPreview","BACK",HubStyle.Honey,cancel,HubStyle.Label,1660);
-            HubKit.Place((RectTransform)back.transform,HubKit.TopLeft,new Vector2(56,-56),new Vector2(148,100));
-            var instruction=HubKit.Text(root,"CourtPickerInstruction","Browse a court, then lock your vote.",HubStyle.Label,false,HubStyle.Paper);
-            HubKit.Place(instruction.rectTransform,HubKit.TopLeft,new Vector2(56,-195),new Vector2(1500,65));
-            picker._name=HubKit.Text(root,"SelectedCourtName","",HubStyle.Hero,true,HubStyle.Paper);
-            HubKit.Place(picker._name.rectTransform,HubKit.TopLeft,new Vector2(56,-300),new Vector2(1500,170));
-            int count=SceneFlow.Maps.Length;picker._cards=new HubButton[count];
-            const float width=340,gap=16;float rowWidth=count*(width+gap)-gap;
-            var row=HubKit.Place(HubKit.Rect(root,"CourtChoices"),HubKit.Bottom,new Vector2(0,100),new Vector2(rowWidth,240));
+            // The boot board `match-result-nextcourt` (`tools/ui_artboards/boot_record.py` `next_court`): the court's
+            // own preview dimmed, red BACK and the white title, the court's name large, the lime LOCK VOTE, and every
+            // court as a kit card with its picture, the one being browsed lime.
+            var dim=HubKit.Rect(root,"CourtDim").gameObject.AddComponent<Image>();dim.color=new Color32(40,8,14,90);dim.raycastTarget=false;HubKit.Stretch(dim.rectTransform);
+            var design=OwnerUiLayout.DesignArea(root,"CourtComposition");
+            HubKnit.Pressable(design,"CancelCourtPreview","BACK",Knit.Danger,60,40,220,100,44,()=>cancel());
+            var title=HubKnit.Display(design,"CourtPickerTitle","NEXT COURT",86,HubKnit.KitWhite,TextAnchor.MiddleLeft,7);
+            HubKnit.In(title.rectTransform,310,36,1300,100);
+            var instruction=HubKnit.Words(design,"CourtPickerInstruction","Browse a court, then lock your vote.",34,HubKnit.KitWhite,TextAnchor.MiddleLeft,true,3);
+            HubKnit.In(instruction.rectTransform,62,158,1300,46);
+            picker._name=HubKnit.Display(design,"SelectedCourtName","",170,HubKnit.KitWhite,TextAnchor.MiddleLeft,9);
+            HubKnit.In(picker._name.rectTransform,56,342,1300,210);
+            int count=SceneFlow.Maps.Length;picker._cards=new HubButton[count];picker._names=new Text[count];
+            const float width=290,step=302;float rowWidth=(count-1)*step+width;
+            var row=HubKnit.In(HubKit.Rect(design,"CourtChoices"),60,650,rowWidth,250+HubKnit.SlabHeight);
             if(rowWidth>1800)row.localScale=Vector3.one*(1800/rowWidth);
             for(int i=0;i<count;i++)
             {
                 int index=i;
-                var card=HubKit.Button(row,"PreviewCourt"+i,null,HubStyle.Night,()=>picker.Browse(index),0,1670+i);
+                var card=HubKnit.Pressable(row,"PreviewCourt"+i,null,Knit.Card,i*step,0,width,250+HubKnit.SlabHeight,0,()=>picker.Browse(index));
                 picker._cards[i]=card;card.Attention+=attended=>{if(attended)picker.Browse(index);};
-                HubKit.Place((RectTransform)card.transform,HubKit.TopLeft,new Vector2(i*(width+gap),0),new Vector2(width,240));
-                var image=HubKit.Rect(card.Body,"CourtImage").gameObject.AddComponent<RawImage>();
-                image.texture=MapPreviewVideo.PosterFor(SceneFlow.Maps[i]);image.raycastTarget=false;
-                HubKit.Place(image.rectTransform,HubKit.TopLeft,new Vector2(12,-12),new Vector2(316,177.75f));
-                var label=HubKit.Text(card.Body,"CourtName",SceneFlow.MapRegistry[i].Name.ToUpperInvariant(),HubStyle.Floor,true,HubStyle.Paper);
-                HubKit.Place(label.rectTransform,HubKit.TopLeft,new Vector2(12,-196),new Vector2(316,36));HubKit.Fit(label);
+                // The picture's top left corner cut, as the board's `picture` cuts it.
+                HubKnit.Picture(card.Body,"CourtImage",MapPreviewVideo.PosterFor(SceneFlow.Maps[i]),20,18,250,140,.5f,22);
+                string words=SceneFlow.MapRegistry[i].Name.ToUpperInvariant();
+                var label=picker._names[i]=HubKnit.Display(card.Body,"CourtName",words,words.Length<12?30:26,HubKnit.KitCream,TextAnchor.MiddleCenter);
+                HubKnit.In(label.rectTransform,10,174,width-20,48);HubKit.Fit(label,width-20);
             }
-            var lockVote=HubKit.Button(root,"ConfirmCourtVote","LOCK VOTE",HubStyle.Golden,()=>confirm(picker._candidate),HubStyle.Title,1690);
-            HubKit.Place((RectTransform)lockVote.transform,HubKit.BottomRight,new Vector2(-56,374),new Vector2(430,100));
+            HubKnit.Pressable(design,"ConfirmCourtVote","LOCK VOTE",Knit.Go,1400,470,460,124,54,()=>confirm(picker._candidate));
             int selected=Mathf.Clamp(initial,0,count-1);picker.Browse(selected);
             // ScreenFocus preserves another live screen's selection. Opening a
             // modal explicitly transfers focus before its normal navigation runs.
             if(EventSystem.current!=null)EventSystem.current.SetSelectedGameObject(picker._cards[selected].gameObject);
             return picker;
         }
-        static void Scrim(Transform parent,string name,Vector2 min,Vector2 max,float alpha)
-        {
-            var image=HubKit.Rect(parent,name).gameObject.AddComponent<Image>();image.color=new Color(HubStyle.Ink.r,HubStyle.Ink.g,HubStyle.Ink.b,alpha);image.raycastTarget=false;
-            HubKit.Span(image.rectTransform,min,max);
-        }
         void Browse(int index)
         {
             if(index<0||index>=_cards.Length||index==_candidate)return;
-            _candidate=index;_media.Show(SceneFlow.Maps[index]);_name.text=SceneFlow.MapRegistry[index].Name.ToUpperInvariant();HubKit.Fit(_name);
-            for(int i=0;i<_cards.Length;i++)HubKit.SetFill(_cards[i],i==index?HubStyle.ArmyDeep:HubStyle.Night);
+            _candidate=index;_media.Show(SceneFlow.Maps[index]);_name.text=SceneFlow.MapRegistry[index].Name.ToUpperInvariant();_name.fontSize=170;HubKit.Fit(_name,1300);
+            for(int i=0;i<_cards.Length;i++)
+            {
+                HubKnit.Recolour(_cards[i].transform,i==index?Knit.CardOn:Knit.Card);
+                if(_names[i]!=null)_names[i].color=i==index?HubKnit.KitLime:HubKnit.KitCream;
+            }
         }
         public void Close(){_media?.Stop();gameObject.SetActive(false);Destroy(gameObject);}
         void OnDisable(){_media?.Stop();}
