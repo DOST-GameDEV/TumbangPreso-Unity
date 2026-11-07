@@ -9,6 +9,7 @@
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "Unity.InputSystem",
+        "Unity.InputSystem.TestFramework",
         "Unity.Netcode.Runtime",
         "Unity.Services.Multiplayer",
         "Unity.Services.Core",

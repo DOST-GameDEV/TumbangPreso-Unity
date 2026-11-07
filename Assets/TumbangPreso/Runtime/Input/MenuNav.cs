@@ -94,7 +94,9 @@ namespace TumbangPreso.InputLayer
                 var module = Module();
                 var action = module != null ? module.cancel : null;
 
-                if (action != null && action.action != null)
+                // An inactive module can retain its actions while a loading or
+                // replacement screen owns input. Use the same fallback as SubmitHeld.
+                if (action != null && action.action != null && action.action.enabled)
                     return action.action.WasPerformedThisFrame();
 
                 var pad = Gamepad.current;
@@ -122,7 +124,7 @@ namespace TumbangPreso.InputLayer
                 var module = Module();
                 var action = module != null ? module.submit : null;
 
-                if (action != null && action.action != null)
+                if (action != null && action.action != null && action.action.enabled)
                     return action.action.WasPerformedThisFrame();
 
                 var pad = Gamepad.current;
