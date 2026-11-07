@@ -100,7 +100,11 @@ namespace TumbangPreso.Visual
         /// ⚠️ A HERO WITH NO TABLE KEEPS THE OLD SHARED LENGTH rather than failing the phase, so a
         /// new hero added without an introduction still pauses and releases exactly as before.
         /// </summary>
-        public static float SecondsFor(string hero) => For(hero)?.Seconds ?? DefaultSeconds;
+        // The owner's cut starts Yasmin after the skated heart. Keep the authored
+        // table and clip intact; all retained picture samples use that clock.
+        public static float PlaybackStartFor(string hero) => hero == "cheska" ? 9.18f : 0f;
+        public static float SecondsFor(string hero) => Mathf.Max(.1f,
+            (For(hero)?.Seconds ?? DefaultSeconds) - PlaybackStartFor(hero));
 
         private static UltimatePerformance Load(string name)
         {

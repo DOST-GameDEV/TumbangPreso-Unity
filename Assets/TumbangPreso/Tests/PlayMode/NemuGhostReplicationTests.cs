@@ -85,6 +85,25 @@ namespace TumbangPreso.PlayTests
             frame.Ghosts[6].Flags = 1; frame.Ghosts[6].Phase = 2; Assert.IsFalse(frame.IsValid, "A dormant ghost cannot lunge or carry.");
             frame.Ghosts = new NemuGhostPose[NemuGhostFrame.MaxGhosts + 1]; Assert.IsFalse(frame.IsValid);
         }
+        [UnityTest]
+        public IEnumerator ABlindfoldWaitsForItsVictimEpochWithoutCrashingOrCoveringAnotherBody()
+        {
+            var victim = GameServices.Round.PlayerAt(1);
+            var pose = Pose(1, 1104, 3); pose.Target = 1; pose.TargetEpoch = victim.MovementEpoch+1;
+            Assert.DoesNotThrow(()=>Deliver(Frame(pose)), "A ghost frame can legitimately precede the victim's matching body pose.");
+            var ghost = NemuBlindfold.Live.Single(g=>g.isActiveAndEnabled);
+            yield return null;
+            Assert.IsNull(ghost.Victim);
+            var renderers = ghost.GetComponentsInChildren<Renderer>(true);
+            Assert.IsNotEmpty(renderers);
+            Assert.IsTrue(renderers.All(r=>!r.enabled||r.forceRenderingOff),
+                "An unbound blindfold must not remain drawn at its previous victim's face.");
+            victim.AdoptMovementEpoch(pose.TargetEpoch);
+            yield return null;
+            Assert.AreSame(victim,ghost.Victim,"The accepted ghost must bind when its own epoch arrives.");
+            Assert.IsTrue(ghost.GetComponentsInChildren<Renderer>().Any(r=>r.enabled&&!r.forceRenderingOff));
+        }
+
         [UnityTest] public IEnumerator OwnerObserverAndSpectatorHydrateTheSameThreeGhostsWithoutCasting()
         {
             foreach (int local in new[] { 0, 1, -1 })

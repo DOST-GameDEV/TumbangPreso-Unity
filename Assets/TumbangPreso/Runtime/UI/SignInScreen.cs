@@ -1610,75 +1610,24 @@ namespace TumbangPreso.UI
             SetMode(true);
         }
 
-        /// <summary>
-        /// The same screen, as the LOGIN step of the boot sequence, on every launch.
-        ///
-        /// ⚠️⚠️ "ONCE PER MACHINE" IS GONE AND THAT WAS 🧑'S CALL ON 2026-09-01, WITH THE FLOW
-        /// WRITTEN OUT: *"i want it to strictly be this: UNITY -> BH STUDIOS ANIMATION -> LOGIN ->
-        /// MAIN MENU -> LOBBY"*. `GameSettings.AccountChoiceMade` gated this on the FIRST launch
-        /// of an install, so the step he drew existed for one boot and then vanished for ever.
-        /// The flag is still written and still read by `ShouldOfferUpgrade`; it no longer decides
-        /// whether this screen appears. `docs/TODO.md` § 114.5.
-        ///
-        /// ⚠️⚠️ AND A RETURNING PLAYER IS NOT ASKED A QUESTION THEY HAVE ALREADY ANSWERED. With a
-        /// username attached this opens on the welcome-back state, which names them and lets go
-        /// after <see cref="WelcomeHold"/>. **A login step that costs a press on every launch is
-        /// a tax**, and the reason it is worth having at all is that a player who wants to switch
-        /// accounts currently has to find the ACCOUNT tab to do it.
-        ///
-        /// ⚠️⚠️ THIS REVERSES `docs/TODO.md` § 92.3, WHICH CALLED THE BOOT BEHAVIOUR "THE ONE
-        /// THING THAT MUST NOT MOVE". 🧑, 2026-08-31: *"i want this like pubg but they have ann
-        /// option to continue right as a guest"*. `GameSettings.AccountChoiceMade` carries the
-        /// full argument for why both the old rule and this can be true: the rule was about a
-        /// FORM appearing unasked, and this is a CHOICE with a one-press escape.
-        ///
-        /// ⚠️⚠️ THE ESCAPE IS THE ENTIRE DESIGN AND IT MUST NEVER NEED THE NETWORK.
-        /// `FUTURE.md` § 0.5 rule 7 and the nationals in General Santos City: the game has to
-        /// reach a match with the cable out. CONTINUE AS GUEST does not call a service, does not
-        /// await anything and cannot fail; the anonymous account is already signed in behind the
-        /// loading screen, or has already fallen back to the local profile, before this screen is
-        /// ever built. **If this button ever grows an `await`, this screen has become the thing
-        /// § 92.3 refused.**
-        ///
-        /// ⚠️ BACK IS HIDDEN, because at boot there is nothing behind it. A button that dismisses
-        /// a screen to reveal nothing is how a player gets stuck on a black frame.
-        /// </summary>
+        // A saved password account remains usable offline; Google requires a restored session.
+        internal static bool HasRestoredBootAccount(PlayerAccount account)
+            => account != null && !account.IsGuest &&
+               ((account.HasPassword && !string.IsNullOrWhiteSpace(account.Username)) ||
+                (account.IsSignedIn && account.HasGoogle));
+
+        /// <summary>Open the boot form only when there is no restored linked account.</summary>
         public void OpenAtBoot()
         {
+            if (HasRestoredBootAccount(GameServices.Account)) return;
             RetireAuthView();
             _username.text = "";
             _password.text = "";
             _error.text = "";
-
-            // ⚠️ CREATE RATHER THAN SIGN IN, because a first-time player has no account to sign
-            // in to and the CREATE copy is the line that says what happens to what they have
-            // already played. A returning player who wants SIGN IN presses one segment.
             SetMode(true);
-
-            // ⚠️ BOTH HALVES ARE REQUIRED. `HasPassword` is a settings flag and `Username` is the
-            // profile's, and an install that has one without the other is a half-attached account
-            // that must be shown the form rather than greeted by name.
-            var account = GameServices.Account;
-            bool attached = account != null && account.HasPassword &&
-                            !string.IsNullOrWhiteSpace(account.Username);
-
-            // ⚠️⚠️ `ShowWelcome` BEFORE `SetBootMode`, AND THE ORDER IS LOAD-BEARING. See the
-            // note in `Open`: `ShowWelcome(false)` reactivates every form piece including `_back`,
-            // so running it second put BACK back on a screen with nothing behind it.
-            ShowWelcome(attached);
+            ShowWelcome(false);
             SetBootMode(true);
-
-            if (attached)
-            {
-                if (_welcomeName != null) _welcomeName.text = account.LobbyName;
-                if (_welcomeHint != null) _welcomeHint.text = "press anything to stay here";
-                _autoPassAt = Time.unscaledTime + WelcomeHold;
-            }
-            else
-            {
-                _autoPassAt = -1.0f;
-            }
-
+            _autoPassAt = -1.0f;
             _root.SetActive(true);
             Opened?.Invoke(true);
         }

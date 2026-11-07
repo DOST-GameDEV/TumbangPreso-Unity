@@ -11,6 +11,7 @@ All original IDs and full bodies remain in the
 
 | ID | Status | Acceptance / next action |
 |---|---|---|
+| BANAUE-PERF-1105 | DONE; follow-ups open | [Evidence and next work](reports/banaue-perf-2026-11-05/README.md) |
 | UI-REVAMP-1029 | In game | New HUD and most menus on main (QoLUpdates-v2 is behind). The unbuilt and old screens, from a board-by-board capture comparison, are listed in the method's 2026-11-07 handoff state. [Method](UI_REVAMP.md) |
 | LOBBY-UI-1028 | DESKTOP FIXES integrated | Knit rules sheet, MATCH SETTINGS footer, joined-room spacing and immediate input on rules close are integrated. Evidence: Logs/lobby-ui-20261028/fixes/. Phone work excluded. |
 | ONLINE-CAST-1028 | FIXED: desktop checks passed | 73b1f403b built. Ult victims/can on own floor from host-frozen pose; GroundY ignores awnings. Delayed Payo pairs: Cheska gap 3.2 m to 0, Nemu 0.015, Paete tree grounded; EditMode 23/23. Open: victims in Paete/Amihan/Phaister reach, physical multi-PC. Logs/ult-terrain-20261029/. |

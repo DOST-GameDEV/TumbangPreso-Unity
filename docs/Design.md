@@ -13,16 +13,19 @@ This supersedes historical slide/timing descriptions below. Protocol144.
 
 # Design — the rules, and every number that decides them
 
-## Current movement values, October 3 owner revision
+## Current movement values, November 4 owner revision
 
-In both modes, attackers walk at 2.5 m/s and run at 5 m/s; defenders walk at
-3.75 m/s and run at 7.5 m/s (owner restored these values October 29). No innate role/hero speed multipliers. Stamina
+In both modes, attackers walk at 2.5 m/s and sprint at 3.75 m/s; defenders walk at
+3.75 m/s and sprint at 5.625 m/s. Character traits do not scale these base speeds;
+hero ability modifiers remain separate. Stamina
 capacity is 250, drain/regen 100 per second, sprint start floor 50, regen delay
-1 second. Fatigue lasts 2.5 seconds with no walking penalty and no sprint/regen.
+1 second. Depletion ends the current sprint without an extra exhaustion lockout;
+normal regeneration and the sprint start floor still apply. A full standard bar
+buys 2.5 seconds, covering 9.375 m as an attacker or 14.0625 m as taya.
 Jump launch is 5.75 m/s, character gravity 20 m/s², maximum falling speed 25 m/s.
 Ideal flat-ground jump is about 0.827 m high and 0.575 s airborne; physics steps
 and collision affect actual measurements. This supersedes the earlier 1 m / 0.5 s revision.
-Shove and defender lunge cost no stamina and are usable during fatigue.
+Shove and defender lunge cost no stamina and are usable with an empty bar.
 Separate retrieval slide remains 1.75 m / 25 stamina / 2.45 s cooldown.
 Defender lunge remains 3.5 m with 0.5 s tap / 2.5 s full-hold cooldown.
 
@@ -1064,8 +1067,7 @@ added since. A reader who assumes otherwise will go looking for numbers that wer
 `GameMode.Classic` is this document. `GameMode.HeroStrike`
 (`Packages/com.tumbangpreso.core/Runtime/MatchRules.cs`) is a different roster with an ability
 layer on top of the same round rules: same four players, 90 s, rotating taya and the scoring in
-§ 8. Hero Strike plays **8 rounds**, two complete role rotations, where Classic plays the four
-rounds described above. Everything in §§ 1 to 12 that is not the match length or an ability
+§ 8. Both modes default to **4 rounds**, one complete role rotation. Everything in §§ 1 to 12 that is not the match length or an ability
 still applies to it.
 
 | System | Where the numbers actually live |
@@ -1113,5 +1115,6 @@ and deducts 5 points per second while suspending normal 10 points/sec defense in
 An owned loose slipper warns at 7.5 seconds; its existing highlight counts the
 remaining 7.5 seconds until the 15-second penalty threshold. Both clocks hold
 while the player cannot act. Retrieving the slipper clears its episode. Scores
-retain their zero floor. Exhaustion now lasts 2.5 seconds at 75% speed with sprint
-and regeneration locked throughout. These shared timings require protocol 119.
+retain their zero floor. The November 4 movement revision above removes the
+exhaustion lockout. The original anti-stall timings required protocol 119;
+current shared movement values are covered by the gameplay fingerprint.

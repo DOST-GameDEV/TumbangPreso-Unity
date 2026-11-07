@@ -603,7 +603,16 @@ namespace TumbangPreso.Abilities
         /// ability row, so there is no long form to fall back to.
         /// </summary>
         public string EffectiveDescription =>
-            string.IsNullOrEmpty(VariantSummary) ? Description : VariantSummary;
+            string.IsNullOrEmpty(VariantSummary) ? KeyedDescription : VariantSummary;
+
+        /// <summary>The input action this ability's slot is cast with, read from its stable id.</summary>
+        public string InputAction => Id.EndsWith("_ultimate") ? "Ultimate" : Id.EndsWith("_skill1") ? "Skill1" : "Skill2";
+
+        /// <summary>
+        /// `Description` with its key marks (`{KEY}`, `{Grab}`, ...) filled with the player's live bindings
+        /// (`UI.AbilityKeys`). Every screen shows this; `Description` itself keeps the marks.
+        /// </summary>
+        public string KeyedDescription => UI.AbilityKeys.Fill(Description, InputAction);
 
         /// <summary>
         /// What this slot's button does RIGHT NOW, for the deck tile, the touch button, the hold-key panel, the cast callout and

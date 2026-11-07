@@ -1238,7 +1238,12 @@ def main():
     os.makedirs(STATUS_OUT, exist_ok=True)
     only = [a for a in sys.argv[1:] if a in GLYPHS or a in STATUSES]
     icons = {}
-    for n in (only or list(GLYPHS) + list(STATUSES)):
+    # The abilities and statuses are now the owner's own sheets, cut by tools/cut_ability_icons.py and
+    # tools/cut_status_icons.py (2026-11-04/05). These older drawings write only when named, never over the set.
+    if not only:
+        print("nothing drawn: name the glyphs to redraw (the live icons come from tools/cut_ability_icons.py)")
+        return
+    for n in only:
         a = Art()
         (GLYPHS.get(n) or STATUSES[n])(a)
         icons[n] = a.render()

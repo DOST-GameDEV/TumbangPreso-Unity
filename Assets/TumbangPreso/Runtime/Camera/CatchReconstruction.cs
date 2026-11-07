@@ -183,7 +183,7 @@ namespace TumbangPreso.CameraSystem
             if (SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null) return;
             if (Playing && (GameServices.Match == null || GameServices.Match.PresentationMatchId != _matchId)) End();
             var round = GameServices.Round;
-            var victim = round != null ? round.PlayerAt(subject) : null;
+            var victim = round != null ? round.BodyAt(subject) : null;
             var rig = Camera.main != null ? Camera.main.GetComponent<CameraRig>() : null;
             if (victim == null || !Watches(rig, victim)) return;
             if (Playing && _victim == victim) return;
@@ -199,16 +199,19 @@ namespace TumbangPreso.CameraSystem
             _pendingStun = victim.StunLeft;
             TryPending();
         }
+        /// <summary>True from the first commit of a shared ultimate until its picture has handed back.</summary>
+        public static bool UltimateOwnsScreen => SharedUltimatePhase.Instance != null &&
+            (SharedUltimatePhase.Instance.Active || SharedUltimatePhase.CinematicShowing);
         private void TryPending()
         {
             if (!_pending) return;
             var round = GameServices.Round; var match = GameServices.Match;
-            if (round == null || match == null || !round.RoundActive || match.RoundNumber != _pendingRound ||
+            if (UltimateOwnsScreen || round == null || match == null || !round.RoundActive || match.RoundNumber != _pendingRound ||
                 match.PresentationMatchId != _pendingMatchId ||
                 Time.unscaledTime > _pendingUntil || Panel.AnyOpen || Settings.SettingsStore.Current.ReducedUiMotion ||
                 !Settings.SettingsStore.Current.CinematicCameraMotion)
             { _pending = false; return; }
-            var victim = round.PlayerAt(_pendingVictim);
+            var victim = round.BodyAt(_pendingVictim);
             var rig = Camera.main != null ? Camera.main.GetComponent<CameraRig>() : null;
             if (victim == null || !Watches(rig, victim)) { _pending = false; return; }
             if (victim.StunLeft <= .3f) return;
@@ -304,10 +307,11 @@ namespace TumbangPreso.CameraSystem
             _worldRoot = new GameObject("~CatchPlaybackWorld");
             _actorGround = new GroundContactVisual(_worldRoot.transform, "Replay contact", true);
             _victimGround = new GroundContactVisual(_worldRoot.transform, "Replay contact", true);
-            for (int seat = 0; seat < Core.Balance.PlayerCount; seat++)
+            for (int seat = 0; seat < Core.CompanionSeats.BodyCount; seat++)
             {
                 var track = _history.ForSeat(seat);
-                if (track != null && track != _actorTrack && track != _victimTrack && track.Ready) AddExtra(track, RecordedObjectKind.Player, seat, availableEnd);
+                if (track != null && track != _actorTrack && track != _victimTrack && track.Ready)
+                    AddExtra(track, Core.CompanionSeats.IsCompanion(seat) ? RecordedObjectKind.Companion : RecordedObjectKind.Player, seat, availableEnd);
             }
             if (_archive != null)
             {
@@ -329,7 +333,7 @@ namespace TumbangPreso.CameraSystem
         {
             if (_actorTrack.Actor != null && _actorTrack.Actor.PlayerSlot == seat) return _actorCopy.Root;
             if (_victim != null && _victim.PlayerSlot == seat) return _victimCopy.Root;
-            foreach (var extra in _extras) if (extra.Kind == RecordedObjectKind.Player && extra.Seat == seat) return extra.Copy.Root;
+            foreach (var extra in _extras) if ((extra.Kind == RecordedObjectKind.Player || extra.Kind == RecordedObjectKind.Companion) && extra.Seat == seat) return extra.Copy.Root;
             return null;
         }
         private GameObject RecordedProp(int seat)
@@ -603,7 +607,9 @@ namespace TumbangPreso.CameraSystem
             float elapsed = Time.unscaledTime - _began;
             bool victimGone = _spectatorView ? !Watching
                 : _rig == null || !_rig.IsFollowing(_victim) || _victim.StunLeft <= .18f || _victim.CanAct();
-            if (_victim == null || victimGone || Panel.AnyOpen || !Settings.SettingsStore.Current.CinematicCameraMotion ||
+            // ⚠️ THE ULTIMATE WINS THE SCREEN (owner, 2026-11-03: "i cant tell whats happening when i get tagged and then
+            // someone ults"). It is shared and decides play; this replay is one player's and skippable. It ends, and does not return.
+            if (UltimateOwnsScreen || _victim == null || victimGone || Panel.AnyOpen || !Settings.SettingsStore.Current.CinematicCameraMotion ||
                 Settings.SettingsStore.Current.ReducedUiMotion || GameServices.Round == null || !GameServices.Round.RoundActive ||
                 GameServices.Match == null || GameServices.Match.RoundNumber != _round ||
                 GameServices.Match.PresentationMatchId != _matchId || elapsed >= _duration)
@@ -826,7 +832,7 @@ namespace TumbangPreso.CameraSystem
             _hiddenCanvases.Clear(); _canvasPrevious.Clear();
             // A held shoe may also be under its actor. Hide each renderer once
             // so restoration cannot accidentally retain the temporary hidden flag.
-            foreach (var actor in GameServices.Round.Players)
+            foreach (var actor in GameServices.Round.Bodies)
             {
                 if (actor == null) continue;
                 HideTree(actor.transform);

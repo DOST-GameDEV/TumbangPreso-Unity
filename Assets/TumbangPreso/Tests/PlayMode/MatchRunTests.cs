@@ -275,12 +275,12 @@ namespace TumbangPreso.PlayTests
         }
 
         /// <summary>
-        /// ⚠️ SPRINT MUST COST THE BAR, AND FATIGUE MUST ARRIVE. The stamina model is asserted
+        /// ⚠️ SPRINT MUST COST THE BAR WITHOUT ADDING A DEPLETION LOCKOUT. The stamina model is asserted
         /// arithmetically in Core.Tests; this proves the MOTOR is actually driving it, which is
         /// a different claim and the one a port breaks.
         /// </summary>
         [UnityTest]
-        public IEnumerator SprintingDrainsTheBarAndReachesFatigue()
+        public IEnumerator SprintingDrainsTheBarWithoutFatigue()
         {
             BuildWorld();
             GameServices.Round.BeginRound();
@@ -289,7 +289,7 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(Balance.StaminaMax, m.Stamina.Current, 0.01f);
 
             float elapsed = 0.0f;
-            while (!m.Stamina.IsFatigued && elapsed < 5.0f)
+            while (m.Stamina.Current > 0 && elapsed < 5.0f)
             {
                 m.Intent.Move = new Vector2(1.0f, 0.0f);
                 m.Intent.Set(Verb.Sprint, true);
@@ -298,7 +298,9 @@ namespace TumbangPreso.PlayTests
                 yield return new WaitForFixedUpdate();
             }
 
-            Assert.IsTrue(m.Stamina.IsFatigued, "sprinting never reached fatigue");
+            Assert.AreEqual(0, m.Stamina.Current, "sprinting never emptied the bar");
+            Assert.IsFalse(m.Stamina.IsFatigued);
+            Assert.IsFalse(m.Stamina.IsSprinting);
             Assert.AreEqual(Balance.StaminaMax / Balance.StaminaDrainRate, elapsed, 0.15f,
                 "sprint-to-empty took the wrong amount of time on a real body");
         }

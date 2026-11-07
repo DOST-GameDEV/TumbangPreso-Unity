@@ -77,9 +77,9 @@ namespace TumbangPreso.UI
                     var (glyph, backing, count) = earned[k];
                     var fill = glyph == HudBadge.Glyph.Slipper ? CourtPresentationPalette.Paper : HudDraw.CardInk;
                     var accent = glyph == HudBadge.Glyph.Tag ? UiTheme.Defense : UiTheme.Offense;
-                    // The burst glyphs sit on the cream card as they are; the slipper needs its disc.
-                    _accoladeGlyphs[i, k].Show(glyph, glyph == HudBadge.Glyph.Knock || glyph == HudBadge.Glyph.Tag ? CourtPresentationPalette.Paper : fill,
-                        backing, accent);
+                    // Ink on the cream card, so the owner's knock and tag symbols read (cream on cream all but vanished,
+                    // 2026-11-04); the slipper keeps its disc.
+                    _accoladeGlyphs[i, k].Show(glyph, fill, backing, accent);
                     _accoladeCounts[i, k].text = count.ToString();
                 }
             }

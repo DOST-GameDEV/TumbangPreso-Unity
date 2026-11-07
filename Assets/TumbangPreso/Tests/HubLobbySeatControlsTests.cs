@@ -210,15 +210,14 @@ namespace TumbangPreso.Tests
             Assert.AreEqual(seat.rect.size,rect.rect.size,"The seat door must cover the whole row.");
             Assert.IsFalse(_root.GetComponentsInChildren<Text>(true).Any(t=>t.text.Contains("SIT HERE")));
         }
-        [Test] public void TheHostAddsAndRemovesBotsSeatBySeat()
+        [Test] public void TheHostCanAddBotsButCannotRemoveThem()
         {
             var add=Button("AddBot3");var remove=Button("RemoveBot2");
             Assert.IsNotNull(add,"An open seat offers ADD BOT to the host.");
-            Assert.IsNotNull(remove,"A bot seat offers REMOVE BOT to the host.");
+            Assert.IsNull(remove,"Custom matches must not offer a remove-bot action.");
             Assert.IsNull(Button("AddBot1"),"An occupied seat has no bot control.");
             Assert.IsNull(Button("AddBot0"));
             add.onClick.Invoke();Assert.AreEqual(3,_host.BotSeat);Assert.IsTrue(_host.BotWanted);
-            remove.onClick.Invoke();Assert.AreEqual(2,_host.BotSeat);Assert.IsFalse(_host.BotWanted);
             Assert.AreEqual(-1,_host.Requested,"A bot control must not also move the player.");
         }
         [Test] public void OnlyTheHostSeesBotControls()

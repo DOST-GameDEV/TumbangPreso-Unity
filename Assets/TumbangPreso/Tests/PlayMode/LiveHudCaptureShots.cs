@@ -122,7 +122,7 @@ namespace TumbangPreso.PlayTests
             typeof(TumpMatchReadout).GetField("_boardPopUntil", Priv).SetValue(view, Time.unscaledTime + 30f);
             yield return Shoot(view, "live-hud-scorepop");
 
-            // Hold Tab: the whole table, with your own plate longer and underlined.
+            // Hold Tab: the whole table, with your own plate underlined.
             local.ApplyWhirled(30); local.ApplyChilled(30); local.ApplyRooted(30);
             view.HoldBoardForCapture(true);
             view.Tick(local, false, false, false, false); yield return new WaitForSecondsRealtime(.7f);

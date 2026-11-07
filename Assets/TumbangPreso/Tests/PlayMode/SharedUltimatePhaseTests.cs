@@ -58,19 +58,91 @@ namespace TumbangPreso.PlayTests
         [UnityTest, Timeout(90000)]
         public IEnumerator YasminCurrentIntroductionReturnsToHerLiveAbility()
             => Profiles(new[] { "cheska" });
+        [UnityTest, Timeout(120000)]
+        public IEnumerator YasminOnBanaueUsesTheTrimmedIntroductionAndReturnsTheHud()
+            => Profiles(new[] { "cheska" }, SceneFlow.Payo);
         [UnityTest, Timeout(90000)]
         public IEnumerator IlyasCurrentIntroductionReturnsToHisLiveAbility()
             => Profiles(new[] { "rafi" });
 
-        private static IEnumerator Profiles(string[] heroes)
+        [UnityTest, Timeout(120000)]
+        public IEnumerator LiveBlindfoldSkillsAndCompanionsCannotObscureTheUltimatePicture()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.Payo,GameMode.HeroStrike);
+            Settings.SettingsStore.Current.CinematicCameraMotion=true;
+            Settings.SettingsStore.Current.ReducedUiMotion=false;
+            var actor = GameServices.Round.PlayerAt(1); Hero(actor,"cheska");
+            Camera.main.GetComponent<CameraRig>().Follow(actor,true);
+            var ghost = NemuBlindfold.Place(actor.transform.position+Vector3.forward,Vector3.back,0);
+            typeof(NemuBlindfold).GetMethod("Spring",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic)
+                .Invoke(ghost,new object[]{actor});
+            var doll = VoodooDollBody.Spawn(GameServices.Round.PlayerAt(0),actor.transform.position+Vector3.right,0,false);
+            var effect = GameObject.CreatePrimitive(PrimitiveType.Quad); effect.name="Live skill foreground regression";
+            effect.transform.position=actor.transform.position+Vector3.forward; VfxRenderTag.Attach(effect);
+            var effectLight=effect.AddComponent<Light>();effectLight.type=LightType.Point;
+            var live = ghost.GetComponentsInChildren<Renderer>(true)
+                .Concat(doll.GetComponentsInChildren<Renderer>(true)).Concat(effect.GetComponentsInChildren<Renderer>()).ToArray();
+            UltimatePhaseView view=null; bool held=false,saw=false,hidden=true,lightOff=true;
+            void Inspect(Camera camera)
+            {
+                if(camera.name!="UltimateSceneCamera")return;
+                saw=true; hidden &= live.All(r=>r.forceRenderingOff);lightOff &= !effectLight.enabled;
+            }
+            try
+            {
+                typeof(PresentationClock).GetMethod("Hold",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic).Invoke(null,null);held=true;
+                float until=Time.realtimeSinceStartup+8;
+                while(UltimateIntroductionCache.Find(actor,actor.GetComponent<Carrier>().Held!=null)==null&&Time.realtimeSinceStartup<until)yield return null;
+                Assert.IsNotNull(UltimateIntroductionCache.Find(actor,actor.GetComponent<Carrier>().Held!=null));
+                view=new UltimatePhaseView(GameServices.Match.transform,new[]{new UltimateCommit(actor.PlayerSlot,1,
+                    actor.transform.position,actor.transform.forward,actor.Intent.AimPoint,0)},UltimatePerformance.SecondsFor("cheska"));
+                // Compare the scope with the immediate pre-render state, after
+                // normal ghost/model warmup has completed its own visibility work.
+                var original=live.Select(r=>r.forceRenderingOff).ToArray();
+                var originallyEnabled=live.Select(r=>r.enabled).ToArray();
+                Camera.onPreCull+=Inspect;
+                view.Draw(0);
+                Assert.IsTrue(saw,"The actual ultimate camera must have rendered.");
+                Assert.GreaterOrEqual(UltimatePhaseView.LastShot,
+                    UltimatePerformance.For("cheska").Shots.FindIndex(s=>s.Start>=9.2f),
+                    "The very first retained frame must use a complete post-heart camera shot.");
+                Assert.IsTrue(hidden,"Live blindfold, skill and companion renderers obscured the ultimate picture.");
+                Assert.IsTrue(lightOff,"The hidden skill's light must not contaminate the authored ultimate lighting.");
+                for(int i=0;i<live.Length;i++)
+                {
+                    Assert.AreEqual(original[i],live[i].forceRenderingOff,"Live visibility was not restored after rendering.");
+                    Assert.AreEqual(originallyEnabled[i],live[i].enabled,"A camera callback leaked its enabled state.");
+                }
+                Assert.IsTrue(effectLight.enabled);Assert.IsTrue(effect.GetComponent<Collider>().enabled);
+                Assert.IsTrue(ghost.enabled);Assert.IsTrue(doll.gameObject.activeInHierarchy);
+                // Simulate teardown after a render was interrupted inside its
+                // visibility scope. Disposal must restore the same world flags.
+                typeof(UltimatePhaseView).GetMethod("Hide",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic)
+                    .Invoke(view,new object[]{effect.transform});
+                Assert.IsFalse(effectLight.enabled);
+                view.Dispose();view=null;
+                Assert.IsTrue(effectLight.enabled);Assert.IsFalse(effect.GetComponent<Renderer>().forceRenderingOff);
+            }
+            finally
+            {
+                Camera.onPreCull-=Inspect;view?.Dispose();
+                if(held)typeof(PresentationClock).GetMethod("Release",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic).Invoke(null,null);
+                Object.Destroy(effect);if(ghost!=null)Object.Destroy(ghost.gameObject);if(doll!=null)Object.Destroy(doll.gameObject);
+            }
+        }
+
+        private static IEnumerator Profiles(string[] heroes, string map = "Eskinita")
         {
             foreach (string hero in heroes)
             {
-                yield return MapRetrievalProbe.Load("Eskinita",GameMode.HeroStrike);
+                yield return MapRetrievalProbe.Load(map,GameMode.HeroStrike);
                 Hud.Instance.ShowReadyPrompt(false); var actor=GameServices.Round.PlayerAt(1); Hero(actor,hero);
-                actor.Teleport(new Vector3(0,.18f,-5));
-                foreach(var other in GameServices.Round.Players)
-                    if(other!=actor)other.Teleport(new Vector3(6,other.transform.position.y,-6+other.PlayerSlot*3));
+                if (map != SceneFlow.Payo)
+                {
+                    actor.Teleport(new Vector3(0,.18f,-5));
+                    foreach(var other in GameServices.Round.Players)
+                        if(other!=actor)other.Teleport(new Vector3(6,other.transform.position.y,-6+other.PlayerSlot*3));
+                }
                 Camera.main.GetComponent<CameraRig>().Follow(actor,true);
                 Settings.SettingsStore.Current.CinematicCameraMotion=true;Settings.SettingsStore.Current.ReducedUiMotion=false;
                 yield return new WaitForSecondsRealtime(.15f);
@@ -95,6 +167,17 @@ namespace TumbangPreso.PlayTests
                 // screenshot helper yields layout frames and can outlast a short intro.
                 var picture=GameObject.Find("UltimateScene").GetComponent<UnityEngine.UI.RawImage>();
                 Assert.IsTrue(picture.enabled,hero+" created a texture but never displayed its cinematic. "+UltimatePhaseView.LastShotReport);
+                if (map == SceneFlow.Payo)
+                {
+                    Assert.GreaterOrEqual(UltimatePhaseView.LastShot,
+                        UltimatePerformance.For(hero).ShotIndexAt(UltimatePerformance.PlaybackStartFor(hero)),
+                        "A blocked retained shot must not restore the cut heart or opening shots.");
+                    var cast = GameObject.Find("RecordedCast-P"+(actor.PlayerSlot+1));
+                    var body = cast.transform.GetChild(0);
+                    float feet = WorldContactPresentation.ModelBottom(body.GetComponentsInChildren<Renderer>(), actor.transform.position.y);
+                    Assert.Less(Mathf.Abs(feet-WorldGround.UnderFeet(actor.transform.position)), .35f,
+                        "Yasmin's staged feet left the actual Banaue floor.");
+                }
                 var frame=(RenderTexture)picture.texture;
                 var previousTarget=RenderTexture.active;
                 var pixels=new Texture2D(frame.width,frame.height,TextureFormat.RGB24,false);
@@ -107,10 +190,14 @@ namespace TumbangPreso.PlayTests
                     System.IO.File.WriteAllBytes(System.IO.Path.Combine(folder,hero+"-actual-phase-frame.png"),pixels.EncodeToPNG());
                 }
                 finally{RenderTexture.active=previousTarget;Object.Destroy(pixels);}
-                yield return GameplayShots.Render(Camera.main,hero+"-live-introduction",true,outDir:"Logs/shared-six-v1");
+                yield return GameplayShots.Render(Camera.main,hero+"-live-introduction",true,
+                    outDir:System.Environment.GetEnvironmentVariable("TUMP_EVIDENCE")??"Logs/shared-six-v1");
                 until=Time.realtimeSinceStartup+4;
                 while(phase.Active&&Time.realtimeSinceStartup<until)yield return null;
                 Assert.IsFalse(phase.Active);Assert.IsFalse(PresentationClock.Held);
+                if (map == SceneFlow.Payo)
+                    Assert.IsTrue(Hud.Instance.GetComponent<TumpMatchReadout>().Canvas.isActiveAndEnabled,
+                        "The Banaue HUD must return after the ultimate.");
                 Assert.IsFalse(ultimate.ReservedForIntroduction);
                 if(hero=="rafi")
                 {
@@ -119,6 +206,18 @@ namespace TumbangPreso.PlayTests
                     var flood=RafiWaterField.Active.SingleOrDefault(f=>f!=null&&f.Capture().Type==TumbangPreso.Net.WorldEffectSnapshot.Kind.Baha&&f.Capture().Owner==actor.PlayerSlot);
                     Assert.IsNotNull(flood,"Ilyas must create his actual owned Baha field after the introduction.");
                     Assert.Greater(flood.Remaining,0);
+                }
+                else if (hero == "cheska")
+                {
+                    // Her introduction is the windup; the actual global freeze is
+                    // applied at release and has no separate active ability timer.
+                    foreach (var victim in GameServices.Round.Players)
+                        if (victim != actor)
+                        {
+                            Assert.Greater(victim.StunLeft, 0, "Absolute Zero must freeze every other real body.");
+                            Assert.AreEqual(StunElement.Ice, victim.StunElement);
+                            Assert.IsTrue(victim.IsChilled);
+                        }
                 }
                 else Assert.IsTrue(ultimate.IsWindingUp||ultimate.IsActive);
                 float revealedScale=0;
@@ -132,7 +231,8 @@ namespace TumbangPreso.PlayTests
                 Assert.IsFalse(ultimate.IsWindingUp,hero+" did not reach its real effect.");
                 if(hero=="nemu")Assert.Greater(familiar.transform.localScale.magnitude,revealedScale*.92f,"Live activation repeated the grow-from-small reveal.");
                 if(ultimate.Duration>.3f)Assert.IsTrue(ultimate.IsActive,hero+" lost its real active duration.");
-                yield return GameplayShots.Render(Camera.main,hero+"-live-execution",true,outDir:"Logs/shared-six-v1");
+                yield return GameplayShots.Render(Camera.main,hero+"-live-execution",true,
+                    outDir:System.Environment.GetEnvironmentVariable("TUMP_EVIDENCE")??"Logs/shared-six-v1");
                 actor.Intent.Clear();
             }
         }
@@ -246,13 +346,22 @@ namespace TumbangPreso.PlayTests
                         foreach(var actor in actors){actor.ClearStun();actor.ClearTrip();actor.AbilitySystem.Kit.AddUltimateCharge(100);actor.Intent.Set(Verb.Ultimate,false);actor.Intent.CommitFrame();}
                         yield return null;
                     }
-                    var phaister=actors[3];
-                    Press(phaister,Verb.Ultimate);yield return null;yield return null;
-                    Assert.IsTrue(phaister.AbilitySystem.IsAiming(HeroAbilitySystem.Slot.Ultimate));
-                    Assert.IsFalse(SharedUltimatePhase.BlocksActions);
-                    Assert.AreEqual(phaister.AbilitySystem.Kit.UltimateCost,phaister.AbilitySystem.Kit.UltimateCharge);
-                    foreach(var actor in actors)if(actor!=phaister)Press(actor,Verb.Ultimate);
-                    phaister.Intent.Set(Verb.Ultimate,false);
+                    // Stage only abilities that currently aim on hold. Phaister's
+                    // sentient doll is an immediate cast, unlike her retired OMEN.
+                    var aiming=actors.Where(a=>a.AbilitySystem.Kit.Ultimate.HoldToAim).ToArray();
+                    foreach(var actor in aiming)Press(actor,Verb.Ultimate);
+                    if(aiming.Length>0)
+                    {
+                        yield return null;yield return null;
+                        foreach(var actor in aiming)
+                        {
+                            Assert.IsTrue(actor.AbilitySystem.IsAiming(HeroAbilitySystem.Slot.Ultimate));
+                            Assert.AreEqual(actor.AbilitySystem.Kit.UltimateCost,actor.AbilitySystem.Kit.UltimateCharge);
+                        }
+                        Assert.IsFalse(SharedUltimatePhase.BlocksActions);
+                    }
+                    foreach(var actor in actors)if(!actor.AbilitySystem.Kit.Ultimate.HoldToAim)Press(actor,Verb.Ultimate);
+                    foreach(var actor in aiming)actor.Intent.Set(Verb.Ultimate,false);
                     float until=Time.realtimeSinceStartup+1;while(!SharedUltimatePhase.BlocksActions&&Time.realtimeSinceStartup<until)yield return null;
                     var phase=SharedUltimatePhase.Instance;Assert.IsTrue(phase.Active);Assert.AreEqual(4,phase.Commits.Count);Assert.Greater(phase.PhaseId,previous);
                     yield return null;

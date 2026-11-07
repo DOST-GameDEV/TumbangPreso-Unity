@@ -93,6 +93,14 @@ namespace TumbangPreso.PlayTests
             public int LocalPeerId => 1;
             public bool IsSeatlessReferee => false;
         }
+        private sealed class WatchingPeer : INetProvider
+        {
+            public bool IsHost => false;
+            public bool IsNetworked => true;
+            public int LocalSlot => 2;
+            public int LocalPeerId => 2;
+            public bool IsSeatlessReferee => false;
+        }
         private sealed class ObservingHost : INetProvider
         {
             public bool IsHost => true;
@@ -1245,6 +1253,62 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(30000)]
+        public IEnumerator WatchedPrisonerPeelsWithTheReplicatedStruggleAndKeepsItsProgress()
+        {
+            // Owner, 2026-11-05: holding F peels the roots off, and everyone sees how far out the prisoner is.
+            var motor = Owner("sean").GetComponent<CharacterMotor>();
+            NetAuthority.Provider = new WatchingPeer();
+            Assert.IsFalse(motor.IsLocallySimulated());
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var step = typeof(CharacterMotor).GetMethod("StepStatuses", flags);
+            motor.ApplyNetworkStatuses(0, 0, StatusRules.RootedSeconds);
+            motor.ApplyNetworkEffort(true, 0);
+            for (int i = 0; i < 10; i++) step.Invoke(motor, new object[] { PaeteRules.BreakFreeHoldSeconds * .05f });
+            Assert.AreEqual(.5f, motor.PresentedBreakFreeProgress, .01f, "A watching peer must time the replicated struggle on the hold's clock.");
+            Assert.AreEqual(0f, motor.BreakFreeProgress, "Watching never touches the host's hold.");
+            motor.ApplyNetworkEffort(false, 0);
+            step.Invoke(motor, new object[] { 1f });
+            Assert.AreEqual(.5f, motor.PresentedBreakFreeProgress, .01f, "Letting go keeps the progress, as the host's hold does.");
+            yield return null;
+            var coil = motor.GetComponentInChildren<Visual.PaeteRootCoil>();
+            Assert.IsNotNull(coil);
+            float waited = 0f;
+            while (waited < 2f && Mathf.Abs(coil.Peel - .5f) > .02f) { waited += Time.deltaTime; yield return null; }
+            Assert.AreEqual(.5f, coil.Peel, .02f, "The roots are drawn peeled as far as the prisoner has fought.");
+            motor.ApplyNetworkStatuses(0, 0, 0);
+            Assert.AreEqual(0f, motor.PresentedBreakFreeProgress);
+            motor.ApplyNetworkStatuses(0, 0, StatusRules.RootedSeconds);
+            Assert.AreEqual(0f, motor.PresentedBreakFreeProgress, "A fresh hold starts tight.");
+        }
+
+        [UnityTest, Timeout(30000)]
+        public IEnumerator RootBandsAreMeasuredToEachHeroStrikeBody()
+        {
+            // Owner, 2026-11-05: every Hero Strike body is its own size and shape; the roots wrap each at its own legs.
+            var widths = new System.Collections.Generic.Dictionary<string, float>();
+            foreach (var person in new[] { "sean", "nemu", "phaister", "dante" })
+            {
+                var body = new GameObject("Measured " + person);
+                try
+                {
+                    var motor = body.AddComponent<CharacterMotor>(); motor.enabled = false;
+                    var visual = body.AddComponent<Visual.CharacterVisual>();
+                    var art = Resources.Load<RosterEntryAsset>("Roster/person_" + person);
+                    Assert.IsNotNull(art, person);
+                    visual.ApplyModel(art.Model, Color.white, art.Clips, art.Palette);
+                    yield return null;
+                    Assert.IsTrue(Visual.PaeteRootCoil.MeasureLegs(motor, out float wide, out float deep, out float top, out _), person);
+                    Assert.Greater(deep, .05f, person); Assert.Greater(top, .05f, person);
+                    widths[person] = wide;
+                }
+                finally { Object.Destroy(body); }
+            }
+            Assert.AreEqual(.70f, widths["nemu"] / widths["sean"], .08f, "Nemu's legs are about 0.7 of Sean's.");
+            Assert.AreEqual(1.30f, widths["phaister"] / widths["sean"], .10f, "Phaister's dress is about 1.3 as wide.");
+            Assert.AreEqual(.85f, widths["dante"] / widths["sean"], .08f);
+        }
+
+        [UnityTest, Timeout(30000)]
         public IEnumerator ReceivedFrozenStateOwnsOneRestraintWithoutCastingOrBlockingAfterThaw()
         {
             var system = Owner("sean");
@@ -1304,7 +1368,7 @@ namespace TumbangPreso.PlayTests
             var tick = typeof(CharacterMotor).GetMethod("FixedUpdate", flags);
             var position = root.transform.position;
             motor.Stamina.Spend(Balance.StaminaMax);
-            Assert.IsTrue(motor.Stamina.IsFatigued);
+            Assert.IsFalse(motor.Stamina.IsFatigued);
             for (int i = 0; i < 500; i++) tick.Invoke(motor, null);
             Assert.IsFalse(motor.Stamina.IsFatigued);
             Assert.AreEqual(0, motor.Stamina.SpeedZones.Count);

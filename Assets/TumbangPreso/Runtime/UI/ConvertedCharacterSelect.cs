@@ -2728,15 +2728,15 @@ namespace TumbangPreso.UI
             switch (id)
             {
                 // Hero Strike Roster
-                case "dante": return "EARTH JUGGERNAUT\nBreak formations with tremors, armor, and a map-splitting fissure.";
-                case "cheska": return "ICE CONTROLLER\nCreate slip zones and barricades, then lock the lane with Glacial Nova.";
-                case "sean": return "FIRE BRAWLER\nRush the lane, blast open space, and finish with Supernova.";
-                case "zack": return "SPEEDSTER\nRun to get faster, rewind a bad run, and send a copy of yourself to fool the taya.";
-                case "nemu": return "SPIRIT TRICKSTER\nSlip beyond reach, possess the street, and turn a seance into a trap.";
-                case "phaister": return "STREET WITCH\nCurse the ground, blink out of trouble, and black out the whole street.";
-                case "rafi": return "CURRENT TRICKSTER\nBend a throw, leave a watery feint, and send a low wave through a chase.";
-                case "paete": return "THE FOREST OF MOUNT MAKILING\nVines to cross the court, a seedling that throws, thorns that take your slipper.";
-                case "amihan": return "WIND RUNNER FROM VIGAN\nThe fastest hero on the court. Her skills are still being designed.";
+                case "dante": return "The Stonecutter\nBreak formations with tremors, armor, and a map-splitting fissure.";
+                case "cheska": return "The Icebreaker\nCreate slip zones and barricades, then lock the lane with Glacial Nova.";
+                case "sean": return "The Firestarter\nRush the lane, blast open space, and finish with Supernova.";
+                case "zack": return "The Surgebreaker\nRun to get faster, rewind a bad run, and send a copy of yourself to fool the taya.";
+                case "nemu": return "The Ghostkeeper\nSlip beyond reach, possess the street, and turn a seance into a trap.";
+                case "phaister": return "The Necromancer\nCurse the ground, blink out of trouble, and black out the whole street.";
+                case "rafi": return "The Tidesurfer\nBend a throw, leave a watery feint, and send a low wave through a chase.";
+                case "paete": return "The Barksplitter\nVines to cross the court, a seedling that throws, thorns that take your slipper.";
+                case "amihan": return "The Windweaver\nThe fastest hero on the court. Her skills are still being designed.";
 
                 // Classic Roster
                 case "bayan":

@@ -46,6 +46,8 @@ namespace TumbangPreso.UI
         private static readonly Vector2 Centre = new Vector2(0.5f, 0.5f);
 
         private Canvas _canvas;
+        private long _scheduledMatch;
+        private int _scheduledNextRound;
         private Text _title, _headline, _tayaName, _attackerNames, _fight, _bufferPrompt;
         private CanvasGroup _swapPanel, _standingsPanel;
         private readonly List<Text[]> _rows = new List<Text[]>();
@@ -131,6 +133,8 @@ namespace TumbangPreso.UI
 
         public void ShowScheduledBreak(int nextRound,int nextDefenderSlot,float remaining,string fallback)
         {
+            _scheduledMatch = GameServices.Match?.PresentationMatchId ?? 0;
+            _scheduledNextRound = nextRound;
             if (_nativeSwap != null)
             {
                 _bufferRemaining = remaining; _isBufferActive = true;
@@ -176,6 +180,13 @@ namespace TumbangPreso.UI
         /// </summary>
         public void ShowForShot(int nextRound, int nextDefenderSlot)
             => OnIntermissionStarted(nextRound, nextDefenderSlot);
+
+        public void EndScheduledBreak(long match, int completedRound)
+        {
+            if (_scheduledMatch != match || _scheduledNextRound != completedRound+1) return;
+            _isBufferActive = false;
+            if (_canvas != null) _canvas.gameObject.SetActive(false);
+        }
 
         private IEnumerator RunTimeline(int nextRound)
         {

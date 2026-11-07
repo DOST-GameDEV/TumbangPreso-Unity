@@ -222,6 +222,16 @@ namespace TumbangPreso
         /// <summary>How much of the break-free hold is done, 0 to 1 (the ring on the HUD).</summary>
         public float BreakFreeProgress => Mathf.Clamp01(_breakFreeHeld / PaeteRules.BreakFreeHoldSeconds);
 
+        private float _seenBreakFreeHeld;
+        /// <summary>
+        /// How far out of the roots this body LOOKS, 0 to 1, on every peer (owner, 2026-11-05: as you hold, you peel the roots
+        /// off and squirm harder the further out you get). The owner and the host hold the real clock; any other peer times the
+        /// replicated struggle flag on the same 7 s, so all four screens peel together within a packet. Presentation only:
+        /// the host alone decides the escape (`HostBreakFree`).
+        /// </summary>
+        public float PresentedBreakFreeProgress => IsLocallySimulated() || NetAuthority.ShouldResolve()
+            ? BreakFreeProgress : Mathf.Clamp01(_seenBreakFreeHeld / PaeteRules.BreakFreeHoldSeconds);
+
         private bool _struggling, _netStruggling;
         private float _pullProgress, _netPullProgress;
 
@@ -263,7 +273,7 @@ namespace TumbangPreso
             if (IsTagged) return; // already held harder, and a tag ends roots anyway
             bool fresh = _rootedLeft <= 0.0f;
             _rootedLeft = StatusRules.Refresh(_rootedLeft, seconds);
-            if (fresh) { _breakFreeHeld = 0.0f; _breakFreeRequested = false; }
+            if (fresh) { _breakFreeHeld = 0.0f; _breakFreeRequested = false; _seenBreakFreeHeld = 0.0f; }
             EndFlightImmediately();
             ReleaseCommitment();
             if (fresh) StatusGained?.Invoke(this, StatusKind.Rooted);
@@ -274,6 +284,7 @@ namespace TumbangPreso
         {
             _rootedLeft = 0.0f;
             _breakFreeHeld = 0.0f;
+            _seenBreakFreeHeld = 0.0f;
             _breakFreeRequested = false;
             _struggling = false;
         }
@@ -284,6 +295,8 @@ namespace TumbangPreso
         /// </summary>
         private void StepBreakFree(float dt)
         {
+            // A peer that only watches this body: the struggle flag off the wire, timed on the hold's own clock.
+            if (IsRooted && _netStruggling) _seenBreakFreeHeld = Mathf.Min(PaeteRules.BreakFreeHoldSeconds, _seenBreakFreeHeld + dt);
             _struggling = false;
             if (!IsRooted || (!IsLocallySimulated() && !NetAuthority.ShouldResolve())) return;
             if (!InteractionHeldForSimulation) return;
@@ -336,7 +349,7 @@ namespace TumbangPreso
             if (rootedLeft <= 0.0f && _rootedLeft > 0.0f) EndRooted();
             else if (rootedLeft > 0.0f)
             {
-                if (rooted) { _breakFreeHeld = 0.0f; _breakFreeRequested = false; }
+                if (rooted) { _breakFreeHeld = 0.0f; _breakFreeRequested = false; _seenBreakFreeHeld = 0.0f; }
                 _rootedLeft = Mathf.Clamp(rootedLeft, 0.0f, StatusRules.RootedSeconds + 0.01f);
                 EndFlightImmediately();
             }

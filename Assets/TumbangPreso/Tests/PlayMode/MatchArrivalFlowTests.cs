@@ -468,13 +468,9 @@ namespace TumbangPreso.PlayTests
             Assert.IsFalse(HubLoading.Visible);
         }
 
-        // ⚠️⚠️ A CUSTOM ROOM STARTS WITH WHOEVER IS IN IT (owner 2026-10-17, `eec7970b0`), AND A SEAT
-        // THE HOST EMPTIES OF ITS BOT HAS NO BODY IN THE MATCH (owner 2026-10-19, `40b7e5d9c`). This
-        // replaced `CustomRoomWithBotsOffRequiresFourHumanSeats`, which still asserted the refusal the
-        // first of those removed. It walks the lobby's own REMOVE BOT and START GAME presses on a real
-        // LAN host into a running round; `CustomBotPolicyStartTests` covers the policy cases in isolation.
+        // Custom rooms retain filler bots; humans can still take their seats.
         [UnityTest, Timeout(90000)]
-        public IEnumerator CustomRoomWithEveryBotRemovedStartsWithOnlyTheHostsSeatInTheMatch()
+        public IEnumerator CustomRoomKeepsBotsAndStartsWithAllFourSeats()
         {
             Settings.SettingsStore.Current.HighContrastHud = false;
             Settings.SettingsStore.Current.LargerText = false;
@@ -483,7 +479,7 @@ namespace TumbangPreso.PlayTests
             // mode flipped and every bot was gone (`HubHome.ApplyChoice`, UX-1.5a).
             HubHome.Choice = 1;
             yield return HubFlowTests.OpenHome();
-            var hosting = TumpHub.Current.Host.HostRoom("NO BOT ADMISSION", SceneFlow.Eskinita,
+            var hosting = TumpHub.Current.Host.HostRoom("BOT FILL ADMISSION", SceneFlow.Eskinita,
                 GameMode.HeroStrike, RoomVisibility.Private, false);
             float until = Time.realtimeSinceStartup + 15;
             while (!hosting.IsCompleted && Time.realtimeSinceStartup < until) yield return null;
@@ -493,7 +489,7 @@ namespace TumbangPreso.PlayTests
             Assert.IsInstanceOf<HubLobby>(TumpHub.Current.Top);
             Assert.AreEqual(GameMode.HeroStrike, SceneFlow.SelectedMode, "Passing through HOME changed the room's mode.");
 
-            // A new room opens with a bot in every empty seat (`HostRoom`); the host takes all three out.
+            // A new room fills every empty seat and offers no removal action.
             int host = NetAuthority.LocalSlot;
             until = Time.realtimeSinceStartup + 5;
             while (TumpHub.Current.Host.Seats().Any(s => s.Slot != host && !s.Bot) && Time.realtimeSinceStartup < until) yield return null;
@@ -505,24 +501,27 @@ namespace TumbangPreso.PlayTests
                 SceneFlow.SelectedRules.BotSeats + ", pinned " + SceneFlow.RulesPinned + ", can edit " +
                 TumpHub.Current.Host.CanEditBots);
             for (int seat = 0; seat < Balance.PlayerCount; seat++)
-                if (seat != host) yield return HubFlowTests.Press("RemoveBot" + seat);
-            Assert.AreEqual(0, SceneFlow.SelectedRules.Bots, "Removing the last bot must switch the room's bots off.");
+            {
+                Assert.IsFalse(TumpHub.Current.GetComponentsInChildren<UnityEngine.UI.Button>(true)
+                    .Any(button => button.name == "RemoveBot" + seat));
+                if (seat != host) TumpHub.Current.Host.SetSeatBot(seat, false);
+            }
             foreach (var seat in TumpHub.Current.Host.Seats())
-                if (seat.Slot != host) Assert.IsFalse(seat.Occupied || seat.Bot, "P" + (seat.Slot + 1) + " must read OPEN.");
+                if (seat.Slot != host) Assert.IsTrue(seat.Bot, "A direct removal request must preserve the bot.");
 
             // The host chooses the court, so no ballot stands between selection and the arena.
             var rules = SceneFlow.SelectedRules.Clone(); rules.MapVote = false;
             MatchRpc.Instance.SelectRulesServerRpc(CustomGameRules.ToWire(rules));
-            // A stale accepted-bot policy must not refill the chairs the room emptied.
+            // Accepting filler bots keeps the room's policy intact.
             TumpHub.Current.Host.AcceptBots();
             Assert.IsTrue(AIController.BotsEnabled);
             yield return HubFlowTests.Press("StartGame");
             until = Time.realtimeSinceStartup + 6;
             while (!(TumpHub.Current.Top is HubCharacterSelect) && Time.realtimeSinceStartup < until) yield return null;
-            Assert.IsInstanceOf<HubCharacterSelect>(TumpHub.Current.Top, "START GAME must open selection with three empty seats.");
+            Assert.IsInstanceOf<HubCharacterSelect>(TumpHub.Current.Top, "START GAME must open selection with three bot seats.");
             Assert.IsTrue(MatchRpc.Instance.CharacterSelecting);
             Assert.IsFalse(MatchRpc.Instance.QueueMapVoting);
-            Assert.IsFalse(AIController.BotsEnabled, "The room's NONE must retire the stale policy at START.");
+            Assert.IsTrue(AIController.BotsEnabled, "Custom matches must retain filler bots at START.");
 
             yield return HubFlowTests.Press("SelectButton");
             until = Time.realtimeSinceStartup + 20;
@@ -536,15 +535,8 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(lobby.MatchInProgress);
             for (int seat = 0; seat < Balance.PlayerCount; seat++)
             {
-                if (seat == host)
-                {
-                    Assert.IsNotNull(GameServices.Round.PlayerAt(seat), "The host's own seat has no body.");
-                    continue;
-                }
-                Assert.IsNull(GameServices.Round.PlayerAt(seat),
-                    "P" + (seat + 1) + " has no player and no bot, so it must have no body.");
-                Assert.IsTrue(lobby.IsSeatBenched(seat),
-                    "P" + (seat + 1) + " has no body, so a mid-match arrival must watch rather than sit in it.");
+                Assert.IsNotNull(GameServices.Round.PlayerAt(seat), "Every custom match seat needs a body.");
+                Assert.IsFalse(lobby.IsSeatBenched(seat), "A filled seat must remain available for a human arrival.");
             }
         }
 

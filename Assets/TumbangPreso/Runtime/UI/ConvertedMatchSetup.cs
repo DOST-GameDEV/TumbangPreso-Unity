@@ -149,24 +149,13 @@ namespace TumbangPreso.UI
         // a fallback system font beside eleven drawn out of the game's own.
         private const string YouMark = "YOU";
 
-        /// <summary>
-        /// ⚠️⚠️ NONE IS LAST, AND IT IS AN ABSENCE RATHER THAN A TIER. 🧑, 2026-08-26: *"add
-        /// None as an option there and make it so that theres actually no bots ... just you
-        /// there no bots"*. The index is `AIController.NoBotsIndex`; its note explains why the
-        /// entry could not go at the front of this array.
-        ///
-        /// NONE is also available to a multiplayer host. Because the match rules require four
-        /// rotating seats, switching fillers off requires all four seats to be occupied before
-        /// START MATCH becomes available. Empty lobby rows remain joinable and read OPEN.
-        /// </summary>
-        private static readonly string[] Difficulties = { "EASY", "NORMAL", "HARD", "NONE" };
-
+        // Custom matches always fill vacant seats with bots. Training has its own controls.
+        private static readonly string[] Difficulties = { "EASY", "NORMAL", "HARD" };
         private static readonly string[] DifficultyDetails =
         {
             "EASY Slower reactions and looser angles. Good for learning the throw arc.",
             "NORMAL The default, and the tier every balance number in this project was measured at. Reads your bearing, leads the can, and blocks about 38% of what you throw.",
-            "HARD Snappier reads and tighter defense. Will punish greedy slipper retrievals.",
-            "NONE No filler bots. Practice starts alone; multiplayer waits until all four human seats are filled."
+            "HARD Snappier reads and tighter defense. Will punish greedy slipper retrievals."
         };
 
         /// <summary>

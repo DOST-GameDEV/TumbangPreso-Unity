@@ -75,7 +75,7 @@ namespace TumbangPreso.Core
     }
 
     /// <summary>
-    /// The stamina pool, the sprint, and the fatigue penalty.
+    /// The stamina pool and sprint. Depletion stops sprinting without an exhaustion lockout.
     ///
     /// ⚠️⚠️ THE FINDING IS THE DISTANCE, NOT THE TIME. StaminaMax, StaminaDrainRate,
     /// SprintScale and ConfinementRadius are ONE INTERLOCKED SET: the bar is dimensioned
@@ -122,13 +122,12 @@ namespace TumbangPreso.Core
         /// <summary>
         /// Applies the host's resource state to a joining or live client.
         ///
-        /// ⚠️ FATIGUE IS ALSO A SPEED-ZONE ENTRY. Replacing only the timer leaves either a
-        /// ghost 0.75 multiplier after fatigue ended or a full-speed body while it is active.
-        /// Remove the old entry first, write the state, then add exactly one new entry.
-        /// Other ability and map speed zones stay untouched.
+        /// The legacy fatigue field stays in the wire layout. Clamp it before updating
+        /// zone membership so a retired exhaustion timer cannot leave a ghost zone.
         /// </summary>
         public void ApplyNetworkSnapshot(float current, float idle, float fatigueLeft)
         {
+            fatigueLeft = System.Math.Clamp(fatigueLeft, 0.0f, Balance.FatigueTime);
             bool wasFatigued = _fatigueLeft > 0.0f;
             bool willBeFatigued = fatigueLeft > 0.0f;
 
@@ -139,7 +138,7 @@ namespace TumbangPreso.Core
 
             _current = System.Math.Clamp(current, 0.0f, Balance.StaminaMax);
             _idle = System.Math.Max(0.0f, idle);
-            _fatigueLeft = System.Math.Clamp(fatigueLeft, 0.0f, Balance.FatigueTime);
+            _fatigueLeft = fatigueLeft;
             // A resource correction is not a release of the owner's sprint key.
             // Preserve continuation below the start floor; empty/fatigue still stop it.
             _isSprinting = _isSprinting && _current > 0 && !willBeFatigued;
@@ -187,7 +186,7 @@ namespace TumbangPreso.Core
 
                 if (_current <= 0.0f)
                 {
-                    EnterFatigue();
+                    StopDepletedSprint();
                     return 1.0f;
                 }
                 return Balance.SprintScale;
@@ -241,20 +240,14 @@ namespace TumbangPreso.Core
             }
         }
 
-        private void EnterFatigue()
+        private void StopDepletedSprint()
         {
-            if (_fatigueLeft > 0.0f) return;
-            _fatigueLeft = Balance.FatigueTime;
             _isSprinting = false;
-            _speedZones.Enter(Balance.FatigueSpeedScale);
         }
 
         /// <summary>
-        /// Pay a one-off cost, e.g. the shove. False if it cannot be paid, and nothing is
-        /// deducted in that case.
-        ///
-        /// ⚠️ A COST THAT EMPTIES THE BAR TRIGGERS FATIGUE, exactly as draining it by
-        /// sprinting does. The shove is priced in escape distance, not in points.
+        /// Pay a one-off cost, such as a retrieval slide. An empty bar stops the
+        /// current sprint and starts the normal regen delay without an extra penalty.
         /// </summary>
         public bool Spend(float amount)
         {
@@ -265,34 +258,14 @@ namespace TumbangPreso.Core
             if (_current <= 0.0f)
             {
                 _current = 0.0f;
-                EnterFatigue();
+                StopDepletedSprint();
             }
             return true;
         }
 
         /// <summary>
-        /// Give back a cost that was paid and then refused, and reverse the fatigue that paying
-        /// it started.
-        ///
-        /// ⚠️⚠️ THIS IS THE EXACT REVERSE OF <see cref="Spend"/> AND IT IS NOT A GENERAL "ADD
-        /// STAMINA". It has one caller: a client predicted a verb, paid for it, and the host
-        /// refused it, so this peer is holding a charge the authoritative simulation never made.
-        /// `docs/TODO.md` § 135.2 is the entry. Calling it on any other event would be a way to
-        /// buy escape distance for free, and escape distance is what the bar IS
-        /// (`CLAUDE.md` § 4: the real price of a shove is the sprint, not the points).
-        ///
-        /// ⚠️⚠️ THE FATIGUE LOCKOUT GOES WITH IT, AND WORKING OUT WHY IT IS SAFE TO CLEAR IS THE
-        /// WHOLE REASON THIS IS NOT A ONE-LINE ADD. `Spend` calls `EnterFatigue` when a cost
-        /// empties the bar, so a refund that returned the points and left the lockout running
-        /// would give back the cheap half of the price and keep the expensive one. It is only
-        /// ever the reversed spend's lockout: `Spend` refuses outright while `_fatigueLeft` is
-        /// live, so this peer was NOT fatigued when it paid, and a bar sitting at zero cannot be
-        /// drained to zero a second time during the round trip. There is no other event in that
-        /// window that could have started one.
-        ///
-        /// ⚠️ IT IS CLAMPED TO THE MAX RATHER THAN ASSERTED. A refund that arrives after the bar
-        /// has regenerated is a normal race on a slow link, not a caller bug, and the answer to
-        /// it is a full bar.
+        /// Reverse a predicted spend refused by the host. This is not a general
+        /// stamina pickup. Clamp to capacity if regeneration beat the refund.
         /// </summary>
         public void Refund(float amount)
         {

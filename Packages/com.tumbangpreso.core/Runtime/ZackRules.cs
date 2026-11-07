@@ -131,8 +131,8 @@ namespace TumbangPreso.Core
         public const float AfterimageCooldown = 30.0f;
         public const float AfterimageSeconds = 3.0f;
 
-        /// <summary>It runs an attacker's run (`Balance.AttackerRunSpeed`), so 15 m at most: the box's diagonal.</summary>
-        public const float AfterimageSpeed = Balance.AttackerRunSpeed;
+        /// <summary>Retired replay effect: preserve its recorded 5 m/s pace independently of current player speed.</summary>
+        public const float AfterimageSpeed = 5.0f;
         public static float AfterimageReach => AfterimageSpeed * AfterimageSeconds;
 
         /// <summary>*"It vanishes if the taya touches it"*: the taya's feet within this flat distance of the copy's.</summary>

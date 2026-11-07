@@ -58,14 +58,18 @@ namespace TumbangPreso.Net
             RoomVisibility = 0;
         }
 
-        private static string LocalLobbyName()
+        private static string LocalPlayerName()
         {
-            if (!string.IsNullOrWhiteSpace(RoomTitle)) return RoomTitle.Trim();
             string account = GameServices.Account?.LobbyName;
             if (!string.IsNullOrWhiteSpace(account)) return account;
             string local = Settings.SettingsStore.Current.PlayerName;
             return Core.AccountRules.Handle(local, "");
         }
+
+        // Room titles are directory labels. Player introductions must carry the
+        // account handle; a title such as "Maria's room" is not a valid player name.
+        private static string LocalLobbyName() =>
+            !string.IsNullOrWhiteSpace(RoomTitle) ? RoomTitle.Trim() : LocalPlayerName();
         public static NetSession Instance { get; private set; }
 
         public const int DefaultPort = LobbySession.DefaultPort;
@@ -714,7 +718,9 @@ namespace TumbangPreso.Net
         // a 186 host's Baha and disagree on who is hit: the two may not meet.
         // 187 (2026-11-02): main and QoLUpdates-v2 each spent 186 on a different change, so a build of one would have met a
         // build of the other and disagreed. Merged, both are in, and no 186 peer of either kind may meet this.
-        public const int ProtocolVersion = 187;
+        // 188 (2026-11-03): `SkipOpening` and `OpeningVotes`, the vote to skip the match opening. A 187 peer would never
+        // vote or hear the result, so a mixed match could hold a button that cannot finish: the two may not meet.
+        public const int ProtocolVersion = 189;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or
@@ -2020,7 +2026,7 @@ namespace TumbangPreso.Net
                 Protocol = ProtocolVersion,
                 SkillContract = SkillContractFingerprint.Current,
                 Token = LocalConnectionToken,
-                Name = LocalLobbyName(),
+                Name = LocalPlayerName(),
 
                 // ⚠️ WHATEVER IS CACHED, AND NEVER A NETWORK CALL FROM HERE. This runs inside
                 // every start path including the two LAN ones, and `FUTURE.md` § 0.5 rule 7 says
@@ -2427,7 +2433,7 @@ namespace TumbangPreso.Net
                     var identity = GameServices.Account;
                     MatchRpc.Instance?.IdentifyServerRpc(
                         LocalConnectionToken,
-                        LocalLobbyName(),
+                        LocalPlayerName(),
                         identity != null && identity.IsSignedIn ? identity.PlayerId : "",
                         identity?.HandleProof ?? "",
                         charPick, canPick, slipperPick);
@@ -2447,7 +2453,7 @@ namespace TumbangPreso.Net
                 hello = new ConnectionHello
                 {
                     Token = LocalConnectionToken,
-                    Name = LocalLobbyName(),
+                    Name = LocalPlayerName(),
 
                     // ⚠️ THE HOST NEVER SENDS ITSELF A HELLO, so this is the only path on which
                     // its own rating is ever recorded. It is the same argument the picks and the

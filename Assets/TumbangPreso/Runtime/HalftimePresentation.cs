@@ -175,10 +175,20 @@ namespace TumbangPreso
         public void End(bool advance)
         {
             bool wasActive=Active;Active=false;IsHalftime=false;
-            _clip=null;_view?.Dispose();_view=null;
-            if(_cover!=null){_cover.Release();_cover=null;}
-            _frame?.Release();
-            if(wasActive){PresentationClock.Release();FreshInput();}
+            try
+            {
+                _clip=null;_view?.Dispose();_view=null;
+                if(_cover!=null){_cover.Release();_cover=null;}
+                _frame?.Release();
+            }
+            finally
+            {
+                if(wasActive)
+                {
+                    try { FindAnyObjectByType<UI.RoleSwapCard>()?.EndScheduledBreak(MatchId, CompletedRound); }
+                    finally { PresentationClock.Release();FreshInput(); }
+                }
+            }
             if(advance&&wasActive&&NetAuthority.ShouldResolve()&&GameServices.Match?.IsWarmupBuffer==true)GameServices.Match.AdvanceRound();
         }
         private static void FreshInput(){if(GameServices.Round!=null)foreach(var actor in GameServices.Round.Players)actor?.Intent.RequireFreshActions();}

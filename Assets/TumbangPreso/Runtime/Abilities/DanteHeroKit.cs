@@ -163,7 +163,7 @@ namespace TumbangPreso.Abilities
 
             public Shield(DanteHeroKit kit)
                 : base("dante_skill1", "UNSTOPPABLE",
-                       "Remove removable negative effects and gain Status Immunity for 15 s. Tagged cannot be removed.",
+                       "PRESS {KEY} to INSTANTLY shake off stuns and negative effects, then gain Status Immunity. Works while stunned, but not while Tagged.",
                        GeoRules.ShieldCooldown, GeoRules.ShieldSeconds, AbilityGlyph.DanteShield,
                        summary: "Cleanse removable effects and gain 15 s of Status Immunity.",
                        castAction: "hero-dante-roar", viewmodelAction: "carapace-guard",
@@ -218,7 +218,7 @@ namespace TumbangPreso.Abilities
 
             public Boulder()
                 : base("dante_skill2", "BOULDER",
-                       "Imbue your held slipper for 15 s. Your next throw inflicts Concussed on a player hit: 75% slower for 5 s.",
+                       "PRESS {KEY} while holding your slipper to coat it in stone. Your next throw Concusses the player it hits, leaving them dizzy and sluggish.",
                        GeoRules.BoulderCooldown, 0.0f, AbilityGlyph.DanteBoulder,
                        summary: "Imbue your held slipper with Concussed.",
                        castAction: "hero-dante-boulder", viewmodelAction: "boulder-load",
@@ -250,7 +250,7 @@ namespace TumbangPreso.Abilities
 
             public Barrier()
                 : base("dante_skill2d", "BASTION",
-                       "Defending. A wide stone force field in front of you for 7.5 s. It follows you, and every slipper that hits it flies back.",
+                       "PRESS {KEY} to raise a stone barrier that moves with you. Slippers thrown at you from the front bounce straight back.",
                        GeoRules.BarrierCooldown, GeoRules.BarrierSeconds, AbilityGlyph.DanteBarrier,
                        summary: "A force field in front of you reflects slippers.",
                        castAction: "hero-dante-bastion", viewmodelAction: "bastion-brace",
@@ -297,7 +297,7 @@ namespace TumbangPreso.Abilities
             private readonly DanteHeroKit _kit;
             public Earthquake(DanteHeroKit kit)
                 : base("dante_ultimate", "CONTINENTAL DRIFT",
-                       "He slams the court: five bands of earth erupt down the lane, knocking away everyone they reach. They land Concussed for 5 s.",
+                       "PRESS {KEY} to slam the court, tearing earth down the lane to knock players away and Concuss them. Then take MOUNTAIN FORM for heavier throws and Status Immunity.",
                        0.0f, 0.0f, AbilityGlyph.DanteFissure,
                        summary: "Knocks away everyone ahead, then 30 s of MOUNTAIN FORM.",
                        castAction: "hero-dante-fissure", viewmodelAction: "fissure-slam",

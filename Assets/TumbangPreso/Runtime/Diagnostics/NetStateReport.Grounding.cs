@@ -28,6 +28,7 @@ namespace TumbangPreso.Diagnostics
             public Color sky, equator, groundColour, fog, sun;
             public float sunIntensity, brightness=1, saturation=1;
             public List<GroundActor> actors=new List<GroundActor>();
+            public List<GroundActor> companions=new List<GroundActor>();
             public List<GroundProp> props=new List<GroundProp>();
         }
         [Serializable] private sealed class GroundActor
@@ -95,7 +96,7 @@ namespace TumbangPreso.Diagnostics
                 var light=WorldLookPresentation.Current?.KeyLight??RenderSettings.sun;
                 if(light!=null){frame.sun=light.color;frame.sunIntensity=light.intensity;}
                 var grade=camera.GetComponent<ColourGrade>();if(grade!=null){frame.brightness=grade.RecordedBrightness;frame.saturation=grade.RecordedSaturation;}
-                foreach(var actor in round.Players)
+                foreach(var actor in round.Bodies)
                 {
                     if(actor==null || !actor.gameObject.activeInHierarchy)continue;
                     var visual=actor.GetComponent<CharacterVisual>();var cc=actor.GetComponent<CharacterController>();
@@ -106,7 +107,8 @@ namespace TumbangPreso.Diagnostics
                     row.hasFloor=WorldGround.TryBelow(row.feet,.3f,14f,out row.floor);if(!row.hasFloor)row.floor=0;
                     if(visual!=null&&visual.ModelRoot!=null){row.hasVisual=true;row.visual=visual.ModelRoot.position;row.modelLocal=visual.ModelRoot.localPosition;row.alignedLocal=visual.AlignedLocalPosition;}
                     if(visual!=null&&visual.Model!=null)row.visible=GroundBounds(visual.Model,out row.boundsMin,out row.boundsMax);
-                    frame.actors.Add(row);
+                    if(CompanionSeats.IsCompanion(actor.PlayerSlot))frame.companions.Add(row);
+                    else frame.actors.Add(row);
                 }
                 if(_groundScene!=frame.scene || Time.realtimeSinceStartup>=_groundShoesNext){_groundScene=frame.scene;_groundShoesNext=Time.realtimeSinceStartup+1;_groundShoes.Clear();_groundShoes.AddRange(FindObjectsByType<Slipper>());
                     _groundConstructs.Clear();foreach(var t in FindObjectsByType<Transform>())if(t.name=="PaeteSentryBody"||t.name=="PaetePlantBody"||t.name=="PaeteThornBody")_groundConstructs.Add(t);}

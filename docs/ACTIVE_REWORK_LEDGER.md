@@ -1,34 +1,17 @@
 # Current checkpoint
 
-Updated 2026-11-01. [TODO](TODO.md) is the only active queue.
+BANAUE-PERF-1105 is complete on main. [TODO](TODO.md) remains the only active queue.
 
-- HOME-FILMS-1101, on main: Zack (BGC), Phaister ("Drained", real Ermita map). [Edit guide](../ArtSource/home-scene/README.md). Next: owner in game.
-- FEEL-1031, on main: replay wipes, spectator 3D replay, break card, impact, 0.6 m knockback,
-  SFX. Film: run_ui_player_review.py --feel-only. Next: owner review.
-- TAG-FEEL-1031, on main: one tag live and in replay (spacing, reach, shared shove), FPP swing, replay impact on hand
-  arrival, taya warnings on the red tile, moment families, feed icons. Open: arm spin in tag replay. Next: owner review.
-- REPLAY-LIMITS-1101, on main: clip 18/protocol 187 records mountain and headband. Next: owner.
-- UI-REVAMP-1029, merged from QoLUpdates-v2: Settings, Room, match menu in game; review open. [Method](UI_REVAMP.md).
-- TAG-PHASE-1031, on main: open, ult visuals in replay. Next: owner review.
-- ONLINE-CAST-1028: 73b1f403b pushed/built. Ult victims stand on own floor from the
-  host-frozen pose; GroundY ignores awnings. Payo delayed pairs: Cheska gap 0, Nemu 0.015,
-  Paete tree grounded. Next: victims in Paete/Amihan/Phaister reach, then multi-PC.
-  Logs/ult-terrain-20261029/. Preserve six owner files.
-- Unfinished mobile UI: [resume here](reports/mobile-ui-2026-10-26/HANDOFF.md). ff9 candidate built; newer
-  source has picker clipping failing and no APK. Jobs stopped.
-- Keep `mobile+network` separate from main; current main is included.
-  Preserve owner metadata/settings and stage only explicit owned paths.
-- Desktop spectator is on main: grouped live controls, calmer camera, actual
-  player eyes/hands/lens,21 bodies/six maps/private cues.
-  [Evidence](reports/spectator-2026-10-25/README.md).
-- Network/mobile code0d8 passed recorded Windows/Android view transfer, same-seat
-  outage/background reconnect, manual spectator pause/card, host-loss stop,
-  six map scenes and Classic HUD. Core841/841 and focused native groups passed.
-  Old broad failures and emulator RTT-recovery limits stay explicit.
-  [Evidence/build hashes](reports/mobile-2026-10-26/README.md).
-- Zack's approved electrical-outline Backtrack308fb345f and hand-zigzag removal
-  remain intact. SFX listening review is still open; rejected sounds were not
-  installed. [Evidence](reports/zack-kit-2026-10-25/refinement-validation.md).
+- Done: catch-clip encode on a worker, `WorldGround` nearest-hit stepping, ultimate live-root rescans at 10 Hz,
+  Banaue far-house LOD (scene and builder), Paete escape (peel, debris, per-body bands, squirm layer).
+- [Evidence, measurements and limits](reports/banaue-perf-2026-11-05/README.md); raw logs in
+  `Logs/banaue-perf-20261105/`. Exact tests only: EditMode 4/4, PlayMode 4/4 and 4/4.
+- Next action: prewarm each picked hero's `HeroIntroductionScene` during loading (Dante 217 ms on the start frame).
+- Probe: `TumbangPreso.exe -tp-framebudget DIR -tp-maps Payo -tp-seconds 300 -tp-trace -tp-spike-scripts` in a
+  development build names the scripts behind every frame over 35 ms. Development players go outside `Builds/Windows`
+  only temporarily and are deleted after; restore the four build-touched settings files after a direct build.
+- Keep canonical checkout on main. No reset, clean or force push.
+- [Previous checkpoint](reports/banaue-perf-2026-11-05/checkpoint-before.md).
 
-Unrelated future sessions do not automatically owe mobile updates.
-[Earlier checkpoints](archive/cleanup-2026-10-25/docs/ACTIVE_REWORK_LEDGER.md) are history.
+- Also on main: the other machine's movement, ability reference and tooltip publication (cf9cbb565); its
+  owner review is open. [Its checkpoint](reports/banaue-perf-2026-11-05/checkpoint-other-machine.md).

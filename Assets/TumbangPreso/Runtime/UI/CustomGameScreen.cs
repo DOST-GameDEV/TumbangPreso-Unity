@@ -403,21 +403,9 @@ namespace TumbangPreso.UI
 
             if (_roomOpen)
             {
-                // ⚠️⚠️ ONE CONTROL FOR THE BOTS, NOT A COUNT AND A TIER, AND THAT IS A
-                // DELIBERATE NARROWING RATHER THAN AN OMISSION. `CustomRules.Bots` is a COUNT
-                // with a bound of `MaxBots` 3, and nothing in this game can currently fill a
-                // PARTIAL number of empty seats: `GameLaunch.AllBots` and the lobby's own BOTS
-                // row are a difficulty list whose last entry is **NONE**, meaning "no filler bots
-                // at all". A stepper offering 0, 1, 2, 3 would be four options of which two do
-                // exactly the same thing.
-                //
-                // ⚠️ `docs/TODO.md` § 108 IS WHY THAT MATTERS: an EQUIP button with no listener
-                // and a CUSTOMIZE LOADOUT button opening a screen drawn underneath the screen
-                // that opened it. **Both looked fine and both did nothing.** A control this
-                // screen cannot honour is that fault with a nicer excuse, so the row offered here
-                // is the one the game can obey, and `Bots` is written from it as all-or-nothing.
+                // Custom rooms keep filler bots; this control selects their difficulty.
                 UiRows.StepperRow(_list, "BOTS", BotLabel(_editing),
-                    BotIndex(_editing), DifficultyCount + 1,
+                    BotIndex(_editing), DifficultyCount,
                     SetBots,
                     "Filler seats when there are not four people. NORMAL is the tier every " +
                     "balance number in this project was measured at, and a match with a bot in " +
@@ -539,6 +527,7 @@ namespace TumbangPreso.UI
         {
             if (_editing == null || !MayEdit) return;
 
+            if (!SceneFlow.RulesPinned) CustomGameRules.FillEmptySeatsWithBots(_editing);
             SceneFlow.SetSelectedRules(_editing);
 
             // ⚠️⚠️ THE ROOM IS TOLD ON EVERY CHANGE, AND ONLY THE HOST MAY TELL IT.
@@ -619,18 +608,7 @@ namespace TumbangPreso.UI
         private static int TsinelasOptionCount
             => CustomGameRules.MaxTsinelas - CustomGameRules.MinTsinelas + 1;
 
-        /// <summary>
-        /// ⚠️⚠️ THREE TIERS, NOT FOUR, AND THE LOBBY'S FOUR-ENTRY LIST IS WHY THAT IS EASY TO GET
-        /// WRONG. `Difficulty` is `Bata`, `Normal`, `Astig` and nothing else;
-        /// `ConvertedMatchSetup.Difficulties` has FOUR rows because its last one is **NONE**,
-        /// which is not a tier at all but "no filler bots". This screen splits those two facts
-        /// into two controls (BOTS is a count, BOT SKILL is a tier), so there is no fourth row to
-        /// invent and no index that means something different from the enum's.
-        ///
-        /// ⚠️ THE NAMES ARE THE LOBBY'S, so a player who set HARD there and opens this screen
-        /// reads HARD. `Difficulty.Astig` is the id and `HARD` is what it has always been called
-        /// on screen; renaming it here would be teaching two words for one tier.
-        /// </summary>
+        /// <summary>Custom room bots have three difficulty tiers and remain enabled.</summary>
         private static int DifficultyCount => (int)Difficulty.Astig + 1;
 
         private static string DifficultyName(int tier) => tier switch
@@ -640,53 +618,24 @@ namespace TumbangPreso.UI
             _ => "HARD",
         };
 
-        /// <summary>
-        /// The BOTS control is one list: three tiers, then NONE.
-        ///
-        /// ⚠️⚠️ THE ORDER IS THE LOBBY'S OWN AND NOT A NEW ONE. `ConvertedMatchSetup.Difficulties`
-        /// reads `EASY, NORMAL, HARD, NONE` and `AIController.NoBotsIndex` is what that last row
-        /// means; a player who set HARD there and opens this screen must read HARD, and a second
-        /// ordering would teach two different meanings for one index.
-        /// </summary>
         private static int BotIndex(CustomRules rules)
-            => rules.Bots <= 0 ? DifficultyCount
-             : Mathf.Clamp(rules.BotDifficulty, 0, DifficultyCount - 1);
+            => Mathf.Clamp(rules.BotDifficulty, 0, DifficultyCount - 1);
 
-        private static string BotLabel(CustomRules rules)
-            => rules.Bots <= 0 ? "NONE" : DifficultyName(rules.BotDifficulty);
+        private static string BotLabel(CustomRules rules) => DifficultyName(BotIndex(rules));
 
-        /// <summary>
-        /// ⚠️⚠️ IT WRITES THE SETTING AND CALLS `AIController.ApplyDifficulty` AS WELL AS THE
-        /// RULE SET, because the bots are the one custom rule this game was already obeying
-        /// through a different door. `ConvertedMatchSetup.OnDifficultyCycle` does exactly these
-        /// two things, and a screen that wrote only `CustomRules.Bots` would be a control that
-        /// changed a record nothing reads, which is `docs/TODO.md` § 108's dead button.
-        ///
-        /// ⚠️ THE COUNT IS ALL OR NOTHING, WHICH THE ROW'S OWN NOTE ARGUES FOR: `MaxBots` when
-        /// bots are wanted and 0 when they are not. It is what the game can currently honour, and
-        /// `CanBeRanked` only ever asks whether it is zero.
-        /// </summary>
         private void SetBots(int index)
         {
-            int clamped = Mathf.Clamp(index, 0, DifficultyCount);
-            bool none = clamped >= DifficultyCount;
-
-            _editing.Bots = none ? 0 : CustomGameRules.MaxBots;
-            if (!none) _editing.BotDifficulty = clamped;
-            // ⚠️ NONE ALSO FORGETS WHICH SEATS THE ROOM CHOSE. Turning bots back on from here is
-            // the old all-or-nothing switch, so it fills every empty seat again
-            // (`CustomGameRules.SeatHasBot`) rather than reviving a stale seat-by-seat pick.
-            if (none) _editing.BotSeats = 0;
-
+            if (_editing == null || !MayEdit) return;
+            int clamped = Mathf.Clamp(index, 0, DifficultyCount - 1);
+            CustomGameRules.FillEmptySeatsWithBots(_editing);
+            _editing.BotDifficulty = clamped;
             var settings = Settings.SettingsStore.Current;
             if (settings != null)
             {
-                settings.AiDifficulty = none ? AIController.NoBotsIndex : clamped;
+                settings.AiDifficulty = clamped;
                 Settings.SettingsStore.Save();
             }
-
-            AIController.ApplyDifficulty(none ? AIController.NoBotsIndex : clamped);
-
+            AIController.ApplyDifficulty(clamped);
             Apply();
             Refresh();
         }

@@ -267,6 +267,9 @@ namespace TumbangPreso.Map
 
         private void ReadSkip()
         {
+            // The shared opening vote owns skipping during a real match opening.
+            // A held confirm must not jump one peer ahead of the room's vote.
+            if (MatchArrivalPresentation.Rolling) { _skipHeld = 0; return; }
             bool held = false;
             var keys = UnityEngine.InputSystem.Keyboard.current;
             if (keys != null) held |= keys.spaceKey.isPressed || keys.enterKey.isPressed || keys.numpadEnterKey.isPressed;

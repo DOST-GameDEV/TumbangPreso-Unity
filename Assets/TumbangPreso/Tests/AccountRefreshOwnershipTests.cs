@@ -74,6 +74,42 @@ namespace TumbangPreso.Tests
             if (_root != null) Object.DestroyImmediate(_root);
             SettingsStore.OverrideForTests(_previous);
         }
+        [Test] public void BootWaitsForRestorationWithoutFlashingTheAccountForm()
+        {
+            var previousAccount = GameServices.Account;
+            var serviceProperty = typeof(GameServices).GetProperty("Account");
+            var menuRoot = new GameObject("Dormant boot admission test"); menuRoot.SetActive(false);
+            try
+            {
+                serviceProperty.SetValue(null, _account);
+                var restored = new TaskCompletionSource<bool>();
+                Field("_initialiseTask", restored.Task);
+                var menu = menuRoot.AddComponent<TumbangPreso.UI.ConvertedMainMenu>();
+                var menuType = menu.GetType();
+                // This case tests admission, without starting unrelated Home asset preparation.
+                menuType.GetField("_homeArrival", Hidden).SetValue(menu, true);
+                menuType.GetField("_loginStepPending", Hidden).SetValue(menu, true);
+                var admission = (System.Collections.IEnumerator)menuType.GetMethod("RestoreBootAccount", Hidden).Invoke(menu, null);
+                Assert.IsTrue(admission.MoveNext());
+                Assert.IsTrue((bool)menuType.GetField("_loginStepPending", Hidden).GetValue(menu));
+                Assert.IsNull(menuRoot.GetComponent<TumbangPreso.UI.SignInScreen>());
+                SettingsStore.Current.AccountHasPassword = true;
+                _local.Username = "restored-user";
+                restored.SetResult(true);
+                Assert.IsFalse(admission.MoveNext());
+                Assert.IsFalse((bool)menuType.GetField("_loginStepPending", Hidden).GetValue(menu));
+                Assert.IsNull(menuRoot.GetComponent<TumbangPreso.UI.SignInScreen>(), "A restored account must never construct the boot form.");
+                var login = menuRoot.AddComponent<TumbangPreso.UI.SignInScreen>();
+                login.OpenAtBoot();
+                Assert.IsFalse(login.IsOpen, "Direct boot entry must also skip a restored account.");
+            }
+            finally
+            {
+                serviceProperty.SetValue(null, previousAccount);
+                Object.DestroyImmediate(menuRoot);
+            }
+        }
+
         [Test] public async Task ReplacementDuringPlayerNameCannotStartCloudLoad()
         {
             var task = Refresh(); Replace(); _names[0].SetResult("Remote#1234");

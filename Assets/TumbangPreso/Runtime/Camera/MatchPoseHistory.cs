@@ -11,7 +11,7 @@ namespace TumbangPreso.CameraSystem
         public const int Samples = 160;
         public const float Interval = .05f;
         public const int TransformLimit = 256;
-        private readonly Track[] _tracks = new Track[Core.Balance.PlayerCount];
+        private readonly Track[] _tracks = new Track[Core.CompanionSeats.BodyCount];
         private float _next;
         private long _match;
         private int _round;
@@ -35,18 +35,34 @@ namespace TumbangPreso.CameraSystem
             if (Time.time >= _next) _next = Time.time + Interval;
             for (int i = 0; i < _tracks.Length; i++)
             {
-                var actor = round.PlayerAt(i); var visual = actor != null ? actor.GetComponent<CharacterVisual>() : null;
+                var actor = round.BodyAt(i); var visual = actor != null ? actor.GetComponent<CharacterVisual>() : null;
                 if (visual == null || visual.Model == null) { _tracks[i] = null; continue; }
                 // A bone destroyed under the model (something parented in and taken away) empties the track; start
                 // again rather than leave the seat with no history, and so no replay, for the rest of the round.
                 if (_tracks[i] == null || _tracks[i].Source != visual.Model || _tracks[i].Broken)
+                {
+                    long began = DiagnoseSpikes ? System.Diagnostics.Stopwatch.GetTimestamp() : 0;
+                    string why = !DiagnoseSpikes ? null : _tracks[i] == null ? "new" : _tracks[i].Source != visual.Model ? "model" : "broken:" + _tracks[i].BrokenBone;
                     _tracks[i] = new Track(actor, visual.Model);
+                    if (DiagnoseSpikes) Debug.Log($"[PoseHistorySpike] t={Time.time:F2} seat={i} rebuild={why} bones={_tracks[i].BoneCount} ms={Ms(began):F1}");
+                }
+                long recordBegan = DiagnoseSpikes ? System.Diagnostics.Stopwatch.GetTimestamp() : 0;
                 _tracks[i].Record(Time.time);
+                if (DiagnoseSpikes && Ms(recordBegan) > 5) Debug.Log($"[PoseHistorySpike] t={Time.time:F2} seat={i} record ms={Ms(recordBegan):F1}");
             }
-            Sampled?.Invoke(Time.time);
+            if (!DiagnoseSpikes || Sampled == null) { Sampled?.Invoke(Time.time); return; }
+            foreach (var listener in Sampled.GetInvocationList())
+            {
+                long began = System.Diagnostics.Stopwatch.GetTimestamp();
+                ((System.Action<float>)listener)(Time.time);
+                if (Ms(began) > 5) Debug.Log($"[PoseHistorySpike] t={Time.time:F2} listener={listener.Method.DeclaringType?.Name}.{listener.Method.Name} ms={Ms(began):F1}");
+            }
         }
+        /// <summary>Benchmark only (`-tp-spike-scripts`): name what a slow sample spent its time on.</summary>
+        internal static bool DiagnoseSpikes;
+        private static double Ms(long began) => (System.Diagnostics.Stopwatch.GetTimestamp() - began) * 1000.0 / System.Diagnostics.Stopwatch.Frequency;
 
-        private readonly bool[] _touchTaken = new bool[Core.Balance.PlayerCount];
+        private readonly bool[] _touchTaken = new bool[Core.CompanionSeats.BodyCount];
         private bool TouchDue(RoundDirector round)
         {
             bool due = false;
@@ -96,8 +112,12 @@ namespace TumbangPreso.CameraSystem
             }
             /// <summary>A recorded bone was destroyed: this track can never record again.</summary>
             public bool Broken { get; private set; }
+            internal string BrokenBone { get; private set; }
+            internal int BoneCount => _bones.Length;
             public float Newest => _count > 0 ? _frames[(_cursor + Samples - 1) % Samples].Time : 0;
             public float Oldest => _count > 0 ? _frames[(_cursor + Samples - _count) % Samples].Time : 0;
+            private readonly string[] _boneNames;
+            private string DescribeParent(int index) => _boneNames != null && index < _boneNames.Length ? _boneNames[index] : "?";
             internal string DescribeHierarchy()=>string.Join(",",System.Array.ConvertAll(_bones,b=>b!=null?b.name:"<destroyed>"));
             internal bool MatchesHierarchy(GameObject source)
             {
@@ -110,6 +130,7 @@ namespace TumbangPreso.CameraSystem
             public Track(CharacterMotor actor, GameObject source)
             {
                 Actor = actor; Source = source; _bones = StableTransforms(source);
+                if (DiagnoseSpikes) _boneNames = System.Array.ConvertAll(_bones, b => (b.parent != null ? b.parent.name + "/" : "") + b.name);
                 if (_bones.Length > TransformLimit) { _frames = new Frame[0]; return; }
                 _frames = new Frame[Samples];
                 for (int i = 0; i < Samples; i++) _frames[i] = new Frame(_bones.Length);
@@ -124,7 +145,7 @@ namespace TumbangPreso.CameraSystem
                 frame.HasCoat=ReadCoat(out frame.Frost,out frame.Flash,out frame.Element);frame.Epoch=ReadEpoch();frame.HasAccent=ReadAccent(out frame.RimStrength,out frame.RimColour);
                 for (int i = 0; i < _bones.Length; i++)
                 {
-                    var bone = _bones[i]; if (bone == null) { _count = 0; Broken = true; return; }
+                    var bone = _bones[i]; if (bone == null) { _count = 0; Broken = true; if (DiagnoseSpikes) BrokenBone = i + "/" + _bones.Length + " under " + DescribeParent(i); return; }
                     frame.Position[i] = i == 0 ? bone.position : bone.localPosition;
                     frame.Rotation[i] = i == 0 ? bone.rotation : bone.localRotation;
                     frame.Scale[i] = i == 0 ? bone.lossyScale : bone.localScale;

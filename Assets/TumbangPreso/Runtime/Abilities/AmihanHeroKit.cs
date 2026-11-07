@@ -103,7 +103,7 @@ namespace TumbangPreso.Abilities
 
             public QuickDash(AmihanHeroKit kit)
                 : base("amihan_skill1", "DRIFT",
-                       "Throw yourself forward where you aim. Anyone you pass is shoved aside and Whirled: slipper dropped, no pickups for 2.5 s.",
+                       "PRESS {KEY} to ride a gust forward where you aim. Players caught in your wake are shoved aside and Whirled. Cannot be used in the air.",
                        AmihanRules.QuickDashCooldown, 0.0f, AbilityGlyph.AmihanQuickDash,
                        summary: "Dash where you aim. Whoever you pass is Whirled and shoved.",
                        castAction: "hero-amihan-dash", viewmodelAction: "gust-dash",
@@ -187,7 +187,7 @@ namespace TumbangPreso.Abilities
 
             public Updraft(AmihanHeroKit kit)
                 : base("amihan_skill2", "FEATHERFALL",
-                       "Fly for 5 s. Move and throw aloft; press again or grab to descend before picking up.",
+                       "PRESS {KEY} to ride an updraft into the air. While aloft you can move and throw, but cannot pick up slippers or be tagged. REACTIVATE to glide down.",
                        AmihanRules.UpdraftCooldown, AmihanRules.UpdraftSeconds, AbilityGlyph.AmihanUpdraft,
                        summary: "Fly for 5 s. Move and throw aloft; descend to retrieve.",
                        castAction: "hero-amihan-updraft", viewmodelAction: "updraft-lift",
@@ -295,7 +295,7 @@ namespace TumbangPreso.Abilities
 
             public Whirlwind(AmihanHeroKit kit)
                 : base("amihan_skill2d", "WHIRLWIND",
-                       "Defending. Send a whirlwind down the court for 2.5 s. Everyone it passes over is Whirled: slipper dropped, no pickups.",
+                       "PRESS {KEY} to send a whirlwind rolling forward. Players it sweeps through are Whirled, dropping their slipper and unable to reset the can.",
                        AmihanRules.WhirlwindCooldown, 0.0f, AbilityGlyph.AmihanWhirlwind,
                        summary: "Send a whirlwind down a lane. Everyone it passes over is Whirled.",
                        // The ring she aims with is the circle it is born as: the same radius, where its middle starts.
@@ -323,7 +323,7 @@ namespace TumbangPreso.Abilities
 
             public StormSurge(AmihanHeroKit kit)
                 : base("amihan_ultimate", "AIRBURST",
-                       "Unleash a monsoon across the whole court in front of you and everyone close around you. Players caught are Whirled and thrown airborne; caught slippers fly toward the arena edge.",
+                       "PRESS {KEY} to call a monsoon across the court ahead of you and all around you. Players caught are Whirled and blown toward the edge, slippers and all.",
                        0.0f, 0.0f, AbilityGlyph.AmihanStormSurge,
                        summary: "A monsoon blows everyone in front of you, and around you, toward the edge.",
                        // v3.2: no press sound; the cutscene's theme carries the call and the release cue lands on the hit.

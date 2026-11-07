@@ -6,7 +6,8 @@ namespace TumbangPreso.UI
 {
     /// <summary>
     /// The current status catalog's icons, drawn by
-    /// `tools/build_ability_icons.py` into `Resources/UI/status-icons`. A status sits on a round
+    /// the owner's own sheet (`ArtSource/ui/status-icons`), cut by `tools/cut_status_icons.py`
+    /// into `Resources/UI/status-icons`. A status sits on a round
     /// badge so it never reads as an ability icon: an ability is something you DO, a status is
     /// something done TO you. The tooltip is the owner's column, verbatim, from `Core.StatusRules`.
     /// </summary>

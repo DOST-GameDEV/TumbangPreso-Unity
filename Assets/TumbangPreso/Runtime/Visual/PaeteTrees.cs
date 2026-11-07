@@ -529,6 +529,16 @@ namespace TumbangPreso.Visual
         private PaeteRootBands _bands;
         private float _age, _strainedAt = -9f;
         private bool _facingEstablished, _retiring;
+        // The peel, as drawn (eased toward the hold so a late packet does not jump it), and what has already come off.
+        private float _peel, _size = 1f, _legTop = 0.509f;
+        private int _peeled;
+
+        // Sean's legs, which the bands were laid round (`PaeteEmbraceFx.LegHalfWidth`): measured at his 2.38 scale, from the
+        // vertices his leg bones carry (half width, half depth, top above the soles, and how far forward their middle is).
+        private const float RefLegHalfWidth = 0.455f, RefLegHalfDepth = 0.334f, RefLegTop = 0.509f, RefLegCentre = 0.065f;
+
+        /// <summary>For tests and the film: how far the roots are drawn peeled, 0 to 1.</summary>
+        public float Peel => _peel;
 
         /// <summary>The film's stand-in for a held Interact (`PaeteAbilityFilm.Sentry`): nothing in play sets it.</summary>
         public bool Strain { get; set; }
@@ -565,7 +575,64 @@ namespace TumbangPreso.Visual
             var fx = go.AddComponent<PaeteRootCoil>();
             fx._body = body;
             fx._bands = new PaeteRootBands(go.transform);
+            if (MeasureLegs(body, out float wide, out float deep, out float top, out float centre))
+            {
+                fx._bands.SetBody(wide / RefLegHalfWidth, top / RefLegTop, deep / RefLegHalfDepth);
+                fx._size = Mathf.Sqrt((wide / RefLegHalfWidth + deep / RefLegHalfDepth) * 0.5f * (top / RefLegTop));
+                fx._legTop = top;
+                go.transform.localPosition = new Vector3(0f, 0f, centre - RefLegCentre);
+            }
             return fx;
+        }
+
+        /// <summary>
+        /// THE BODY'S OWN LEGS (owner, 2026-11-05: every Hero Strike body is a different size and shape): the box round
+        /// the vertices its two leg bones carry, in the body's own frame, once when the roots take it. Nemu's legs are
+        /// about 0.7 of Sean's; Phaister's dress is 1.3 as wide. False (the bands keep Sean's size) when the model has no
+        /// leg bones or its mesh cannot be read.
+        /// </summary>
+        public static bool MeasureLegs(CharacterMotor body, out float halfWidth, out float halfDepth, out float top, out float centre)
+        {
+            halfWidth = RefLegHalfWidth; halfDepth = RefLegHalfDepth; top = RefLegTop; centre = RefLegCentre;
+            var model = body != null ? body.GetComponent<CharacterVisual>()?.Model : null;
+            if (model == null) return false;
+            float x0 = float.MaxValue, x1 = float.MinValue, z0 = float.MaxValue, z1 = float.MinValue, y1 = float.MinValue, floor = float.MaxValue;
+            int found = 0;
+            var frame = body.transform;
+            Mesh baked = null;
+            try
+            {
+                foreach (var skin in model.GetComponentsInChildren<SkinnedMeshRenderer>(false))
+                {
+                    var mesh = skin.sharedMesh;
+                    if (mesh == null || !mesh.isReadable || skin.bones == null) continue;
+                    int left = -1, right = -1;
+                    for (int i = 0; i < skin.bones.Length; i++)
+                    {
+                        var bone = skin.bones[i]; if (bone == null) continue;
+                        if (bone.name == "leg-left") left = i; else if (bone.name == "leg-right") right = i;
+                    }
+                    if (baked == null) baked = new Mesh();
+                    skin.BakeMesh(baked, true);
+                    var vertices = baked.vertices; var weights = mesh.boneWeights;
+                    var toFrame = frame.worldToLocalMatrix * skin.transform.localToWorldMatrix;
+                    for (int i = 0; i < vertices.Length; i++)
+                    {
+                        Vector3 p = toFrame.MultiplyPoint3x4(vertices[i]);
+                        floor = Mathf.Min(floor, p.y);
+                        if ((left < 0 && right < 0) || weights.Length != vertices.Length) continue;
+                        int bone0 = weights[i].boneIndex0;
+                        if (bone0 != left && bone0 != right) continue;
+                        x0 = Mathf.Min(x0, p.x); x1 = Mathf.Max(x1, p.x); z0 = Mathf.Min(z0, p.z); z1 = Mathf.Max(z1, p.z); y1 = Mathf.Max(y1, p.y);
+                        found++;
+                    }
+                }
+            }
+            catch (System.Exception) { return false; }
+            finally { if (baked != null) Destroy(baked); }
+            if (found < 8 || x1 - x0 < 0.05f || z1 - z0 < 0.05f || y1 - floor < 0.05f) return false;
+            halfWidth = (x1 - x0) * 0.5f; halfDepth = (z1 - z0) * 0.5f; top = y1 - floor; centre = (z1 + z0) * 0.5f;
+            return true;
         }
 
         public void Retire()
@@ -601,8 +668,9 @@ namespace TumbangPreso.Visual
             if (_body == null || !_body.IsRooted)
             {
                 // The roots letting go: the hold finished, a tag landed or the sentry slept. Local on
-                // every peer off the replicated state, like the gain below.
-                if (_body != null) Break(_body.transform.position, _body.transform.rotation, _age - _strainedAt < 0.35f);
+                // every peer off the replicated state, like the gain below. Torn free: straining at the end, or
+                // most of the way out already (a watching peer's timed peel can lag the host's clock a packet).
+                if (_body != null) Break(_body.transform.position, _body.transform.rotation, _age - _strainedAt < 0.35f || _peel >= 0.85f);
                 Retire(); return;
             }
             if (_age <= 0f)
@@ -613,7 +681,33 @@ namespace TumbangPreso.Visual
             _age += dt;
             bool fighting = _body.IsStruggling || Strain;
             if (fighting) _strainedAt = _age;
-            _bands.Draw(_age, 0f, fighting);
+            // Progress survives letting go of the button (`StepBreakFree`), so the peel holds where it got to.
+            float target = Strain ? Mathf.Max(_peel, Mathf.Clamp01(_age / Core.PaeteRules.BreakFreeHoldSeconds)) : _body.PresentedBreakFreeProgress;
+            _peel = target < _peel - 0.25f ? target : Mathf.MoveTowards(_peel, target, dt * 0.6f);
+            StepPeeledOff();
+            _bands.Draw(_age, 0f, fighting, _peel);
+        }
+
+        /// <summary>Each piece of the hold that has just come off is thrown, once, with a crack (the order in `PaeteRootBands`).</summary>
+        private void StepPeeledOff()
+        {
+            if (_peel < 0.02f) { _peeled = 0; return; }
+            var feet = _body.transform.position; var facing = _body.transform.rotation;
+            while (_peeled < 6)
+            {
+                float at = _peeled < 3 ? PaeteRootBands.LeafPops[_peeled]
+                    : _peeled == 3 ? PaeteRootBands.FlowerPops
+                    : _peeled == 4 ? Mathf.Lerp(PaeteRootBands.RootPeel[1].x, PaeteRootBands.RootPeel[1].y, 0.5f)
+                    : Mathf.Lerp(PaeteRootBands.RootPeel[0].x, PaeteRootBands.RootPeel[0].y, 0.5f);
+                if (_peel < at) break;
+                var what = _peeled < 3 ? PaeteEmbraceFx.Peel.Leaf : _peeled == 3 ? PaeteEmbraceFx.Peel.Flower
+                    : _peeled == 4 ? PaeteEmbraceFx.Peel.OuterRoot : PaeteEmbraceFx.Peel.InnerRoot;
+                float height = _legTop * (what == PaeteEmbraceFx.Peel.Leaf ? 0.55f + 0.15f * _peeled : what == PaeteEmbraceFx.Peel.Flower ? 0.55f : 0.75f);
+                PaeteEmbraceFx.PeelOff(feet, facing, what, _peeled, _size, height);
+                bool root = what == PaeteEmbraceFx.Peel.OuterRoot || what == PaeteEmbraceFx.Peel.InnerRoot;
+                GameServices.Audio?.PlayAtVaried(root ? "sfx_paete_root_break" : "sfx_status_rooted", feet, root ? 1.15f : 1.35f, root ? 1.3f : 1.5f, root ? 0.45f : 0.25f);
+                _peeled++;
+            }
         }
     }
 }

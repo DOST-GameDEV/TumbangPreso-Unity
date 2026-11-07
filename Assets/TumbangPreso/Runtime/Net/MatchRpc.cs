@@ -434,6 +434,8 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("ReqSnapshot", OnReqSnapshotMsg);
             cm.RegisterNamedMessageHandler("SkipBuffer", OnSkipBufferMsg);
             cm.RegisterNamedMessageHandler("BufferVotes", OnBufferVotesMsg);
+            cm.RegisterNamedMessageHandler("SkipOpening", OnSkipOpeningMsg);
+            cm.RegisterNamedMessageHandler("OpeningVotes", OnOpeningVotesMsg);
             cm.RegisterNamedMessageHandler("SyncAbility", OnSyncAbilityMsg);
             cm.RegisterNamedMessageHandler("RebindSeat", OnRebindSeatMsg);
             cm.RegisterNamedMessageHandler("ReqCue", OnReqCueMsg);
@@ -3381,8 +3383,8 @@ namespace TumbangPreso.Net
             if (reader.Position != reader.Length || !Finite(at) || !Finite(strength)
                 || kind > (byte)Visual.MatchFlair.LastKind || match <= 0 || match != PresentationMatchId
                 || round <= 0 || round != GameServices.Match?.RoundNumber) return;
-            if (actor < -1 || actor >= Balance.PlayerCount) return;
-            if (subject < -1 || subject >= Balance.PlayerCount) return;
+            if (actor < -1 || actor >= CompanionSeats.BodyCount) return;
+            if (subject < -1 || subject >= CompanionSeats.BodyCount) return;
 
             // ⚠️ `Play`, NOT `Announce`. A replicated copy must not relay itself onward, which is
             // the same loop `NetCue.SuppressRelay` exists to break for sounds.
@@ -6403,6 +6405,7 @@ namespace TumbangPreso.Net
             SendArenaBalloonSnapshot((ulong)peerId);
             SendPayoMoonSnapshot((ulong)peerId);
             FindFirstObjectByType<BufferSkipVote>()?.PublishTally((ulong)peerId);
+            FindFirstObjectByType<OpeningSkipVote>()?.PublishTally((ulong)peerId);
             FindFirstObjectByType<UI.MatchResult>()?.PublishRematchTally((ulong)peerId);
             int previousFieldGeneration=_worldFieldGeneration;
             SendWorldFieldSnapshot((ulong)peerId);
@@ -6564,6 +6567,7 @@ namespace TumbangPreso.Net
             // that quits mid-buffer drops the denominator, and with nobody re-evaluating the
             // players still waiting sit on a gate that is already satisfied.
             FindFirstObjectByType<BufferSkipVote>()?.OnPeerLeft(peerId);
+            FindFirstObjectByType<OpeningSkipVote>()?.OnPeerLeft(peerId);
 
             _spawned.Remove(peerId);
 

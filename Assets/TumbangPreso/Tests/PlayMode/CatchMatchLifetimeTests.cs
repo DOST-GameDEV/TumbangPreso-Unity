@@ -72,6 +72,22 @@ namespace TumbangPreso.PlayTests
             Settings.SettingsStore.Current.CinematicCameraMotion = _cinematic;
             yield return PlayModeWorld.Reset();
         }
+        [UnityTest, Timeout(90000)]
+        public IEnumerator PhaistersDollTagStartsTheActualVictimCatchReplay()
+        {
+            var doll = Abilities.VoodooDollBody.Spawn(_taya, _taya.transform.position,
+                _taya.transform.eulerAngles.y, brain: false);
+            Assert.IsNotNull(doll);
+            doll.IsDefender = true; doll.RoundActive = true; doll.enabled = false;
+            _taya.Teleport(_taya.transform.position+Vector3.left*6);
+            yield return new WaitForSeconds(.4f);
+            var history = Object.FindAnyObjectByType<MatchPoseHistory>();
+            Assert.IsNotNull(history.ForSeat(doll.PlayerSlot), "Companion contact needs its own real pose history.");
+            Assert.IsTrue(doll.GetComponent<CombatVerbs>().HostResolvePunch(doll.transform.position,doll.transform.forward));
+            Assert.Greater(_victim.StunLeft,0);
+            Assert.IsTrue(_view.Playing,"A doll's accepted tag must show the same victim catch replay as a player's.");
+        }
+
         private void Catch()
         {
             Assert.IsTrue(_taya.GetComponent<CombatVerbs>().HostResolvePunch(_taya.transform.position, _taya.transform.forward));
@@ -84,6 +100,26 @@ namespace TumbangPreso.PlayTests
             _match.AdoptPresentationMatch(fresh ? previous + 1 : previous);
             Assert.AreEqual(round, _match.RoundNumber);
             Assert.AreEqual(fresh ? previous + 1 : previous, _match.PresentationMatchId);
+        }
+        private static void SetUltimate(bool active) =>
+            typeof(SharedUltimatePhase).GetProperty("Active").SetValue(SharedUltimatePhase.Ensure(), active);
+        [UnityTest] public IEnumerator AnUltimateEndsTheTagReplayAndAPendingTagNeverStartsOne()
+        {
+            Catch(); float stun = _victim.StunLeft;
+            try
+            {
+                SetUltimate(true);
+                _view.SendMessage("LateUpdate");
+                Assert.IsFalse(_view.Playing, "The ultimate owns the screen: the tag replay ends.");
+                Assert.AreEqual(stun, _victim.StunLeft, "Only the picture goes; the tag's recovery stands.");
+                MatchFlair.Play(MatchFlair.Kind.Tag, 0, 1, _victim.transform.position);
+                _view.SendMessage("LateUpdate");
+                Assert.IsFalse(_view.Playing, "A tag during an ultimate starts no replay over it.");
+            }
+            finally { SetUltimate(false); }
+            _view.SendMessage("LateUpdate");
+            Assert.IsFalse(_view.Playing, "And it does not come back when the ultimate ends.");
+            yield return null;
         }
         [UnityTest] public IEnumerator FreshSameRoundIdentityRetiresAnActiveCatchBeforeOldRecoveryArrives()
         {

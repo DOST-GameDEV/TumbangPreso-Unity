@@ -108,9 +108,9 @@ namespace TumbangPreso.Core.Tests
         }
 
         [Fact]
-        public void TheCopiesRunAnAttackersRunAndFanOutWhenOverclocked()
+        public void RetiredCopiesKeepTheirRecordedPaceAndFanOutWhenOverclocked()
         {
-            Assert.Equal(Balance.AttackerRunSpeed, ZackRules.AfterimageSpeed);
+            Assert.Equal(5.0f, ZackRules.AfterimageSpeed);
             Assert.Equal(15.0f, ZackRules.AfterimageReach, 3);
             Assert.Equal(0.0f, ZackRules.AfterimageYaw(0, 1));
             Assert.Equal(-ZackRules.AfterimageYaw(0, 2), ZackRules.AfterimageYaw(1, 2));

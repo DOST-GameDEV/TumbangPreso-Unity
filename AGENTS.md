@@ -73,7 +73,7 @@ Do not load historical TODO bodies or all reports to start a session.
 ## Product and authored work
 
 - Four players, one rotating taya; retrieval is the tension. Classic and Hero Strike
-  both ship, normally eight rounds. No Street Hype.
+  both ship, normally four rounds. No Street Hype.
 - Stable IDs differ from displayed names. Preserve `Roster` order. Owner, October 28:
   all nine heroes are unlocked and each character belongs to one player per match.
   MIRROR is retired from new matches; its wire value stays reserved for history.

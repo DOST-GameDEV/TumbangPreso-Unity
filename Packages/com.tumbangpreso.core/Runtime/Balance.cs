@@ -19,15 +19,9 @@ namespace TumbangPreso.Core
         // MATCH STRUCTURE — match_manager.gd, round_manager.gd
         // -------------------------------------------------------------------
 
-        /// <summary>Both normal Classic and Hero Strike play two full defender rotations.</summary>
-        public const int Rounds = 8;
-
-        /// <summary>
-        /// Hero Strike runs two complete role rotations. Eight rounds gives every seat the
-        /// attacker and defender matchup twice, which is the requested competitive format,
-        /// matching the owner's eight-round Classic default.
-        /// </summary>
-        public const int HeroStrikeRounds = 8;
+        /// <summary>Both default modes play one complete defender rotation.</summary>
+        public const int Rounds = 4;
+        public const int HeroStrikeRounds = 4;
         public const int PlayerCount = 4;
         public const float RoundTime = 90.0f;
         public const float IntermissionDuration = 3.0f;
@@ -109,14 +103,14 @@ namespace TumbangPreso.Core
 
         /// <summary>
         /// Owner, October 22 tournament feedback: *"ults were rarely cast in 4 round games"*. The
-        /// ultimate costs are priced for the eight-round default, so a shorter match pays every
+        /// ultimate costs are priced for an eight-round match, so a shorter match pays every
         /// objective point proportionally more (four rounds: double) and each player can still
         /// reach an ultimate. Eight rounds or more are unchanged.
         /// </summary>
         public static float UltimateChargeScale(int totalRounds)
         {
-            if (totalRounds <= 0 || totalRounds >= HeroStrikeRounds) return 1.0f;
-            return System.Math.Min(3.0f, HeroStrikeRounds / (float)totalRounds);
+            if (totalRounds <= 0 || totalRounds >= 8) return 1.0f;
+            return System.Math.Min(3.0f, 8 / (float)totalRounds);
         }
 
         // Pektus (Curve Spin) Throwing
@@ -153,8 +147,8 @@ namespace TumbangPreso.Core
         // picks and both modes. Active statuses, abilities and terrain remain separate.
         public const float AttackerWalkSpeed = 2.5f;
         public const float DefenderWalkSpeed = 3.75f;
-        public const float AttackerRunSpeed = 5.0f;
-        public const float DefenderRunSpeed = 7.5f;
+        public const float AttackerRunSpeed = 3.75f;
+        public const float DefenderRunSpeed = 5.625f;
 
         public const float SprintScale = 1.50f;
         public const float Friction = 30.0f;
@@ -256,7 +250,8 @@ namespace TumbangPreso.Core
         /// <summary>You cannot START a sprint below this, so the bar cannot be feathered.</summary>
         public const float StaminaSprintFloor = 50.0f;
 
-        public const float FatigueTime = 2.5f;
+        // November 4 owner revision: empty stamina adds no exhaustion lockout.
+        public const float FatigueTime = 0.0f;
         public const float FatigueSpeedScale = 1.0f;
 
         // -------------------------------------------------------------------

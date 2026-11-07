@@ -50,8 +50,8 @@ namespace TumbangPreso.UI
                 "Reach this score to finish early. OFF plays every round.");
             Rule(_ownerMatchPage,"Stock","SLIPPERS EACH",360,d=>{_editing.Tsinelas=CustomGameRules.MinTsinelas+Cycle(_editing.Tsinelas-CustomGameRules.MinTsinelas,d,TsinelasOptionCount);Apply();},
                 "Starting slippers in Last Tsinelas Standing.");
-            Rule(_ownerRoomPage,"Bots","BOTS",0,d=>SetBots(Cycle(BotIndex(_editing),d,DifficultyCount+1)),
-                "Fill empty seats, or choose NONE to play with people only.");
+            Rule(_ownerRoomPage,"Bots","BOTS",0,d=>SetBots(Cycle(BotIndex(_editing),d,DifficultyCount)),
+                "Choose the difficulty of bots filling empty seats.");
             Rule(_ownerRoomPage,"Private","PRIVATE ROOM",98,d=>{_editing.Private=!_editing.Private;Apply();},
                 "Hide this room from the online room list.");
             _passwordRow=OwnerUiLayout.Rect(_ownerRoomPage,"PasswordRow").gameObject;
