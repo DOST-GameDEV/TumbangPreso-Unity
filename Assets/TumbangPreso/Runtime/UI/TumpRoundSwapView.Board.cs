@@ -42,9 +42,7 @@ namespace TumbangPreso.UI
             _notice = HubKnit.Display(_popup, "ReplayNotice", "", 42, HubKnit.KitWhite, TextAnchor.MiddleCenter, 4);
             HubKnit.In(_notice.rectTransform, 1000, 46, 780, 60);
 
-            // The hazard tape at the two top corners of the cards.
-            Tape("TapeLeft", 62, 214, 40);
-            Tape("TapeRight", 1846, 214, -40);
+            // No hazard tape: the owner removed it on 2026-11-08.
 
             BuildTayaCard();
             BuildClockCard();

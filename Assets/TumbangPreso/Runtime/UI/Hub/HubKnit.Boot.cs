@@ -302,14 +302,43 @@ namespace TumbangPreso.UI.Hub
             uvRect = new Rect((1 - visibleW) * .5f, (1 - visibleH) * (1 - focus), visibleW, visibleH);
         }
 
+        /// <summary>
+        /// How far inside a kit card's edge a picture on its face stops: the middle of the rim's stroke, which the
+        /// card art draws from about 2 to 12 units in (`bootkit.frame_art`). A picture drawn to the card's own edge
+        /// showed a few pixels past the stroke wherever its wobble turned inward (owner, 2026-11-08: "set a
+        /// clipping margin so it always gets clipped ~ the middle of the stroke").
+        /// </summary>
+        public const float RimMiddle = 7;
+
         protected override void OnPopulateMesh(VertexHelper vh)
         {
             vh.Clear();
             var r = GetPixelAdjustedRect();
             var uv = uvRect;
+            // On a kit face, any edge closer to the card's edge than the rim's middle is pulled in to it, and the
+            // chamfer cuts move in with it (a 45 degree cut moved in by m loses (2 - sqrt 2) m along each edge).
+            float left = 0, bottom = 0, right = r.width, top = r.height, cut = Cut, cutEnd = CutEnd;
+            if (transform.parent is RectTransform face && face.name == "Face" && transform.localRotation == Quaternion.identity)
+            {
+                Vector2 at = rectTransform.localPosition;
+                var f = face.rect;
+                float faceLeft = f.xMin - at.x - r.xMin, faceBottom = f.yMin - at.y - r.yMin;
+                float faceRight = f.xMax - at.x - r.xMin, faceTop = f.yMax - at.y - r.yMin;
+                const float Shrink = 2 - 1.41421356f;
+                bool l = left < faceLeft + RimMiddle, bo = bottom < faceBottom + RimMiddle;
+                bool ri = right > faceRight - RimMiddle, t = top > faceTop - RimMiddle;
+                if (l) left = faceLeft + RimMiddle;
+                if (bo) bottom = faceBottom + RimMiddle;
+                if (ri) right = faceRight - RimMiddle;
+                if (t) top = faceTop - RimMiddle;
+                // Only a corner that sat on the card's own chamfer moves in; a picture set inside the card keeps its cut.
+                if (l && t && cut > 0) cut = Mathf.Max(0, cut - Shrink * RimMiddle);
+                if (ri && bo && cutEnd > 0) cutEnd = Mathf.Max(0, cutEnd - Shrink * RimMiddle);
+                if (right <= left || top <= bottom) return;
+            }
             void Add(float x, float y) => vh.AddVert(new Vector3(r.xMin + x, r.yMin + y), color,
                 new Vector2(uv.x + uv.width * x / r.width, uv.y + uv.height * y / r.height));
-            Add(0, 0); Add(0, r.height - Cut); Add(Cut, r.height); Add(r.width, r.height); Add(r.width, CutEnd); Add(r.width - CutEnd, 0);
+            Add(left, bottom); Add(left, top - cut); Add(left + cut, top); Add(right, top); Add(right, bottom + cutEnd); Add(right - cutEnd, bottom);
             vh.AddTriangle(0, 1, 2); vh.AddTriangle(0, 2, 3); vh.AddTriangle(0, 3, 4); vh.AddTriangle(0, 4, 5);
         }
     }
