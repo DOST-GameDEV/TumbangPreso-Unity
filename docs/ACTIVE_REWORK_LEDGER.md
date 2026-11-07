@@ -1,11 +1,10 @@
 # Current checkpoint
 
-FEEL-PICKUP-1107, feel/retrieval-arc: approach hop, danger-tiered pickup and escape
-relief compiled; EditMode 1/1, exact PlayMode 9/9 in Logs/feel-retrieval-20261107/.
-No new HOST-ONLY audit findings against main; baseline audit failures remain.
-Player 8adb872f4 built/launched: Logs/windows-build-20261107-223638/job.json.
-All 145 cues loaded; responsive window, but capture timed out. Next: owner
-sound/feel review before main integration. Actual two-PC play remains unverified.
+FEEL-PICKUP-1107, feel/retrieval-arc: dwell bends before the grab; six contexts
+lift the street shoe. Opening skip frees the pointer and shows its binding.
+4 unique Edit cases and 9 exact Play cases passed: Logs/feel-pickup-revision-20261107/.
+No new HOST-ONLY findings; baseline failures remain. Next: build with
+tools/build_windows.py --launch, then owner feel review before merge. Peers unverified.
 
 CONTROLLER-NATIVE-1107, main: native DualSense/Edge HID reports reach the current
 gameplay/UI bindings. Fixed disabled UI-action confirm/back fallback and added

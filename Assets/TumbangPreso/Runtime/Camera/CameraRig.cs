@@ -1034,6 +1034,14 @@ namespace TumbangPreso.CameraSystem
             return Mathf.SmoothStep(0f, 1f, _fppSquatBlend) * _fppSquatShape;
         }
 
+        private float _pickupViewBend;
+        private float FppPickupBend(Carrier carrier)
+        {
+            float wanted = carrier != null && !Settings.SettingsStore.Current.ReducedUiMotion ? carrier.PickupBend : 0;
+            _pickupViewBend = Mathf.MoveTowards(_pickupViewBend, wanted, Time.deltaTime / .10f);
+            return _pickupViewBend;
+        }
+
         private void ApplyFpp()
         {
             float yaw = BodyYawDeg();
@@ -1045,6 +1053,12 @@ namespace TumbangPreso.CameraSystem
             float squat = FppRaiseSquat();
             eye -= Vector3.up * (Visual.CanRaiseShape.FppEyeDrop * squat);
             eye += Quaternion.Euler(0f, yaw, 0f) * Vector3.forward * (Visual.CanRaiseShape.FppLean * squat);
+
+            var pickupCarrier = _character.GetComponent<Carrier>();
+            float pickupBend = FppPickupBend(pickupCarrier);
+            var pickupStyle = pickupCarrier != null ? pickupCarrier.PickupStyle : Visual.PickupStyle.Standing;
+            eye -= Vector3.up * (Visual.PickupMotion.EyeDrop(pickupStyle) * pickupBend);
+            eye += Quaternion.Euler(0, yaw, 0) * Vector3.forward * (.10f * pickupBend);
 
             // The movement rework's crouch and slide, from the eyes (`MovementRework`, a debug switch; zero with it off).
             // An offset of the view like the two around it, eased so the drop is a motion and not a cut.
@@ -1068,7 +1082,8 @@ namespace TumbangPreso.CameraSystem
 
             // Absolute, from yaw and pitch only. The body's roll cannot reach this.
             transform.SetPositionAndRotation(eye, Quaternion.Euler(_pitchDeg + Visual.CanRaiseShape.FppLookDown * squat
-                                                                   + Visual.PaeteGroundCall.FppLookDown * kneel, yaw, 0.0f));
+                                                                   + Visual.PaeteGroundCall.FppLookDown * kneel
+                                                                   + Visual.PickupMotion.LookDown(pickupStyle) * pickupBend, yaw, 0.0f));
 
             if (_viewmodel != null && !_viewmodel.gameObject.activeSelf && !MatchArrivalPresentation.OwnsCamera)
                 _viewmodel.gameObject.SetActive(true);
@@ -1083,6 +1098,7 @@ namespace TumbangPreso.CameraSystem
             // so an event-driven version showed both slippers until the next swap.
             var carrier = _character.GetComponent<Carrier>();
             var held = carrier != null ? carrier.Held : null;
+            _arms.SetPickupSource(carrier);
 
             // HERO-10 v3: while a curse has her slipper at her belt the right hand is empty and reaching (`StowsCarriedSlipper`).
             bool stowed = held != null && _character.StowsCarriedSlipper && (carrier == null || carrier.ObservedChargePower < 0.0f);
@@ -1126,6 +1142,7 @@ namespace TumbangPreso.CameraSystem
             // ⚠️ THE VIEWMODEL WEARS THE PICKED SKIN. A player who chose CROCS held a brown
             // flip-flop in their own hands while every peer saw what they had actually picked.
             if (held != null) _arms.MatchSkin(held);
+            _arms.RefreshPickupPresentation();
         }
 
         private bool _debugThirdPerson;

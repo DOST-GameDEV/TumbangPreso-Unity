@@ -273,9 +273,30 @@ namespace TumbangPreso
         private Vector3 _tossFrom;
         private Quaternion _tossFromRotation;
         private float _tossLeft;
-        private const float TossSeconds = 0.17f;
-        private const float ScoopTossSeconds = 0.13f;
+        private const float TossSeconds = 0.62f;
         private float _tossDuration = TossSeconds;
+        private Visual.PickupStyle _pickupStyle, _autoStyle;
+        private bool _pickupFromDwell;
+        private float _recentRunUntil = -1;
+
+        public Visual.PickupStyle PickupStyle => _autoTarget != null ? _autoStyle : _pickupStyle;
+        public Vector3 PickupGround => _autoTarget != null ? _autoTarget.transform.position : _tossFrom;
+        public Quaternion PickupGroundRotation => _tossFromRotation;
+        public bool PickupLifting => Held != null && _tossLeft > 0;
+        public float PickupProgress => PickupLifting ? 1 - _tossLeft / _tossDuration : 1;
+        public float PickupLift => PickupLifting ? Visual.PickupMotion.Lift(PickupProgress, _pickupFromDwell) : 0;
+        public float PickupGrip => PickupLifting ? Visual.PickupMotion.Grip(PickupProgress, _pickupFromDwell) : 1;
+        public float PickupBend => Held == null ? Mathf.SmoothStep(0, 1, AutoPickupRatio)
+            : PickupLifting ? Visual.PickupMotion.Bend(PickupProgress, _pickupFromDwell) : 0;
+
+        private Visual.PickupStyle CurrentPickupStyle()
+        {
+            Vector3 velocity = _motor.PresentationTravelVelocity; velocity.y = 0;
+            if (velocity.magnitude > Balance.Speed * 1.15f || _motor.Intent.Pressed(Verb.Sprint))
+                _recentRunUntil = Time.unscaledTime + .75f;
+            return Visual.PickupMotion.Choose(_motor.ReworkSliding, _motor.ReworkCrouched,
+                _motor.Intent.Pressed(Verb.Lunge), velocity.magnitude, Time.unscaledTime < _recentRunUntil);
+        }
 
         private void Awake() => _motor = GetComponent<CharacterMotor>();
 
@@ -477,8 +498,8 @@ namespace TumbangPreso
 
             if (what == null) return;
 
-            ResetAutoPickup();
             PresentPickup(what);
+            ResetAutoPickup();
             // ⚠️⚠️ THE RETRIEVAL PAYS THE HERO ECONOMY, AND IT IS WIRED HERE BECAUSE THIS IS THE
             // ONE FUNNEL EVERY PICKUP GOES THROUGH. `HostPickUp`, the proximity grab and
             // `Slipper.HostGrab` all arrive here, and the guard above makes it idempotent, so a
@@ -576,6 +597,7 @@ namespace TumbangPreso
         private void Update()
         {
             float dt = Time.deltaTime;
+            CurrentPickupStyle();
             var planar=_motor.Velocity;planar.y=0;
             float moving=Mathf.Clamp(planar.magnitude/Balance.Speed,0,1.5f);
             float settle=moving > _aimMovement ? .12f : .28f;
@@ -681,13 +703,12 @@ namespace TumbangPreso
         {
             if (_tossLeft <= 0.0f || _tossDuration <= 0.0f) return;
             float u = 1.0f - _tossLeft / _tossDuration;
-            float ease = 1.0f - (1.0f - u) * (1.0f - u) * (1.0f - u);
+            float ease = Visual.PickupMotion.Lift(u, _pickupFromDwell);
             var t = Held.transform;
             Vector3 target = t.position;
             Quaternion targetRotation = t.rotation;
-            Vector3 at = Vector3.Lerp(_tossFrom, target, ease) + Vector3.up * (0.22f * Mathf.Sin(Mathf.PI * u));
-            Quaternion turned = Quaternion.Slerp(_tossFromRotation, targetRotation, ease)
-                                * Quaternion.AngleAxis((1.0f - ease) * -320.0f, Vector3.right);
+            Vector3 at = Vector3.Lerp(_tossFrom, target, ease) + Vector3.up * (0.08f * Mathf.Sin(Mathf.PI * ease));
+            Quaternion turned = Quaternion.Slerp(_tossFromRotation, targetRotation, ease);
             t.SetPositionAndRotation(at, turned);
         }
 
@@ -1050,7 +1071,7 @@ namespace TumbangPreso
                     return;
                 }
 
-                if (best != _autoTarget) { _autoTarget = best; _autoDwell = 0.0f; }
+                if (best != _autoTarget) { _autoTarget = best; _autoDwell = 0.0f; _autoStyle = CurrentPickupStyle(); }
                 _autoDwell += dt;
                 AutoPickupRatio = Mathf.Clamp01(_autoDwell / Balance.AutoPickupSeconds);
                 if (_autoDwell < Balance.AutoPickupSeconds) return;
@@ -1069,6 +1090,13 @@ namespace TumbangPreso
 
         private void ResetAutoPickup()
         {
+            if (_autoTarget != null && Held == null)
+            {
+                // An interrupted reach retreats from the shoe, not an old pickup or the world origin.
+                _tossFrom = _autoTarget.transform.position;
+                _tossFromRotation = _autoTarget.transform.rotation;
+                _pickupStyle = _autoStyle;
+            }
             _autoTarget = null;
             _autoDwell = 0.0f;
             AutoPickupRatio = 0.0f;
@@ -1099,6 +1127,9 @@ namespace TumbangPreso
             if (what == null) return;
 
             bool scoop = _motor.ReworkSliding;
+            _pickupFromDwell = _autoTarget == what && AutoPickupRatio >= .8f && !scoop;
+            _pickupStyle = _pickupFromDwell ? _autoStyle : CurrentPickupStyle();
+            ResetAutoPickup();
             float taya = DistanceToTaya();
             var round = GameServices.Round;
 
@@ -1127,7 +1158,7 @@ namespace TumbangPreso
             // The shoe flips up off the street into the hand instead of appearing there.
             _tossFrom = layAt;
             _tossFromRotation = layRotation;
-            _tossDuration = scoop ? ScoopTossSeconds : TossSeconds;
+            _tossDuration = Visual.PickupMotion.Seconds(_pickupStyle, _pickupFromDwell);
             _tossLeft = _tossDuration;
 
             var rig = UnityEngine.Camera.main != null
@@ -1138,9 +1169,8 @@ namespace TumbangPreso
             {
                 // Your own pickup: the view dips to the street and snaps back up with the shoe; a scoop kicks up
                 // and leans with the slide instead.
-                if (scoop) rig.ViewPunch(new Vector3(-2.4f, 0.0f, 2.2f), 3.5f);
-                else if (live) rig.ViewPunch(new Vector3(6.0f, 0.0f, -1.8f), 3.0f);
-                else rig.ViewPunch(new Vector3(5.0f, 0.0f, -1.4f), -2.5f);
+                // The view now bends through the dwell and rises with the hand, rather than a shake pulse.
+                if (scoop) rig.ViewPunch(new Vector3(-1.0f, 0.0f, 1.2f), 2.0f);
                 InputLayer.Rumble.Pulse(scoop ? 0.28f : 0.14f, scoop ? 0.50f : 0.34f, scoop ? 0.10f : 0.07f);
 
                 // A grab with the taya bearing down: a beat of stillness, then a heartbeat. You are live now.

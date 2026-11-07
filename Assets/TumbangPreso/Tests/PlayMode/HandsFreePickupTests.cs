@@ -3,6 +3,8 @@ using System.Reflection;
 using NUnit.Framework;
 using TumbangPreso.Core;
 using TumbangPreso.UI;
+using TumbangPreso.CameraSystem;
+using TumbangPreso.Visual;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
@@ -78,10 +80,12 @@ namespace TumbangPreso.PlayTests
             PlaceShoe(0.2f);
             Dwell(Balance.AutoPickupSeconds * 0.6f);
             Assert.IsNull(_carrier.Held, "The hands-free pickup fired before its dwell.");
+            Assert.Greater(_carrier.PickupBend, .5f, "The dwell must be spent reaching down before the shoe is equipped.");
             Assert.AreEqual(0.6f, _carrier.AutoPickupRatio, 0.01f, "The HUD bar must show how far the dwell has run.");
             Dwell(Balance.AutoPickupSeconds * 0.5f);
             Assert.AreSame(_shoe, _carrier.Held, "Standing on your own shoe for the dwell did not collect it.");
             Assert.AreEqual(0.0f, _carrier.AutoPickupRatio, "A finished pickup must clear the bar.");
+            Assert.Greater(_carrier.PickupBend, .95f, "The lift must continue from the completed downward reach.");
         }
 
         [Test] public void InPressReachButOutsideTheStandingRadiusNeverCollects()
@@ -111,6 +115,87 @@ namespace TumbangPreso.PlayTests
             _motor.IsDefender = true;
             Dwell(Balance.AutoPickupSeconds * 3.0f);
             Assert.IsNull(_carrier.Held, "The taya collected a tsinelas hands-free.");
+        }
+
+        [UnityTest] public IEnumerator TheDwellLowersTheViewBeforePossessionAndTheShoeLiftsFromTheStreet()
+        {
+            var cameraBody = new GameObject("Pickup motion eyes");
+            var camera = cameraBody.AddComponent<Camera>(); camera.tag = "MainCamera";
+            var rig = cameraBody.AddComponent<CameraRig>();
+            bool reduced = Settings.SettingsStore.Current.ReducedUiMotion;
+            try
+            {
+                Settings.SettingsStore.Current.ReducedUiMotion = false;
+                _shoeBody.transform.position = Vector3.forward * .6f;
+                var art = RosterBook.Load().Slippers[0];
+                if (art != null && art.Model != null) Object.Instantiate(art.Model, _shoeBody.transform);
+                rig.Follow(_motor, true); rig.SetAimSource(AimSource.Movement);
+                yield return null; yield return null;
+                float standing = camera.transform.position.y;
+                Dwell(.25f);
+                yield return new WaitForSecondsRealtime(.15f);
+                Assert.IsNull(_carrier.Held, "The downward motion must happen before the pickup succeeds.");
+                Assert.Less(camera.transform.position.y, standing - .15f, "Auto pickup did not lower the actual camera.");
+                Dwell(.24f);
+                yield return new WaitForSecondsRealtime(.1f);
+                Assert.IsNull(_carrier.Held);
+                Assert.Less(camera.transform.position.y, standing - .4f, "The end of the dwell must feel like a crouch.");
+                Dwell(.02f);
+                yield return null;
+                Assert.AreSame(_shoe, _carrier.Held);
+                Assert.AreEqual(0, _carrier.PickupLift, .001f, "The first pickup frame snapped to the carrying hand.");
+                var arms = camera.GetComponentInChildren<ViewmodelArms>(true);
+                Assert.IsNotNull(arms);
+                var drawnShoe = arms.transform.Find("RightPivot/Arm/HeldSlipper");
+                Assert.IsNotNull(drawnShoe);
+                Vector3 from = drawnShoe.position;
+                float until = Time.realtimeSinceStartup + .5f;
+                while (Time.realtimeSinceStartup < until)
+                {
+                    typeof(Carrier).GetMethod("LateUpdate", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(_carrier, null);
+                    yield return null;
+                }
+                Assert.Greater(Vector3.Distance(from, drawnShoe.position), .15f, "The first-person slipper did not travel through the lift.");
+                Assert.AreEqual(0, _carrier.PickupBend);
+                Assert.Greater(camera.transform.position.y, standing - .05f, "The eye did not rise after collecting.");
+            }
+            finally
+            {
+                Settings.SettingsStore.Current.ReducedUiMotion = reduced;
+                Object.Destroy(cameraBody);
+            }
+        }
+
+        [UnityTest] public IEnumerator LeavingDuringTheReachReturnsUprightWithoutEquippingTheShoe()
+        {
+            var cameraBody = new GameObject("Interrupted pickup eyes");
+            var camera = cameraBody.AddComponent<Camera>(); camera.tag = "MainCamera";
+            var rig = cameraBody.AddComponent<CameraRig>();
+            bool reduced = Settings.SettingsStore.Current.ReducedUiMotion;
+            try
+            {
+                Settings.SettingsStore.Current.ReducedUiMotion = false;
+                _shoeBody.transform.position = Vector3.forward * .6f;
+                Vector3 ground = _shoeBody.transform.position;
+                rig.Follow(_motor, true); rig.SetAimSource(AimSource.Movement);
+                yield return null; yield return null;
+                float standing = camera.transform.position.y;
+                Dwell(.4f); yield return new WaitForSecondsRealtime(.12f);
+                Assert.Less(camera.transform.position.y, standing - .35f);
+                _motor.transform.position += Vector3.right * 2;
+                Dwell(.01f);
+                Assert.IsNull(_carrier.Held);
+                Assert.AreEqual(0, _carrier.AutoPickupRatio);
+                Assert.AreEqual(ground, _carrier.PickupGround, "The retreating hand lost the shoe's location.");
+                yield return new WaitForSecondsRealtime(.2f);
+                Assert.Greater(camera.transform.position.y, standing - .05f);
+                Assert.AreEqual(SlipperState.Loose, _shoe.State);
+            }
+            finally
+            {
+                Settings.SettingsStore.Current.ReducedUiMotion = reduced;
+                Object.Destroy(cameraBody);
+            }
         }
     }
 }

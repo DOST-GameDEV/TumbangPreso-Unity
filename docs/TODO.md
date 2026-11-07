@@ -10,7 +10,7 @@ All original IDs and full bodies remain in the
 
 | ID | Status | Acceptance / next action |
 |---|---|---|
-| FEEL-PICKUP-1107 | Base on main; feel/retrieval-arc validated | [Design](Design.md) Nov 7. Edit 1/1, Play 9/9: Logs/feel-retrieval-20261107/. Owner sound/feel review before merge; actual peers open. |
+| FEEL-PICKUP-1107 | Revised on feel/retrieval-arc | [Design](Design.md) Nov 7. Dwell crouch, six motion contexts, clickable opening skip. 4 unique Edit cases, 9 exact Play cases passed: Logs/feel-pickup-revision-20261107/. Owner feel review and actual peers open. |
 | PAD-1107 | Hardware open | [Evidence](reports/controller-native-2026-11-07.md) |
 | BANAUE-PERF-1105 | DONE; follow-ups open | [Evidence and next work](reports/banaue-perf-2026-11-05/README.md) |
 | UI-REVAMP-1029 | In game | New HUD and most menus on main (QoLUpdates-v2 is behind). The unbuilt and old screens, from a board-by-board capture comparison, are listed in the method's 2026-11-07 handoff state. [Method](UI_REVAMP.md) |

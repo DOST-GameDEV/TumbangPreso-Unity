@@ -23,6 +23,20 @@ peer (70 ms at 0.08 time scale, refused by Reduced Effects), replacing the
 earlier no-global-pause rule, plus a stretch, squash and rim flash on the can.
 The October 3 removal of the right-click retrieval slide still stands.
 
+Owner revision after playing the first candidate: pickup must feel like going
+down, including the hands-free route. The existing 0.5 s dwell now drives the
+camera bend and reaching hand before possession. Collection continues into the
+lift, with the first-person shoe starting at the street and attaching to the
+palm at contact. Leaving reach cancels the dwell and eases upright without a
+pickup. Standing, moving, run-stop, crouched, sliding and quick-snatch contexts
+have different reach, brace, depth and recovery. Recent running is remembered
+through the stop. Right-click remains shove; quick-snatch is a pickup posture,
+not a new right-click pickup rule. No movement, reach or possession timing changed.
+
+The opening skip vote now frees the mouse while visible, shows the current
+ReadyUp binding and restores gameplay capture after the film. Pointer-click
+coverage uses the actual UI input module, not a direct call to the vote method.
+
 ## Current basic-action revision, October 3
 
 Full throw charge is1.5s. Normal tag/punch recovery is0.25s on an authoritative

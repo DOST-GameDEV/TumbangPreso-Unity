@@ -115,12 +115,16 @@ namespace TumbangPreso.Visual
 
         private void ClearResetRaise() { RestoreResetRaise(); _rrTorso = _rrHead = _rrArmR = _rrArmL = _rrRoot = _rrLegR = _rrLegL = null; _rrLegLength = -1; _rrResolved = false; _raiseWeight = 0; ResetRaiseProgress = 0; }
 
+        private float _pickupBodyBend;
         private void ApplyResetRaise()
         {
             if (_motor == null || _animator == null) return;
             float progress = ResetProgressNow();
+            float pickupWanted = !_motor.IsDefender && _carrier != null ? _carrier.PickupBend : 0;
+            _pickupBodyBend = Mathf.MoveTowards(_pickupBodyBend, pickupWanted, Time.deltaTime / .12f);
+            bool pickup = !_motor.IsDefender && _pickupBodyBend > .001f;
             ResetRaiseProgress = progress;
-            _raiseWeight = Mathf.MoveTowards(_raiseWeight, progress > 0 ? 1 : 0, Time.deltaTime / (progress > 0 ? .12f : .15f));
+            _raiseWeight = Mathf.MoveTowards(_raiseWeight, progress > 0 || pickup ? 1 : 0, Time.deltaTime / (progress > 0 || pickup ? .12f : .15f));
             if (_raiseWeight <= .001f) return;
             if (!_rrResolved)
             {
@@ -148,8 +152,14 @@ namespace TumbangPreso.Visual
             // The shape of the raise against progress (`CanRaiseShape`): crouch, grip, lift, set.
             float p = progress > 0 ? progress : 1;
             float crouch = CanRaiseShape.Crouch(p), rise = CanRaiseShape.Rise(p), press = CanRaiseShape.Press(p);
+            if (pickup)
+            {
+                crouch = _pickupBodyBend * Mathf.Clamp01(PickupMotion.EyeDrop(_carrier.PickupStyle) / .52f);
+                rise = 1 - crouch; press = 0;
+            }
             // Squatting does most of the reaching now, so the waist bends less than the old 50.
             float bow = Mathf.Lerp(30, 12, rise) + 12 * crouch + 10 * press;
+            if (pickup) bow = 46 * crouch;
             // Hands on the can: down at the road in the squat, lifting with it, pushed down in the press.
             float handY = Mathf.Lerp(-.62f, -.30f, rise) - .25f * press;
             var hand = new Vector3(.12f, handY, Mathf.Lerp(.58f, .86f, rise));
@@ -169,7 +179,7 @@ namespace TumbangPreso.Visual
             if (_rrRoot != null && _rrLegR != null && _rrLegL != null)
             {
                 if (_rrLegLength < 0) _rrLegLength = Mathf.Max(.2f, _rrLegR.position.y - transform.position.y);
-                float spread = CanRaiseShape.CrouchSpreadDegrees * crouch * w;
+                float spread = (pickup ? 40 : CanRaiseShape.CrouchSpreadDegrees) * crouch * w;
                 float legSide = transform.InverseTransformPoint(_rrLegR.position).x >= 0 ? 1f : -1f;
                 _rrLegR.rotation = Quaternion.AngleAxis(spread * legSide, transform.forward) * Quaternion.AngleAxis(-8f * crouch * w, transform.right) * _rrLegR.rotation;
                 _rrLegL.rotation = Quaternion.AngleAxis(-spread * legSide, transform.forward) * Quaternion.AngleAxis(-8f * crouch * w, transform.right) * _rrLegL.rotation;
@@ -181,7 +191,9 @@ namespace TumbangPreso.Visual
             if (_rrHead != null) _rrHead.rotation = Quaternion.Slerp(Quaternion.identity, Quaternion.AngleAxis(-bow * .35f, transform.right), w) * _rrHead.rotation;
             float sideR = transform.InverseTransformPoint(_rrArmR.position).x >= 0 ? 1f : -1f;
             PointArm(_rrArmR, _rrAlongR, new Vector3(hand.x * sideR, hand.y, hand.z), w, 0);
-            PointArm(_rrArmL, _rrAlongL, new Vector3(-hand.x * sideR, hand.y, hand.z), w, 0);
+            PointArm(_rrArmL, _rrAlongL, pickup
+                ? new Vector3(-.30f * sideR, -.15f, .12f) + PickupMotion.Brace(_carrier.PickupStyle)
+                : new Vector3(-hand.x * sideR, hand.y, hand.z), w, 0);
         }
     }
 }

@@ -3091,6 +3091,7 @@ namespace TumbangPreso.CameraSystem
 
         public void StepVisuals(float dt, bool snap = false)
         {
+            RestorePickupReach();
             RestoreHandLife();
             RestoreReleaseSweep();
             RestoreThrowReach();
@@ -3150,6 +3151,7 @@ namespace TumbangPreso.CameraSystem
                 ApplyTagReach();
                 ApplyCastGesture();
                 ApplyReleaseSweep();
+                ApplyPickupReach(dt);
                 StepHandLife(dt);
                 return;
             }
@@ -3201,6 +3203,7 @@ namespace TumbangPreso.CameraSystem
             ApplyTagReach();
             ApplyCastGesture();
             ApplyReleaseSweep();
+            ApplyPickupReach(dt);
             StepHandLife(dt);
         }
 
