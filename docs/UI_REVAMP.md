@@ -253,6 +253,22 @@ Boards added: `match-hud-discs` (the round abilities, approved), `match-hud-plat
 
 Still on old designs in game, next in this order (boards in the preview folder, all approved): hero screen and ability popup (`hub-hero`, `hub-ability`), story (`hub-story`, still the old cream page), skill tree (`hub-skilltree`), Next Round (`match-break`), Halftime (`match-halftime`; the capture currently lands on the results), results views (`match-result-standings`, `-yourmatch`, `-players`; the game draws a cream sheet), Next Court (`match-result-nextcourt`). Then training menu, guided training, spectator controls and chips, phone powers. Smaller gaps are in the 11-07 list above.
 
+### Later on 2026-11-08 (main at `4f79d7ad8`, pushed)
+
+- Shop cards and the sunburst cards (ability popup, item inspect) cut their pictures at the kit card's chamfers (`HubKnit.ShowCardCut` 34, `KitCutPicture.CutEnd` for the bottom right); the shop's hover words sit above the items, under the rim.
+- One wallet everywhere: `HubKnit.TopBar` draws HOME's approved chip (`HubChrome.TopRight`). No + (it only opened TASKS; there is no currency store). The coin has a drop shadow.
+- Queue ticket: the cancel button centred on the stub both ways (`HubQueue.cs`, owner approved).
+- Spectators read the ranked grey score plates (the Tab board, standing) instead of the old chip row (`TumpMatchReadout._watching`). They lost the per-seat ultimate meter and TAYA tag; ask the owner before adding them to the plates.
+- The world prompt (Retrieve Slipper) hides while the held reference or the emote wheel is open.
+- Training panel (`GuidedTrainingHud.OwnerPainted.cs`, `KitPanelWeave.cs`): the F1 plates' stroke with no drop (`live-hud/ref-frame-flat`), a quieter, finer weave cropped not stretched (`panel-weave`, at 90 per cent), the F1 header box as bands top and bottom (`band-top-690x94`, `band-bottom-690x92`: 75 per cent, inner shadow, square inside), white words, Darumadrop headings and Grandstander for the sentence and the prompt words, lime for what to press, yellow SKIP LESSON, one solid route bar on the HUD's deep glass track, every key 56 tall.
+- The F1 reference's header box is 75 per cent.
+
+Owner rules from 2026-11-08: key prompts are the Xelu icons as drawn, never relettered or redrawn; Grandstander is for the words beside them. A weave on a large panel must be quiet. In-match panels use the grey woven plates and the F1 dark box, not maroon. Unused import to remove (owner runs it): `Resources/UI/input/xelu/blank` and its `.meta`.
+
+Still not in the game, in this order: hero screen and ability popup (`hub-hero`, `hub-ability`), story (`hub-story`), skill tree (`hub-skilltree`), Next Round (`match-break`), Halftime (`match-halftime`; its capture lands on the results), results (`match-result-standings`, `-yourmatch`, `-players`; the name chip covers the YOUR MATCH tab), Next Court (`match-result-nextcourt`), training menu (`match-training-menu`), spectator controls (`match-spectator-controls`), phone screens (the Mobile capture has not run since). Smaller: body text smaller than boards, menu and Host/Join icons, item tile slipper size, task reward icon, Keep Your Changes buttons, phone settings tabs, countdown digit, ultimate-ready notice, emote wheel transparency, catch replay REC tag, a 1 to 2 px stub at GAMEMODE's card corners.
+
+Capture notes: `MatchHud` always reports `match-ultimate-shared` and `match-catch` missed; `PracticeAndSpectator` reports `match-spectator` missed (a `ReplayEdge` has no CanvasRenderer) although its image is written. In the capture profile Interact is bound to F10, so captures show F10 where play shows F. Capture runner: `scratchpad/caps.py <outdir> <tests...>` copies new captures; `scratchpad/tests.py <key> <tests...>` runs exact tests.
+
 ## Pipeline
 
 Run from this worktree; the owner's editor and other worktrees are never touched.
