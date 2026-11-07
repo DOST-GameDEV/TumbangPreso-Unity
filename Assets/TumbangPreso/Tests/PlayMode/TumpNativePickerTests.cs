@@ -270,7 +270,7 @@ namespace TumbangPreso.PlayTests
                 Press(Find("StoryButton")); yield return null; yield return null;
                 var biography = GameObject.Find("OwnerCharacterStoryCanvas").GetComponent<Canvas>();
                 Assert.IsFalse(TumpHub.Current.Canvas.enabled, "The biography must own the screen.");
-                Assert.AreEqual(story.origin, biography.GetComponentsInChildren<Text>().First(t => t.name == "StoryOrigin").text);
+                Assert.AreEqual(story.origin.ToUpperInvariant(), biography.GetComponentsInChildren<Text>().First(t => t.name == "StoryOrigin").text);
                 yield return TumpUiCapture.Capture("Hub-biography-" + hero.Id, biography, 960, 540, false, checkActionBounds: true);
                 Press(Find("CloseCharacterStory")); yield return null; yield return null;
                 Assert.IsInstanceOf<HubHero>(TumpHub.Current.Top);

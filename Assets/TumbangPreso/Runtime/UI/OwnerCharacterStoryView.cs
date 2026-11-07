@@ -15,8 +15,8 @@ namespace TumbangPreso.UI
         {
             var story=OwnerCharacterStories.For(id);if(story==null)return;
             _back=back;if(_canvas==null)Build();
-            _title.text="MEET "+name;_origin.text=story.origin;_court.text="Home court · "+story.homeCourt;
-            _shortLine.text=story.shortLine;_body.text=story.introduction;_portrait.sprite=OwnerPortraitArt.Get("UI/portraits/"+id);
+            _title.text=("MEET "+name).ToUpperInvariant();_origin.text=(story.origin??"").ToUpperInvariant();_court.text="Home court · "+story.homeCourt;
+            _shortLine.text=(story.shortLine??"").ToUpperInvariant();_body.text=story.introduction;_portrait.sprite=OwnerPortraitArt.Get("UI/portraits/"+id);
             _canvas.gameObject.SetActive(true);_scroll.verticalNormalizedPosition=1;_canvas.GetComponent<InputLayer.ScreenFocus>().Rebuild();
         }
         private void BuildPreviousPaintedStory()
