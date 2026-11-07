@@ -1593,11 +1593,11 @@ def ref_plate_art(w, h, head, cut=None, alpha=.82, rad=14):
         cx, cy, r = cut
         ImageDraw.Draw(bx).ellipse(((cx - r) * S, (cy - r) * S, (cx + r) * S, (cy + r) * S), fill=0)
     bx = ImageChops.multiply(bx, inner)
-    im.paste((0x2C, 0x2B, 0x35, 255), (0, 0), bx)
+    im.paste((0x2C, 0x2B, 0x35, 255), (0, 0), bx.point(lambda v: int(v * .75)))
     shadow = ImageChops.invert(ImageChops.offset(bx, 0, 4 * S)).filter(ImageFilter.GaussianBlur(5 * S))
     im.paste((0x08, 0x07, 0x0C, 255), (0, 0), ImageChops.multiply(shadow.point(lambda v: min(255, int(v * 1.5))), bx))
     plate = see_through(im.resize((w, h + drop), Image.LANCZOS), alpha)
-    plate.putalpha(ImageChops.lighter(plate.getchannel("A"), bx.resize((w, h + drop), Image.LANCZOS).point(lambda v: int(v * .88))))
+    plate.putalpha(ImageChops.lighter(plate.getchannel("A"), bx.resize((w, h + drop), Image.LANCZOS).point(lambda v: int(v * .75))))
     return plate
 
 
