@@ -2,6 +2,20 @@
 > govern behavior and assignments. Historical values, proposals and unchecked
 > boxes below are context, not automatic work orders.
 
+## Retrieval and can-hit feel, November 7
+
+From the external feedback document (Gameplay / Juice). An attacker standing
+within 0.85 m of a tsinelas they may take collects it after 0.5 s with no press
+(`Balance.AutoPickupSeconds`, `AutoPickupRadius`); the Grab press stays instant
+within the 1.75 m pickup radius. Sliding (sprint, then crouch) over an eligible
+tsinelas scoops it immediately. Both use the existing pickup gate and grab
+request, so no protocol change. Every peer now plays the pickup presentation,
+and a pickup of your own shoe with the taya within 2.5 m is called CLUTCH
+(presentation only). The can knockdown adds a bounded global hitstop on every
+peer (70 ms at 0.08 time scale, refused by Reduced Effects), replacing the
+earlier no-global-pause rule, plus a stretch, squash and rim flash on the can.
+The October 3 removal of the right-click retrieval slide still stands.
+
 ## Current basic-action revision, October 3
 
 Full throw charge is1.5s. Normal tag/punch recovery is0.25s on an authoritative
