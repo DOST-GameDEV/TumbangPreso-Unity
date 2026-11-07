@@ -78,9 +78,9 @@ namespace TumbangPreso.UI
             hang.gameObject.AddComponent<RectMask2D>();
             _portrait = OwnerUiLayout.Rect(hang, "NextDefenderPortrait").gameObject.AddComponent<Image>();
             _portrait.preserveAspect = true; _portrait.raycastTarget = false;
-            HubKnit.In(_portrait.rectTransform, -32, 130, 564, 564);
+            HubKnit.In(_portrait.rectTransform, -32, 70, 564, 564);
             var badge = OwnerUiLayout.Rect(_popup, "NextTayaBadge").gameObject.AddComponent<HudBadge>();
-            HubKnit.In(badge.rectTransform, 425, 490, 84, 84); badge.Detail = UiTheme.Defense; badge.raycastTarget = false;
+            HubKnit.In(badge.rectTransform, 425, 430, 84, 84); badge.Detail = UiTheme.Defense; badge.raycastTarget = false;
             badge.Show(HudBadge.Glyph.Can, HudDraw.Ivory, UiTheme.Defense); _tayaBadge = badge.rectTransform;
             var tag = HubKnit.Tag(_popup, "NextRole", "NEXT TAYA", Knit.Danger, 74);
             HubKnit.In(tag, 560, 226, 340, 74);
