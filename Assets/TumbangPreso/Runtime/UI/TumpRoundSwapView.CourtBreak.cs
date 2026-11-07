@@ -74,7 +74,8 @@ namespace TumbangPreso.UI
         /// <summary>For tests: what the chip at <paramref name="rank"/> says its seat earned since the last break.</summary>
         public int GainAt(int rank)=>rank>=0&&rank<4?_gainOf[rank]:0;
 
-        public void Build(Transform owner,Action dismiss)
+        /// <summary>The October 31 dark card, before the boot board (owner, 2026-11-08: follow the board); not called.</summary>
+        private void BuildDarkCard(Transform owner,Action dismiss)
         {
             Canvas=OwnerUiLayout.Canvas(owner,"OwnerRoundSwapCanvas",260);
             var focus=Canvas.GetComponent<InputLayer.ScreenFocus>();if(focus!=null)focus.enabled=false;
@@ -137,10 +138,10 @@ namespace TumbangPreso.UI
                 _gains[i]=Label(chip.transform,"StandingGain"+i,"",30,HudDraw.Honey);
                 OwnerUiLayout.Place(_gains[i].rectTransform,16,172,84,40);_gains[i].fontStyle=FontStyle.Italic;
                 var gainInk=_gains[i].gameObject.AddComponent<Outline>();gainInk.effectColor=UiTheme.InGameOutline;gainInk.effectDistance=new Vector2(2,-2);
-                _chipHome[i]=chip.rectTransform.anchoredPosition;_chipFrom[i]=_chipHome[i].x;
+                _chipRect[i]=chip.rectTransform;_chipHome[i]=chip.rectTransform.anchoredPosition;_chipFrom[i]=_chipHome[i].x;
             }
 
-            var ticket=_ticket=Card(_popup,"NextTayaTicket",180,370,500,88,CardFill);
+            var ticket=_ticket=Card(_popup,"NextTayaTicket",180,370,500,88,CardFill);_ticketRect=ticket.rectTransform;
             Plate(ticket,HudDraw.Lean,EdgeRed);
             _nextSwatch=Card(ticket.transform,"NextTayaSwatch",30,8,72,72,Color.white);_nextSwatch.Slant=HudDraw.Lean;
             _nextSwatch.ShadowAlpha=0;_nextSwatch.FollowContrast=false;_nextSwatch.Radius=4;
@@ -202,6 +203,7 @@ namespace TumbangPreso.UI
         private void PaintChips(int[] order,int nextTaya,bool uniqueLeader)
         {
             if(!_popupBuilt)return;
+            if(_board){PaintBoardChips(order,nextTaya,uniqueLeader);return;}
             int mine=LocalSeat();
             _nextSwatch.color=PlayerIdentity.Colour(nextTaya);
             for(int i=0;i<4;i++)
@@ -279,8 +281,8 @@ namespace TumbangPreso.UI
         /// <summary>The next-taya ticket turns over, its can badge stamps, and that seat's chip swells once.</summary>
         private void PaintRoleSwap(float age,bool reduced)
         {
-            if(_ticket==null)return;
-            var ticket=_ticket.rectTransform;
+            if(_ticketRect==null)return;
+            var ticket=_ticketRect;
             if(reduced){ticket.localScale=Vector3.one;if(_tayaBadge!=null)_tayaBadge.localScale=Vector3.one;return;}
             // Edge-on until a quarter second in, then turns face-up past flat and settles.
             float turn=Mathf.Clamp01((age-.85f)/.3f);
@@ -293,10 +295,10 @@ namespace TumbangPreso.UI
                 _tayaBadge.localScale=Vector3.one*(stamp<=0?0:Mathf.Lerp(1.8f,1,1-(1-stamp)*(1-stamp)));
                 _tayaBadge.localRotation=Quaternion.Euler(0,0,-20*(1-stamp));
             }
-            if(_nextTayaRank>=0&&_nextTayaRank<4&&_chips[_nextTayaRank]!=null)
+            if(_nextTayaRank>=0&&_nextTayaRank<4&&_chipRect[_nextTayaRank]!=null)
             {
                 float swell=Mathf.Clamp01(1-Mathf.Abs(age-1.35f)/.16f);
-                _chips[_nextTayaRank].rectTransform.localScale*=1+.08f*swell;
+                _chipRect[_nextTayaRank].localScale*=1+.08f*swell;
             }
         }
 
@@ -305,14 +307,14 @@ namespace TumbangPreso.UI
         {
             for(int i=0;i<4;i++)
             {
-                if(_chips[i]==null||_gains[i]==null)continue;
+                if(_chipRect[i]==null||_gains[i]==null)continue;
                 // Each card bounces up into place in rank order, overshooting a little; its rank pops as it lands.
                 float land=reduced?1:Mathf.Clamp01((age-.24f-i*.1f)/.32f);
                 float back=land-1,e=1+2.70158f*back*back*back+1.70158f*back*back;
                 float slide=reduced?1:Mathf.SmoothStep(0,1,Mathf.Clamp01((age-.7f)/.4f));
                 var home=_chipHome[i];
-                _chips[i].rectTransform.anchoredPosition=new Vector2(Mathf.Lerp(_chipFrom[i],home.x,slide),home.y-(reduced?0:170*(1-e)));
-                _chips[i].rectTransform.localScale=Vector3.one*(reduced?1:land<=0?0:Mathf.Lerp(.6f,1,e));
+                _chipRect[i].anchoredPosition=new Vector2(Mathf.Lerp(_chipFrom[i],home.x,slide),home.y-(reduced?0:170*(1-e)));
+                _chipRect[i].localScale=Vector3.one*(reduced?1:land<=0?0:Mathf.Lerp(.6f,1,e));
                 if(_ranks[i]!=null)_ranks[i].rectTransform.localScale=Vector3.one*(reduced?1:1+.7f*Mathf.Clamp01(1-Mathf.Abs(land-1)*1)*Mathf.Clamp01(1-(age-.56f-i*.1f)/.2f));
                 if(_chipCrowns[i]!=null&&!reduced)_chipCrowns[i].rectTransform.localRotation=Quaternion.Euler(0,0,Mathf.Sin(age*5)*8);
                 int gain=_gainOf[i];
@@ -320,7 +322,7 @@ namespace TumbangPreso.UI
                 int shown=Mathf.RoundToInt(gain*count);
                 // Blank until the count begins: a "+0" waiting on the chip read as a score of nothing.
                 _gains[i].text=gain==0||shown==0?"":(gain>0?"+":"")+shown;
-                var c=gain<0?HudDraw.Alarm:HudDraw.Honey;c.a=e;_gains[i].color=c;
+                var c=gain<0?HudDraw.Alarm:_board?TumbangPreso.UI.Hub.HubKnit.KitCream:HudDraw.Honey;c.a=e;_gains[i].color=c;
                 // The tab punches once as its count lands.
                 float punch=reduced?0:Mathf.Clamp01(1-Mathf.Abs(age-(1.3f+i*.1f))/.12f);
                 _gains[i].rectTransform.localScale=Vector3.one*(1+.25f*punch);

@@ -313,7 +313,7 @@ namespace TumbangPreso.PlayTests
                 var archive = Object.FindAnyObjectByType<MatchReplayArchive>();
                 Assert.IsNotEmpty(archive.Clips, archive.LastSkip);
                 long clip = archive.Clips[0].Clip.Id;
-                while (match.RoundNumber < 4) { round.EndRound(); match.AdvanceRound(); yield return null; }
+                while (match.RoundNumber < match.TotalRounds / 2) { round.EndRound(); match.AdvanceRound(); yield return null; }
                 DrawFrame(); round.EndRound(); match.BeginIntermission();
                 var phase = HalftimePresentation.Instance;
                 Assert.IsTrue(phase.IsHalftime); Assert.AreEqual(10, phase.Duration); Assert.AreEqual(clip, phase.ClipId);
@@ -352,7 +352,7 @@ namespace TumbangPreso.PlayTests
         {
             yield return MapRetrievalProbe.Load(UI.SceneFlow.Eskinita);
             var match = GameServices.Match; var round = GameServices.Round; var phase = HalftimePresentation.Instance;
-            while (match.RoundNumber < 4) { round.EndRound(); match.AdvanceRound(); yield return null; }
+            while (match.RoundNumber < match.TotalRounds / 2) { round.EndRound(); match.AdvanceRound(); yield return null; }
             var provider = NetAuthority.Provider;
             try
             {

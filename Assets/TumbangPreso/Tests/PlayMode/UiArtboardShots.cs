@@ -832,7 +832,8 @@ namespace TumbangPreso.PlayTests
         {
             var round = GameServices.Round; var match = GameServices.Match;
             round.enabled = true;
-            while (match.RoundNumber < 4) { round.EndRound(); match.AdvanceRound(); yield return null; }
+            // Halftime follows half the match's rounds (`HalftimePresentation.IsMiddleBreak`); matches are four rounds now.
+            while (match.RoundNumber < match.TotalRounds / 2) { round.EndRound(); match.AdvanceRound(); yield return null; }
             round.EndRound(); match.BeginIntermission();
             yield return new WaitForSecondsRealtime(1.2f);
             yield return Shot("match-halftime", "Halftime", "Match");
