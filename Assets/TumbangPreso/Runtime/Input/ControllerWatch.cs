@@ -46,6 +46,8 @@ namespace TumbangPreso.InputLayer
         public static IReadOnlyList<string> Unrecognised => Seen;
 
         private static readonly List<string> Seen = new List<string>();
+        private static readonly HashSet<int> ReportedPads = new HashSet<int>();
+        private static readonly List<Gamepad> AwaitingInput = new List<Gamepad>();
 
         /// <summary>True when at least one controller was found that this game cannot use.</summary>
         public static bool HasUnrecognised => Seen.Count > 0;
@@ -58,13 +60,45 @@ namespace TumbangPreso.InputLayer
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Install()
         {
+            Debug.Log($"[Controller] Input ready: {Gamepad.all.Count} gamepads, {Joystick.all.Count} joysticks.");
             foreach (var device in InputSystem.devices) Consider(device);
 
             InputSystem.onDeviceChange += (device, change) =>
             {
                 if (change == InputDeviceChange.Added || change == InputDeviceChange.Reconnected)
+                {
+                    if (change == InputDeviceChange.Reconnected) ReportedPads.Remove(device.deviceId);
                     Consider(device);
+                }
+                else if (device is Gamepad pad &&
+                    (change == InputDeviceChange.Removed || change == InputDeviceChange.Disconnected))
+                {
+                    ReportedPads.Remove(device.deviceId);
+                    AwaitingInput.Remove(pad);
+                    Debug.Log($"[Controller] Disconnected '{pad.displayName}' (layout '{pad.layout}').");
+                }
             };
+            InputSystem.onAfterUpdate += ObserveFirstInput;
+        }
+
+        private static void ObserveFirstInput()
+        {
+            for (int i = AwaitingInput.Count - 1; i >= 0; i--)
+            {
+                var pad = AwaitingInput[i];
+                if (!pad.added) { AwaitingInput.RemoveAt(i); continue; }
+                if (!pad.enabled || !pad.wasUpdatedThisFrame) continue;
+                bool active = pad.leftStick.ReadValue().sqrMagnitude > .0256f
+                    || pad.rightStick.ReadValue().sqrMagnitude > .0256f
+                    || pad.leftTrigger.ReadValue() > .2f || pad.rightTrigger.ReadValue() > .2f;
+                if (!active)
+                    foreach (var control in pad.allControls)
+                        if (control is UnityEngine.InputSystem.Controls.ButtonControl button && button.isPressed)
+                        { active = true; break; }
+                if (!active) continue;
+                Debug.Log($"[Controller] Input received from '{pad.displayName}' (layout '{pad.layout}').");
+                AwaitingInput.RemoveAt(i);
+            }
         }
 
         /// <summary>
@@ -77,7 +111,18 @@ namespace TumbangPreso.InputLayer
         private static void Consider(InputDevice device)
         {
             if (device == null) return;
-            if (device is Gamepad) return;
+            if (device is Gamepad pad)
+            {
+                if (ReportedPads.Add(pad.deviceId))
+                {
+                    var info = pad.description;
+                    Debug.Log($"[Controller] Connected '{pad.displayName}': layout '{pad.layout}', "
+                        + $"interface '{info.interfaceName}', manufacturer '{info.manufacturer}', "
+                        + $"product '{info.product}', enabled {pad.enabled}, native {pad.native}.");
+                    if (!AwaitingInput.Contains(pad)) AwaitingInput.Add(pad);
+                }
+                return;
+            }
             if (!(device is Joystick)) return;
 
             var description = device.description;

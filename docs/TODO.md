@@ -1,7 +1,6 @@
 # Current work
 
-This is the only active queue. Updated 2026-10-26 from source and the owner's
-current assignment. Older unchecked boxes are not automatically unfinished work.
+Only active queue. Updated 2026-11-07. Old unchecked boxes are not assignments.
 [Retirement decisions](RETIRED_WORK.md) explain superseded requirements.
 All original IDs and full bodies remain in the
 [previous queue](archive/cleanup-2026-10-25/docs/TODO.md),
@@ -11,6 +10,7 @@ All original IDs and full bodies remain in the
 
 | ID | Status | Acceptance / next action |
 |---|---|---|
+| PAD-1107 | Hardware open | [Evidence](reports/controller-native-2026-11-07.md) |
 | BANAUE-PERF-1105 | DONE; follow-ups open | [Evidence and next work](reports/banaue-perf-2026-11-05/README.md) |
 | UI-REVAMP-1029 | In game | New HUD and most menus on QoLUpdates-v2 and main. Remaining screens listed in the method's handoff state. [Method](UI_REVAMP.md) |
 | LOBBY-UI-1028 | DESKTOP FIXES integrated | Knit rules sheet, MATCH SETTINGS footer, joined-room spacing and immediate input on rules close are integrated. Evidence: Logs/lobby-ui-20261028/fixes/. Phone work excluded. |

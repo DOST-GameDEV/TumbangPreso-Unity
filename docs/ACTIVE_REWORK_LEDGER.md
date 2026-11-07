@@ -1,5 +1,13 @@
 # Current checkpoint
 
+CONTROLLER-NATIVE-1107, main: native DualSense/Edge HID reports reach the current
+gameplay/UI bindings. Fixed disabled UI-action confirm/back fallback and added
+bounded controller discovery/first-input logs. Input-only isolated EditMode
+evidence: [report](reports/controller-native-2026-11-07.md),
+`Logs/controller-native-20261107/`. No physical Sony controller was available.
+Next action for the reported failure: USB and Bluetooth hardware acceptance,
+retaining the `[Controller]` Player.log lines if it still fails.
+
 BANAUE-PERF-1105 is complete on main. [TODO](TODO.md) remains the only active queue.
 
 - Done: catch-clip encode on a worker, `WorldGround` nearest-hit stepping, ultimate live-root rescans at 10 Hz,
