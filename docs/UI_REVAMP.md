@@ -217,10 +217,27 @@ Motion for the live HUD, built with it (spring or eased, never linear; UI Motion
 - Notices: words stamp in from 1.3 with a spring and a slight per-letter stagger, the band wipes out from the centre, the `!` marks or cans pop last with a tilt wobble; out is a quick fade and rise.
 - Warning: the band pulses slowly while it stands. Others' scores slide in from the left and out after 3 s. Tab: scrim fades, the panel rises, rows stagger .04 s.
 
-### State at the 2026-11-03 handoff
+### State at the 2026-11-07 handoff
 
-The UI is on `QoLUpdates-v2` and main.
-Not yet in the game: hero, story and skill tree screens, the rows in the record tabs, results, Next Court, Next Round, Halftime, and the redesigned countdown, arrival, emote wheel, ultimate card, catch replay and guided training. Phone and spectator HUDs still need redesigning. The HUD's motion, Tab and F1 have not been tried in play.
+Main is at `cb8f313b6` with all the UI work below. `QoLUpdates-v2` is behind at `f189981bd`; the owner asked for main only.
+
+Done and on main since 2026-11-03:
+- Panels: cream and dark panels use the boards' large weave (`bootkit.panel_art` at 1536 x 864, stretched, not tiled).
+- Custom popup (Host, Join) matches its board: the berry card, bold icons, the board's line spacing, the yellow action at 104.
+- Mode and choice cards: on hover the card's own border turns white (`paint-*-rim`), a clear-to-dark gradient on the picture, the description slides up clipped to the picture, and a black inner shadow (hard top-left at 35 per cent, soft bottom-right at 40).
+- The log-in fit (`login3-tabs`: pill 13 down and 61 tall of 89) on the timer, loading bar, tabs, switches, sliders, XP and task bars. Inactive tabs turn white on hover.
+- Short green and yellow tags use `tag-go` and `tag-yellow` (the thin button's two ends) so a short tag does not smear.
+- Bots on seats: the grin bot in cream (`boot-kit/bot-face`, from `tools/ui_artboards/export_bot_face.py`).
+- Character picker and select seats: figures with no background (`hero-cuts`, rebuilt from our portraits with the approved framing). HOME and the profile keep the approved avatars with their sunburst.
+- PICTURE screen: square grid tiles (`frame-rim-116`), pictures clipped to their frames; the big preview keeps the board's chamfer.
+- Centre messages: CAN DOWN and the TAYA reveal join the message lanes, so nothing overlaps (`LiveHudCaptureShots.CentreMessagesDoNotOverlap`).
+- Tagged's description waits for the catch replay to end, then starts fresh.
+
+Comparison of every board with a real capture (2026-11-05). Still on an old design or missing: Let's Play (approved, but the game shows the old tan page), hero and ability popup, story, skill tree, Next Round, Halftime, results (players, your match), Next Court, powers (F1 and phone), training menu, guided training (PC and phone), spectator controls and phone tools, spectator chips, loading title. The record tabs have their panel but plain-text rows. Smaller: body text runs smaller than the boards (the game has Grandstander 400 and 600 only; the boards use 450 to 800), menu and Host or Join icons, slipper size in item tiles and inspect, the wallet chip, the task reward icon, Keep Your Changes' buttons, the phone settings tabs, the phone HUD's pale buttons, the countdown digit, the ultimate-ready notice, the emote wheel's transparency, the catch replay's REC tag. The capture tests `MatchHud` and `PracticeAndSpectator` still miss some states, and `match-result-standings` captures with the camera inside a character.
+
+Uncommitted in this worktree: `Assets/TumbangPreso/Editor/TumpPosedPortrait.cs` (Dante posed on the avatars' stage for the owner) and the weave exports in `ArtSource/ui/revamp-2026-10-30-boot/weave/`.
+
+Teammate note: Matyu removed the owner's STOP notes from `AGENTS.md` and `CLAUDE.md` twice (`96d0b2427` on `QoLUpdates-v2`, `a6ded64cb` on main). Both times the merge kept the owner's notes. The owner keeps them.
 
 ## Pipeline
 
