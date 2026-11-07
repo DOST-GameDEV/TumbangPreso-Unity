@@ -4,7 +4,7 @@
 
 ## The rule
 
-No ability VFX reaches the branch or `main` until the owner (GitHub: StarRayX) has personally approved that look from a film. Approved looks are locked: do not restyle, retune or "clean up" them without the owner's word.
+No ability VFX reaches the branch or `main` until the repository owner has personally approved that look from a film. Approved looks are locked: do not restyle, retune or "clean up" them without the owner's word.
 
 `docs/VFX_BENCH_METHOD.md` is the method. This file is the short list of what gets rejected.
 

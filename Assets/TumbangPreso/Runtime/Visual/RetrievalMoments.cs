@@ -48,6 +48,7 @@ namespace TumbangPreso.Visual
         {
             EndPerk();
             ClearSeats();
+            _inReach = null;
         }
 
         private void Update()
@@ -163,7 +164,7 @@ namespace TumbangPreso.Visual
                                   && _teleports[seat] == p.PresentationTeleportSerial;
                 if (!continuous) { _hunted[seat] = false; _closest[seat] = float.MaxValue; }
 
-                bool hunted = canUp && !p.IsDefender && p.HoldingSlipper && p.IsInsideBox() && !p.IsStunned;
+                bool hunted = canUp && p.IsTaggable() && p.HoldingSlipper && p.IsInsideBox() && !p.IsStunned;
                 if (hunted)
                 {
                     if (!_hunted[seat]) _closest[seat] = float.MaxValue;
@@ -174,7 +175,8 @@ namespace TumbangPreso.Visual
                         _closest[seat] = Mathf.Min(_closest[seat], d.magnitude);
                     }
                 }
-                else if (_hunted[seat] && continuous && canUp && p.HoldingSlipper && !p.IsInsideBox())
+                else if (_hunted[seat] && continuous && canUp && !p.IsDefender && !p.IsStunned
+                         && p.HoldingSlipper && !p.IsInsideBox() && !p.IsTaggable())
                 {
                     Escaped(p, _closest[seat]);
                 }

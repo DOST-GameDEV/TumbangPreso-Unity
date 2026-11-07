@@ -1,5 +1,11 @@
 # Current checkpoint
 
+FEEL-PICKUP-1107, feel/retrieval-arc: approach hop, danger-tiered pickup and escape
+relief compiled; EditMode 1/1, exact PlayMode 9/9 in Logs/feel-retrieval-20261107/.
+No new HOST-ONLY audit findings against main; baseline audit failures remain.
+Next: build with tools/build_windows.py --launch, then owner sound/feel review
+before main integration. Actual two-PC play remains unverified.
+
 CONTROLLER-NATIVE-1107, main: native DualSense/Edge HID reports reach the current
 gameplay/UI bindings. Fixed disabled UI-action confirm/back fallback and added
 bounded controller discovery/first-input logs. Input-only isolated EditMode
