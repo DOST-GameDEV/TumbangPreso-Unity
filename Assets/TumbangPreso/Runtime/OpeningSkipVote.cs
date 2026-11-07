@@ -5,6 +5,7 @@ using TumbangPreso.UI.Hub;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using CursorMode = TumbangPreso.UI.CursorMode;
 
 namespace TumbangPreso
 {
@@ -31,11 +32,12 @@ namespace TumbangPreso
         private readonly HashSet<int> _votes = new HashSet<int>();
         private InputAction _readyUp;
         private GameObject _root;
-        private Text _label;
+        private Text _label, _hint;
         private UnityEngine.UI.Button _button;
         private string _shownWords;
         private bool _votedLocally, _sendPending, _hasTally, _decided, _sawFilm;
         private float _nextSend;
+        private bool _ownsPointer, _restoreCapture;
         private long _scopeMatch;
         private byte _voteMask;
 
@@ -57,11 +59,17 @@ namespace TumbangPreso
             map?.Enable();
         }
 
-        private void OnDisable() { Showing = false; if (_root != null) _root.SetActive(false); }
+        private void OnDisable()
+        {
+            Showing = false;
+            if (_root != null) _root.SetActive(false);
+            PresentPointer(false);
+        }
 
         private void OnDestroy()
         {
             Showing = false;
+            PresentPointer(false);
             if (_root != null) Destroy(_root);
         }
 
@@ -89,6 +97,7 @@ namespace TumbangPreso
             }
 
             Showing = rolling && !_decided && !GameLaunch.Spectator && !HubLoading.Visible;
+            PresentPointer(Showing);
             if (!Showing)
             {
                 if (_root != null && _root.activeSelf) _root.SetActive(false);
@@ -97,6 +106,28 @@ namespace TumbangPreso
             Paint();
             if (_votedLocally || LobbyChat.AnyTyping) return;
             if (_readyUp != null && _readyUp.WasPressedThisFrame()) Cast();
+        }
+
+        private void PresentPointer(bool showing)
+        {
+            if (showing)
+            {
+                if (!_ownsPointer)
+                {
+                    _restoreCapture = CursorMode.WantsCapture;
+                    _ownsPointer = true;
+                }
+                // The film holds gameplay input, but its skip button needs a free pointer.
+                CursorMode.Release();
+                return;
+            }
+            if (!_ownsPointer) return;
+            _ownsPointer = false;
+            bool restore = _restoreCapture;
+            _restoreCapture = false;
+            if (restore && SceneFlow.InMatch && GameServices.Match?.HasCompleted != true
+                && !Panel.AnyOpen && !LobbyChat.AnyTyping && !HubLoading.Visible)
+                CursorMode.Capture();
         }
 
         /// <summary>This player's vote: the key, a tap or a click.</summary>
@@ -184,11 +215,14 @@ namespace TumbangPreso
             if (_root == null) Build();
             if (!_root.activeSelf) _root.SetActive(true);
             string tally = $"{Votes}/{Mathf.Max(1, VotesNeeded)}";
-            string words = ">>\n" + tally;
+            string hint = InputLayer.LastInputDevice.Current == InputLayer.InputDeviceKind.Touch
+                ? "TAP" : "[" + Hud.KeyLabelFor("ReadyUp") + "]";
+            string words = ">>\n" + hint + "\n" + tally;
             _button.interactable = !_votedLocally;
             if (words == _shownWords) return;
             _shownWords = words;
             if (_label != null) _label.text = tally;
+            if (_hint != null) _hint.text = hint;
         }
 
         private void Build()
@@ -217,14 +251,20 @@ namespace TumbangPreso
             for (int i = 0; i < 2; i++)
             {
                 var forward = HubKit.Glyph(target, "Forward" + i, HubGlyph.Mark.Play, Color.white, .14f);
-                OwnerUiLayout.Place(forward.rectTransform, 24 + i * 24, 25, 40, 40);
+                OwnerUiLayout.Place(forward.rectTransform, 24 + i * 24, 12, 40, 40);
                 forward.raycastTarget = false;
             }
+            _hint = OwnerUiLayout.Text(target, "Binding", "", 28, OwnerUiLayout.TypeRole.Reading);
+            _hint.alignment = TextAnchor.MiddleCenter;
+            _hint.color = Color.white;
+            _hint.raycastTarget = false;
+            OwnerUiLayout.Place(_hint.rectTransform, 0, 56, 112, 36);
+            _hint.gameObject.AddComponent<UnityEngine.UI.Outline>().effectColor = UiTheme.InGameOutline;
             _label = OwnerUiLayout.Text(target, "Votes", "0/1", 28, OwnerUiLayout.TypeRole.Reading);
             _label.alignment = TextAnchor.MiddleCenter;
             _label.color = Color.white;
             _label.raycastTarget = false;
-            OwnerUiLayout.Place(_label.rectTransform, 0, 83, 112, 40);
+            OwnerUiLayout.Place(_label.rectTransform, 0, 96, 112, 36);
             _label.gameObject.AddComponent<UnityEngine.UI.Outline>().effectColor = UiTheme.InGameOutline;
         }
     }
