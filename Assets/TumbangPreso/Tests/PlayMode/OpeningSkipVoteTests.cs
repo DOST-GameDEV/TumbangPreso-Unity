@@ -62,7 +62,7 @@ namespace TumbangPreso.PlayTests
                 Assert.AreEqual(0, filmOverlay.transform.Find("Skip").GetComponent<CanvasGroup>().alpha,
                     "The old local skip ring must not duplicate the shared vote.");
                 yield return GameplayShots.Render(Camera.main, "banaue-skip", true,
-                    outDir: "Logs/multiplayer-fixes-20261104");
+                    outDir: "Logs/feel-pickup-revision-20261107");
 
                 // Drive the actual UI input module. Calling Cast directly cannot prove clickability.
                 var events = EventSystem.current;
