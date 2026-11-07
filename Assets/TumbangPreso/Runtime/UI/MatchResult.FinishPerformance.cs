@@ -47,6 +47,7 @@ namespace TumbangPreso.UI
             // VISUAL-1.16: the bar's chips grown. The winner is a gold border and a crown, not a
             // deep-red ticket (red means "something is wrong"); you are the gold underline.
             var order=GameServices.Match.Ranking();_accoladeOrder=order;
+            if(_board){PaintBoardStandings(order,winner,hasWinner);PaintAccolades(GameServices.Stats?.Last);TickFinishPerformance();return;}
             int mine=LocalResultSeat();
             for(int i=0;i<4;i++)
             {
@@ -79,7 +80,7 @@ namespace TumbangPreso.UI
                 float t=reduced?1:Mathf.Clamp01((Time.unscaledTime-_finishEntered-i*.065f)/.26f);
                 float enter=1-Mathf.Pow(1-t,3);
                 _finishFades[i].alpha=reduced?1:Mathf.Lerp(.35f,1,t);
-                _finishTickets[i].rectTransform.anchoredPosition=_finishRowOrigins[i]+Vector2.right*(22*(1-enter));
+                (_board?_boardRows[i]:_finishTickets[i].rectTransform).anchoredPosition=_finishRowOrigins[i]+Vector2.right*(22*(1-enter));
             }
         }
     }

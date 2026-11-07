@@ -295,8 +295,10 @@ namespace TumbangPreso.UI
             }
             _highlightLine.gameObject.SetActive(best.HasValue);
             _highlightLine.text = best.HasValue
-                ? "MATCH MOMENT  ·  " + NameFor(best.Value.Actor) + "  ·  " + Core.HighlightRules.Describe(best.Value)
+                ? (_board ? "MATCH MOMENT · " + Tight(NameFor(best.Value.Actor)) + " · " + Core.HighlightRules.Describe(best.Value).ToUpperInvariant()
+                          : "MATCH MOMENT  ·  " + NameFor(best.Value.Actor) + "  ·  " + Core.HighlightRules.Describe(best.Value))
                 : "";
+            if (_board) PaintBoardMoment(best);
         }
 
         private void PlayTheWin()
@@ -637,7 +639,7 @@ namespace TumbangPreso.UI
             return string.Join(" · ", names);
         }
 
-        private void Build() => BuildNativeResult();
+        private void Build() => BuildBoardResult();
 
         private void BuildLegacyReference()
         {
@@ -1434,7 +1436,7 @@ namespace TumbangPreso.UI
 
             var label = _mapVote.GetComponentInChildren<Text>();
             if (label != null)
-                label.text = $"NEXT MAP  ·  {SceneFlow.PreviewFor(SceneFlow.Maps[next]).Name}";
+                label.text = _board ? $"NEXT MAP · {SceneFlow.PreviewFor(SceneFlow.Maps[next]).Name}" : $"NEXT MAP  ·  {SceneFlow.PreviewFor(SceneFlow.Maps[next]).Name}";
 
             if (_mapVoteTally == null) return;
 

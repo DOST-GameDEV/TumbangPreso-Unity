@@ -105,10 +105,10 @@ namespace TumbangPreso.UI
         }
         private void PresentNativeResult(int winner)
         {
-            _message.text = winner < 0 ? "It's a draw!" : NameFor(winner) + " wins!"; _message.color = CourtPresentationPalette.Paper;
+            _message.text = winner < 0 ? "It's a draw!" : (_board ? Tight(NameFor(winner)) : NameFor(winner)) + " wins!"; _message.color = _board ? TumbangPreso.UI.Hub.HubKnit.KitWhite : CourtPresentationPalette.Paper;
             int rounds=GameServices.Match.TotalRounds;
             _broadcastLine.text = (SceneFlow.SelectedMode == GameMode.Classic ? "Classic" : "Hero Strike") + " · " + rounds + (rounds==1 ? " round" : " rounds");
-            _broadcastLine.color = CourtPresentationPalette.Paper;
+            _broadcastLine.color = _board ? TumbangPreso.UI.Hub.HubKnit.KitWhite : CourtPresentationPalette.Paper;
             var order = GameServices.Match.Ranking();
             for(int i=0;i<4;i++)
             {

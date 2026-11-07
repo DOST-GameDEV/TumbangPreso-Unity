@@ -125,23 +125,19 @@ namespace TumbangPreso.UI.Hub
         }
 
         /// <summary>
-        /// A player's picture as the profile draws it (`PlayerHub.RecordBook`): a dark kit card whose face is the
-        /// mask, the seat colour filling it, the portrait filling the whole card and the card's rim closing over the
-        /// edge, so no inner ground shows and no corner pokes out. <paramref name="size"/> is the card's face.
+        /// The boards' seat chip (`boot_record.chip`): a square in the seat colour, chamfered at both corners, with the
+        /// player's rendered close-up (`Resources/UI/hero-cuts`) standing on its bottom edge. Returns the picture; the
+        /// colour square is <paramref name="seat"/>.
         /// </summary>
-        public static Image Avatar(Transform parent, string name, float x, float y, float size, out Image seat)
+        public static Image SeatChip(Transform parent, string name, float x, float y, float size, out Graphic seat)
         {
-            var frame = Plate(parent, name, Knit.DarkCard);
-            In(frame, x, y, size, size + SlabHeight);
-            var face = FaceOf(frame);
-            face.gameObject.AddComponent<Mask>().showMaskGraphic = true;
-            seat = HubKit.Rect(face, "SeatColour").gameObject.AddComponent<Image>();
-            HubKit.Stretch(seat.rectTransform); seat.raycastTarget = false;
-            seat.rectTransform.offsetMin = new Vector2(0, SlabHeight);
-            var portrait = HubKit.Rect(face, "Portrait").gameObject.AddComponent<Image>();
-            HubKit.Stretch(portrait.rectTransform); portrait.raycastTarget = false; portrait.preserveAspect = false;
-            portrait.rectTransform.offsetMin = new Vector2(0, SlabHeight);
-            RimOver(face, false, true);
+            var square = HubKit.Rect(parent, name).gameObject.AddComponent<KitCutPicture>();
+            square.Cut = square.CutEnd = size * 18f / 126f; square.raycastTarget = false;
+            In(square.rectTransform, x, y, size, size);
+            seat = square;
+            var portrait = HubKit.Rect(square.transform, "Portrait").gameObject.AddComponent<Image>();
+            portrait.preserveAspect = true; portrait.raycastTarget = false;
+            In(portrait.rectTransform, size * .07f, size * .07f, size * .86f, size * .93f);
             return portrait;
         }
 

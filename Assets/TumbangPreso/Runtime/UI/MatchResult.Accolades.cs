@@ -40,7 +40,7 @@ namespace TumbangPreso.UI
                 glyph.Detail = HudDraw.Plate; glyph.raycastTarget = false;
                 var count = _accoladeCounts[i, k] = OwnerUiLayout.Text(row, "AccoladeCount" + i + k, "", 34, OwnerUiLayout.TypeRole.Display);
                 OwnerUiLayout.Place(count.rectTransform, x + k * 170 + 56, y, 100, 48);
-                count.color = HudDraw.CardInk; count.alignment = TextAnchor.MiddleLeft; count.verticalOverflow = VerticalWrapMode.Overflow;
+                count.color = _board ? TumbangPreso.UI.Hub.HubKnit.KitCream : HudDraw.CardInk; count.alignment = TextAnchor.MiddleLeft; count.verticalOverflow = VerticalWrapMode.Overflow;
                 glyph.enabled = false; count.enabled = false;
             }
         }
@@ -75,7 +75,7 @@ namespace TumbangPreso.UI
                     _accoladeGlyphs[i, k].enabled = show; _accoladeCounts[i, k].enabled = show;
                     if (!show) continue;
                     var (glyph, backing, count) = earned[k];
-                    var fill = glyph == HudBadge.Glyph.Slipper ? CourtPresentationPalette.Paper : HudDraw.CardInk;
+                    var fill = _board || glyph == HudBadge.Glyph.Slipper ? CourtPresentationPalette.Paper : HudDraw.CardInk;
                     var accent = glyph == HudBadge.Glyph.Tag ? UiTheme.Defense : UiTheme.Offense;
                     // Ink on the cream card, so the owner's knock and tag symbols read (cream on cream all but vanished,
                     // 2026-11-04); the slipper keeps its disc.

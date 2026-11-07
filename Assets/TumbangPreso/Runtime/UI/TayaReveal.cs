@@ -61,7 +61,8 @@ namespace TumbangPreso.UI
 
         private void Update()
         {
-            if (Time.unscaledTime - _born >= _life || GameServices.Round == null) { Destroy(gameObject); return; }
+            // Gone under the results board, which it drew through (2026-11-08).
+            if (Time.unscaledTime - _born >= _life || GameServices.Round == null || MatchResult.BoardShowing) { Destroy(gameObject); return; }
             Animate();
         }
 

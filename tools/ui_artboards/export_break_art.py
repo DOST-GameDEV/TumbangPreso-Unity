@@ -1,4 +1,4 @@
-"""Exports the round break and halftime pictures from the drawing functions in boot_record.py into
+"""Exports the round break, halftime and results pictures from the drawing functions in boot_record.py into
 Assets/TumbangPreso/Resources/UI/break, so the game draws the pictures the boards were drawn with.
 
     py -3 tools/ui_artboards/export_break_art.py
@@ -40,6 +40,9 @@ def main():
     # The stopwatch, 300 wide: dial centre (150, 194), track outer radius 124, 20 thick.
     save("stopwatch", br.clock_art(300, 0))
     save("hazard-tape", hazard_art(240, 30))
+    # The results: the match winner's burst and the match moment's, at the card sizes `standings` and `your_match` frame them.
+    save("burst-winner", sunburst_art(580, 470, centre=(290, 262)))
+    save("burst-moment", sunburst_art(1320, 340, centre=(360, 200)))
 
 
 if __name__ == "__main__":

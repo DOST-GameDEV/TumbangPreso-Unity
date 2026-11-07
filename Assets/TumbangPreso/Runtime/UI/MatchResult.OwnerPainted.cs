@@ -76,6 +76,7 @@ namespace TumbangPreso.UI
         }
         private void NativePage(int page)
         {
+            if(_board){BoardPage(page);return;}
             RefreshOwnerResultEmptyState();
             for(int i=0;i<3;i++)
             {
@@ -99,6 +100,7 @@ namespace TumbangPreso.UI
         }
         private void NativeRecentPlayers()
         {
+            if(_board){BoardRecentPlayers();return;}
             if(_nativePeople==null)return;
             foreach(Transform child in _nativePeople){child.gameObject.SetActive(false);Destroy(child.gameObject);}
             var social=GameServices.Social;var record=GameServices.Stats?.Last;
