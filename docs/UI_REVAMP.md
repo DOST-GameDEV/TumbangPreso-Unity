@@ -269,6 +269,14 @@ Still not in the game, in this order: hero screen and ability popup (`hub-hero`,
 
 Capture notes: `MatchHud` always reports `match-ultimate-shared` and `match-catch` missed; `PracticeAndSpectator` reports `match-spectator` missed (a `ReplayEdge` has no CanvasRenderer) although its image is written. In the capture profile Interact is bound to F10, so captures show F10 where play shows F. Capture runner: `scratchpad/caps.py <outdir> <tests...>` copies new captures; `scratchpad/tests.py <key> <tests...>` runs exact tests.
 
+### Later still on 2026-11-08 (local commits on `claude/ui-revamp`, not pushed)
+
+Built to their boards and checked in captures: hero screen and ability popup, story, skill tree, Next Round and Halftime (maroon, owner: "follow the board"; no hazard tape), the three results views, Next Court, training menu (cream kit panel, settings switches), spectator controls (grey HUD plate, Xelu icons). Pictures on kit cards now clip at the middle of the rim stroke everywhere (`KitCutPicture.RimMiddle` 7). Seat chips keep the board's four seat colours and carry the rendered close-ups from `Resources/UI/hero-cuts` (owner: replace the renders, not the design). Halftime capture and tests now stop at half the match's rounds. New exports: `tools/ui_artboards/export_break_art.py` into `Resources/UI/break`.
+
+Next: the phone screens. The Mobile capture ran (`Logs/caps-m1/Mobile`, boards in `Logs/hero-screens-20261108/mobile-boards.png`): phone powers is still the old brown sheet, phone guided training's header overlaps (READY UP faded under SKIP and QUIT), and the spectator touch buttons and drawer are the old dark style. Then the smaller gaps listed above.
+
+Tests still red, all red before these changes with the same messages: hero (3-tile kit, SkillTreeButton on HOME, Sean's feet), halftime (expects a 10 s break, game runs 12), the classic HUD budget, and five results tests (need `-tp-profile`, map vote, rematch).
+
 ## Pipeline
 
 Run from this worktree; the owner's editor and other worktrees are never touched.
