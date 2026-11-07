@@ -1,10 +1,10 @@
 # Current checkpoint
 
-FEEL-PICKUP-1107, feel/retrieval-arc: dwell bends before the grab; six contexts
+FEEL-PICKUP-1107, main (owner publication request, November 8): dwell bends before the grab; six contexts
 lift the street shoe. Opening skip frees the pointer and shows its binding.
 4 unique Edit cases and 9 exact Play cases passed: Logs/feel-pickup-revision-20261107/.
 No new HOST-ONLY findings; baseline failures remain. Player 6b6fbc747 built/open:
-Logs/windows-build-20261107-232826/job.json. Next: owner feel review before merge.
+Logs/windows-build-20261107-232826/job.json. Next: actual two-PC pickup/skip checks.
 Peers unverified.
 
 CONTROLLER-NATIVE-1107, main: native DualSense/Edge HID reports reach the current
