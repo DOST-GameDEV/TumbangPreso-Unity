@@ -23,7 +23,10 @@ namespace TumbangPreso.UI
             control.anchoredPosition = new Vector2(-60, 0); control.sizeDelta = new Vector2(ControlWidth, 78);
             return control;
         }
-        public static void Toggle(Transform parent, string name, bool current, Action<bool> changed)
+        public static void Toggle(Transform parent, string name, bool current, Action<bool> changed) => Toggle(parent, name, current, changed, out _);
+
+        /// <summary>The same switch, returned with <paramref name="show"/>, which repaints it without notifying (the training menu's rules change from elsewhere).</summary>
+        public static UnityEngine.UI.Toggle Toggle(Transform parent, string name, bool current, Action<bool> changed, out Action<bool> show)
         {
             // OFF / ON on the tab track. ON is the lime pill on the right; OFF a cream pill on the left,
             // so lime always means on.
@@ -53,6 +56,8 @@ namespace TumbangPreso.UI
             Show(current);
             toggle.SetIsOnWithoutNotify(current);
             toggle.onValueChanged.AddListener(value => { Show(value); MenuSfx.Click(); changed(value); });
+            show = value => { toggle.SetIsOnWithoutNotify(value); Show(value); };
+            return toggle;
             Text Word(Transform owner, string id, string words, float x)
             {
                 var word = OwnerUiLayout.Text(owner, id, words, 28, OwnerUiLayout.TypeRole.Display);
