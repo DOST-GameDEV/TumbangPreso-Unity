@@ -124,6 +124,27 @@ namespace TumbangPreso.UI.Hub
             return panel;
         }
 
+        /// <summary>
+        /// A player's picture as the profile draws it (`PlayerHub.RecordBook`): a dark kit card whose face is the
+        /// mask, the seat colour filling it, the portrait filling the whole card and the card's rim closing over the
+        /// edge, so no inner ground shows and no corner pokes out. <paramref name="size"/> is the card's face.
+        /// </summary>
+        public static Image Avatar(Transform parent, string name, float x, float y, float size, out Image seat)
+        {
+            var frame = Plate(parent, name, Knit.DarkCard);
+            In(frame, x, y, size, size + SlabHeight);
+            var face = FaceOf(frame);
+            face.gameObject.AddComponent<Mask>().showMaskGraphic = true;
+            seat = HubKit.Rect(face, "SeatColour").gameObject.AddComponent<Image>();
+            HubKit.Stretch(seat.rectTransform); seat.raycastTarget = false;
+            seat.rectTransform.offsetMin = new Vector2(0, SlabHeight);
+            var portrait = HubKit.Rect(face, "Portrait").gameObject.AddComponent<Image>();
+            HubKit.Stretch(portrait.rectTransform); portrait.raycastTarget = false; portrait.preserveAspect = false;
+            portrait.rectTransform.offsetMin = new Vector2(0, SlabHeight);
+            RimOver(face, false, true);
+            return portrait;
+        }
+
         /// <summary>A card's rim alone, closing over a picture drawn under it, so nothing passes the border.</summary>
         public static Image RimOver(Transform face, bool on = false, bool dark = false)
         {

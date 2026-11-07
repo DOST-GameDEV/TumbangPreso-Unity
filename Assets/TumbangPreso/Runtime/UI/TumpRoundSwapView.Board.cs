@@ -17,7 +17,7 @@ namespace TumbangPreso.UI
         private bool _board;
         private readonly RectTransform[] _chipRect = new RectTransform[4];
         private readonly RectTransform[] _boardPlate = new RectTransform[4];
-        private readonly KitCutPicture[] _boardSwatch = new KitCutPicture[4];
+        private readonly Image[] _boardSwatch = new Image[4];
         private RectTransform _ticketRect;
         private static readonly float[] PodiumHeights = { 330, 306, 282, 258 };
 
@@ -116,12 +116,9 @@ namespace TumbangPreso.UI
             var card = HubKnit.Piece(_popup, "ScoreTicket" + i, Knit.Card, x, y, w, h);
             _boardPlate[i] = card; _chipRect[i] = card;
             var face = HubKnit.FaceOf(card);
-            var swatch = _boardSwatch[i] = OwnerUiLayout.Rect(face, "StandingSwatch" + i).gameObject.AddComponent<KitCutPicture>();
-            swatch.Cut = swatch.CutEnd = 18; swatch.raycastTarget = false;
-            HubKnit.In(swatch.rectTransform, 26, 26, 126, 126);
-            _portraits[i] = OwnerUiLayout.Rect(face, "StandingPortrait" + i).gameObject.AddComponent<Image>();
-            _portraits[i].preserveAspect = true; _portraits[i].raycastTarget = false;
-            HubKnit.In(_portraits[i].rectTransform, 35, 37, 108, 108);
+            // The player's picture as the profile draws it: the seat colour and portrait filling a dark kit card.
+            _portraits[i] = HubKnit.Avatar(face, "StandingAvatar" + i, 26, 26, 126, out var seatFill);
+            _boardSwatch[i] = seatFill;
             _chipCrowns[i] = OwnerUiLayout.Rect(card, "StandingCrown" + i).gameObject.AddComponent<HudBadge>();
             HubKnit.In(_chipCrowns[i].rectTransform, 54, -36, 72, 56); _chipCrowns[i].raycastTarget = false;
             _chipRoles[i] = OwnerUiLayout.Rect(face, "StandingRole" + i).gameObject.AddComponent<HudBadge>();

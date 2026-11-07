@@ -84,7 +84,7 @@ namespace TumbangPreso.UI
                     _names[i].text=_board?PlayerIdentity.Label(order[i]):_popupBuilt?SeatLabel.Raw(order[i]):PlayerIdentity.Label(order[i])+" · "+SeatLabel.Raw(order[i]);
                     _names[i].color=_scores[i].color=_popupBuilt?HudDraw.Ivory:CourtPresentationPalette.Ink;
                     TumpMatchReadout.PaintScoreValue(_scores[i], match.ScoreFor(order[i]), _board ? 92 : _popupBuilt ? 60 : 46, 4);
-                    _portraits[i].sprite=Portrait(actor);_portraits[i].enabled=_portraits[i].sprite!=null;
+                    _portraits[i].sprite=_board?Face(actor):Portrait(actor);_portraits[i].enabled=_portraits[i].sprite!=null;
                 }
                 PaintChips(order,defender,uniqueLeader);
                 NoteRoundGains(order,match);
@@ -102,6 +102,15 @@ namespace TumbangPreso.UI
             // The first reading of a break is its length, so the return ring starts full.
             if(seconds>_remaining+.5f||_remainingStart<=0)_remainingStart=seconds;
             _remaining=seconds;_buffer.text=_popupBuilt?Mathf.CeilToInt(seconds).ToString():Mathf.CeilToInt(seconds)+"s";
+        }
+        /// <summary>The rendered close-up the profile uses (`Avatars.Cut`, no sunburst), or the full portrait for anyone without one.</summary>
+        private static Sprite Face(CharacterMotor actor)
+        {
+            if (actor == null) return null;
+            var people = Roster.GetPeople(actor.Mode);
+            if (actor.CharacterIndex < 0 || actor.CharacterIndex >= people.Count) return null;
+            var cut = Resources.Load<Sprite>("UI/hero-cuts/" + people[actor.CharacterIndex].Id);
+            return cut != null ? cut : Portrait(actor);
         }
         private static Sprite Portrait(CharacterMotor actor)
         {
