@@ -16,7 +16,7 @@ namespace TumbangPreso.UI
                 for(int i=0;i<career.History.Count && i<HistoryPageSize;i++)_shown.Add(career.History[i]);
             }
             HubNote("Recent matches, newest first. Select a match for its scorecard.");
-            if(_shown.Count==0)HubNote(_page==0?"No matches recorded yet. Your first completed match appears here.":"No older matches on this page.");
+            if(_shown.Count==0)HubEmpty(_page==0?"No matches recorded yet. Your first completed match appears here.":"No older matches on this page.");
             string me=Net.CareerStore.LocalPlayerId;
             foreach(var record in _shown)
             {

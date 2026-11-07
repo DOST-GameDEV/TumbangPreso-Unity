@@ -79,6 +79,10 @@ namespace TumbangPreso.UI.Hub
                 case Knit.DarkPanel:
                     cut = new Cut { Face = KitArt + "dark-panel", FaceBorder = new Vector4(60, 74, 60, 60), Density = 1, Ink = KitCream, Kit = true };
                     return true;
+                // The chosen mode on Let's Play: the same panel with a lime rim.
+                case Knit.DarkPanelOn:
+                    cut = new Cut { Face = KitArt + "dark-panel-on", FaceBorder = new Vector4(60, 74, 60, 60), Density = 1, Ink = KitCream, Kit = true };
+                    return true;
                 case Knit.DarkCard: cut = KitCard(KitArt + "dark-card", KitCream); return true;
                 case Knit.DarkCardOn: cut = KitCard(KitArt + "dark-card-on", KitCream); return true;
                 case Knit.DarkCardViewed: cut = KitCard(KitArt + "dark-card-viewed", KitCream); return true;

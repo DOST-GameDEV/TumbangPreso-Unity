@@ -29,7 +29,7 @@ namespace TumbangPreso.UI
         private void BuildFindFriendRows(Net.SocialStore social)
         {
             if(!Group("Find a friend","Enter their exact NAME#TAG.",false))return;
-            var field=RecordFields.Input(RecordFields.Row(_list,"FriendSearchRow","Name and tag"),"FriendSearch","NAME#TAG");
+            var field=RecordFields.Input(KitFieldRow(_list,"FriendSearchRow","Name and tag",800),"FriendSearch","NAME#TAG");DressField((UnityEngine.RectTransform)field.transform,800,false);
             field.characterLimit=AccountRules.HandleMax;field.SetTextWithoutNotify(_ownerFriendSearch);field.onValueChanged.AddListener(value=>_ownerFriendSearch=value);
             HubAction("SendFriendRequest","","SEND REQUEST",()=>social?.RequestHandle(_ownerFriendSearch),"They must accept before joining your friends list.");
             if(!string.IsNullOrEmpty(social?.SearchStatus))HubNote(social.SearchStatus);
@@ -37,7 +37,7 @@ namespace TumbangPreso.UI
         private void BuildFriendRows(Net.SocialStore social,SocialList list,DateTime now)
         {
             var friends=SocialRules.Sorted(list?.Friends,now);
-            if(friends.Count==0){HubNote("No friends yet. Add someone by their tag or from the results after a match.");return;}
+            if(friends.Count==0){HubEmpty("No friends yet. Add someone by their tag or from the results after a match.");return;}
             int online=0;foreach(var friend in friends)if(SocialRules.EffectivePresence(friend,now)!=PresenceState.Offline)online++;
             if(!Group("Friends",online+" of "+friends.Count+" online."))return;
             foreach(var friend in friends)

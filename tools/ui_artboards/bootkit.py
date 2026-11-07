@@ -699,6 +699,7 @@ def export_game_kit():
     # Large, and stretched rather than tiled: the boards fit the whole weave to each panel, so a small piece shrinks it to a busy checker.
     pieces["panel"] = panel_art(1536, 864, drop=14, seed=4)
     pieces["dark-panel"] = dark_panel_art(1536, 864, drop=14, seed=4)
+    pieces["dark-panel-on"] = dark_panel_art(1536, 864, drop=14, seed=4, on=True)  # a chosen mode on Let's Play
     pieces["card"] = frame_art(240, 200, False)
     pieces["card-on"] = frame_art(240, 200, True)
     pieces["dark-card"] = dark_card_art(240, 200, False)

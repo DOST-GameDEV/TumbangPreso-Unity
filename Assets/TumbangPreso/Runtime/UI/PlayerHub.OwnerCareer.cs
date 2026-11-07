@@ -36,10 +36,11 @@ namespace TumbangPreso.UI
                 bool placing=rank.Deviation>RatingRules.SettledDeviation;
                 var rankRow=HubValue("Current tier",RatingRules.TierName(RatingRules.TierFor(rank.Rating))+(placing?" · PLACING":""),
                     rank.MatchesThisSeason+" matches this season.",OwnerUiTheme.Current.Green);
-                var badge=OwnerUiLayout.Rect(rankRow,"CareerRankEmblem").gameObject.AddComponent<TumpRankBadge>();
-                badge.Tier=(int)RatingRules.TierFor(rank.Rating);badge.raycastTarget=false;OwnerUiLayout.Place(badge.rectTransform,0,2,88,92);
-                OwnerUiLayout.Place((RectTransform)rankRow.Find("ValueName"),108,0,799,64);
-                OwnerUiLayout.Place((RectTransform)rankRow.Find("ValueDetail"),108,65,1432,43);
+                // The emblem sits at the card's left; the name and detail move over to make room.
+                var rankFace=rankRow.Find("Card/Face");
+                var badge=OwnerUiLayout.Rect(rankFace,"CareerRankEmblem").gameObject.AddComponent<TumpRankBadge>();
+                badge.Tier=(int)RatingRules.TierFor(rank.Rating);badge.raycastTarget=false;OwnerUiLayout.Place(badge.rectTransform,24,16,88,92);
+                foreach(var part in new[]{"ValueName","ValueDetail"}){var r=(RectTransform)rankFace.Find(part);if(r!=null)r.offsetMin=new Vector2(132,r.offsetMin.y);}
             }
             if(Group("Attack","What you did with the slipper in your hand.",false))
             {

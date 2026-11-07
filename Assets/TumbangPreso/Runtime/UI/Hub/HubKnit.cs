@@ -34,7 +34,9 @@ namespace TumbangPreso.UI.Hub
                        Blue, PillBlue, DarkPanel, DarkCard, DarkCardOn, DarkCardViewed, DarkCardViewedOn,
                        PaintYellow, PaintRed, PaintBlue, PaintGo, ThinPlain, ThinYellow, ThinRed, ThinGo, ThinBlue,
                        // A card's rim alone, closing over a picture drawn under it.
-                       CardRim, CardRimOn, DarkCardRim, DarkCardRimOn }
+                       CardRim, CardRimOn, DarkCardRim, DarkCardRimOn,
+                       // A dark panel with a lime rim: the chosen mode on Let's Play.
+                       DarkPanelOn }
 
     public static partial class HubKnit
     {

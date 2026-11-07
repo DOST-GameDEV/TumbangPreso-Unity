@@ -100,7 +100,7 @@ namespace TumbangPreso.UI
             // The same picture as HOME's profile button (owner, 2026-11-02: "profiles dont match").
             _ownerPortrait.sprite=Avatars.Get(Avatars.Mine());
         }
-        private bool Group(string title,string subtitle,bool openByDefault=true)
+        private bool GroupPainted(string title,string subtitle,bool openByDefault=true)
         {
             string key=_tab+"/"+title;if(!_groups.TryGetValue(key,out bool open))open=openByDefault;
             var row=OwnerUiLayout.Rect(_list,"Group_"+title);row.gameObject.AddComponent<LayoutElement>().preferredHeight=102;
@@ -109,7 +109,7 @@ namespace TumbangPreso.UI
             var hint=OwnerUiLayout.Text(row,"GroupHint",subtitle,28);hint.color=OwnerUiTheme.Current.EnteredInk;OwnerUiLayout.Place(hint.rectTransform,0,49,1540,48);
             return open;
         }
-        private RectTransform HubValue(string label,string value,string detail="",Color? tint=null,string portrait=null)
+        private RectTransform HubValuePainted(string label,string value,string detail="",Color? tint=null,string portrait=null)
         {
             var row=OwnerUiLayout.Rect(_list,"Value_"+label);row.gameObject.AddComponent<LayoutElement>().preferredHeight=string.IsNullOrEmpty(detail)?74:114;
             float inset=0;
@@ -121,18 +121,18 @@ namespace TumbangPreso.UI
             if(!string.IsNullOrEmpty(detail)){var hint=OwnerUiLayout.Text(row,"ValueDetail",detail,28);hint.color=OwnerUiTheme.Current.EnteredInk;OwnerUiLayout.Place(hint.rectTransform,inset,65,1540-inset,43);}
             return row;
         }
-        private Button HubAction(string name,string title,string action,Action click,string detail="")
+        private Button HubActionPainted(string name,string title,string action,Action click,string detail="")
         {
-            var row=HubValue(title,"",detail);
+            var row=HubValuePainted(title,"",detail);
             return OwnerTextAction.Create(row,name,action,click,1010,0,549,70,28);
         }
-        private void HubNote(string text)
+        private void HubNotePainted(string text)
         {
             var label=OwnerUiLayout.Text(_list,"HubNote",text,28);label.color=OwnerUiTheme.Current.EnteredInk;label.gameObject.AddComponent<TumpParagraph>();
         }
-        private void HubChoice(string name,string label,string[] options,int selected,Action<int> choose)
+        private void HubChoicePainted(string name,string label,string[] options,int selected,Action<int> choose)
             =>RecordChoice.Create(RecordFields.Row(_list,name,label),name+"Value",options,selected,choose);
-        private InputField HubField(string key,string label,string value,int limit,string placeholder,OwnerUiTheme.Piece frame)
+        private InputField HubFieldPainted(string key,string label,string value,int limit,string placeholder,OwnerUiTheme.Piece frame)
         {
             var field=RecordFields.Input(RecordFields.Row(_list,key+"Row",label),key,placeholder);
             field.characterLimit=limit;field.SetTextWithoutNotify(_ownerDraft.TryGetValue(key,out var draft)?draft:value??"");

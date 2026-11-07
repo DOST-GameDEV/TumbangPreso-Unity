@@ -68,6 +68,14 @@ namespace TumbangPreso.UI
             OwnerUiLayout.Place(_ownerPageTitle.rectTransform, 120, 372, 1560, 64);
             _list = OwnerScrollColumn.Build(design, "HubRows", new Rect(110, 450, 1672, 430), out _scroll);
             _list.GetComponent<VerticalLayoutGroup>().padding.bottom = 26;
+            // The board's scrollbar: a dark well rail with a tan thumb, 26 wide.
+            var bar = _scroll.verticalScrollbar;
+            var rail = bar.GetComponent<Image>(); rail.color = HubBoard.Colour("#5C1422");
+            OwnerUiLayout.Place((RectTransform)bar.transform, 1672 - 26, 0, 26, 430);
+            bar.handleRect.GetComponent<Image>().color = HubKnit.KitTan;
+            bar.handleRect.parent.GetComponent<RectTransform>().offsetMin = new Vector2(3, 3);
+            bar.handleRect.parent.GetComponent<RectTransform>().offsetMax = new Vector2(-3, -3);
+            ((RectTransform)_scroll.viewport).offsetMax = new Vector2(-50, 0);
             _footerNote = HubKnit.Words(design, "HubNotice", "", 32, HubKnit.KitWhite, TextAnchor.MiddleLeft, true, 3);
             OwnerUiLayout.Place(_footerNote.rectTransform, 60, 936, 1340, 100);
             _footerAction = HubKnit.Button(design, "HubPrimary", "SAVE", Knit.Go, () => { MenuSfx.Click(); FooterPressed(); }, 54);

@@ -1,18 +1,123 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TumbangPreso.Core;
+using TumbangPreso.UI.Hub;
 
 namespace TumbangPreso.UI
 {
-    // The asymmetric mode spread follows PDF49's hierarchy, not its placeholder labels.
+    /// <summary>
+    /// LET'S PLAY, drawn from its approved board (`tools/ui_artboards/boot_menus.py` `hub_letsplay`): the berry
+    /// ground, BACK and the white title, the logo, the two modes as dark panels with their pictures (the chosen one
+    /// with a lime rim, lime name and a tick), PLAY YOUR WAY with the three routes as blue, lime and yellow kit
+    /// buttons, LEARN TO PLAY and the hint. RANKED is Hero Strike only, so it hides while Classic is chosen.
+    /// The earlier layout is kept as `BuildPrevious`, not called.
+    /// </summary>
     public sealed class CourtPlayView : MonoBehaviour
     {
+        private RectTransform _classicPanel, _heroPanel;
+        private Text _classicName, _heroName;
+        private GameObject _ranked;
         private Canvas _canvas;
         private PlayChoiceSurface _classic, _hero;
         private GameObject _classicTick, _heroTick;
         private readonly RectTransform[] _routes = new RectTransform[3];
         private readonly Text[] _routeLabels = new Text[3], _routeDetails = new Text[3];
         public void Build(Transform owner)
+        {
+            _canvas = OwnerUiLayout.Canvas(owner, "OwnerPlayCanvas", 100);
+            HubKnit.Ground(_canvas.transform);
+            var design = OwnerUiLayout.DesignArea(_canvas.transform, "LetsPlayBoard");
+            HubKnit.Back(design, null, () => SceneFlow.Go(SceneFlow.MainMenu));
+            var title = HubKnit.Title(design, "LET'S PLAY", "", out var under);
+            title.name = "Heading";
+            under.gameObject.SetActive(false);
+            var logoSprite = TumpUiFactory.Sprite("UI/brand/tump_logo");
+            var logo = HubKit.Rect(design, "Logo").gameObject.AddComponent<Image>();
+            logo.sprite = logoSprite; logo.raycastTarget = false;
+            float lw = 250, lh = 250 * logoSprite.rect.height / logoSprite.rect.width;
+            if (lh > 190) { lw *= 190 / lh; lh = 190; }
+            HubKnit.In(logo.rectTransform, 1860 - lw, 30, lw, lh);
+
+            _classicPanel = ModePanel(design, "ClassicButton", "CLASSIC", "Four rounds. No powers.", "ClassicChoice", GameMode.Classic, 60, .75f, out _classicName, out _classicTick);
+            _heroPanel = ModePanel(design, "HeroStrikeButton", "HERO STRIKE", "Four rounds. Six heroes.", "HeroStrikeChoice", GameMode.HeroStrike, 990, .62f, out _heroName, out _heroTick);
+
+            var routes = HubKnit.Display(design, "RoutesHeading", "PLAY YOUR WAY", 40, HubKnit.KitWhite, TextAnchor.MiddleLeft, 3);
+            HubKnit.In(routes.rectTransform, 60, 694, 900, 60);
+            RouteButton(design, 0, "PracticeButton", "WITH BOTS", "Offline match", Knit.Blue, "icon-route-bots", LobbyMode.Practice);
+            RouteButton(design, 1, "CustomButton", "WITH FRIENDS", "Create or join", Knit.Go, "icon-route-friends", LobbyMode.Custom);
+            _ranked = RouteButton(design, 2, "RankedButton", "RANKED", "Online. Sign in.", Knit.Yellow, "icon-route-ranked", LobbyMode.Ranked).gameObject;
+
+            var learn = HubKnit.Button(design, "TutorialButton", "LEARN TO PLAY", Knit.Yellow, SceneFlow.StartTraining, 44);
+            HubKnit.In((RectTransform)learn.transform, 60, 950, 440, 100);
+            var hint = HubKnit.Words(design, "ModeHint", "Choose a mode, then a way to play.", 34, HubKnit.KitWhite, TextAnchor.MiddleLeft, true, 3);
+            HubKnit.In(hint.rectTransform, 540, 970, 1000, 56);
+            hint.horizontalOverflow = HorizontalWrapMode.Overflow;
+            Select(SceneFlow.SelectedMode);
+        }
+
+        /// <summary>A mode: a dark panel 870 x 460, its name and line top left, the picture under them, a tick when chosen.</summary>
+        private RectTransform ModePanel(RectTransform design, string name, string mode, string line, string poster, GameMode pick, float x, float focus,
+                                        out Text label, out GameObject tick)
+        {
+            var card = HubKnit.Button(design, name, null, Knit.DarkPanel, () => { MenuSfx.Click(); Select(pick); });
+            HubKnit.In((RectTransform)card.transform, x, 190, 870, 460 + HubKnit.SlabHeight);
+            var face = card.Body;
+            label = HubKnit.Display(face, "ModeName", mode, 76, HubKnit.KitCream);
+            HubKnit.In(label.rectTransform, 48, 66 - 50, 740, 100);
+            var details = HubKnit.Words(face, "ModeDetails", line, 38, HubKnit.KitCream, TextAnchor.MiddleLeft, true);
+            HubKnit.In(details.rectTransform, 50, 134 - 32, 740, 64);
+            HubKnit.Picture(face, "Poster", HubKnit.Poster(poster), 24, 176, 822, 260, focus);
+            var mark = KitIcon(face, "SelectedMode", "icon-check", 800, 80, 64, HubKnit.KitLime);
+            tick = mark.gameObject;
+            return (RectTransform)card.transform;
+        }
+
+        /// <summary>A route: a kit button 580 x 170, its icon, name and line in the button's own ink.</summary>
+        private HubButton RouteButton(RectTransform design, int index, string name, string title, string line, Knit k, string icon, LobbyMode mode)
+        {
+            var button = HubKnit.Button(design, name, null, k, () =>
+            {
+                MenuSfx.Click();
+                PlaySelectionScreen.RequestedLobbyMode = mode;
+                SceneFlow.Networked = mode != LobbyMode.Practice;
+                SceneFlow.Go(SceneFlow.MatchSetup);
+            });
+            HubKnit.In((RectTransform)button.transform, 60 + index * 610, 750, 580, 170);
+            var face = button.Body;
+            var ink = HubKnit.InkOf(k);
+            KitIcon(face, "RouteIcon", icon, 80, 62, 56, ink);
+            var label = HubKnit.Display(face, "RouteName", title, 44, ink);
+            HubKnit.In(label.rectTransform, 130, 50 - 32, 430, 64);
+            var details = HubKnit.Words(face, "RouteDetails", line, 30, ink, TextAnchor.MiddleLeft, true);
+            HubKnit.In(details.rectTransform, 132, 92 - 24, 430, 48);
+            return button;
+        }
+
+        /// <summary>A white kit icon from `UI/boot-kit`, tinted, centred on a point at a height.</summary>
+        private static RawImage KitIcon(Transform parent, string name, string art, float cx, float cy, float height, Color tint)
+        {
+            var texture = Resources.Load<Texture2D>("UI/boot-kit/" + art);
+            var image = HubKit.Rect(parent, name).gameObject.AddComponent<RawImage>();
+            image.texture = texture; image.color = tint; image.raycastTarget = false;
+            float w = texture != null ? height * texture.width / texture.height : height;
+            HubKnit.In(image.rectTransform, cx - w / 2, cy - height / 2, w, height);
+            return image;
+        }
+
+        public void Select(GameMode mode)
+        {
+            SceneFlow.SelectedMode = mode; SceneFlow.SetSelectedRules(SceneFlow.SelectedRules);
+            bool hero = mode == GameMode.HeroStrike;
+            HubKnit.Recolour(_classicPanel, hero ? Knit.DarkPanel : Knit.DarkPanelOn);
+            HubKnit.Recolour(_heroPanel, hero ? Knit.DarkPanelOn : Knit.DarkPanel);
+            _classicName.color = hero ? HubKnit.KitCream : HubKnit.KitLime;
+            _heroName.color = hero ? HubKnit.KitLime : HubKnit.KitCream;
+            _classicTick.SetActive(!hero); _heroTick.SetActive(hero);
+            _ranked.SetActive(hero);
+            _canvas.GetComponent<InputLayer.ScreenFocus>().Rebuild();
+        }
+
+        private void BuildPrevious(Transform owner)
         {
             _canvas = OwnerUiLayout.Canvas(owner, "OwnerPlayCanvas", 100);
             var backdrop = OwnerUiLayout.Rect(_canvas.transform, "PlayColourField").gameObject.AddComponent<Image>();
@@ -35,7 +140,7 @@ namespace TumbangPreso.UI
             OwnerTextAction.Create(design, "TutorialButton", "LEARN TO PLAY", SceneFlow.StartTraining, 91, 970, 400, 66, 30);
             var hint = OwnerUiLayout.Text(design, "ModeHint", "Choose a mode, then a way to play.", 28);
             OwnerUiLayout.Place(hint.rectTransform, 1170, 891, 627, 72); hint.alignment = TextAnchor.UpperLeft;
-            Select(SceneFlow.SelectedMode);
+            SelectPrevious(SceneFlow.SelectedMode);
         }
         private PlayChoiceSurface Mode(Transform parent, bool hero, out GameObject tick)
         {
@@ -44,7 +149,7 @@ namespace TumbangPreso.UI
             var surface = root.gameObject.AddComponent<PlayChoiceSurface>(); surface.Hero = hero;
             var button = root.gameObject.AddComponent<PlayChoiceButton>(); button.targetGraphic = surface; button.Surface = surface;
             button.transition = Selectable.Transition.None;
-            button.onClick.AddListener(() => { MenuSfx.Click(); Select(hero ? GameMode.HeroStrike : GameMode.Classic); });
+            button.onClick.AddListener(() => { MenuSfx.Click(); SelectPrevious(hero ? GameMode.HeroStrike : GameMode.Classic); });
             var name = OwnerUiLayout.Text(root, "ModeName", hero ? "HERO STRIKE" : "CLASSIC", hero ? 54 : 65, OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(name.rectTransform, 35, 35, hero ? 588 : 490, 94);
             var detail = OwnerUiLayout.Text(root, "ModeDetails", hero ? "Eight rounds. Six heroes." : "Eight rounds. No powers.", 29);
@@ -78,7 +183,7 @@ namespace TumbangPreso.UI
             _routeDetails[index] = OwnerUiLayout.Text(root, "RouteDetails", details, 28);
             _routeDetails[index].color = OwnerUiTheme.Current.EnteredInk;
         }
-        public void Select(GameMode mode)
+        private void SelectPrevious(GameMode mode)
         {
             SceneFlow.SelectedMode = mode; SceneFlow.SetSelectedRules(SceneFlow.SelectedRules);
             bool hero = mode == GameMode.HeroStrike;
