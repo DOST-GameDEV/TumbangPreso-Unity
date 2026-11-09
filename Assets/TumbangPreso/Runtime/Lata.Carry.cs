@@ -416,8 +416,9 @@ namespace TumbangPreso
             Vector3 forward = FlatForward(who);
             Quaternion upright = Quaternion.LookRotation(forward, Vector3.up);
             Vector3 heldBase = who.transform.position + forward * HoldReach + Vector3.up * HeldBaseHeightFor(who);
-            // A little bob with the walk, so it reads as held and not glued.
-            float bob = Carrying == CarryPhase.Carry ? .018f * Mathf.Sin(Time.time * 11.0f) : 0.0f;
+            // A small lift with the walk, measured from the start of this carry.
+            // It starts at the grip and stays above it even if the restore timing changes.
+            float bob = Carrying == CarryPhase.Carry ? .006f * (1 - Mathf.Cos(CarryAge * 11.0f)) : 0.0f;
             Vector3 heldPos = heldBase + Vector3.up * bob + upright * relPos;
             Quaternion heldRot = upright * relRot;
 

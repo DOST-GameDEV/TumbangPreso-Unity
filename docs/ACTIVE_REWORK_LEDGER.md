@@ -1,11 +1,10 @@
 # Current checkpoint
 
-FEEL-PICKUP-1107, main (owner publication request, November 8): dwell bends before the grab; six contexts
-lift the street shoe. Opening skip frees the pointer and shows its binding.
-4 unique Edit cases and 9 exact Play cases passed: Logs/feel-pickup-revision-20261107/.
-No new HOST-ONLY findings; baseline failures remain. Player 6b6fbc747 built/open:
-Logs/windows-build-20261107-232826/job.json. Next: actual two-PC pickup/skip checks.
-Peers unverified.
+TJ-CADENA-1109, `tj-cadena-fixes`: throw arc, seven-second grace, three-second
+gold protection and clearer defender/shop/Hero UI. Core 1/1, Edit 5/5, eight
+exact Play cases passed across focused runs. Logs/tj-cadena-fixes/ and native
+TJ captures in Logs/shots-native-ui/. Next: build and owner feel review.
+Actual peer and physical controller checks remain open.
 
 CONTROLLER-NATIVE-1107, main: native DualSense/Edge HID reports reach the current
 gameplay/UI bindings. Fixed disabled UI-action confirm/back fallback and added
