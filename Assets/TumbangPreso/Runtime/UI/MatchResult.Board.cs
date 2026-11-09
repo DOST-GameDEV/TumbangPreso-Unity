@@ -51,7 +51,8 @@ namespace TumbangPreso.UI
 
             // No tabs (owner, 2026-11-09: "just drop the tabs"): the results are the standings page alone. The other two
             // pages are still built, hidden, so the XP and record fields the result code fills keep their homes.
-            HubKnit.Piece(root, "ResultPanel", Knit.DarkPanel, 60, 330, 1800, 550);
+            // The panel fills the room the tabs left, from under the title down to the buttons (owner, 2026-11-09: "fill this space").
+            HubKnit.Piece(root, "ResultPanel", Knit.DarkPanel, 60, 200, 1800, 690);
 
             BuildBoardStandings(root);
             BuildBoardMatch(root);
@@ -68,46 +69,49 @@ namespace TumbangPreso.UI
             NativePage(0); NativeProgression(null, null); ScreenTakeover.Register(this, () => NativeVisible);
         }
 
+        /// <summary>A standings row's height: four rows and three 30-unit gaps fill the panel inside its 32-unit margin.</summary>
+        private const float RowH = 134;
+
         private void BuildBoardStandings(RectTransform root)
         {
             var page = OwnerUiLayout.Rect(root, "Standings"); OwnerUiLayout.Fill(page); _nativePages[0] = page.gameObject;
             for (int i = 0; i < 4; i++)
             {
-                var card = HubKnit.Piece(page, "FinisherTicket" + i, Knit.Card, 110, 362 + i * 122, 1080, 106);
+                var card = HubKnit.Piece(page, "FinisherTicket" + i, Knit.Card, 110, 232 + i * 164, 1080, RowH);
                 _boardRows[i] = card; _finishRowOrigins[i] = card.anchoredPosition;
                 _finishFades[i] = card.gameObject.AddComponent<CanvasGroup>(); _finishFades[i].blocksRaycasts = false;
                 var face = HubKnit.FaceOf(card);
-                var place = HubKnit.Display(card, "FinisherPlace" + i, "", 54, HubKnit.KitTan, TextAnchor.MiddleCenter);
-                HubKnit.In(place.rectTransform, 10, 0, 80, 106);
-                _nativePortraits[i] = HubKnit.SeatChip(face, "FinisherSwatch" + i, 104, 14, 78, out _boardSeats[i]);
+                var place = HubKnit.Display(card, "FinisherPlace" + i, "", 62, HubKnit.KitTan, TextAnchor.MiddleCenter);
+                HubKnit.In(place.rectTransform, 10, 0, 80, RowH);
+                _nativePortraits[i] = HubKnit.SeatChip(face, "FinisherSwatch" + i, 102, (RowH - 96) * .5f, 96, out _boardSeats[i]);
                 _nativePortraits[i].name = "FinisherPortrait" + i;
                 _finishCrowns[i] = OwnerUiLayout.Rect(card, "FinisherCrown" + i).gameObject.AddComponent<HudBadge>();
-                HubKnit.In(_finishCrowns[i].rectTransform, 107, -28, 72, 56); _finishCrowns[i].raycastTarget = false;
-                var name = HubKnit.Display(card, "FinisherName" + i, "", 40, HubKnit.KitCream);
-                HubKnit.In(name.rectTransform, 224, 0, 430, 106); HubKit.Fit(name, 430);
-                BuildAccolades(card, i, 660, 29);
-                var score = HubKnit.Display(card, "FinisherScore" + i, "", 44, HubKnit.KitCream, TextAnchor.MiddleRight);
-                HubKnit.In(score.rectTransform, 840, 0, 200, 106);
+                HubKnit.In(_finishCrowns[i].rectTransform, 114, -26, 72, 56); _finishCrowns[i].raycastTarget = false;
+                var name = HubKnit.Display(card, "FinisherName" + i, "", 46, HubKnit.KitCream);
+                HubKnit.In(name.rectTransform, 234, 0, 420, RowH); HubKit.Fit(name, 430);
+                BuildAccolades(card, i, 660, (RowH - 48) * .5f);
+                var score = HubKnit.Display(card, "FinisherScore" + i, "", 52, HubKnit.KitCream, TextAnchor.MiddleRight);
+                HubKnit.In(score.rectTransform, 800, 0, 240, RowH);
                 var title = HubKnit.Words(card, "FinisherTitle" + i, "", 26, HubKnit.KitCream); title.enabled = false;
                 _rows.Add(new[] { place, name, score, title });
             }
 
             // The winner on a sunburst, under MATCH WINNER, with their name on a kit card below.
-            var winner = HubKnit.Piece(page, "WinnerCard", Knit.Card, 1230, 362, 580, 470);
+            var winner = HubKnit.Piece(page, "WinnerCard", Knit.Card, 1230, 232, 580, 626);
             var face2 = HubKnit.FaceOf(winner);
-            HubKnit.Picture(face2, "Burst", Resources.Load<Texture2D>("UI/break/burst-winner"), 0, 0, 580, 470, .5f, HubKnit.ShowCardCut).CutEnd = HubKnit.ShowCardCut;
-            _finishFigure = OwnerUiLayout.Rect(face2, "WinnerFigure"); HubKnit.In(_finishFigure, 20, 96, 540, 300);
+            HubKnit.Picture(face2, "Burst", Resources.Load<Texture2D>("UI/break/burst-winner"), 0, 0, 580, 626, .5f, HubKnit.ShowCardCut).CutEnd = HubKnit.ShowCardCut;
+            _finishFigure = OwnerUiLayout.Rect(face2, "WinnerFigure"); HubKnit.In(_finishFigure, 20, 104, 540, 400);
             _finishPreview = _finishFigure.gameObject.AddComponent<ModelPreview>(); _finishPreview.Attach(_finishFigure);
             _finishCelebration = _finishFigure.gameObject.AddComponent<FinishCelebration>();
             _finishDraw = OwnerUiLayout.Rect(face2, "DrawCan").gameObject.AddComponent<TumpSymbol>();
-            HubKnit.In(_finishDraw.rectTransform, 190, 120, 200, 240); _finishDraw.Kind = TumpSymbol.Icon.Can;
+            HubKnit.In(_finishDraw.rectTransform, 190, 170, 200, 240); _finishDraw.Kind = TumpSymbol.Icon.Can;
             _finishDraw.color = CourtPresentationPalette.Red; _finishDraw.raycastTarget = false; _finishDraw.gameObject.SetActive(false);
             HubKnit.RimOver(face2);
             var banner = HubKnit.Tag(page, "WinnerBanner", "MATCH WINNER", Knit.Go, 66);
-            HubKnit.In(banner, 1330, 394, 380, 66);
+            HubKnit.In(banner, 1330, 264, 380, 66);
             _finishCaption = HubKnit.FaceOf(banner) != null ? HubKnit.FaceOf(banner).GetComponentInChildren<Text>() : banner.GetComponentInChildren<Text>();
             _finishCaption.name = "WinnerCaption";
-            var tag = HubKnit.Piece(page, "WinnerTag", Knit.Card, 1250, 752, 540, 92);
+            var tag = HubKnit.Piece(page, "WinnerTag", Knit.Card, 1250, 734, 540, 92);
             _winnerName = HubKnit.Display(HubKnit.FaceOf(tag), "WinnerName", "", 60, HubKnit.KitCream, TextAnchor.MiddleCenter);
             OwnerUiLayout.Fill(_winnerName.rectTransform); _winnerName.rectTransform.offsetMin = new Vector2(16, 0); _winnerName.rectTransform.offsetMax = new Vector2(-16, 0);
             _winnerName.horizontalOverflow = HorizontalWrapMode.Wrap; _winnerName.resizeTextForBestFit = true; _winnerName.resizeTextMinSize = 32; _winnerName.resizeTextMaxSize = 60;
