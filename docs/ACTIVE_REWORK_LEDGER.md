@@ -1,14 +1,9 @@
 # Current checkpoint
 
-TJ-CADENA-1109, `tj-cadena-fixes`: throw arc, seven-second grace, four-second
-gold protection with a faster final pulse, clearer UI and a refined can raise.
-Core 1/1, Edit 5/5, nine exact Play cases passed across focused runs.
-Logs/tj-cadena-fixes/ and native TJ captures in Logs/shots-native-ui/.
-Player `efc0a5ff5` built and opened. Logs/windows-build-20261109-181212/job.json.
-Owner follow-up: [TJ review ledger](TJ_CADENA_REVIEW_LEDGER.md).
-Slipper rebound fixed, six persistent chalk marks, one results board and
-visible Home shadows. Exact recheck 9/9, final rendered recheck 5/5.
-Actual peer and physical controller checks remain open.
+TJ-CADENA-1109, `tj-cadena-fixes`: slipper rebound, six chalk marks, simpler
+restore and results, Home shadows. Exact recheck 9/9 and final render 5/5.
+Windows player `9e1aac96a` opened. [Decisions, tests, build and remaining
+owner checks](TJ_CADENA_REVIEW_LEDGER.md).
 
 CONTROLLER-NATIVE-1107, main: native DualSense/Edge HID reports reach the current
 gameplay/UI bindings. Fixed disabled UI-action confirm/back fallback and added

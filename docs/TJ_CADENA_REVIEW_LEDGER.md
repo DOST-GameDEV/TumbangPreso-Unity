@@ -3,8 +3,9 @@
 November 9, 2026. Work is local on `tj-cadena-fixes`, based on main
 `988ec7d53`. The previous Windows player was built from `efc0a5ff5`
 and was closed for this follow-up.
-Use the canonical checkout and `python tools/build_windows.py --launch` for
-the next player. Keep this branch for review until the owner directs publication.
+Keep this branch for review until the owner directs publication. Use the
+canonical checkout and `python tools/build_windows.py --launch` for future
+Windows players.
 
 ## Earlier pickup and skip work on main
 
@@ -97,13 +98,22 @@ cases in `review-render-final.xml`. The real Classic match-end board and the
 Hero Strike XP fixture were reviewed, along with detail views from all six
 actual court scenes. The game-side evidence is
 `Logs/shots-native-ui/TJ-real-match-end-1280x720.png` and
-`Logs/tj-cadena-fixes/marks-final/`. The fresh Windows player build is next.
+`Logs/tj-cadena-fixes/marks-final/`.
+
+The Windows 64-bit player built from gameplay commit `9e1aac96a` and opened
+to a responsive window. See `Logs/windows-build-20261109-190215/job.json`.
+The helper recorded a clean starting tree and restored source settings.
+The in-build identity still marks the tree dirty. The visual evidence above is
+from the actual PlayMode courts and UI routes. It does not stand in for a
+two-PC playthrough or owner feel approval.
 
 Presentation reach, audio reach, cue relay and positional audio audits each
 found zero new host-only call signatures against fetched main `988ec7d53`.
 Their prior failures remain. The docs audit only flags the existing TODO
 size limit. No paid generation, resets, force pushes, broad PlayMode runs
-or other chats.
+or other chats. The main audit scratch copy was removed. Automatic approval
+review blocked removal of the first render's superseded shader-error
+screenshots, so they remain in `Logs/tj-cadena-fixes/marks/`.
 
 ## Owner review still open
 
