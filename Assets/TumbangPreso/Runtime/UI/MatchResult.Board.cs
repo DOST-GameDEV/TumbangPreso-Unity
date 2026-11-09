@@ -20,7 +20,6 @@ namespace TumbangPreso.UI
     public sealed partial class MatchResult
     {
         private bool _board;
-        private HubButton[] _boardTabs;
         private readonly RectTransform[] _boardRows = new RectTransform[4];
         private readonly Graphic[] _boardSeats = new Graphic[4];
         private Text _winnerName, _momentWord, _momentName, _finishCaption;
@@ -50,9 +49,8 @@ namespace TumbangPreso.UI
             _broadcastLine = HubKnit.Words(root, "ResultMode", "", 34, HubKnit.KitWhite, TextAnchor.MiddleLeft, true, 3);
             HubKnit.In(_broadcastLine.rectTransform, 62, 128, 1200, 46);
 
-            _boardTabs = HubKnit.Tabs(root, "ResultTabs", 60, 206, 1080, 112, new[] { "ResultTab0", "ResultTab1", "ResultTab2" },
-                                      new[] { "STANDINGS", "YOUR MATCH", "PLAYERS" }, NativePage);
-            for (int i = 0; i < 3; i++) _nativeTabs[i] = _boardTabs[i];
+            // No tabs (owner, 2026-11-09: "just drop the tabs"): the results are the standings page alone. The other two
+            // pages are still built, hidden, so the XP and record fields the result code fills keep their homes.
             HubKnit.Piece(root, "ResultPanel", Knit.DarkPanel, 60, 330, 1800, 550);
 
             BuildBoardStandings(root);
@@ -175,9 +173,8 @@ namespace TumbangPreso.UI
         private void BoardPage(int page)
         {
             RefreshOwnerResultEmptyState();
-            for (int i = 0; i < 3; i++) if (_nativePages[i] != null) _nativePages[i].SetActive(i == page);
-            HubKnit.ChooseTab(_boardTabs, page);
-            if (page == 2) BoardRecentPlayers();
+            // Only the standings show; with no tabs there is no other page to open.
+            for (int i = 0; i < 3; i++) if (_nativePages[i] != null) _nativePages[i].SetActive(i == 0);
             _canvas.GetComponent<ScreenFocus>().Rebuild();
         }
 
