@@ -175,6 +175,21 @@ namespace TumbangPreso.PlayTests
             yield return Open();
             Assert.That(Time.timeScale, Is.EqualTo(1));
             Assert.That(Notice.text, Does.Contain("keeps playing"));
+            yield return new WaitForSecondsRealtime(.24f);
+            var canvas = GameObject.Find("OwnerPauseCanvas").GetComponent<Canvas>();
+            var card = canvas.transform.Find("LiveMenuComposition/LiveMenuColumn") as RectTransform;
+            Assert.IsNotNull(card);
+            Assert.AreEqual(Vector2.zero, card.anchoredPosition, "The match menu should settle at screen centre.");
+            yield return TumpUiCapture.Capture("MatchMenu-centred-1280x720", canvas, 1280, 720, checkPalette: false);
+            Button("LeaveMatch").onClick.Invoke();
+            var stay = Button("StayInMatch");
+            var leave = Button("ConfirmLeaveMatch");
+            Assert.Greater(((RectTransform)stay.transform).anchoredPosition.y, ((RectTransform)leave.transform).anchoredPosition.y);
+            Assert.AreEqual("LEAVE", leave.GetComponentInChildren<Text>().text.ToUpperInvariant());
+            Assert.AreSame(stay.gameObject, UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject);
+            yield return TumpUiCapture.Capture("LeaveConfirmation-centred-1280x720", canvas, 1280, 720, checkPalette: false);
+            stay.onClick.Invoke();
+            Assert.IsTrue(Button("ResumeMatch").gameObject.activeInHierarchy);
             _panel.Close();
             Assert.That(Time.timeScale, Is.EqualTo(1));
         }

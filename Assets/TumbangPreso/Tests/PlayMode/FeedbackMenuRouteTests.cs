@@ -33,7 +33,16 @@ namespace TumbangPreso.PlayTests
             Assert.IsNotNull(hub);
             Assert.IsInstanceOf<HubHome>(hub.Top);
             yield return new WaitForSecondsRealtime(.55f);
-            yield return TumpUiCapture.Capture("TJ-home-sticker-shadows-1280x720", hub.Canvas, 1280, 720,
+            var wallet = hub.Top.GetComponentInChildren<HubWalletChip>().transform;
+            var plate = wallet.Find("Plate") as RectTransform;
+            var field = wallet.Find("Field") as RectTransform;
+            Assert.IsNotNull(plate);
+            Assert.IsNotNull(field);
+            float rightGap = plate.anchoredPosition.x + plate.rect.width * .5f
+                - field.anchoredPosition.x - field.rect.width * .5f;
+            Assert.That(rightGap, Is.InRange(10f, 28f), "The wallet should end just after its balance field.");
+            Assert.IsNull(GameObject.Find("EarnButton"));
+            yield return TumpUiCapture.Capture("Home-compact-wallet-1280x720", hub.Canvas, 1280, 720,
                 checkPalette: false, checkActionBounds: true);
             var events = UnityEngine.EventSystems.EventSystem.current;
             var module = events.GetComponent<UnityEngine.InputSystem.UI.InputSystemUIInputModule>();

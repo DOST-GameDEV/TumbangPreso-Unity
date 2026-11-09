@@ -82,11 +82,13 @@ namespace TumbangPreso.PlayTests
             var effectLight=effect.AddComponent<Light>();effectLight.type=LightType.Point;
             var live = ghost.GetComponentsInChildren<Renderer>(true)
                 .Concat(doll.GetComponentsInChildren<Renderer>(true)).Concat(effect.GetComponentsInChildren<Renderer>()).ToArray();
-            UltimatePhaseView view=null; bool held=false,saw=false,hidden=true,lightOff=true;
+            UltimatePhaseView view=null; bool held=false,saw=false,hidden=true,lightOff=true,popupsOff=true;
+            Canvas clutch=null, late=null;
             void Inspect(Camera camera)
             {
                 if(camera.name!="UltimateSceneCamera")return;
                 saw=true; hidden &= live.All(r=>r.forceRenderingOff);lightOff &= !effectLight.enabled;
+                popupsOff &= clutch != null && !clutch.enabled && (late == null || !late.enabled);
             }
             try
             {
@@ -94,6 +96,8 @@ namespace TumbangPreso.PlayTests
                 float until=Time.realtimeSinceStartup+8;
                 while(UltimateIntroductionCache.Find(actor,actor.GetComponent<Carrier>().Held!=null)==null&&Time.realtimeSinceStartup<until)yield return null;
                 Assert.IsNotNull(UltimateIntroductionCache.Find(actor,actor.GetComponent<Carrier>().Held!=null));
+                ComicPopup.Spawn(actor.transform.position, "CLUTCH!", UiTheme.Highlight);
+                clutch = GameObject.Find("ComicPopup_CLUTCH!").GetComponent<Canvas>();
                 view=new UltimatePhaseView(GameServices.Match.transform,new[]{new UltimateCommit(actor.PlayerSlot,1,
                     actor.transform.position,actor.transform.forward,actor.Intent.AimPoint,0)},UltimatePerformance.SecondsFor("cheska"));
                 // Compare the scope with the immediate pre-render state, after
@@ -108,6 +112,15 @@ namespace TumbangPreso.PlayTests
                     "The very first retained frame must use a complete post-heart camera shot.");
                 Assert.IsTrue(hidden,"Live blindfold, skill and companion renderers obscured the ultimate picture.");
                 Assert.IsTrue(lightOff,"The hidden skill's light must not contaminate the authored ultimate lighting.");
+                Assert.IsTrue(popupsOff, "The cinematic camera captured a world callout.");
+                Assert.IsTrue(clutch.enabled, "Rendering the cinematic must return the callout to the live camera.");
+                clutch.enabled = false;
+                ComicPopup.Spawn(actor.transform.position, "ESCAPED!", UiTheme.Highlight);
+                late = GameObject.Find("ComicPopup_ESCAPED!").GetComponent<Canvas>();
+                view.Draw(.1f);
+                Assert.IsTrue(popupsOff, "A callout created after the scene scan leaked into the cinematic.");
+                Assert.IsFalse(clutch.enabled, "An already disabled callout must stay disabled.");
+                Assert.IsTrue(late.enabled, "The live camera must retain a late callout.");
                 for(int i=0;i<live.Length;i++)
                 {
                     Assert.AreEqual(original[i],live[i].forceRenderingOff,"Live visibility was not restored after rendering.");
@@ -127,6 +140,7 @@ namespace TumbangPreso.PlayTests
             {
                 Camera.onPreCull-=Inspect;view?.Dispose();
                 if(held)typeof(PresentationClock).GetMethod("Release",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic).Invoke(null,null);
+                if(clutch!=null)Object.Destroy(clutch.gameObject);if(late!=null)Object.Destroy(late.gameObject);
                 Object.Destroy(effect);if(ghost!=null)Object.Destroy(ghost.gameObject);if(doll!=null)Object.Destroy(doll.gameObject);
             }
         }

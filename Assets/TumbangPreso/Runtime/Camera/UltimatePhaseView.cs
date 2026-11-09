@@ -31,6 +31,7 @@ namespace TumbangPreso.CameraSystem
         private readonly List<Light> _hiddenLights = new List<Light>(), _lightScratch = new List<Light>();
         private readonly List<bool> _lightsWereEnabled = new List<bool>();
         private readonly HashSet<Light> _seenLights = new HashSet<Light>();
+        private readonly List<Canvas> _hiddenCallouts = new List<Canvas>(2);
         private readonly HashSet<Transform> _liveFieldRoots = new HashSet<Transform>();
         private GameObject _stage;
         private Camera _camera;
@@ -246,6 +247,8 @@ namespace TumbangPreso.CameraSystem
                 foreach(var ghost in Abilities.NemuBlindfold.Live)if(ghost!=null)Hide(ghost.transform);
                 foreach(var field in _liveFieldRoots)Hide(field);
                 if(WorldContactPresentation.Current!=null)Hide(WorldContactPresentation.Current.transform);
+                // Callouts are world canvases, so the renderer mask above does not hide them.
+                ComicPopup.HideForCapture(_hiddenCallouts);
                 _primary.Body.ShowOnlyForCapture(true);_primary.Scene.SetVisibleForCapture(true);
                 float foot=WorldContactPresentation.ModelBottom(_primary.Body.Renderers,_primary.Body.Root.transform.position.y);
                 _primary.Contact.Place(_primary.Body.Root.transform.position,foot,new Vector2(.45f,.45f),WorldCueProfile.LightingWeight*.20f);
@@ -268,7 +271,7 @@ namespace TumbangPreso.CameraSystem
         // ⚠️ THE SCENE SCAN IS NOT PER FRAME (Banaue lag, 2026-11-05). Fourteen-odd FindObjectsByType calls, each a whole-
         // scene walk and an array, ran for every frame of an ultimate; on Banaue's dense scene that was garbage and
         // main-thread time for the whole stage. The bodies are frozen while it plays, so the set of live arms, effects,
-        // particles, callouts and fields barely changes: rescan at 10 Hz and hide the cached roots every frame.
+        // particles and fields barely changes: rescan at 10 Hz and hide the cached roots every frame.
         private const float LiveRootRescan = .1f;
         private readonly List<Transform> _liveRoots = new List<Transform>(64);
         private float _liveRootsUntil = float.NegativeInfinity;
@@ -280,7 +283,6 @@ namespace TumbangPreso.CameraSystem
             foreach(var arms in Object.FindObjectsByType<ViewmodelArms>())_liveRoots.Add(arms.transform);
             foreach(var effect in Object.FindObjectsByType<VfxRenderTag>())_liveRoots.Add(effect.transform);
             foreach(var particles in Object.FindObjectsByType<ParticleSystemRenderer>())_liveRoots.Add(particles.transform);
-            foreach(var callout in Object.FindObjectsByType<ComicPopup>())_liveRoots.Add(callout.transform);
             RefreshLiveFieldRoots();
         }
         private void RefreshLiveFieldRoots()
@@ -411,6 +413,8 @@ namespace TumbangPreso.CameraSystem
             for(int i=0;i<_hidden.Count;i++)if(_hidden[i]!=null)
             { _hidden[i].enabled=_wasEnabled[i];_hidden[i].forceRenderingOff=_wasHidden[i]; }
             for(int i=0;i<_hiddenLights.Count;i++)if(_hiddenLights[i]!=null)_hiddenLights[i].enabled=_lightsWereEnabled[i];
+            foreach (var callout in _hiddenCallouts) if (callout != null) callout.enabled = true;
+            _hiddenCallouts.Clear();
             _hidden.Clear();_wasHidden.Clear();_wasEnabled.Clear();_seen.Clear();
             _hiddenLights.Clear();_lightsWereEnabled.Clear();_seenLights.Clear();
         }

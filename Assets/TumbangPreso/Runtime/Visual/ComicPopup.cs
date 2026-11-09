@@ -124,6 +124,7 @@ namespace TumbangPreso.Visual
         private static readonly List<ComicPopup> Live = new List<ComicPopup>(8);
 
         private Text _text;
+        private Canvas _canvas;
         private CanvasGroup _group;
         private Camera _camera;
         private static bool _preparingCamera;
@@ -241,6 +242,17 @@ namespace TumbangPreso.Visual
             finally{_preparingCamera=false;}
         }
 
+        internal static void HideForCapture(List<Canvas> hidden)
+        {
+            foreach (var popup in Live)
+            {
+                var canvas = popup != null ? popup._canvas : null;
+                if (canvas == null || !canvas.isActiveAndEnabled) continue;
+                canvas.enabled = false;
+                hidden.Add(canvas);
+            }
+        }
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetStatics()
         {
@@ -293,8 +305,8 @@ namespace TumbangPreso.Visual
             // ⚠️⚠️ A WORLD-SPACE CANVAS, NOT A `TextMesh`. See the class note: `TextMesh` does
             // not survive a dynamic font atlas rebuild and Darumadrop is dynamic. This is the
             // fault behind "they were a weird font", and no amount of restyling reaches it.
-            var canvas = gameObject.AddComponent<Canvas>();
-            canvas.renderMode = RenderMode.WorldSpace;
+            _canvas = gameObject.AddComponent<Canvas>();
+            _canvas.renderMode = RenderMode.WorldSpace;
 
             // ⚠️ A WORLD-SPACE SCALER WITH A DYNAMIC MULTIPLIER, so the atlas is rasterised
             // denser still than  asks for. The callout vocabulary is about twenty

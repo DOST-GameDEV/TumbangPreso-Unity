@@ -122,10 +122,7 @@ namespace TumbangPreso.UI.Hub
         }
 
         /// <summary>
-        /// Currency with its + and the hamburger, top right.
-        ///
-        /// ⚠️ THE + OPENS TASKS, NEVER A STORE OF CURRENCY. There is no way to buy TANSAN; the + answers
-        /// "how do I get more", which is "play and finish tasks". The owner's rule for UX-1.
+        /// Currency and the hamburger, top right.
         /// </summary>
         public static HubWalletChip TopRight(RectTransform root, TumpHub hub)
         {
@@ -135,7 +132,7 @@ namespace TumbangPreso.UI.Hub
             var lines = HubBoard.Picture(menuFace, menuGroup, "glyph_menu", "Icon");
             HubBoard.Feel(menu, menuFace, HubBoard.Depth("menu_button"), 0.45f, false, lines);
 
-            var chip = HubWalletChip.Build(root, hub);
+            var chip = HubWalletChip.Build(root);
             return chip;
         }
     }
@@ -144,18 +141,20 @@ namespace TumbangPreso.UI.Hub
     public sealed class HubWalletChip : MonoBehaviour
     {
         private Text _amount;
-        private GameObject _notice;
         private HubBoard.LabelSpec _spec;
 
-        public static HubWalletChip Build(RectTransform parent, TumpHub hub)
+        public static HubWalletChip Build(RectTransform parent)
         {
-            // The bar is furniture (not pressable); its + is its own sticker. The coin overlaps the
-            // bar's left end, as on the board.
-            var group = HubBoard.Bounds("currency_bar_slab", "currency_bar_face", "icon_coin", "plus_button_slab");
-            var root = HubBoard.Hang(HubKit.Rect(parent, "WalletChip"), HubKit.TopRight, group);
+            // Fit the bar to the balance field and keep the original gap to the menu.
+            var group = HubBoard.Bounds("currency_bar_slab", "currency_bar_face", "icon_coin", "currency_field");
+            var fieldBounds = HubBoard.Bounds("currency_field");
+            const float trailingInset = 18f;
+            float trim = Mathf.Max(0f, group.xMax - fieldBounds.xMax - trailingInset);
+            var compact = new Rect(group.x + trim, group.y, group.width - trim, group.height);
+            var root = HubBoard.Hang(HubKit.Rect(parent, "WalletChip"), HubKit.TopRight, compact);
             var chip = root.gameObject.AddComponent<HubWalletChip>();
-            HubBoard.Place(root, group, "currency_bar_slab", "PlateSlab");
-            HubBoard.Place(root, group, "currency_bar_face", "Plate");
+            PlaceBar(root, group, "currency_bar_slab", "PlateSlab", trim);
+            PlaceBar(root, group, "currency_bar_face", "Plate", trim);
             HubBoard.Place(root, group, "currency_field", "Field");
             chip._amount = HubBoard.Write(root, group, "000,000", "Balance");
             chip._spec = HubBoard.Label("000,000");
@@ -189,6 +188,15 @@ namespace TumbangPreso.UI.Hub
             return chip;
         }
 
+        private static void PlaceBar(RectTransform root, Rect group, string sprite, string name, float trim)
+        {
+            var image = HubBoard.Place(root, group, sprite, name);
+            image.sprite = HubKnit.Knitted(sprite, new Vector4(88, 82, 88, 82));
+            image.type = Image.Type.Sliced;
+            image.rectTransform.sizeDelta -= Vector2.right * trim;
+            image.rectTransform.anchoredPosition -= Vector2.right * (trim * .5f);
+        }
+
         private void OnEnable()
         {
             if (GameServices.Wallet != null) GameServices.Wallet.Changed += Refresh;
@@ -211,7 +219,6 @@ namespace TumbangPreso.UI.Hub
             var ink = HubBoard.Colour(_spec != null ? _spec.colour : "#55071D");
             ink.a = balance < 0 ? 0.45f : 1f;
             _amount.color = ink;
-            if (_notice != null) _notice.SetActive(wallet != null && wallet.AnyClaimable);
         }
     }
 

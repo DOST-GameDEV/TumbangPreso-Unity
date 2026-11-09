@@ -3,11 +3,11 @@
 TJ-CADENA-1109 is on main. Incoming UI takes precedence on conflicting
 UI hunks. [Previous review and evidence](TJ_CADENA_REVIEW_LEDGER.md).
 
-Bot slide and court lanes are on main at `57a3e472a`. Exact tests 2/2
-in `Logs/bot-slide-20261109/integrated.xml`. The narrower Tondo and wider
-Arena were checked. The hero-pick controls and trajectory marks were
-refined and the idle defender hint removed. Five exact UI cases passed
-across `Logs/pick-ui-20261109/`.
+Movement-based aim drift, bot lane changes and emotes, cinematic callout
+visibility, the centred match menu and compact wallet were checked.
+Core 9/9 and PlayMode 9/9 in `Logs/aim-guard-ui-20261109/`.
+Earlier slide and picker evidence is in `Logs/bot-slide-20261109/`
+and `Logs/pick-ui-20261109/`.
 
 CONTROLLER-NATIVE-1107, main: native DualSense/Edge HID reports reach the current
 gameplay/UI bindings. Fixed disabled UI-action confirm/back fallback and added

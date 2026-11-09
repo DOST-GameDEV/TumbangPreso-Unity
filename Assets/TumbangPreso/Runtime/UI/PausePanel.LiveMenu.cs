@@ -21,8 +21,8 @@ namespace TumbangPreso.UI
         /// The live match menu, in the match HUD's toy family (UI revamp 2026-10-06).
         ///
         /// ⚠️ NOT THE FRONT END'S STICKERS. The owner rejected basing the match on the current
-        /// home screen, so this card is the HUD's cream toy tile, sitting at the left so a live
-        /// match stays visible on the right. A small state pill answers the
+        /// home screen, so this card is the HUD's cream toy tile, centred in the viewport.
+        /// A small state pill answers the
         /// first question anyone opening it has (is the game stopped?), the title names the
         /// menu, and three `MatchMenuButton`s rank the choices: honey RESUME is the one primary,
         /// SETTINGS is ordinary, and the red LEAVE MATCH is the one destructive choice, set
@@ -33,7 +33,9 @@ namespace TumbangPreso.UI
         {
             if (PracticeRange.Requested && PracticeRange.Instance != null) { BuildTrainingRange(); return; }
             var design = OwnerUiLayout.DesignArea(Canvas.transform, "LiveMenuComposition");
-            var holder = OwnerUiLayout.Rect(design, "LiveMenuColumn"); OwnerUiLayout.Place(holder, 72, 160, 696, 772);
+            var holder = OwnerUiLayout.Rect(design, "LiveMenuColumn");
+            holder.anchorMin = holder.anchorMax = holder.pivot = new Vector2(.5f, .5f);
+            holder.sizeDelta = new Vector2(696, 772);
             // ⚠️ THE CARD IS HOME'S WINE KNIT (owner 2026-10-28), the same deep plate as the room's chat
             // drawer, so the match menu and its leave question belong to the room family. An invisible
             // image keeps the card's job of catching every press that lands on it.
@@ -65,17 +67,15 @@ namespace TumbangPreso.UI
             Action(_menuChoices, "LeaveMatch", "Leave match", MatchMenuButton.Kind.Destructive, AskToLeave, 618, 108, 36);
 
             // ⚠️ THE LEAVE QUESTION LIVES IN THE SAME CARD (2026-10-28 room and menu pass). It says
-            // what leaving does for this player, names both answers, and focuses STAY. LEAVE MATCH
-            // moves up to where SETTINGS was and STAY sits where RESUME was, so a second click on the
-            // old LEAVE spot lands on nothing and a mashed confirm keeps the player in the match.
+            // what leaving does for this player and focuses STAY, the first choice on the card.
             _leaveChoices = OwnerUiLayout.Rect(holder, "LeaveConfirm"); OwnerUiLayout.Fill(_leaveChoices);
             _leaveChoicesGroup = _leaveChoices.gameObject.AddComponent<CanvasGroup>();
             _leaveLine = OwnerUiLayout.Text(_leaveChoices, "LeaveConsequence", "", 32);
             _leaveLine.color = Hub.HubKnit.KitInk; _leaveLine.font = Hub.HubKnit.SentenceFont(false);
             OwnerUiLayout.Place(_leaveLine.rectTransform, 54, 222, 600, 110);
             _leaveLine.verticalOverflow = VerticalWrapMode.Overflow;
-            Action(_leaveChoices, "ConfirmLeaveMatch", "Leave match", MatchMenuButton.Kind.Destructive, SceneFlow.LeaveMatchToMainMenu, 360, 108, 38);
-            _stay = Action(_leaveChoices, "StayInMatch", "Stay", MatchMenuButton.Kind.Primary, HideLeaveQuestion, 500, 124, 50);
+            _stay = Action(_leaveChoices, "StayInMatch", "Stay", MatchMenuButton.Kind.Primary, HideLeaveQuestion, 350, 124, 50);
+            Action(_leaveChoices, "ConfirmLeaveMatch", "Leave", MatchMenuButton.Kind.Destructive, SceneFlow.LeaveMatchToMainMenu, 500, 108, 38);
             _leaveChoices.gameObject.SetActive(false);
             _menuCard = holder;
             _menuRest = holder.anchoredPosition;
@@ -137,7 +137,7 @@ namespace TumbangPreso.UI
         }
 
         /// <summary>Called from <see cref="OnOpened"/>: every open starts on the three choices, with the
-        /// card sliding in from the left edge it is anchored to.</summary>
+        /// card easing up into the centre.</summary>
         private void ResetLiveMenu()
         {
             HideLeaveQuestion();
@@ -164,7 +164,7 @@ namespace TumbangPreso.UI
             if (_menuEnter < 1) _menuEnter = Mathf.MoveTowards(_menuEnter, 1, dt / 0.2f);
             if (_swap < 1) _swap = Mathf.MoveTowards(_swap, 1, dt / 0.14f);
             float enter = 1 - Mathf.Pow(1 - _menuEnter, 3);
-            _menuCard.anchoredPosition = _menuRest + new Vector2((enter - 1) * 56, 0);
+            _menuCard.anchoredPosition = _menuRest + new Vector2(0, (enter - 1) * 18);
             float swap = 1 - Mathf.Pow(1 - _swap, 2);
             if (_menuChoicesGroup != null) _menuChoicesGroup.alpha = swap;
             if (_leaveChoicesGroup != null) _leaveChoicesGroup.alpha = swap;
