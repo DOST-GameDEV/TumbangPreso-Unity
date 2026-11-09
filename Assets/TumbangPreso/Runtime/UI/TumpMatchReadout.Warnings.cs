@@ -62,10 +62,10 @@ namespace TumbangPreso.UI
             if(local==null||spectating||round==null||!round.RoundActive||ReadyWindow||ScreenTakeover.AnyOpen)
             {_warningRoot.gameObject.SetActive(false);_warningUntil=0;return;}
             string text=null;bool abilitySoundPlayed=false;
-            if(local.IsDefender&&round.IsTayaCampWarningActive)
+            if(local.IsDefender&&!_defenderTaskShown&&round.IsTayaCampWarningActive)
                 text=round.IsTayaCampPenaltyActive&&local.CanAct()
                     ?"DO NOT CAMP - MOVE AWAY FROM CAN IMMEDIATELY":"DO NOT CAMP - MOVE AWAY FROM CAN";
-            else if(local.IsDefender&&round.IsCanDownWarningActive)
+            else if(local.IsDefender&&!_defenderTaskShown&&round.IsCanDownWarningActive)
                 text=round.IsCanDownPenaltyActive&&local.CanAct()
                     ?"STAND THE CAN UP - LOSING POINTS":"STAND THE CAN UP";
             else if(!local.IsDefender&&!local.HoldingSlipper&&TournamentRules.IsSlipperWarning(round.AttackerIdleSeconds(local.PlayerSlot)))
@@ -76,7 +76,7 @@ namespace TumbangPreso.UI
                 string refusal=null;var can=round.Lata;
                 if(local.Intent.Pressed(Verb.SpecialAbility))
                 {
-                    if(local.IsDefender&&can!=null&&!can.IsUpright)
+                    if(local.IsDefender&&!_defenderTaskShown&&can!=null&&!can.IsUpright)
                         refusal="CANNOT TAG - CAN MUST BE UPRIGHT FIRST";
                     else if(!local.IsDefender&&local.HoldingSlipper)
                     {
@@ -84,7 +84,7 @@ namespace TumbangPreso.UI
                             refusal="CANNOT THROW - MUST BE OUTSIDE DANGER ZONE";
                     }
                 }
-                if(refusal==null&&local.IsDefender&&local.Intent.Pressed(Verb.Lunge)&&can!=null&&!can.IsUpright)
+                if(refusal==null&&local.IsDefender&&!_defenderTaskShown&&local.Intent.Pressed(Verb.Lunge)&&can!=null&&!can.IsUpright)
                     refusal="CANNOT TAG - CAN MUST BE UPRIGHT FIRST";
                 if(refusal==null&&local.Intent.Pressed(Verb.Sprint)&&!local.Stamina.IsSprinting
                     &&(local.Stamina.IsFatigued||local.Stamina.Current<Balance.StaminaSprintFloor))

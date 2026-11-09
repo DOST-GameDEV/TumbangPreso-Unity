@@ -380,8 +380,11 @@ namespace TumbangPreso.UI
                 _status[index].enabled = true; _status[index].text = row.Label + (row.Timed ? $" · {row.Remaining:0.0}s" : ""); index++;
             }
         }
+        private bool _defenderTaskShown;
+
         private void Prompts(CharacterMotor local, bool spectating)
         {
+            _defenderTaskShown = false;
             // The held reference and the emote wheel own the screen while open; the prompt drew over both (QA, 2026-11-08).
             bool covered = TumpPowerReadout.ReferenceOpen || EmoteWheel.AnyOpen;
             _promptRoot.gameObject.SetActive(local != null && !spectating && !covered);
@@ -431,25 +434,12 @@ namespace TumbangPreso.UI
                 return;
             }
             if (PlantPrompt(local)) return;
-            if (local.IsDefender && round.Lata != null && !round.Lata.IsUpright)
+            if (local.IsDefender && round.Lata != null && round.RoundActive)
             {
                 if (!local.CanAct()) return;
-                // Sean's MOLTEN THROW: say WHY the reset is refused, with the cooling on the bar, instead of no prompt at all.
-                if (round.Lata.IsHot)
-                {
-                    Vector3 off = local.transform.position - round.Lata.transform.position; off.y = 0;
-                    if (off.magnitude > Balance.InteractionRadius) return;
-                    _prompt.text = "Too hot to reset";
-                    Progress(1f - round.Lata.HotLeft / SeanRules.HotCanSeconds); return;
-                }
-                if (carrier == null || !carrier.HasResetTarget) return;
-                bool toggle = Settings.SettingsStore.Current.ToggleRestore;
-                string cue = Hud.PressCue("Grab");
-                if (carrier.ChannelRatio > 0)
-                    _prompt.text = toggle ? "Resetting Can · " + (Hud.OnTouch ? "tap" : "press " + cue.TrimEnd()) + " to cancel" : "Resetting Can";
-                else BindingPrompt("Grab", "Reset Can");
-                if (Hud.OnTouch) TouchHud.Emphasise(Verb.Grab);
-                if (carrier.ChannelRatio > 0) Progress(carrier.ChannelRatio); return;
+                if (round.Lata.IsUpright && ReclaimPrompt(local)) return;
+                DefenderTask(local, carrier, round);
+                return;
             }
             // ⚠️ VISUAL-1.6: CHARGING SAYS NOTHING HERE. The charge ring, the pektus tick and
             // the grey refused state are on the reticle (`HudReticle`), where the eye already
@@ -513,6 +503,52 @@ namespace TumbangPreso.UI
                     if (Hud.OnTouch) TouchHud.Emphasise(Verb.Interact);
                 }
             }
+        }
+
+        private void DefenderTask(CharacterMotor local, Carrier carrier, RoundDirector round)
+        {
+            _defenderTaskShown = true;
+            var can = round.Lata;
+            if (can.IsUpright)
+            {
+                if (round.IsTayaCampWarningActive)
+                {
+                    _prompt.text = "Step away from the can";
+                    if (round.IsTayaCampPenaltyActive) _context.text = "Losing points";
+                }
+                else if (local.TryGetComponent(out CombatVerbs combat) && combat.PunchCooldownLeft <= 0 && TayaInReach(local, round))
+                {
+                    BindingPrompt("SpecialAbility", "Tag attacker");
+                    if (Hud.OnTouch) TouchHud.Emphasise(Verb.SpecialAbility);
+                }
+                else _prompt.text = "Cover a way out";
+                return;
+            }
+
+            if (round.IsCanDownPenaltyActive) _context.text = "Losing points";
+            if (Abilities.NemuLookout.Keeping(can)) { _prompt.text = "Keeper is restoring the can"; return; }
+            if (can.IsHot)
+            {
+                _prompt.text = "Can is cooling";
+                Progress(1 - can.HotLeft / SeanRules.HotCanSeconds);
+                return;
+            }
+            if (carrier != null && carrier.ChannelRatio > 0)
+            {
+                bool toggle = Settings.SettingsStore.Current.ToggleRestore;
+                _prompt.text = carrier.IsCarryWalking ? "Returning the can" : "Restoring the can";
+                if (toggle) _context.text = Hud.OnTouch ? "Tap to cancel" : Hud.PressCue("Grab") + "Cancel";
+                if (Hud.OnTouch) TouchHud.Emphasise(Verb.Grab);
+                Progress(carrier.ChannelRatio);
+                return;
+            }
+            if (carrier != null && carrier.HasResetTarget)
+            {
+                BindingPrompt("Grab", Settings.SettingsStore.Current.ToggleRestore ? "Restore can" : "Hold to restore can");
+                if (Hud.OnTouch) TouchHud.Emphasise(Verb.Grab);
+                return;
+            }
+            _prompt.text = "Go to the can";
         }
         /// <summary>
         /// SOULBOUND (owner 2026-10-21): next to one of her dormant ghosts, Nemu's Grab reads like the can's reset and the

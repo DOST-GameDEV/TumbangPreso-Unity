@@ -262,12 +262,23 @@ namespace TumbangPreso.UI.Hub
                 HubKit.Place(symbol.rectTransform, HubKit.Top, new Vector2(0, four ? -8 : -12), new Vector2(glyph, glyph));
                 // A role kit's middle tiles name their role; the key is the same for both.
                 bool touch = Application.isMobilePlatform || InputLayer.TouchHud.ForceVisible;
-                string caption = touch || (four && !screenSlots[i].IsUltimate && i > 0) ? screenSlots[i].Label : Hud.KeyLabelFor(screenSlots[i].Action);
-                var key = HubKit.Text(tile.Body, "Key", caption, HubStyle.Floor, true, HubKit.InkOn(HubStyle.Honey), TextAnchor.MiddleCenter);
+                bool roleCaption = touch || (four && !screenSlots[i].IsUltimate && i > 0);
+                string caption = roleCaption ? screenSlots[i].Label : Hud.KeyLabelFor(screenSlots[i].Action);
+                var bindingArt = roleCaption ? null : InputGlyphs.For(caption, false);
                 float keyWidth = tileWidth - (four ? 16 : 14);
-                HubKit.Place(key.rectTransform, HubKit.Bottom, new Vector2(0, four ? 4 : 8),
-                             new Vector2(keyWidth, four ? 40 : 36));
-                HubKit.Fit(key, keyWidth);
+                var captionAt = new Vector2(0, four ? 4 : 8);
+                if (bindingArt != null)
+                {
+                    var key = HubKit.Picture(tile.Body, "BindingGlyph", bindingArt);
+                    HubKit.Place(key.rectTransform, HubKit.Bottom, captionAt,
+                        new Vector2(InputGlyphs.PromptWidth(bindingArt, 36, keyWidth), 36));
+                }
+                else
+                {
+                    var key = HubKit.Text(tile.Body, "Key", caption, HubStyle.Floor, true, HubKit.InkOn(HubStyle.Honey), TextAnchor.MiddleCenter);
+                    HubKit.Place(key.rectTransform, HubKit.Bottom, captionAt, new Vector2(keyWidth, four ? 40 : 36));
+                    HubKit.Fit(key, keyWidth);
+                }
                 HubSlap.On(tile.transform, 0.04f * i, 2 - i * 2);
                 yield return null;
             }

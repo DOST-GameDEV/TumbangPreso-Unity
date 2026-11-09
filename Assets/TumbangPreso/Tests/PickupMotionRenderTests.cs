@@ -46,7 +46,7 @@ namespace TumbangPreso.Tests
                 Settings.SettingsStore.Current.ReducedUiMotion = false;
                 foreach (PickupStyle style in Enum.GetValues(typeof(PickupStyle)))
                 {
-                    string output = Path.Combine("Logs/feel-pickup-revision-20261107/variants", style.ToString());
+                    string output = Path.Combine(Environment.GetEnvironmentVariable("TUMP_EVIDENCE") ?? "Logs/feel-pickup-revision-20261107", "variants", style.ToString());
                     Directory.CreateDirectory(output);
                     for (int frame = 0; frame < 28; frame++)
                     {

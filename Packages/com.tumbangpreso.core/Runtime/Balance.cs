@@ -65,7 +65,7 @@ namespace TumbangPreso.Core
         public const float DefenseTickInterval = 1.0f;
         public const float TagStunTime = 5.0f;
         public const float SabotageWindow = 2.5f;
-        public const float ThrowRestoreCooldown = 1.25f;
+        public const float ThrowRestoreCooldown = 3.0f;
         public const float ThrowChargeResetTime = .5f;
 
         // Tournament Anti-Camping & Anti-Stall Penalties
@@ -85,7 +85,7 @@ namespace TumbangPreso.Core
         // of the can down while the taya is free to act and not standing it up, the taya pays
         // ScoreCanDownPenalty every TournamentPenaltyInterval.
         public const float CanDownWarningTime = 2.5f;
-        public const float CanDownGracePeriod = 5.0f;
+        public const float CanDownGracePeriod = 7.0f;
         public const int ScoreCanDownPenalty = -5;
 
         // ------------------------------------------------------------------

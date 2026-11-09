@@ -41,14 +41,14 @@ namespace TumbangPreso.Visual
         {
             float p=(1-Mathf.Exp(-4.5f*Mathf.Clamp01(charge)))/(1-Mathf.Exp(-4.5f));
             spin=Mathf.Clamp(spin,-1,1);
-            return new Pose(new Vector3(-13,24+10*spin,2*spin)*p,new Vector3(7,-12-4*spin,0)*p,
-                new Vector3(-16,38-22*spin,-44-10*spin)*p,
-                new Vector3(-24,-12,20)*p);
+            return new Pose(new Vector3(-16,30+12*spin,4*spin)*p,new Vector3(8,-15-5*spin,0)*p,
+                new Vector3(-19,42-24*spin,-48-12*spin)*p,
+                new Vector3(-30,-14,24)*p);
         }
         public static Pose Contact(float spin)=>new Pose(new Vector3(11,-10-8*spin,-2*spin),
             new Vector3(-5,7,0),new Vector3(-20,-18+12*spin,5+8*spin),new Vector3(2,0,9));
-        public static Pose FollowThrough(float spin)=>new Pose(new Vector3(17,-25-14*spin,-3),
-            new Vector3(-7,13,1),new Vector3(-8,-35+16*spin,12+16*spin),new Vector3(12,5,6));
+        public static Pose FollowThrough(float spin)=>new Pose(new Vector3(23,-31-17*spin,-4),
+            new Vector3(-9,16,1),new Vector3(-11,-42+19*spin,16+18*spin),new Vector3(17,7,9));
         public static float Recovery(float seconds)=>Mathf.SmoothStep(0,1,Mathf.InverseLerp(FollowSeconds,ReleaseSeconds,seconds));
         public static Pose Release(Pose from,float seconds,float spin)=>Release(Rest,from,Rest,seconds,spin);
         public static Pose Release(Pose carryBasis,Pose from,Pose locomotion,float seconds,float spin)
@@ -63,7 +63,7 @@ namespace TumbangPreso.Visual
         public static Quaternion HandPreparation(float charge,float spin)=>Quaternion.Euler(
             CameraSystem.ViewmodelArms.WindupCarry*CameraSystem.ViewmodelArms.WindupRad*.5f*Mathf.Clamp01(charge)*Mathf.Rad2Deg,
             -16*spin*Mathf.Clamp01(charge),-14*spin*Mathf.Clamp01(charge));
-        public static Quaternion HandFollowThrough(float spin)=>Quaternion.Euler(48,-23+24*spin,-12+32*spin);
+        public static Quaternion HandFollowThrough(float spin)=>Quaternion.Euler(55,-26+26*spin,-13+35*spin);
         public static Quaternion ReleaseHand(Quaternion from,float seconds,float spin)
         {
             var contact=Quaternion.Euler(27,-12+14*spin,-6+14*spin);

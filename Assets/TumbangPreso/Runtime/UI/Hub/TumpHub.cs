@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TumbangPreso.InputLayer;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace TumbangPreso.UI.Hub
@@ -176,6 +177,7 @@ namespace TumbangPreso.UI.Hub
             }
             if (popup)
             {
+                screen.ReturnFocus = EventSystem.current?.currentSelectedGameObject;
                 // A popup's root is the scrim and owns a focus path of its own (HubKit.Modal).
                 var scrim = host.AddComponent<Image>();
                 scrim.color = HubStyle.Scrim;
@@ -193,6 +195,7 @@ namespace TumbangPreso.UI.Hub
                 {
                     var gone = Top;
                     _stack.RemoveAt(_stack.Count - 1);
+                    gone.gameObject.SetActive(false);
                     Destroy(gone.gameObject);
                 }
                 foreach (var below in _stack) if (!below.IsPopup) below.gameObject.SetActive(false);
@@ -222,7 +225,13 @@ namespace TumbangPreso.UI.Hub
             if(_pendingScreen!=screen)yield break;
             (_preparationWork as System.IDisposable)?.Dispose();_preparationWork=null;_preparation=null;
             _pendingScreen=null;
-            while(Top!=null&&Top.IsPopup){var gone=Top;_stack.RemoveAt(_stack.Count-1);Destroy(gone.gameObject);}
+            while (Top != null && Top.IsPopup)
+            {
+                var gone = Top;
+                _stack.RemoveAt(_stack.Count - 1);
+                gone.gameObject.SetActive(false);
+                Destroy(gone.gameObject);
+            }
             using(PrepareRevealMarker.Auto())
             {
                 foreach(var below in _stack)if(!below.IsPopup)below.gameObject.SetActive(false);
@@ -252,13 +261,20 @@ namespace TumbangPreso.UI.Hub
             CancelPreparation();
             int index = _stack.IndexOf(screen);
             if (index < 0) return;
+            var returnFocus = screen.ReturnFocus;
             for (int i = _stack.Count - 1; i >= index; i--)
             {
                 var gone = _stack[i];
                 _stack.RemoveAt(i);
-                if (gone != null) Destroy(gone.gameObject);
+                if (gone == null) continue;
+                gone.gameObject.SetActive(false);
+                Destroy(gone.gameObject);
             }
             ResumeTop();
+            if (returnFocus != null && returnFocus.TryGetComponent(out Selectable opener) &&
+                opener.isActiveAndEnabled && opener.IsInteractable() &&
+                (Top == null || !Top.IsPopup || opener.transform.IsChildOf(Top.Root)))
+                EventSystem.current?.SetSelectedGameObject(returnFocus);
         }
 
         /// <summary>Close everything above <typeparamref name="T"/>, or everything but HOME if absent.</summary>
@@ -269,6 +285,7 @@ namespace TumbangPreso.UI.Hub
             {
                 var gone = Top;
                 _stack.RemoveAt(_stack.Count - 1);
+                gone.gameObject.SetActive(false);
                 Destroy(gone.gameObject);
             }
             ResumeTop();
@@ -317,7 +334,17 @@ namespace TumbangPreso.UI.Hub
         {
             if (Canvas.TryGetComponent(out ScreenFocus canvasFocus)) canvasFocus.Rebuild();
             var top = Top;
-            if (top != null && top.TryGetComponent(out ScreenFocus popupFocus)) popupFocus.Rebuild();
+            if (top == null || !top.TryGetComponent(out ScreenFocus popupFocus)) return;
+            popupFocus.Rebuild();
+            var system = EventSystem.current;
+            if (system == null || popupFocus.Order.Count == 0) return;
+            var current = system.currentSelectedGameObject;
+            if (current != null && current.transform.IsChildOf(top.Root) &&
+                current.TryGetComponent(out Selectable selected) && selected.isActiveAndEnabled && selected.IsInteractable()) return;
+            // The underlying screen remains drawn. Give the top modal custody of Submit.
+            var first = top.FirstFocus;
+            if (first == null || !first.isActiveAndEnabled || !first.IsInteractable()) first = popupFocus.Order[0];
+            system.SetSelectedGameObject(first.gameObject);
         }
 
         /// <summary>BACK from any device. Always answers; HOME's own answer leaves to the title.</summary>

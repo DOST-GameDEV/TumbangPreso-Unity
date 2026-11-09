@@ -585,7 +585,7 @@ namespace TumbangPreso
         // § THE KNOCKDOWN POP. The can itself takes the hit: it stretches up off the impact, squashes back and
         // settles, and its rim flashes warm white for a few frames. Presentation only, on the drawn `Visual`
         // child, so the contact shape (measured once from the meshes and cached) and the physics never see it.
-        private const float KnockPopSeconds = 0.30f, KnockFlashSeconds = 0.10f;
+        private const float KnockPopSeconds = 0.36f, KnockFlashSeconds = 0.10f;
         private float _knockPopLeft, _knockFlashLeft;
         private Transform _popVisual;
         private Vector3 _popRestScale = Vector3.one;
@@ -614,8 +614,15 @@ namespace TumbangPreso
             if (_knockPopLeft <= 0.0f || _popVisual == null) return;
             _knockPopLeft = Mathf.Max(0.0f, _knockPopLeft - Time.unscaledDeltaTime);
             float u = 1.0f - _knockPopLeft / KnockPopSeconds;
-            // Up to a 26 per cent stretch on the hit, a squash under rest on the rebound, then home.
-            float stretch = Mathf.Sin(u * Mathf.PI * 2.0f) * Mathf.Exp(-u * 3.2f) * 0.26f;
+            // The hit compresses the tin during the pause. The rebound follows as the topple resumes.
+            float stretch;
+            if (u < .18f) stretch = Mathf.SmoothStep(0, -.14f, u / .18f);
+            else if (u < .47f) stretch = Mathf.SmoothStep(-.14f, .20f, Mathf.InverseLerp(.18f, .47f, u));
+            else
+            {
+                float settle = Mathf.InverseLerp(.47f, 1, u);
+                stretch = .20f * (1 - settle) * (1 - settle) * Mathf.Cos(settle * Mathf.PI * 1.5f);
+            }
             float across = 1.0f - stretch * 0.5f;
             _popVisual.localScale = Vector3.Scale(_popRestScale, new Vector3(across, 1.0f + stretch, across));
             if (_knockPopLeft <= 0.0f) _popVisual.localScale = _popRestScale;
@@ -1021,6 +1028,8 @@ namespace TumbangPreso
             _sealMaterial.SetFloat("_InkWeight", Visual.WorldCueProfile.Current.InkEffects);
         }
 
+        private bool _showingRestoreGold;
+
         private void StepStatePresentation()
         {
             if (_restoreProtectionLeft > 0.0f)
@@ -1047,6 +1056,11 @@ namespace TumbangPreso
             // beacon swept about so much. `DriveDownPulse` breathes the ring and the rim off one
             // sine and leaves the marker's own transform alone.
             DriveDownPulse();
+
+            bool gold = _isUpright && _restoreProtectionLeft > 0 && !Settings.SettingsStore.Current.ReducedEffects;
+            if (gold) SetRim(1.75f, new Color(1f, .76f, .10f));
+            else if (_showingRestoreGold && _isUpright) SetRim(0);
+            _showingRestoreGold = gold;
         }
 
         /// <summary>

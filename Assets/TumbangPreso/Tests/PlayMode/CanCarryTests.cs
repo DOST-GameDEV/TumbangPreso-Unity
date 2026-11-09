@@ -111,10 +111,45 @@ namespace TumbangPreso.PlayTests
             while (!can.IsUpright && Time.time < deadline) yield return null;
             taya.Intent.Set(Verb.Grab, false);
             Assert.IsTrue(can.IsUpright, $"Carried back and set down (phase {can.Carrying}, {Flat(taya.transform.position, mark):0.00} m from the mark).");
+            Assert.That(can.ProtectionLeft, Is.InRange(2.8f, 3f), "An accepted reset starts the three-second protection window.");
             Assert.IsFalse(can.IsCarried);
             Assert.Less(Flat(can.transform.position, mark), .05f, "It stands on its mark.");
             Assert.Less(Flat(taya.transform.position, mark), Lata.HoldReach + Lata.ArriveSlack + .1f);
             Assert.AreEqual(0, carrier.ChannelRatio, .001f);
+        }
+
+        [UnityTest] public IEnumerator DefenderHudShowsRestoreAndTimedProtectionInFirstPerson()
+        {
+            yield return Load();
+            yield return Stage(out var taya, out var can, out var mark);
+            Hud.Instance.Bind(taya);
+            var readout = Hud.Instance.GetComponent<TumpMatchReadout>();
+            var rig = Camera.main.GetComponent<CameraSystem.CameraRig>();
+            rig.Follow(taya); rig.SetAimSource(CameraSystem.AimSource.Movement);
+            taya.transform.rotation = Quaternion.LookRotation(Vector3.left);
+            var pitch = typeof(CameraSystem.CameraRig).GetField("_pitchDeg", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            pitch.SetValue(rig, 42f);
+            yield return null;
+            var prompt = System.Array.Find(readout.Canvas.GetComponentsInChildren<UnityEngine.UI.Text>(true), text => text.name == "ActionPrompt");
+            StringAssert.Contains("restore can", prompt.text.ToLowerInvariant());
+            yield return TumpUiCapture.Capture("TJ-defender-restore-refined-960x540", readout.Canvas, 960, 540,
+                checkPalette: false, includeWorld: true);
+
+            can.HostRestore();
+            taya.Teleport(mark + Vector3.right * 1.45f);
+            taya.transform.rotation = Quaternion.LookRotation(Vector3.left);
+            pitch.SetValue(rig, 28f);
+            yield return null;
+            var state = System.Array.Find(readout.Canvas.GetComponentsInChildren<UnityEngine.UI.Text>(true), text => text.name == "RoundLabel");
+            StringAssert.StartsWith("CAN PROTECTED", state.text);
+            float scale = Time.timeScale;
+            Time.timeScale = 0;
+            try
+            {
+                yield return TumpUiCapture.Capture("TJ-defender-protected-960x540", readout.Canvas, 960, 540,
+                    checkPalette: false, includeWorld: true);
+            }
+            finally { Time.timeScale = scale; }
         }
 
         [UnityTest] public IEnumerator LettingGoDropsTheCanAtTheTayasFeet()

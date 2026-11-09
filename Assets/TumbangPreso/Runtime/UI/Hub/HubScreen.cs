@@ -13,6 +13,7 @@ namespace TumbangPreso.UI.Hub
     {
         public TumpHub Hub { get; internal set; }
         public RectTransform Root { get; internal set; }
+        internal GameObject ReturnFocus { get; set; }
 
         /// <summary>A popup keeps the screen under it drawn and dimmed; a screen replaces it.</summary>
         public virtual bool IsPopup => false;

@@ -110,6 +110,15 @@ namespace TumbangPreso.PlayTests
             can.ApplySnapshotState(at, Quaternion.identity, true, 0);
             can.ApplySnapshotState(at, Quaternion.identity, true, 0);
             Assert.AreEqual(1, Object.FindObjectsByType<CanContactAccent>().Length);
+            Assert.That(can.ProtectionLeft, Is.EqualTo(3f).Within(.001f), "A client sees the same restoration window.");
+            yield return null;
+            if (!SettingsStore.Current.ReducedEffects)
+            {
+                var block = new MaterialPropertyBlock();
+                can.transform.Find("Visual").GetComponentInChildren<Renderer>().GetPropertyBlock(block);
+                Assert.Greater(block.GetFloat("_RimStrength"), 0, "The protected can needs a visible rim.");
+                Assert.That(block.GetColor("_RimColor").g, Is.GreaterThan(.65f), "Protection uses gold instead of the downed can's red rim.");
+            }
             yield return new WaitForSecondsRealtime(.45f);
             SettingsStore.Current.FlashIntensity = 0;
             can.ApplySnapshotState(at, Quaternion.identity, false, 0);

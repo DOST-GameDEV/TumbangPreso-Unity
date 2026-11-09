@@ -25,11 +25,11 @@ namespace TumbangPreso.Core.Tests
         private const float Tol = 0.001f;
 
         [Fact]
-        public void LeavingTheCanDownCostsTheTayaAfterFiveSeconds()
+        public void LeavingTheCanDownCostsTheTayaAfterSevenSeconds()
         {
             Assert.Equal(-5, MatchRules.PointsFor(ScoreEvent.CanDownPenalty));
-            Assert.False(TournamentRules.IsCanDownPenalty(4.9f));
-            Assert.True(TournamentRules.IsCanDownPenalty(5.0f));
+            Assert.False(TournamentRules.IsCanDownPenalty(6.9f));
+            Assert.True(TournamentRules.IsCanDownPenalty(7.0f));
             Assert.True(TournamentRules.IsCanDownWarning(2.5f));
             Assert.False(MatchRules.IsChainBonus(ScoreEvent.CanDownPenalty));
             Assert.Equal((int)ScoreEvent.MultiCatch + 1, (int)ScoreEvent.CanDownPenalty); // appended for the wire
