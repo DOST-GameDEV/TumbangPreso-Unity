@@ -30,7 +30,7 @@ namespace TumbangPreso.CameraSystem
         /// <summary>How far from the eye, in the view model's space, the gripping fists are drawn.</summary>
         public const float GripDepth = 1.22f;
         /// <summary>
-        /// How far either side of the can's middle each fist is drawn, in the view model's space. The can is small on
+        /// Nominal spread either side of the can's middle, in the view model's space. The can is small on
         /// screen and a fist is wide: put on its true sides the two fists met in the middle and hid it (Logs/fpp-1023/after1),
         /// so they close on it from either side and leave it showing between them.
         /// </summary>
@@ -72,14 +72,12 @@ namespace TumbangPreso.CameraSystem
             //  * through the lift they draw it in toward the body and lag a little under it;
             //  * the press drives down harder with a thump in the view, and on letting go they spring open off the can.
             float close = Mathf.SmoothStep(0, 1, Mathf.InverseLerp(.08f, .28f, p));
-            float rise = Visual.CanRaiseShape.Rise(p);
-            float effort = Mathf.Sin(rise * Mathf.PI);
             float letGo = ratio > 0 ? 0 : 1 - k;
             if (ratio > 0)
             {
                 var rig = GetComponentInParent<CameraRig>();
                 if (_raiseLastShape < .28f && p >= .28f) rig?.ViewPunch(new Vector3(1.4f, 0, 0), -1.5f);
-                if (_raiseLastShape < .9f && p >= .9f) { rig?.ViewPunch(new Vector3(3.2f, 0, -1.6f), -4f); InputLayer.Rumble.Pulse(.3f, .5f, .1f); }
+                if (_raiseLastShape < .975f && p >= .975f) { rig?.ViewPunch(new Vector3(2.8f, 0, -.6f), -2f); InputLayer.Rumble.Pulse(.3f, .5f, .08f); }
             }
             _raiseLastShape = ratio;
 
@@ -87,9 +85,9 @@ namespace TumbangPreso.CameraSystem
             if (TryCanGrip(out rightFist, out leftFist))
             {
                 float spread = (1 - close) * .24f + letGo * .3f;
-                Vector3 toBody = new Vector3(0, -.05f * effort, -.14f * rise) + Vector3.up * (letGo * .12f);
-                rightFist += Vector3.right * spread + toBody + Vector3.down * (.09f * press);
-                leftFist += Vector3.left * spread + toBody + Vector3.down * (.09f * press);
+                Vector3 reach = Vector3.up * (letGo * .12f - (1 - close) * .08f - .025f * press);
+                rightFist += Vector3.right * spread + reach;
+                leftFist += Vector3.left * spread + reach;
             }
             else
             {
@@ -126,9 +124,16 @@ namespace TumbangPreso.CameraSystem
             var eye = _viewCamera != null ? _viewCamera : GetComponentInParent<Camera>();
             if (!any || eye == null) return false;
             Vector3 origin = DrawnFromWorld(eye.transform.position);
-            Vector3 ray = DrawnFromWorld(box.center) - origin;
-            Vector3 middle = origin + (ray.sqrMagnitude > 1e-6f ? ray.normalized : Vector3.forward) * GripDepth;
-            right = middle + Vector3.right * GripSpread; left = middle - Vector3.right * GripSpread;
+            Vector3 drawnCentre = DrawnFromWorld(box.center);
+            Vector3 ray = drawnCentre - origin;
+            float distance = ray.magnitude;
+            Vector3 middle = origin + (distance > .001f ? ray / distance : Vector3.forward) * GripDepth;
+            Vector3 side = eye.transform.right;
+            Vector3 extent = box.extents;
+            float worldHalfWidth = Mathf.Abs(side.x) * extent.x + Mathf.Abs(side.y) * extent.y + Mathf.Abs(side.z) * extent.z;
+            float drawnHalfWidth = Mathf.Abs((DrawnFromWorld(box.center + side * worldHalfWidth) - drawnCentre).x);
+            float spread = Mathf.Clamp(.08f + drawnHalfWidth * GripDepth / Mathf.Max(.1f, distance), GripSpread - .1f, GripSpread + .12f);
+            right = middle + Vector3.right * spread; left = middle - Vector3.right * spread;
             return true;
         }
     }

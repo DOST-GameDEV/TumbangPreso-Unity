@@ -1057,8 +1057,21 @@ namespace TumbangPreso
             // sine and leaves the marker's own transform alone.
             DriveDownPulse();
 
-            bool gold = _isUpright && _restoreProtectionLeft > 0 && !Settings.SettingsStore.Current.ReducedEffects;
-            if (gold) SetRim(1.75f, new Color(1f, .76f, .10f));
+            var settings = Settings.SettingsStore.Current;
+            bool gold = _isUpright && _restoreProtectionLeft > 0 && !settings.ReducedEffects;
+            if (gold)
+            {
+                float intensity = 1.75f;
+                if (_restoreProtectionLeft < 1 && !settings.ReducedUiMotion)
+                {
+                    float elapsed = 1 - _restoreProtectionLeft;
+                    // A continuous phase ramps the last second from two to five pulses per second.
+                    float cycles = 2 * elapsed + 1.5f * elapsed * elapsed;
+                    float trough = .5f * (1 - Mathf.Cos(2 * Mathf.PI * cycles));
+                    intensity *= 1 - .58f * settings.EffectiveFlashIntensity * trough;
+                }
+                SetRim(intensity, new Color(1f, .76f, .10f));
+            }
             else if (_showingRestoreGold && _isUpright) SetRim(0);
             _showingRestoreGold = gold;
         }

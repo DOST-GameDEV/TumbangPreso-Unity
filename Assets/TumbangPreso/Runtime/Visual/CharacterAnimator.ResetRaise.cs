@@ -39,22 +39,19 @@ namespace TumbangPreso.Visual
     /// </summary>
     public static class CanRaiseShape
     {
-        public const float CrouchSpreadDegrees = 24f;
+        public const float CrouchSpreadDegrees = 31f;
         /// <summary>How far the first-person eye drops at the bottom of the bend, metres.</summary>
-        public const float FppEyeDrop = .17f;
+        public const float FppEyeDrop = .25f;
         /// <summary>How far the first-person eye leans out over the can at the bottom of the bend, metres.</summary>
         public const float FppLean = .10f;
         /// <summary>How far the first-person view tips down toward the can at the bottom, degrees.</summary>
-        public const float FppLookDown = 24f;
+        public const float FppLookDown = 30f;
 
         /// <summary>
-        /// The first-person bend (owner, 2026-10-23: *"feels like im js wobbing my can and i js did a quick squat"*). The
-        /// body's <see cref="Crouch"/> is a quick drop then an early rise, which read from the eyes as a bob while the hands
-        /// floated. From the eyes the bend is slower (in over the first quarter), shallower (17 cm, was 34), leans out over
-        /// the can and looks down at it, and HOLDS while the hands stand it up, straightening only as the can seats.
+        /// The eyes go down with the grip, rise with the can, and lean over the mark for the plant.
         /// </summary>
-        public static float FppBend(float p) =>
-            Mathf.SmoothStep(0, 1, Mathf.InverseLerp(0f, .26f, p)) * (1f - Mathf.SmoothStep(0, 1, Mathf.InverseLerp(.78f, 1f, p)));
+        public static float FppBend(float p) => p >= .85f ? .62f * Press(p)
+            : Mathf.SmoothStep(0, 1, Mathf.InverseLerp(0, .23f, p)) * (1 - Rise(p));
 
         public static float Crouch(float p) =>
             Mathf.SmoothStep(0, 1, Mathf.InverseLerp(0f, .18f, p)) * (1f - Mathf.SmoothStep(0, 1, Mathf.InverseLerp(.30f, .85f, p)));
@@ -161,7 +158,8 @@ namespace TumbangPreso.Visual
             float bow = Mathf.Lerp(30, 12, rise) + 12 * crouch + 10 * press;
             if (pickup) bow = 46 * crouch;
             // Hands on the can: down at the road in the squat, lifting with it, pushed down in the press.
-            float handY = Mathf.Lerp(-.62f, -.30f, rise) - .25f * press;
+            float handY = pickup ? Mathf.Lerp(-.62f, -.30f, rise)
+                : Mathf.Lerp(-.55f, -.24f, rise) - .22f * press;
             var hand = new Vector3(.12f, handY, Mathf.Lerp(.58f, .86f, rise));
 
             float w = _raiseWeight;

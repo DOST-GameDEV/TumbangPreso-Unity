@@ -1,9 +1,10 @@
 # Current checkpoint
 
-TJ-CADENA-1109, `tj-cadena-fixes`: throw arc, seven-second grace, three-second
-gold protection and clearer defender/shop/Hero UI. Core 1/1, Edit 5/5, eight
-exact Play cases passed across focused runs. Logs/tj-cadena-fixes/ and native
-TJ captures in Logs/shots-native-ui/. Next: build and owner feel review.
+TJ-CADENA-1109, `tj-cadena-fixes`: throw arc, seven-second grace, four-second
+gold protection with a faster final pulse, clearer UI and a refined can raise.
+Core 1/1, Edit 5/5, nine exact Play cases passed across focused runs.
+Logs/tj-cadena-fixes/ and native TJ captures in Logs/shots-native-ui/.
+Next: build and owner feel review.
 Actual peer and physical controller checks remain open.
 
 CONTROLLER-NATIVE-1107, main: native DualSense/Edge HID reports reach the current

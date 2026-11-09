@@ -110,14 +110,43 @@ namespace TumbangPreso.PlayTests
             can.ApplySnapshotState(at, Quaternion.identity, true, 0);
             can.ApplySnapshotState(at, Quaternion.identity, true, 0);
             Assert.AreEqual(1, Object.FindObjectsByType<CanContactAccent>().Length);
-            Assert.That(can.ProtectionLeft, Is.EqualTo(3f).Within(.001f), "A client sees the same restoration window.");
+            Assert.That(can.ProtectionLeft, Is.EqualTo(4f).Within(.001f), "A client sees the same restoration window.");
             yield return null;
             if (!SettingsStore.Current.ReducedEffects)
             {
                 var block = new MaterialPropertyBlock();
-                can.transform.Find("Visual").GetComponentInChildren<Renderer>().GetPropertyBlock(block);
-                Assert.Greater(block.GetFloat("_RimStrength"), 0, "The protected can needs a visible rim.");
+                var skin = can.transform.Find("Visual").GetComponentInChildren<Renderer>();
+                skin.GetPropertyBlock(block);
+                float steady = block.GetFloat("_RimStrength");
+                Assert.Greater(steady, 0, "The protected can needs a visible rim.");
                 Assert.That(block.GetColor("_RimColor").g, Is.GreaterThan(.65f), "Protection uses gold instead of the downed can's red rim.");
+                var clock = typeof(Lata).GetField("_restoreProtectionLeft", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                bool reducedMotion = SettingsStore.Current.ReducedUiMotion;
+                try
+                {
+                    SettingsStore.Current.ReducedUiMotion = false;
+                    float dimmest = steady, brightest = 0;
+                    for (int i = 0; i < 12; i++)
+                    {
+                        clock.SetValue(can, .98f - i * .075f);
+                        yield return null;
+                        skin.GetPropertyBlock(block);
+                        float rim = block.GetFloat("_RimStrength");
+                        dimmest = Mathf.Min(dimmest, rim); brightest = Mathf.Max(brightest, rim);
+                    }
+                    Assert.Greater(dimmest, 0, "The can is still visibly protected between pulses.");
+                    Assert.Greater(brightest - dimmest, .3f, "The last second must visibly pulse.");
+                    SettingsStore.Current.ReducedUiMotion = true;
+                    clock.SetValue(can, .53f);
+                    yield return null;
+                    skin.GetPropertyBlock(block);
+                    Assert.That(block.GetFloat("_RimStrength"), Is.EqualTo(steady).Within(.001f));
+                    clock.SetValue(can, 0f);
+                    yield return null;
+                    skin.GetPropertyBlock(block);
+                    Assert.AreEqual(0, block.GetFloat("_RimStrength"), "Protection ends on the actual clock edge.");
+                }
+                finally { SettingsStore.Current.ReducedUiMotion = reducedMotion; }
             }
             yield return new WaitForSecondsRealtime(.45f);
             SettingsStore.Current.FlashIntensity = 0;

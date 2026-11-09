@@ -65,7 +65,7 @@ namespace TumbangPreso.Core
         public const float DefenseTickInterval = 1.0f;
         public const float TagStunTime = 5.0f;
         public const float SabotageWindow = 2.5f;
-        public const float ThrowRestoreCooldown = 3.0f;
+        public const float ThrowRestoreCooldown = 4.0f;
         public const float ThrowChargeResetTime = .5f;
 
         // Tournament Anti-Camping & Anti-Stall Penalties

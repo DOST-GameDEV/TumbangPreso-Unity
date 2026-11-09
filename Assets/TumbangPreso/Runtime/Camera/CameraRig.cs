@@ -1029,7 +1029,7 @@ namespace TumbangPreso.CameraSystem
             if (ratio > 0)
             {
                 float want = carrier.IsCarryWalking ? 0f : Visual.CanRaiseShape.FppBend(ratio);
-                _fppSquatShape = Mathf.MoveTowards(_fppSquatShape, want, Time.deltaTime / .18f);
+                _fppSquatShape = Mathf.MoveTowards(_fppSquatShape, want, Time.deltaTime / .10f);
             }
             return Mathf.SmoothStep(0f, 1f, _fppSquatBlend) * _fppSquatShape;
         }
