@@ -521,7 +521,7 @@ namespace TumbangPreso.UI
                     BindingPrompt("SpecialAbility", "Tag attacker");
                     if (Hud.OnTouch) TouchHud.Emphasise(Verb.SpecialAbility);
                 }
-                else _prompt.text = "Cover a way out";
+                else if (!can.HasRestoreProtection) _prompt.text = "Cover a way out";
                 return;
             }
 
@@ -536,7 +536,13 @@ namespace TumbangPreso.UI
             if (carrier != null && carrier.ChannelRatio > 0)
             {
                 bool toggle = Settings.SettingsStore.Current.ToggleRestore;
-                _prompt.text = carrier.IsCarryWalking ? "Returning the can" : "Restoring the can";
+                _prompt.text = can.Carrying switch
+                {
+                    Lata.CarryPhase.Pickup => "Lifting the can",
+                    Lata.CarryPhase.Carry => "Carrying to the mark",
+                    Lata.CarryPhase.SetDown => "Setting it down",
+                    _ => "Restoring the can"
+                };
                 if (toggle) _context.text = Hud.OnTouch ? "Tap to cancel" : Hud.PressCue("Grab") + "Cancel";
                 if (Hud.OnTouch) TouchHud.Emphasise(Verb.Grab);
                 Progress(carrier.ChannelRatio);

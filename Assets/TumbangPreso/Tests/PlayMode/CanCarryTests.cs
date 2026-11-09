@@ -135,7 +135,17 @@ namespace TumbangPreso.PlayTests
             yield return TumpUiCapture.Capture("TJ-defender-restore-refined-960x540", readout.Canvas, 960, 540,
                 checkPalette: false, includeWorld: true);
 
-            can.HostRestore();
+            taya.Intent.Set(Verb.Grab, true);
+            var prompts = new System.Collections.Generic.HashSet<string>();
+            float deadline = Time.time + 4f;
+            while (!can.IsUpright && Time.time < deadline)
+            {
+                prompts.Add(prompt.text);
+                yield return null;
+            }
+            taya.Intent.Set(Verb.Grab, false);
+            Assert.IsTrue(can.IsUpright, "The real hold-to-restore action should set the can back down.");
+            CollectionAssert.IsSubsetOf(new[] { "Lifting the can", "Carrying to the mark", "Setting it down" }, prompts);
             taya.Teleport(mark + Vector3.right * 1.45f);
             taya.transform.rotation = Quaternion.LookRotation(Vector3.left);
             pitch.SetValue(rig, 28f);

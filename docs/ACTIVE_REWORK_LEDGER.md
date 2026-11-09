@@ -5,7 +5,9 @@ gold protection with a faster final pulse, clearer UI and a refined can raise.
 Core 1/1, Edit 5/5, nine exact Play cases passed across focused runs.
 Logs/tj-cadena-fixes/ and native TJ captures in Logs/shots-native-ui/.
 Player `efc0a5ff5` built and opened. Logs/windows-build-20261109-181212/job.json.
-Next: owner feel review.
+Owner follow-up: [TJ review ledger](TJ_CADENA_REVIEW_LEDGER.md).
+Slipper rebound fixed, six persistent chalk marks, one results board and
+visible Home shadows. Exact recheck 9/9, final rendered recheck 5/5.
 Actual peer and physical controller checks remain open.
 
 CONTROLLER-NATIVE-1107, main: native DualSense/Edge HID reports reach the current

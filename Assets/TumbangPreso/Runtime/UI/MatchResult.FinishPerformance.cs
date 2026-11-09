@@ -7,7 +7,6 @@ namespace TumbangPreso.UI
     {
         private ModelPreview _finishPreview;
         private FinishCelebration _finishCelebration;
-        private Text _finishCaption;
         private RectTransform _finishFigure;
         private TumpSymbol _finishDraw;
         private float _finishEntered;
@@ -17,16 +16,16 @@ namespace TumbangPreso.UI
 
         private void BuildFinishFigure(RectTransform parent)
         {
-            var badge=OwnerUiLayout.Rect(parent,"WinnerBanner");OwnerUiLayout.Place(badge,1190,-6,530,70);
-            var brush=badge.gameObject.AddComponent<CourtPopupGraphic>();brush.Brush=true;brush.color=CourtPresentationPalette.Red;brush.raycastTarget=false;
-            _finishCaption=OwnerUiLayout.Text(badge,"WinnerCaption","WINNER",34,OwnerUiLayout.TypeRole.Display);
-            OwnerUiLayout.Fill(_finishCaption.rectTransform);_finishCaption.alignment=TextAnchor.MiddleCenter;_finishCaption.color=CourtPresentationPalette.Paper;
-            _finishFigure=OwnerUiLayout.Rect(parent,"WinnerFigure");OwnerUiLayout.Place(_finishFigure,1180,62,550,434);
+            var stage = OwnerUiLayout.Rect(parent, "WinnerStage").gameObject.AddComponent<HudCard>();
+            OwnerUiLayout.Place(stage.rectTransform, 1146, 0, 566, 469);
+            stage.Glass(SheetCard, slant: 0, radius: 16);
+            stage.raycastTarget = false;
+            _finishFigure=OwnerUiLayout.Rect(stage.transform,"WinnerFigure");OwnerUiLayout.Place(_finishFigure,10,6,546,457);
             _finishPreview=_finishFigure.gameObject.AddComponent<ModelPreview>();_finishPreview.Attach(_finishFigure);
             _finishCelebration=_finishFigure.gameObject.AddComponent<FinishCelebration>();
-            _finishDraw=OwnerUiLayout.Rect(parent,"DrawCan").gameObject.AddComponent<TumpSymbol>();
-            OwnerUiLayout.Place(_finishDraw.rectTransform,1340,150,240,260);_finishDraw.Kind=TumpSymbol.Icon.Can;
-            _finishDraw.color=CourtPresentationPalette.Red;_finishDraw.raycastTarget=false;_finishDraw.gameObject.SetActive(false);
+            _finishDraw=OwnerUiLayout.Rect(stage.transform,"DrawCan").gameObject.AddComponent<TumpSymbol>();
+            OwnerUiLayout.Place(_finishDraw.rectTransform,163,104,240,260);_finishDraw.Kind=TumpSymbol.Icon.Can;
+            _finishDraw.color=LiveHud.Cream;_finishDraw.raycastTarget=false;_finishDraw.gameObject.SetActive(false);
         }
 
         private void PresentFinishPerformance(int winner)
@@ -35,14 +34,13 @@ namespace TumbangPreso.UI
             _finishEntered=Time.unscaledTime;
             bool hasWinner=winner>=0&&GameServices.Round?.PlayerAt(winner)!=null;
             _finishFigure.gameObject.SetActive(hasWinner);_finishDraw.gameObject.SetActive(!hasWinner);
-            _finishCaption.text=hasWinner?"MATCH WINNER":"EVEN AT THE TOP";
             if(hasWinner)
             {
                 var actor=GameServices.Round.PlayerAt(winner);var visual=actor.GetComponent<Visual.CharacterVisual>();
                 var art=RosterBook.Load().PersonArt(actor.CharacterIndex,actor.Mode);
                 _finishPreview.Show(visual!=null&&visual.SourceModel!=null?visual.SourceModel:art.Model,
                     art.Clips,visual!=null?visual.AppliedPalette:art.Palette,art.PetModel);
-                _finishPreview.CentreSubject();_finishPreview.SetTileFraming(.94f);_finishCelebration.Bind(_finishPreview);
+                _finishPreview.CentreSubject();_finishPreview.SetTileFraming(.82f);_finishCelebration.Bind(_finishPreview);
             }
             // VISUAL-1.16: the bar's chips grown. The winner is a gold border and a crown, not a
             // deep-red ticket (red means "something is wrong"); you are the gold underline.
@@ -51,12 +49,13 @@ namespace TumbangPreso.UI
             for(int i=0;i<4;i++)
             {
                 bool best=hasWinner&&order[i]==winner;
-                _finishTickets[i].Style(SheetCard,best?CourtPresentationPalette.Gold:Color.clear,best?5:0,
-                    order[i]==mine?CourtPresentationPalette.Gold:Color.clear,order[i]==mine?5:0);
+                _finishTickets[i].Style(SheetCard,best?CourtPresentationPalette.Gold:HudDraw.GlassEdge,best?3:1.5f,
+                    order[i]==mine?CourtPresentationPalette.Gold:Color.clear,order[i]==mine?4:0);
                 if(_finishSwatches[i]!=null)_finishSwatches[i].color=PlayerIdentity.Colour(order[i]);
                 if(_finishCrowns[i]!=null)_finishCrowns[i].Show(best?HudBadge.Glyph.Crown:HudBadge.Glyph.None,CourtPresentationPalette.Gold,Color.clear);
-                foreach(var cell in _rows[i])cell.color=HudDraw.CardInk;
+                foreach(var cell in _rows[i])cell.color=LiveHud.Cream;
                 _rows[i][1].text=SeatLabel.WithIdentity(order[i]);
+                TumbangPreso.UI.Hub.HubKit.Fit(_rows[i][1], 558f);
             }
             PaintAccolades(GameServices.Stats?.Last);
             TickFinishPerformance();

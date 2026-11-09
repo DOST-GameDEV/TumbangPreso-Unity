@@ -219,23 +219,6 @@ namespace TumbangPreso.PlayTests
             var board = _host.AddComponent<MatchResult>();
             yield return null;
 
-            // The caption is a reader of observed moments, with no career write.
-            var moments = Diagnostics.MatchHighlights.Log;
-            moments.Clear();
-            var showMoment=typeof(MatchResult).GetMethod("ShowMatchMoment",BindingFlags.Instance|BindingFlags.NonPublic);
-            var caption=(UnityEngine.UI.Text)typeof(MatchResult).GetField("_highlightLine",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(board);
-            showMoment.Invoke(board,null);
-            Assert.IsFalse(caption.gameObject.activeSelf);
-            var best=new HighlightMarker(HighlightKind.BankShot,12,1,1,-1,0,1);
-            moments.Add(best);
-            moments.Add(new HighlightMarker(HighlightKind.Tag,15,1,0,1,0,.5f));
-            showMoment.Invoke(board,null);
-            Assert.IsTrue(caption.gameObject.activeSelf);
-            StringAssert.Contains(HighlightRules.Describe(best),caption.text);
-            moments.Clear();
-            showMoment.Invoke(board,null);
-            Assert.IsFalse(caption.gameObject.activeSelf,"A rematch must not display the preceding match's moment.");
-
             var (profile, record, line) = LevelUpFixture();
             var award = ProgressionRules.Award(profile, record, line);
             Assert.IsNotNull(award, "ProgressionRules.Award paid nothing for a clean winning match");
@@ -271,25 +254,9 @@ namespace TumbangPreso.PlayTests
             Raise(canvas);
             yield return null;
 
-            // ⚠️⚠️ THE XP BLOCK IS ON THE SECOND PAGE AND THE SHEET OPENS ON THE FIRST, SO
-            // RAISING THE CANVAS IS NOT ENOUGH. The painted board is three tabbed pages
-            // (STANDINGS, YOUR MATCH, PLAYERS) and `BuildNativeResult` finishes on `NativePage(0)`.
-            // `ShowProgression` still activates the headline itself, so an `activeSelf` assertion
-            // passes while every rect under the hidden page measures ZERO WIDTH and the layout
-            // measurement below proves nothing. **Pressed rather than reflected**: the tab is the
-            // door a player has, and driving it also proves the door still works.
-            var yourMatch = Find(canvas, "ResultTab1");
-            Assert.IsNotNull(yourMatch, "the results board has no YOUR MATCH tab, so the XP block " +
-                "has no door. MatchResult.FinishSheet.cs builds ResultTab0..2.");
-            yourMatch.GetComponent<Button>().onClick.Invoke();
-            for (int i = 0; i < 3; i++) yield return null;
-
-            // ⚠️ `EarnedXp` AND `XpTrack`, NOT `XpHeadline` AND `XpBar`. The painted finish sheet
-            // renamed both; the legacy names still exist in `MatchResult.cs` on the branch
-            // `BuildLegacyReference` owns, which nothing calls.
             var headline = Find(canvas, "EarnedXp") ?? Find(canvas, "XpHeadline");
             Assert.IsNotNull(headline, "the XP block has no headline");
-            Assert.IsTrue(headline.gameObject.activeSelf,
+            Assert.IsTrue(headline.gameObject.activeInHierarchy,
                 "ShowProgression was given a real award and left the XP block hidden");
             Assert.IsNotEmpty(headline.GetComponent<Text>().text,
                 "the XP headline is active and empty");
@@ -304,12 +271,7 @@ namespace TumbangPreso.PlayTests
                 Assert.Greater(measured, 0,
                     $"{name}: the results board drew no labels, so this proves nothing");
 
-                // ⚠️ THE BAR IS ASSERTED SEPARATELY FROM THE LABELS. It is an Image, so no
-                // amount of text measurement can see it running off the card, and a progress bar
-                // that is off screen is the one part of this block a player actually looks at.
-                var bar = Find(canvas, "XpTrack") ?? Find(canvas, "XpBar");
-                Assert.IsNotNull(bar, "the XP block has no bar");
-                AssertInside((RectTransform)canvas, (RectTransform)bar.transform, name, "the XP bar");
+                AssertInside((RectTransform)canvas, (RectTransform)headline.transform, name, "earned XP");
 
                 report.AppendLine($"{name,-14} {w}x{h}  xp block ok, {measured} labels");
             }

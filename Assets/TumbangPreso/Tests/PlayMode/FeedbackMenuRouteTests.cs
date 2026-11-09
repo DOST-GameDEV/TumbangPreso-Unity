@@ -32,6 +32,9 @@ namespace TumbangPreso.PlayTests
             var hub = TumpHub.Current;
             Assert.IsNotNull(hub);
             Assert.IsInstanceOf<HubHome>(hub.Top);
+            yield return new WaitForSecondsRealtime(.55f);
+            yield return TumpUiCapture.Capture("TJ-home-sticker-shadows-1280x720", hub.Canvas, 1280, 720,
+                checkPalette: false, checkActionBounds: true);
             var events = UnityEngine.EventSystems.EventSystem.current;
             var module = events.GetComponent<UnityEngine.InputSystem.UI.InputSystemUIInputModule>();
             var opener = GameObject.Find("ShopButton");

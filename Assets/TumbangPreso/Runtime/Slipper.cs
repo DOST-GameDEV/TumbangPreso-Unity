@@ -183,7 +183,7 @@ namespace TumbangPreso
             State = next;
             // HostGrab captures eligibility first; other Held routes consume it without a reward.
             if (next == SlipperState.Held) ClearRetrievalEpisode();
-            if (next != SlipperState.InFlight) { _skimLeft = 0; _skimStarted = false; }
+            if (next != SlipperState.InFlight) { _skimLeft = 0; _skimStarted = false; _canContact = null; }
             if (next != SlipperState.InFlight && _motionAccent != null) _motionAccent.ClearFlight();
             if (next != SlipperState.Loose) SetLandedHighlight(false);
             if (changed) RefreshBeam();
@@ -202,6 +202,7 @@ namespace TumbangPreso
         /// </summary>
         public Vector3 Velocity => _velocity;
         private float _flightTime;
+        private Lata _canContact;
 
         /// <summary>Time in the air since the throw, which a deflect deliberately does NOT
         /// reset. See <see cref="Balance.MaxAirborneTime"/>.</summary>
@@ -1272,6 +1273,7 @@ namespace TumbangPreso
             _bankCreditLimit = Balance.MaxScoringBanks;
             PektusSpin = Mathf.Clamp(pektusSpin, -Balance.MaxPektusSpin, Balance.MaxPektusSpin);
             _bankCount = 0;
+            _canContact = null;
             _airborneTotal = 0.0f;
             _closestCanFlat = float.PositiveInfinity;
             _nearMissReported = false;
@@ -1506,23 +1508,28 @@ namespace TumbangPreso
                 }
             }
 
-            // The can next: it is the thing being aimed at.
-            if (round?.Lata != null && round.Lata.gameObject.activeInHierarchy
-                && round.Lata.IsUpright && round.Lata.Connects(transform.position))
+            // Leaving the top of the can is still part of the same encounter.
+            // A nearly vertical rebound must be able to fall back to the street.
+            var can = round?.Lata;
+            if (_canContact != null && (_canContact != can || !_canContact.InContactFootprint(transform.position)))
+                _canContact = null;
+            if (can != null && can != _canContact && can.gameObject.activeInHierarchy
+                && can.IsUpright && can.Connects(transform.position))
             {
-                int before = round.Lata.HostKnockdownSerial;
+                _canContact = can;
+                int before = can.HostKnockdownSerial;
                 bool molten = Affinity == SlipperAffinity.FireExplosive;
                 Vector3 struck = _velocity;
                 TriggerAffinityImpact();
-                round.Lata.HostKnockDown(_throwerSlot);
+                can.HostKnockDown(_throwerSlot);
                 // Sean's MOLTEN THROW: a can it knocks over is blasted along the throw and lands hot.
-                if (molten && round.Lata.HostKnockdownSerial > before) round.Lata.HostMoltenHit(struck);
-                FinishChain(_throwerSlot >= 0 && round.Lata.HostKnockdownSerial > before
+                if (molten && can.HostKnockdownSerial > before) can.HostMoltenHit(struck);
+                FinishChain(_throwerSlot >= 0 && can.HostKnockdownSerial > before
                     ? ThrowChainEnd.Hit : ThrowChainEnd.Miss);
                 // REBOUND belongs to the shared can that was hit, never the thrower's
                 // own loadout. Host-owned velocity already replicates to every peer.
                 // The restore shield still returns the shoe without awarding a hit.
-                float rebound = Roster.CanReboundScale(round.Lata.SkinIndex);
+                float rebound = Roster.CanReboundScale(can.SkinIndex);
                 Deflect(-_velocity * Balance.LataRecoilScale * rebound,
                         Balance.LataRecoilLiftScale * rebound);
                 KeepAboveFloor(prevPos);

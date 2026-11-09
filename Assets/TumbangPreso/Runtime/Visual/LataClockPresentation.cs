@@ -84,6 +84,7 @@ namespace TumbangPreso.Visual
             }
             ReadLive(out float restore,out float protection);
             Draw(_lata.transform.position,_lata.transform.rotation,restore,protection);
+            if (_lata.IsCarried || _lata.HasRestoreProtection) _ring.enabled = false;
         }
         private void ReadLive(out float restore,out float protection)
         {

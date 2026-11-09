@@ -19,10 +19,10 @@ namespace TumbangPreso.PlayTests
         [UnitySetUp] public IEnumerator Before() => PlayModeWorld.Reset();
         [UnityTearDown] public IEnumerator After() => PlayModeWorld.Reset();
         [UnityTest]
-        public IEnumerator ResultsKeepStandingsPlayersMapChoiceAndRealRematch()
+        public IEnumerator ResultsKeepScoresMapChoiceAndRealRematch()
             => ReviewResults(GameMode.Classic);
         [UnityTest]
-        public IEnumerator HeroResultsKeepStandingsPlayersMapChoiceAndRealRematch()
+        public IEnumerator HeroResultsKeepScoresMapChoiceAndRealRematch()
             => ReviewResults(GameMode.HeroStrike);
         [UnityTest, Timeout(90000)]
         public IEnumerator RealMatchEndParksTouchAndLeavesOverlayResultActionsHittable()
@@ -99,6 +99,7 @@ namespace TumbangPreso.PlayTests
                 Assert.IsTrue(touch.Canvas.enabled, "Touch controls were not visible during the live round.");
                 Assert.IsFalse(result.IsVisible);
 
+                match.AddScore(local.PlayerSlot, ScoreEvent.LataKnocked);
                 GameServices.Round.EndRound();
                 match.BeginIntermission();
                 yield return null;
@@ -131,8 +132,7 @@ namespace TumbangPreso.PlayTests
                 var system = EventSystem.current;
                 Assert.IsNotNull(system);
                 Canvas.ForceUpdateCanvases();
-                foreach (string name in new[] { "ResultTab0", "ResultTab1", "ResultTab2",
-                    "ResultRematch", "ResultNextMap", "ResultMainMenu" })
+                foreach (string name in new[] { "ResultRematch", "ResultNextMap", "ResultMainMenu" })
                 {
                     var button = Find(name);
                     var rect = ScreenFocus.HitRectOf(button);
@@ -146,6 +146,12 @@ namespace TumbangPreso.PlayTests
                     Assert.IsFalse(hits.Any(hit => hit.gameObject.transform.IsChildOf(touch.Canvas.transform)),
                         name + " still raycast through the disabled touch canvas.");
                 }
+                Assert.IsFalse(resultCanvas.rootCanvas.transform.Cast<Transform>().Any(layer =>
+                    layer != resultCanvas.transform && layer.gameObject.activeSelf),
+                    "The live HUD should be hidden under results.");
+                yield return new WaitForSecondsRealtime(.5f);
+                yield return TumpUiCapture.Capture("TJ-real-match-end-1280x720", resultCanvas.rootCanvas, 1280, 720,
+                    checkPalette: false, includeWorld: true, checkActionBounds: true);
             }
             finally
             {
@@ -226,37 +232,31 @@ namespace TumbangPreso.PlayTests
 
         private static IEnumerator ReviewResults(GameMode mode)
         {
-            SceneFlow.Networked = false; SceneFlow.SetSelectedRules(CustomGameRules.Defaults(mode));
-            yield return SceneManager.LoadSceneAsync("Eskinita"); yield return new WaitForSecondsRealtime(.4f);
+            SceneFlow.Networked = false; SceneFlow.SelectedMap = SceneFlow.Eskinita;
+            yield return MapRetrievalProbe.Load(SceneFlow.Eskinita, mode, skipReadyArrival: true);
             var result = Object.FindFirstObjectByType<MatchResult>(); Assert.IsNotNull(result);
-            result.OnMatchWon(-1); yield return null;
+            result.OnMatchWon(-1); yield return new WaitForSecondsRealtime(.5f);
             var canvas = GameObject.Find("OwnerResultCanvas").GetComponent<Canvas>();
             Assert.IsEmpty(canvas.GetComponentsInChildren<PaperSkin>(true));
             Assert.AreEqual(4, canvas.GetComponentsInChildren<Image>().Count(i => i.name.StartsWith("FinisherPortrait") && i.enabled && i.sprite != null));
             Assert.That(canvas.GetComponentsInChildren<Text>().First(t => t.name == "ResultHeadline").text, Does.Contain("draw"));
+            Assert.IsFalse(canvas.GetComponentsInChildren<Button>(true).Any(button => button.name.StartsWith("ResultTab")));
+            Assert.AreEqual(4, canvas.GetComponentsInChildren<Text>().Count(text => text.name.StartsWith("FinisherScore")));
             foreach(var size in TumpUiCapture.PcViewports)
-                yield return TumpUiCapture.Capture("FinishSheet-"+mode+"-standings-"+size.x+"x"+size.y,canvas,size.x,size.y,false,checkActionBounds:true);
-            Press("ResultTab2"); yield return null;
-            Assert.AreEqual(4, canvas.GetComponentsInChildren<Text>().Count(t => t.name == "RecentPlayerName"));
-            foreach(var size in TumpUiCapture.PcViewports)
-                yield return TumpUiCapture.Capture("FinishSheet-"+mode+"-players-"+size.x+"x"+size.y,canvas,size.x,size.y,false,checkActionBounds:true);
-            Press("ResultTab1"); yield return null;
-            Assert.IsTrue(canvas.GetComponentsInChildren<Text>().Any(t=>
-                (t.name=="EmptyMatchDetails" || t.name=="YourMatchSummary" || t.name=="EarnedXp" || t.name=="MatchHighlight")
-                && !string.IsNullOrWhiteSpace(t.text)),"Details needs a report or a clear empty state.");
-            yield return TumpUiCapture.Capture("FinishSheet-"+mode+"-empty-details",canvas,960,540,false,checkActionBounds:true);
+                yield return TumpUiCapture.Capture("TJ-result-"+mode+"-"+size.x+"x"+size.y,canvas.rootCanvas,size.x,size.y,false,checkActionBounds:true);
             // Local presentation fixture only. This does not award XP or write a career.
             typeof(MatchResult).GetMethod("ShowProgression",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic)
                 .Invoke(result,new object[]{new XpAward{MatchXp=175,LevelBefore=2,LevelAfter=3},new PlayerProfile{Xp=2750}});
             Assert.That(canvas.GetComponentsInChildren<Text>().First(t=>t.name=="EarnedXp").text,Does.Contain("175 XP"));
             foreach(var size in TumpUiCapture.PcViewports)
-                yield return TumpUiCapture.Capture("FinishSheet-"+mode+"-reward-fixture-"+size.x+"x"+size.y,canvas,size.x,size.y,false,checkActionBounds:true);
+                yield return TumpUiCapture.Capture("FinishSheet-"+mode+"-reward-fixture-"+size.x+"x"+size.y,canvas.rootCanvas,size.x,size.y,false,checkActionBounds:true);
             int next = (System.Array.IndexOf(SceneFlow.Maps, SceneFlow.SelectedMap) + 1) % SceneFlow.Maps.Length;
             result.HostReceiveMapVote(GameLaunch.SoloSeat, next); yield return null;
             Assert.That(Find("ResultNextMap").GetComponentInChildren<Text>().text, Does.Contain(SceneFlow.PreviewFor(SceneFlow.Maps[next]).Name));
             result.RequestRematch(); yield return null;
             Assert.IsFalse(result.IsVisible);
-            Assert.That(Time.timeScale, Is.EqualTo(1).Within(.001));
+            Assert.That(PresentationClock.RequestedScale, Is.EqualTo(1).Within(.001),
+                "Rematch must release the result pause even while the next court's opening holds the clock.");
         }
         [UnityTest]
         public IEnumerator RematchActuallyLoadsTheChosenArena()
@@ -265,28 +265,30 @@ namespace TumbangPreso.PlayTests
             SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.Classic));
             yield return SceneManager.LoadSceneAsync(SceneFlow.Eskinita);yield return new WaitForSecondsRealtime(.4f);
             var result=Object.FindFirstObjectByType<MatchResult>();result.OnMatchWon(0);yield return null;
-            int next=System.Array.IndexOf(SceneFlow.Maps,SceneFlow.BayanPlaza);
+            string destination = SceneFlow.IlalimNgTulay;
+            int next=System.Array.IndexOf(SceneFlow.Maps,destination);
+            Assert.GreaterOrEqual(next, 0);
             result.HostReceiveMapVote(GameLaunch.SoloSeat,next);result.RequestRematch();yield return null;
-            Assert.AreEqual(SceneFlow.BayanPlaza,SceneFlow.SelectedMap);
+            Assert.AreEqual(destination,SceneFlow.SelectedMap);
             // UX-1 now enters offline arenas through HubLoading.LoadSceneAsync.
             // One frame is not load completion; keep the real arena assertion.
             float deadline=Time.realtimeSinceStartup+30;int frames=0;
-            while((SceneManager.GetActiveScene().name!=SceneFlow.BayanPlaza||Object.FindFirstObjectByType<ReadyGate>()==null)
+            while((SceneManager.GetActiveScene().name!=destination||Object.FindFirstObjectByType<ReadyGate>()==null)
                 &&Time.realtimeSinceStartup<deadline&&frames++<ProbeWait.MaxFrames)yield return null;
-            Assert.AreEqual(SceneFlow.BayanPlaza,SceneManager.GetActiveScene().name,"Rematch selected the next map but kept playing on the old court.");
+            Assert.AreEqual(destination,SceneManager.GetActiveScene().name,"Rematch selected the next map but kept playing on the old court.");
             Assert.IsNotNull(Object.FindFirstObjectByType<ReadyGate>());
         }
 
         [UnityTest]
-        public IEnumerator PopulatedResultSummaryAndRewardBreakdownRemainReadable()
+        public IEnumerator PopulatedResultShowsEarnedXpBesideScores()
         {
-            SceneFlow.Networked=false;SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));
-            yield return SceneManager.LoadSceneAsync("Eskinita");yield return new WaitForSecondsRealtime(.4f);
-            var result=Object.FindFirstObjectByType<MatchResult>();result.OnMatchWon(1);yield return null;
+            SceneFlow.Networked=false;SceneFlow.SelectedMap=SceneFlow.Eskinita;
+            yield return MapRetrievalProbe.Load(SceneFlow.Eskinita, GameMode.HeroStrike, skipReadyArrival: true);
+            var result=Object.FindFirstObjectByType<MatchResult>();result.OnMatchWon(1);yield return new WaitForSecondsRealtime(.5f);
             // Presentation-only record. It is never submitted or applied to the saved career.
             var line=new PlayerMatchStats{Slot=1,PlayerId=Net.CareerStore.LocalPlayerId,CharacterId="zack",Placement=1,
                 Knockdowns=4,Retrievals=6,Tags=2,DefenceTicks=74,Score=850};
-            // VISUAL-1.16: the other three seats get lines too, so every chip has accolades to draw.
+            // Include the other three seats so the board draws the complete result.
             var others=new[]{
                 new PlayerMatchStats{Slot=0,PlayerId="fixture-0",Tags=3,Retrievals=2,RetrievalsUnderPressure=1,Score=420},
                 new PlayerMatchStats{Slot=2,PlayerId="fixture-2",Retrievals=5,Score=300},
@@ -299,19 +301,11 @@ namespace TumbangPreso.PlayTests
             var award=ProgressionRules.Award(profile,record,line);
             Assert.AreEqual(ProgressionRules.Breakdown(record,line).Sum(part=>part.Xp),award.MatchXp);
             typeof(MatchResult).GetMethod("ShowProgression",flags).Invoke(result,new object[]{award,profile});
-            Press("ResultTab1");yield return null;
             var canvas=GameObject.Find("OwnerResultCanvas").GetComponent<Canvas>();
-            Assert.That(canvas.GetComponentsInChildren<Text>().First(t=>t.name=="YourMatchSummary").text,Does.Contain("6 RETRIEVALS"));
-            Assert.That(canvas.GetComponentsInChildren<Text>().First(t=>t.name=="RewardDetails").text,Does.Contain("MASTERY"));
-            foreach(var size in new[]{new Vector2Int(960,540),new Vector2Int(1280,960),new Vector2Int(1920,1080),new Vector2Int(3840,2160)})
-                yield return TumpUiCapture.Capture("FinishSheet-populated-fixture-"+size.x+"x"+size.y,canvas,size.x,size.y,false,checkActionBounds:true);
-            // VISUAL-1.16: the standings show two record-backed accolades per player, glyph and number.
-            Press("ResultTab0");yield return null;
-            var counts=canvas.GetComponentsInChildren<Text>().Where(t=>t.name.StartsWith("AccoladeCount")&&t.enabled).Select(t=>t.text).ToList();
-            CollectionAssert.Contains(counts,"4","Zack's four knockdowns are his first accolade.");
-            Assert.AreEqual(7,counts.Count,"Two accolades each, except seat 2 whose only non-zero stat is retrievals.");
+            Assert.That(canvas.GetComponentsInChildren<Text>().First(t=>t.name=="EarnedXp").text,Does.Contain(award.MatchXp+" XP"));
+            Assert.AreEqual(4,canvas.GetComponentsInChildren<Text>().Count(t=>t.name.StartsWith("FinisherScore")));
             foreach(var size in new[]{new Vector2Int(1920,1080),TumpUiCapture.OwnerWindow,new Vector2Int(960,540)})
-                yield return TumpUiCapture.Capture("FinishSheet-podium-fixture-"+size.x+"x"+size.y,canvas,size.x,size.y,false,true,checkActionBounds:true);
+                yield return TumpUiCapture.Capture("TJ-result-winner-"+size.x+"x"+size.y,canvas.rootCanvas,size.x,size.y,false,checkActionBounds:true);
         }
         [UnityTest]
         public IEnumerator AllExistingRankTiersHaveEditableVisibleEmblems()

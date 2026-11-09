@@ -92,7 +92,7 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(0, trail.positionCount);
         }
 
-        [UnityTest] public IEnumerator CanEdgesExpireAndRepeatedStateDoesNotReplayContact()
+        [UnityTest] public IEnumerator CanEdgesKeepProtectionCueWithoutContactStrokes()
         {
             yield return MapRetrievalProbe.Load("Eskinita");
             SettingsStore.Current.FlashIntensity = 1;
@@ -101,15 +101,12 @@ namespace TumbangPreso.PlayTests
             NetAuthority.Provider = new Replica();
             Vector3 at = can.transform.position;
             can.ApplySnapshotState(at, Quaternion.identity, false, 0);
-            Assert.AreEqual(1, Object.FindObjectsByType<CanContactAccent>().Length);
             can.ApplySnapshotState(at, Quaternion.identity, false, 0);
-            Assert.AreEqual(1, Object.FindObjectsByType<CanContactAccent>().Length);
-            Assert.AreEqual(0, Object.FindAnyObjectByType<CanContactAccent>().GetComponentsInChildren<Collider>().Length);
+            Assert.AreEqual(0, Object.FindObjectsByType<CanContactAccent>().Length, "Knockdown should not draw temporary contact strokes.");
             yield return new WaitForSecondsRealtime(.45f);
-            Assert.AreEqual(0, Object.FindObjectsByType<CanContactAccent>().Length);
             can.ApplySnapshotState(at, Quaternion.identity, true, 0);
             can.ApplySnapshotState(at, Quaternion.identity, true, 0);
-            Assert.AreEqual(1, Object.FindObjectsByType<CanContactAccent>().Length);
+            Assert.AreEqual(0, Object.FindObjectsByType<CanContactAccent>().Length, "Restoring the can should leave only its protection cue.");
             Assert.That(can.ProtectionLeft, Is.EqualTo(4f).Within(.001f), "A client sees the same restoration window.");
             yield return null;
             if (!SettingsStore.Current.ReducedEffects)
@@ -152,7 +149,7 @@ namespace TumbangPreso.PlayTests
             SettingsStore.Current.FlashIntensity = 0;
             can.ApplySnapshotState(at, Quaternion.identity, false, 0);
             Assert.AreEqual(0, Object.FindObjectsByType<CanContactAccent>().Length,
-                "Reduced flash must not suppress actual can state, only this decorative accent.");
+                "Changing flash settings must not revive the removed accent.");
             Assert.IsFalse(can.IsUpright);
         }
     }

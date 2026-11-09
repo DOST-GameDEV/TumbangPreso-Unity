@@ -106,6 +106,7 @@ namespace TumbangPreso.UI
         private void PresentNativeResult(int winner)
         {
             _message.text = winner < 0 ? "It's a draw!" : NameFor(winner) + " wins!"; _message.color = CourtPresentationPalette.Paper;
+            Hub.HubKit.Fit(_message, 1700f);
             int rounds=GameServices.Match.TotalRounds;
             _broadcastLine.text = (SceneFlow.SelectedMode == GameMode.Classic ? "Classic" : "Hero Strike") + " · " + rounds + (rounds==1 ? " round" : " rounds");
             _broadcastLine.color = CourtPresentationPalette.Paper;
@@ -126,12 +127,22 @@ namespace TumbangPreso.UI
         private void NativeProgression(XpAward award, PlayerProfile profile)
         {
             bool show = award != null && profile != null && !IsSpectator;
-            _xpHeadline.gameObject.SetActive(show); _xpBarTrack.gameObject.SetActive(show); _xpDetail.gameObject.SetActive(show);
+            _xpHeadline.gameObject.SetActive(show);
+            if (show)
+            {
+                int level = ProgressionRules.LevelForXp(profile.Xp);
+                _xpHeadline.text = award.Afk || award.Suspended ? "Level " + level + " · No XP this match"
+                    : award.LevelAfter > award.LevelBefore ? "Level " + award.LevelAfter + " · Level up! +" + award.MatchXp + " XP"
+                    : "Level " + level + " · +" + award.MatchXp + " XP";
+            }
+            if (_xpBarTrack == null)
+            {
+                _xpDetail.text = !IsSpectator && profile != null ? RankLine(profile).Trim() : "";
+                _xpDetail.gameObject.SetActive(!string.IsNullOrEmpty(_xpDetail.text));
+                return;
+            }
+            _xpBarTrack.gameObject.SetActive(show); _xpDetail.gameObject.SetActive(show);
             _nativeRank.gameObject.SetActive(false); if(!show){RefreshOwnerResultEmptyState();return;}
-            int level=ProgressionRules.LevelForXp(profile.Xp);
-            _xpHeadline.text=award.Afk||award.Suspended ? "Level "+level+" · No XP this match"
-                : award.LevelAfter>award.LevelBefore ? "Level "+award.LevelAfter+" · Level up! +"+award.MatchXp+" XP"
-                : "Level "+level+" · +"+award.MatchXp+" XP";
             float ratio=ProgressionRules.XpIntoLevel(profile.Xp)/(float)ProgressionRules.XpPerLevel;
             _xpBarFill.rectTransform.anchorMax=new Vector2(Mathf.Clamp01(ratio),1);
             _xpDetail.text=DetailFor(award)+RankLine(profile); _xpDetail.color=OwnerUiTheme.Current.EnteredInk;

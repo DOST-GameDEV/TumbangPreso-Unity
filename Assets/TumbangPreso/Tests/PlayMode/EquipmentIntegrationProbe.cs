@@ -75,6 +75,36 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest]
+        public IEnumerator ASlowSlipperLandsBeforeCanProtectionEnds()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.Eskinita, GameMode.Classic);
+            NetAuthority.Provider = new SoloProvider();
+            GameServices.Round.BeginRound();
+            var round = GameServices.Round;
+            var can = round.Lata;
+            var at = can.Mark;
+            var owner = round.PlayerAt(1);
+            var shoe = owner.GetComponent<Carrier>().Held;
+            Assert.IsNotNull(shoe);
+            foreach (var player in round.Players)
+                if (player != null) player.Teleport(new Vector3(4, .12f, 4 + player.PlayerSlot));
+            shoe.enabled = false;
+            can.ApplySnapshotState(at, Quaternion.identity, false, 0);
+            can.ApplySnapshotState(at, Quaternion.identity, true, 0);
+            Assert.IsTrue(can.IsProtected);
+            int score = GameServices.Match.ScoreFor(1);
+            shoe.HostThrow(owner, at + new Vector3(0, .18f, -.06f), Vector3.forward * .3f);
+            var step = typeof(Slipper).GetMethod("FixedUpdate", Private);
+            step.Invoke(shoe, null);
+            Assert.Greater(shoe.Velocity.y, 0, "The first contact must still rebound.");
+            for (int i = 0; i < Mathf.CeilToInt(1.2f / Time.fixedDeltaTime) && shoe.State == SlipperState.InFlight; i++)
+                step.Invoke(shoe, null);
+            Assert.IsTrue(can.IsProtected && can.IsUpright);
+            Assert.AreEqual(score, GameServices.Match.ScoreFor(1));
+            Assert.AreEqual(SlipperState.Loose, shoe.State, "A slow rebound inside the can's footprint must settle during immunity.");
+        }
+
+        [UnityTest]
         public IEnumerator ActualCanHitUsesSharedEquipmentInBothModesAndDuringRestoreProtection()
         {
             const string output = "Logs/equipment-integration-v1";

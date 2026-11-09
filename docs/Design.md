@@ -53,6 +53,15 @@ motion keeps it steady. The restore's existing phases show a deeper crouch,
 a two-handed grip, a weighted lift and a clean plant on the mark. Existing moving
 and settled aim drift still applies.
 
+The restore prompt follows lift, carry and placement with one progress bar.
+The chalk target stays at the can's home even when the can falls or moves.
+It uses a different chalk pattern in each court. The temporary settling and
+placement circles are removed. A slipper striking the protected can rebounds
+once per contact and can fall to the street while the protection still runs.
+
+The results board shows the winner, scores, any earned XP and three next
+actions. Rematch, map choice and the main menu are all on the same board.
+
 ## Current basic-action revision, October 3
 
 Full throw charge is1.5s. Normal tag/punch recovery is0.25s on an authoritative

@@ -134,7 +134,7 @@ namespace TumbangPreso.CameraSystem
                 _stage=new GameObject("~RecordedWorld");_stage.SetActive(false);
                 _court=CourtBoundaryPresentation.CreateRecorded(_stage.transform,standalone?null:GameServices.Round?.Lata);
                 _lataClock=LataClockPresentation.Install(_stage.transform,null,true);_lataClock.ShowForCapture(false);
-                _canLanding=new GroundContactVisual(_stage.transform,"Recorded can footprint",true);
+                _canLanding=new GroundContactVisual(_stage.transform,"Recorded can reset mark",true);
                 foreach(var track in clip.Objects)
                 {
                     GameObject source=standalone?CataloguedObject(track,clip.Mode):Source(track);
@@ -463,23 +463,20 @@ namespace TumbangPreso.CameraSystem
             var can=_items.FirstOrDefault(i=>i.Track.Kind==RecordedObjectKind.Can);
             if(can!=null)
             {
-                bool previous=false,known=false;float restoredAt=float.NegativeInfinity,fallenAt=float.NegativeInfinity;Vector3 origin=Vector3.zero;
+                bool previous=false,known=false;float restoredAt=float.NegativeInfinity;
+                Vector3 origin=GameServices.Round?.Lata?.Mark ?? can.Bones[0].position;
                 foreach(var sample in can.Track.Pose.Samples)
                 {
                     if(sample.Time>time)break;
                     bool upright=(sample.State&1)!=0;
+                    if(!known && upright)origin=sample.Positions[0];
                     if(known && !previous && upright){restoredAt=sample.Time;origin=sample.Positions[0];}
-                    if(known && previous && !upright)fallenAt=sample.Time;
                     previous=upright;known=true;
                 }
                 bool up=(can.Track.Pose.StateAt(time).State&1)!=0;
                 _court.DrawRecorded(up,time-restoredAt,origin);
                 can.Track.Pose.Apply(can.Bones,time);
-                float bottom=can.Bones[0].position.y-(up?0:WorldContactPresentation.RecordedCanSupport(can.Copy.Renderers,can.Bones[0].rotation));
-                bool elevated=WorldGround.TryBelow(can.Bones[0].position,.5f,3.5f,out float ground) && bottom-ground>.12f;
-                float settle=!up?Mathf.Clamp01(1-(time-fallenAt)/Core.Balance.ToppleTime):0;
-                _canLanding.Place(can.Bones[0].position,bottom,new Vector2(.29f,.29f),
-                    (elevated?.62f:settle*.62f)*WorldCueProfile.Current.HeroObjects,true);
+                _canLanding.PlaceCanMark(origin, GroundContactVisual.MarkStyleFor(UI.SceneFlow.SelectedMap));
             }
             HoldCaughtBody(time);
             foreach(var item in _items)

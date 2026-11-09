@@ -164,11 +164,11 @@ namespace TumbangPreso.UI.Hub
             return button;
         }
 
-        private static void AddPrintedShadow(Graphic graphic)
+        internal static void AddPrintedShadow(Graphic graphic, Vector2? offset = null)
         {
             var shadow = graphic.gameObject.AddComponent<Shadow>();
             shadow.effectColor = new Color(.13f, .027f, .047f, .47f);
-            shadow.effectDistance = new Vector2(1.6f, -2.2f);
+            shadow.effectDistance = offset ?? new Vector2(1.6f, -2.2f);
         }
 
         /// <summary>

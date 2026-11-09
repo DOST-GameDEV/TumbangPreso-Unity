@@ -82,36 +82,57 @@ namespace TumbangPreso.PlayTests
                 Object.Destroy(observer.gameObject);
             }
         }
-        [UnityTest] public IEnumerator CanContactFollowsActualToppleElevatedPoseAndIndependentRecordedSupport()
+        [UnityTest, Timeout(180000)] public IEnumerator CanResetMarkStaysAtHomeAndMatchesEachMap()
         {
-            yield return Load(SceneFlow.BayanPlaza);var lata=GameServices.Round.Lata;var contacts=WorldContactPresentation.Current;
-            Assert.IsNotNull(contacts);yield return new WaitForSeconds(lata.ProtectionLeft+.05f);
-            lata.HostKnockDown(1);Hitstop.End();yield return null;yield return null;
-            Assert.IsTrue(contacts.LandingVisible,"Actual falling/settling state should carry its small footprint.");
-            var camera=StageCamera(lata.transform.position+new Vector3(2,1.5f,-3),lata.transform.position);
-            Time.timeScale=0;yield return GameplayShots.Render(camera,"can-settling-footprint",false,Output,null,960,540);
-            Time.timeScale=1;yield return new WaitForSeconds(Balance.ToppleTime+.08f);
-            yield return null;
-            WorldGround.TryBelow(lata.transform.position,.5f,3.5f,out float contactFloor);
-            Assert.IsFalse(contacts.LandingVisible,"Settled can cannot keep a false landing prediction: root="+lata.transform.position+" floor="+contactFloor+" support="+lata.PresentationSupportOffset);
-            Vector3 settled=lata.transform.position;Quaternion rotation=lata.transform.rotation;
-            // Use the actual authoritative-pose seam. Normal knocks remain
-            // grounded; this exercises an elevated received pose without adding
-            // or pretending there is new ballistic gameplay.
-            lata.ApplySnapshotPose(settled+Vector3.up*.8f,rotation);yield return null;yield return null;
-            Assert.IsTrue(contacts.LandingVisible);
-            Time.timeScale=0;yield return GameplayShots.Render(camera,"can-elevated-footprint",false,Output,null,960,540);
-            WorldCueProfile.Current.HeroObjects=0;yield return null;Assert.IsFalse(contacts.LandingVisible);WorldCueProfile.Current.HeroObjects=1;
-            var recorded=new GroundContactVisual(camera.transform,"Recorded support contract",true);
-            Vector3 live=lata.transform.position;
-            try
+            string[] maps = { SceneFlow.Eskinita, SceneFlow.IlalimNgTulay, SceneFlow.LagoonCove,
+                SceneFlow.Kanto, SceneFlow.Arena, SceneFlow.Payo };
+            var block = new MaterialPropertyBlock();
+            for (int i = 0; i < maps.Length; i++)
             {
-                Assert.IsTrue(recorded.Place(settled,settled.y,new Vector2(.25f,.22f),.2f));
-                Assert.AreEqual(live,lata.transform.position);Assert.IsTrue(recorded.Renderer.forceRenderingOff);
-                recorded.Visible(true);Assert.IsFalse(recorded.Renderer.forceRenderingOff);recorded.Visible(false);
-                Assert.AreEqual(0,recorded.Renderer.GetComponents<Collider>().Length);
+                string map = maps[i];
+                yield return MapRetrievalProbe.Load(map, skipReadyArrival: true);
+                GameServices.Match.StartMatch(); GameServices.Round.BeginRound();
+                yield return new WaitUntil(() => !Map.ArenaIntro.StageUnbuilt);
+                yield return null;
+                var lata = GameServices.Round.Lata;
+                var contacts = WorldContactPresentation.Current;
+                Assert.IsNotNull(contacts, map);
+                var marker = GameObject.Find("Can reset mark").GetComponent<MeshRenderer>();
+                Assert.IsTrue(contacts.HomeMarkVisible, map);
+                marker.GetPropertyBlock(block);
+                Assert.AreEqual(i + 1, block.GetFloat("_MarkStyle"), map);
+                Vector3 home = marker.transform.position;
+                Assert.That(Vector2.Distance(new Vector2(home.x, home.z), new Vector2(lata.Mark.x, lata.Mark.z)),
+                    Is.LessThan(.01f), map);
+
+                if (map == SceneFlow.Eskinita)
+                {
+                    yield return new WaitForSeconds(lata.ProtectionLeft + .05f);
+                    lata.HostKnockDown(1); Hitstop.End(); yield return null;
+                    Assert.IsTrue(contacts.HomeMarkVisible);
+                    yield return new WaitForSeconds(Balance.ToppleTime + .08f);
+                    lata.ApplySnapshotPose(lata.transform.position + Vector3.right * 1.4f + Vector3.up * .8f,
+                        lata.transform.rotation);
+                    WorldCueProfile.Current.HeroObjects = 0;
+                    yield return null;
+                    Assert.IsTrue(contacts.HomeMarkVisible, "The reset spot is a rule cue and stays visible while the can moves.");
+                    Assert.AreEqual(home, marker.transform.position);
+                    WorldCueProfile.Current.HeroObjects = 1;
+                    lata.HostRestore(); Hitstop.End(); yield return null;
+                    Assert.IsTrue(contacts.HomeMarkVisible, "The same chalk stays during protection.");
+                    Assert.AreEqual(home, marker.transform.position);
+                }
+
+                foreach (var actor in GameServices.Round.Players)
+                    actor.Teleport(new Vector3(home.x - 3.5f + actor.PlayerSlot * 1.3f, home.y, home.z + 5f));
+                yield return null;
+                var camera = StageCamera(home + new Vector3(1.3f, 1.5f, -1.85f), home);
+                try
+                {
+                    yield return GameplayShots.Render(camera, "reset-mark-" + map, false, Output, null, 960, 540);
+                }
+                finally { Object.Destroy(camera.gameObject); }
             }
-            finally{recorded.Dispose();Object.Destroy(camera.gameObject);Time.timeScale=1;}
         }
         [UnityTest] public IEnumerator OrdinaryFlightInkUsesActualThrowerAndReplaysItsRecordedStroke()
         {

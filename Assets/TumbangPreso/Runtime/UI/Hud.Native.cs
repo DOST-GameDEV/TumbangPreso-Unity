@@ -6,6 +6,8 @@ namespace TumbangPreso.UI
     {
         private TumpMatchReadout _nativeReadout;
         private SlipperRecall _recall;
+        private readonly System.Collections.Generic.List<GameObject> _hiddenForResults = new();
+        private bool _resultsOpen;
         /// <summary>SOULBOUND: the recall mark again, one per dormant ghost Nemu can have waiting at once.</summary>
         private readonly SlipperRecall[] _dormantMarks = new SlipperRecall[3];
         public bool NativePresentation => _nativeReadout != null;
@@ -38,6 +40,7 @@ namespace TumbangPreso.UI
         }
         private void NativeTick()
         {
+            if (_resultsOpen) return;
             if (_spectating && Fired(SpectatorAction("CleanFeed"))) SetCleanFeed(!_cleanFeed);
             if (_spectating && Fired(SpectatorAction("SpectatorControls"))) SetSpectatorControlsVisible(!_spectatorControlsVisible);
             TrySubscribeRound();
@@ -48,6 +51,28 @@ namespace TumbangPreso.UI
                 UpdateIndicators();
                 _indicators.SetCanArrowColour(_local.IsDefender ? TumpUiTheme.Current.Yellow : TumpUiTheme.Current.Cream);
             }
+        }
+
+        internal void SetResultHud(Canvas results, bool visible)
+        {
+            if (_resultsOpen == visible || _canvas == null) return;
+            _resultsOpen = visible;
+            if (!visible)
+            {
+                foreach (var layer in _hiddenForResults) if (layer != null) layer.SetActive(true);
+                _hiddenForResults.Clear();
+                return;
+            }
+
+            foreach (Transform layer in _canvas.transform)
+            {
+                if (layer == results.transform || !layer.gameObject.activeSelf) continue;
+                _hiddenForResults.Add(layer.gameObject);
+                layer.gameObject.SetActive(false);
+            }
+            if (_indicators != null) _indicators.UpdateArrows(null, null);
+            if (_recall != null) _recall.Hide();
+            foreach (var mark in _dormantMarks) if (mark != null) mark.Hide();
         }
         private void NativeSpectator(bool spectating)
         {

@@ -119,29 +119,33 @@ namespace TumbangPreso.UI.Hub
         private void BuildDoors()
         {
             var hero = HubBoard.Sticker(Root, "HeroButton", HubKit.BottomLeft, "tile_hero", () => Hub.Push<HubHero>(), out var heroFace, out var heroGroup, "icon_hero");
-            var heroPic = HubBoard.Picture(heroFace, heroGroup, "icon_hero", "Face");
-            HubBoard.Lettering(heroFace, heroGroup, "hero", "Label");
+            var heroPic = PaintDoor(heroFace, heroGroup, "icon_hero", "Face", "hero");
             HubBoard.Feel(hero, heroFace, HubBoard.Depth("tile_hero"), 0.15f, false, heroPic);
             HubSlap.On(hero.transform, 0.08f, -2);
 
             var item = HubBoard.Sticker(Root, "LoadoutButton", HubKit.BottomLeft, "tile_item", () => Hub.Push<HubLoadout>(), out var itemFace, out var itemGroup, "icon_item");
-            var itemPic = HubBoard.Picture(itemFace, itemGroup, "icon_item", "Picture");
-            HubBoard.Lettering(itemFace, itemGroup, "item", "Label");
+            var itemPic = PaintDoor(itemFace, itemGroup, "icon_item", "Picture", "item");
             HubBoard.Feel(item, itemFace, HubBoard.Depth("tile_item"), 0.55f, false, itemPic);
             HubSlap.On(item.transform, 0.12f, 2);
 
             var shop = HubBoard.Sticker(Root, "ShopButton", HubKit.BottomLeft, "tile_shop", () => Hub.Push<HubShopPopup>(), out var shopFace, out var shopGroup, "icon_shop");
-            var shopPic = HubBoard.Picture(shopFace, shopGroup, "icon_shop", "Icon");
-            HubBoard.Lettering(shopFace, shopGroup, "shop", "Label");
+            var shopPic = PaintDoor(shopFace, shopGroup, "icon_shop", "Icon", "shop");
             HubBoard.Feel(shop, shopFace, HubBoard.Depth("tile_shop"), 0.8f, false, shopPic);
             HubSlap.On(shop.transform, 0.16f, -3);
 
             var task = HubBoard.Sticker(Root, "TaskButton", HubKit.BottomLeft, "tile_task", () => Hub.Push<HubTasks>(), out var taskFace, out var taskGroup, "icon_task");
-            var taskPic = HubBoard.Picture(taskFace, taskGroup, "icon_task", "Icon");
-            HubBoard.Lettering(taskFace, taskGroup, "task", "Label");
+            var taskPic = PaintDoor(taskFace, taskGroup, "icon_task", "Icon", "task");
             _taskNotice = HubKit.Notice(taskFace);
             HubBoard.Feel(task, taskFace, HubBoard.Depth("tile_task"), 0.35f, false, taskPic);
             HubSlap.On(task.transform, 0.2f, 3);
+        }
+
+        private static RectTransform PaintDoor(RectTransform face, Rect group, string sprite, string pictureName, string label)
+        {
+            var picture = HubBoard.Picture(face, group, sprite, pictureName);
+            HubKnit.AddPrintedShadow(picture.GetComponent<Image>(), new Vector2(5, -7));
+            HubKnit.AddPrintedShadow(HubBoard.Lettering(face, group, label, "Label"), new Vector2(2.8f, -3.5f));
+            return picture;
         }
 
         // ------------------------------------------------------------------ bottom right
