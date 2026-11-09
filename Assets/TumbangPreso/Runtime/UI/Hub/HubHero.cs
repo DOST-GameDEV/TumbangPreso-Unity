@@ -256,9 +256,21 @@ namespace TumbangPreso.UI.Hub
                 // A role kit's middle tiles name their role; the key is the same for both.
                 bool touch = Application.isMobilePlatform || InputLayer.TouchHud.ForceVisible;
                 string caption = touch || (four && !ult && i > 0) ? screenSlots[i].Label : Hud.KeyLabelFor(screenSlots[i].Action);
-                var key = HubKnit.Display(tile.Body, "Key", caption, 28, ult ? HubKnit.KitLime : HubKnit.KitCream, TextAnchor.MiddleCenter);
-                HubKnit.In(key.rectTransform, 8, 132, tileWidth - 16, 40);
-                HubKit.Fit(key, tileWidth - 16);
+                // The key as its Xelu icon, never redrawn (owner rule); the words only where the pack has none or the tile names a role.
+                bool roleCaption = touch || (four && !ult && i > 0);
+                var bindingArt = roleCaption ? null : InputGlyphs.For(caption, true);
+                if (bindingArt != null)
+                {
+                    var glyph = HubKit.Picture(tile.Body, "BindingGlyph", bindingArt);
+                    float w = InputGlyphs.PromptWidth(bindingArt, 40, tileWidth - 16);
+                    HubKnit.In(glyph.rectTransform, (tileWidth - w) * .5f, 132, w, 40);
+                }
+                else
+                {
+                    var key = HubKnit.Display(tile.Body, "Key", caption, 28, ult ? HubKnit.KitLime : HubKnit.KitCream, TextAnchor.MiddleCenter);
+                    HubKnit.In(key.rectTransform, 8, 132, tileWidth - 16, 40);
+                    HubKit.Fit(key, tileWidth - 16);
+                }
                 HubSlap.On(tile.transform, 0.04f * i, 2 - i * 2);
                 yield return null;
             }

@@ -669,7 +669,6 @@ namespace TumbangPreso.Diagnostics
                 yield return WaitFor(()=>Find("ResumeMatch")!=null);yield return Shot(mode+"-pause");yield return Click("ResumeMatch");
                 Stage(mode+" waiting for real result");StartFrameWindow(mode);
                 yield return WaitForResult();StopFrameWindow();yield return Shot(mode+"-result");
-                yield return Click("ResultTab1");yield return Shot(mode+"-details");
                 if(mode=="ClassicButton")
                 {
                     string nextMap=SceneFlow.Maps[(Array.IndexOf(SceneFlow.Maps,SceneFlow.SelectedMap)+1)%SceneFlow.Maps.Length];

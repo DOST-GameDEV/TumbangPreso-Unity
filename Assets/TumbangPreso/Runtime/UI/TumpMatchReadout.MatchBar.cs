@@ -66,15 +66,16 @@ namespace TumbangPreso.UI
             float lead = glyph ? 14 + glyphWidth + 14 : 28;
             float width = Mathf.Min(_statusPromptMaxWidth, Mathf.Max(220, lead + measured + 24));
             float left = (1100 - width) * .5f;
-            OwnerUiLayout.Place(_promptPlate.rectTransform, left, 0, width, progress ? band + 16 : band);
-            if (glyph) OwnerUiLayout.Place(_bindingGlyph.rectTransform, left + 14, (band - key) * .5f, glyphWidth, key);
-            OwnerUiLayout.Place(_prompt.rectTransform, left + lead, 0, width - lead - 20, band);
+            float lane = _defenderTaskShown ? 112f : 0f;
+            OwnerUiLayout.Place(_promptPlate.rectTransform, left, lane, width, progress ? band + 16 : band);
+            if (glyph) OwnerUiLayout.Place(_bindingGlyph.rectTransform, left + 14, lane + (band - key) * .5f, glyphWidth, key);
+            OwnerUiLayout.Place(_prompt.rectTransform, left + lead, lane, width - lead - 20, band);
             float textHeight = Mathf.Max(band, _prompt.preferredHeight + 12);
             _prompt.rectTransform.sizeDelta = new Vector2(_prompt.rectTransform.sizeDelta.x, textHeight);
             _promptPlate.rectTransform.sizeDelta = new Vector2(width, textHeight + (progress ? 16 : 0));
             if(_progress != null)
-                OwnerUiLayout.Place((RectTransform)_progress.transform.parent, left + 18, textHeight + 2, width - 36, 8);
-            OwnerUiLayout.Place(_context.rectTransform, left - 100, textHeight + (progress ? 30 : 14), width + 200, 66);
+                OwnerUiLayout.Place((RectTransform)_progress.transform.parent, left + 18, lane + textHeight + 2, width - 36, 8);
+            OwnerUiLayout.Place(_context.rectTransform, left - 100, lane + textHeight + (progress ? 30 : 14), width + 200, 66);
         }
 
         // ⚠️⚠️ IN-GAME UI OVERHAUL 2026-10-20: THE TEAM BAR, OVERWATCH'S SHAPE IN THE GAME'S COLOURS.
@@ -169,6 +170,8 @@ namespace TumbangPreso.UI
             _clockOnFill.alignment = TextAnchor.MiddleCenter; _clockOnFill.verticalOverflow = VerticalWrapMode.Overflow;
             _clockOnFill.horizontalOverflow = HorizontalWrapMode.Overflow;
             _clockOnFill.color = LiveHud.GoInk;
+            _canRing.transform.SetAsLastSibling();
+            _canGlyph.transform.SetAsLastSibling();
 
             // The round beads are retired; their objects stay for the layout probes.
             var track = OwnerUiLayout.Rect(_clockRoot, "RoundTrack").gameObject.AddComponent<HudCard>();
@@ -397,9 +400,11 @@ namespace TumbangPreso.UI
             float edgeOn = flip < .5f ? Mathf.Cos(flip * Mathf.PI) : -Mathf.Cos(flip * Mathf.PI);
             float land = flip >= .5f && flip < 1 ? .3f * Mathf.Sin((flip - .5f) * 2 * Mathf.PI) : 0;
             _canGlyph.rectTransform.localScale = new Vector3(Mathf.Max(.04f, edgeOn) * (1 + land), 1 + land, 1);
-            if (_canShownUpright == true) _canGlyph.Show(HudBadge.Glyph.Can, HudDraw.Ivory, Color.clear);
+            if (_canShownUpright == true) _canGlyph.Show(HudBadge.Glyph.Can, lata.IsProtected ? HudDraw.Honey : HudDraw.Ivory, Color.clear);
             else _canGlyph.Show(HudBadge.Glyph.CanDown, HudDraw.Alarm, Color.clear);
             _canRing.Set(lata.IsProtected ? lata.ProtectionLeft / Mathf.Max(.01f, Balance.ThrowRestoreCooldown) : 0);
+            if (lata.IsUpright && lata.IsProtected)
+                _round.text = $"CAN PROTECTED  {lata.ProtectionLeft:0.0}s";
         }
 
         private void MatchBarChip(int i, int slot, CharacterMotor actor, bool defender, bool mine, bool leader, bool spectating)

@@ -43,6 +43,7 @@ namespace TumbangPreso
         public int SkinIndex { get => _skinIndex; set => _skinIndex = value; }
         public bool IsUpright => _isUpright;
         public bool IsProtected => ProtectionLeft > 0.0f;
+        internal bool HasRestoreProtection => _isUpright && _restoreProtectionLeft > 0;
         public float ProtectionLeft
         {
             get
@@ -153,13 +154,17 @@ namespace TumbangPreso
         /// </summary>
         public bool Connects(Vector3 slipperPosition)
         {
-            Vector3 a = new Vector3(slipperPosition.x, 0.0f, slipperPosition.z);
-            Vector3 b = new Vector3(transform.position.x, 0.0f, transform.position.z);
-            if (!ThrowRules.Connects(Vector3.Distance(a, b), _skinIndex)) return false;
+            if (!InContactFootprint(slipperPosition)) return false;
             ResolveContactHeight();
             float y = transform.InverseTransformPoint(slipperPosition).y;
             float margin = Balance.SlipperHitRadius / Mathf.Max(.001f, Mathf.Abs(transform.lossyScale.y));
             return y >= _contactBottom - margin && y <= _contactTop + margin;
+        }
+
+        internal bool InContactFootprint(Vector3 at)
+        {
+            Vector3 delta = at - transform.position;
+            return ThrowRules.Connects(new Vector2(delta.x, delta.z).magnitude, _skinIndex);
         }
 
         private Transform _contactVisual;
@@ -560,7 +565,6 @@ namespace TumbangPreso
         {
             if (nowUpright)
             {
-                Visual.CanContactAccent.Play(transform.position, true);
                 GameServices.Voice?.OnLataRestored();
                 return;
             }
@@ -569,7 +573,6 @@ namespace TumbangPreso
             // The accepted flair event supplies personal confirmation to the scorer.
             GameServices.Voice?.OnLataKnocked();
             Visual.ImpactBurst.SpawnTinContact(transform.position + Vector3.up * .18f);
-            Visual.CanContactAccent.Play(transform.position, false);
 
             // ⚠️⚠️ THE KNOCKDOWN NOW HAS A BEAT ON EVERY SCREEN (owner, 2026-11-07, from the external
             // feedback document: *"Try adding more emphasis on when the slipper hits the can ... for hit stops,
@@ -585,7 +588,7 @@ namespace TumbangPreso
         // § THE KNOCKDOWN POP. The can itself takes the hit: it stretches up off the impact, squashes back and
         // settles, and its rim flashes warm white for a few frames. Presentation only, on the drawn `Visual`
         // child, so the contact shape (measured once from the meshes and cached) and the physics never see it.
-        private const float KnockPopSeconds = 0.30f, KnockFlashSeconds = 0.10f;
+        private const float KnockPopSeconds = 0.36f, KnockFlashSeconds = 0.10f;
         private float _knockPopLeft, _knockFlashLeft;
         private Transform _popVisual;
         private Vector3 _popRestScale = Vector3.one;
@@ -614,8 +617,15 @@ namespace TumbangPreso
             if (_knockPopLeft <= 0.0f || _popVisual == null) return;
             _knockPopLeft = Mathf.Max(0.0f, _knockPopLeft - Time.unscaledDeltaTime);
             float u = 1.0f - _knockPopLeft / KnockPopSeconds;
-            // Up to a 26 per cent stretch on the hit, a squash under rest on the rebound, then home.
-            float stretch = Mathf.Sin(u * Mathf.PI * 2.0f) * Mathf.Exp(-u * 3.2f) * 0.26f;
+            // The hit compresses the tin during the pause. The rebound follows as the topple resumes.
+            float stretch;
+            if (u < .18f) stretch = Mathf.SmoothStep(0, -.14f, u / .18f);
+            else if (u < .47f) stretch = Mathf.SmoothStep(-.14f, .20f, Mathf.InverseLerp(.18f, .47f, u));
+            else
+            {
+                float settle = Mathf.InverseLerp(.47f, 1, u);
+                stretch = .20f * (1 - settle) * (1 - settle) * Mathf.Cos(settle * Mathf.PI * 1.5f);
+            }
             float across = 1.0f - stretch * 0.5f;
             _popVisual.localScale = Vector3.Scale(_popRestScale, new Vector3(across, 1.0f + stretch, across));
             if (_knockPopLeft <= 0.0f) _popVisual.localScale = _popRestScale;
@@ -874,7 +884,7 @@ namespace TumbangPreso
                 // The shared clock, ground footprint and can glyph already carry
                 // this state. The legacy collar rotates with the fallen can and
                 // becomes an upright red crescent; retain it only for look-off.
-                _downCollar.gameObject.SetActive(Visual.WorldCueProfile.Current.HeroObjects < .001f);
+                _downCollar.gameObject.SetActive(!IsCarried && Visual.WorldCueProfile.Current.HeroObjects < .001f);
                 float r = DownCollarRadius * (1.0f + beat * 0.07f);
                 _downCollar.localScale = new Vector3(r, 1.0f, r);
             }
@@ -934,7 +944,7 @@ namespace TumbangPreso
         private float _protectionPulse;
         private void BuildProtectionShell()
         {
-            if (Visual.WorldCueProfile.Current.RestoreClock > 0)
+            if (HasRestoreProtection || Visual.WorldCueProfile.Current.RestoreClock > 0)
             { ClearProtectionShell(); return; }
             if (_protectionShell != null) return;
             // A close collar protects this can, without making a shield bubble
@@ -974,7 +984,7 @@ namespace TumbangPreso
         private void StepChalkSeal()
         {
             var round = GameServices.Round;
-            bool want = _isUpright && IsProtected && round != null && round.RoundActive;
+            bool want = _isUpright && IsProtected && !HasRestoreProtection && round != null && round.RoundActive;
             if (want)
             {
                 if (_seal == null)
@@ -1021,6 +1031,8 @@ namespace TumbangPreso
             _sealMaterial.SetFloat("_InkWeight", Visual.WorldCueProfile.Current.InkEffects);
         }
 
+        private bool _showingRestoreGold;
+
         private void StepStatePresentation()
         {
             if (_restoreProtectionLeft > 0.0f)
@@ -1047,6 +1059,24 @@ namespace TumbangPreso
             // beacon swept about so much. `DriveDownPulse` breathes the ring and the rim off one
             // sine and leaves the marker's own transform alone.
             DriveDownPulse();
+
+            var settings = Settings.SettingsStore.Current;
+            bool gold = _isUpright && _restoreProtectionLeft > 0 && !settings.ReducedEffects;
+            if (gold)
+            {
+                float intensity = 1.75f;
+                if (_restoreProtectionLeft < 1 && !settings.ReducedUiMotion)
+                {
+                    float elapsed = 1 - _restoreProtectionLeft;
+                    // A continuous phase ramps the last second from two to five pulses per second.
+                    float cycles = 2 * elapsed + 1.5f * elapsed * elapsed;
+                    float trough = .5f * (1 - Mathf.Cos(2 * Mathf.PI * cycles));
+                    intensity *= 1 - .58f * settings.EffectiveFlashIntensity * trough;
+                }
+                SetRim(intensity, new Color(1f, .76f, .10f));
+            }
+            else if (_showingRestoreGold && _isUpright) SetRim(0);
+            _showingRestoreGold = gold;
         }
 
         /// <summary>
@@ -1143,7 +1173,7 @@ namespace TumbangPreso
         {
             RestoreRaisePresentation();
             try { StepRoll(); }
-            finally { ApplyRaisePresentation(); NoteDrawnDownPose(); StepSetRing(); }
+            finally { ApplyRaisePresentation(); NoteDrawnDownPose(); }
         }
 
         // ⚠️⚠️ THE CAN RISES UNDER THE TAYA'S HANDS, IN THE DRAWING ONLY.
@@ -1177,10 +1207,6 @@ namespace TumbangPreso
         private Vector3 _hopFromPos, _drawnDownPos;
         private Quaternion _hopFromRot, _drawnDownRot;
         private float _drawnDownAt = -100;
-        private LineRenderer _setRing;
-        private Material _setRingMaterial;
-        private float _setRingAge = -1;
-        private const float SetRingLife = .5f;
 
         private const float ClatterSeconds = .62f;
         // Three hops, each a real parabola: off the hit, then two shrinking rebounds (seconds, metres). A smooth
@@ -1229,44 +1255,6 @@ namespace TumbangPreso
             var round = GameServices.Round;
             if (round == null || !round.RoundActive) return;
             Visual.ImpactBurst.SpawnTinContact(transform.position + Vector3.up * .04f);
-            if (Settings.SettingsStore.Current.EffectiveFlashIntensity <= .001f) return;
-            if (_setRing == null)
-            {
-                var go = new GameObject("~CanSetRing");
-                go.transform.SetParent(transform, false);
-                _setRing = go.AddComponent<LineRenderer>();
-                _setRing.useWorldSpace = true; _setRing.loop = true; _setRing.positionCount = 32;
-                _setRing.numCapVertices = 0; _setRing.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-                _setRing.receiveShadows = false;
-                _setRingMaterial = new Material(Shader.Find("TumbangPreso/InkContact")) { name = "Can set ring" };
-                Visual.VfxRenderTag.Own(go, _setRingMaterial);
-                _setRing.sharedMaterial = _setRingMaterial;
-            }
-            _setRing.enabled = true; _setRingAge = 0;
-            StepSetRing();
-        }
-
-        /// <summary>A gold ring that runs out along the road from the planted can and thins away.</summary>
-        private void StepSetRing()
-        {
-            if (_setRing == null || _setRingAge < 0) return;
-            float u = _setRingAge / SetRingLife;
-            _setRingAge += Time.deltaTime;
-            var round = GameServices.Round;
-            if (u >= 1 || round == null || !round.RoundActive) { _setRing.enabled = false; _setRingAge = -1; return; }
-            float ease = 1 - (1 - u) * (1 - u) * (1 - u);
-            float radius = Mathf.Lerp(.18f, .85f, ease);
-            var colour = new Color(1, .77f, .26f, (1 - u) * .85f * Settings.SettingsStore.Current.EffectiveFlashIntensity);
-            _setRing.startColor = _setRing.endColor = colour;
-            _setRing.widthMultiplier = Mathf.Lerp(.07f, .015f, u);
-            _setRingMaterial.SetFloat("_Age", u);
-            _setRingMaterial.SetFloat("_InkWeight", Visual.WorldCueProfile.Current.InkEffects);
-            Vector3 c = new Vector3(transform.position.x, _mark.y + .02f, transform.position.z);
-            for (int i = 0; i < 32; i++)
-            {
-                float a = i / 32f * Mathf.PI * 2;
-                _setRing.SetPosition(i, c + new Vector3(Mathf.Cos(a), 0, Mathf.Sin(a)) * radius);
-            }
         }
 
         private void RestoreRaisePresentation()

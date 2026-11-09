@@ -1,6 +1,6 @@
 # Current work
 
-Only active queue. Updated 2026-11-08. Old unchecked boxes are not assignments.
+Only active queue. Updated 2026-11-09. Old unchecked boxes are not assignments.
 [Retirement decisions](RETIRED_WORK.md) explain superseded requirements.
 All original IDs and full bodies remain in the
 [previous queue](archive/cleanup-2026-10-25/docs/TODO.md),
@@ -10,6 +10,7 @@ All original IDs and full bodies remain in the
 
 | ID | Status | Acceptance / next action |
 |---|---|---|
+| TJ-CADENA-1109 | `tj-cadena-fixes` candidate | [Design](Design.md) Nov 9. Throw arc, defender timing and UI. Native evidence: Logs/tj-cadena-fixes/. Owner play and actual peers open. |
 | FEEL-PICKUP-1107 | Integrated on main by owner request, Nov 8 | [Design](Design.md) Nov 7. Dwell crouch, six contexts, clickable skip. Edit 4/4, exact Play 9/9: Logs/feel-pickup-revision-20261107/. Actual peers open. |
 | PAD-1107 | Hardware open | [Evidence](reports/controller-native-2026-11-07.md) |
 | BANAUE-PERF-1105 | DONE; follow-ups open | [Evidence and next work](reports/banaue-perf-2026-11-05/README.md) |

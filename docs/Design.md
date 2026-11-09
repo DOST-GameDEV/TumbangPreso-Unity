@@ -37,6 +37,31 @@ The opening skip vote now frees the mouse while visible, shows the current
 ReadyUp binding and restores gameplay capture after the film. Pointer-click
 coverage uses the actual UI input module, not a direct call to the vote method.
 
+### TJ Cadena feedback, November 9
+
+The throw guide uses spaced marks along the predicted flight plus the landing
+circle. Elevated terrain can hide the circle, so the visible arc carries the
+release direction and climb. The guide uses the actual current launch and curve.
+Live interception can still change the outcome.
+
+The defender's prompt shows one current job: move to the downed can, restore it,
+cover an exit, or tag an attacker in reach. The approved can-down penalty grace
+is seven seconds. An accepted reset protects the upright can for four seconds.
+The can shows a gold rim during reset protection, and the clock caption shows
+the time remaining. The gold pulses faster through the final second. Reduced
+motion keeps it steady. The restore's existing phases show a deeper crouch,
+a two-handed grip, a weighted lift and a clean plant on the mark. Existing moving
+and settled aim drift still applies.
+
+The restore prompt follows lift, carry and placement with one progress bar.
+The chalk target stays at the can's home even when the can falls or moves.
+It uses a different chalk pattern in each court. The temporary settling and
+placement circles are removed. A slipper striking the protected can rebounds
+once per contact and can fall to the street while the protection still runs.
+
+The results board shows the winner, scores, any earned XP and three next
+actions. Rematch, map choice and the main menu are all on the same board.
+
 ## Current basic-action revision, October 3
 
 Full throw charge is1.5s. Normal tag/punch recovery is0.25s on an authoritative
@@ -437,7 +462,7 @@ within 0.2 m of them — the slipper drops out of the bottom of the screen the i
 is released. From the sight line it is **0.001–0.043 m**. The path was right; the
 starting height was not.
 
-⚠️ **`THROW_RESTORE_COOLDOWN` 1.25 s.** After the taya stands the lata back up, nobody
+⚠️ **`THROW_RESTORE_COOLDOWN` 4 s.** After the taya stands the lata back up, nobody
 may throw. It stops the lata being re-knocked by a slipper already charged and waiting
 on the last frame of the reset channel.
 

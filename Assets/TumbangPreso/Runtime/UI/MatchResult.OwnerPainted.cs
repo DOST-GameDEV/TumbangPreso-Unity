@@ -81,6 +81,7 @@ namespace TumbangPreso.UI
             for(int i=0;i<3;i++)
             {
                 if(_nativePages[i]!=null)_nativePages[i].SetActive(i==page);
+                if(_nativeTabs[i]==null)continue;
                 // The open page's tab is the persimmon marker sticker, the rest honey: the hub's
                 // own tab language (LOADOUT's OWNED and UNOWNED), in place of a gold underline.
                 var sticker=_nativeTabs[i].transform.Find("ActionPlate")?.GetComponent<TumbangPreso.UI.Hub.HubShape>();

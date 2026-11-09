@@ -844,12 +844,7 @@ namespace TumbangPreso.PlayTests
             var result = Object.FindFirstObjectByType<MatchResult>();
             result.OnMatchWon(0);
             yield return new WaitForSecondsRealtime(1.2f);
-            yield return Shot("match-result-standings", "Result / Standings", "Match");
-            Global("ResultTab1").onClick.Invoke(); yield return new WaitForSecondsRealtime(.5f);
-            yield return Shot("match-result-yourmatch", "Result / Your match", "Match");
-            Global("ResultTab2").onClick.Invoke(); yield return new WaitForSecondsRealtime(.5f);
-            yield return Shot("match-result-players", "Result / Players", "Match");
-            Global("ResultTab0").onClick.Invoke(); yield return null;
+            yield return Shot("match-result-summary", "Match result", "Match");
             ExecuteEvents.Execute(Global("ResultNextMap").gameObject, new BaseEventData(EventSystem.current), ExecuteEvents.submitHandler);
             yield return new WaitForSecondsRealtime(1.5f);
             yield return Shot("match-result-nextcourt", "Result / Next court", "Match");

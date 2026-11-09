@@ -121,6 +121,7 @@ namespace TumbangPreso.UI.Hub
             if (icon != HubGlyph.Mark.None)
             {
                 var glyph = HubKit.Glyph(face, "Icon", icon, ink, 0.1f);
+                AddPrintedShadow(glyph);
                 bool alone = words == null;
                 var g = glyph.rectTransform;
                 g.anchorMin = g.anchorMax = g.pivot = alone ? new Vector2(0.5f, 0.5f) : new Vector2(0, 0.5f);
@@ -131,6 +132,7 @@ namespace TumbangPreso.UI.Hub
             if (words != null)
             {
                 var label = HubKit.Text(face, "Label", words, step, true, ink, TextAnchor.MiddleCenter);
+                AddPrintedShadow(label);
                 HubKit.Stretch(label.rectTransform);
                 label.rectTransform.offsetMin = new Vector2(icon != HubGlyph.Mark.None ? 74 : 18, 4);
                 label.rectTransform.offsetMax = new Vector2(-18, -4);
@@ -160,6 +162,13 @@ namespace TumbangPreso.UI.Hub
             }
             rect.gameObject.AddComponent<KnitFocus>().Button = button;
             return button;
+        }
+
+        internal static void AddPrintedShadow(Graphic graphic, Vector2? offset = null)
+        {
+            var shadow = graphic.gameObject.AddComponent<Shadow>();
+            shadow.effectColor = new Color(.13f, .027f, .047f, .47f);
+            shadow.effectDistance = offset ?? new Vector2(1.6f, -2.2f);
         }
 
         /// <summary>

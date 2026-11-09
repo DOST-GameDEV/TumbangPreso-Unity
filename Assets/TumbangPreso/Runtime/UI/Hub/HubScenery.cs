@@ -148,7 +148,7 @@ namespace TumbangPreso.UI.Hub
         /// <summary>A printed poster's ground: the evening maroon with a halftone screen over it.</summary>
         public static void PosterGround(RectTransform root)
         {
-            if (HubBoardSkin.Wears(root)) { Wash(root); return; }
+            if (HubBoardSkin.Wears(root)) { Wash(root, new Vector2(.73f, .54f), new Vector2(1350, 1050)); return; }
             Fill(root, HubStyle.Maroon);
             Surface(root, HubSurface.Kind.Halftone, 1);
         }

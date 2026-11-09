@@ -24,19 +24,34 @@ namespace TumbangPreso.Visual
             VfxRenderTag.Own(_root,material);_block=new MaterialPropertyBlock();_renderer.enabled=false;
             _renderer.forceRenderingOff=recorded;
         }
-        public bool Place(Vector3 supportPoint,float lowestY,Vector2 radius,float weight,bool landing=false)
+        public bool Place(Vector3 supportPoint,float lowestY,Vector2 radius,float weight) =>
+            PlaceOnSupport(supportPoint, lowestY, radius, weight, 0);
+
+        private bool PlaceOnSupport(Vector3 supportPoint,float lowestY,Vector2 radius,float weight,int markStyle)
         {
             if(weight<=0 || !WorldGround.TryBelow(supportPoint,.5f,3.5f,out float ground))
             {_renderer.enabled=false;return false;}
             float gap=Mathf.Max(0,lowestY-ground);
-            if(!landing && gap>2.5f){_renderer.enabled=false;return false;}
+            if(markStyle==0 && gap>2.5f){_renderer.enabled=false;return false;}
             _root.transform.position=new Vector3(supportPoint.x,ground+.015f,supportPoint.z);
             _root.transform.localScale=new Vector3(radius.x,1,radius.y);
-            _block.SetFloat("_Landing",landing?1:0);
-            _block.SetFloat("_Weight",Mathf.Clamp01(weight)*(landing?1:Mathf.Clamp01(1-gap/2.5f)));
-            _block.SetColor("_Face",WorldLookPresentation.CourtChalk);_block.SetColor("_Ink",WorldLookPresentation.CourtEdge);
+            _block.SetFloat("_MarkStyle",markStyle);
+            _block.SetFloat("_Weight",Mathf.Clamp01(weight)*(markStyle>0?1:Mathf.Clamp01(1-gap/2.5f)));
+            if(markStyle>0)_block.SetColor("_Face",new Color(.98f,.96f,.90f));
             _renderer.SetPropertyBlock(_block);_renderer.enabled=true;return true;
         }
+        internal bool PlaceCanMark(Vector3 mark, int style) =>
+            PlaceOnSupport(mark, mark.y, new Vector2(.51f, .51f), .92f, style);
+
+        internal static int MarkStyleFor(string scene) => scene switch
+        {
+            UI.SceneFlow.IlalimNgTulay => 2,
+            UI.SceneFlow.LagoonCove => 3,
+            UI.SceneFlow.Kanto => 4,
+            UI.SceneFlow.Arena => 5,
+            UI.SceneFlow.Payo => 6,
+            _ => 1
+        };
         public void Hide()=>_renderer.enabled=false;
         public void Visible(bool visible)=>_renderer.forceRenderingOff=!visible;
         public void Dispose(){if(_root!=null)Object.Destroy(_root);}

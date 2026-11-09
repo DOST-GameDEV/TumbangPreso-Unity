@@ -416,8 +416,9 @@ namespace TumbangPreso
             Vector3 forward = FlatForward(who);
             Quaternion upright = Quaternion.LookRotation(forward, Vector3.up);
             Vector3 heldBase = who.transform.position + forward * HoldReach + Vector3.up * HeldBaseHeightFor(who);
-            // A little bob with the walk, so it reads as held and not glued.
-            float bob = Carrying == CarryPhase.Carry ? .018f * Mathf.Sin(Time.time * 11.0f) : 0.0f;
+            // A small lift with the walk, measured from the start of this carry.
+            // It starts at the grip and stays above it even if the restore timing changes.
+            float bob = Carrying == CarryPhase.Carry ? .006f * (1 - Mathf.Cos(CarryAge * 11.0f)) : 0.0f;
             Vector3 heldPos = heldBase + Vector3.up * bob + upright * relPos;
             Quaternion heldRot = upright * relRot;
 
@@ -431,16 +432,20 @@ namespace TumbangPreso
                     float lift = Visual.CanRaiseShape.Rise(Mathf.Lerp(0.0f, .84f, u));
                     Vector3 from = _pickupFromKnown ? _pickupFromPos : _raiseMesh.position;
                     Quaternion fromRot = _pickupFromKnown ? _pickupFromRot : _raiseMesh.rotation;
-                    pos = Vector3.Lerp(from, heldPos, lift) + Vector3.up * (.06f * Mathf.Sin(lift * Mathf.PI));
-                    rot = Quaternion.Slerp(fromRot, heldRot, lift);
+                    float arc = Mathf.Sin(lift * Mathf.PI);
+                    pos = Vector3.Lerp(from, heldPos, lift) + (Vector3.up * .045f - forward * .06f) * arc;
+                    // The can tips upright a little ahead of its lift, then settles into the grip.
+                    rot = Quaternion.Slerp(fromRot, heldRot, lift + .16f * arc);
                     break;
                 }
                 case CarryPhase.SetDown:
                 {
-                    float u = Mathf.SmoothStep(0.0f, 1.0f, Mathf.Clamp01(CarryAge / SetDownSeconds));
-                    Vector3 onMark = _mark + upright * relPos;
-                    pos = Vector3.Lerp(heldPos, onMark, u);
-                    rot = heldRot;
+                    float u = Mathf.Clamp01(CarryAge / SetDownSeconds);
+                    float plant = Mathf.SmoothStep(0, 1, Mathf.InverseLerp(.08f, .94f, u));
+                    pos = Vector3.Lerp(heldPos, _mark + relPos, plant);
+                    float tilt = Mathf.Sin(u * Mathf.PI) * (1 - plant) * 11;
+                    // Meet HostRestore's upright mark pose before the hands open.
+                    rot = Quaternion.AngleAxis(tilt, who.transform.right) * Quaternion.Slerp(heldRot, relRot, plant);
                     break;
                 }
                 default:
@@ -464,7 +469,8 @@ namespace TumbangPreso
             if (CameraSystem.ViewPerspective.IsEyesOf(Camera.main, who)) return HoldBaseHeight;
             var palm = who.GetComponent<Visual.CharacterVisual>()?.HandAnchor;
             if (palm == null) return HandsBaseHeight;
-            return Mathf.Clamp(palm.position.y - who.transform.position.y - HeldGripAboveBase, .1f, HoldBaseHeight);
+            // Keep the tin above ankle height even at the low point of the carry gait.
+            return Mathf.Clamp(palm.position.y - who.transform.position.y - HeldGripAboveBase, .17f, HoldBaseHeight);
         }
 
         /// <summary>The base height in the hands when the body has no palm to read, metres.</summary>

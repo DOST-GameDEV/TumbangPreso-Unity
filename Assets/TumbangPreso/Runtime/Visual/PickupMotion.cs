@@ -41,5 +41,19 @@ namespace TumbangPreso.Visual
             : style == PickupStyle.Moving ? new Vector3(-.12f, .20f, .04f)
             : style == PickupStyle.QuickSnatch ? new Vector3(.10f, .15f, -.12f)
             : new Vector3(.05f, .12f, -.06f);
+
+        public static Vector3 HandArc(PickupStyle style, float progress)
+        {
+            Vector3 bend = style switch
+            {
+                PickupStyle.Moving => new Vector3(.16f, .06f, .06f),
+                PickupStyle.RunStop => new Vector3(.04f, .16f, -.08f),
+                PickupStyle.Crouched => new Vector3(.08f, .04f, 0),
+                PickupStyle.Sliding => new Vector3(.24f, .02f, .08f),
+                PickupStyle.QuickSnatch => new Vector3(-.18f, .12f, .04f),
+                _ => new Vector3(0, .10f, .03f)
+            };
+            return bend * Mathf.Sin(Mathf.Clamp01(progress) * Mathf.PI);
+        }
     }
 }

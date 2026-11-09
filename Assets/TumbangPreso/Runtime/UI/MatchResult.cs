@@ -144,6 +144,7 @@ namespace TumbangPreso.UI
         private void OnDisable()
         {
             CloseCourtPicker();
+            if (Hud.Instance != null && _canvas != null) Hud.Instance.SetResultHud(_canvas, false);
             _rematchPending = false;
             if (_nativeResult && _canvas != null) _canvas.gameObject.SetActive(false);
             if (GameServices.Match != null) GameServices.Match.MatchEnded -= OnMatchWon;
@@ -187,6 +188,7 @@ namespace TumbangPreso.UI
         {
             CloseCourtPicker();
             _canvas.gameObject.SetActive(true);
+            if (Hud.Instance != null) Hud.Instance.SetResultHud(_canvas, true);
 
             if (winningSlot < 0)
             {
@@ -373,7 +375,7 @@ namespace TumbangPreso.UI
         /// </summary>
         private void OnRecordReady(Core.MatchRecord record)
         {
-            if (_yourMatchLine == null || record == null) return;
+            if (record == null) return;
             PaintAccolades(record); // every seat's accolades, spectators included
 
             string me = Net.CareerStore.LocalPlayerId;
@@ -381,16 +383,18 @@ namespace TumbangPreso.UI
             if (line == null)
             {
                 // A spectator has no line, and a spectated match adds nothing to a career.
-                _yourMatchLine.text = "";
+                _lastLine = null; _lastRecord = null;
+                ShowProgression(null, null);
+                if (_yourMatchLine != null) _yourMatchLine.text = "";
                 return;
             }
 
             var career = GameServices.Career;
-            string queued = UploadCopyFor(record, career?.QueuedCount ?? 0);
-
             _lastLine = line; _lastRecord = record;
             ShowProgression(career?.LastAward, career?.Profile);
 
+            if (_yourMatchLine == null) return;
+            string queued = UploadCopyFor(record, career?.QueuedCount ?? 0);
             string clutch = Core.MatchRecordRules.IsClutch(record, line.Slot) ? "  ·  CLUTCH" : "";
 
             _yourMatchLine.text =
@@ -1504,6 +1508,7 @@ namespace TumbangPreso.UI
             _rematchStarting = true; _rematchPending = false;
             RestoreTime();
             if (_canvas != null) _canvas.gameObject.SetActive(false);
+            if (Hud.Instance != null && _canvas != null) Hud.Instance.SetResultHud(_canvas, false);
             if (_rematch != null) _rematch.interactable = true;
             CursorMode.Capture();
 

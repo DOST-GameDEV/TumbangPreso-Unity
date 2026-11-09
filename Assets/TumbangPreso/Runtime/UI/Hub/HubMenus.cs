@@ -170,32 +170,41 @@ namespace TumbangPreso.UI.Hub
     /// </summary>
     public sealed class HubShopPopup : HubScreen
     {
+        private HubButton _heroes;
         public override bool WearsBoard => true;
         public override bool IsPopup => true;
+        public override Selectable FirstFocus => _heroes;
 
         public override void Build()
         {
-            var panel = HubKnit.DarkModal(Root, Hub, "SHOP", "Spend " + EconomyRules.CurrencyName + " on heroes and items. Earn it by playing.", 1230, 815, out _, true, true, new Vector2(345, 130));
-            var heroes = ShopDoor(panel, "HeroShopDoor", "HEROES", "Unlock heroes for online play. Every hero is free to try in Practice.", 45, "sunburst-red",
-                new[] { ("rafi", 150f, 282f, 230f), ("nemu", 405f, 282f, 230f), ("phaister", 278f, 255f, 290f) }, () => { Close(); Hub.Push<HubHero>(h => h.ShopMode = true); });
-            var items = ShopDoor(panel, "ItemShopDoor", "ITEMS", "New tsinelas and lata. Each one trades one strength for another.", 630, "sunburst-lime",
-                new[] { ("heels", 105f, 310f, 170f), ("loafers", 450f, 310f, 170f), ("karne", 278f, 240f, 300f) }, () => { Close(); Hub.Push<HubLoadout>(l => l.StartUnowned = true); });
-            HubSlap.On(heroes.transform, 0.02f, -2);
+            string overview = "Spend " + EconomyRules.CurrencyName + " on heroes and items. Earn it by playing.";
+            var panel = HubKnit.DarkModal(Root, Hub, "SHOP", overview, 1230, 815, out _, true, true, new Vector2(345, 130));
+            var caption = panel.Find("Line").GetComponent<Text>();
+            _heroes = ShopDoor(panel, "HeroShopDoor", "HEROES", 45, "sunburst-red",
+                new[] { ("rafi", 150f, 282f, 230f, 0f), ("nemu", 405f, 282f, 230f, 0f), ("phaister", 278f, 255f, 290f, 0f) }, () => { Close(); Hub.Push<HubHero>(h => h.ShopMode = true); });
+            var items = ShopDoor(panel, "ItemShopDoor", "ITEMS", 630, "sunburst-lime",
+                new[] { ("heels", 104f, 265f, 205f, 44f), ("loafers", 451f, 265f, 205f, -58f), ("karne", 278f, 246f, 295f, 0f) }, () => { Close(); Hub.Push<HubLoadout>(l => l.StartUnowned = true); });
+            _heroes.Attention += on => caption.text = on ? "Unlock heroes for matches. Try them all in Practice." : overview;
+            items.Attention += on => caption.text = on ? "Browse tsinelas and lata for your loadout." : overview;
+            HubSlap.On(_heroes.transform, 0.02f, -2);
             HubSlap.On(items.transform, 0.08f, 2);
         }
 
-        private static HubButton ShopDoor(RectTransform panel, string name, string title, string description, float x, string burst,
-                                          (string id, float cx, float cy, float size)[] art, System.Action open)
+        private static HubButton ShopDoor(RectTransform panel, string name, string title, float x, string burst,
+                                          (string id, float cx, float cy, float size, float tilt)[] art, System.Action open)
         {
             const float w = 555, h = 540;
-            var door = HubKnit.ShowCard(panel, name, Resources.Load<Texture2D>("UI/boot-kit/" + burst), x, 230, w, h, 400, open, false, false, 0, description);
-            foreach (var (id, cx, cy, size) in art)
+            var door = HubKnit.ShowCard(panel, name, Resources.Load<Texture2D>("UI/boot-kit/" + burst), x, 230, w, h, 400, open, false, false, 0);
+            foreach (var (id, cx, cy, size, tilt) in art)
             {
                 var picture = HubKit.Picture(door.Body, "Cast_" + id, HubKit.Portrait(id));
                 HubKnit.In(picture.rectTransform, cx - size / 2, cy - size / 2, size, size);
+                picture.rectTransform.pivot = new Vector2(.5f, .5f);
+                picture.rectTransform.anchoredPosition = new Vector2(cx, -cy);
+                picture.rectTransform.localRotation = Quaternion.Euler(0, 0, tilt);
             }
             var rim = HubKnit.RimOver(door.Body);
-            // The hover line goes over the cast and the items, so its words never show behind them, and under the rim (QA, 2026-11-08).
+            // The focus tint stays under the rim. The description lives above the cards.
             door.Body.Find("Hover").SetSiblingIndex(rim.transform.GetSiblingIndex());
             var label = HubKnit.Display(door.Body, "Label", title, 76, HubKnit.KitCream, TextAnchor.MiddleCenter);
             HubKnit.In(label.rectTransform, 0, h - 130, w, 90);

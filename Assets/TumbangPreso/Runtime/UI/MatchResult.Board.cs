@@ -23,7 +23,7 @@ namespace TumbangPreso.UI
         private HubButton[] _boardTabs;
         private readonly RectTransform[] _boardRows = new RectTransform[4];
         private readonly Graphic[] _boardSeats = new Graphic[4];
-        private Text _winnerName, _momentWord, _momentName;
+        private Text _winnerName, _momentWord, _momentName, _finishCaption;
         private Image _momentPortrait;
         private GameObject _momentCard;
         private static MatchResult _shown;
@@ -228,6 +228,7 @@ namespace TumbangPreso.UI
                 _rows[i][1].text = Tight(SeatLabel.WithIdentity(order[i])); HubKit.Fit(_rows[i][1], 430);
             }
             if (_winnerName != null) _winnerName.text = hasWinner ? Tight(NameFor(winner)) : "EVEN AT THE TOP";
+            if (_finishCaption != null) _finishCaption.text = hasWinner ? "MATCH WINNER" : "EVEN AT THE TOP";
         }
 
         private void BoardRecentPlayers()

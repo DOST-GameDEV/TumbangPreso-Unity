@@ -65,6 +65,7 @@ namespace TumbangPreso.CameraSystem
             low = new Vector3(Mathf.Clamp(low.x, -.60f, .65f), Mathf.Clamp(low.y, -1.1f, -.20f), depth);
             float lift = _pickupSource.PickupLifting ? _pickupSource.PickupLift : 0;
             Vector3 fist = Vector3.Lerp(low, CarryAnchor + new Vector3(0, .04f, .02f), lift);
+            fist += PickupMotion.HandArc(style, _pickupSource.PickupLifting ? lift : _pickupSource.AutoPickupRatio);
             AimForearm(_rightPivot, _rightArm, _rightRest, fist, PickupMotion.Shoulder(style), _pickupReachWeight);
             _leftPivot.localPosition += PickupMotion.Brace(style) * _pickupReachWeight;
 

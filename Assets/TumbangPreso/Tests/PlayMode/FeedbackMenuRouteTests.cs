@@ -21,6 +21,64 @@ namespace TumbangPreso.PlayTests
         [UnityTest, Timeout(90000)]
         public IEnumerator TitlePadSubmitIsReleasedBeforeHomeCanReceiveIt() => SubmitRoute(true);
 
+        [UnityTest, Timeout(90000)]
+        public IEnumerator ShopPopupTakesPadFocusAndReturnsItToTheOpener()
+        {
+            SceneFlow.Networked = false;
+            GameLaunch.Reset();
+            yield return SceneManager.LoadSceneAsync(SceneFlow.MatchSetup);
+            float until = Time.realtimeSinceStartup + 45;
+            while ((TumpHub.Current == null || HubLoading.Visible) && Time.realtimeSinceStartup < until) yield return null;
+            var hub = TumpHub.Current;
+            Assert.IsNotNull(hub);
+            Assert.IsInstanceOf<HubHome>(hub.Top);
+            yield return new WaitForSecondsRealtime(.55f);
+            yield return TumpUiCapture.Capture("TJ-home-sticker-shadows-1280x720", hub.Canvas, 1280, 720,
+                checkPalette: false, checkActionBounds: true);
+            var events = UnityEngine.EventSystems.EventSystem.current;
+            var module = events.GetComponent<UnityEngine.InputSystem.UI.InputSystemUIInputModule>();
+            var opener = GameObject.Find("ShopButton");
+            Assert.IsNotNull(opener);
+            var settings = InputSystem.settings;
+            var background = settings.backgroundBehavior;
+            var editorInput = settings.editorInputBehaviorInPlayMode;
+            var pad = InputSystem.AddDevice<Gamepad>();
+            try
+            {
+                settings.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus;
+                settings.editorInputBehaviorInPlayMode = InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
+                InputSystem.EnableDevice(pad);
+                events.SetSelectedGameObject(opener);
+                InputSystem.QueueStateEvent(pad, new GamepadState().WithButton(GamepadButton.South));
+                InputSystem.Update();
+                TumbangPreso.InputLayer.LastInputDevice.Sample();
+                Assert.IsTrue(module.submit.action.WasPerformedThisFrame());
+                module.Process();
+                Assert.IsInstanceOf<HubShopPopup>(hub.Top);
+                Assert.AreSame(hub.Top.FirstFocus.gameObject, events.currentSelectedGameObject);
+                InputSystem.QueueStateEvent(pad, new GamepadState());
+                InputSystem.Update();
+                yield return new WaitForSecondsRealtime(.4f);
+                yield return TumpUiCapture.Capture("TJ-shop-focus-refined-1280x720", hub.Canvas, 1280, 720,
+                    checkPalette: false, checkActionBounds: true);
+                hub.Back();
+                Assert.IsInstanceOf<HubHome>(hub.Top);
+                Assert.AreSame(opener, events.currentSelectedGameObject);
+                hub.Push<HubHero>(hero => hero.ShopMode = true);
+                until = Time.realtimeSinceStartup + 35;
+                while (!(hub.Top is HubHero) && Time.realtimeSinceStartup < until) yield return null;
+                Assert.IsInstanceOf<HubHero>(hub.Top);
+                yield return TumpUiCapture.Capture("TJ-hero-contrast-refined-1600x680", hub.Canvas, 1600, 680,
+                    checkPalette: false, checkActionBounds: true);
+            }
+            finally
+            {
+                InputSystem.RemoveDevice(pad);
+                settings.backgroundBehavior = background;
+                settings.editorInputBehaviorInPlayMode = editorInput;
+            }
+        }
+
         private IEnumerator SubmitRoute(bool usePad)
         {
             var settings = InputSystem.settings;
