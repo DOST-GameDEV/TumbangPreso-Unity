@@ -97,7 +97,7 @@ namespace TumbangPreso.Abilities
             public Crosscurrent() : base("rafi_skill1", "CROSSCURRENT",
                 "PRESS {KEY} to send a narrow current where you aim. It bends the first flying slipper it meets, and the thrower keeps the credit. Walls stop it.",
                 RafiRules.CurrentCooldown, glyph: AbilityGlyph.RafiCrosscurrent,
-                summary: "Bend one flying slipper. Its thrower keeps the credit.",
+                summary: "Redirect a flying slipper. Its original thrower scores if it hits the can.",
                 telegraphRadius: RafiRules.CurrentRadius, telegraphRange: RafiRules.CurrentRange,
                 castAction: "hero-rafi-cut", viewmodelAction: "current-cut", castCue: "sfx_cast_rafi_current") { }
             protected override void OnActivate(AbilityContext ctx)

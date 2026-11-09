@@ -3,11 +3,11 @@
 TJ-CADENA-1109 is on main. Incoming UI takes precedence on conflicting
 UI hunks. [Previous review and evidence](TJ_CADENA_REVIEW_LEDGER.md).
 
-Movement-based aim drift, bot lane changes and emotes, cinematic callout
-visibility, the centred match menu and compact wallet were checked.
-Core 9/9 and PlayMode 9/9 in `Logs/aim-guard-ui-20261109/`.
-Earlier slide and picker evidence is in `Logs/bot-slide-20261109/`
-and `Logs/pick-ui-20261109/`.
+Soft dark card edges and the skill readout were checked in
+`Logs/ui-edges-20261109/` and `Logs/picker-hierarchy-20261109/`.
+Amihan's local face pass captured a 5.9 s real ultimate for owner
+review in `Logs/amihan-face-20261109/`.
+Aim drift, bots and menu evidence remain in `Logs/aim-guard-ui-20261109/`.
 
 CONTROLLER-NATIVE-1107, main: native DualSense/Edge HID reports reach the current
 gameplay/UI bindings. Fixed disabled UI-action confirm/back fallback and added

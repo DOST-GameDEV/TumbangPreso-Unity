@@ -177,6 +177,8 @@ namespace TumbangPreso.PlayTests
                 Assert.IsInstanceOf<HubMenu>(hub.Top);
                 Assert.AreEqual(SceneFlow.MatchSetup, SceneManager.GetActiveScene().name, "Back from Home must not reopen the title.");
                 Assert.IsTrue(hub.ShowingHome, "The hamburger must retain the Home picture underneath it.");
+                yield return TumpUiCapture.Capture("HubMenu-soft-edges-1920x1080", hub.Canvas, 1920, 1080,
+                    checkPalette: false, checkActionBounds: true);
                 hub.Back(); yield return null;
                 Assert.IsInstanceOf<HubHome>(hub.Top); Assert.IsTrue(hub.ShowingHome);
                 Assert.AreEqual(SceneFlow.MatchSetup, SceneManager.GetActiveScene().name);

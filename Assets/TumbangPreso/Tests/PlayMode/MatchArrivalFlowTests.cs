@@ -108,7 +108,7 @@ namespace TumbangPreso.PlayTests
 
         /// <summary>The version stamped on the review pictures. Bump it with every layout pass, so a
         /// chat client that caches by filename never shows the previous picture (`CLAUDE.md` § 6.1).</summary>
-        private const string ReviewVersion = "v9";
+        private const string ReviewVersion = "v11";
 
         /// <summary>
         /// The pictures a character select change is judged on: the timed screen as a queue match
@@ -150,6 +150,8 @@ namespace TumbangPreso.PlayTests
             int ilyas = Roster.IndexIn(people, "rafi");
             yield return HubFlowTests.Press("Portrait" + ilyas);
             yield return HubFlowTests.Press("SelectionAbility0");
+            var facts = timed.GetComponentsInChildren<Text>().Single(t => t.name == "AbilityCost");
+            Assert.AreEqual("35 s cooldown", facts.text);
             yield return TumpUiCapture.Capture($"CharSelect-{ReviewVersion}-ilyas-1920x1080",
                 TumpHub.Current.Canvas, 1920, 1080, false, checkActionBounds: true,
                 inspectViewport: () => AssertSelectionPicture(timed, "ilyas/1920x1080"));
@@ -205,7 +207,7 @@ namespace TumbangPreso.PlayTests
         {
             var labels = selector.GetComponentsInChildren<Text>();
             float previousBottom = float.PositiveInfinity;
-            foreach (string name in new[] { "AbilityName", "AbilityMeta", "AbilityCost", "AbilitySummary" })
+            foreach (string name in new[] { "AbilityMeta", "AbilityName", "AbilitySummary", "AbilityCost" })
             {
                 var text = labels.FirstOrDefault(t => t.name == name);
                 if (text == null || string.IsNullOrEmpty(text.text)) continue;

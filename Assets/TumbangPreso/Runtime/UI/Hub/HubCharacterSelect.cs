@@ -100,6 +100,9 @@ namespace TumbangPreso.UI.Hub
         private Text[] _abilityLabels;
         private Image[] _abilityUnderlines;
         private Text _abilityName, _abilityMeta, _abilityCost, _abilitySummary;
+        private RectTransform _abilityFacts;
+        private Image _abilityKeyGlyph;
+        private Text _abilityKeyText, _abilityHold;
         private RectTransform _abilityColumn;
         private HeroKit _shownKit;
         private HeroAbility[] _shownAbilities;
@@ -462,8 +465,8 @@ namespace TumbangPreso.UI.Hub
         }
 
         /// <summary>
-        /// The hero's kit under the name: a row of ability tiles, then the inspected one's name,
-        /// what kind of power it is, how it is cast and paid for, and its sentence.
+        /// The hero's kit under the name: ability choices, a category and effect, then a small
+        /// row for the binding and resource. The timed picker keeps the details inline.
         ///
         /// ⚠️ NO PLATE. The kit used to be a 380 by 610 dark box between the hero and the grid, as
         /// heavy as the hero and mostly empty below a three-line sentence. Valorant and Apex both
@@ -510,14 +513,22 @@ namespace TumbangPreso.UI.Hub
                 _abilityButtons[i] = button; _abilitySymbols[i] = glyph;
                 _abilityLabels[i] = label; _abilityUnderlines[i] = underline;
             }
-            // ⚠️ NAME, THEN WHAT IT IS, THEN HOW IT IS CAST, THEN THE SENTENCE, STACKED BY MEASURED
-            // HEIGHT (`StackAbilityText`). The kind and the cost are now two one-line labels: as one
-            // wrapping label, "ATTACKING · PROJECTILE" plus "35 s cooldown" was the text that drew
-            // over the sentence in the owner's screenshot (`CrispUiText` has the cause).
-            _abilityName = HubKnit.Display(_abilityColumn, "AbilityName", "", 54, HubKnit.KitWhite, TextAnchor.MiddleLeft, 5);
-            _abilityMeta = HubKnit.Words(_abilityColumn, "AbilityMeta", "", 30, HubKnit.KitLime, TextAnchor.MiddleLeft, true, 2);
-            _abilityCost = HubKnit.Words(_abilityColumn, "AbilityCost", "", 30, HubKnit.KitWhite, TextAnchor.MiddleLeft, true, 3);
-            _abilitySummary = HubKnit.Words(_abilityColumn, "AbilitySummary", "", 32, HubKnit.KitWhite, TextAnchor.MiddleLeft, true, 3);
+            _abilityMeta = HubKnit.Words(_abilityColumn, "AbilityMeta", "", 28, HubKnit.KitTan, TextAnchor.MiddleLeft);
+            _abilityName = HubKnit.Display(_abilityColumn, "AbilityName", "", 50, HubKnit.KitWhite, TextAnchor.MiddleLeft, 3);
+            _abilitySummary = HubKnit.Words(_abilityColumn, "AbilitySummary", "", 33, HubKnit.KitCream, TextAnchor.MiddleLeft, false);
+            var facts = HubKit.Rect(_abilityColumn, "SkillFacts").gameObject.AddComponent<HudCard>();
+            facts.Glass(PanelInk, slant: 0, radius: 10, shadow: .2f);
+            facts.Border = PanelEdge;
+            facts.raycastTarget = false;
+            _abilityFacts = facts.rectTransform;
+            _abilityKeyGlyph = HubKit.Rect(_abilityFacts, "KeyGlyph").gameObject.AddComponent<Image>();
+            _abilityKeyGlyph.preserveAspect = true;
+            _abilityKeyGlyph.raycastTarget = false;
+            _abilityKeyText = HubKnit.Words(_abilityFacts, "KeyText", "", 28, HubKnit.KitCream, TextAnchor.MiddleCenter);
+            _abilityKeyText.horizontalOverflow = HorizontalWrapMode.Overflow;
+            _abilityHold = HubKnit.Words(_abilityFacts, "HoldPrompt", "HOLD", 28, HubKnit.KitTan);
+            _abilityCost = HubKnit.Words(_abilityColumn, "AbilityCost", "", 28, HubKnit.KitCream, TextAnchor.MiddleLeft);
+            _abilityCost.horizontalOverflow = HorizontalWrapMode.Overflow;
         }
 
         private void InspectAbility(int slot)
@@ -536,16 +547,20 @@ namespace TumbangPreso.UI.Hub
             bool alternate = variant != null && !variant.IsDefault;
             _abilityName.text = (alternate ? variant.Name : ability.Name).ToUpperInvariant();
             _abilitySummary.text = alternate ? variant.Description : ability.Summary;
-            // A role kit says which role the power belongs to before what kind of power it is.
-            string role = _shownKit.HasRoleAbilities && !shown.IsUltimate ? shown.Label + "  ·  " : "";
-            _abilityMeta.text = role + AbilityIcons.LabelFor(ability.Glyph);
+            // The selected tab already names the role.
+            _abilityMeta.text = AbilityIcons.LabelFor(ability.Glyph);
             string resource = shown.IsUltimate ? _shownKit.UltimateCost.ToString("0") + " charge"
                 : ability.UsesCharges ? ability.MaxCharges + (ability.MaxCharges == 1 ? " use" : " uses")
                 : ability.Cooldown.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture) + " s cooldown";
             // ⚠️ THE KEY IS THE LIVE BINDING FOR THE DEVICE IN HAND (`Hud.KeyLabelFor`), never a
             // literal, and a phone is told no key at all (`docs/VISION.md` § 3).
             string key = InputLayer.LastInputDevice.Current == InputLayer.InputDeviceKind.Touch ? "" : Hud.KeyLabelFor(shown.Action);
-            _abilityCost.text = string.IsNullOrEmpty(key) ? resource : "Press " + key + "  ·  " + resource;
+            _abilityKeyGlyph.sprite = InputGlyphs.For(key, true);
+            _abilityKeyGlyph.enabled = _abilityKeyGlyph.sprite != null;
+            _abilityKeyText.text = key;
+            _abilityKeyText.enabled = !_abilityKeyGlyph.enabled && !string.IsNullOrEmpty(key);
+            _abilityHold.enabled = ability.HoldToAim && !string.IsNullOrEmpty(key);
+            _abilityCost.text = resource;
             StackAbilityText();
             for (int i = 0; i < _abilityButtons.Length; i++)
             {
@@ -559,22 +574,46 @@ namespace TumbangPreso.UI.Hub
             }
         }
 
-        /// <summary>Lay the name, the two meta lines and the sentence one under another at their real
-        /// heights, so a one-line name does not leave a hole the size of a two-line one.</summary>
+        /// <summary>Measure the effect as it wraps. The input and resource sit below it.</summary>
         private void StackAbilityText()
         {
             const float width = ColumnWidth - 150;
-            _abilityName.fontSize = HubStyle.Size(54);
-            _abilityMeta.fontSize = _abilityCost.fontSize = HubStyle.Size(30);
-            _abilitySummary.fontSize = HubStyle.Size(32);
-            float y = 132;
-            foreach (var text in new[] { _abilityName, _abilityMeta, _abilityCost, _abilitySummary })
+            const float left = -10, factsHeight = 55;
+            _abilityName.fontSize = HubStyle.Size(50);
+            _abilityMeta.fontSize = _abilityCost.fontSize = _abilityKeyText.fontSize = _abilityHold.fontSize = HubStyle.Size(28);
+            _abilitySummary.fontSize = HubStyle.Size(33);
+            float y = Line(_abilityMeta, 128, 6) + 2;
+            y = Line(_abilityName, y, 12) + 8;
+            y = Line(_abilitySummary, y, 8) + 14;
+
+            float x = 16;
+            if (_abilityHold.enabled)
+            {
+                float holdWidth = Mathf.Ceil(_abilityHold.preferredWidth);
+                HubKnit.In(_abilityHold.rectTransform, x, 0, holdWidth + 4, factsHeight);
+                x += holdWidth + 14;
+            }
+            if (_abilityKeyGlyph.enabled)
+            {
+                HubKnit.In(_abilityKeyGlyph.rectTransform, x, 8, 48, 39);
+                x += 60;
+            }
+            else if (_abilityKeyText.enabled)
+            {
+                float keyWidth = Mathf.Max(38, Mathf.Ceil(_abilityKeyText.preferredWidth) + 14);
+                HubKnit.In(_abilityKeyText.rectTransform, x, 0, keyWidth, factsHeight);
+                x += keyWidth + 14;
+            }
+            float costWidth = Mathf.Ceil(_abilityCost.preferredWidth) + 4;
+            HubKnit.In(_abilityFacts, left, y, x + costWidth + 16, factsHeight);
+            HubKnit.In(_abilityCost.rectTransform, left + x, y, costWidth, factsHeight);
+
+            float Line(Text text, float top, float padding)
             {
                 text.rectTransform.sizeDelta = new Vector2(width, text.rectTransform.sizeDelta.y);
-                // The print stroke extends past the glyphs measured by preferredHeight.
-                float height = Mathf.Ceil(text.preferredHeight) + (text == _abilityName ? 16 : 10);
-                HubKit.Place(text.rectTransform, HubKit.TopLeft, new Vector2(-10, -y), new Vector2(width, height));
-                y += height + (text == _abilityName ? 6 : text == _abilityCost ? 18 : 4);
+                float height = Mathf.Ceil(text.preferredHeight) + padding;
+                HubKnit.In(text.rectTransform, left, top, width, height);
+                return top + height;
             }
         }
 

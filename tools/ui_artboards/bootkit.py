@@ -166,6 +166,60 @@ def wobble(points, amp, seed):
 def chamfer(x, y, w, h, c):
     return [(x + c, y), (x + w, y), (x + w, y + h - c), (x + w - c, y + h), (x, y + h), (x, y + c)]
 
+def eased_chamfer_mask(w, h, drop, box, cut, rounding, density=1):
+    """Keep the kit's two diagonal cuts and ease their joins at the source.
+
+    The straight runs stay flat through the nine-slice centre, which used to
+    stretch small hard-edged bumps into long seams on the lobby and menu.
+    """
+    points = chamfer(*box, cut)
+    scale = density * 3
+    path = []
+    for i, point in enumerate(points):
+        ends = []
+        for neighbour in (points[i - 1], points[(i + 1) % len(points)]):
+            dx, dy = neighbour[0] - point[0], neighbour[1] - point[1]
+            length = math.hypot(dx, dy)
+            t = min(.44, rounding / length)
+            ends.append((point[0] + dx * t, point[1] + dy * t))
+        for step in range(9):
+            t = step / 8
+            u = 1 - t
+            path.append(tuple((u * u * ends[0][axis] + 2 * u * t * point[axis] + t * t * ends[1][axis]) * scale
+                              for axis in range(2)))
+    mask = Image.new("L", (w * scale, (h + drop) * scale))
+    ImageDraw.Draw(mask).polygon(path, fill=255)
+    return mask.resize((w * density, (h + drop) * density), Image.Resampling.LANCZOS)
+
+
+def softened_dark_frame(w, h, on, shade, drop, cut, rim, density=1):
+    """Render the dark rim, shallow slab and original weave on eased contours."""
+    mask = lambda box, c, radius: eased_chamfer_mask(w, h, drop, box, c, radius, density)
+    size = (w * density, (h + drop) * density)
+    im = Image.new("RGBA", size)
+    # Preserve the stroke and button shadow as separate depth cues, with a shallower lip.
+    for box, colour in (
+        ((2, 2 + drop - 4, w - 4, h - 4), (0x8E, 0xA6, 0x22) if on else (0x36, 0x0D, 0x19)),
+        ((2, 2, w - 4, h - 4), LIME if on else (0xD0, 0x62, 0x76)),
+    ):
+        layer = Image.new("RGBA", size, colour + (255,))
+        layer.putalpha(mask(box, cut, 13))
+        im.alpha_composite(layer)
+    opening = mask((rim, rim, w - 2 * rim, h - 2 * rim), max(6, cut - rim + 3), 9)
+    if shade is None:
+        from PIL import ImageChops
+        im.putalpha(ImageChops.subtract(im.getchannel("A"), opening))
+    else:
+        dark, lit = (0x36, 0x0A, 0x15), (0x6E, 0x1E, 0x30)
+        colours = [tuple(int(v * shade) for v in colour) for colour in (dark, lit)]
+        if w < 300:
+            grain = weave(*colours).crop((0, 0, w, h + drop)).resize(size, Image.Resampling.BICUBIC)
+        else:
+            grain = weave(*colours, size=size)
+        grain.putalpha(opening)
+        im.alpha_composite(grain)
+    return im
+
 
 def panel_art(w, h, drop=14, seed=1):
     """A painted card: chamfered corners, a hand-wobbled rim, the slab straight below."""
@@ -449,31 +503,16 @@ def framed(b, x, y, w, h, content, key, on=False, name="Card"):
     b.place("card-rim-%dx%d%s" % (w, h, "-on" if on else ""), frame_art(w, h, on, fill=(0, 0, 0, 0)), x, y, name + " rim")
 
 
-def dark_card_art(w, h, on, shade=1.0):
+def dark_card_art(w, h, on, shade=1.0, density=1):
     """A small card for a mid-berry ground: the dark panel's weave and rose rim, in the card's outline."""
-    im = frame_art(w, h, on)
-    d = ImageDraw.Draw(im)
-    c, seed = min(34, int(min(w, h) * 0.22)), 3
-    if not on:
-        d.polygon(wobble(chamfer(2, 16, w - 4, h - 4, c), 1.6, seed), fill=(0x2A, 0x06, 0x10))
-        d.polygon(wobble(chamfer(2, 2, w - 4, h - 4, c), 1.6, seed), fill=(0xD0, 0x62, 0x76))
-    mask = Image.new("L", im.size)
-    ImageDraw.Draw(mask).polygon(wobble(chamfer(12, 12, w - 24, h - 24, max(6, c - 8)), 1.2, seed + 1), fill=255)
-    dark, lit = (0x36, 0x0A, 0x15), (0x6E, 0x1E, 0x30)
-    im.paste(weave(tuple(int(v * shade) for v in dark), tuple(int(v * shade) for v in lit)).crop((0, 0, w, h + 14)), (0, 0), mask)
-    return im
+    return softened_dark_frame(w, h, on, shade, 14, min(34, int(min(w, h) * .22)), 10, density)
 
 
-def rim_art(w, h, on, dark=False):
+def rim_art(w, h, on, dark=False, density=1):
     """A card's rim alone, its opening clear: the frame (or dark frame) of `frame_art` without a fill."""
-    im = frame_art(w, h, on, fill=(0, 0, 0, 0))
-    if dark and not on:
-        c, seed = min(34, int(min(w, h) * 0.22)), 3
-        d = ImageDraw.Draw(im)
-        d.polygon(wobble(chamfer(2, 16, w - 4, h - 4, c), 1.6, seed), fill=(0x2A, 0x06, 0x10))
-        d.polygon(wobble(chamfer(2, 2, w - 4, h - 4, c), 1.6, seed), fill=(0xD0, 0x62, 0x76))
-        d.polygon(wobble(chamfer(12, 12, w - 24, h - 24, max(6, c - 8)), 1.2, seed + 1), fill=(0, 0, 0, 0))
-    return im
+    if dark:
+        return dark_card_art(w, h, on, shade=None, density=density)
+    return frame_art(w, h, on, fill=(0, 0, 0, 0))
 
 
 def blends_with_card(b, x, y, w, h):
@@ -509,12 +548,14 @@ def picture(b, x, y, w, h, path, key, cut=22):
     b.place(key, out, x, y, "Picture")
 
 
-def well_art(w, h, seed=1):
+def well_art(w, h, seed=1, density=1):
     """An empty slot: the panel's shape sunk into the berry, like the tab track."""
-    im = Image.new("RGBA", (w, h + 14))
-    d = ImageDraw.Draw(im)
-    d.polygon(wobble(chamfer(2, 2, w - 4, h - 4, 34), 1.6, seed), fill=WELL_RIM)
-    d.polygon(wobble(chamfer(10, 16, w - 20, h - 18, 28), 1.2, seed + 1), fill=WELL)
+    size = (w * density, (h + 14) * density)
+    im = Image.new("RGBA", size, WELL_RIM + (255,))
+    im.putalpha(eased_chamfer_mask(w, h, 14, (2, 2, w - 4, h - 4), 34, 13, density))
+    inset = Image.new("RGBA", size, WELL + (255,))
+    inset.putalpha(eased_chamfer_mask(w, h, 14, (10, 13, w - 20, h - 16), 28, 9, density))
+    im.alpha_composite(inset)
     return im
 
 
@@ -524,14 +565,7 @@ def well(b, x, y, w, h, seed=1):
 
 def dark_panel_art(w, h, drop=14, seed=1, on=False):
     """A large panel on the dark side: a chamfered rose rim, light enough to stand off the berry ground around a deep berry weave."""
-    im = Image.new("RGBA", (w, h + drop))
-    d = ImageDraw.Draw(im)
-    d.polygon(wobble(chamfer(2, 2 + drop, w - 4, h - 4, 34), 1.6, seed), fill=(0x8E, 0xA6, 0x22) if on else (0x2A, 0x06, 0x10))
-    d.polygon(wobble(chamfer(2, 2, w - 4, h - 4, 34), 1.6, seed), fill=LIME if on else (0xD0, 0x62, 0x76))
-    mask = Image.new("L", im.size)
-    ImageDraw.Draw(mask).polygon(wobble(chamfer(16, 16, w - 32, h - 32, 26), 1.2, seed + 1), fill=255)
-    im.paste(weave((0x36, 0x0A, 0x15), (0x6E, 0x1E, 0x30), im.size), (0, 0), mask)
-    return im
+    return softened_dark_frame(w, h, on, 1.0, drop, 34, 13)
 
 
 def dark_panel(b, x, y, w, h, seed=1, group="Panel", on=False):
@@ -702,10 +736,10 @@ def export_game_kit():
     pieces["dark-panel-on"] = dark_panel_art(1536, 864, drop=14, seed=4, on=True)  # a chosen mode on Let's Play
     pieces["card"] = frame_art(240, 200, False)
     pieces["card-on"] = frame_art(240, 200, True)
-    pieces["dark-card"] = dark_card_art(240, 200, False)
-    pieces["dark-card-on"] = dark_card_art(240, 200, True)
-    pieces["dark-card-viewed"] = dark_card_art(240, 200, False, shade=.72)
-    pieces["dark-card-viewed-on"] = dark_card_art(240, 200, True, shade=.72)
+    pieces["dark-card"] = dark_card_art(240, 200, False, density=2)
+    pieces["dark-card-on"] = dark_card_art(240, 200, True, density=2)
+    pieces["dark-card-viewed"] = dark_card_art(240, 200, False, shade=.72, density=2)
+    pieces["dark-card-viewed-on"] = dark_card_art(240, 200, True, shade=.72, density=2)
     # Coloured checker cards. The centre is two checker periods (4 x 44) square, so a tiled
     # centre repeats without a seam: 46 + 176 + 46 across, 46 + 176 + 60 (slab included) down.
     for kind in ("yellow", "red", "blue", "go"):
@@ -714,12 +748,12 @@ def export_game_kit():
     # so nothing passes the border (the boards' `framed`).
     for on in (False, True):
         for dark in (False, True):
-            pieces[("dark-" if dark else "") + "card-rim" + ("-on" if on else "")] = rim_art(240, 200, on, dark)
+            pieces[("dark-" if dark else "") + "card-rim" + ("-on" if on else "")] = rim_art(240, 200, on, dark, density=2 if dark else 1)
     # Sunbursts for showcase pictures: the winners' yellow, the shop's red and lime.
     pieces["sunburst-yellow"] = sunburst_art(800, 640)
     pieces["sunburst-red"] = sunburst_art(800, 640, c1=(0xE0, 0x4A, 0x4A), c2=(0xB2, 0x2A, 0x36))
     pieces["sunburst-lime"] = sunburst_art(800, 640, c1=(0xD8, 0xE8, 0x5A), c2=(0xA8, 0xC2, 0x30))
-    pieces["well"] = well_art(240, 200, seed=20)
+    pieces["well"] = well_art(240, 200, seed=20, density=2)
     pieces["field"] = field_art(1094, 156)
     pieces["knob"] = knob_art()
     template = (ART / "login3-primary.png.meta").read_text(encoding="utf-8")
