@@ -730,6 +730,7 @@ namespace TumbangPreso
 
             Press(intent, Verb.Sprint, false);
             Press(intent, Verb.Jump, false);
+            Press(intent, Verb.Crouch, false);
             Press(intent, Verb.Grab, false);
             Press(intent, Verb.Lunge, false);
             Press(intent, Verb.SpecialAbility, false);
@@ -2206,6 +2207,7 @@ namespace TumbangPreso
             if (_lungeHeld >= 0 && !_touched.Contains(Verb.Lunge)) Press(intent, Verb.Lunge, true);
             if (!_touched.Contains(Verb.Lunge)) Press(intent, Verb.Lunge, false);
             if (!_touched.Contains(Verb.Grab)) Press(intent, Verb.Grab, false);
+            if (!_touched.Contains(Verb.Crouch)) Press(intent, Verb.Crouch, false);
         }
 
         // ---- ATTACKER VERBS -------------------------------------------------
@@ -2236,6 +2238,16 @@ namespace TumbangPreso
 
             Goto(intent, where, AiTuning.Reach * 0.75f, hurry);
 
+            // A clean run-up lets the real movement slide scoop the shoe. Save the grab press
+            // for a walk-up or a slide that ended short.
+            if (_motor.ReworkSliding || (mine.IsGrabbableIgnoringReach(_motor) &&
+                Mathf.Abs(where.y - transform.position.y) <= .45f &&
+                distance > 1.35f && distance <= 2.85f && CanSlideToward(intent, where)))
+            {
+                Press(intent, Verb.Crouch, true);
+                return;
+            }
+
             // ⚠️ THE PICKUP IS A TAP AND A HELD BUTTON WOULD DO NOTHING AT ALL. The carrier
             // reads `JustPressed`, so holding produces exactly one edge in a lifetime and then
             // a bot that stands on its own slipper for the rest of the round. Tap alternates,
@@ -2261,7 +2273,25 @@ namespace TumbangPreso
             if (distance <= Balance.PickupRadius) Tap(intent, Verb.Grab);
             else Press(intent, Verb.Grab, false);
 
-            // Retrieval slide removed: keep the ordinary run-up and pickup.
+        }
+
+        private bool CanSlideToward(InputIntent intent, Vector3 target)
+        {
+            if (!_motor.CanStartBotSlide || !intent.Pressed(Verb.Sprint)) return false;
+            Vector3 feet = transform.position;
+            Vector3 travel = _motor.Velocity;
+            travel.y = 0;
+            Vector3 toward = target - feet;
+            toward.y = 0;
+            if (Vector3.Dot(travel.normalized, toward.normalized) < .88f)
+                return false;
+
+            // Check the runway in the direction the body is actually moving, including the ground past the shoe.
+            Vector3 end = feet + travel.normalized * Mathf.Clamp(toward.magnitude + .3f, 1.3f, 3.15f);
+            if (!Visual.WorldGround.TryBelow(end, .45f, .9f, out float floor) || Mathf.Abs(floor - feet.y) > .45f)
+                return false;
+            end.y = floor;
+            return !IsOutsidePlayable(end, -.35f) && MapRoutes.Walk(feet, end, shortOfStart: .2f);
         }
 
         /// <summary>True while the slipper is somewhere the taya can contest. Decides a sprint
@@ -2344,7 +2374,7 @@ namespace TumbangPreso
                 }
             }
 
-            Goto(intent, RingPoint(bearing, Confinement.Radius + 0.6f),
+            Goto(intent, StalkPost(bearing),
                  AiTuning.ArriveSlop, false);
 
             if (_arrived) Loiter(intent);
@@ -2354,7 +2384,16 @@ namespace TumbangPreso
         {
             // Straight out along the bearing already held: a step back, not a lap of the
             // arena, and sprinting, because this is the taggable window.
-            Goto(intent, SafeSpot(), AiTuning.ArriveSlop, true);
+            Vector3 exit = OpenExit();
+            // Arrival must put the body outside the chalk. A normal stop radius can leave a
+            // body inside when the nearest exit is squeezed between the line and a wall.
+            float stop = Confinement.IsInsideBox(transform.position.x, transform.position.z) ? .22f : AiTuning.ArriveSlop;
+            Goto(intent, exit, stop, true);
+            var taya = GameServices.Round != null ? DefenderOf(GameServices.Round) : null;
+            Vector3? threat = taya != null ? At(taya) : null;
+            if (_motor.ReworkSliding || (threat.HasValue && Flat(transform.position, threat.Value) < 3.5f
+                && Flat(transform.position, exit) <= 2.8f && CanSlideToward(intent, exit)))
+                Press(intent, Verb.Crouch, true);
         }
 
         private void DoPosition(InputIntent intent)
@@ -2698,24 +2737,29 @@ namespace TumbangPreso
             if (_arrived) Loiter(intent);
         }
 
+        private Vector3 _guardPost;
+        private float _guardPostUntil;
+
         private void DoGuard(InputIntent intent)
         {
-            if (StepDecoyChase(intent, Time.deltaTime, LiveThreat())) return;
             var lata = GameServices.Round?.Lata;
 
             if (lata == null) { Stop(intent); return; }
 
             var threat = LiveThreat();
+            if (StepDecoyChase(intent, Time.deltaTime, threat)) return;
 
             if (threat == null)
             {
-                // Clear the hysteresis ring with a real movement margin. Stopping exactly
-                // on the clear radius still counts as camping by the tournament rule.
-                Vector3 safeGuard = lata.transform.position + Vector3.forward
-                    * (Balance.TayaCampClearRadius + 0.35f);
-                Goto(intent, ClampToBox(safeGuard), AiTuning.ArriveSlop, false);
+                if (Time.time >= _guardPostUntil)
+                {
+                    _guardPost = NextGuardPost(lata);
+                    _guardPostUntil = Time.time + 1.4f;
+                }
+                Goto(intent, _guardPost, AiTuning.ArriveSlop, false);
                 return;
             }
+            _guardPostUntil = 0f;
 
             // Stand BETWEEN the lata and the threat, dynamically outside the camping penalty ring!
             Vector3 toward = At(threat).Value - lata.transform.position;
@@ -2732,6 +2776,25 @@ namespace TumbangPreso
 
             // Keep moving and patrolling actively!
             if (_arrived) Loiter(intent);
+        }
+
+        private Vector3 NextGuardPost(Lata lata)
+        {
+            Vector3 can = lata.transform.position;
+            Vector3 feet = transform.position;
+            Vector3 fromCan = feet - can;
+            float bearing = Mathf.Atan2(fromCan.x, fromCan.z);
+            float radius = Mathf.Max(AiTuning.GuardRadius, Balance.TayaCampClearRadius + .55f);
+            for (int i = 1; i <= 6; i++)
+            {
+                float angle = bearing + i * Mathf.PI / 3f;
+                Vector3 post = ClampToPlayable(ClampToBox(can + new Vector3(Mathf.Sin(angle), 0, Mathf.Cos(angle)) * radius), .45f);
+                if (Flat(post, can) <= Balance.TayaCampClearRadius || Flat(post, feet) < 1.35f) continue;
+                if (!Visual.WorldGround.TryBelow(post, 1f, 2.5f, out float ground)) continue;
+                post.y = ground;
+                if (MapRoutes.Walk(feet, post, shortOfStart: .3f)) return post;
+            }
+            return ClampToPlayable(ClampToBox(can + Vector3.forward * radius), .45f);
         }
 
         /// <summary>
@@ -3901,6 +3964,7 @@ namespace TumbangPreso
         private bool MayHop()
         {
             if (_motor == null || !_motor.CanAct()) return false;
+            if (_motor.Intent.Crouch || _motor.ReworkSliding) return false;
 
             // The reset channel is the one held button in the game, and a jump is a press edge
             // on a different key in the same frame the emote layer reads as "acted".
@@ -4421,8 +4485,14 @@ namespace TumbangPreso
             {
                 float bearing = -Mathf.PI + 2.0f * Mathf.PI * i / SpotSamples;
                 Vector3 point = RingPoint(bearing, ring);
+                if (Confinement.IsInsideBox(point.x, point.z)) continue;
+                point.y = lata.Mark.y;
+                if (!Visual.WorldGround.TryBelow(point, 1.3f, 2.8f, out float ground)) continue;
+                point.y = ground;
 
-                float score = 0.0f;
+                // The actual walls and supporting floor decide where a bot can use the ring.
+                // A tight street favours its open ends while a wide court still offers flanks.
+                float score = .62f * Mathf.Clamp(WallClearance(point), 0f, 10f);
 
                 // Away from the taya. Half a turn is the ideal and is worth the most.
                 if (taya != null)
@@ -4454,6 +4524,49 @@ namespace TumbangPreso
         }
 
         private const int SpotSamples = 16;
+
+        private static float WallClearance(Vector3 point) => Mathf.Min(
+            Mathf.Min(point.x - PlayableMinX, PlayableMaxX - point.x),
+            Mathf.Min(point.z - PlayableMinZ, PlayableMaxZ - point.z));
+
+        private Vector3 StalkPost(float bearing)
+        {
+            float ring = Confinement.Radius + .6f;
+            Vector3 best = RingPoint(bearing, ring);
+            float bestScore = float.NegativeInfinity;
+            for (int i = -2; i <= 2; i++)
+            {
+                Vector3 point = RingPoint(bearing + i * .46f, ring);
+                if (Confinement.IsInsideBox(point.x, point.z)) continue;
+                float score = .45f * Mathf.Min(10f, WallClearance(point)) - Mathf.Abs(i) * .32f;
+                if (score <= bestScore) continue;
+                best = point;
+                bestScore = score;
+            }
+            return best;
+        }
+
+        private Vector3 OpenExit()
+        {
+            Vector3 direct = SafeSpot();
+            float safeRadius = Confinement.Radius + .4f;
+            if (WallClearance(direct) >= .7f && !Confinement.IsInsideBox(direct.x, direct.z, safeRadius))
+                return direct;
+
+            Vector3 best = direct;
+            float shortest = float.PositiveInfinity;
+            for (int i = 0; i < 4; i++)
+            {
+                Vector3 point = RingPoint(i * Mathf.PI * .5f, Confinement.Radius + AiTuning.ThrowStandoff);
+                if (WallClearance(point) < .7f || Confinement.IsInsideBox(point.x, point.z, safeRadius))
+                    continue;
+                float distance = Flat(transform.position, point);
+                if (distance >= shortest) continue;
+                best = point;
+                shortest = distance;
+            }
+            return best;
+        }
 
         /// <summary>Bearings other bots have staked out recently, as a list. Entries older than
         /// <see cref="AiTuning.ClaimTtl"/> are ignored rather than removed, so a bot that dies
@@ -4679,11 +4792,9 @@ namespace TumbangPreso
 
             foreach (var who in Perceived(round.Players))
             {
-                if (who == null || who.IsDefender) continue;
+                if (who == null || who.IsDefender || !who.HoldingSlipper) continue;
 
                 float score = 0.0f;
-
-                if (who.HoldingSlipper) score += 2.0f;
                 if (!Confinement.IsInsideBox(who.transform.position.x, who.transform.position.z))
                     score += 1.0f;
 
@@ -6200,6 +6311,7 @@ namespace TumbangPreso
             intent.Move = Vector2.zero;
             Press(intent, Verb.Sprint, false);
             Press(intent, Verb.Jump, false);
+            Press(intent, Verb.Crouch, false);
             Press(intent, Verb.Grab, false);
             Press(intent, Verb.Lunge, false);
             Press(intent, Verb.SpecialAbility, false);
@@ -6221,6 +6333,7 @@ namespace TumbangPreso
             _lungeHeld = -1.0f;
             _goalValid = false;
             _arrived = false;
+            _guardPostUntil = 0f;
             _stuckTime = 0.0f;
             _stuckWatch.Reset();
             _unstickLeft = 0.0f;

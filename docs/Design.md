@@ -89,6 +89,11 @@ Shove and defender lunge cost no stamina and are usable with an empty bar.
 Separate retrieval slide remains 1.75 m / 25 stamina / 2.45 s cooldown.
 Defender lunge remains 3.5 m with 0.5 s tap / 2.5 s full-hold cooldown.
 
+The movement slide starts with crouch at running speed. It carries the sprint
+heading for 0.16 seconds, then allows steering as braking builds. A jump or
+leaving the ground ends the slide. Bots use this same movement action on clear
+runways for retrieval or escape. They favour throwing spots with room from
+the court's walls and change guard posts when there is no armed threat.
 
 **Model/art requirement:** new and reworked models must belong to TUMP's cute
 blocky visual language and avoid unnecessary detail. Gameplay changes and stronger

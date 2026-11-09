@@ -1,11 +1,13 @@
 using System.Collections;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using NUnit.Framework;
 using TumbangPreso.Core;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
+using TumbangPreso.UI;
 
 namespace TumbangPreso.PlayTests
 {
@@ -35,6 +37,154 @@ namespace TumbangPreso.PlayTests
 
         [UnityTearDown]
         public IEnumerator ResetWorldAfter() => PlayModeWorld.Reset();
+
+        [UnityTest, Timeout(90000)]
+        public IEnumerator ARealBotSprintsAndSlidesToScoopItsShoe()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.Eskinita, skipReadyArrival: true);
+            var round = GameServices.Round;
+            var can = round.Lata;
+            var bot = round.PlayerAt(2);
+            var brain = bot.GetComponent<AIController>();
+            var carrier = bot.GetComponent<Carrier>();
+            var shoe = carrier.Held;
+            Assert.IsNotNull(shoe);
+
+            float floor = can.Mark.y;
+            var runUp = new Vector3(0, floor + .04f, -8.4f);
+            var pickup = new Vector3(0, floor + shoe.RestHeight, -2.5f);
+            bot.Teleport(runUp);
+            bot.transform.rotation = Quaternion.identity;
+            round.PlayerAt(GameServices.Match.DefenderSlot).Teleport(new Vector3(2.8f, floor + .04f, -2.5f));
+            shoe.HostDisarm();
+            shoe.transform.position = pickup;
+            Physics.SyncTransforms();
+            yield return new WaitForSeconds(can.ProtectionLeft + .05f);
+            can.HostKnockDown(-1);
+            Hitstop.End();
+
+            var camera = new GameObject("Slide observer").AddComponent<Camera>();
+            camera.CopyFrom(Camera.main);
+            camera.enabled = false;
+            camera.fieldOfView = 52f;
+            var random = Random.state;
+            Random.InitState(8607);
+            try
+            {
+                yield return SlideFrame(camera, bot, "bot-runup");
+                bot.Intent.Parked = false;
+                brain.enabled = true;
+                bool sprinted = false, slid = false, scooped = false, captured = false;
+                float slideSpeed = 0f, slideAt = 0f;
+                float deadline = Time.time + 7f;
+                while (Time.time < deadline && (!scooped || bot.ReworkSliding))
+                {
+                    yield return null;
+                    sprinted |= bot.Stamina.IsSprinting;
+                    if (bot.ReworkSliding)
+                    {
+                        if (!slid) slideAt = Time.time;
+                        slid = true;
+                        slideSpeed = Mathf.Max(slideSpeed, bot.ReworkFlatSpeed);
+                        if (carrier.Held == shoe)
+                        {
+                            scooped = true;
+                            Assert.IsFalse(bot.Intent.Pressed(Verb.Grab), "The slide must use the real scoop, without a grab press.");
+                        }
+                        if (scooped && !captured && Time.time - slideAt >= .19f)
+                        {
+                            var animator = bot.GetComponentInChildren<Visual.CharacterAnimator>();
+                            var weight = typeof(Visual.CharacterAnimator).GetField("_slideWeight", BindingFlags.Instance | BindingFlags.NonPublic);
+                            if (animator != null && (float)weight.GetValue(animator) > .65f)
+                            {
+                                yield return SlideFrame(camera, bot, "bot-scoop");
+                                captured = true;
+                            }
+                        }
+                    }
+                }
+                Assert.IsTrue(sprinted && slid && scooped, $"Expected the live bot to sprint, slide and scoop. Plan {brain.Plan}, held={carrier.Held == shoe}, speed={bot.ReworkFlatSpeed:F2}, position={bot.transform.position}.");
+                Assert.IsTrue(captured, "The same slide state must drive the third-person pose.");
+                Assert.Greater(slideSpeed, Stamina.MovementSpeed(false, true));
+                Assert.IsFalse(bot.ReworkSliding);
+                yield return new WaitForSeconds(.25f);
+                yield return SlideFrame(camera, bot, "bot-recovery");
+            }
+            finally
+            {
+                Random.state = random;
+                Object.Destroy(camera.gameObject);
+            }
+        }
+
+        [UnityTest, Timeout(90000)]
+        public IEnumerator BotsChooseLanesForEachCourtAndTheUnguardedTayaPatrols()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.Eskinita, skipReadyArrival: true);
+            var round = GameServices.Round;
+            var can = round.Lata;
+            var defender = round.PlayerAt(GameServices.Match.DefenderSlot);
+            var attacker = round.PlayerAt(2);
+            float floor = can.Mark.y;
+            attacker.Teleport(new Vector3(AIController.PlayableMaxX - 1f, floor + .04f, 0));
+            var brain = attacker.GetComponent<AIController>();
+            var spot = typeof(AIController).GetMethod("ThrowSpot", BindingFlags.Instance | BindingFlags.NonPublic);
+            Vector3 lane = (Vector3)spot.Invoke(brain, null);
+            Assert.IsFalse(Confinement.IsInsideBox(lane.x, lane.z), "A selected throw spot must be outside the chalk.");
+            Assert.Greater(Mathf.Abs(lane.z), Mathf.Abs(lane.x),
+                $"The tight street should favour an open end. Chose {lane}, walls {AIController.PlayableNearestX:F2}/{AIController.PlayableNearestZ:F2}.");
+
+            foreach (var who in round.Players)
+            {
+                if (who == defender) continue;
+                var shoe = who.GetComponent<Carrier>().Held;
+                if (shoe == null) continue;
+                shoe.HostDisarm();
+                shoe.transform.position = new Vector3(who.PlayerSlot, floor + shoe.RestHeight, -9f);
+            }
+            defender.Teleport(can.Mark + Vector3.right * (Balance.TayaCampClearRadius + .7f));
+            defender.Intent.Parked = false;
+            defender.GetComponent<AIController>().enabled = true;
+            Vector3 previous = defender.transform.position;
+            float travelled = 0;
+            float deadline = Time.time + 4.5f;
+            while (Time.time < deadline)
+            {
+                yield return new WaitForFixedUpdate();
+                Vector3 current = defender.transform.position;
+                travelled += Vector3.Distance(previous, current);
+                previous = current;
+            }
+            Assert.Greater(travelled, 4f, "A defender with no armed threat should change posts.");
+            Vector3 gap = defender.transform.position - can.transform.position;
+            gap.y = 0f;
+            Assert.Greater(gap.magnitude, Balance.TayaCampRadius, "The patrol must clear the can's camping penalty.");
+
+            yield return PlayModeWorld.Reset();
+            yield return MapRetrievalProbe.Load(SceneFlow.Arena, skipReadyArrival: true);
+            var arena = GameServices.Round;
+            float arenaFloor = arena.Lata.Mark.y;
+            var arenaAttacker = arena.PlayerAt(2);
+            arenaAttacker.Teleport(new Vector3(Confinement.Radius + 1f, arenaFloor + .04f, 0));
+            arena.PlayerAt(GameServices.Match.DefenderSlot).Teleport(new Vector3(-2.5f, arenaFloor + .04f, 0));
+            Vector3 openSide = (Vector3)spot.Invoke(arenaAttacker.GetComponent<AIController>(), null);
+            Assert.IsFalse(Confinement.IsInsideBox(openSide.x, openSide.z));
+            Assert.Greater(openSide.x, Mathf.Abs(openSide.z),
+                $"Arena has room to use the nearby side. Chose {openSide}.");
+        }
+
+        private static IEnumerator SlideFrame(Camera camera, CharacterMotor bot, string name)
+        {
+            camera.transform.position = bot.transform.position + new Vector3(-2.8f, 1.25f, 1.1f);
+            camera.transform.LookAt(bot.transform.position + Vector3.up * .67f);
+            float previous = Time.timeScale;
+            Time.timeScale = 0f;
+            try
+            {
+                yield return GameplayShots.Render(camera, name, false, "Logs/bot-slide-20261109", bot, 960, 540);
+            }
+            finally { Time.timeScale = previous; }
+        }
 
         [UnityTest]
         public IEnumerator BotsWalkOnceTheRoundIsLive()
