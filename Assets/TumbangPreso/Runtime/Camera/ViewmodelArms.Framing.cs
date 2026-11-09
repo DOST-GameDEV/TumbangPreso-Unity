@@ -175,6 +175,7 @@ namespace TumbangPreso.CameraSystem
         private void OnEnable(){Camera.onPreCull+=BeginViewFrame;Camera.onPostRender+=EndViewFrame;}
         private void OnDisable()
         {
+            RestorePickupReach(); _pickupReachWeight = 0;
             Camera.onPreCull-=BeginViewFrame;Camera.onPostRender-=EndViewFrame;
             for(int i=_viewFrames.Count-1;i>=0;i--)RestoreViewFrame(_viewFrames[i]);_viewFrames.Clear();
             RestoreReleaseSweep();

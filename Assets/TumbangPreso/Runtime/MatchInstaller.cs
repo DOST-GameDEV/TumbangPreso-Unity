@@ -638,6 +638,10 @@ namespace TumbangPreso
             if (GetComponent<Diagnostics.HighlightWatch>() == null)
                 gameObject.AddComponent<Diagnostics.HighlightWatch>();
 
+            // The retrieval arc's approach and escape beats (`Visual.RetrievalMoments`). Presentation, every peer.
+            if (GetComponent<Visual.RetrievalMoments>() == null)
+                gameObject.AddComponent<Visual.RetrievalMoments>();
+
             // ⚠️ PRINTED ONCE PER ARENA, because the seat may already be right by the time this
             // runs and then no `SeatingChanged` ever fires to report it. A client that cannot
             // move needs this line whether or not anything changed after the build.

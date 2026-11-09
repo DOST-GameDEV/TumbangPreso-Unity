@@ -570,6 +570,33 @@ namespace TumbangPreso.CameraSystem
             new Key(0.40f, 0.00f,  0.00f, 0.0f),
         };
 
+        /// <summary>
+        /// Picking a tsinelas up off the street (owner, 2026-11-07: "make it all feel better"). Where
+        /// <see cref="GrabClip"/> dips and returns, this snaps down fast, holds the contact for two frames,
+        /// then flicks the hand up past rest so the shoe is shown before it settles into the carry.
+        /// </summary>
+        private static readonly Key[] PickupClip =
+        {
+            new Key(0.00f,  0.00f,  0.00f,  0.00f),
+            new Key(0.08f,  0.66f, -0.18f, -0.06f),
+            new Key(0.14f,  0.66f, -0.18f, -0.06f),
+            new Key(0.25f, -0.24f,  0.07f,  0.05f),
+            new Key(0.42f,  0.00f,  0.00f,  0.00f),
+        };
+
+        /// <summary>
+        /// The slide scoop: the low road reach of <see cref="SlideClip"/> compressed into one pass, so the hand
+        /// sweeps the shoe off the street at speed and comes up with it.
+        /// </summary>
+        private static readonly Key[] ScoopClip =
+        {
+            new Key(0.00f,  0.00f,  0.00f,  0.00f),
+            new Key(0.06f,  1.08f, -0.28f, -0.10f),
+            new Key(0.13f,  1.08f, -0.28f, -0.10f),
+            new Key(0.26f, -0.28f,  0.08f,  0.06f),
+            new Key(0.46f,  0.00f,  0.00f,  0.00f),
+        };
+
         /// <summary>The taya's jab: a short cock back and a hard straight thrust, inward toward
         /// the crosshair. It leads with the ARM, which is what tells it apart from the lunge at a
         /// glance.</summary>
@@ -1173,6 +1200,8 @@ namespace TumbangPreso.CameraSystem
             _actionName = clip;
             _clip = Visual.ThrowGesture.IsThrow(clip) ? ThrowClip
                   : clip == "grab" ? GrabClip
+                  : clip == "pickup" ? PickupClip
+                  : clip == "scoop" ? ScoopClip
                   : clip == "punch" ? PunchClip
                   : clip == "lunge" ? LungeClip
 
@@ -1262,6 +1291,7 @@ namespace TumbangPreso.CameraSystem
             _aimPreview=null;
             _actionReturnLeft = 0.0f;
             _heroAction = _clip != null && _clip != ThrowClip && _clip != GrabClip
+                && _clip != PickupClip && _clip != ScoopClip
                 && _clip != PunchClip && _clip != LungeClip && _clip != SlideClip && _clip != ShoveClip;
 
             // ⚠️ THE PER-CLIP SLEEVE IMPULSES WENT WITH THE SOLVER. See the field block at the
@@ -3061,6 +3091,7 @@ namespace TumbangPreso.CameraSystem
 
         public void StepVisuals(float dt, bool snap = false)
         {
+            RestorePickupReach();
             RestoreHandLife();
             RestoreReleaseSweep();
             RestoreThrowReach();
@@ -3120,6 +3151,7 @@ namespace TumbangPreso.CameraSystem
                 ApplyTagReach();
                 ApplyCastGesture();
                 ApplyReleaseSweep();
+                ApplyPickupReach(dt);
                 StepHandLife(dt);
                 return;
             }
@@ -3171,6 +3203,7 @@ namespace TumbangPreso.CameraSystem
             ApplyTagReach();
             ApplyCastGesture();
             ApplyReleaseSweep();
+            ApplyPickupReach(dt);
             StepHandLife(dt);
         }
 

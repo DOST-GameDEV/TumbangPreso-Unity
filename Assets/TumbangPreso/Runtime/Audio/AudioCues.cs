@@ -406,6 +406,9 @@ namespace TumbangPreso.Audio
             "throw_whoosh", "throw_charge", "slipper_land", "slipper_bounce", "grab",
             "can_knockdown", "reset_complete", "pickup", "throw_release",
             "court_escape", "court_skid",
+            // The retrieval arc's heartbeat on a grab with the taya close (`Carrier.PresentPickup`), the
+            // Arena intro's own recording. Provisional until heard in play.
+            "sfx_arena_intro_heart",
 
             // Match state.
             "countdown_tick", "countdown_go", "round_win", "round_lose", "match_win",
