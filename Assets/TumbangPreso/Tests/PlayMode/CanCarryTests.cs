@@ -160,6 +160,10 @@ namespace TumbangPreso.PlayTests
                     checkPalette: false, includeWorld: true);
             }
             finally { Time.timeScale = scale; }
+
+            taya.Teleport(mark + Vector3.right * (Balance.TayaCampClearRadius + .8f));
+            yield return new WaitForSeconds(can.ProtectionLeft + .1f);
+            Assert.IsEmpty(prompt.text, "An idle defender should see instructions only when an action is available.");
         }
 
         [UnityTest] public IEnumerator LettingGoDropsTheCanAtTheTayasFeet()

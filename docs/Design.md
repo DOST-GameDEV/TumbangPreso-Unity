@@ -39,13 +39,13 @@ coverage uses the actual UI input module, not a direct call to the vote method.
 
 ### TJ Cadena feedback, November 9
 
-The throw guide uses spaced marks along the predicted flight plus the landing
-circle. Elevated terrain can hide the circle, so the visible arc carries the
+The throw guide uses up to six small, spaced marks along the predicted flight
+plus the landing circle. Elevated terrain can hide the circle, so the visible arc carries the
 release direction and climb. The guide uses the actual current launch and curve.
 Live interception can still change the outcome.
 
 The defender's prompt shows one current job: move to the downed can, restore it,
-cover an exit, or tag an attacker in reach. The approved can-down penalty grace
+step away from the can, or tag an attacker in reach. The approved can-down penalty grace
 is seven seconds. An accepted reset protects the upright can for four seconds.
 The can shows a gold rim during reset protection, and the clock caption shows
 the time remaining. The gold pulses faster through the final second. Reduced

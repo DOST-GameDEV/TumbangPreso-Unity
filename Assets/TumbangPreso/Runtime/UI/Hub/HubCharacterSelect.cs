@@ -66,7 +66,10 @@ namespace TumbangPreso.UI.Hub
 
         /// <summary>The seat strip's height, and the band the stage leaves above it for the chalked
         /// TAYA tag over your own card.</summary>
-        private const float SeatHeight = 144;
+        private const float SeatWidth = 284, SeatHeight = 108;
+        private static readonly Color PanelInk = new Color32(65, 25, 37, 245);
+        private static readonly Color SelectedInk = new Color32(98, 42, 47, 255);
+        private static readonly Color PanelEdge = new Color32(152, 81, 91, 255);
 
         private float _endsAt;
         private bool _locked, _started;
@@ -84,6 +87,7 @@ namespace TumbangPreso.UI.Hub
         private HubChalk _ring;
         private HubGlow _shadow;
         private Text _name, _role, _tagline, _clock, _hint;
+        private float _taglineScale;
         private HubButton _select;
         private readonly List<HubButton> _cells = new List<HubButton>();
         private readonly List<Image> _portraitFaces = new List<Image>();
@@ -93,6 +97,8 @@ namespace TumbangPreso.UI.Hub
         private string _shownSeats = "";
         private HubButton[] _abilityButtons;
         private TumpAbilitySymbol[] _abilitySymbols;
+        private Text[] _abilityLabels;
+        private Image[] _abilityUnderlines;
         private Text _abilityName, _abilityMeta, _abilityCost, _abilitySummary;
         private RectTransform _abilityColumn;
         private HeroKit _shownKit;
@@ -136,7 +142,7 @@ namespace TumbangPreso.UI.Hub
             if (Mode == GameMode.HeroStrike) BuildAbilityReadout();
 
             // Everyone in the match along the bottom left, with their pick and whether they locked.
-            _seats = HubKnit.At(HubKit.Rect(Root, "Seats"), 60, 904, 4 * 300, SeatHeight);
+            _seats = HubKnit.At(HubKit.Rect(Root, "Seats"), 60, 932, 4 * 300, SeatHeight);
 
             if (!Timed)
             {
@@ -381,8 +387,7 @@ namespace TumbangPreso.UI.Hub
             HubKit.Fit(_name, _name.rectTransform.sizeDelta.x);
             _tagline.gameObject.SetActive(!hero);
             _tagline.text = hero ? "" : parts.Length > 1 ? parts[1] : tagline;
-            _tagline.fontSize = HubStyle.Size(32);
-            _tagline.rectTransform.sizeDelta = new Vector2(480, Mathf.Ceil(_tagline.preferredHeight) + 12); // Line metrics round up at other canvas scales.
+            if (!hero) FitTagline();
 
             var art = RosterBook.Load().PersonArt(_pick, Mode);
             if (art != null) _preview.Show(art.Model, art.Clips, art.Palette, art.PetModel);
@@ -407,7 +412,18 @@ namespace TumbangPreso.UI.Hub
                 {
                     bool on = i < count;
                     _abilityButtons[i].gameObject.SetActive(on);
-                    if (on) _abilitySymbols[i].Glyph = _shownAbilities[i].Glyph;
+                    if (!on) continue;
+                    _abilitySymbols[i].Glyph = _shownAbilities[i].Glyph;
+                    _abilityLabels[i].text = _shownSlots[i].Label switch
+                    {
+                        "SIGNATURE" => "SIGN.",
+                        "ATTACKING" => "ATTACK",
+                        "DEFENDING" => "DEFEND",
+                        "ULTIMATE" => "ULT",
+                        _ => _shownSlots[i].Label
+                    };
+                    _abilityLabels[i].fontSize = HubStyle.Size(HubStyle.Floor);
+                    HubKit.Fit(_abilityLabels[i], 108);
                 }
                 InspectAbility(Mathf.Min(_inspectedAbility, count - 1));
             }
@@ -464,25 +480,44 @@ namespace TumbangPreso.UI.Hub
             HubKnit.At(_abilityColumn, 72, 280, ColumnWidth, 620);
             _abilityButtons = new HubButton[4];
             _abilitySymbols = new TumpAbilitySymbol[4];
+            _abilityLabels = new Text[4];
+            _abilityUnderlines = new Image[4];
             for (int i = 0; i < 4; i++)
             {
                 int slot = i;
-                var button = HubKit.Button(_abilityColumn, "SelectionAbility" + i, null, HubStyle.Honey,
-                    () => InspectAbility(slot), 0, 746 + i);
-                HubKit.Place((RectTransform)button.transform, HubKit.TopLeft, new Vector2(4 + i * 120, 0), new Vector2(104, 104));
+                var rect = HubKnit.In(HubKit.Rect(_abilityColumn, "SelectionAbility" + i), -10 + i * 124, 0, 114, 106);
+                var hit = rect.gameObject.AddComponent<Image>();
+                hit.color = Color.clear;
+                var button = rect.gameObject.AddComponent<HubButton>();
+                button.targetGraphic = hit;
+                button.RequireUserAttention = true;
+                button.onClick.AddListener(() => InspectAbility(slot));
+                button.Body = HubKit.Stretch(HubKit.Rect(rect, "Body"));
+                button.Shape = HubKit.Shape(button.Body, "Sticker", PanelInk, true, 746 + i, 2, 12, dress: false);
+                HubKit.Stretch(button.Shape.rectTransform);
+                button.Shape.Outline = PanelEdge;
+                button.Shape.ShadowOffset = new Vector2(0, -3);
+                button.Shape.ShadowColor = new Color32(32, 10, 21, 160);
                 var glyph = HubKit.Rect(button.Body, "Glyph").gameObject.AddComponent<TumpAbilitySymbol>();
-                HubKit.Stretch(glyph.rectTransform, 12);
+                HubKnit.In(glyph.rectTransform, 23, 5, 68, 63);
                 glyph.color = HubStyle.Ink; glyph.raycastTarget = false;
+                var label = HubKnit.Words(button.Body, "SlotLabel", "", HubStyle.Floor, HubKnit.KitCream, TextAnchor.MiddleCenter);
+                HubKnit.In(label.rectTransform, 2, 65, 110, 38);
+                var underline = HubKit.Rect(button.Body, "InspectedMark").gameObject.AddComponent<Image>();
+                HubKnit.In(underline.rectTransform, 38, 102, 38, 4);
+                underline.color = HubStyle.Golden;
+                underline.raycastTarget = false;
                 _abilityButtons[i] = button; _abilitySymbols[i] = glyph;
+                _abilityLabels[i] = label; _abilityUnderlines[i] = underline;
             }
             // ⚠️ NAME, THEN WHAT IT IS, THEN HOW IT IS CAST, THEN THE SENTENCE, STACKED BY MEASURED
             // HEIGHT (`StackAbilityText`). The kind and the cost are now two one-line labels: as one
             // wrapping label, "ATTACKING · PROJECTILE" plus "35 s cooldown" was the text that drew
             // over the sentence in the owner's screenshot (`CrispUiText` has the cause).
-            _abilityName = HubKnit.Display(_abilityColumn, "AbilityName", "", 54, HubKnit.KitWhite, TextAnchor.UpperLeft, 5);
-            _abilityMeta = HubKnit.Words(_abilityColumn, "AbilityMeta", "", 30, HubKnit.KitLime, TextAnchor.UpperLeft, true, 2);
-            _abilityCost = HubKnit.Words(_abilityColumn, "AbilityCost", "", 30, HubKnit.KitWhite, TextAnchor.UpperLeft, true, 3);
-            _abilitySummary = HubKnit.Words(_abilityColumn, "AbilitySummary", "", 32, HubKnit.KitWhite, TextAnchor.UpperLeft, true, 3);
+            _abilityName = HubKnit.Display(_abilityColumn, "AbilityName", "", 54, HubKnit.KitWhite, TextAnchor.MiddleLeft, 5);
+            _abilityMeta = HubKnit.Words(_abilityColumn, "AbilityMeta", "", 30, HubKnit.KitLime, TextAnchor.MiddleLeft, true, 2);
+            _abilityCost = HubKnit.Words(_abilityColumn, "AbilityCost", "", 30, HubKnit.KitWhite, TextAnchor.MiddleLeft, true, 3);
+            _abilitySummary = HubKnit.Words(_abilityColumn, "AbilitySummary", "", 32, HubKnit.KitWhite, TextAnchor.MiddleLeft, true, 3);
         }
 
         private void InspectAbility(int slot)
@@ -513,8 +548,15 @@ namespace TumbangPreso.UI.Hub
             _abilityCost.text = string.IsNullOrEmpty(key) ? resource : "Press " + key + "  ·  " + resource;
             StackAbilityText();
             for (int i = 0; i < _abilityButtons.Length; i++)
-                HubKit.SetFill(_abilityButtons[i], i == _inspectedAbility ? HubStyle.Persimmon
-                    : i < _shownSlots.Length && _shownSlots[i].IsUltimate ? HubStyle.Golden : HubStyle.Honey);
+            {
+                bool inspected = i == _inspectedAbility;
+                var shape = _abilityButtons[i].Shape;
+                shape.Fill = inspected ? SelectedInk : PanelInk;
+                shape.Outline = inspected ? HubStyle.Golden : PanelEdge;
+                shape.Redraw();
+                _abilityLabels[i].color = inspected ? HubStyle.Honey : HubKnit.KitCream;
+                _abilityUnderlines[i].enabled = inspected;
+            }
         }
 
         /// <summary>Lay the name, the two meta lines and the sentence one under another at their real
@@ -525,11 +567,12 @@ namespace TumbangPreso.UI.Hub
             _abilityName.fontSize = HubStyle.Size(54);
             _abilityMeta.fontSize = _abilityCost.fontSize = HubStyle.Size(30);
             _abilitySummary.fontSize = HubStyle.Size(32);
-            float y = 104 + 56;
+            float y = 132;
             foreach (var text in new[] { _abilityName, _abilityMeta, _abilityCost, _abilitySummary })
             {
                 text.rectTransform.sizeDelta = new Vector2(width, text.rectTransform.sizeDelta.y);
-                float height = Mathf.Ceil(text.preferredHeight) + 4;
+                // The print stroke extends past the glyphs measured by preferredHeight.
+                float height = Mathf.Ceil(text.preferredHeight) + (text == _abilityName ? 16 : 10);
                 HubKit.Place(text.rectTransform, HubKit.TopLeft, new Vector2(-10, -y), new Vector2(width, height));
                 y += height + (text == _abilityName ? 6 : text == _abilityCost ? 18 : 4);
             }
@@ -540,6 +583,13 @@ namespace TumbangPreso.UI.Hub
             if (Timed) return true;   // a found match is not left from the pick screen
             Hub.Host.PublishPicks();
             return false;
+        }
+
+        private void FitTagline()
+        {
+            _tagline.fontSize = HubStyle.Size(32);
+            _tagline.rectTransform.sizeDelta = new Vector2(480, Mathf.Ceil(_tagline.preferredHeight) + 12);
+            _taglineScale = _tagline.canvas != null ? _tagline.canvas.scaleFactor : 0f;
         }
 
         public override void Tick()
@@ -554,6 +604,9 @@ namespace TumbangPreso.UI.Hub
             if (_abilityName != null)
                 foreach (var text in new[] { _abilityName, _abilityMeta, _abilityCost, _abilitySummary })
                     if (text.preferredHeight > text.rectTransform.rect.height + 2) { StackAbilityText(); break; }
+            if (_tagline.isActiveAndEnabled && _tagline.canvas != null
+                && (!Mathf.Approximately(_taglineScale, _tagline.canvas.scaleFactor) || _tagline.fontSize != HubStyle.Size(32)))
+                FitTagline();
             if (!Timed) return;
 
             float left = Net.MatchRpc.Instance != null && Net.MatchRpc.Instance.CharacterSelecting
@@ -664,9 +717,12 @@ namespace TumbangPreso.UI.Hub
                 // Another player just locked: their card pops and the room hears it.
                 bool justLocked = !first && locked && i < _seatWasLocked.Length && !_seatWasLocked[i] && !seat.Mine;
                 if (i < _seatWasLocked.Length) _seatWasLocked[i] = locked;
-                var card = HubKnit.Plate(_seats, "Seat" + i, open ? Knit.Well : seat.Mine ? Knit.DarkCardOn : Knit.DarkCard);
-                HubKnit.In(card, i * 300, 0, 284, SeatHeight);
-                var cardFace = HubKnit.FaceOf(card);
+                var card = HubKnit.In(HubKit.Rect(_seats, "Seat" + i), i * 300, 0, SeatWidth, SeatHeight);
+                var surface = card.gameObject.AddComponent<HudCard>();
+                surface.Glass(PanelInk, slant: 0, radius: 16, shadow: .24f);
+                surface.Style(seat.Mine ? SelectedInk : PanelInk,
+                    seat.Mine ? HubStyle.Golden : PanelEdge, seat.Mine ? 2.5f : 1.5f, Color.clear, 0);
+                surface.raycastTarget = false;
                 var person = seat.Occupied ? Roster.At(People, seat.CharacterPick) : null;
                 string title = seat.Mine ? "YOU" : seat.Occupied ? seat.Name : seat.Bot ? "BOT" : "+ OPEN";
                 string state = seat.Bot ? (Timed ? "READY" : "")
@@ -675,15 +731,19 @@ namespace TumbangPreso.UI.Hub
                              : seat.Ready ? "READY" : "";
                 if (open)
                 {
-                    var word = HubKnit.Display(cardFace, "Name", title, 38, HubKnit.KitCream, TextAnchor.MiddleCenter);
-                    HubKnit.In(word.rectTransform, 0, 30, 284, 70);
+                    var word = HubKnit.Display(card, "Name", title, 34, HubKnit.KitCream, TextAnchor.MiddleCenter);
+                    HubKnit.In(word.rectTransform, 0, 19, SeatWidth, 70);
                 }
                 else
                 {
+                    var badge = HubKnit.In(HubKit.Rect(card, "SeatBadge"), 14, 14, 80, 80).gameObject.AddComponent<HudCard>();
+                    badge.Glass(new Color32(46, 18, 29, 255), slant: 0, radius: 12, shadow: 0);
+                    badge.Border = PanelEdge;
+                    badge.raycastTarget = false;
                     if (person != null)
                     {
-                        var face = FramedFace(cardFace, person.Id);
-                        HubKnit.In((RectTransform)face.rectTransform.parent, 26, 14, 104, 104);
+                        var face = FramedFace(badge.rectTransform, person.Id);
+                        HubKit.Stretch((RectTransform)face.rectTransform.parent, 3);
                         // Everyone else's pick is faint until they lock it; your own face stays whole.
                         if (Timed && !locked && !seat.Mine)
                         {
@@ -693,17 +753,20 @@ namespace TumbangPreso.UI.Hub
                     }
                     else
                     {
-                        Graphic mark = seat.Occupied ? HubKit.Glyph(cardFace, "Bot", HubGlyph.Mark.Person, HubKnit.KitTan) : HubKnit.BotFace(cardFace, "Bot");
-                        HubKnit.In(mark.rectTransform, 40, 28, 72, 72);
+                        Graphic mark = seat.Occupied
+                            ? HubKit.Glyph(badge.rectTransform, "Person", HubGlyph.Mark.Person, HubKnit.KitTan)
+                            : HubKnit.BotFace(badge.rectTransform, "Bot");
+                        HubKnit.In(mark.rectTransform, 19, 19, 42, 42);
                     }
-                    var name = HubKnit.Display(cardFace, "Name", title, 40, seat.Mine ? HubKnit.KitLime : HubKnit.KitCream);
-                    HubKnit.In(name.rectTransform, 136, state.Length > 0 ? 18 : 34, 134, 56);
-                    HubKit.Fit(name, 134);
+                    var name = HubKnit.Display(card, "Name", title, 35, HubKnit.KitCream);
+                    HubKnit.In(name.rectTransform, 108, state.Length > 0 ? 12 : 28, 160, 49);
+                    HubKit.Fit(name, 160);
                     if (state.Length > 0)
                     {
-                        var stateText = HubKnit.Words(cardFace, "State", state, HubStyle.Floor, HubKnit.KitTan);
-                        HubKnit.In(stateText.rectTransform, 138, 70, 134, 40);
-                        HubKit.Fit(stateText, 134);
+                        Color status = locked || seat.Bot ? HubStyle.Honey : HubKnit.KitTan;
+                        var stateText = HubKnit.Words(card, "State", state, HubStyle.Floor, status);
+                        HubKnit.In(stateText.rectTransform, 109, 56, 158, 38);
+                        HubKit.Fit(stateText, 158);
                     }
                 }
                 int taya = seat.Mine ? FirstTayaRound(seat.Slot) : 0;
@@ -713,7 +776,7 @@ namespace TumbangPreso.UI.Hub
                     // N + 1 (`MatchRules.DefenderSlotFor`), fixed before the match, and a role kit's
                     // defending power is the one you need first if this says round 1.
                     var tag = HubKnit.Tag(_seats, "Taya", "TAYA IN ROUND " + taya, Knit.PillYellow, 56);
-                    HubKnit.In(tag, i * 300 + (284 - tag.sizeDelta.x) * .5f, -60, tag.sizeDelta.x, 56);
+                    HubKnit.In(tag, i * 300 + (SeatWidth - tag.sizeDelta.x) * .5f, -60, tag.sizeDelta.x, 56);
                 }
                 var slipper = seat.Mine && locked && Timed ? Resources.Load<Texture2D>("UI/brand/tsinelas_mark") : null;
                 if (slipper != null)
