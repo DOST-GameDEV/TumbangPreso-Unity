@@ -39,13 +39,13 @@ coverage uses the actual UI input module, not a direct call to the vote method.
 
 ### TJ Cadena feedback, November 9
 
-The throw guide uses spaced marks along the predicted flight plus the landing
-circle. Elevated terrain can hide the circle, so the visible arc carries the
+The throw guide uses up to six small, spaced marks along the predicted flight
+plus the landing circle. Elevated terrain can hide the circle, so the visible arc carries the
 release direction and climb. The guide uses the actual current launch and curve.
 Live interception can still change the outcome.
 
 The defender's prompt shows one current job: move to the downed can, restore it,
-cover an exit, or tag an attacker in reach. The approved can-down penalty grace
+step away from the can, or tag an attacker in reach. The approved can-down penalty grace
 is seven seconds. An accepted reset protects the upright can for four seconds.
 The can shows a gold rim during reset protection, and the clock caption shows
 the time remaining. The gold pulses faster through the final second. Reduced
@@ -89,6 +89,11 @@ Shove and defender lunge cost no stamina and are usable with an empty bar.
 Separate retrieval slide remains 1.75 m / 25 stamina / 2.45 s cooldown.
 Defender lunge remains 3.5 m with 0.5 s tap / 2.5 s full-hold cooldown.
 
+The movement slide starts with crouch at running speed. It carries the sprint
+heading for 0.16 seconds, then allows steering as braking builds. A jump or
+leaving the ground ends the slide. Bots use this same movement action on clear
+runways for retrieval or escape. They favour throwing spots with room from
+the court's walls and change guard posts when there is no armed threat.
 
 **Model/art requirement:** new and reworked models must belong to TUMP's cute
 blocky visual language and avoid unnecessary detail. Gameplay changes and stronger

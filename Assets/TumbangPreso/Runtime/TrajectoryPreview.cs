@@ -41,6 +41,8 @@ namespace TumbangPreso
         public bool LandingVisible => _renderer != null && _renderer.enabled;
         public bool FlightVisible => _flightRenderer != null && _flightRenderer.enabled;
         public const float CircleRadius = .4f;
+        public const int MaxFlightMarks = 6;
+        private const int MarkSides = 8;
 
         public static TrajectoryPreview AttachTo(CharacterMotor motor)
         {
@@ -174,17 +176,29 @@ namespace TumbangPreso
             _verts.Clear(); _colours.Clear(); _tris.Clear();
             float length = 0;
             for (int i = 1; i < _path.Count; i++) length += Vector3.Distance(_path[i - 1], _path[i]);
-            // Leave space at the hands and at the landing circle. At most eight stamps keep a long uphill arc quiet.
-            float spacing = Mathf.Max(.8f, (length - 1.2f) / 7);
-            float next = .9f, walked = 0;
-            for (int i = 1; i < _path.Count && next < length - .28f; i++)
+            const float first = 1f, landingGap = .46f;
+            float spacing = Mathf.Max(.9f, (length - first - landingGap) / (MaxFlightMarks - 1));
+            float next = first, walked = 0;
+            int marks = 0;
+            Vector2? previousScreen = null;
+            float minScreenGap = Mathf.Max(8f, camera.pixelHeight * .016f);
+            for (int i = 1; i < _path.Count && next < length - landingGap && marks < MaxFlightMarks; i++)
             {
                 Vector3 start = _path[i - 1], delta = _path[i] - start;
                 float segment = delta.magnitude;
-                while (segment > .001f && next <= walked + segment && next < length - .28f)
+                while (segment > .001f && next <= walked + segment && next < length - landingGap && marks < MaxFlightMarks)
                 {
                     Vector3 point = start + delta * ((next - walked) / segment);
-                    DrawFlightStamp(camera, point, delta, tint);
+                    Vector3 projected = camera.WorldToScreenPoint(point);
+                    Vector2 screen = projected;
+                    // Foreshortened marks need a screen-space gap or they read as a solid line.
+                    if (projected.z > camera.nearClipPlane && (!previousScreen.HasValue
+                        || (screen - previousScreen.Value).sqrMagnitude >= minScreenGap * minScreenGap))
+                    {
+                        DrawFlightMark(camera, point, projected.z, tint, Mathf.Lerp(.82f, .56f, next / length));
+                        previousScreen = screen;
+                        marks++;
+                    }
                     next += spacing;
                 }
                 walked += segment;
@@ -193,25 +207,27 @@ namespace TumbangPreso
             _flightMesh.RecalculateBounds(); _flightRenderer.enabled = _verts.Count > 0;
         }
 
-        private void DrawFlightStamp(UnityEngine.Camera camera, Vector3 point, Vector3 direction, Color tint)
+        private void DrawFlightMark(UnityEngine.Camera camera, Vector3 point, float depth, Color tint, float weight)
         {
             var eye = camera.transform;
-            float depth = Vector3.Dot(point - eye.position, eye.forward);
-            if (depth <= camera.nearClipPlane) return;
             float perPixel = camera.orthographic ? 2 * camera.orthographicSize / Mathf.Max(1, camera.pixelHeight)
                 : 2 * depth * Mathf.Tan(camera.fieldOfView * Mathf.Deg2Rad * .5f) / Mathf.Max(1, camera.pixelHeight);
-            Vector3 along = Vector3.ProjectOnPlane(direction, eye.forward).normalized;
-            if (along.sqrMagnitude < .01f) along = eye.up;
-            Vector3 side = Vector3.Cross(eye.forward, along);
-            float size = Mathf.Clamp(perPixel, .002f, .035f);
-            FlightStamp(point, along * (size * 5.5f), side * (size * 3.6f), new Color(.018f, .012f, .008f, .85f));
-            FlightStamp(point, along * (size * 4.0f), side * (size * 2.35f), tint);
+            float radius = Mathf.Clamp(perPixel, .002f, .035f) * 3.1f;
+            tint.a *= weight;
+            FlightDisc(point, eye.right, eye.up, radius * 1.45f, new Color(.075f, .035f, .022f, weight * .66f));
+            FlightDisc(point, eye.right, eye.up, radius, tint);
         }
 
-        private void FlightStamp(Vector3 point, Vector3 along, Vector3 side, Color tint)
+        private void FlightDisc(Vector3 point, Vector3 right, Vector3 up, float radius, Color tint)
         {
-            AddTri(point - along, point + side, point + along, tint);
-            AddTri(point - along, point + along, point - side, tint);
+            Vector3 previous = point + right * radius;
+            for (int i = 1; i <= MarkSides; i++)
+            {
+                float angle = i * (Mathf.PI * 2 / MarkSides);
+                Vector3 edge = point + (right * Mathf.Cos(angle) + up * Mathf.Sin(angle)) * radius;
+                AddTri(point, previous, edge, tint);
+                previous = edge;
+            }
         }
 
         private static bool ProjectRingPoint(Vector3 point, float referenceHeight, out Vector3 projected)

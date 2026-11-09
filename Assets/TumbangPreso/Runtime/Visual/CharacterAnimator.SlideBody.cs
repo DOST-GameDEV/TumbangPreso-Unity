@@ -7,21 +7,14 @@ namespace TumbangPreso.Visual
     /// rework's slide (`CharacterMotor.ReworkSliding`) played the out-of-breath clip, a body bent over on its feet,
     /// while it shot along the ground.
     ///
-    /// Posed in code over whatever clip is underneath, the way the tag and the throw are (`TagBody`, `ThrowBody`), so
-    /// every rig in the cast has it without thirty-odd authored clips: down on one hip with the hips nearly on the
-    /// ground, the lead leg long ahead and the other tucked, the chest laid back, the head held up to look where it is
-    /// going, the trailing hand down behind on the ground and the other arm out ahead for balance. It eases in over
-    /// `SlideInSeconds` and out over `SlideOutSeconds`, rides a small shudder while it runs, and restores its bones
-    /// every frame.
-    ///
-    /// Presentation only, and only on the peer that simulates the body: the slide is not replicated, so other
-    /// screens do not see it (`docs/SKILL_NETWORK_CONTRACT.md`, protocol157).
+    /// Drop onto the trailing hip, extend into the glide, then bring the lead foot back under
+    /// the body as speed falls. Local and observed bodies drive it from the same slide flag.
     /// </summary>
     public sealed partial class CharacterAnimator
     {
-        public const float SlideInSeconds = .10f, SlideOutSeconds = .18f;
+        public const float SlideInSeconds = .075f, SlideOutSeconds = .22f;
 
-        private float _slideWeight;
+        private float _slideWeight, _slideAge, _slideExtension;
         private bool _slideApplied;
         private Vector3 _slRootPos;
         private Quaternion _slRootRot, _slTorso, _slHead, _slArmL, _slArmR, _slLegL, _slLegR, _slForeL, _slForeR;
@@ -41,15 +34,25 @@ namespace TumbangPreso.Visual
             _slideApplied = false;
         }
 
-        private void ClearSlideBody() { RestoreSlideBody(); _slideWeight = 0f; }
+        private void ClearSlideBody()
+        {
+            RestoreSlideBody();
+            _slideWeight = _slideAge = _slideExtension = 0f;
+        }
 
         private void ApplySlideBody()
         {
             if (_motor == null || _animator == null) return;
-            bool sliding = _motor.ReworkSliding && !_motor.IsStunned && !_motor.IsTripped;
+            if (_motor.IsStunned || _motor.IsTripped) { ClearSlideBody(); return; }
+            bool sliding = _motor.ReworkSliding;
+            float dt = Time.deltaTime;
             _slideWeight = Mathf.MoveTowards(_slideWeight, sliding ? 1f : 0f,
-                                             Time.deltaTime / (sliding ? SlideInSeconds : SlideOutSeconds));
-            if (_slideWeight <= .001f) return;
+                                             dt / (sliding ? SlideInSeconds : SlideOutSeconds));
+            if (_slideWeight <= .001f) { _slideAge = _slideExtension = 0f; return; }
+            if (sliding) _slideAge += dt;
+            float speedShare = Mathf.InverseLerp(1.2f, _motor.IsDefender ? 5.2f : 3.8f, _motor.ReworkFlatSpeed);
+            float extension = sliding ? Mathf.SmoothStep(0, 1, _slideAge / .16f) * speedShare : 0f;
+            _slideExtension = Mathf.MoveTowards(_slideExtension, extension, dt * 8f);
             if (!_swingBonesResolved) ResolveSwingBones();
             if (_swingRoot == null || _swingTorso == null || _swingArmL == null || _swingArmR == null
                 || _swingLegL == null || _swingLegR == null) return;
@@ -73,25 +76,25 @@ namespace TumbangPreso.Visual
             ToBind(_swingForeL, w, false); ToBind(_swingForeR, w, false);
 
             var up = transform.up; var right = transform.right; var fwd = transform.forward;
-            float shudder = Mathf.Sin(Time.time * 41f) * .006f * w;
-
-            // The hips: nearly on the ground (the legs lie forward, so the body comes down by most of their length),
-            // a little behind the feet, rolled onto the trailing hip.
+            float glide = _slideExtension;
             float reach = _legReachWorld > 0f ? _legReachWorld : .45f;
-            _swingRoot.position += (-up * (reach * .80f) - fwd * (reach * .18f) + up * shudder) * w;
-            _swingRoot.rotation = Quaternion.AngleAxis(-12f * w, fwd) * _swingRoot.rotation;
+            _swingRoot.position += (-up * (reach * Mathf.Lerp(.51f, .80f, glide))
+                - fwd * (reach * Mathf.Lerp(.02f, .22f, glide))) * w;
+            _swingRoot.rotation = Quaternion.AngleAxis(Mathf.Lerp(-5f, -14f, glide) * w, fwd) * _swingRoot.rotation;
 
             // The legs, by POSITION as the gait does (the importer mirrors X): the left long ahead, the right tucked.
             float sideL = SideOf(_swingLegL, -1f), sideR = SideOf(_swingLegR, 1f);
             Transform lead = sideL < 0 ? _swingLegL : _swingLegR, tuck = sideL < 0 ? _swingLegR : _swingLegL;
             Vector3 leadAxis = sideL < 0 ? _legAxisL : _legAxisR, tuckAxis = sideL < 0 ? _legAxisR : _legAxisL;
-            PoseLimb(lead, leadAxis, -1f, 84f, 6f, w);
-            PoseLimb(tuck, tuckAxis, 1f, 62f, 16f, w);
+            PoseLimb(lead, leadAxis, -1f, Mathf.Lerp(43f, 86f, glide), 7f, w);
+            PoseLimb(tuck, tuckAxis, 1f, Mathf.Lerp(25f, 57f, glide), Mathf.Lerp(6f, 20f, glide), w);
 
             // The chest laid back and turned a little toward the trailing hand; the head up, looking down the slide.
-            _swingTorso.rotation = Quaternion.AngleAxis(-30f * w, right) * Quaternion.AngleAxis(14f * w, up) * _swingTorso.rotation;
+            _swingTorso.rotation = Quaternion.AngleAxis(Mathf.Lerp(8f, -26f, glide) * w, right)
+                * Quaternion.AngleAxis(12f * glide * w, up) * _swingTorso.rotation;
             if (_swingHead != null)
-                _swingHead.rotation = Quaternion.AngleAxis(24f * w, right) * Quaternion.AngleAxis(-12f * w, up) * _swingHead.rotation;
+                _swingHead.rotation = Quaternion.AngleAxis(Mathf.Lerp(-5f, 19f, glide) * w, right)
+                    * Quaternion.AngleAxis(-10f * glide * w, up) * _swingHead.rotation;
 
             // The arms, by position too. The right hand is down behind on the ground; the left is out ahead.
             float armSideL = SideOf(_swingArmL, -1f);
@@ -99,10 +102,12 @@ namespace TumbangPreso.Visual
             Vector3 backAlong = armSideL < 0 ? _alongR : _alongL, frontAlong = armSideL < 0 ? _alongL : _alongR;
             Transform backFore = armSideL < 0 ? _swingForeR : _swingForeL, frontFore = armSideL < 0 ? _swingForeL : _swingForeR;
             Vector3 backForeAlong = armSideL < 0 ? _foreAlongR : _foreAlongL, frontForeAlong = armSideL < 0 ? _foreAlongL : _foreAlongR;
-            PointArm(back, backAlong, new Vector3(.55f, -.55f, -.62f), w, 0f);
+            PointArm(back, backAlong, Vector3.Lerp(new Vector3(.42f, -.65f, .25f), new Vector3(.55f, -.55f, -.62f), glide), w, 0f);
             if (backFore != null) PointArm(backFore, backForeAlong, new Vector3(.30f, -.90f, -.30f), w, 0f);
-            PointArm(front, frontAlong, new Vector3(-.50f, .05f, .86f), w, 0f);
-            if (frontFore != null) PointArm(frontFore, frontForeAlong, new Vector3(-.30f, .40f, .86f), w, 0f);
+            bool holding = _motor.HoldingSlipper;
+            PointArm(front, frontAlong, holding ? new Vector3(-.18f, -.58f, .77f) : new Vector3(-.50f, -.04f, .86f), w, 0f);
+            if (frontFore != null) PointArm(frontFore, frontForeAlong,
+                holding ? new Vector3(.08f, .54f, .84f) : new Vector3(-.30f, .40f, .86f), w, 0f);
         }
     }
 }

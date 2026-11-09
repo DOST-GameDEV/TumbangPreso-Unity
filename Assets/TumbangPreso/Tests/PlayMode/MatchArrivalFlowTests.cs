@@ -40,8 +40,8 @@ namespace TumbangPreso.PlayTests
                         .Single(b => b.name == "Portrait" + index);
                     Assert.IsTrue(portrait.IsInteractable(), "Offline play keeps every hero available");
                     Assert.IsFalse(portrait.Hatched, "Offline portraits must not look locked");
-                    Assert.AreEqual(Color.white, portrait.GetComponentsInChildren<Image>()
-                        .Single(i => i.name == "Face").color,
+                    var face = portrait.Body.Find("Well/Face").GetComponent<Image>();
+                    Assert.AreEqual(Color.white, face.color,
                         "Offline portraits must keep their full image");
                 }
                 // ⚠️ One cell per hero: the fixed 3x4 grid drew three hatched cells for nine heroes,
@@ -108,7 +108,7 @@ namespace TumbangPreso.PlayTests
 
         /// <summary>The version stamped on the review pictures. Bump it with every layout pass, so a
         /// chat client that caches by filename never shows the previous picture (`CLAUDE.md` § 6.1).</summary>
-        private const string ReviewVersion = "v8";
+        private const string ReviewVersion = "v9";
 
         /// <summary>
         /// The pictures a character select change is judged on: the timed screen as a queue match
@@ -147,6 +147,12 @@ namespace TumbangPreso.PlayTests
                     TumpHub.Current.Canvas, size.x, size.y, false, checkActionBounds: brief,
                     inspectViewport: () => AssertSelectionPicture(timed, where));
             }
+            int ilyas = Roster.IndexIn(people, "rafi");
+            yield return HubFlowTests.Press("Portrait" + ilyas);
+            yield return HubFlowTests.Press("SelectionAbility0");
+            yield return TumpUiCapture.Capture($"CharSelect-{ReviewVersion}-ilyas-1920x1080",
+                TumpHub.Current.Canvas, 1920, 1080, false, checkActionBounds: true,
+                inspectViewport: () => AssertSelectionPicture(timed, "ilyas/1920x1080"));
             int dante = Enumerable.Range(0, people.Count).First(i => people[i].Id == "dante");
             yield return HubFlowTests.Press("Portrait" + dante);
             yield return HubFlowTests.Press("SelectionAbility1");

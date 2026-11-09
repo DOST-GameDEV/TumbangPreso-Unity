@@ -4,9 +4,8 @@ using UnityEngine;
 namespace TumbangPreso
 {
     /// <summary>
-    /// The body's side of the movement rework prototype (`MovementRework`, a debug switch, offline only). Everything
-    /// here is reached only for the LOCAL HUMAN'S body while the switch is on; with it off `FixedUpdate` runs the one
-    /// velocity write it always has.
+    /// The local player's movement rework and the shared slide. Bot seats keep their normal
+    /// walk and jump and use the same slide when their input presses crouch at speed.
     ///
     ///   * GROUND: friction, then acceleration toward the wish (`MovementRework.GroundFriction`, `GroundAccel`), so a
     ///     start, a stop and a turn each take a moment and speed above the wish bleeds off instead of vanishing.
@@ -18,7 +17,8 @@ namespace TumbangPreso
     ///   * CROUCH: the capsule is shortened from the top (the feet stay put), the walk is slower, sprint is refused, and
     ///     standing waits for headroom.
     ///   * SLIDE: crouch at a sprint. A boost along the way it was going, little friction, a little steering; it ends
-    ///     when it has slowed to a crouch walk, when crouch is let go, or into a jump that keeps its speed.
+    ///     when it has slowed to a crouch walk, after the initial commitment when crouch is let go,
+    ///     or into a jump that keeps its speed.
     /// </summary>
     public sealed partial class CharacterMotor
     {
@@ -35,9 +35,12 @@ namespace TumbangPreso
         public bool ReworkCrouched => _rwCrouched || NetCrouched;
         public bool ReworkSliding => _rwSliding || NetSliding;
         /// <summary>How far the first-person eye sits below standing, metres; the camera eases toward it.</summary>
-        public float ReworkEyeDropTarget => _rwSliding ? MovementRework.SlideEyeDrop : _rwCrouched ? MovementRework.CrouchEyeDrop : 0f;
+        public float ReworkEyeDropTarget => ReworkSliding ? MovementRework.SlideEyeDrop : ReworkCrouched ? MovementRework.CrouchEyeDrop : 0f;
         /// <summary>Flat speed, metres a second, for the prototype map's readout.</summary>
         public float ReworkFlatSpeed => new Vector2(_velocity.x, _velocity.z).magnitude;
+        internal bool CanStartBotSlide => MovementRework.Enabled && _isPerson && _isBot && _grounded &&
+            !IsSwimming && !IsFlying && !IsCarryingCan && !_rwCrouched && !_rwSliding &&
+            _rwSlideCooldown <= 0f && ReworkFlatSpeed >= Stamina.MovementSpeed(_isDefender, true) * MovementRework.SlideEntryScale;
 
         /// <summary>Read by `ApplyGravity`: the rework wants the grounded jump to fire this step.</summary>
         private bool ReworkJumpQueued => _rwJumpQueued;
@@ -64,7 +67,16 @@ namespace TumbangPreso
         private bool StepReworkVelocity(Vector3 wish, float speed, float dt)
         {
             _rwJumpQueued = false; _rwJumpScale = 1f;
-            if (!ReworkDrivesThisBody) { _rwJumpFatigue = 0f; StandUpFromRework(force: true); return false; }
+            _rwSlideCooldown = Mathf.Max(0f, _rwSlideCooldown - dt);
+            if (!ReworkDrivesThisBody)
+            {
+                _rwJumpFatigue = 0f;
+                if (MovementRework.Enabled && _isPerson && _isBot && !IsSwimming && !IsFlying && !IsCarryingCan)
+                    return StepBotSlideVelocity(wish, speed, dt);
+                _rwCrouchHeldPrev = false;
+                StandUpFromRework(force: true);
+                return false;
+            }
 
             // The jump: buffered before the landing, repeated while held.
             _rwJumpBuffer = Intent.JustPressed(Verb.Jump) ? MovementRework.JumpBufferSeconds : Mathf.Max(0f, _rwJumpBuffer - dt);
@@ -204,55 +216,9 @@ namespace TumbangPreso
             float hopCap = Mathf.Max(speed, run * MovementRework.HopSpeedScale);
             if (!_grounded || groundJump || coyoteJump) _rwRecoveryBlockedUntil = Time.time + MovementRework.HopRecoveryDelay;
 
-            bool held = Intent.Crouch;
-            // ⚠️ CROUCH HELD THROUGH A LEAP IS A SLIDE OUT OF IT (owner, 2026-10-07: "im still unable to slide while leaping").
-            // A slide starts on the PRESS, and a press made during Paete's leap found a body with no speed of its own
-            // (the vines were carrying it) and was spent. For a moment after the leap hands its speed over
-            // (`StepCarry`), crouch being DOWN counts as the press.
-            bool pressed = held && (!_rwCrouchHeldPrev || Time.time < _rwLeapHandedOverUntil);
-            _rwCrouchHeldPrev = held;
-            _rwSlideCooldown = Mathf.Max(0f, _rwSlideCooldown - dt);
-
-            // A slide starts on the press, on the ground, at a sprint.
-            if (pressed && _grounded && !groundJump && !_rwSliding && flat >= run * MovementRework.SlideEntryScale)
-            {
-                _rwSliding = true; _rwSlideLeft = MovementRework.SlideMaxSeconds;
-                if (_rwSlideCooldown <= 0f)
-                {
-                    v = v.normalized * Mathf.Min(cap, Mathf.Max(flat, run * MovementRework.SlideBoostScale));
-                    _rwSlideCooldown = MovementRework.SlideBoostCooldown;
-                    GetComponentInChildren<Visual.CharacterSquashStretch>()?.Squash(0.18f);
-                }
-                flat = v.magnitude;
-            }
-            SetReworkCrouch(held || _rwSliding);
-
             bool onGround = _grounded && !groundJump;
-            if (_rwSliding)
-            {
-                _rwSlideLeft -= dt;
-                if (onGround)
-                {
-                    // ⚠️ THE GROUND TAKES THE SLIDE, NOT A CLOCK (owner, 2026-10-07, of a slide that lost a share of its
-                    // speed a second and then stopped when its time ran out: "too linear, doesnt slowly slow down,
-                    // only stops when the slide time is done ... it doesnt feel like theres friction to it"). A real
-                    // drag in metres a second each second, light as it starts and biting harder the longer it runs,
-                    // so it glides, then drags, then is down to a crouch walk and is over.
-                    float age = MovementRework.SlideMaxSeconds - _rwSlideLeft;
-                    float drag = Mathf.Lerp(MovementRework.SlideDragStart, MovementRework.SlideDragEnd,
-                                            Mathf.Clamp01(age / Mathf.Max(0.01f, MovementRework.SlideDragRamp)));
-                    float now = v.magnitude;
-                    if (now > 1e-4f) v *= Mathf.Max(0f, now - drag * dt) / now;
-                    flat = v.magnitude;
-                    v = Accelerate(v, w, v.magnitude, MovementRework.SlideSteer, dt);
-                    // Steering turns a slide; it does not speed it up.
-                    if (v.magnitude > flat) v = v.normalized * flat;
-                }
-                bool slow = v.magnitude < Mathf.Max(0.5f, speed * MovementRework.CrouchSpeedScale * 1.15f);
-                // Into a jump the slide ends and its speed goes with the body.
-                if (!held || slow || _rwSlideLeft <= 0f || groundJump || !_grounded) _rwSliding = false;
-            }
-            else if (onGround)
+            bool slid = StepMovementSlide(ref v, w, speed, run, cap, onGround, dt);
+            if (!slid && onGround)
             {
                 float wishSpeed = speed * (_rwCrouched ? MovementRework.CrouchSpeedScale : 1f);
                 float friction = IsOnIce ? MovementRework.IceFriction : MovementRework.GroundFriction;
@@ -264,7 +230,7 @@ namespace TumbangPreso
                 }
                 v = Accelerate(v, w, wishSpeed, accel, dt);
             }
-            else
+            else if (!slid)
             {
                 // ⚠️ IN THE AIR THE KEYS STEER, AND SPEED IS NOT FREE (owner, 2026-10-07, of the first cut, a Quake strafe:
                 // "spinning in a circle just ramps up ur speed too easily, airstrafing barely moves your character - but
@@ -365,6 +331,81 @@ namespace TumbangPreso
             float add = wishSpeed - Vector2.Dot(velocity, wish);
             if (add <= 0f) return velocity;
             return velocity + wish * Mathf.Min(accel * wishSpeed * dt, add);
+        }
+
+        private bool StepBotSlideVelocity(Vector3 wish, float speed, float dt)
+        {
+            if (!Intent.Crouch && !_rwCrouched && !_rwSliding)
+            {
+                _rwCrouchHeldPrev = false;
+                return false;
+            }
+
+            var velocity = new Vector2(_velocity.x, _velocity.z);
+            var steering = new Vector2(wish.x, wish.z);
+            float run = Stamina.MovementSpeed(_isDefender, true);
+            float cap = Mathf.Min(MovementRework.MaxSpeed, Mathf.Max(speed, run * MovementRework.MaxSpeedScale));
+            bool groundSlide = _grounded && !Intent.JustPressed(Verb.Jump);
+            if (!StepMovementSlide(ref velocity, steering.normalized, speed, run, cap, groundSlide, dt))
+            {
+                if (!_rwCrouched) return false;
+                velocity = steering * (speed * MovementRework.CrouchSpeedScale);
+            }
+            _velocity.x = velocity.x;
+            _velocity.z = velocity.y;
+            return true;
+        }
+
+        private bool StepMovementSlide(ref Vector2 velocity, Vector2 steering, float speed, float run, float cap,
+                                       bool onGround, float dt)
+        {
+            bool held = Intent.Crouch;
+            // Paete can hold crouch through his leap and use its speed when it hands movement back.
+            bool pressed = held && (!_rwCrouchHeldPrev || Time.time < _rwLeapHandedOverUntil);
+            _rwCrouchHeldPrev = held;
+            float flat = velocity.magnitude;
+            if (pressed && onGround && !_rwSliding && flat >= run * MovementRework.SlideEntryScale)
+            {
+                _rwSliding = true;
+                _rwSlideLeft = MovementRework.SlideMaxSeconds;
+                if (_rwSlideCooldown <= 0f)
+                {
+                    velocity = velocity.normalized * Mathf.Min(cap, Mathf.Max(flat, run * MovementRework.SlideBoostScale));
+                    _rwSlideCooldown = MovementRework.SlideBoostCooldown;
+                    GetComponentInChildren<Visual.CharacterSquashStretch>()?.Squash(.12f);
+                }
+            }
+
+            SetReworkCrouch(held || _rwSliding);
+            if (!_rwSliding) return false;
+
+            _rwSlideLeft -= dt;
+            float age = MovementRework.SlideMaxSeconds - _rwSlideLeft;
+            if (onGround)
+            {
+                float ramp = Mathf.SmoothStep(0, 1, age / Mathf.Max(.01f, MovementRework.SlideDragRamp));
+                float drag = Mathf.Lerp(MovementRework.SlideDragStart, MovementRework.SlideDragEnd, ramp);
+                float nextSpeed = Mathf.Max(0, velocity.magnitude - drag * dt);
+                if (velocity.sqrMagnitude > .0001f)
+                {
+                    var heading = new Vector3(velocity.x, 0, velocity.y).normalized;
+                    // Start along the sprint. Steering curves the glide without adding speed or reversing it in one frame.
+                    if (age >= MovementRework.SlideCommitSeconds && steering.sqrMagnitude > .01f)
+                        heading = Vector3.RotateTowards(heading, new Vector3(steering.x, 0, steering.y),
+                            MovementRework.SlideSteer * dt, 0);
+                    velocity = new Vector2(heading.x, heading.z) * nextSpeed;
+                }
+            }
+
+            bool committed = age < MovementRework.SlideCommitSeconds;
+            bool slow = velocity.magnitude < Mathf.Max(.5f, speed * MovementRework.CrouchSpeedScale * 1.15f);
+            bool blocked = (_cc.collisionFlags & CollisionFlags.Sides) != 0;
+            if (!onGround || _rwSlideLeft <= 0f || (!committed && (!held || slow || blocked)))
+            {
+                _rwSliding = false;
+                SetReworkCrouch(held);
+            }
+            return true;
         }
 
         /// <summary>Called where the body cannot steer (a stun, a root): no crouch, no slide, nothing queued.</summary>

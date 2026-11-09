@@ -537,7 +537,8 @@ namespace TumbangPreso.CameraSystem
                              && _character.Stamina != null
                              && _character.Stamina.IsSprinting;
 
-            want += sprinting ? SprintFieldOfViewKick : 0.0f;
+            if (sprinting) want += SprintFieldOfViewKick;
+            else if (_mode == CameraMode.Fpp && !_emoteView) want += _reworkSlideLean * SprintFieldOfViewKick;
             // Zack's Momentum stages widen his own lens a little more at each stage (smoothed with the sprint's).
             if (_mode == CameraMode.Fpp && !_emoteView) want += Visual.ZackMomentumLook.LensWiden(_character);
 
@@ -584,6 +585,7 @@ namespace TumbangPreso.CameraSystem
             UnsubscribeVisual();
 
             _emoteView = false;
+            _reworkEyeDrop = _reworkSlideLean = 0f;
 
             // ⚠️ THE FALL FLAG CLEARS WITH THE EMOTE FLAG, because it is a claim ABOUT the emote
             // flag. This function's own note above is the reason: a rig that keeps a stale swing
@@ -1013,7 +1015,7 @@ namespace TumbangPreso.CameraSystem
             return Mathf.Atan2(forward.x, forward.z) * Mathf.Rad2Deg;
         }
 
-        private float _fppSquatBlend, _fppSquatShape, _reworkEyeDrop;
+        private float _fppSquatBlend, _fppSquatShape, _reworkEyeDrop, _reworkSlideLean;
 
         /// <summary>0 to 1: how deep the local taya is in the raise's crouch, eased in and out.</summary>
         private float FppRaiseSquat()
@@ -1060,10 +1062,16 @@ namespace TumbangPreso.CameraSystem
             eye -= Vector3.up * (Visual.PickupMotion.EyeDrop(pickupStyle) * pickupBend);
             eye += Quaternion.Euler(0, yaw, 0) * Vector3.forward * (.10f * pickupBend);
 
-            // The movement rework's crouch and slide, from the eyes (`MovementRework`, a debug switch; zero with it off).
-            // An offset of the view like the two around it, eased so the drop is a motion and not a cut.
-            var reworkMotor = _character.GetComponent<CharacterMotor>();
-            _reworkEyeDrop = Mathf.MoveTowards(_reworkEyeDrop, reworkMotor != null ? reworkMotor.ReworkEyeDropTarget : 0f, Time.deltaTime * 4.5f);
+            // Drop quickly on entry and rise more gently. The lean rolls around the aim axis.
+            bool sliding = _character.ReworkSliding;
+            float drop = _character.ReworkEyeDropTarget;
+            float dropRate = sliding ? 23f : drop > _reworkEyeDrop ? 12f : 9f;
+            _reworkEyeDrop = Mathf.Lerp(_reworkEyeDrop, drop, 1 - Mathf.Exp(-Time.deltaTime * dropRate));
+            var comfort = Settings.SettingsStore.Current;
+            float slideLean = sliding && !comfort.ReducedEffects && !comfort.ReducedUiMotion
+                ? Mathf.InverseLerp(1.4f, _character.IsDefender ? 5.5f : 3.75f, _character.ReworkFlatSpeed) * comfort.EffectiveCameraShake
+                : 0f;
+            _reworkSlideLean = Mathf.Lerp(_reworkSlideLean, slideLean, 1 - Mathf.Exp(-Time.deltaTime * 15f));
             eye -= Vector3.up * _reworkEyeDrop;
             eye += Visual.ZackBacktrackLook.EyeOffset(_character);
 
@@ -1080,10 +1088,10 @@ namespace TumbangPreso.CameraSystem
             Shader.SetGlobalFloat(Visual.NearFade.EyeDropId,
                 Mathf.Max(0f, _character.transform.position.y + PersonCapsuleHeight * 0.5f + FppEyeHeight - eye.y));
 
-            // Absolute, from yaw and pitch only. The body's roll cannot reach this.
-            transform.SetPositionAndRotation(eye, Quaternion.Euler(_pitchDeg + Visual.CanRaiseShape.FppLookDown * squat
-                                                                   + Visual.PaeteGroundCall.FppLookDown * kneel
-                                                                   + Visual.PickupMotion.LookDown(pickupStyle) * pickupBend, yaw, 0.0f));
+            var aim = Quaternion.Euler(_pitchDeg + Visual.CanRaiseShape.FppLookDown * squat
+                                       + Visual.PaeteGroundCall.FppLookDown * kneel
+                                       + Visual.PickupMotion.LookDown(pickupStyle) * pickupBend, yaw, 0f);
+            transform.SetPositionAndRotation(eye, aim * Quaternion.AngleAxis(2.4f * _reworkSlideLean, Vector3.forward));
 
             if (_viewmodel != null && !_viewmodel.gameObject.activeSelf && !MatchArrivalPresentation.OwnsCamera)
                 _viewmodel.gameObject.SetActive(true);

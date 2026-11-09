@@ -8,11 +8,8 @@ namespace TumbangPreso
     /// itself feels rigid, and theres no airstrafing + bunnyhoping"*, then: *"we'll put this as a debug setting, default
     /// to on only when the characterprototype scene is being played"*.
     ///
-    /// OFF, NOTHING IN THE GAME CHANGES: the motor's one velocity write, its jump and its capsule are exactly as they
-    /// were, for every body. ON, the LOCAL HUMAN'S body (never a bot, never a replica) moves by
-    /// `CharacterMotor.MovementRework.cs`: acceleration and friction on the ground, momentum kept in the air with
-    /// strafe gain, a buffered and held jump that keeps speed through a landing, a crouch, and a slide entered by
-    /// crouching at a sprint.
+    /// The local human gets the ground and air rework. Simulated bots use the same crouch and slide
+    /// on their normal motor. Replicas draw the crouch and slide from the received movement pose.
     ///
     /// ⚠️ IT WAS OFFLINE ONLY UNTIL 2026-10-09 (see `Active`). A client simulates its own movement and the host only checks
     /// distance (`MatchRpc.AcceptMove`); the host never sees a crouch, so a shrunk capsule does not exist where slippers
@@ -153,10 +150,10 @@ namespace TumbangPreso
         // metres a second each second as it begins, rising to `SlideDragEnd` over `SlideDragRamp` seconds, and it is
         // over when it is down to a crouch walk (about a second and four metres from an attacker's sprint).
         // `SlideMaxSeconds` is only a backstop now.
-        public static float SlideEntryScale = 0.85f, SlideBoostScale = 1.30f, SlideSteer = 2.0f;
-        // (Half as long again since 2026-10-09, the owner: "make it 1.5x longer". The three were 2.0, 9.0 and 0.9.)
-        public static float SlideDragStart = 1.33f, SlideDragEnd = 6.0f, SlideDragRamp = 1.35f;
-        public static float SlideMaxSeconds = 4.0f, SlideBoostCooldown = 0.9f;
+        public static float SlideEntryScale = 0.85f, SlideBoostScale = 1.30f, SlideSteer = 1.65f;
+        public static float SlideDragStart = 1.65f, SlideDragEnd = 7.1f, SlideDragRamp = .72f;
+        public static float SlideMaxSeconds = 1.30f, SlideBoostCooldown = 0.9f;
+        public const float SlideCommitSeconds = .16f;
 
         /// <summary>
         /// THE CAP (owner, 2026-10-07: "movement should have a cap"): no horizontal speed above `MaxSpeedScale` of the

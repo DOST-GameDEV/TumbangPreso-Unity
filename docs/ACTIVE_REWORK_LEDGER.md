@@ -1,9 +1,13 @@
 # Current checkpoint
 
-TJ-CADENA-1109, `tj-cadena-fixes`: slipper rebound, six chalk marks, simpler
-restore and results, Home shadows. Exact recheck 9/9 and final render 5/5.
-Windows player `9e1aac96a` opened. [Decisions, tests, build and remaining
-owner checks](TJ_CADENA_REVIEW_LEDGER.md).
+TJ-CADENA-1109 is on main. Incoming UI takes precedence on conflicting
+UI hunks. [Previous review and evidence](TJ_CADENA_REVIEW_LEDGER.md).
+
+Bot slide and court lanes are on main at `57a3e472a`. Exact tests 2/2
+in `Logs/bot-slide-20261109/integrated.xml`. The narrower Tondo and wider
+Arena were checked. The hero-pick controls and trajectory marks were
+refined and the idle defender hint removed. Five exact UI cases passed
+across `Logs/pick-ui-20261109/`.
 
 CONTROLLER-NATIVE-1107, main: native DualSense/Edge HID reports reach the current
 gameplay/UI bindings. Fixed disabled UI-action confirm/back fallback and added

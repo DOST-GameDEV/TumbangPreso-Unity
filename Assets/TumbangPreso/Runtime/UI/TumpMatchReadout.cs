@@ -521,7 +521,6 @@ namespace TumbangPreso.UI
                     BindingPrompt("SpecialAbility", "Tag attacker");
                     if (Hud.OnTouch) TouchHud.Emphasise(Verb.SpecialAbility);
                 }
-                else if (!can.HasRestoreProtection) _prompt.text = "Cover a way out";
                 return;
             }
 
