@@ -1,5 +1,6 @@
 using System.Collections;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using NUnit.Framework;
@@ -184,6 +185,70 @@ namespace TumbangPreso.PlayTests
                 yield return GameplayShots.Render(camera, name, false, "Logs/bot-slide-20261109", bot, 960, 540);
             }
             finally { Time.timeScale = previous; }
+        }
+
+        [UnityTest]
+        public IEnumerator WaitingAttackerFindsANewLaneWhileTheCanIsDown()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.Eskinita, skipReadyArrival: true);
+            var round = GameServices.Round;
+            var can = round.Lata;
+            var attacker = round.PlayerAt(2);
+            attacker.Teleport(can.Mark + new Vector3(0, .05f, -9f));
+            yield return new WaitForSeconds(can.ProtectionLeft + .05f);
+            can.HostKnockDown(-1);
+            Hitstop.End();
+            Assert.IsFalse(can.IsUpright);
+            attacker.Intent.Parked = false;
+            var brain = attacker.GetComponent<AIController>();
+            brain.enabled = true;
+            var arrived = typeof(AIController).GetField("_arrived", BindingFlags.Instance | BindingFlags.NonPublic);
+            float deadline = Time.time + 12f;
+            while (!(bool)arrived.GetValue(brain) && Time.time < deadline) yield return null;
+            Assert.IsTrue((bool)arrived.GetValue(brain));
+            Vector3 post = attacker.transform.position;
+            deadline = Time.time + 5f;
+            while (Vector3.Distance(attacker.transform.position, post) < 1.3f && Time.time < deadline)
+                yield return null;
+            Assert.GreaterOrEqual(Vector3.Distance(attacker.transform.position, post), 1.3f,
+                "Waiting for a reset should create a new lane, beyond an idle shuffle.");
+            Assert.IsFalse(can.IsUpright);
+            Assert.IsTrue(attacker.HoldingSlipper);
+        }
+
+        [UnityTest]
+        public IEnumerator TayaCanEmoteInASafeWindowAndBreaksOffForATaggableAttacker()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.Eskinita, GameMode.HeroStrike, skipReadyArrival: true);
+            var round = GameServices.Round;
+            var can = round.Lata;
+            var taya = round.PlayerAt(GameServices.Match.DefenderSlot);
+            var opponent = round.Players.First(who => who != taya);
+            var shoe = opponent.GetComponent<Carrier>().Held;
+            Assert.IsNotNull(shoe);
+            foreach (var player in round.Players)
+                if (player != taya) player.Teleport(can.Mark + new Vector3(player.PlayerSlot, .06f, -9f));
+
+            taya.Teleport(can.Mark + new Vector3(Balance.TayaCampClearRadius + .9f, .06f, 0));
+            var art = RosterBook.Load().FindPersonArt("rafi");
+            taya.GetComponent<Visual.CharacterVisual>().ApplyModel(art.Model, art.Tint, art.Clips, art.Palette, art.PetModel);
+            taya.Intent.Parked = false;
+            for (int i = 0; i < 12; i++) yield return new WaitForFixedUpdate();
+            Assert.IsTrue(taya.IsGrounded);
+            var emotes = taya.GetComponent<Social.EmotePlayer>();
+            Assert.IsTrue(emotes.HasEmoteClip("dance"));
+            var brain = taya.GetComponent<AIController>();
+            typeof(AIController).GetField("_wantedEmote", BindingFlags.Instance | BindingFlags.NonPublic)
+                .SetValue(brain, "dance");
+            brain.enabled = true;
+            float deadline = Time.time + .4f;
+            while (!emotes.IsEmoting && Time.time < deadline) yield return null;
+            Assert.AreEqual("dance", emotes.Current, "An unthreatened defender outside the camping radius may emote.");
+            opponent.Teleport(can.Mark + new Vector3(2, .06f, 1.1f));
+            Assert.IsTrue(opponent.IsTaggable());
+            deadline = Time.time + .35f;
+            while (emotes.IsEmoting && Time.time < deadline) yield return null;
+            Assert.IsFalse(emotes.IsEmoting, "A defender should abandon the emote when an attacker becomes taggable.");
         }
 
         [UnityTest]

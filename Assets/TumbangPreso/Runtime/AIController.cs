@@ -222,9 +222,10 @@ namespace TumbangPreso
             _commitLeft = _self.Hesitation;
             Plan = chosen;
 
-            // A new plan gets a new goal. Carrying the last one over is how a bot ends up
-            // walking to a throwing spot it chose two verbs ago.
-            if (chosen != AiPlan.Position) _goal = Vector3.zero;
+            // Arrival belongs to the previous plan. Position must choose its own lane.
+            _goalValid = false;
+            _arrived = false;
+            _goal = Vector3.zero;
         }
 
         /// <summary>
@@ -477,6 +478,10 @@ namespace TumbangPreso
             _boredAnchor = transform.position;
             _boredomSettleLeft = 0.0f;
             _boredomShift = 0.0f;
+            _avoidStagingUntil = 0f;
+            _thinkLeft = _commitLeft = 0f;
+            _goalValid = _arrived = false;
+            Plan = AiPlan.Idle;
             _lapseLeft = 0.0f;
             _lastTagTarget = null;
             _tagFocusUntil = 0.0f;
@@ -529,7 +534,7 @@ namespace TumbangPreso
 
         private void WantEmote(string id, float chance)
         {
-            if (_emoteCooldown > 0.0f || _emoteHoldLeft > 0.0f) return;
+            if (_wantedEmote != null || _emoteCooldown > 0.0f || _emoteHoldLeft > 0.0f) return;
             if (UnityEngine.Random.value > chance * Me.Flair * _self.Showmanship) return;
 
             _wantedEmote = id;
@@ -559,7 +564,19 @@ namespace TumbangPreso
             // ⚠️ A CHARGE IN PROGRESS IS A SHOT ALREADY PAID FOR. `SpecialAbility` is held across
             // frames during a wind-up and releasing it IS the throw, so an emote here does not
             // delay a shot, it fires one in a direction nobody aimed.
-            if (Plan == AiPlan.Windup || _windup) return false;
+            if (Plan == AiPlan.Windup || _windup || (_carrier?.IsCharging ?? false)) return false;
+            if (!_motor.IsGrounded || _motor.ReworkSliding || _motor.IsCarryingCan) return false;
+
+            if (_motor.IsDefender)
+            {
+                var can = round.Lata;
+                return can != null && can.IsUpright && _lungeHeld < 0f
+                    && Flat(transform.position, can.transform.position) > Balance.TayaCampClearRadius
+                    && !AnyTaggableAttacker(round) && !RivalShotIsInbound(can);
+            }
+
+            if (Plan == AiPlan.Fetch || Plan == AiPlan.Withdraw || Plan == AiPlan.Evade || Plan == AiPlan.Sabotage)
+                return false;
 
             // ⚠️ THE TAGGABLE STATE IS THE WHOLE GAME (`docs/VISION.md` § 0: *"the tension is the
             // retrieval"*). Standing still while armed and inside the chalk is the single worst
@@ -574,19 +591,6 @@ namespace TumbangPreso
             var taya = DefenderOf(round);
             if (taya != null && Flat(transform.position, At(taya).Value) < AiTuning.EmoteSafeRadius)
                 return false;
-
-            // ⚠️ A TAYA ITSELF NEVER CELEBRATES MID-ROUND WITH SOMEBODY IN THE CHALK. The passive
-            // defence tick is the only score it earns by standing there, and `TayaCampPenalty`
-            // punishes standing in the wrong place; a taya that stops to dance while an attacker
-            // is retrieving has handed over the round.
-            //
-            // ⚠️⚠️ AND IT IS A PURE READ RATHER THAN A CALL TO `TagTarget`, WHICH IS THE TRAP
-            // `TryGlanceAt` ALREADY CARRIES A NOTE ABOUT. `TagTarget` WRITES `_lastTagTarget` as a
-            // side effect of being asked, and that field is the anti-fixation memory the whole
-            // chase commit rests on (§ 33.1). Asking it here, for something as incidental as
-            // whether this bot may dance, would let the social layer quietly re-decide who the
-            // taya is chasing, once per frame.
-            if (_motor.IsDefender && AnyTaggableAttacker(round)) return false;
 
             return true;
         }
@@ -656,6 +660,7 @@ namespace TumbangPreso
                 // ends the clip. `CLAUDE.md` § 4: emotes end only by interruption.
                 _emoteHoldLeft = 0.0f;
                 _emoteHeldFor = 0.0f;
+                emotes?.Stop();
                 _emoteCooldown = UnityEngine.Random.Range(AiTuning.EmoteCooldownMin,
                                                           AiTuning.EmoteCooldownMax);
                 return false;
@@ -2715,7 +2720,8 @@ namespace TumbangPreso
 
             // Close on where they are GOING. `Lead` is the tier's willingness to do that and is
             // 0 on the kid, which is why the kid chases a shadow.
-            Vector3 toward = AheadOf(victim, 0.35f).Value - transform.position;
+            Vector3 lead = AheadOf(victim, 0.35f).Value;
+            Vector3 toward = lead - transform.position;
             toward.y = 0.0f;
 
             // ⚠️⚠️ IT NEVER STOPS CLOSING, AND THAT IS FORCED BY THE GAME RATHER THAN CHOSEN.
@@ -2727,6 +2733,11 @@ namespace TumbangPreso
             if (EdgeSense) _edgeGoalDistance = toward.magnitude;
             Drive(intent, toward, MaySprint() && toward.magnitude > 1.5f);
             StepLungeIntent(intent, victim, dt);
+            float distance = toward.magnitude;
+            var combat = GetComponent<CombatVerbs>();
+            if (_motor.ReworkSliding || (combat != null && combat.LungeCooldownLeft > .3f
+                && distance > 1.8f && distance <= 3.1f && CanSlideToward(intent, ClampToBox(lead))))
+                Press(intent, Verb.Crouch, true);
         }
 
         private void DoCover(InputIntent intent)
@@ -4011,6 +4022,11 @@ namespace TumbangPreso
 
         /// <summary>Radians added to this bot's home bearing by boredom.</summary>
         private float _boredomShift;
+        private Vector3 _lastStagingPost;
+        private float _avoidStagingUntil;
+
+        private float RecentPostCost(Vector3 point) => Time.time < _avoidStagingUntil
+            ? 3.2f * (1f - Mathf.Clamp01(Flat(point, _lastStagingPost) / 3.2f)) : 0f;
 
         /// <summary>
         /// This bot's working corner of the ring, including whatever boredom has added to it.
@@ -4049,8 +4065,14 @@ namespace TumbangPreso
             var round = GameServices.Round;
             if (round == null || !round.RoundActive) { _boredFor = 0.0f; return; }
 
+            bool waitingForLane = _arrived && (Plan == AiPlan.Position || Plan == AiPlan.Stalk);
             _boredFor += dt;
-            if (_boredFor < AiTuning.BoredomSeconds) return;
+            if (_boredFor < (waitingForLane ? 2.4f : AiTuning.BoredomSeconds)) return;
+            if (waitingForLane)
+            {
+                _lastStagingPost = _goal;
+                _avoidStagingUntil = Time.time + 4f;
+            }
 
             // ⚠️⚠️ THE SIGN IS ROLLED, NOT ALTERNATED. Alternating would walk a bored bot back and
             // forth between two marks forever, which is the pacing `LoiterLeash` exists to delete,
@@ -4513,6 +4535,7 @@ namespace TumbangPreso
 
                 // And it has to be worth walking to.
                 score -= 0.11f * Flat(here, point);
+                score -= RecentPostCost(point);
 
                 if (score <= bestScore) continue;
 
@@ -4538,7 +4561,8 @@ namespace TumbangPreso
             {
                 Vector3 point = RingPoint(bearing + i * .46f, ring);
                 if (Confinement.IsInsideBox(point.x, point.z)) continue;
-                float score = .45f * Mathf.Min(10f, WallClearance(point)) - Mathf.Abs(i) * .32f;
+                float score = .45f * Mathf.Min(10f, WallClearance(point)) - Mathf.Abs(i) * .32f
+                    - RecentPostCost(point);
                 if (score <= bestScore) continue;
                 best = point;
                 bestScore = score;

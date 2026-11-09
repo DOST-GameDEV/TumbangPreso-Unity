@@ -598,10 +598,11 @@ namespace TumbangPreso
         {
             float dt = Time.deltaTime;
             CurrentPickupStyle();
-            var planar=_motor.Velocity;planar.y=0;
-            float moving=Mathf.Clamp(planar.magnitude/Balance.Speed,0,1.5f);
-            float settle=moving > _aimMovement ? .12f : .28f;
-            _aimMovement=Mathf.Lerp(_aimMovement,moving,1-Mathf.Exp(-Mathf.Max(0,dt)/settle));
+            Vector3 planar = _motor.Velocity;
+            planar.y = 0;
+            float moving = ThrowAimRules.MovementLoad(planar.magnitude, _motor.IsGrounded, _motor.ReworkSliding);
+            float settle = moving > _aimMovement ? .12f : .28f;
+            _aimMovement = Mathf.Lerp(_aimMovement, moving, 1 - Mathf.Exp(-Mathf.Max(0, dt) / settle));
             if (_charging) _aimHeldSeconds+=dt;
 
             if (!_motor.Intent.Pressed(Verb.Grab)) _grabPressConsumed = false;

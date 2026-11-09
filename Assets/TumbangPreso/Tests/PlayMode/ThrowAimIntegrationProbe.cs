@@ -34,6 +34,59 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest]
+        public IEnumerator RealMovementIncreasesDriftAndTheAirborneReleaseUsesTheGuide()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.Eskinita, skipReadyArrival: true);
+            NetAuthority.Provider = new SoloProvider();
+            var actor = GameServices.Round.PlayerAt(1);
+            var carrier = actor.GetComponent<Carrier>();
+            var shoe = carrier.Held;
+            Assert.IsNotNull(shoe);
+            actor.Teleport(new Vector3(-3, .12f, -9.5f));
+            actor.transform.rotation = Quaternion.identity;
+            actor.Intent.Parked = false;
+            actor.Intent.AimPoint = GameServices.Round.Lata.Mark + Vector3.up * .2f;
+            for (int i = 0; i < 12; i++) yield return new WaitForFixedUpdate();
+            Assert.IsTrue(actor.IsGrounded);
+            Assert.IsTrue(GameServices.Round.CanThrow(actor));
+
+            var load = typeof(Carrier).GetField("_aimMovement", Private);
+            actor.Intent.Set(Verb.SpecialAbility, true);
+            yield return new WaitForSeconds(1.65f);
+            Assert.IsTrue(carrier.IsCharging);
+            float planted = (float)load.GetValue(carrier);
+
+            actor.Intent.Move = Vector2.right;
+            yield return new WaitForSeconds(.45f);
+            float walking = (float)load.GetValue(carrier);
+            Assert.Greater(walking, planted + .7f);
+
+            actor.Intent.Set(Verb.Sprint, true);
+            yield return new WaitForSeconds(.45f);
+            Assert.IsTrue(actor.Stamina.IsSprinting);
+            float sprinting = (float)load.GetValue(carrier);
+            Assert.Greater(sprinting, walking + .3f);
+
+            actor.Intent.Set(Verb.Jump, true);
+            actor.Intent.BufferPress(Verb.Jump);
+            float until = Time.time + .25f;
+            while (actor.IsGrounded && Time.time < until) yield return new WaitForFixedUpdate();
+            actor.Intent.Set(Verb.Jump, false);
+            yield return new WaitForSeconds(.2f);
+            Assert.IsFalse(actor.IsGrounded);
+            float airborne = (float)load.GetValue(carrier);
+            Assert.Greater(airborne, sprinting + .15f);
+            Assert.IsTrue(carrier.IsCharging);
+            var expected = carrier.AimGuideVelocityNow();
+            actor.Intent.Set(Verb.SpecialAbility, false);
+            Step(carrier, 0f);
+            Assert.AreEqual(SlipperState.InFlight, shoe.State);
+            Assert.Less(Vector3.Distance(expected, shoe.Velocity), .001f);
+            Debug.Log(FormattableString.Invariant(
+                $"[ThrowAimContext] planted={planted:F3} walk={walking:F3} sprint={sprinting:F3} airborne={airborne:F3}"));
+        }
+
+        [UnityTest]
         public IEnumerator PreviewAndReleasedThrowRetainTheSameAimInBothModes()
         {
             const string output="Logs/throw-aim-integration-v1";Directory.CreateDirectory(output);

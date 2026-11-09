@@ -15,11 +15,16 @@ namespace TumbangPreso.Core.Tests
 
         [Fact] public void MovementRemainsLessSteadyAtEveryHoldTime()
         {
-            foreach(float hold in new[]{0f,.2f,1f,2.5f,8f})
+            foreach (float hold in new[] { 0f, .2f, 1f, 2.5f, 8f })
             {
-                float still=ThrowAimRules.Amplitude(hold,0);
-                float walking=ThrowAimRules.Amplitude(hold,.55f);
-                Assert.True(walking>still);Assert.True(ThrowAimRules.Amplitude(hold,1)>walking);
+                float still = ThrowAimRules.Amplitude(hold, ThrowAimRules.MovementLoad(0, true));
+                float walking = ThrowAimRules.Amplitude(hold, ThrowAimRules.MovementLoad(Balance.AttackerWalkSpeed, true));
+                float running = ThrowAimRules.Amplitude(hold, ThrowAimRules.MovementLoad(Balance.AttackerRunSpeed, true));
+                float airborne = ThrowAimRules.Amplitude(hold, ThrowAimRules.MovementLoad(Balance.AttackerRunSpeed, false));
+                float sliding = ThrowAimRules.Amplitude(hold, ThrowAimRules.MovementLoad(Balance.AttackerRunSpeed, true, sliding: true));
+                Assert.True(walking > still && running > walking);
+                Assert.True(airborne > running && sliding > running);
+                Assert.True(ThrowAimRules.MovementLoad(0, false) > ThrowAimRules.MovementLoad(Balance.AttackerWalkSpeed, true));
             }
         }
 

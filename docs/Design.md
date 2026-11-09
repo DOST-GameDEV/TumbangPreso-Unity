@@ -50,8 +50,12 @@ is seven seconds. An accepted reset protects the upright can for four seconds.
 The can shows a gold rim during reset protection, and the clock caption shows
 the time remaining. The gold pulses faster through the final second. Reduced
 motion keeps it steady. The restore's existing phases show a deeper crouch,
-a two-handed grip, a weighted lift and a clean plant on the mark. Existing moving
-and settled aim drift still applies.
+a two-handed grip, a weighted lift and a clean plant on the mark.
+
+Aim drift grows with actual movement speed. Walking is less steady than
+standing, sprinting drifts more than walking and jumps and slides keep an
+extra amount of drift. Stopping and holding aim lets it settle. The guide
+shows the current launch direction, including that drift.
 
 The restore prompt follows lift, carry and placement with one progress bar.
 The chalk target stays at the can's home even when the can falls or moves.
@@ -92,8 +96,10 @@ Defender lunge remains 3.5 m with 0.5 s tap / 2.5 s full-hold cooldown.
 The movement slide starts with crouch at running speed. It carries the sprint
 heading for 0.16 seconds, then allows steering as braking builds. A jump or
 leaving the ground ends the slide. Bots use this same movement action on clear
-runways for retrieval or escape. They favour throwing spots with room from
-the court's walls and change guard posts when there is no armed threat.
+runways for retrieval, escape or closing on an attacker while lunge cools
+down. They favour throwing spots with room from the court's walls and look
+for a new lane if a wait stalls. The taya patrols without an armed threat
+and can emote in a safe window, then break off if the chase is back on.
 
 **Model/art requirement:** new and reworked models must belong to TUMP's cute
 blocky visual language and avoid unnecessary detail. Gameplay changes and stronger
