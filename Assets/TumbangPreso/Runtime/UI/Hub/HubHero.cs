@@ -252,7 +252,8 @@ namespace TumbangPreso.UI.Hub
                 symbol.Glyph = ability.Glyph;
                 symbol.color = Color.white;
                 symbol.raycastTarget = false;
-                HubKnit.In(symbol.rectTransform, 45, 28, 110, 100);
+                // The board draws the ability art about 110 by 100 of ink; the symbol carries its own margin, so its rect is larger.
+                HubKnit.In(symbol.rectTransform, 10, -4, 180, 152);
                 // A role kit's middle tiles name their role; the key is the same for both.
                 bool touch = Application.isMobilePlatform || InputLayer.TouchHud.ForceVisible;
                 string caption = touch || (four && !ult && i > 0) ? screenSlots[i].Label : Hud.KeyLabelFor(screenSlots[i].Action);
@@ -262,8 +263,10 @@ namespace TumbangPreso.UI.Hub
                 if (bindingArt != null)
                 {
                     var glyph = HubKit.Picture(tile.Body, "BindingGlyph", bindingArt);
-                    float w = InputGlyphs.PromptWidth(bindingArt, 40, tileWidth - 16);
-                    HubKnit.In(glyph.rectTransform, (tileWidth - w) * .5f, 132, w, 40);
+                    // Centred under the art where the board writes the key, at the icon's own width.
+                    const float keyH = 48;
+                    float w = InputGlyphs.PromptWidth(bindingArt, keyH);
+                    HubKnit.In(glyph.rectTransform, (tileWidth - w) * .5f, 134, w, keyH);
                 }
                 else
                 {
