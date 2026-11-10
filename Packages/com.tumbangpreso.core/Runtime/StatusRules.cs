@@ -169,9 +169,9 @@ namespace TumbangPreso.Core
         public const int DisorientedPhantomSlippers = 3;
         public const float DisorientedAimSwayDegrees = 6.0f;
 
-        /// <summary>Vulnerable: 3.5 s; the taya's tag reach x1.5 against them, stuns on them last x1.5, and
+        /// <summary>Vulnerable: 5 s; the taya's tag reach x1.5 against them, stuns on them last x1.5, and
         /// a taya who cast it may leave the box to tag them.</summary>
-        public const float VulnerableSeconds = 3.5f;
+        public const float VulnerableSeconds = 5.0f;
         public const float VulnerableTagReachScale = 1.5f;
         public const float VulnerableStunScale = 1.5f;
 

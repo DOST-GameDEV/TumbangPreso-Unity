@@ -96,6 +96,7 @@ namespace TumbangPreso.Core.Tests
             Assert.False(disoriented.BlocksMovement || disoriented.BlocksInteraction || disoriented.DropsHeldSlipper);
 
             // "easier to tag".
+            Assert.Equal(5.0f, StatusRules.For(StatusKind.Vulnerable).Seconds);
             Assert.True(StatusRules.VulnerableTagReachScale > 1.0f);
             Assert.True(StatusRules.For(StatusKind.Vulnerable).ImmunityApplies);
         }

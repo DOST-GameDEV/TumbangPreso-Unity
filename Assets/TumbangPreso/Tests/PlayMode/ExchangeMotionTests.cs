@@ -107,7 +107,7 @@ namespace TumbangPreso.PlayTests
             can.ApplySnapshotState(at, Quaternion.identity, true, 0);
             can.ApplySnapshotState(at, Quaternion.identity, true, 0);
             Assert.AreEqual(0, Object.FindObjectsByType<CanContactAccent>().Length, "Restoring the can should leave only its protection cue.");
-            Assert.That(can.ProtectionLeft, Is.EqualTo(4f).Within(.001f), "A client sees the same restoration window.");
+            Assert.That(can.ProtectionLeft, Is.EqualTo(3.5f).Within(.001f), "A client sees the same restoration window.");
             yield return null;
             if (!SettingsStore.Current.ReducedEffects)
             {

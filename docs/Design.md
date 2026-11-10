@@ -26,7 +26,7 @@ recovery. Recent running is remembered through the stop. Right-click still shove
 
 A soft red edge pulse draws the taya to the can marker while the fallen can
 is out of reach. Reduce UI Motion keeps the edge cue steady. The can lift takes 1.5 s before
-carrying or setting down. Vulnerable lasts 3.5 s.
+carrying or setting down.
 
 The throw guide uses outlined dashes that move toward the predicted landing
 point. Reduce UI Motion keeps the dashes stationary.
@@ -44,7 +44,7 @@ Live interception can still change the outcome.
 
 The defender's prompt shows one current job: move to the downed can, restore it,
 step away from the can, or tag an attacker in reach. The approved can-down penalty grace
-is seven seconds. An accepted reset protects the upright can for four seconds.
+is seven seconds. An accepted reset protects the upright can for 3.5 seconds.
 The can shows a gold rim during reset protection, and the clock caption shows
 the time remaining. The gold pulses faster through the final second. Reduced
 motion keeps it steady. The restore's existing phases show a deeper crouch,

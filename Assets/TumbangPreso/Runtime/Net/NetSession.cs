@@ -722,7 +722,8 @@ namespace TumbangPreso.Net
         // vote or hear the result, so a mixed match could hold a button that cannot finish: the two may not meet.
         // 190 (2026-11-10): Grab-only slipper retrieval, 1.5 s can lift and 3.5 s Vulnerable.
         // Older clients predict a shorter lift and keep Vulnerable after it expires on the host.
-        public const int ProtocolVersion = 190;
+        // 191 (2026-11-10): a raised can is protected for 3.5 s and the Vulnerable status lasts 5 s.
+        public const int ProtocolVersion = 191;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

@@ -111,7 +111,7 @@ namespace TumbangPreso.PlayTests
             while (!can.IsUpright && Time.time < deadline) yield return null;
             taya.Intent.Set(Verb.Grab, false);
             Assert.IsTrue(can.IsUpright, $"Carried back and set down (phase {can.Carrying}, {Flat(taya.transform.position, mark):0.00} m from the mark).");
-            Assert.That(can.ProtectionLeft, Is.InRange(3.8f, 4f), "An accepted reset starts the four-second protection window.");
+            Assert.That(can.ProtectionLeft, Is.InRange(3.3f, 3.5f), "An accepted reset starts the 3.5-second protection window.");
             Assert.IsFalse(can.IsCarried);
             Assert.Less(Flat(can.transform.position, mark), .05f, "It stands on its mark.");
             Assert.Less(Flat(taya.transform.position, mark), Lata.HoldReach + Lata.ArriveSlack + .1f);
@@ -156,7 +156,7 @@ namespace TumbangPreso.PlayTests
             Time.timeScale = 0;
             try
             {
-                yield return TumpUiCapture.Capture("TJ-defender-protected-four-seconds-960x540", readout.Canvas, 960, 540,
+                yield return TumpUiCapture.Capture("TJ-defender-protected-3p5-seconds-960x540", readout.Canvas, 960, 540,
                     checkPalette: false, includeWorld: true);
             }
             finally { Time.timeScale = scale; }
