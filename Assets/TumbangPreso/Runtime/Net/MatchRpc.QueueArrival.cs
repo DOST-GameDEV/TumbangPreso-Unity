@@ -19,6 +19,12 @@ namespace TumbangPreso.Net
             if (!NetAuthority.IsHost || _characterSelecting || _queueMapVoting || !InPreparationScene()) return;
             var lobby = NetSession.Instance?.Lobby;
             if (lobby == null || lobby.MatchInProgress) return;
+            // A custom room with only spectators has nobody who can pick or vote.
+            if (!UI.Hub.HubQueueWatch.QueueRoom && lobby.SeatedPeerCount() == 0)
+            {
+                HostStartMatch();
+                return;
+            }
             _characterSelecting = true;
             _characterSelectEnds = Time.unscaledTime + CharacterSelectionSeconds;
             _queueVoteSerial++;
@@ -42,7 +48,8 @@ namespace TumbangPreso.Net
                 return;
             }
             _characterSelecting = false;
-            if (UI.SceneFlow.SelectedRules.MapVote) HostBeginQueueMapVote();
+            if (UI.SceneFlow.SelectedRules.MapVote &&
+                (UI.Hub.HubQueueWatch.QueueRoom || lobby.SeatedPeerCount() > 0)) HostBeginQueueMapVote();
             else HostStartMatch();
         }
 
@@ -117,7 +124,13 @@ namespace TumbangPreso.Net
             if (!NetAuthority.IsHost) return;
             if (_characterSelecting)
             {
-                if (CharacterSelectSecondsLeft <= 0) HostCompleteCharacterSelection();
+                var lobby = NetSession.Instance?.Lobby;
+                // A spectating host has no picker screen to finish selection. After the host
+                // has pressed Start, the seated guests' accepted lock-ins can finish it.
+                bool spectatorHostReady = !UI.Hub.HubQueueWatch.QueueRoom &&
+                    lobby?.PeerById(NetAuthority.LocalPeerId)?.Spectator == true &&
+                    LobbyReadyCount() >= LobbyExpectedReady();
+                if (spectatorHostReady || CharacterSelectSecondsLeft <= 0) HostCompleteCharacterSelection();
                 else if (Time.unscaledTime >= _queueVoteNextState) SendQueueVoteState();
                 return;
             }

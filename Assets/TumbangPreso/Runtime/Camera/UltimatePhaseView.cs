@@ -132,6 +132,7 @@ namespace TumbangPreso.CameraSystem
                     _picture.material = _pictureMaterial;
                 }
                 var header = OwnerUiLayout.Rect(root, "UltimateIdentity");
+                CleanFeedLayer.Attach(header.gameObject);
                 header.gameObject.SetActive(!GameLaunch.GuidedTutorial);
                 header.anchorMin=header.anchorMax=header.pivot=new Vector2(.5f,1);
                 bool together=commits.Count>1;

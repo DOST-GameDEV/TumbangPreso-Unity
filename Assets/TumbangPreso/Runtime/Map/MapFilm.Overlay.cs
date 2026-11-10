@@ -74,6 +74,7 @@ namespace TumbangPreso.Map
             for (int s = 0; s < Seats; s++) { _chipAt[s] = -99.0f; _chipLife[s] = 2.0f; }
             _titleAt = -99.0f; _tayaAt = -99.0f;
             _overlay = OwnerUiLayout.Canvas(transform, "Map film overlay", 151);
+            CleanFeedLayer.Attach(_overlay.gameObject);
             var focus = _overlay.GetComponent<InputLayer.ScreenFocus>(); if (focus != null) focus.enabled = false;
             var raycaster = _overlay.GetComponent<GraphicRaycaster>(); if (raycaster != null) raycaster.enabled = false;
             _ui = (RectTransform)_overlay.transform;

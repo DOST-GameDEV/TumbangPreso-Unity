@@ -55,7 +55,10 @@ namespace TumbangPreso.PlayTests
                 StringAssert.Contains(">>", vote.Words);
                 var control = GameObject.Find("OpeningSkip").GetComponent<RectTransform>();
                 Assert.LessOrEqual(control.rect.width, 112);
-                Assert.IsNotNull(control.Find("Votes"));
+                var tally = control.Find("Votes").GetComponent<Text>();
+                Assert.AreEqual("0/1", tally.text);
+                Assert.IsTrue(tally.isActiveAndEnabled);
+                Assert.LessOrEqual(tally.preferredHeight, tally.rectTransform.rect.height);
                 Assert.IsNotEmpty(control.Find("Binding").GetComponent<Text>().text, "The control must show its live binding.");
                 var filmOverlay = GameObject.Find("Map film overlay");
                 Assert.IsNotNull(filmOverlay);

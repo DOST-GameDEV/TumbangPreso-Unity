@@ -37,6 +37,7 @@ namespace TumbangPreso.UI
         {
             _board = _nativeResult = true; _shown = this;
             _canvas = OwnerUiLayout.Canvas(transform, "OwnerResultCanvas", 400);
+            CleanFeedLayer.Attach(_canvas.gameObject);
             // Its own root canvas at 400, not nested in the HUD's: nested it took the HUD's order (the TAYA reveal, 165,
             // drew over it), and the HUD's canvas is hidden while this board is up.
             var ground = OwnerUiLayout.Rect(_canvas.transform, "FinishSheetGround").gameObject.AddComponent<Image>();
@@ -88,8 +89,8 @@ namespace TumbangPreso.UI
                 _finishCrowns[i] = OwnerUiLayout.Rect(card, "FinisherCrown" + i).gameObject.AddComponent<HudBadge>();
                 HubKnit.In(_finishCrowns[i].rectTransform, 114, -26, 72, 56); _finishCrowns[i].raycastTarget = false;
                 var name = HubKnit.Display(card, "FinisherName" + i, "", 46, HubKnit.KitCream);
-                HubKnit.In(name.rectTransform, 234, 0, 420, RowH); HubKit.Fit(name, 430);
-                BuildAccolades(card, i, 660, (RowH - 48) * .5f);
+                HubKnit.In(name.rectTransform, 234, 0, 302, RowH);
+                BuildAccolades(card, i, 548, (RowH - 42) * .5f);
                 var score = HubKnit.Display(card, "FinisherScore" + i, "", 52, HubKnit.KitCream, TextAnchor.MiddleRight);
                 HubKnit.In(score.rectTransform, 800, 0, 240, RowH);
                 var title = HubKnit.Words(card, "FinisherTitle" + i, "", 26, HubKnit.KitCream); title.enabled = false;
@@ -226,7 +227,10 @@ namespace TumbangPreso.UI
                 _finishCrowns[i].Show(best ? HudBadge.Glyph.Crown : HudBadge.Glyph.None, CourtPresentationPalette.Gold, Color.clear);
                 _rows[i][0].color = me ? HubKnit.KitLime : HubKnit.KitTan;
                 _rows[i][1].color = _rows[i][2].color = me ? HubKnit.KitLime : HubKnit.KitCream;
-                _rows[i][1].text = Tight(SeatLabel.WithIdentity(order[i])); HubKit.Fit(_rows[i][1], 430);
+                var name = _rows[i][1];
+                name.text = Tight(SeatLabel.WithIdentity(order[i]));
+                name.fontSize = HubStyle.Size(46);
+                HubKit.Fit(name, name.rectTransform.rect.width - 8);
             }
             if (_winnerName != null) _winnerName.text = hasWinner ? Tight(NameFor(winner)) : "EVEN AT THE TOP";
             if (_finishCaption != null) _finishCaption.text = hasWinner ? "MATCH WINNER" : "EVEN AT THE TOP";

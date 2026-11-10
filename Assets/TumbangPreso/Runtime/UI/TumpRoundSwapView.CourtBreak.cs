@@ -319,13 +319,16 @@ namespace TumbangPreso.UI
                 if(_chipCrowns[i]!=null&&!reduced)_chipCrowns[i].rectTransform.localRotation=Quaternion.Euler(0,0,Mathf.Sin(age*5)*8);
                 int gain=_gainOf[i];
                 float count=reduced?1:Mathf.SmoothStep(0,1,Mathf.Clamp01((age-.8f-i*.1f)/.5f));
-                int shown=Mathf.RoundToInt(gain*count);
+                int shown=(int)System.Math.Round(gain*(double)count);
                 // Blank until the count begins: a "+0" waiting on the chip read as a score of nothing.
-                _gains[i].text=gain==0||shown==0?"":(gain>0?"+":"")+shown;
+                var label=_gains[i];
+                string gainText=shown==0?"":(shown>0?"+":"")+TumpMatchReadout.ScoreTextForChip(shown);
+                TumpMatchReadout.PaintScoreText(label,gainText,_board?40:30,6,16);
                 var c=gain<0?HudDraw.Alarm:_board?TumbangPreso.UI.Hub.HubKnit.KitCream:HudDraw.Honey;c.a=e;_gains[i].color=c;
                 // The tab punches once as its count lands.
                 float punch=reduced?0:Mathf.Clamp01(1-Mathf.Abs(age-(1.3f+i*.1f))/.12f);
-                _gains[i].rectTransform.localScale=Vector3.one*(1+.25f*punch);
+                float fit=(label.rectTransform.rect.width-4)/Mathf.Max(1,label.preferredWidth);
+                label.rectTransform.localScale=Vector3.one*Mathf.Clamp(fit,1,1+.25f*punch);
             }
         }
     }

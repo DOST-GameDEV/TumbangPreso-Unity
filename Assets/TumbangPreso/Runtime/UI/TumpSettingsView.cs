@@ -14,6 +14,8 @@ namespace TumbangPreso.UI
         private RectTransform _list;
         private Text _heading, _status;
         private Button _save;
+        private CanvasGroup _saveLock;
+        private InputField _playerName;
         private GameObject _decision;
         private readonly List<Button> _tabs = new List<Button>();
         private readonly Dictionary<string, Button> _bindingRows = new Dictionary<string, Button>();
@@ -37,6 +39,7 @@ namespace TumbangPreso.UI
             ReleaseSession();
             _session = new TumpSettingsSession(); _session.Changed += Changed;
             if (_canvas == null) Build(owner);
+            if (_saveLock == null) _saveLock = _canvas.gameObject.AddComponent<CanvasGroup>();
             ScreenTakeover.Register(this, () => !_suspended && _canvas != null && _canvas.gameObject.activeInHierarchy);
             _suspended = false; _canvas.gameObject.SetActive(true); ShowSection(_tab);
         }
@@ -45,12 +48,12 @@ namespace TumbangPreso.UI
         private void OnDisable()
         {
             if (_canvas != null) _canvas.gameObject.SetActive(false);
-            if (_session != null && _session.Dirty) _session.Discard();
+            if (_session != null && !_session.Saving && _session.Dirty) _session.Discard();
             ReleaseSession();
         }
         private void Update()
         {
-            if (_suspended || _canvas == null || !_canvas.gameObject.activeSelf) return;
+            if (_suspended || _canvas == null || !_canvas.gameObject.activeSelf || _session.Saving) return;
             if (_tab == 0 && _device != InputDeviceKind.Touch && !_session.Listening
                 && SettingsOptionMenu.OpenOption == null && _genericSupportShown != ControllerWatch.HasUnrecognised)
                 ShowSection(0);
@@ -105,7 +108,7 @@ namespace TumbangPreso.UI
             _status = TumpUiFactory.Text(root, "SettingsStatus", "", 26);
             _status.rectTransform.anchorMin = Vector2.zero; _status.rectTransform.anchorMax = new Vector2(1, 0);
             _status.rectTransform.offsetMin = new Vector2(476, 144); _status.rectTransform.offsetMax = new Vector2(-72, 196);
-            _save = TumpUiFactory.Button(root, "TumpSaveSettings", "Save changes", () => _session.Save(), TumpSurface.Form.Slap, f.Lime, 42);
+            _save = TumpUiFactory.Button(root, "TumpSaveSettings", "Save changes", () => SaveChanges(), TumpSurface.Form.Slap, f.Lime, 42);
             TumpUiFactory.Anchor((RectTransform)_save.transform, new Vector2(1, 0), new Vector2(-340, 80), new Vector2(536, 100));
         }
         public void ShowSectionPrevious(int index)
@@ -183,9 +186,7 @@ namespace TumbangPreso.UI
         private void PlayerPrevious()
         {
             var s = SettingsStore.Current;
-            var name = TumpUiFactory.Field(Row("PlayerName", "Player name"), "PlayerNameField", "Your player name", s.PlayerName);
-            name.characterLimit = Core.Balance.PlayerNameMax;
-            name.onValueChanged.AddListener(v => { s.PlayerName = v; _session.Preview(); });
+            BindPlayerName(TumpUiFactory.Field(Row("PlayerName", "Player name"), "PlayerNameField", "Your player name", _session.PlayerName));
             Toggle("Telemetry", "Share play statistics", s.TelemetryEnabled, v => s.TelemetryEnabled = v);
             Note("Counts only: matches, modes, maps, picks and frame rate. No names, chat or anything you type.");
         }
@@ -256,8 +257,11 @@ namespace TumbangPreso.UI
                 _readingLarge = SettingsStore.Current.LargerText;
             }
             if (_status != null) _status.text = message;
+            if (_saveLock != null) _saveLock.interactable = !_session.Saving;
+            if (_playerName != null && _playerName.text != _session.PlayerName)
+                _playerName.SetTextWithoutNotify(_session.PlayerName);
             bool dirty = _session.Dirty;
-            if (_save != null) _save.interactable = dirty;
+            if (_save != null) _save.interactable = dirty && !_session.Saving;
             RefreshSave(dirty);
             foreach (var pair in _bindingRows)
             {
@@ -280,9 +284,26 @@ namespace TumbangPreso.UI
         }
         public void Back()
         {
+            if (_session.Saving) return;
             if (_session.Listening) { _session.CancelRebind(); return; }
             if (_session.Dirty) { Decision(); return; }
             _canvas.gameObject.SetActive(false); _back?.Invoke();
+        }
+
+        private void BindPlayerName(InputField field)
+        {
+            _playerName = field;
+            field.characterLimit = Core.Balance.PlayerNameMax;
+            field.SetTextWithoutNotify(_session.PlayerName);
+            field.onValueChanged.AddListener(value => _session.EditPlayerName(value));
+        }
+
+        private async void SaveChanges(bool goBack = false)
+        {
+            var session = _session;
+            if (session == null || session.Saving) return;
+            if (goBack) CloseDecision();
+            if (await session.SaveAsync() && this != null && ReferenceEquals(_session, session) && goBack) Back();
         }
         private void CloseDecision()
         {
@@ -301,7 +322,7 @@ namespace TumbangPreso.UI
             TumpUiFactory.Anchor(paper.rectTransform, new Vector2(.5f, .5f), Vector2.zero, new Vector2(960, 620));
             var title = TumpUiFactory.Text(paper.transform, "Heading", "Keep your changes?", 52, true);
             TumpUiFactory.Place(title.rectTransform, 90, 70, 800, 94);
-            DecisionAction(paper.transform, "SaveAndBack", "Save & go back", 226, true, () => { _session.Save(); _decision.SetActive(false); Back(); });
+            DecisionAction(paper.transform, "SaveAndBack", "Save & go back", 226, true, () => SaveChanges(true));
             DecisionAction(paper.transform, "DiscardAndBack", "Discard changes", 366, false, () => { _session.Discard(); _decision.SetActive(false); Back(); });
             DecisionAction(paper.transform, "KeepEditing", "Keep editing", 484, false, () => _decision.SetActive(false));
             ScreenFocus.Install(root.gameObject).Rebuild();

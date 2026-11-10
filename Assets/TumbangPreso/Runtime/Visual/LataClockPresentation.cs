@@ -110,7 +110,7 @@ namespace TumbangPreso.Visual
             // body centre; depth test stays on, and its diameter stays close.
             transform.SetPositionAndRotation(position+rotation*Vector3.up*.18f,rotation);
             float ratio=ProtectionRatio>0?ProtectionRatio:RestoreRatio;
-            _ring.enabled=ratio>0 && WorldCueProfile.Current.RestoreClock>0;
+            _ring.enabled=ratio>0 && WorldCueProfile.Current.RestoreClock>0 && UI.Hud.Instance?.IsCleanFeed!=true;
             _block.SetFloat("_Fill",ratio);_block.SetFloat("_Weight",WorldCueProfile.Current.RestoreClock);
             _block.SetFloat("_Billboard",1);
             _block.SetColor("_Face",ProtectionRatio>0?new Color(1,.83f,.45f):UI.UiTheme.Defense);

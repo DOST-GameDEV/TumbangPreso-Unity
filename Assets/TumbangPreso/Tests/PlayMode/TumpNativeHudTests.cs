@@ -307,6 +307,61 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(canvas.transform.HudFind("LocalState").gameObject.activeSelf);
         }
         [UnityTest]
+        public IEnumerator SpectatorCleanFeedHidesDetachedAnnouncementsAndResults()
+        {
+            yield return Open(GameMode.Classic);
+            var hud = Hud.Instance;
+            var settings = SettingsStore.Current;
+            bool oldSpectator = GameLaunch.Spectator, oldMotion = settings.ReducedUiMotion;
+            bool oldCinematic = settings.CinematicCameraMotion;
+            try
+            {
+                settings.ReducedUiMotion = false;
+                settings.CinematicCameraMotion = true;
+                GameLaunch.Spectator = true;
+                hud.EnterSpectatorMode();
+                yield return null;
+                var readout = hud.GetComponent<TumpMatchReadout>();
+                var lata = GameServices.Round.Lata;
+                Visual.MatchFlair.Play(Visual.MatchFlair.Kind.Tag, 0, 1, lata.transform.position);
+                var catchView = hud.GetComponent<CameraSystem.CatchReconstruction>();
+                bool queued = (bool)typeof(CameraSystem.CatchReconstruction).GetField("_pending",
+                    BindingFlags.Instance | BindingFlags.NonPublic).GetValue(catchView);
+                Assert.IsFalse(queued || catchView.Playing, "A spectator must not start an automatic catch inset.");
+
+                CanDownStamp.Play(1);
+                var stamp = GameObject.Find("~CanDownStamp").GetComponent<CanvasGroup>();
+                Assert.AreEqual(1, stamp.alpha);
+                hud.SetCleanFeed(true);
+                Assert.IsFalse(readout.Canvas.gameObject.activeSelf);
+                Assert.AreEqual(0, stamp.alpha);
+                CanDownStamp.Play(2);
+                yield return null;
+                stamp = GameObject.Find("~CanDownStamp").GetComponent<CanvasGroup>();
+                Assert.AreEqual(0, stamp.alpha, "New announcements must also obey the hidden feed.");
+                hud.SetCleanFeed(false);
+                Assert.AreEqual(1, stamp.alpha);
+
+                hud.SetCleanFeed(true);
+                var result = Object.FindFirstObjectByType<MatchResult>();
+                result.OnMatchWon(1);
+                var board = GameObject.Find("OwnerResultCanvas").GetComponent<CanvasGroup>();
+                Assert.AreEqual(0, board.alpha);
+                Assert.IsFalse(board.blocksRaycasts);
+                hud.SetCleanFeed(false);
+                Assert.AreEqual(1, board.alpha);
+                Assert.IsTrue(board.blocksRaycasts);
+            }
+            finally
+            {
+                hud.SetCleanFeed(false);
+                GameLaunch.Spectator = oldSpectator;
+                settings.ReducedUiMotion = oldMotion;
+                settings.CinematicCameraMotion = oldCinematic;
+            }
+        }
+
+        [UnityTest]
         public IEnumerator RootedPromptTracksLiveBindingsDevicesAndHeldProgress()
         {
             var actions = Resources.Load<InputActionAsset>("TumbangPreso");
@@ -491,10 +546,15 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest]
-        public IEnumerator TayaWhoseCanIsDownSeesTheOffenseFrameUntilTheReset()
+        public IEnumerator TayaCanDownCueKeepsPulsingInReachUntilRestore()
         {
             int seat = GameLaunch.SoloSeat;
+            var settings = SettingsStore.Current;
+            bool reducedMotion = settings.ReducedUiMotion, reducedEffects = settings.ReducedEffects;
+            float flashIntensity = settings.FlashIntensity;
             GameLaunch.SoloSeat = MatchRules.DefenderSlotFor(1);
+            settings.ReducedUiMotion = settings.ReducedEffects = false;
+            settings.FlashIntensity = 1f;
             try
             {
                 yield return Open(GameMode.Classic);
@@ -504,8 +564,9 @@ namespace TumbangPreso.PlayTests
                 var can = GameServices.Round.Lata;
                 var effects = Object.FindFirstObjectByType<TumpHudEffects>();
                 // Chasing, looking away: the knockdown lands behind the taya.
-                local.Teleport(can.transform.position + new Vector3(0, 0, 4)); local.transform.rotation = Quaternion.identity;
-                float protectionDeadline = Time.time + 3;
+                local.Teleport(can.transform.position + Vector3.forward * (Balance.InteractionRadius + 2));
+                local.transform.rotation = Quaternion.identity;
+                float protectionDeadline = Time.time + 5;
                 while (can.IsProtected && Time.time < protectionDeadline) yield return null;
                 yield return null;
                 Assert.IsFalse(effects.DangerFrameVisible || effects.CanDownFrameVisible, "An upright can frames nothing for the taya.");
@@ -515,16 +576,40 @@ namespace TumbangPreso.PlayTests
                 while (!effects.CanDownFrameVisible && Time.unscaledTime < frameBy) yield return null;
                 Assert.IsTrue(effects.CanDownFrameVisible, "The taya whose can is down must see the frame.");
                 Assert.IsFalse(effects.DangerFrameVisible, "The taya is never told they can be tagged.");
-                yield return new WaitForSecondsRealtime(.4f);
-                LogCanMarker("taya");
-                yield return TumpUiCapture.Capture("CourtHud-taya-can-down-1280x720",
-                    GameObject.Find("OwnerMatchCanvas").GetComponent<Canvas>(), 1280, 720, false, true, OffscreenUnderlay());
+                var carrier = local.GetComponent<Carrier>();
+                Assert.IsFalse(carrier.HasResetTarget, "The knockdown starts outside Grab range.");
+                local.Teleport(can.transform.position + Vector3.back * (Balance.InteractionRadius * .7f));
+                yield return new WaitForSecondsRealtime(.35f);
+                Assert.IsTrue(carrier.HasResetTarget, "Entering Grab range must exercise the old cutoff.");
+                var canvas = GameObject.Find("OwnerMatchCanvas").GetComponent<Canvas>();
+                var wash = canvas.GetComponentsInChildren<Image>().First(image => image.name == "DangerEdges");
+                float lowest = 1f, highest = 0f;
+                float sampleUntil = Time.unscaledTime + 1.6f;
+                while (Time.unscaledTime < sampleUntil)
+                {
+                    Assert.IsFalse(can.IsUpright);
+                    Assert.IsTrue(effects.CanDownFrameVisible, "The cue stays visible in reach, even at the pulse trough.");
+                    Assert.IsFalse(wash.enabled, "Can down should read as corner strikes instead of a vignette.");
+                    lowest = Mathf.Min(lowest, effects.FrameColour.a);
+                    highest = Mathf.Max(highest, effects.FrameColour.a);
+                    yield return null;
+                }
+                Assert.Greater(highest - lowest, .15f, "The pulse must continue when Grab becomes available.");
+                yield return TumpUiCapture.Capture("CourtHud-tumba-in-reach-1280x720",
+                    canvas, 1280, 720, false, true, OffscreenUnderlay());
                 can.HostRestore();
+                Assert.IsTrue(can.IsUpright, "The referee restored the can.");
                 float clearBy = Time.unscaledTime + .5f;
                 while (effects.CanDownFrameVisible && Time.unscaledTime < clearBy) yield return null;
                 Assert.IsFalse(effects.CanDownFrameVisible, "The frame clears once the can stands again.");
             }
-            finally { GameLaunch.SoloSeat = seat; }
+            finally
+            {
+                GameLaunch.SoloSeat = seat;
+                settings.ReducedUiMotion = reducedMotion;
+                settings.ReducedEffects = reducedEffects;
+                settings.FlashIntensity = flashIntensity;
+            }
         }
 
         // The edge can marker is its own canvas; the renders show it with the frame.

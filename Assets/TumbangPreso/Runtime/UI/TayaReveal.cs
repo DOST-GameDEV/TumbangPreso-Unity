@@ -35,6 +35,7 @@ namespace TumbangPreso.UI
             if (owner == null) return;
             if (_live != null) Destroy(_live.gameObject);
             var canvas = OwnerUiLayout.Canvas(owner, "~TayaReveal", 165);
+            CleanFeedLayer.Attach(canvas.gameObject);
             var focus = canvas.GetComponent<InputLayer.ScreenFocus>(); if (focus != null) focus.enabled = false;
             var raycaster = canvas.GetComponent<GraphicRaycaster>(); if (raycaster != null) raycaster.enabled = false;
             _live = canvas.gameObject.AddComponent<TayaReveal>(); Played++;

@@ -548,6 +548,59 @@ namespace TumbangPreso.PlayTests
             }
         }
 
+        [UnityTest]
+        public IEnumerator LockedSelectionKeepsOnlyTheButtonConfirmation()
+        {
+            yield return HubFlowTests.OpenHome();
+            SceneFlow.PinSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));
+            var picker = TumpHub.Current.Push<HubCharacterSelect>(screen => screen.Timed = true);
+            yield return null;
+            var select = picker.Root.GetComponentsInChildren<Button>().Single(button => button.name == "SelectButton");
+            select.onClick.Invoke();
+            yield return null;
+            var confirmations = picker.Root.GetComponentsInChildren<Text>()
+                .Where(label => label.enabled && label.text == "LOCKED IN").ToArray();
+            Assert.AreEqual(1, confirmations.Length, "The hero preview must stay clear after lock-in.");
+            Assert.IsTrue(confirmations[0].transform.IsChildOf(select.transform));
+        }
+
+        [UnityTest, Timeout(120000)]
+        public IEnumerator SpectatingRoomOwnerCanStartFourBotsWithNoSeatedPlayers()
+        {
+            yield return HubFlowTests.OpenHome();
+            var host = TumpHub.Current.Host;
+            var hosting = host.HostRoom("SPECTATOR START CHECK", SceneFlow.Eskinita,
+                GameMode.Classic, RoomVisibility.Private, false);
+            float deadline = Time.realtimeSinceStartup + 15;
+            while (!hosting.IsCompleted && Time.realtimeSinceStartup < deadline) yield return null;
+            Assert.IsTrue(hosting.IsCompleted && !hosting.IsFaulted && string.IsNullOrEmpty(hosting.Result));
+            deadline = Time.realtimeSinceStartup + 5;
+            while (!(TumpHub.Current.Top is HubLobby) && Time.realtimeSinceStartup < deadline) yield return null;
+            Assert.IsInstanceOf<HubLobby>(TumpHub.Current.Top);
+
+            var rules = SceneFlow.SelectedRules.Clone();
+            rules.Bots = CustomGameRules.MaxBots;
+            rules.MapVote = true;
+            MatchRpc.Instance.SelectRulesServerRpc(CustomGameRules.ToWire(rules));
+            host.ToggleSpectate();
+            deadline = Time.realtimeSinceStartup + 5;
+            while (!host.Spectating && Time.realtimeSinceStartup < deadline) yield return null;
+            Assert.IsTrue(host.IsHost && host.Spectating);
+            var lobby = NetSession.Instance.Lobby;
+            Assert.Zero(lobby.SeatedPeerCount());
+            Assert.IsTrue(host.Seats().All(seat => !seat.Occupied && seat.Bot));
+
+            yield return HubFlowTests.Press("StartGame");
+            Assert.IsTrue(lobby.MatchInProgress, "With no voters, Start should launch directly.");
+            Assert.IsFalse(MatchRpc.Instance.CharacterSelecting || MatchRpc.Instance.QueueMapVoting);
+            deadline = Time.realtimeSinceStartup + 30;
+            while (GameServices.Round?.RoundActive != true && Time.realtimeSinceStartup < deadline) yield return null;
+            Assert.AreEqual(SceneFlow.Eskinita, SceneManager.GetActiveScene().name);
+            Assert.IsTrue(GameServices.Round.RoundActive);
+            Assert.IsTrue(GameLaunch.Spectator);
+            Assert.AreEqual(4, GameServices.Round.Players.Count(actor => actor != null && actor.IsBot));
+        }
+
         private static void CaptureArrivalCamera(string directory, int index)
         {
             var camera = Camera.main; if (camera == null) return;

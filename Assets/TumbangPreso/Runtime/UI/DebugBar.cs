@@ -102,6 +102,7 @@ namespace TumbangPreso.UI
             canvasGo.transform.SetParent(transform, false);
 
             var canvas = _canvas = canvasGo.AddComponent<Canvas>();
+            CleanFeedLayer.Attach(canvasGo);
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvas.sortingOrder = 500;   // over everything, including the pause overlay
 

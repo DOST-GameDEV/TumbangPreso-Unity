@@ -895,6 +895,7 @@ namespace TumbangPreso.Map
             var go = new GameObject("Arena opening overlay");
             go.transform.SetParent(transform, false);
             _overlay = go.AddComponent<Canvas>();
+            UI.CleanFeedLayer.Attach(go);
             _overlay.renderMode = RenderMode.ScreenSpaceOverlay;
             // Over the arrival's own curtain (150), under the loading screen (900).
             _overlay.sortingOrder = 151;

@@ -166,6 +166,44 @@ namespace TumbangPreso.PlayTests
             Assert.IsEmpty(prompt.text, "An idle defender should see instructions only when an action is available.");
         }
 
+        [UnityTest] public IEnumerator NearMarkRestoreBarFollowsLiftAndSetDownClocks()
+        {
+            yield return Load();
+            yield return Stage(out var taya, out var can, out var mark);
+            Hud.Instance.Bind(taya);
+            var readout = Hud.Instance.GetComponent<TumpMatchReadout>();
+            var texts = readout.Canvas.GetComponentsInChildren<UnityEngine.UI.Text>(true);
+            var roundLabel = System.Array.Find(texts, label => label.name == "RoundLabel");
+            var detail = System.Array.Find(texts, label => label.name == "ActionDetail");
+            var fill = System.Array.Find(readout.Canvas.GetComponentsInChildren<UnityEngine.UI.Image>(true),
+                image => image.name == "ProgressFill");
+            float deadline = Time.time + Balance.CanDownGracePeriod + 1;
+            while (!GameServices.Round.IsCanDownPenaltyActive && Time.time < deadline) yield return null;
+            Assert.IsTrue(GameServices.Round.IsCanDownPenaltyActive);
+
+            can.transform.position = new Vector3(mark.x, can.transform.position.y, mark.z);
+            taya.Teleport(mark + Vector3.right * .4f);
+            taya.Intent.Set(Verb.Grab, true);
+            bool lifted = false, planted = false;
+            float total = Lata.PickupSeconds + Lata.SetDownSeconds;
+            deadline = Time.time + total + 1;
+            while (!can.IsUpright && Time.time < deadline)
+            {
+                yield return null;
+                if (!can.IsCarried) continue;
+                Assert.AreEqual("LOSING POINTS", roundLabel.text);
+                StringAssert.DoesNotContain("Losing points", detail.text);
+                Assert.AreNotEqual(Lata.CarryPhase.Carry, can.Carrying, "At the mark no walk is required.");
+                lifted |= can.Carrying == Lata.CarryPhase.Pickup;
+                planted |= can.Carrying == Lata.CarryPhase.SetDown;
+                float elapsed = (can.Carrying == Lata.CarryPhase.SetDown ? Lata.PickupSeconds : 0) + can.CarryAge;
+                Assert.AreEqual(elapsed / total, fill.rectTransform.anchorMax.x, .035f,
+                    "The bar follows elapsed lift and set-down time without jumping across an absent walk.");
+            }
+            taya.Intent.Set(Verb.Grab, false);
+            Assert.IsTrue(lifted && planted && can.IsUpright);
+        }
+
         [UnityTest] public IEnumerator LettingGoDropsTheCanAtTheTayasFeet()
         {
             yield return Load();

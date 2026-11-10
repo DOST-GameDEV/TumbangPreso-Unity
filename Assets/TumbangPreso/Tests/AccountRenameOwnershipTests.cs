@@ -74,7 +74,7 @@ namespace TumbangPreso.Tests
             var task = Rename("Requested");
             _account.SignInAsGuest("Guest"); _account.LeaveGuest(); Signed(true); _changed = 0;
             _answers[0].SetResult("Old_remote#1234"); await task;
-            Assert.AreEqual("Requested", _account.DisplayName);
+            Assert.AreEqual("Original", _account.DisplayName);
             Assert.AreEqual("Original", SettingsStore.Current.PlayerName); Assert.AreEqual(0, _changed);
         }
         [Test] public async Task EarlierRenameCannotOverwriteLaterAcceptedRename()
@@ -89,7 +89,7 @@ namespace TumbangPreso.Tests
         {
             var task = Rename("Requested"); Signed(false);
             _answers[0].SetResult("Old_remote#1234"); await task;
-            Assert.AreEqual("Requested", _account.DisplayName);
+            Assert.AreEqual("Original", _account.DisplayName);
             Assert.AreEqual("Original", SettingsStore.Current.PlayerName); Assert.AreEqual(0, _changed);
         }
         [Test] public async Task CurrentOwnerRenameStillApplies()

@@ -237,10 +237,13 @@ namespace TumbangPreso.CameraSystem
                 // Its plate lands on the contact with a flash, as the tag replay's does, so the slowed moment has a hit in it.
                 if(!standalone)
                 {
-                    _contactFlash=OwnerUiLayout.Rect(_canvas.transform,"RecordedContactFlash").gameObject.AddComponent<Image>();
+                    var chrome = OwnerUiLayout.Rect(_canvas.transform, "RecordedReplayChrome");
+                    OwnerUiLayout.Fill(chrome);
+                    CleanFeedLayer.Attach(chrome.gameObject);
+                    _contactFlash=OwnerUiLayout.Rect(chrome,"RecordedContactFlash").gameObject.AddComponent<Image>();
                     OwnerUiLayout.Fill(_contactFlash.rectTransform);_contactFlash.raycastTarget=false;_contactFlash.color=new Color(1,1,1,0);
-                    _impactLook=ReplayImpact.Build(_canvas.transform);
-                    _overlay=ReplayOverlay.Build(_canvas.transform,"HIGHLIGHT",false);_overlay.HoldAnnouncement();
+                    _impactLook=ReplayImpact.Build(chrome);
+                    _overlay=ReplayOverlay.Build(chrome,"HIGHLIGHT",false);_overlay.HoldAnnouncement();
                 }
                 _audioMix=GameServices.Audio?.EnterReplayMix();
                 Ready=true;

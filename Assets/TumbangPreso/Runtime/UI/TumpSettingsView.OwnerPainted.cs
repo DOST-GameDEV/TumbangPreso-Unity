@@ -39,7 +39,7 @@ namespace TumbangPreso.UI
             _list.GetComponent<VerticalLayoutGroup>().padding.bottom=20;
             _status=OwnerUiLayout.Text(design,"SettingsStatus","",27);_status.color=OwnerUiTheme.Current.EnteredInk;
             OwnerUiLayout.Place(_status.rectTransform,101,960,1190,75);
-            _save=OwnerPaintedAction.Create(design,"TumpSaveSettings","SAVE CHANGES",()=>_session.Save(),false,40);
+            _save=OwnerPaintedAction.Create(design,"TumpSaveSettings","SAVE CHANGES",()=>SaveChanges(),false,40);
             OwnerUiLayout.Place((RectTransform)_save.transform,1387,952,413,91);
         }
         public void ShowSection(int index)
@@ -147,8 +147,8 @@ namespace TumbangPreso.UI
             var s=SettingsStore.Current;
             if (!_touchLayout) Header("PROFILE");
             var name=SettingsWorkspaceRows.Entry(Row("PlayerName","Player name"),"PlayerNameField","PLAYER NAME");
-            name.SetTextWithoutNotify(s.PlayerName);name.gameObject.AddComponent<SettingsControlFocus>();name.characterLimit=Core.Balance.PlayerNameMax;
-            name.onValueChanged.AddListener(v=>{s.PlayerName=v;_session.Preview();});
+            BindPlayerName(name);
+            name.gameObject.AddComponent<SettingsControlFocus>();
             Header("PRIVACY");
             Toggle("Telemetry","Share play statistics",s.TelemetryEnabled,v=>s.TelemetryEnabled=v);
             Note("Counts only: matches, modes, maps, picks and frame rate. No names, chat or anything you type.");
@@ -250,7 +250,7 @@ namespace TumbangPreso.UI
             // three choices were floating words at three different widths and indents, so nothing
             // said which one was the expected answer. Now one column of equal slabs: SAVE & BACK is
             // the filled accent (the one primary), DISCARD and KEEP EDITING are outlined.
-            var save=SettingsWorkspaceRows.Action(paper.transform,"SaveAndBack","SAVE & BACK",()=>{_session.Save();_decision.SetActive(false);Back();},560);
+            var save=SettingsWorkspaceRows.Action(paper.transform,"SaveAndBack","SAVE & BACK",()=>SaveChanges(true),560);
             OwnerUiLayout.Place((RectTransform)save.transform,195,200,560,96);
             if (_touchLayout) OwnerUiLayout.Place((RectTransform)save.transform,195,190,560,InputLayer.TouchMetrics.MinTargetUnits);
             SettingsWorkspaceRows.Slab(save,true);

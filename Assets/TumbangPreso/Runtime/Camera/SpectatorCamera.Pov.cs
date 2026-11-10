@@ -55,13 +55,17 @@ namespace TumbangPreso.CameraSystem
             float dt = Time.unscaledDeltaTime;
             if (ObservedPlayerView.TryGet(_follow, out var view, out bool local))
             {
-                bool snap = local || !_observedViewAvailable || _observedActor != _follow || _observedEpoch != view.Epoch
-                    || (view.Eye - transform.position).sqrMagnitude > 64;
-                float blend = snap ? 1 : 1 - Mathf.Exp(-28f * dt);
+                if (!local) view = ObservedPlayerView.SampleRemote(view, Time.unscaledTime);
+                bool bot = (view.Flags & SpectatorViewState.BotView) != 0;
+                bool newView = !_observedViewAvailable || _observedActor != _follow || _observedEpoch != view.Epoch ||
+                               (view.Eye - transform.position).sqrMagnitude > 64;
+                // Local players already have a rendered camera. Locally simulated bots need
+                // smoothing between physics ticks; remote views already interpolate snapshots.
+                float blend = local && bot && !newView ? 1 - Mathf.Exp(-18f * dt) : 1;
                 transform.SetPositionAndRotation(Vector3.Lerp(transform.position, view.Eye, blend),
                     Quaternion.Slerp(transform.rotation, view.Rotation.normalized, blend));
                 _targetPosition = transform.position; SyncAnglesFromTransform();
-                if (_camera != null) _camera.fieldOfView = snap ? view.Fov : Mathf.Lerp(_camera.fieldOfView, view.Fov, blend);
+                if (_camera != null) _camera.fieldOfView = Mathf.Lerp(_camera.fieldOfView, view.Fov, blend);
                 ApplyObservedLens(view.Aspect, view.NearClip, view.FarClip);
                 Shader.SetGlobalFloat(Visual.NearFade.EyeDropId, view.EyeDrop);
                 _resetObservedMotion |= _observedActor != _follow || _observedEpoch != view.Epoch;
@@ -71,7 +75,7 @@ namespace TumbangPreso.CameraSystem
                 _observedViewAvailable = true;
                 _observedFirstPerson = (view.Flags & SpectatorViewState.FirstPerson) != 0;
                 _observedHands = (view.Flags & SpectatorViewState.HandsVisible) != 0;
-                _observedBot = (view.Flags & SpectatorViewState.BotView) != 0;
+                _observedBot = bot;
                 StepPovArms(Time.deltaTime);
                 if (local) _privateView?.Clear();
                 else if (view.Private.Phantoms.Length > 0 || view.Private.Marker.Present || _privateView != null)

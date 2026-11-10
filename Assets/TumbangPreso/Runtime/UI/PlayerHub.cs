@@ -1414,8 +1414,8 @@ namespace TumbangPreso.UI
                 string country = OwnerDraftValue("ProfileCountry",_country != null ? _country.text : a.Country);
                 string pronouns = OwnerDraftValue("ProfilePronouns",_pronouns != null ? _pronouns.text : a.Pronouns);
 
-                await a.SetProfileAsync(name, bio, country, pronouns);
-                if (!ProfileSaveIsCurrent(request, a, owner, signedIn)) return;
+                if (!await a.SetProfileAsync(name, bio, country, pronouns) ||
+                    !ProfileSaveIsCurrent(request, a, owner, signedIn)) return;
                 _notice = "Saved.";
                 OwnerProfileSaved();
             }

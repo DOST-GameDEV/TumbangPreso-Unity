@@ -57,14 +57,29 @@ namespace TumbangPreso.PlayTests
             ObservedPlayerView.Capture(_rig, _actor);
             typeof(SpectatorCamera).GetMethod("LateUpdate", Hidden).Invoke(_watcher, null);
         }
+        private Net.MatchRpc UseRemoteWatcher(out long priorMatch)
+        {
+            if (Net.MatchRpc.Instance == null) Net.NetSession.Ensure();
+            var rpc = Net.MatchRpc.Instance;
+            Assert.IsNotNull(rpc);
+            priorMatch = rpc.PresentationMatchId;
+            typeof(Net.MatchRpc).GetProperty("PresentationMatchId").SetValue(rpc, 100L);
+            NetAuthority.Provider = new RemoteWatcher();
+            GameLaunch.Spectator = true;
+            _rig.SetActive(false);
+            ObservedPlayerView.ClearRemote();
+            return rpc;
+        }
+        private static void RestoreRemoteWatcher(Net.MatchRpc rpc, long priorMatch)
+        {
+            typeof(Net.MatchRpc).GetProperty("PresentationMatchId").SetValue(rpc, priorMatch);
+            ObservedPlayerView.ClearRemote();
+        }
         [Test] public void ARecoveredRemoteViewReturnsDirectlyToTheOwnersEyes()
         {
-            var router=new GameObject("Recovered view scope");
+            var rpc = UseRemoteWatcher(out long priorMatch);
             try
             {
-                var rpc=router.AddComponent<Net.MatchRpc>();
-                typeof(Net.MatchRpc).GetProperty("PresentationMatchId").SetValue(rpc,100L);
-                NetAuthority.Provider=new RemoteWatcher();GameLaunch.Spectator=true;_rig.SetActive(false);
                 var state=new Net.SpectatorViewState {Match=100,Round=1,Slot=1,Epoch=_actor.MovementEpoch,Sequence=1,
                     Eye=_actor.transform.position+Vector3.up,Rotation=Quaternion.Euler(10,120,0),Fov=91,
                     HandsRotation=Quaternion.identity,Flags=Net.SpectatorViewState.FirstPerson};
@@ -79,7 +94,35 @@ namespace TumbangPreso.PlayTests
                 Assert.Less(Vector3.Distance(state.Eye,_watcher.transform.position),.0001f);
                 Assert.Less(Quaternion.Angle(state.Rotation,_watcher.transform.rotation),.001f);
             }
-            finally { Object.DestroyImmediate(router);ObservedPlayerView.ClearRemote(); }
+            finally { RestoreRemoteWatcher(rpc, priorMatch); }
+        }
+        [Test] public void RemoteFirstPersonBlendsTheEyesAndHandsBetweenPackets()
+        {
+            var rpc = UseRemoteWatcher(out long priorMatch);
+            try
+            {
+                var first = new Net.SpectatorViewState
+                {
+                    Match = 100, Round = 1, Slot = 1, Epoch = _actor.MovementEpoch, Sequence = 1,
+                    Eye = _actor.transform.position + Vector3.up, Rotation = Quaternion.identity,
+                    Fov = 90, HandsRotation = Quaternion.identity, Flags = Net.SpectatorViewState.FirstPerson
+                };
+                var second = first;
+                second.Sequence++; second.Eye += Vector3.right;
+                second.Rotation = Quaternion.Euler(0, 50, 0);
+                second.HandsSeat = Vector3.right * .2f;
+                var install = typeof(ObservedPlayerView).GetMethod("InstallRemoteAt", BindingFlags.Static | BindingFlags.NonPublic);
+                float now = Time.unscaledTime;
+                Assert.IsTrue((bool)install.Invoke(null, new object[] { first, _actor, now - .19f }));
+                Assert.IsTrue((bool)install.Invoke(null, new object[] { second, _actor, now - .09f }));
+                typeof(SpectatorCamera).GetMethod("LateUpdate", Hidden).Invoke(_watcher, null);
+                Assert.IsTrue(_watcher.IsWatchingEyes(_actor));
+                Assert.AreEqual(first.Eye.x + .5f, _watcher.transform.position.x, .015f);
+                Assert.Less(Quaternion.Angle(Quaternion.Euler(0, 25, 0), _watcher.transform.rotation), .6f);
+                var pose = (Net.SpectatorViewState)typeof(SpectatorCamera).GetField("_observedPose", Hidden).GetValue(_watcher);
+                Assert.AreEqual(.1f, pose.HandsSeat.x, .005f);
+            }
+            finally { RestoreRemoteWatcher(rpc, priorMatch); }
         }
         [TestCase(16f/9,20f/9)] [TestCase(20f/9,16f/9)] [TestCase(4f/3,20f/9)]
         public void ObservedViewportPreservesTheOwnersFrustum(float source,float output)

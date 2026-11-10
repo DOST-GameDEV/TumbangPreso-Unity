@@ -284,6 +284,9 @@ namespace TumbangPreso.PlayTests
         {
             SceneFlow.Networked=false;SceneFlow.SelectedMap=SceneFlow.Eskinita;
             yield return MapRetrievalProbe.Load(SceneFlow.Eskinita, GameMode.HeroStrike, skipReadyArrival: true);
+            var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
+            var scores = (Scoreboard)typeof(MatchDirector).GetField("_scores", flags).GetValue(GameServices.Match);
+            scores.SetAll(new[] { 98000, int.MaxValue, 1500, 100 });
             var result=Object.FindFirstObjectByType<MatchResult>();result.OnMatchWon(1);yield return new WaitForSecondsRealtime(.5f);
             // Presentation-only record. It is never submitted or applied to the saved career.
             var line=new PlayerMatchStats{Slot=1,PlayerId=Net.CareerStore.LocalPlayerId,CharacterId="zack",Placement=1,
@@ -295,17 +298,35 @@ namespace TumbangPreso.PlayTests
                 new PlayerMatchStats{Slot=3,PlayerId="fixture-3",Sabotages=2,Retrievals=3,RetrievalsUnderPressure=2,Score=250}};
             var record=new MatchRecord{MatchId="results-presentation-fixture",Mode=GameMode.HeroStrike.ToString(),Rounds=8,
                 WinningSlot=1,Players=new[]{line,others[0],others[1],others[2]}};
-            var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
             typeof(MatchResult).GetMethod("OnRecordReady",flags).Invoke(result,new object[]{record});
             var profile=new PlayerProfile{Xp=1930};ProgressionRules.MasteryFor(profile,"zack").Xp=1930;
             var award=ProgressionRules.Award(profile,record,line);
             Assert.AreEqual(ProgressionRules.Breakdown(record,line).Sum(part=>part.Xp),award.MatchXp);
             typeof(MatchResult).GetMethod("ShowProgression",flags).Invoke(result,new object[]{award,profile});
             var canvas=GameObject.Find("OwnerResultCanvas").GetComponent<Canvas>();
-            Assert.That(canvas.GetComponentsInChildren<Text>().First(t=>t.name=="EarnedXp").text,Does.Contain(award.MatchXp+" XP"));
-            Assert.AreEqual(4,canvas.GetComponentsInChildren<Text>().Count(t=>t.name.StartsWith("FinisherScore")));
+            // The detail tabs were removed from the board. The hidden summary still receives the award.
+            Assert.That(canvas.GetComponentsInChildren<Text>(true).First(t=>t.name=="EarnedXp").text,Does.Contain(award.MatchXp+" XP"));
+            var labels = canvas.GetComponentsInChildren<Text>().Where(t => t.name.StartsWith("FinisherScore")).ToArray();
+            Assert.AreEqual(4, labels.Length);
+            Assert.AreEqual(int.MaxValue + " PTS", labels.First(t => t.name == "FinisherScore0").text);
             foreach(var size in new[]{new Vector2Int(1920,1080),TumpUiCapture.OwnerWindow,new Vector2Int(960,540)})
-                yield return TumpUiCapture.Capture("TJ-result-winner-"+size.x+"x"+size.y,canvas.rootCanvas,size.x,size.y,false,checkActionBounds:true);
+                yield return TumpUiCapture.Capture("TJ-result-winner-"+size.x+"x"+size.y,canvas.rootCanvas,size.x,size.y,false,
+                    checkActionBounds:true, inspectViewport: () =>
+                    {
+                        var scoreCorners = new Vector3[4];
+                        var accoladeCorners = new Vector3[4];
+                        foreach (var label in labels)
+                        {
+                            Assert.LessOrEqual(label.preferredWidth, label.rectTransform.rect.width - 4, label.text);
+                            label.rectTransform.GetWorldCorners(scoreCorners);
+                            foreach (var stat in label.transform.parent.GetComponentsInChildren<Graphic>()
+                                         .Where(graphic => graphic.enabled && graphic.name.StartsWith("Accolade")))
+                            {
+                                stat.rectTransform.GetWorldCorners(accoladeCorners);
+                                Assert.Less(accoladeCorners[2].x, scoreCorners[0].x, stat.name + " overlaps " + label.name);
+                            }
+                        }
+                    });
         }
         [UnityTest]
         public IEnumerator AllExistingRankTiersHaveEditableVisibleEmblems()

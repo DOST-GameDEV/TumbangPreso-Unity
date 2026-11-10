@@ -33,13 +33,15 @@ namespace TumbangPreso.UI
 
         private void BuildAccolades(RectTransform row, int i, float x, float y)
         {
+            const float stride = 116, iconSize = 42, countOffset = 48, countWidth = 60;
             for (int k = 0; k < 2; k++)
             {
+                float left = x + k * stride;
                 var glyph = _accoladeGlyphs[i, k] = OwnerUiLayout.Rect(row, "Accolade" + i + k).gameObject.AddComponent<HudBadge>();
-                OwnerUiLayout.Place(glyph.rectTransform, x + k * 170, y, 48, 48);
+                OwnerUiLayout.Place(glyph.rectTransform, left, y, iconSize, iconSize);
                 glyph.Detail = HudDraw.Plate; glyph.raycastTarget = false;
                 var count = _accoladeCounts[i, k] = OwnerUiLayout.Text(row, "AccoladeCount" + i + k, "", 34, OwnerUiLayout.TypeRole.Display);
-                OwnerUiLayout.Place(count.rectTransform, x + k * 170 + 56, y, 100, 48);
+                OwnerUiLayout.Place(count.rectTransform, left + countOffset, y, countWidth, iconSize);
                 count.color = _board ? TumbangPreso.UI.Hub.HubKnit.KitCream : HudDraw.CardInk; count.alignment = TextAnchor.MiddleLeft; count.verticalOverflow = VerticalWrapMode.Overflow;
                 glyph.enabled = false; count.enabled = false;
             }
@@ -80,7 +82,7 @@ namespace TumbangPreso.UI
                     // Ink on the cream card, so the owner's knock and tag symbols read (cream on cream all but vanished,
                     // 2026-11-04); the slipper keeps its disc.
                     _accoladeGlyphs[i, k].Show(glyph, fill, backing, accent);
-                    _accoladeCounts[i, k].text = count.ToString();
+                    TumpMatchReadout.PaintScoreText(_accoladeCounts[i, k], TumpMatchReadout.ScoreTextForChip(count), 34, 5, 12);
                 }
             }
         }

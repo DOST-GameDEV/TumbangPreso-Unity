@@ -142,7 +142,7 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest]
-        public IEnumerator LandingCircleStaysVisibleOnRealSurfacesAndReleaseHidesIt()
+        public IEnumerator FlightGuideStaysVisibleOnRealSurfacesAndReleaseHidesIt()
         {
             string output=Environment.GetEnvironmentVariable("TUMP_AIM_GUIDE_REVIEW")??"Logs/aim-guide-surfaces-v2";Directory.CreateDirectory(output);
             foreach(string map in new[]{SceneFlow.BayanPlaza,SceneFlow.IlalimNgTulay,SceneFlow.SaBubong})
@@ -171,25 +171,24 @@ namespace TumbangPreso.PlayTests
                 var guide=GameObject.Find($"~AimArc{who.PlayerSlot}")?.GetComponent<TrajectoryPreview>();
                 Assert.IsNotNull(guide,"The real match must install the local aiming guide.");
                 typeof(TrajectoryPreview).GetMethod("LateUpdate",Private).Invoke(guide,null);
-                Assert.True(guide.GetComponent<MeshRenderer>().enabled,"A disabled old bot component hid the local direction guide.");
+                Assert.True(guide.FlightVisible,"A disabled old bot component hid the local direction guide.");
                 var path=(List<Vector3>)typeof(TrajectoryPreview).GetField("_path",Private).GetValue(guide);
                 Assert.Greater(path.Count,3);
                 Assert.That(guide.LandingPoint.y, Is.GreaterThan(-1f));
-                foreach (var vertex in guide.GetComponent<MeshFilter>().sharedMesh.vertices)
-                    Assert.That(vertex.y, Is.EqualTo(guide.LandingPoint.y).Within(.001f), "Only the landing circle belongs in the drawn mesh.");
-                foreach(var vertex in guide.GetComponent<MeshFilter>().sharedMesh.vertices)
+                Assert.IsNull(guide.GetComponent<MeshRenderer>(), "The flight guide should have no ground circle.");
+                foreach(var vertex in guide.GetComponentInChildren<MeshFilter>().sharedMesh.vertices)
                     Assert.False(float.IsNaN(vertex.x)||float.IsNaN(vertex.y)||float.IsNaN(vertex.z));
                 yield return GameplayShots.Render(rig.Camera,map+"-moving-guide",true,output);
-                Assert.True(guide.GetComponent<MeshRenderer>().enabled,"The guide disappeared during actual camera frames.");
+                Assert.True(guide.FlightVisible,"The guide disappeared during actual camera frames.");
                 CaptureGuideDifference(rig.Camera,guide,output,map+"-moving");
                 Set(carrier,"_aimMovement",0f);
                 typeof(TrajectoryPreview).GetMethod("LateUpdate",Private).Invoke(guide,null);
-                Assert.True(guide.LandingVisible, "Settled aim must retain its ground circle.");
+                Assert.True(guide.FlightVisible, "Settled aim must retain its flight path.");
                 yield return GameplayShots.Render(rig.Camera,map+"-settled-guide",true,output);
                 CaptureGuideDifference(rig.Camera,guide,output,map+"-settled");
                 who.Intent.Set(Verb.SpecialAbility,false);Step(carrier,.016f);
                 typeof(TrajectoryPreview).GetMethod("LateUpdate",Private).Invoke(guide,null);
-                Assert.False(guide.GetComponent<MeshRenderer>().enabled,"The guide survived an accepted release.");
+                Assert.False(guide.FlightVisible,"The guide survived an accepted release.");
                 Object.Destroy(guide.gameObject);yield return PlayModeWorld.Reset();
             }
         }
@@ -222,7 +221,7 @@ namespace TumbangPreso.PlayTests
                     if(sample>=sampleTimes.Length || t<sampleTimes[sample])continue;
                     yield return GameplayShots.Render(rig.Camera,"motion-"+sample,false,output);
                     var path=(List<Vector3>)typeof(TrajectoryPreview).GetField("_path",Private).GetValue(guide);
-                    var renderer=guide.GetComponent<MeshRenderer>();var mesh=guide.GetComponent<MeshFilter>().sharedMesh;
+                    var renderer=guide.GetComponentInChildren<MeshRenderer>();var mesh=guide.GetComponentInChildren<MeshFilter>().sharedMesh;
                     var tail=path.Count>1?path[path.Count-1]:Vector3.zero;string blocker="none";
                     if(path.Count>1)
                     {
@@ -242,7 +241,7 @@ namespace TumbangPreso.PlayTests
         private static void CaptureGuideDifference(Camera camera,TrajectoryPreview guide,string folder,string name)
         {
             const int width=1280,height=720;
-            var renderer=guide.GetComponent<MeshRenderer>();bool wasEnabled=renderer.enabled;
+            var renderer=guide.GetComponentInChildren<MeshRenderer>();bool wasEnabled=renderer.enabled;
             var prior=camera.targetTexture;var active=RenderTexture.active;
             var hdr=RenderTexture.GetTemporary(width,height,24,RenderTextureFormat.DefaultHDR,RenderTextureReadWrite.Linear);
             var resolved=RenderTexture.GetTemporary(width,height,0,RenderTextureFormat.ARGB32,RenderTextureReadWrite.sRGB);

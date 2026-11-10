@@ -100,7 +100,7 @@ namespace TumbangPreso.UI
             // something to save and a quiet outlined one when not, and an UNSAVED marker sits beside
             // it for as long as the session is dirty (`RefreshSave`). The sidebar sentence "Save your
             // changes when you're ready" that used to explain it is gone: the button says it.
-            _save = SettingsWorkspaceRows.Action(root, "TumpSaveSettings", "SAVE CHANGES", () => _session.Save(), 440);
+            _save = SettingsWorkspaceRows.Action(root, "TumpSaveSettings", "SAVE CHANGES", () => SaveChanges(), 440);
             OwnerUiLayout.Place((RectTransform)_save.transform, 1430, 930, 440, 118);
             if (_touchLayout) OwnerUiLayout.Place((RectTransform)_save.transform, 1360, 916, 500, InputLayer.TouchMetrics.MinTargetUnits);
             var saveFace = OwnerUiLayout.Rect(_save.transform, "SaveFace").gameObject.AddComponent<Image>();

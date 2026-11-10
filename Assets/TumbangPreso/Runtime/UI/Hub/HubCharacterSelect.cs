@@ -74,12 +74,10 @@ namespace TumbangPreso.UI.Hub
         private float _endsAt;
         private bool _locked, _started;
         private ModelPreview _preview;
-        // ⚠️ THE LOCK-IN IS A MOMENT (owner, 2026-10-22: "lock in make that one real better"). SELECT used to
-        // turn a button and the ring gold. Now the hero punches up, a gold flash crosses the screen, a tilted
-        // LOCKED IN stamp slams onto the stage and stays, and every other seat's card pops as it locks.
+        // The hero and flash mark the instant of confirmation. The button carries the
+        // persistent confirmation so the center of the stage stays clear.
         private RectTransform _modelRect;
         private Image _lockFlash;
-        private Text _lockStamp;
         private float _lockAt = -100f;
         private readonly bool[] _seatWasLocked = new bool[4];
         private const float LockPunchSeconds = .36f, LockFlashSeconds = .3f;
@@ -682,17 +680,6 @@ namespace TumbangPreso.UI.Hub
                 _lockFlash.raycastTarget = false;
             }
             _lockFlash.transform.SetAsLastSibling();
-            if (_lockStamp == null)
-            {
-                _lockStamp = HubKit.Text(_stage, "LockedInStamp", "LOCKED IN", HubStyle.Hero, true, HubStyle.Golden, TextAnchor.MiddleCenter);
-                HubKit.Place(_lockStamp.rectTransform, HubKit.Bottom, new Vector2(0, 40), new Vector2(900, 170));
-                var ink = _lockStamp.gameObject.AddComponent<Outline>();
-                ink.effectColor = HubStyle.Ink; ink.effectDistance = new Vector2(5, -5);
-                _lockStamp.gameObject.AddComponent<Shadow>().effectDistance = new Vector2(10, -12);
-            }
-            _lockStamp.gameObject.SetActive(true);
-            _lockStamp.rectTransform.localRotation = Quaternion.Euler(0, 0, -6);
-            HubSlap.On(_lockStamp, .05f, -6);
             AnimateLock();
         }
 

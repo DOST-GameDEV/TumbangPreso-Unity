@@ -25,6 +25,7 @@ namespace TumbangPreso.UI
         {
             _board = true;
             Canvas = OwnerUiLayout.Canvas(owner, "OwnerRoundSwapCanvas", 260);
+            CleanFeedLayer.Attach(Canvas.gameObject);
             var focus = Canvas.GetComponent<InputLayer.ScreenFocus>(); if (focus != null) focus.enabled = false;
             // Passive graphic over the court. It does not open a page or need a click.
             _popup = OwnerUiLayout.DesignArea(Canvas.transform, "CourtBreakPopup");

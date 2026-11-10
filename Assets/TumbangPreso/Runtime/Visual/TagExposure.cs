@@ -95,9 +95,9 @@ namespace TumbangPreso.Visual
         //     the slope, fading out between 1.5 and 5 m up, and gone when there is no floor under them at all.
 
         /// <summary>True while a cutscene or a replay owns this screen.</summary>
-        public static bool Quiet => QuietOverride ??
+        public static bool Quiet => UI.Hud.Instance?.IsCleanFeed == true || (QuietOverride ??
             (SpectatorCutscene.Hides || SharedUltimatePhase.CinematicShowing || CameraSystem.CatchReconstruction.AnyPlaying ||
-             CameraSystem.LocalReplayPlayback.Active);
+             CameraSystem.LocalReplayPlayback.Active));
 
         /// <summary>For tests and review tools: force <see cref="Quiet"/> on or off; null is the game's own answer.</summary>
         public static bool? QuietOverride;

@@ -9,7 +9,7 @@ namespace TumbangPreso.CameraSystem
         private Canvas _lensBars;
         private Image[] _lensEdges;
         private Rect _lensViewport = new Rect(0, 0, 1, 1);
-        private bool _borrowedClip;
+        private bool _borrowedClip, _borrowedAspect;
         private float _originalNear, _originalFar;
         public Rect ObservedViewport => _lensViewport;
 
@@ -36,12 +36,23 @@ namespace TumbangPreso.CameraSystem
             {
                 _camera.nearClipPlane = _originalNear; _camera.farClipPlane = _originalFar; _borrowedClip = false;
             }
-            var old = _camera.rect;
-            float output = (_camera.pixelWidth / Mathf.Max(.001f, old.width))
-                / Mathf.Max(1, _camera.pixelHeight / Mathf.Max(.001f, old.height));
+            // Use the full output. Deriving it from a rounded cropped pixel rect can
+            // change the fitted viewport a fraction of a pixel on every frame.
+            var target = _camera.targetTexture;
+            float output = (target != null ? target.width : Screen.width)
+                / (float)Mathf.Max(1, target != null ? target.height : Screen.height);
             Rect fit = FitObservedViewport(aspect, output);
-            _camera.rect = fit;
-            if (aspect > 0) _camera.aspect = aspect; else _camera.ResetAspect();
+            if (_camera.rect != fit) _camera.rect = fit;
+            if (aspect > 0)
+            {
+                if (!_borrowedAspect || _camera.aspect != aspect) _camera.aspect = aspect;
+                _borrowedAspect = true;
+            }
+            else if (_borrowedAspect)
+            {
+                _camera.ResetAspect();
+                _borrowedAspect = false;
+            }
             bool bars = fit.width < .999f || fit.height < .999f;
             if (!bars)
             {

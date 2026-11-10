@@ -5,42 +5,31 @@ using UnityEngine;
 namespace TumbangPreso
 {
     /// <summary>
-    /// Local flight path and landing-circle UI for the current throw. Real gravity, signed curve,
+    /// Local flight path for the current throw. Real gravity, signed curve,
     /// world banks and supporting floor are predicted without changing gameplay.
     /// Moving players, can impacts and later ability effects may still intercept it.
     /// </summary>
     [DefaultExecutionOrder(900)]
     public sealed class TrajectoryPreview : MonoBehaviour
     {
-        public const int Samples = 48;
-        public const float WidthPerMetre = .004f, WidthMin = .002f, WidthMax = .075f;
         public const float AlphaMax = .92f;
-        public const float NearFadeStart = .12f, NearFadeEnd = .65f;
         public const float FloorEpsilon = .018f;
         private CharacterMotor _motor;
         private Carrier _carrier;
-        private MeshRenderer _renderer;
-        private Mesh _mesh;
         private MeshRenderer _flightRenderer;
         private Mesh _flightMesh;
-        private readonly List<Vector3> _path = new List<Vector3>(Samples + 2);
-        private readonly List<Vector3> _verts = new List<Vector3>(Samples * 12);
-        private readonly List<Color> _colours = new List<Color>(Samples * 12);
-        private readonly List<int> _tris = new List<int>(Samples * 12);
+        private readonly List<Vector3> _path = new List<Vector3>(128);
+        private readonly List<Vector3> _fromPath = new List<Vector3>(128);
+        private readonly List<Vector3> _shownPath = new List<Vector3>(128);
+        private readonly List<Vector3> _verts = new List<Vector3>(MaxFlightMarks * 12);
+        private readonly List<Color> _colours = new List<Color>(MaxFlightMarks * 12);
+        private readonly List<int> _tris = new List<int>(MaxFlightMarks * 12);
         private static Material _arcMaterial;
         private readonly RaycastHit[] _hits = new RaycastHit[64];
-        private readonly Vector3[] _ringInner = new Vector3[Samples], _ringOuter = new Vector3[Samples];
-        private readonly bool[] _ringSupported = new bool[Samples];
-        public const float StrokeHalfPixels = 1.6f;
         private float _nextDraw, _drawStart;
-        private Vector3 _drawFrom;
-        private bool _hasLanding;
         public const float PredictionInterval = .05f;
-        public Vector3 DisplayedLandingPoint { get; private set; }
         public Vector3 LandingPoint { get; private set; }
-        public bool LandingVisible => _renderer != null && _renderer.enabled;
         public bool FlightVisible => _flightRenderer != null && _flightRenderer.enabled;
-        public const float CircleRadius = .4f;
         public const int MaxFlightMarks = 10;
 
         public static TrajectoryPreview AttachTo(CharacterMotor motor)
@@ -56,7 +45,6 @@ namespace TumbangPreso
         {
             if (_arcMaterial == null)
                 _arcMaterial = new Material(Shader.Find("TumbangPreso/AimGuide")) { name = "ThrowDirectionGuide" };
-            _renderer = CreateMesh(gameObject, "ThrowLanding", out _mesh);
             var flight = new GameObject("FlightPath");
             flight.transform.SetParent(transform, false);
             _flightRenderer = CreateMesh(flight, "ThrowFlightPath", out _flightMesh);
@@ -83,7 +71,7 @@ namespace TumbangPreso
                 _nextDraw = Time.unscaledTime + PredictionInterval;
                 Rebuild();
             }
-            else if (_hasLanding) DrawInterpolated(Time.unscaledTime);
+            else if (_path.Count > 1) DrawInterpolated(Time.unscaledTime);
         }
 
         private bool ShouldShow()
@@ -101,10 +89,8 @@ namespace TumbangPreso
         private void Clear()
         {
             _nextDraw = 0;
-            _hasLanding = false;
-            if (_renderer != null) _renderer.enabled = false;
+            _path.Clear(); _fromPath.Clear(); _shownPath.Clear();
             if (_flightRenderer != null) _flightRenderer.enabled = false;
-            if (_mesh != null && _mesh.vertexCount > 0) _mesh.Clear();
             if (_flightMesh != null && _flightMesh.vertexCount > 0) _flightMesh.Clear();
         }
 
@@ -122,91 +108,76 @@ namespace TumbangPreso
             var camera = UnityEngine.Camera.main;
             if (camera == null || !TryPredictLanding(_carrier.AimGuideOrigin(), _carrier.AimGuideVelocityNow(), _carrier.CurrentPektusSpin, out var landing))
             { Clear(); return; }
-            // Smooth only presentation. Never invent an interpolated ballistic result.
-            _drawFrom = !_hasLanding || Mathf.Abs(landing.y - LandingPoint.y) > .15f ||
-                Vector3.SqrMagnitude(landing - LandingPoint) > 64 ? landing : DisplayedLandingPoint;
+            // Blend neighbouring samples between predictions. Large aim changes or a different
+            // landing level should switch paths immediately rather than sweep through a wall.
+            bool blend = _shownPath.Count > 1 && _path.Count > 1 &&
+                         Mathf.Abs(landing.y - LandingPoint.y) < .5f &&
+                         (landing - LandingPoint).sqrMagnitude < 16 &&
+                         (_path[0] - _shownPath[0]).sqrMagnitude < 1;
+            _fromPath.Clear();
+            _fromPath.AddRange(blend ? _shownPath : _path);
             LandingPoint = landing;
             _drawStart = Time.unscaledTime;
-            _hasLanding = true;
             DrawInterpolated(_drawStart);
         }
 
         private void DrawInterpolated(float now)
         {
             var camera = UnityEngine.Camera.main;
-            if (camera == null || !_hasLanding) return;
-            var landing = Vector3.Lerp(_drawFrom, LandingPoint, Mathf.Clamp01((now - _drawStart) / PredictionInterval));
-            DisplayedLandingPoint = landing;
-            _verts.Clear(); _colours.Clear(); _tris.Clear();
+            if (camera == null || _path.Count < 2) return;
+            float t = Mathf.Clamp01((now - _drawStart) / PredictionInterval);
+            _shownPath.Clear();
+            int samples = t >= 1 ? _path.Count : Mathf.Max(_fromPath.Count, _path.Count);
+            for (int i = 0; i < samples; i++)
+            {
+                var from = _fromPath[Mathf.Min(i, _fromPath.Count - 1)];
+                var to = _path[Mathf.Min(i, _path.Count - 1)];
+                _shownPath.Add(Vector3.Lerp(from, to, t));
+            }
             bool legal = GameServices.Round.CanThrow(_motor);
             var tint = legal ? new Color(1, .92f, .58f, AlphaMax) : new Color(.72f, .72f, .68f, AlphaMax);
-            for (int stroke = 0; stroke < 2; stroke++)
-            {
-                Color colour = stroke == 0 ? new Color(.018f, .012f, .008f, 1) : tint;
-                for (int i = 0; i < Samples; i++)
-                {
-                    float angle = i * Mathf.PI * 2 / Samples;
-                    var radial = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle));
-                    var centre = landing + radial * CircleRadius;
-                    float depth = Mathf.Max(camera.nearClipPlane, Vector3.Dot(centre-camera.transform.position, camera.transform.forward));
-                    float perPixel = camera.orthographic ? 2*camera.orthographicSize/Mathf.Max(1,camera.pixelHeight)
-                        : 2*depth*Mathf.Tan(camera.fieldOfView*Mathf.Deg2Rad*.5f)/Mathf.Max(1,camera.pixelHeight);
-                    float half = Mathf.Clamp(perPixel*StrokeHalfPixels, WidthMin, .18f)*(stroke == 0 ? 1.8f : 1);
-                    _ringSupported[i] = ProjectRingPoint(centre-radial*half, landing.y, out _ringInner[i])
-                        && ProjectRingPoint(centre+radial*half, landing.y, out _ringOuter[i]);
-                }
-                for (int i = 0; i < Samples; i++)
-                {
-                    int next = (i+1)%Samples;
-                    if (!_ringSupported[i] || !_ringSupported[next]) continue;
-                    // Do not bridge an open ledge with a floating diagonal ribbon.
-                    if (Mathf.Abs(_ringInner[i].y-_ringInner[next].y)>.45f || Mathf.Abs(_ringOuter[i].y-_ringOuter[next].y)>.45f) continue;
-                    AddTri(_ringInner[i], _ringOuter[i], _ringOuter[next], colour);
-                    AddTri(_ringInner[i], _ringOuter[next], _ringInner[next], colour);
-                }
-            }
-            _mesh.Clear(); _mesh.SetVertices(_verts); _mesh.SetColors(_colours); _mesh.SetTriangles(_tris, 0);
-            _mesh.RecalculateBounds(); _renderer.enabled = _verts.Count > 0;
-            DrawFlight(camera, tint, now);
+            DrawFlight(camera, tint, _shownPath);
         }
 
-        private void DrawFlight(UnityEngine.Camera camera, Color tint, float now)
+        private void DrawFlight(UnityEngine.Camera camera, Color tint, List<Vector3> path)
         {
             _verts.Clear(); _colours.Clear(); _tris.Clear();
             float length = 0;
-            for (int i = 1; i < _path.Count; i++) length += Vector3.Distance(_path[i - 1], _path[i]);
-            const float first = 1f, landingGap = .46f;
-            float end = length - landingGap;
+            for (int i = 1; i < path.Count; i++) length += Vector3.Distance(path[i - 1], path[i]);
+            float first = Mathf.Min(1f, length * .32f);
+            float end = length - Mathf.Min(.24f, length * .12f);
             float available = Mathf.Max(0, end - first);
             float spacing = Mathf.Max(.75f, available / MaxFlightMarks);
-            bool moving = !Settings.SettingsStore.Current.ReducedUiMotion && available > spacing;
-            float phase = moving ? Mathf.Repeat(now * .85f, 1f) : .5f;
-            float next = first + phase * Mathf.Min(spacing, available);
+            float next = first + .5f * Mathf.Min(spacing, available);
             float walked = 0;
             int marks = 0;
             Vector2? previousScreen = null;
             float pixelScale = Mathf.Max(1f, camera.pixelHeight / 1080f);
             float minScreenGap = 26f * pixelScale;
-            for (int i = 1; i < _path.Count && next < end && marks < MaxFlightMarks; i++)
+            for (int i = 1; i < path.Count && next < end && marks < MaxFlightMarks; i++)
             {
-                Vector3 start = _path[i - 1], delta = _path[i] - start;
+                Vector3 start = path[i - 1], delta = path[i] - start;
                 float segment = delta.magnitude;
                 while (segment > .001f && next <= walked + segment && next < end && marks < MaxFlightMarks)
                 {
                     Vector3 point = start + delta * ((next - walked) / segment);
                     Vector3 projected = camera.WorldToScreenPoint(point);
                     Vector2 screen = projected;
-                    // Foreshortened marks need a screen-space gap or they read as a solid line.
-                    if (projected.z > camera.nearClipPlane && (!previousScreen.HasValue
-                        || (screen - previousScreen.Value).sqrMagnitude >= minScreenGap * minScreenGap))
+                    if (projected.z > camera.nearClipPlane)
                     {
-                        float fade = moving ? Mathf.Clamp01(Mathf.Min(next - first, end - next) / (.2f * spacing)) : 1;
-                        Vector2 tangent = (Vector2)camera.WorldToScreenPoint(point + delta) - screen;
-                        DrawFlightMark(camera, point, projected.z, tangent, pixelScale, tint,
-                            fade * Mathf.Lerp(1f, .8f, next / length));
+                        // Fade crowded dashes instead of popping them in and out at one pixel cutoff.
+                        float fade = previousScreen.HasValue
+                            ? Mathf.InverseLerp(minScreenGap * .4f, minScreenGap, Vector2.Distance(screen, previousScreen.Value))
+                            : 1f;
+                        if (fade > .01f)
+                        {
+                            Vector2 tangent = (Vector2)camera.WorldToScreenPoint(point + delta) - screen;
+                            DrawFlightMark(camera, point, projected.z, tangent, pixelScale, tint,
+                                fade * Mathf.Lerp(1f, .8f, next / length));
+                        }
                         previousScreen = screen;
-                        marks++;
                     }
+                    marks++;
                     next += spacing;
                 }
                 walked += segment;
@@ -237,15 +208,6 @@ namespace TumbangPreso
             AddTri(start - across, end + across, end - across, tint);
         }
 
-        private static bool ProjectRingPoint(Vector3 point, float referenceHeight, out Vector3 projected)
-        {
-            projected = point;
-            point.y = referenceHeight;
-            if (!Visual.WorldGround.TryBelow(point, 1.25f, 12f, out float floor)) return false;
-            projected.y = floor + FloorEpsilon;
-            return true;
-        }
-
         private void AddTri(Vector3 a, Vector3 b, Vector3 c, Color colour)
         {
             int index = _verts.Count;
@@ -257,7 +219,6 @@ namespace TumbangPreso
         private void OnDisable() => Clear();
         private void OnDestroy()
         {
-            if (_mesh != null) Destroy(_mesh);
             if (_flightMesh != null) Destroy(_flightMesh);
         }
     }

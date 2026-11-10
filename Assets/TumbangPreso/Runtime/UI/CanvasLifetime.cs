@@ -31,4 +31,28 @@ namespace TumbangPreso.UI
             if (_owner == null) Destroy(gameObject);
         }
     }
+
+    /// <summary>Gates detached match UI while leaving its owner and its lifetime running.</summary>
+    internal sealed class CleanFeedLayer : MonoBehaviour
+    {
+        private CanvasGroup _gate;
+
+        internal static void Attach(GameObject root) => root.AddComponent<CleanFeedLayer>();
+
+        private void Awake() => _gate = gameObject.AddComponent<CanvasGroup>();
+
+        private void OnEnable()
+        {
+            Hud.CleanFeedChanged += Apply;
+            Apply(Hud.Instance?.IsCleanFeed == true);
+        }
+
+        private void OnDisable() => Hud.CleanFeedChanged -= Apply;
+
+        private void Apply(bool hidden)
+        {
+            _gate.alpha = hidden ? 0 : 1;
+            _gate.interactable = _gate.blocksRaycasts = !hidden;
+        }
+    }
 }

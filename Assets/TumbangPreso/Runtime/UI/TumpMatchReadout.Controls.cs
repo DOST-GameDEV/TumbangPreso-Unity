@@ -11,9 +11,6 @@ namespace TumbangPreso.UI
         private readonly List<(Text Text, string Action)> _spectatorBindings = new();
         private int _spectatorBindingRevision = -1, _spectatorDeviceRevision = -1;
         private Text _directSeatKeys;
-        private Text _spectatorViewMode;
-        private float _spectatorStatusAt;
-        private bool _spectatorControlsShown;
         private Vector2 _helpViewport;
 
         private readonly List<(Image Icon, Text Words, Image Cap, string Action)> _spectatorKeys = new();
@@ -99,15 +96,8 @@ namespace TumbangPreso.UI
 
         private void TickSpectatorHelp(bool spectating, bool showControls)
         {
-            bool touch = TouchHud.ShouldShow;
-            if (touch) showControls = false;
-            if (spectating && _spectatorViewMode == null)
-            {
-                _spectatorViewMode = Ink(_root, "SpectatorViewMode", "", 28, false);
-                _spectatorViewMode.color = HudDraw.Honey;
-                Pin(_spectatorViewMode.rectTransform, new Vector2(.5f, 0), new Vector2(0, 84), new Vector2(1200, 40));
-            }
-            if (_spectatorViewMode != null) _spectatorViewMode.enabled = spectating;
+            if (TouchHud.ShouldShow) showControls = false;
+            _spectator.enabled = false;
             if (spectating && showControls && _spectatorHelp == null) BuildSpectatorHelp();
             if (_spectatorHelp != null)
             {
@@ -135,21 +125,6 @@ namespace TumbangPreso.UI
                         : "Left stick: move. Right stick: look. Follow a player, then switch first / third person.";
                 }
             }
-            _spectator.enabled = spectating;
-            if (!spectating) return;
-            // The restore hint stays visible when the full control list is hidden.
-            bool changed = _spectatorControlsShown != showControls;
-            _spectatorControlsShown = showControls;
-            if (!changed && Time.unscaledTime < _spectatorStatusAt) return;
-            _spectatorStatusAt = Time.unscaledTime + .15f;
-            if (_spectatorCamera == null) _spectatorCamera = FindAnyObjectByType<CameraSystem.SpectatorCamera>();
-            string mode = _spectatorCamera != null ? _spectatorCamera.ViewLabel : "SPECTATING";
-            if (_spectatorViewMode.text != mode) _spectatorViewMode.text = mode;
-            string hint = Hud.KeyLabelFor("SpectatorControls")
-                + (showControls ? " hide controls" : " show controls");
-            if (showControls) hint += "  |  " + Hud.KeyLabelFor("CleanFeed") + " hide HUD";
-            if (touch) hint = "Left stick: fly  |  Drag right: look  |  More tools: camera and match";
-            if (_spectator.text != hint) _spectator.text = hint;
         }
     }
 }

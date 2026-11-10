@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Reflection;
 using NUnit.Framework;
 using TumbangPreso.Visual;
 using UnityEngine;
@@ -36,31 +35,28 @@ namespace TumbangPreso.Tests
             Assert.AreEqual(At.y+.7925f, floor, .002f);
         }
 
-        private static Vector3 RingPoint(Vector3 point, float referenceHeight)
+        private static float Support(Vector3 point)
         {
-            var method = typeof(TrajectoryPreview).GetMethod("ProjectRingPoint", BindingFlags.NonPublic|BindingFlags.Static);
-            var args = new object[] { point, referenceHeight, Vector3.zero };
-            Assert.IsTrue((bool)method.Invoke(null,args)); return (Vector3)args[2];
+            Assert.IsTrue(WorldGround.TryBelow(point, 1.25f, 12f, out float floor));
+            return floor;
         }
         [Test]
-        public void ThrowRingFollowsBothSidesOfAStep()
+        public void FloorSupportDistinguishesBothSidesOfAStep()
         {
             Floor(new Vector3(0,-.5f,0),new Vector3(8,1,8));
             Floor(new Vector3(2,.3f,0),new Vector3(4,.6f,8));
-            var low=RingPoint(At+Vector3.left*.4f,At.y);
-            var high=RingPoint(At+Vector3.right*.4f,At.y);
-            Assert.AreEqual(At.y+TrajectoryPreview.FloorEpsilon,low.y,.002f);
-            Assert.AreEqual(At.y+.6f+TrajectoryPreview.FloorEpsilon,high.y,.002f);
+            Assert.AreEqual(At.y,Support(At+Vector3.left*.4f),.002f);
+            Assert.AreEqual(At.y+.6f,Support(At+Vector3.right*.4f),.002f);
         }
         [Test]
-        public void ThrowRingFollowsASlopedLandingSurface()
+        public void FloorSupportFollowsASlopedSurface()
         {
             var slab=Floor(Vector3.down*.5f,new Vector3(8,1,8),20);
             foreach(float x in new[]{-.4f,0,.4f})
             {
                 Vector3 point=At+Vector3.right*x;
                 Assert.IsTrue(slab.GetComponent<Collider>().Raycast(new Ray(point+Vector3.up*3,Vector3.down),out var hit,8));
-                Assert.AreEqual(hit.point.y+TrajectoryPreview.FloorEpsilon,RingPoint(point,At.y).y,.002f);
+                Assert.AreEqual(hit.point.y,Support(point),.002f);
             }
         }
     }

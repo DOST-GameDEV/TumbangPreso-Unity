@@ -20,25 +20,24 @@ namespace TumbangPreso.PlayTests
         }
         [UnityTearDown] public IEnumerator After()
         { if (_root != null) Object.Destroy(_root); yield return PlayModeWorld.Reset(); }
-        [UnityTest] public IEnumerator HiddenControlsRetainTheBoundRestoreHint()
+        [Test] public void HiddenControlsLeaveTheSpectatorViewClear()
         {
             _view.Tick(null, true, false, false, false);
-            Assert.IsTrue(_label.enabled, "Hiding controls also erased the only restore hint.");
-            StringAssert.Contains(Hud.KeyLabelFor("SpectatorControls"), _label.text);
-            StringAssert.Contains("show controls", _label.text);
-            StringAssert.DoesNotContain("AUTOPILOT", _label.text);
-            yield return TumpUiCapture.Capture("spectator-restore-hint-960", _view.Canvas, 960, 540, false);
-            yield return TumpUiCapture.Capture("spectator-restore-hint-wide", _view.Canvas, 1600, 680, false);
+            Assert.IsFalse(_label.enabled);
+            Assert.IsFalse(_view.Canvas.GetComponentsInChildren<Text>(true).Any(t => t.name == "SpectatorViewMode"));
         }
-        [Test] public void VisibleControlsKeepTheirHideAndCleanFeedHints()
+        [Test] public void VisibleControlsListTheCloseAndCleanFeedBindings()
         {
             _view.Tick(null, true, false, false, true);
-            Assert.IsTrue(_label.enabled); StringAssert.Contains("hide controls", _label.text);
-            StringAssert.Contains(Hud.KeyLabelFor("CleanFeed"), _label.text);
+            Assert.IsFalse(_label.enabled);
+            var panel = _view.Canvas.GetComponentsInChildren<RectTransform>(true)
+                .Single(t => t.name == "SpectatorControlsPanel");
+            Assert.IsTrue(panel.GetComponentsInChildren<RectTransform>().Any(t => t.name == "CleanFeedKey"));
+            Assert.IsTrue(panel.GetComponentsInChildren<RectTransform>().Any(t => t.name == "SpectatorControlsClose"));
         }
         [Test] public void PlayersDoNotReceiveTheSpectatorRestoreHint()
         { _view.Tick(null, false, false, false, false); Assert.IsFalse(_label.enabled); }
-        [UnityTest] public IEnumerator ControlsAreGroupedAndCanBeOpenedAndClosedWithoutLosingTheHint()
+        [UnityTest] public IEnumerator ControlsAreGroupedAndCloseWithoutLeavingAFooter()
         {
             _view.Tick(null, true, false, false, true);
             var panel = _view.Canvas.GetComponentsInChildren<RectTransform>(true)
@@ -46,12 +45,12 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(panel.gameObject.activeSelf);
             CollectionAssert.AreEquivalent(new[] { "WATCH", "FLY", "MATCH TIME", "CAMERA TOOLS" },
                 panel.GetComponentsInChildren<Text>().Where(t => t.name == "GroupHeading").Select(t => t.text).ToArray());
-            StringAssert.DoesNotContain("WATCH", _label.text, "The restore hint still contains the old wall of controls.");
+            Assert.IsFalse(_label.enabled);
             yield return TumpUiCapture.Capture("spectator-controls-grouped-960", _view.Canvas, 960, 540, false);
             yield return TumpUiCapture.Capture("spectator-controls-grouped-wide", _view.Canvas, 1600, 680, false);
             _view.Tick(null, true, false, false, false);
             Assert.IsFalse(panel.gameObject.activeSelf);
-            StringAssert.Contains("show controls", _label.text);
+            Assert.IsFalse(_label.enabled);
         }
     }
 }

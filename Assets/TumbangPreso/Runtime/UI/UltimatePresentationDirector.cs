@@ -393,6 +393,7 @@ namespace TumbangPreso.UI
             canvasGo.transform.SetParent(transform, false);
 
             _canvas = canvasGo.AddComponent<Canvas>();
+            CleanFeedLayer.Attach(canvasGo);
             _canvas.renderMode = RenderMode.ScreenSpaceOverlay;
 
             // ⚠️ UNDER THE REPLAY OVERLAY (500) AND OVER THE HUD. A replay is a picture of a

@@ -1092,10 +1092,16 @@ namespace TumbangPreso.UI
         /// </summary>
         public void ExitSpectatorMode()
         {
-            if (_nativeReadout != null) { NativeSpectator(false); return; }
+            if (_nativeReadout != null)
+            {
+                NativeSpectator(false);
+                SetCleanFeed(false);
+                return;
+            }
             if (!_spectating) return;
 
             _spectating = false;
+            SetCleanFeed(false);
 
             // The caster cell's width, given back by the same arithmetic that took it. See
             // `EnterSpectatorMode`: stated rather than rounded so moving `CasterStateWidth`
@@ -1265,6 +1271,7 @@ namespace TumbangPreso.UI
         }
 
         public bool IsCleanFeed => _cleanFeed;
+        internal static event System.Action<bool> CleanFeedChanged;
 
         /// <summary>
         /// § WHAT THE CLEAN FEED HIDES. Anything parented here disappears with H.
@@ -1346,6 +1353,7 @@ namespace TumbangPreso.UI
             }
 
             if (_canvas != null) _canvas.gameObject.SetActive(!on);
+            CleanFeedChanged?.Invoke(on);
         }
 
         /// <summary>

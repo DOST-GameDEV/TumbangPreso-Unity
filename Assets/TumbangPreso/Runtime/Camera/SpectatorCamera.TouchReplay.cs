@@ -13,6 +13,8 @@ namespace TumbangPreso.CameraSystem
             var safe = UiSafeArea.Content(_replayCanvas, "ReplaySafeArea");
             _replayLabel.rectTransform.SetParent(safe, false);
             _replayExitLabel.rectTransform.SetParent(safe, false);
+            CleanFeedLayer.Attach(_replayLabel.gameObject);
+            CleanFeedLayer.Attach(_replayExitLabel.gameObject);
             var rect = OwnerUiLayout.Rect(safe, "ReplayReturnToLive");
             rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(1, 0);
             rect.anchoredPosition = new Vector2(-28, 20); rect.sizeDelta = new Vector2(300, 144);

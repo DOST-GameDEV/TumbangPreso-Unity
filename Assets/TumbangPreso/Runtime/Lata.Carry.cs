@@ -72,6 +72,7 @@ namespace TumbangPreso
             => _carrierBody != null && _carrierBody.PlayerSlot == CarrierSlot ? _carrierBody : GameServices.Round?.PlayerAt(CarrierSlot);
 
         private float _carryStartDistance = 1.0f;
+        private float _setDownStartProgress;
         private float _carryBestDistance, _carryStuckFor;
         private bool _carryPredicted;
         private float _carryPredictedAt;
@@ -95,24 +96,26 @@ namespace TumbangPreso
         public Vector3 Mark => _mark;
 
         /// <summary>
-        /// 0 to 1, how far through the whole reset this seat is, for the HUD, the clock and the readouts: the pickup fills
-        /// the first fifth, the walk the next two thirds by distance covered, the set-down the rest.
+        /// Progress through the actual lift and set-down clocks, with a distance-based share for
+        /// the walk only when the defender has ground to cover.
         /// </summary>
         public float CarryProgressFor(int slot)
         {
             if (!IsCarriedBy(slot)) return 0.0f;
+            float arrival = HoldReach + ArriveSlack;
+            float walk = Mathf.Max(0, _carryStartDistance - arrival);
+            float total = PickupSeconds + walk / Balance.DefenderWalkSpeed + SetDownSeconds;
             switch (Carrying)
             {
-                case CarryPhase.Pickup: return Mathf.Lerp(.02f, .2f, Mathf.Clamp01(CarryAge / PickupSeconds));
+                case CarryPhase.Pickup: return Mathf.Max(.001f, Mathf.Min(CarryAge, PickupSeconds) / total);
                 case CarryPhase.Carry:
                 {
-                    var who = CarrierBody;
-                    float walk = Mathf.Max(0.0f, _carryStartDistance - HoldReach);
-                    float left = Mathf.Max(0.0f, CarryDistanceLeft(who) - HoldReach);
-                    float done = walk > .01f ? 1.0f - Mathf.Clamp01(left / walk) : 1.0f;
-                    return Mathf.Lerp(.2f, .85f, done);
+                    float left = Mathf.Max(0, CarryDistanceLeft(CarrierBody) - arrival);
+                    float covered = Mathf.Clamp(walk - left, 0, walk);
+                    return (PickupSeconds + covered / Balance.DefenderWalkSpeed) / total;
                 }
-                case CarryPhase.SetDown: return Mathf.Lerp(.85f, 1.0f, Mathf.Clamp01(CarryAge / SetDownSeconds));
+                case CarryPhase.SetDown:
+                    return Mathf.Lerp(_setDownStartProgress, 1f, Mathf.Clamp01(CarryAge / SetDownSeconds));
             }
             return 0.0f;
         }
@@ -212,6 +215,12 @@ namespace TumbangPreso
         private void BeginCarryState(int slot, CarryPhase phase, float age)
         {
             bool fresh = !IsCarriedBy(slot);
+            if (phase == CarryPhase.SetDown)
+            {
+                // A blocked walk can plant early. Start from the last actual progress so the
+                // bar remains continuous at that transition as well.
+                _setDownStartProgress = fresh ? PickupSeconds / (PickupSeconds + SetDownSeconds) : CarryProgressFor(slot);
+            }
             CarrierSlot = slot;
             Carrying = phase;
             CarryAge = age;
@@ -309,8 +318,8 @@ namespace TumbangPreso
             {
                 case CarryPhase.Pickup:
                     if (CarryAge < PickupSeconds) return;
-                    Carrying = CarryPhase.Carry; CarryAge = 0.0f;
-                    if (CarryDistanceLeft(who) <= HoldReach + ArriveSlack) { Carrying = CarryPhase.SetDown; }
+                    var next = CarryDistanceLeft(who) <= HoldReach + ArriveSlack ? CarryPhase.SetDown : CarryPhase.Carry;
+                    BeginCarryState(CarrierSlot, next, 0);
                     Net.MatchRpc.Instance?.BroadcastLataState();
                     return;
 
@@ -323,7 +332,7 @@ namespace TumbangPreso
                     float left = CarryDistanceLeft(who);
                     if (left <= HoldReach + ArriveSlack)
                     {
-                        Carrying = CarryPhase.SetDown; CarryAge = 0.0f;
+                        BeginCarryState(CarrierSlot, CarryPhase.SetDown, 0);
                         Net.MatchRpc.Instance?.BroadcastLataState();
                         return;
                     }
@@ -332,7 +341,7 @@ namespace TumbangPreso
                     {
                         // Something stands on the mark (a body, most often): within the old reset's own reach the taya
                         // leans in and plants it rather than walk into them for ever.
-                        Carrying = CarryPhase.SetDown; CarryAge = 0.0f;
+                        BeginCarryState(CarrierSlot, CarryPhase.SetDown, 0);
                         Net.MatchRpc.Instance?.BroadcastLataState();
                     }
                     else if (_carryStuckFor > StuckSeconds)

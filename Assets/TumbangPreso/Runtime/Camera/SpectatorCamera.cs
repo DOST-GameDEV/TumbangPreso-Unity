@@ -1936,12 +1936,14 @@ namespace TumbangPreso.CameraSystem
             blendRt.offsetMin = Vector2.zero;
             blendRt.offsetMax = Vector2.zero;
 
-            // The same camcorder frame as every other replay in the game.
-            UI.ReplayOverlay.Build(panelGo.transform, "REPLAY", false);
+            var chrome = UI.OwnerUiLayout.Rect(panelGo.transform, "ManualReplayChrome");
+            UI.OwnerUiLayout.Fill(chrome);
+            UI.CleanFeedLayer.Attach(chrome.gameObject);
+            UI.ReplayOverlay.Build(chrome, "REPLAY", false);
 
             var labelGo = new GameObject("ReplayLabel");
-            BuildReplayBand(panelGo.transform, "ReplayHeadingBand", true, 76);
-            labelGo.transform.SetParent(panelGo.transform, false);
+            BuildReplayBand(chrome, "ReplayHeadingBand", true, 76);
+            labelGo.transform.SetParent(chrome, false);
             _replayLabel = labelGo.AddComponent<Text>();
             _replayLabel.font = UI.InGameTypography.Resolve(UI.OwnerUiTheme.Current.Display, true, _replayLabel);
             _replayLabel.fontSize = 36;
@@ -1985,8 +1987,8 @@ namespace TumbangPreso.CameraSystem
             // -------------------------------------------------------------------
 
             var exitGo = new GameObject("ReplayExitHint");
-            BuildReplayBand(panelGo.transform, "ReplayFooterBand", false, 72);
-            exitGo.transform.SetParent(panelGo.transform, false);
+            BuildReplayBand(chrome, "ReplayFooterBand", false, 72);
+            exitGo.transform.SetParent(chrome, false);
             _replayExitLabel = exitGo.AddComponent<Text>();
             _replayExitLabel.font = UI.InGameTypography.Resolve(UI.OwnerUiTheme.Current.Reading, false, _replayExitLabel);
             _replayExitLabel.fontSize = 28;
@@ -2011,7 +2013,7 @@ namespace TumbangPreso.CameraSystem
 
             // The progress bar: a track along the very bottom edge with an amber fill.
             var trackGo = new GameObject("ReplayProgressTrack");
-            trackGo.transform.SetParent(panelGo.transform, false);
+            trackGo.transform.SetParent(chrome, false);
             var track = trackGo.AddComponent<Image>();
             track.color = new Color(UI.UiTheme.Ink.r, UI.UiTheme.Ink.g, UI.UiTheme.Ink.b, 0.55f);
             track.raycastTarget = false;

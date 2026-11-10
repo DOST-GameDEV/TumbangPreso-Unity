@@ -261,6 +261,7 @@ namespace TumbangPreso.UI.Hub
 
         private float _nextRefresh;
         private bool _playShowsQueue;
+        private string _shownName, _shownTag;
 
         public override void Tick()
         {
@@ -272,21 +273,32 @@ namespace TumbangPreso.UI.Hub
                 _playShowsQueue = queueing;
                 HubBoard.SetWords(_playLabel, queueing ? "IN QUEUE" : "PLAY", _playSpec);
             }
-            if (Time.unscaledTime > _nextRefresh) { _nextRefresh = Time.unscaledTime + 1.0f; RefreshNotices(); }
+            if (Time.unscaledTime > _nextRefresh)
+            {
+                _nextRefresh = Time.unscaledTime + 1.0f;
+                RefreshIdentity();
+                RefreshNotices();
+            }
+        }
+
+        private void RefreshIdentity()
+        {
+            var account = GameServices.Account;
+            var settings = Settings.SettingsStore.Current;
+            string name = account != null && !string.IsNullOrWhiteSpace(account.DisplayName) ? account.DisplayName
+                        : !string.IsNullOrWhiteSpace(settings.PlayerName) ? settings.PlayerName : "PLAYER";
+            string tag = account != null ? account.Discriminator : "";
+            string label = account != null && account.IsGuest ? "GUEST" : string.IsNullOrEmpty(tag) ? "OFFLINE" : "#" + tag;
+            if (name == _shownName && label == _shownTag) return;
+            _shownName = name; _shownTag = label;
+            HubBoard.SetWords(_tag, label, _tagSpec);
+            HubBoard.SetWords(_name, name, _nameSpec, NameLineRoom - HubPlateFit.Gap - _tag.preferredWidth * 0.5f);
         }
 
         private void Refresh()
         {
             ApplyChoice();
-            var settings = Settings.SettingsStore.Current;
-            var account = GameServices.Account;
-
-            string name = account != null && !string.IsNullOrWhiteSpace(account.DisplayName) ? account.DisplayName
-                        : !string.IsNullOrWhiteSpace(settings.PlayerName) ? settings.PlayerName : "PLAYER";
-            string tag = account != null ? account.Discriminator : "";
-            HubBoard.SetWords(_tag, account != null && account.IsGuest ? "GUEST" : string.IsNullOrEmpty(tag) ? "OFFLINE" : "#" + tag, _tagSpec);
-            HubBoard.SetWords(_name, name, _nameSpec, NameLineRoom - HubPlateFit.Gap - _tag.preferredWidth * 0.5f);
-
+            RefreshIdentity();
             var profile = GameServices.Career?.Profile;
             int level = profile != null ? Mathf.Max(1, profile.Level) : 1;
             _level.text = level.ToString("00");

@@ -61,7 +61,7 @@ namespace TumbangPreso.CameraSystem
             _retired.Clear();
             foreach (var pair in _copies) if (!_seen.Contains(pair.Key)) _retired.Add(pair.Key);
             foreach (var key in _retired) { DestroyCopy(_copies[key]); _copies.Remove(key); }
-            if (view.Marker.Present)
+            if (view.Marker.Present && UI.Hud.Instance?.IsCleanFeed != true)
             {
                 if (_marker == null) _marker = Visual.GroundReticle.Create(_parent);
                 _marker.transform.localScale = Divide(Vector3.one, _parent != null ? _parent.lossyScale : Vector3.one);

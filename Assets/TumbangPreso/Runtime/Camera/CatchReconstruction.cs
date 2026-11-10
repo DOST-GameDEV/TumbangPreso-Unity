@@ -130,13 +130,9 @@ namespace TumbangPreso.CameraSystem
         private bool _touchShown, _poseAtTouch;
         // The run the taya arrives with, along the line. They carry a little of it past the touch instead of stopping dead.
         private float _actorCarry;
-        // ⚠️ SPECTATORS SEE IT TOO (owner, October 22: *"make it seaable ren for spectator"*), as a corner
-        // window over the live picture: a watcher has no stun to fill and must not lose the match behind it.
-        private bool _spectatorView;
-        public const float SpectatorWindowScale = .36f;
-        private static bool Watching => GameLaunch.Spectator;
         private static bool Watches(CameraRig rig, CharacterMotor victim)
-            => Watching || (rig != null && victim != null && rig.IsFollowing(victim));
+            => !GameLaunch.Spectator && Hud.Instance?.IsCleanFeed != true
+                && rig != null && victim != null && rig.IsFollowing(victim);
         private Image _flash;
 
         /// <summary>
@@ -240,11 +236,10 @@ namespace TumbangPreso.CameraSystem
             _actorCopy = actor.Clone(_stage.transform); _victimCopy = victimTrack.Clone(_stage.transform);
             if (_actorCopy == null || _victimCopy == null) { End(); return; }
             _actorTrack = actor; _victimTrack = victimTrack; _victim = victim;
-            _spectatorView = Watching; _rig = _spectatorView ? null : rig;
-            _contact = contact; _impact = contact + HandArrives; _began = Time.unscaledTime + (_spectatorView ? 0 : VictimHitBeat);
+            _rig = rig;
+            _contact = contact; _impact = contact + HandArrives; _began = Time.unscaledTime + VictimHitBeat;
             _duration = Mathf.Min(ReplayDuration, victim.StunLeft - FadeDuration - VictimHitBeat);
-            _fade = FadeDuration; _skipHeld = !_spectatorView && victim.Intent.Pressed(Verb.Interact);
-            if (_spectatorView) _duration = ReplayDuration;
+            _fade = FadeDuration; _skipHeld = victim.Intent.Pressed(Verb.Interact);
             _round = GameServices.Match != null ? GameServices.Match.RoundNumber : 0;
             _matchId = GameServices.Match != null ? GameServices.Match.PresentationMatchId : 0;
             _clipStart = Mathf.Max(contact - LeadSeconds, actor.Oldest, victimTrack.Oldest);
@@ -573,19 +568,7 @@ namespace TumbangPreso.CameraSystem
             _target.Create(); _camera.targetTexture = _target;
             _canvas = OwnerUiLayout.Canvas(transform, "CatchReconstructionCanvas", 180);
             var focus = _canvas.GetComponent<InputLayer.ScreenFocus>(); if (focus != null) focus.enabled = false;
-            // The whole replay is drawn inside one full-screen frame; a spectator's is that frame scaled into
-            // the lower right corner, so the camcorder brackets and TAGGED plate keep their proportions.
             var frame = OwnerUiLayout.Rect(_canvas.transform, "CatchReplayFrame"); OwnerUiLayout.Fill(frame);
-            if (_spectatorView)
-            {
-                // Middle right: the controls card owns the bottom and the event feed the top right.
-                frame.pivot = new Vector2(1, .5f);
-                frame.anchoredPosition = new Vector2(-40, 40);
-                frame.localScale = Vector3.one * SpectatorWindowScale;
-                var border = OwnerUiLayout.Rect(frame, "SpectatorReplayBorder").gameObject.AddComponent<Image>();
-                OwnerUiLayout.Fill(border.rectTransform); border.raycastTarget = false; border.color = Color.white;
-                border.rectTransform.offsetMin = new Vector2(-14, -14); border.rectTransform.offsetMax = new Vector2(14, 14);
-            }
             _picture = OwnerUiLayout.Rect(frame, "RecordedCatch").gameObject.AddComponent<RawImage>();
             OwnerUiLayout.Fill(_picture.rectTransform); _picture.texture = _target; _picture.raycastTarget = false;
             // The contact flash sits between the picture and the camcorder frame.
@@ -594,19 +577,18 @@ namespace TumbangPreso.CameraSystem
             _impactLook = ReplayImpact.Build(frame);
             // The camcorder frame is the only thing over the picture (owner, 2026-10-22): no CAUGHT BY caption.
             // Its TAGGED plate waits for the touch and slams in on it.
-            _overlay = ReplayOverlay.Build(frame, "TAGGED", !_spectatorView);
+            _overlay = ReplayOverlay.Build(frame, "TAGGED", true);
             _overlay.HoldAnnouncement();
-            // The victim's whole screen jumps back in time, so a wipe says so. A spectator's corner window has no cut to hide.
+            // The victim's whole screen jumps back in time, so a wipe says so.
             _exitSwept = false;
-            _sweepWaiting = !_spectatorView;
+            _sweepWaiting = true;
         }
         private void LateUpdate()
         {
             TryPending();
             if (!Playing) return;
             float elapsed = Time.unscaledTime - _began;
-            bool victimGone = _spectatorView ? !Watching
-                : _rig == null || !_rig.IsFollowing(_victim) || _victim.StunLeft <= .18f || _victim.CanAct();
+            bool victimGone = !Watches(_rig, _victim) || _victim.StunLeft <= .18f || _victim.CanAct();
             // ⚠️ THE ULTIMATE WINS THE SCREEN (owner, 2026-11-03: "i cant tell whats happening when i get tagged and then
             // someone ults"). It is shared and decides play; this replay is one player's and skippable. It ends, and does not return.
             if (UltimateOwnsScreen || _victim == null || victimGone || Panel.AnyOpen || !Settings.SettingsStore.Current.CinematicCameraMotion ||
@@ -615,11 +597,11 @@ namespace TumbangPreso.CameraSystem
                 GameServices.Match.PresentationMatchId != _matchId || elapsed >= _duration)
             { End(); return; }
             // A fresh Interact press leaves the replay: it shortens to one crossfade from now.
-            bool skip = !_spectatorView && _victim.Intent.Pressed(Verb.Interact);
+            bool skip = _victim.Intent.Pressed(Verb.Interact);
             if (skip && !_skipHeld && _duration - elapsed > SkipFadeDuration) { _fade = SkipFadeDuration; _duration = elapsed + SkipFadeDuration; }
             _skipHeld = skip;
             if (_sweepWaiting && elapsed >= 0) { _sweepWaiting = false; ReplayStinger.Sweep(transform, HudDraw.Honey); }
-            if (!_spectatorView && !_exitSwept && _duration - elapsed <= ReplayStinger.InSeconds)
+            if (!_exitSwept && _duration - elapsed <= ReplayStinger.InSeconds)
             { _exitSwept = true; ReplayStinger.Sweep(transform, HudDraw.Honey, true); }
             float alpha = Mathf.Clamp01((_duration - elapsed) / _fade) * Mathf.Clamp01(elapsed / .12f);
             // The hold reads as a freeze frame: the picture dims a little under the TAGGED plate.
@@ -638,17 +620,16 @@ namespace TumbangPreso.CameraSystem
             float sinceContact = elapsed - ContactPlayback;
             var look = Settings.SettingsStore.Current;
             // The picture itself takes the hit, once, and settles before the held frame's own push.
-            if (!_spectatorView && !look.ReducedUiMotion && sinceContact >= 0 && !_freezeCaptured)
+            if (!look.ReducedUiMotion && sinceContact >= 0 && !_freezeCaptured)
                 _picture.rectTransform.localScale = Vector3.one * (1 + .045f * Mathf.Exp(-sinceContact * 9));
             float flash = sinceContact < 0 || look.ReducedEffects ? 0
                 : .1f * Mathf.Clamp01(1 - sinceContact / .12f) * look.EffectiveFlashIntensity;
             _flash.color = new Color(1, 1, 1, flash * alpha);
             // THE HOLD IS THE CAPTURED IMAGE, NOTHING LIVE RENDERS INTO IT, and the live match never pauses behind it.
-            // Its push-in is the frozen picture itself easing larger, not the camera rendering again. A spectator's
-            // corner window keeps its size, so the picture never spills out of its border.
+            // Its push-in is the frozen picture itself easing larger.
             if (_freezeCaptured)
             {
-                float push = _spectatorView ? 0 : Mathf.SmoothStep(0, 1, Mathf.Clamp01((elapsed - AnimationDuration) / FreezeDuration));
+                float push = Mathf.SmoothStep(0, 1, Mathf.Clamp01((elapsed - AnimationDuration) / FreezeDuration));
                 _picture.rectTransform.localScale = Vector3.one * Mathf.Lerp(1, 1.1f, push);
                 // Never keep an obstructed shot over the live recovery view once the world has moved on.
                 Vector3 frozenOffset = _camera.transform.position - _shotFocus;

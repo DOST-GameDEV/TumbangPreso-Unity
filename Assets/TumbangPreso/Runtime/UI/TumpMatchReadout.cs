@@ -215,7 +215,7 @@ namespace TumbangPreso.UI
             _crosshair.enabled = !spectating && local != null && round.RoundActive;
             if(_aimOwner!=local){_aimOwner=local;_aimCarrier=local!=null?local.GetComponent<Carrier>():null;}
             Prompts(local, spectating);
-            _effects.Tick(local, spectating, Canvas.enabled && _approachCan && !ScreenTakeover.AnyOpen && !PresentationClock.Held);
+            _effects.Tick(local, spectating);
             Warnings(local, spectating);
             _powers.Tick(local != null ? local.GetComponent<Abilities.HeroAbilitySystem>() : null,
                 !spectating && !hidePowers && SceneFlow.SelectedMode == GameMode.HeroStrike);
@@ -312,8 +312,12 @@ namespace TumbangPreso.UI
             // VISUAL-1.4: the can's state is one glyph in the clock plate for players and
             // spectators alike, so the corner readout that said it in words stays built (the
             // reading layout and probes address it by name) and is never shown.
-            var lata = GameServices.Round.Lata;
+            var round = GameServices.Round;
+            var lata = round.Lata;
             MatchBarCan(lata);
+            if (!training && !spectating && local != null && local.IsDefender && round.RoundActive &&
+                (round.IsTayaCampPenaltyActive || round.IsCanDownPenaltyActive))
+                _round.text = "LOSING POINTS";
             _canRoot.gameObject.SetActive(false);
             if (lata == null || !spectating) return;
             _canState.text = lata.IsUpright ? "Can upright" : "Can down";
@@ -384,11 +388,11 @@ namespace TumbangPreso.UI
                 _status[index].enabled = true; _status[index].text = row.Label + (row.Timed ? $" · {row.Remaining:0.0}s" : ""); index++;
             }
         }
-        private bool _defenderTaskShown, _approachCan;
+        private bool _defenderTaskShown;
 
         private void Prompts(CharacterMotor local, bool spectating)
         {
-            _defenderTaskShown = _approachCan = false;
+            _defenderTaskShown = false;
             // The held reference and the emote wheel own the screen while open; the prompt drew over both (QA, 2026-11-08).
             bool covered = TumpPowerReadout.ReferenceOpen || EmoteWheel.AnyOpen;
             _promptRoot.gameObject.SetActive(local != null && !spectating && !covered);
@@ -397,6 +401,12 @@ namespace TumbangPreso.UI
             if (_bindingGlyph != null) _bindingGlyph.enabled = false;
             _prompt.color = PromptInk;
             if(HalftimePresentation.Playing){_prompt.text="HALFTIME";_context.text="Next round in "+Mathf.CeilToInt(HalftimePresentation.Instance.Remaining)+"s";return;}
+            if (BufferSkipVote.Showing)
+            {
+                BindingPrompt("ReadyUp", "Skip warmup");
+                _context.text = $"Scores paused · {BufferSkipVote.Votes}/{BufferSkipVote.VotesNeeded} ready";
+                return;
+            }
             var carrier = local.GetComponent<Carrier>(); var round = GameServices.Round;
             if (local.IsTripped)
             {
@@ -419,11 +429,6 @@ namespace TumbangPreso.UI
                 Progress(local.BreakFreeProgress);
                 if (Hud.OnTouch) TouchHud.Emphasise(Verb.Interact);
                 return;
-            }
-            if (BufferSkipVote.Showing)
-            {
-                _prompt.text = Hud.PressCue("ReadyUp") + "Skip warmup";
-                _context.text = "Scores paused" + (BufferSkipVote.VotesNeeded > 1 ? $" · {BufferSkipVote.Votes}/{BufferSkipVote.VotesNeeded} ready" : ""); return;
             }
             if (ReadyWindow)
             {
@@ -516,7 +521,6 @@ namespace TumbangPreso.UI
                 if (round.IsTayaCampWarningActive)
                 {
                     _prompt.text = "Step away from the can";
-                    if (round.IsTayaCampPenaltyActive) _context.text = "Losing points";
                 }
                 else if (local.TryGetComponent(out CombatVerbs combat) && combat.PunchCooldownLeft <= 0 && TayaInReach(local, round))
                 {
@@ -526,7 +530,6 @@ namespace TumbangPreso.UI
                 return;
             }
 
-            if (round.IsCanDownPenaltyActive) _context.text = "Losing points";
             if (Abilities.NemuLookout.Keeping(can)) { _prompt.text = "Keeper is restoring the can"; return; }
             if (can.IsHot)
             {
@@ -555,7 +558,6 @@ namespace TumbangPreso.UI
                 if (Hud.OnTouch) TouchHud.Emphasise(Verb.Grab);
                 return;
             }
-            _approachCan = true;
         }
         /// <summary>
         /// SOULBOUND (owner 2026-10-21): next to one of her dormant ghosts, Nemu's Grab reads like the can's reset and the

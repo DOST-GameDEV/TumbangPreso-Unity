@@ -305,13 +305,15 @@ namespace TumbangPreso.UI
         /// <summary>Fit only a changed score, leaving normal three-digit totals at their authored size. `slack` keeps the glyphs
         /// that far inside the box, because the width measured here shifts a unit or two when the window is resized.</summary>
         public static void PaintScoreValue(Text label, int value, int size = ScoreFont, float slack = 0)
+            => PaintScoreText(label, ScoreTextForChip(value), size, slack, ScoreFontFloor);
+
+        internal static void PaintScoreText(Text label, string shown, int size, float slack, int minimumSize)
         {
-            string shown = ScoreTextForChip(value);
             if (label.text == shown) return;
             label.text = shown;
             label.fontSize = size;
-            while (label.fontSize > ScoreFontFloor && label.preferredWidth > label.rectTransform.rect.width - slack)
-                label.fontSize -= 2;
+            while (label.fontSize > minimumSize && label.preferredWidth > label.rectTransform.rect.width - slack)
+                label.fontSize = Mathf.Max(minimumSize, label.fontSize - 2);
         }
 
         private void BuildStaminaArc()

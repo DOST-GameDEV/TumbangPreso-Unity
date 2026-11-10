@@ -57,9 +57,9 @@ namespace TumbangPreso.PlayTests
             Assert.That(landing.y, Is.EqualTo(ground + TrajectoryPreview.FloorEpsilon).Within(.001f));
         }
 
-        [Test] public void FlatFlightMatchesTheGroundCircle() => Equivalent(0, 0, false);
+        [Test] public void FlatFlightMatchesThePredictedLanding() => Equivalent(0, 0, false);
         [Test] public void RaisedGroundAndCurveMatchRealFlight() => Equivalent(.6f, .65f, false);
-        [Test] public void BankShotMatchesTheGroundCircle() => Equivalent(0, .9f, true);
+        [Test] public void BankShotMatchesThePredictedLanding() => Equivalent(0, .9f, true);
 
         [UnityTest] public IEnumerator UphillFlightRemainsReadableAboveTheLaunchHeight()
         {
@@ -75,8 +75,10 @@ namespace TumbangPreso.PlayTests
             camera.transform.SetPositionAndRotation(origin - Vector3.forward * .15f, Quaternion.Euler(-14, 0, 0));
             var light = Track(new GameObject("FlightReviewLight")).AddComponent<Light>();
             light.type = LightType.Directional; light.transform.rotation = Quaternion.Euler(45, -35, 0);
-            typeof(TrajectoryPreview).GetMethod("DrawFlight", BindingFlags.Instance | BindingFlags.NonPublic)
-                .Invoke(guide, new object[] { camera, new Color(1, .92f, .58f, .92f) });
+            var hidden = BindingFlags.Instance | BindingFlags.NonPublic;
+            var path = typeof(TrajectoryPreview).GetField("_path", hidden).GetValue(guide);
+            typeof(TrajectoryPreview).GetMethod("DrawFlight", hidden)
+                .Invoke(guide, new object[] { camera, new Color(1, .92f, .58f, .92f), path });
             Assert.IsTrue(guide.FlightVisible);
             var mesh = guide.transform.Find("FlightPath").GetComponent<MeshFilter>().sharedMesh;
             Assert.Greater(mesh.bounds.max.y, landing.y + .4f);
@@ -108,7 +110,7 @@ namespace TumbangPreso.PlayTests
             Assert.That(query(Vector3.up * 3, .045f), Is.EqualTo(1.485f).Within(.001f), "A full nonalloc buffer must not silently lose the highest support.");
         }
 
-        [UnityTest, Timeout(90000)] public IEnumerator TheRealLocalChargeDrawsFlightAndLandingAndReleaseHidesBoth()
+        [UnityTest, Timeout(90000)] public IEnumerator LocalChargeDrawsASteadyFlightGuideWithoutAGroundRing()
         {
             yield return MapRetrievalProbe.Load(UI.SceneFlow.Eskinita);
             var ready = Object.FindFirstObjectByType<ReadyGate>();
@@ -135,7 +137,7 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(carrier.IsCharging);
             var guide = GameObject.Find("~AimArc1").GetComponent<TrajectoryPreview>();
             typeof(TrajectoryPreview).GetMethod("Rebuild", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(guide, null);
-            Assert.IsTrue(guide.LandingVisible);
+            Assert.IsNull(guide.GetComponent<MeshRenderer>(), "The old ground circle must not be rendered.");
             Assert.IsTrue(guide.FlightVisible);
             var flightMesh = guide.transform.Find("FlightPath").GetComponent<MeshFilter>().sharedMesh;
             Assert.Greater(flightMesh.bounds.max.y, guide.LandingPoint.y + .2f, "Flight guidance has to leave the floor.");
@@ -144,34 +146,36 @@ namespace TumbangPreso.PlayTests
                 "Keep the path sparse at full charge.");
             Debug.Log("Landing review point=" + guide.LandingPoint + " viewport=" + rig.Camera.WorldToViewportPoint(guide.LandingPoint)
                 + " camera=" + rig.Camera.transform.position + " facing=" + rig.Camera.transform.forward + " rigLocal=" + rig.IsLocalFpp);
-            foreach (var vertex in guide.GetComponent<MeshFilter>().sharedMesh.vertices)
-            {
-                Assert.That(vertex.y, Is.EqualTo(guide.LandingPoint.y).Within(.001));
-                Assert.Less(Vector3.Distance(vertex, guide.LandingPoint), .6f, "The landing circle stays on its own mesh.");
-            }
-            // Exercise the real mesh between two prediction ticks. Prediction remains exact;
-            // only the visible centre travels linearly at render cadence.
             var flags=BindingFlags.Instance|BindingFlags.NonPublic;
-            var exact=guide.LandingPoint;var from=exact+Vector3.right*.4f;
-            typeof(TrajectoryPreview).GetField("_drawFrom",flags).SetValue(guide,from);
-            typeof(TrajectoryPreview).GetField("_drawStart",flags).SetValue(guide,Time.unscaledTime);
+            var exact=guide.LandingPoint;
+            var target=(List<Vector3>)typeof(TrajectoryPreview).GetField("_path",flags).GetValue(guide);
+            var previous=(List<Vector3>)typeof(TrajectoryPreview).GetField("_fromPath",flags).GetValue(guide);
+            previous.Clear();
+            foreach (var point in target) previous.Add(point + Vector3.right * .4f);
             var draw=typeof(TrajectoryPreview).GetMethod("DrawInterpolated",flags);
             float start=Time.unscaledTime;
+            typeof(TrajectoryPreview).GetField("_drawStart",flags).SetValue(guide,start);
+            draw.Invoke(guide,new object[]{start});
+            float first=flightMesh.bounds.center.x;
             draw.Invoke(guide,new object[]{start+TrajectoryPreview.PredictionInterval*.5f});
-            Assert.Less(Vector3.Distance(guide.DisplayedLandingPoint,Vector3.Lerp(from,exact,.5f)),.002f);
-            Assert.AreEqual(exact,guide.LandingPoint,"Presentation may not rewrite the ballistic prediction.");
+            float middle=flightMesh.bounds.center.x;
             draw.Invoke(guide,new object[]{start+TrajectoryPreview.PredictionInterval*2});
-            Assert.Less(Vector3.Distance(guide.DisplayedLandingPoint,exact),.001f,"Never overshoot a landing target.");
-            const string output = "Logs/tj-cadena-fixes/trajectory";
+            Assert.That(middle, Is.InRange(flightMesh.bounds.center.x + .04f, first - .04f),
+                "The drawn path should move between predictions instead of snapping.");
+            Assert.AreEqual(exact,guide.LandingPoint,"Presentation may not rewrite the ballistic prediction.");
+            var settled=flightMesh.vertices;
+            draw.Invoke(guide,new object[]{start+1f});
+            CollectionAssert.AreEqual(settled,flightMesh.vertices,"Steady aim must not make the dashes slide or pop.");
+            const string output = "Logs/steady-throw-guide";
             System.IO.Directory.CreateDirectory(output);
             typeof(ThrowAimIntegrationProbe).GetMethod("CaptureGuideDifference", BindingFlags.Static | BindingFlags.NonPublic)
-                .Invoke(null, new object[] { rig.Camera, guide, output, "landing-visible" });
-            yield return GameplayShots.Render(rig.Camera, "Flight-and-landing-charge", true, output);
-            Assert.IsTrue(guide.LandingVisible, "Actual render frames must retain the local landing circle. charged=" + carrier.IsCharging
+                .Invoke(null, new object[] { rig.Camera, guide, output, "flight-visible" });
+            yield return GameplayShots.Render(rig.Camera, "Flight-guide-charge", true, output);
+            Assert.IsTrue(guide.FlightVisible, "Actual render frames must retain the local flight path. charged=" + carrier.IsCharging
                 + " held=" + (carrier.Held != null) + " round=" + GameServices.Round.RoundActive + " brain=" + (who.GetComponent<AIController>()?.enabled == true)
                 + " main=" + (Camera.main == rig.Camera) + " local=" + rig.IsLocalFpp + " follows=" + rig.IsFollowing(who));
             who.Intent.Set(Verb.SpecialAbility, false); step.Invoke(carrier, new object[] { .01f });
-            guide.SendMessage("LateUpdate"); Assert.IsFalse(guide.LandingVisible);
+            guide.SendMessage("LateUpdate");
             Assert.IsFalse(guide.FlightVisible);
         }
     }

@@ -344,7 +344,10 @@ namespace TumbangPreso.UI
 
                 cells[0].text = drawn && tiedAtTop ? (_nativeResult ? "TIE" : "=") : $"{i + 1}";
                 cells[1].text = NameFor(slot);
-                cells[2].text = $"{points} PTS";
+                string score = $"{points} PTS";
+                // Leave room for the wider glyphs that can result from rounding at another canvas scale.
+                if (_nativeResult) TumpMatchReadout.PaintScoreText(cells[2], score, _board ? 52 : 44, _board ? 24 : 16, 16);
+                else cells[2].text = score;
 
                 // ⚠️⚠️ THE BANNER TITLE, ON THE SECOND OF THE TWO SCREENS THAT DRAW IT.
                 // `docs/TODO.md` § 101 and `LobbyNameplates.SetSeat`: a banner says who you are

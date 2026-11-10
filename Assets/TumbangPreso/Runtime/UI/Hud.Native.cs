@@ -40,8 +40,8 @@ namespace TumbangPreso.UI
         }
         private void NativeTick()
         {
-            if (_resultsOpen) return;
             if (_spectating && Fired(SpectatorAction("CleanFeed"))) SetCleanFeed(!_cleanFeed);
+            if (_resultsOpen) return;
             if (_spectating && Fired(SpectatorAction("SpectatorControls"))) SetSpectatorControlsVisible(!_spectatorControlsVisible);
             TrySubscribeRound();
             _nativeReadout.Tick(_local, _spectating, _trainingChrome, _trainingDeckHidden, _spectatorControlsVisible);

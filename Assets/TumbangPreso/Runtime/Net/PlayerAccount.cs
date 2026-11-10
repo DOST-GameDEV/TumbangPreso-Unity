@@ -830,7 +830,7 @@ namespace TumbangPreso.Net
             Changed?.Invoke();
         }
 
-        public async Task SetProfileAsync(string displayName, string bio, string country, string pronouns)
+        public async Task<bool> SetProfileAsync(string displayName, string bio, string country, string pronouns)
         {
             if (!AccountRules.TryDisplayName(displayName, out string clean))
                 throw new ArgumentException($"Display name must be {AccountRules.DisplayNameMin} to {AccountRules.DisplayNameMax} letters or numbers.");
@@ -838,11 +838,6 @@ namespace TumbangPreso.Net
             var requestedProfile = Profile;
             string requestedOwner = requestedProfile.PlayerId;
             long request = ++_renameRequest;
-            requestedProfile.DisplayName = clean;
-            requestedProfile.Bio = AccountRules.Bio(bio);
-            requestedProfile.Country = AccountRules.Country(country);
-            requestedProfile.Pronouns = AccountRules.Pronouns(pronouns);
-
             if (IsSignedIn)
             {
                 string full = _updateNameDispatch == null
@@ -851,9 +846,9 @@ namespace TumbangPreso.Net
                 // The answer belongs to this edit and account, including across
                 // a guest handover that later restores the same primary object.
                 if (this == null || IsGuest || !IsSignedIn || request != _renameRequest ||
-                    !ReferenceEquals(_profile, requestedProfile) || PlayerId != requestedOwner) return;
+                    !ReferenceEquals(_profile, requestedProfile) || PlayerId != requestedOwner) return false;
                 if (AccountRules.TrySplitHandle(full, out string remoteName, out _))
-                    requestedProfile.DisplayName = remoteName.Replace('_', ' ');
+                    clean = remoteName.Replace('_', ' ');
 
                 // ⚠️ THE TAG IS NOT PLAYER NAMES' TO DECIDE ANY MORE, for the reason
                 // `RefreshFromAuthenticationAsync` sets out at length: one tag source, derived
@@ -863,8 +858,13 @@ namespace TumbangPreso.Net
                 requestedProfile.Discriminator = AccountRules.DerivedTag(requestedOwner);
             }
 
+            requestedProfile.DisplayName = clean;
+            requestedProfile.Bio = AccountRules.Bio(bio);
+            requestedProfile.Country = AccountRules.Country(country);
+            requestedProfile.Pronouns = AccountRules.Pronouns(pronouns);
             Apply(requestedProfile, IsSignedIn, IsSignedIn ? "Profile saved" : "Profile saved locally");
             if (IsSignedIn) await SaveCloudProfileAsync();
+            return true;
         }
 
         /// <summary>

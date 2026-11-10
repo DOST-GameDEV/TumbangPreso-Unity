@@ -54,6 +54,7 @@ namespace TumbangPreso.UI
             if (_host == null)
             {
                 var canvas = OwnerUiLayout.Canvas(round.Lata.transform, "~CastCallouts", 150);
+                CleanFeedLayer.Attach(canvas.gameObject);
                 var focus = canvas.GetComponent<InputLayer.ScreenFocus>(); if (focus != null) focus.enabled = false;
                 var raycaster = canvas.GetComponent<GraphicRaycaster>(); if (raycaster != null) raycaster.enabled = false;
                 _host = canvas.gameObject.AddComponent<CastCallout>();

@@ -35,6 +35,7 @@ namespace TumbangPreso.UI
         {
             if (owner == null || Settings.SettingsStore.Current.ReducedUiMotion) return null;
             var canvas = OwnerUiLayout.Canvas(owner, "~ReplayStinger", 900);
+            CleanFeedLayer.Attach(canvas.gameObject);
             var focus = canvas.GetComponent<InputLayer.ScreenFocus>(); if (focus != null) focus.enabled = false;
             var raycaster = canvas.GetComponent<GraphicRaycaster>(); if (raycaster != null) raycaster.enabled = false;
             var stinger = canvas.gameObject.AddComponent<ReplayStinger>();

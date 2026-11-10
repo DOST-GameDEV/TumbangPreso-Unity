@@ -8,11 +8,15 @@ namespace TumbangPreso.CameraSystem
     public static class ObservedPlayerView
     {
         public const float FreshSeconds = .6f;
+        private const float PlaybackDelay = .14f;
+        private const int BufferedFrames = 5;
         private struct LocalView { public CameraRig Rig; }
-        private struct RemoteView { public SpectatorViewState State; public float At; public bool Present; }
+        private struct RemoteView { public SpectatorViewState State; public float At; public int Index, Count; }
+        private struct RemoteFrame { public SpectatorViewState State; public float At; }
         private struct Gesture { public CharacterMotor Actor; public string Name; public float At; public uint Sequence; }
         private static readonly LocalView[] Local = new LocalView[Core.Balance.PlayerCount];
         private static readonly RemoteView[] Remote = new RemoteView[Core.Balance.PlayerCount];
+        private static readonly RemoteFrame[,] Buffer = new RemoteFrame[Core.Balance.PlayerCount, BufferedFrames];
         private static readonly Gesture[] Gestures = new Gesture[Core.Balance.PlayerCount];
         public static CharacterMotor Target { get; private set; }
         public static long MatchIdentity => MatchRpc.Instance?.PresentationMatchId ?? 0;
@@ -24,7 +28,7 @@ namespace TumbangPreso.CameraSystem
             Target = target;
             if (target != null && ValidSlot(target.PlayerSlot))
             {
-                var previous = Remote[target.PlayerSlot]; previous.Present = false;
+                var previous = Remote[target.PlayerSlot]; previous.Count = 0;
                 Remote[target.PlayerSlot] = previous; // Keep its serial cursor across target cycling.
             }
         }
@@ -48,12 +52,19 @@ namespace TumbangPreso.CameraSystem
             return entry.Rig != null && entry.Rig.IsFollowing(actor) && entry.Rig.TryObservedView(out state);
         }
         public static bool InstallRemote(SpectatorViewState state, CharacterMotor actor)
+            => InstallRemoteAt(state, actor, Time.unscaledTime);
+
+        internal static bool InstallRemoteAt(SpectatorViewState state, CharacterMotor actor, float now)
         {
             if (!state.IsValid || !state.Matches(MatchIdentity, GameServices.Match?.RoundNumber ?? 0, actor)) return false;
             var previous = Remote[state.Slot];
             bool sameScope = previous.State.Match == state.Match && previous.State.Round == state.Round && previous.State.Epoch == state.Epoch;
             if (sameScope && previous.State.Sequence != 0 && !SpectatorViewState.Newer(state.Sequence, previous.State.Sequence)) return false;
-            Remote[state.Slot] = new RemoteView { State = state, At = Time.unscaledTime, Present = true };
+            int count = sameScope && now - previous.At <= FreshSeconds ? previous.Count : 0;
+            int index = count == 0 ? 0 : (previous.Index + 1) % BufferedFrames;
+            Buffer[state.Slot, index] = new RemoteFrame { State = state, At = now };
+            Remote[state.Slot] = new RemoteView { State = state, At = now, Index = index,
+                Count = Mathf.Min(BufferedFrames, count + 1) };
             return true;
         }
         public static bool TryGet(CharacterMotor actor, out SpectatorViewState state, out bool local)
@@ -61,15 +72,49 @@ namespace TumbangPreso.CameraSystem
             local = TryLocal(actor, out state);
             if (local) return true;
             if (actor == null) return false;
+            if (actor.IsBot && NetAuthority.ShouldResolve())
+            { state = BotPose(actor); local = true; return state.PoseIsValid; }
             if (ValidSlot(actor.PlayerSlot))
             {
                 var entry = Remote[actor.PlayerSlot];
-                if (entry.Present && Time.unscaledTime - entry.At <= FreshSeconds
+                if (entry.Count > 0 && Time.unscaledTime - entry.At <= FreshSeconds
                     && entry.State.Matches(MatchIdentity, GameServices.Match?.RoundNumber ?? 0, actor))
                 { state = entry.State; return true; }
             }
             if (!NetAuthority.IsNetworked) { state = BotPose(actor); local = true; return state.PoseIsValid; }
             return false;
+        }
+
+        // Play between arrivals instead of easing to one held pose and stopping every packet.
+        // The small buffer is viewer-only and never blends across a body epoch or a camera cut.
+        internal static SpectatorViewState SampleRemote(SpectatorViewState latest, float now)
+        {
+            var entry = Remote[latest.Slot];
+            float at = now - PlaybackDelay;
+            if (entry.Count < 2 || at >= entry.At) return latest;
+            var newer = Buffer[latest.Slot, entry.Index];
+            for (int i = 1; i < entry.Count; i++)
+            {
+                var older = Buffer[latest.Slot, (entry.Index + BufferedFrames - i) % BufferedFrames];
+                if (at >= older.At)
+                {
+                    var from = older.State;
+                    var to = newer.State;
+                    const byte viewKind = SpectatorViewState.FirstPerson | SpectatorViewState.BotView;
+                    if (((from.Flags ^ to.Flags) & viewKind) != 0 || (from.Eye - to.Eye).sqrMagnitude > 64)
+                        return from;
+                    float t = Mathf.InverseLerp(older.At, newer.At, at);
+                    from.Eye = Vector3.Lerp(from.Eye, to.Eye, t);
+                    from.Rotation = Quaternion.Slerp(from.Rotation, to.Rotation, t);
+                    from.Fov = Mathf.Lerp(from.Fov, to.Fov, t);
+                    from.EyeDrop = Mathf.Lerp(from.EyeDrop, to.EyeDrop, t);
+                    from.HandsSeat = Vector3.Lerp(from.HandsSeat, to.HandsSeat, t);
+                    from.HandsRotation = Quaternion.Slerp(from.HandsRotation, to.HandsRotation, t);
+                    return from;
+                }
+                newer = older;
+            }
+            return newer.State;
         }
         public static SpectatorViewState BotPose(CharacterMotor actor)
         {
@@ -118,7 +163,7 @@ namespace TumbangPreso.CameraSystem
             { previous.Name = null; Gestures[actor.PlayerSlot] = previous; }
         }
         public static void ClearRemote()
-        { System.Array.Clear(Remote, 0, Remote.Length); }
+        { System.Array.Clear(Remote, 0, Remote.Length); System.Array.Clear(Buffer, 0, Buffer.Length); }
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void Reset()
         { System.Array.Clear(Local, 0, Local.Length); System.Array.Clear(Gestures, 0, Gestures.Length); ClearRemote(); Target = null; }

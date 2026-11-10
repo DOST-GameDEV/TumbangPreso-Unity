@@ -214,7 +214,7 @@ namespace TumbangPreso
         {
             if (_root == null) Build();
             if (!_root.activeSelf) _root.SetActive(true);
-            string tally = $"{Votes}/{Mathf.Max(1, VotesNeeded)}";
+            string tally = _hasTally ? $"{Votes}/{VotesNeeded}" : "…";
             string hint = InputLayer.LastInputDevice.Current == InputLayer.InputDeviceKind.Touch
                 ? "TAP" : "[" + Hud.KeyLabelFor("ReadyUp") + "]";
             string words = ">>\n" + hint + "\n" + tally;
@@ -260,11 +260,15 @@ namespace TumbangPreso
             _hint.raycastTarget = false;
             OwnerUiLayout.Place(_hint.rectTransform, 0, 56, 112, 36);
             _hint.gameObject.AddComponent<UnityEngine.UI.Outline>().effectColor = UiTheme.InGameOutline;
-            _label = OwnerUiLayout.Text(target, "Votes", "0/1", 28, OwnerUiLayout.TypeRole.Reading);
+            var badge = OwnerUiLayout.Rect(target, "VoteBadge").gameObject.AddComponent<HudCard>();
+            OwnerUiLayout.Place(badge.rectTransform, 7, 92, 98, 46);
+            badge.Glass(new Color32(30, 14, 20, 244), slant: 0, radius: 12, shadow: .2f);
+            badge.raycastTarget = false;
+            _label = OwnerUiLayout.Text(target, "Votes", "", 34, OwnerUiLayout.TypeRole.Reading);
             _label.alignment = TextAnchor.MiddleCenter;
             _label.color = Color.white;
             _label.raycastTarget = false;
-            OwnerUiLayout.Place(_label.rectTransform, 0, 96, 112, 36);
+            OwnerUiLayout.Place(_label.rectTransform, 0, 92, 112, 46);
             _label.gameObject.AddComponent<UnityEngine.UI.Outline>().effectColor = UiTheme.InGameOutline;
         }
     }

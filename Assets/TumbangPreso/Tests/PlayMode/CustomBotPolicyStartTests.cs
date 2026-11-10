@@ -102,6 +102,29 @@ namespace TumbangPreso.PlayTests
             _controller.StartGame(); yield return null;
             Assert.IsTrue(MatchRpc.Instance.CharacterSelecting); Assert.IsFalse(AIController.BotsEnabled);
         }
+        [UnityTest] public IEnumerator SpectatingHostStartsAfterTheSeatedGuestLocksIn()
+        {
+            var rules = CustomGameRules.Defaults(GameMode.HeroStrike);
+            rules.MapVote = false;
+            SceneFlow.AdoptRemoteRules(rules);
+            var rpc = MatchRpc.Instance;
+            rpc.RequestSeatServerRpc(-1);
+            Assert.IsFalse(_session.Lobby.IsSeatedPeer(NetAuthority.LocalPeerId));
+            const int guest = 101;
+            _session.Lobby.Admit(guest, "spectator-start-guest", "Seated guest");
+            Assert.AreEqual(1, _session.Lobby.SeatedPeerCount());
+
+            _controller.StartGame();
+            yield return null;
+            Assert.IsTrue(rpc.CharacterSelecting);
+            Assert.IsFalse(_session.Lobby.MatchInProgress);
+            typeof(MatchRpc).GetMethod("HostDeclareReady", System.Reflection.BindingFlags.Instance |
+                System.Reflection.BindingFlags.NonPublic).Invoke(rpc, new object[] { guest, true, 0L });
+            yield return null;
+            yield return null;
+            Assert.IsFalse(rpc.CharacterSelecting);
+            Assert.IsTrue(_session.Lobby.MatchInProgress);
+        }
         [UnityTest] public IEnumerator AlreadyDisabledNoneStartsWithVacantSeats()
         {
             Rules(0); AIController.ApplyDifficulty(AIController.NoBotsIndex);

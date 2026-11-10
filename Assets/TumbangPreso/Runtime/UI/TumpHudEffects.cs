@@ -18,15 +18,15 @@ namespace TumbangPreso.UI
         private bool _frameCanDown;
         /// <summary>True while the screen-edge frame says "the taya can catch you" (VISUAL-1.1).</summary>
         public bool DangerFrameVisible => FrameShown && !_frameCanDown;
-        /// <summary>True while the same frame tells the local taya the can is down: the attackers
+        /// <summary>True while the corner cue tells the local taya the can is down: the attackers
         /// are free to retrieve and nothing can be tagged until it is reset.</summary>
         public bool CanDownFrameVisible => FrameShown && _frameCanDown;
         private bool FrameShown => _frame != null && _frame.enabled && _frameAlpha > .3f;
-        /// <summary>The frame's colour this frame: blue, the warning's white, or the taya's orange. For tests.</summary>
+        /// <summary>The colour and opacity of the active edge cue. For tests.</summary>
         public Color FrameColour => _frame != null ? _frame.color : Color.clear;
         private Material _dangerMaterial, _caughtMaterial;
-        private float _flash, _coverage, _threatCue, _level, _canWarningAge;
-        private bool _wasThreatened, _wasCanDown;
+        private float _flash, _coverage, _threatCue, _level, _canDownAge;
+        private bool _wasThreatened;
         public void Build(Transform root)
         {
             _danger = Effect(root, "DangerEdges", "TumbangPreso/DownedVignette", out _dangerMaterial);
@@ -48,7 +48,7 @@ namespace TumbangPreso.UI
             return image;
         }
         public void Flash(bool active) => _flash = active ? Hud.DownedFlashTime : 0;
-        public void Tick(CharacterMotor local, bool spectator, bool approachCan = false)
+        public void Tick(CharacterMotor local, bool spectator)
         {
             if (spectator)
             {
@@ -60,58 +60,49 @@ namespace TumbangPreso.UI
             TickBlinded(local, spectator);
             TickConcussed(local, spectator);
             var f = OwnerUiTheme.Current;
+            var settings = Settings.SettingsStore.Current;
             var round = GameServices.Round;
             // The same reading as the body's fill (`Visual.TagExposure`): taggable now, once the can is up. The frame is
             // as strong as the fill is high, so it fades as Vulnerable runs out, with the body.
             var exposure = spectator || local == null || Visual.TagExposure.Quiet ? Visual.TagExposure.State.Safe : Visual.TagExposure.Read(local, out _level);
             bool threatened = exposure != Visual.TagExposure.State.Safe;
-            // The taya's half of the same rule. A knockdown usually lands behind a taya who is
-            // chasing, and the only cues were a small edge icon and a line of text, so the taya
-            // gets the attacker's treatment: the onset cue, then the held frame until the reset.
+            // The can state owns this cue through approach, lifting and set-down.
             bool canDown = !spectator && local != null && local.IsDefender
                 && round != null && round.RoundActive && round.Lata != null && !round.Lata.IsUpright;
             bool framed = threatened || canDown;
-            if ((threatened && !_wasThreatened) || (canDown && !_wasCanDown)) _threatCue = .36f;
-            if (!framed) _threatCue = 0;
-            _wasThreatened = threatened; _wasCanDown = canDown;
-            _threatCue = Mathf.Max(0, _threatCue - dt);
+            if (threatened && !_wasThreatened) _threatCue = .36f;
+            _threatCue = threatened ? Mathf.Max(0, _threatCue - dt) : 0;
+            _wasThreatened = threatened;
             if (_frame != null)
             {
-                // VISUAL-1.1: a state, held for as long as the state lasts, faded in over 0.12 s
-                // and out over 0.2 s. No pulse, so Reduce UI motion has nothing to remove, and
-                // Reduce visual effects keeps it: it is information, not a flash.
-                // The taggable colour (the taya's red by default) means "the taya can catch you"; Offense orange tells the taya
-                // "the attackers are free". One viewer is never both, being one role at a time.
                 if (framed) _frameCanDown = canDown;
                 float want = !framed ? 0 : canDown ? 1 : Mathf.Lerp(.25f, 1, _level);
-                _frameAlpha = Mathf.MoveTowards(_frameAlpha, want, dt / (want > _frameAlpha ? .12f : .2f));
+                float rise = canDown ? .045f : .12f;
+                _frameAlpha = Mathf.MoveTowards(_frameAlpha, want, dt / (want > _frameAlpha ? rise : .2f));
                 _frame.enabled = _frameAlpha > .001f;
-                var edge = _frameCanDown ? UiTheme.Offense : Visual.TagExposure.Colour;
-                edge.a = .72f * _frameAlpha; _frame.color = edge;
+                var edge = _frameCanDown ? UiTheme.Defense : Visual.TagExposure.Colour;
+                float intensity = canDown && !settings.ReducedUiMotion ? settings.EffectiveFlashIntensity : 0;
+                float impact = 1 - Mathf.Clamp01(_canDownAge / .26f);
+                impact *= impact * intensity;
+                float beat = .5f + .5f * Mathf.Cos(_canDownAge * (2 * Mathf.PI / 1.45f));
+                edge.a = _frameAlpha * (_frameCanDown ? .56f + .24f * beat * intensity + .20f * impact : .72f);
+                _frame.SetCanDownPose(_frameCanDown, impact);
+                _frame.color = edge;
             }
-            // The can marker gives direction. The vignette recedes as soon as Grab is available.
-            const float canWarningPeriod = 1.4f;
-            _canWarningAge = approachCan ? Mathf.Repeat(_canWarningAge + dt, canWarningPeriod) : 0;
+            _canDownAge = canDown ? _canDownAge + dt : 0;
             _flash = Mathf.Max(0, _flash - dt);
             if (_danger != null)
             {
-                // A brief peripheral cue marks danger returning, or the taya's can going down.
-                // The held state is the thin frame above (VISUAL-1.1), not a continuous red screen.
-                var settings = Settings.SettingsStore.Current;
+                // Keep the brief attacker and personal downed flashes separate from the can cue.
                 float alpha = spectator || settings.ReducedUiMotion ? 0 :
                     Mathf.Max(_threatCue / .36f * .20f, _flash / Hud.DownedFlashTime * .28f);
-                if (approachCan)
-                {
-                    float pulse = .5f + .5f * Mathf.Cos(_canWarningAge / canWarningPeriod * (2 * Mathf.PI));
-                    alpha = Mathf.Max(alpha, settings.ReducedUiMotion ? .24f : Mathf.Lerp(.18f, .52f, pulse));
-                }
                 alpha *= settings.EffectiveFlashIntensity;
                 // ⚠️ VISUAL-1.5: ONE FULL-SCREEN TINT AT A TIME. The caught edge (frost, stun) is
                 // the stronger state and owns the screen while it lasts; the red onset or downed
                 // flash under it only muddied both.
                 if (_coverage > .001f) alpha = 0;
                 _danger.enabled = alpha > .001f;
-                var tint = approachCan ? UiTheme.Defense : f.ActionInk;
+                var tint = f.ActionInk;
                 tint.a = alpha;
                 _danger.color = tint;
             }

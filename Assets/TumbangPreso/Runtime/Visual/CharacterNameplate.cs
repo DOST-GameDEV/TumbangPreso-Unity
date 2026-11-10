@@ -301,6 +301,11 @@ namespace TumbangPreso.Visual
         /// </summary>
         private void LateUpdate()
         {
+            if (UI.Hud.Instance?.IsCleanFeed == true)
+            {
+                gameObject.SetActive(false);
+                return;
+            }
             if(_ring!=null)
             {
                 float u=Mathf.Clamp01((Time.unscaledTime-_roleChangedAt)/.32f);

@@ -42,6 +42,61 @@ namespace TumbangPreso.PlayTests
         { if (existed) PlayerPrefs.SetString(key, value); else PlayerPrefs.DeleteKey(key); }
 
         [UnityTest]
+        public IEnumerator SavingPlayerNameUpdatesTheAccountHandle()
+        {
+            const string id = "settings-name-test";
+            string tag = Core.AccountRules.DerivedTag(id);
+            var accountSlot = typeof(GameServices).GetProperty("Account");
+            var previousAccount = accountSlot.GetValue(null);
+            var previousSettings = SettingsStore.Current;
+            var profileRoot = new GameObject("Settings name account");
+            profileRoot.SetActive(false);
+            var viewRoot = new GameObject("Settings name view");
+            try
+            {
+                var account = profileRoot.AddComponent<Net.PlayerAccount>();
+                typeof(Net.PlayerAccount).GetField("_profile", System.Reflection.BindingFlags.Instance |
+                    System.Reflection.BindingFlags.NonPublic).SetValue(account, new Core.AccountProfile
+                    {
+                        PlayerId = id, DisplayName = "Original", Discriminator = tag, Bio = "My profile"
+                    });
+                accountSlot.SetValue(null, account);
+                SettingsStore.OverrideForTests(new GameSettings { AccountPlayerId = id, PlayerName = "Stale setting" });
+
+                var view = viewRoot.AddComponent<TumpSettingsView>();
+                view.Open(viewRoot.transform, () => { }, null, null);
+                view.ShowSection(3);
+                yield return null;
+                var canvas = GameObject.Find("OwnerSettingsCanvas");
+                Assert.IsNotNull(canvas);
+                var field = canvas.GetComponentsInChildren<InputField>().Single(input => input.name == "PlayerNameField");
+                Assert.AreEqual("Original", field.text, "Settings should show the actual account name.");
+                field.text = "Draft name";
+                Assert.AreEqual("Original", account.DisplayName);
+                Assert.AreEqual("Stale setting", SettingsStore.Current.PlayerName);
+                view.Session.Discard();
+                Assert.AreEqual("Original", field.text);
+
+                field.text = "New name";
+                Press(Find("TumpSaveSettings"));
+                yield return null;
+                Assert.AreEqual("New name", account.DisplayName);
+                Assert.AreEqual("New name#" + tag, account.LobbyName, "Future lobby introductions use this handle.");
+                Assert.AreEqual("My profile", account.Bio);
+                Assert.AreEqual("New name", SettingsStore.Current.PlayerName);
+                Assert.IsFalse(view.Session.Dirty);
+            }
+            finally
+            {
+                viewRoot.SetActive(false);
+                accountSlot.SetValue(null, previousAccount);
+                SettingsStore.OverrideForTests(previousSettings);
+                Object.Destroy(viewRoot);
+                Object.Destroy(profileRoot);
+            }
+        }
+
+        [UnityTest]
         public IEnumerator UnrecognisedControllerSwitchParticipatesInSaveAndDiscard()
         {
             const string key = "tumbangpreso.genericpad";
