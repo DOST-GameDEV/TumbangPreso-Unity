@@ -41,8 +41,7 @@ namespace TumbangPreso
         public bool LandingVisible => _renderer != null && _renderer.enabled;
         public bool FlightVisible => _flightRenderer != null && _flightRenderer.enabled;
         public const float CircleRadius = .4f;
-        public const int MaxFlightMarks = 6;
-        private const int MarkSides = 8;
+        public const int MaxFlightMarks = 10;
 
         public static TrajectoryPreview AttachTo(CharacterMotor motor)
         {
@@ -168,25 +167,31 @@ namespace TumbangPreso
             }
             _mesh.Clear(); _mesh.SetVertices(_verts); _mesh.SetColors(_colours); _mesh.SetTriangles(_tris, 0);
             _mesh.RecalculateBounds(); _renderer.enabled = _verts.Count > 0;
-            DrawFlight(camera, tint);
+            DrawFlight(camera, tint, now);
         }
 
-        private void DrawFlight(UnityEngine.Camera camera, Color tint)
+        private void DrawFlight(UnityEngine.Camera camera, Color tint, float now)
         {
             _verts.Clear(); _colours.Clear(); _tris.Clear();
             float length = 0;
             for (int i = 1; i < _path.Count; i++) length += Vector3.Distance(_path[i - 1], _path[i]);
             const float first = 1f, landingGap = .46f;
-            float spacing = Mathf.Max(.9f, (length - first - landingGap) / (MaxFlightMarks - 1));
-            float next = first, walked = 0;
+            float end = length - landingGap;
+            float available = Mathf.Max(0, end - first);
+            float spacing = Mathf.Max(.75f, available / MaxFlightMarks);
+            bool moving = !Settings.SettingsStore.Current.ReducedUiMotion && available > spacing;
+            float phase = moving ? Mathf.Repeat(now * .85f, 1f) : .5f;
+            float next = first + phase * Mathf.Min(spacing, available);
+            float walked = 0;
             int marks = 0;
             Vector2? previousScreen = null;
-            float minScreenGap = Mathf.Max(8f, camera.pixelHeight * .016f);
-            for (int i = 1; i < _path.Count && next < length - landingGap && marks < MaxFlightMarks; i++)
+            float pixelScale = Mathf.Max(1f, camera.pixelHeight / 1080f);
+            float minScreenGap = 26f * pixelScale;
+            for (int i = 1; i < _path.Count && next < end && marks < MaxFlightMarks; i++)
             {
                 Vector3 start = _path[i - 1], delta = _path[i] - start;
                 float segment = delta.magnitude;
-                while (segment > .001f && next <= walked + segment && next < length - landingGap && marks < MaxFlightMarks)
+                while (segment > .001f && next <= walked + segment && next < end && marks < MaxFlightMarks)
                 {
                     Vector3 point = start + delta * ((next - walked) / segment);
                     Vector3 projected = camera.WorldToScreenPoint(point);
@@ -195,7 +200,10 @@ namespace TumbangPreso
                     if (projected.z > camera.nearClipPlane && (!previousScreen.HasValue
                         || (screen - previousScreen.Value).sqrMagnitude >= minScreenGap * minScreenGap))
                     {
-                        DrawFlightMark(camera, point, projected.z, tint, Mathf.Lerp(.82f, .56f, next / length));
+                        float fade = moving ? Mathf.Clamp01(Mathf.Min(next - first, end - next) / (.2f * spacing)) : 1;
+                        Vector2 tangent = (Vector2)camera.WorldToScreenPoint(point + delta) - screen;
+                        DrawFlightMark(camera, point, projected.z, tangent, pixelScale, tint,
+                            fade * Mathf.Lerp(1f, .8f, next / length));
                         previousScreen = screen;
                         marks++;
                     }
@@ -207,27 +215,26 @@ namespace TumbangPreso
             _flightMesh.RecalculateBounds(); _flightRenderer.enabled = _verts.Count > 0;
         }
 
-        private void DrawFlightMark(UnityEngine.Camera camera, Vector3 point, float depth, Color tint, float weight)
+        private void DrawFlightMark(UnityEngine.Camera camera, Vector3 point, float depth,
+            Vector2 tangent, float pixelScale, Color tint, float weight)
         {
             var eye = camera.transform;
             float perPixel = camera.orthographic ? 2 * camera.orthographicSize / Mathf.Max(1, camera.pixelHeight)
                 : 2 * depth * Mathf.Tan(camera.fieldOfView * Mathf.Deg2Rad * .5f) / Mathf.Max(1, camera.pixelHeight);
-            float radius = Mathf.Clamp(perPixel, .002f, .035f) * 3.1f;
+            Vector2 direction = tangent.sqrMagnitude > .01f ? tangent.normalized : Vector2.up;
+            Vector3 along = eye.right * direction.x + eye.up * direction.y;
+            Vector3 across = eye.up * direction.x - eye.right * direction.y;
+            float unit = perPixel * pixelScale;
             tint.a *= weight;
-            FlightDisc(point, eye.right, eye.up, radius * 1.45f, new Color(.075f, .035f, .022f, weight * .66f));
-            FlightDisc(point, eye.right, eye.up, radius, tint);
+            FlightDash(point, along * (10f * unit), across * (3.3f * unit), new Color(.04f, .02f, .01f, weight));
+            FlightDash(point, along * (8.6f * unit), across * (2f * unit), tint);
         }
 
-        private void FlightDisc(Vector3 point, Vector3 right, Vector3 up, float radius, Color tint)
+        private void FlightDash(Vector3 point, Vector3 along, Vector3 across, Color tint)
         {
-            Vector3 previous = point + right * radius;
-            for (int i = 1; i <= MarkSides; i++)
-            {
-                float angle = i * (Mathf.PI * 2 / MarkSides);
-                Vector3 edge = point + (right * Mathf.Cos(angle) + up * Mathf.Sin(angle)) * radius;
-                AddTri(point, previous, edge, tint);
-                previous = edge;
-            }
+            Vector3 start = point - along, end = point + along;
+            AddTri(start - across, start + across, end + across, tint);
+            AddTri(start - across, end + across, end - across, tint);
         }
 
         private static bool ProjectRingPoint(Vector3 point, float referenceHeight, out Vector3 projected)

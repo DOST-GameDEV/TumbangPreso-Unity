@@ -51,25 +51,18 @@ namespace TumbangPreso.Tests
                     for (int frame = 0; frame < 28; frame++)
                     {
                         float time = frame / 24f;
-                        bool dwell = style != PickupStyle.Sliding && style != PickupStyle.QuickSnatch;
-                        float contact = dwell ? .5f : 0;
-                        float duration = PickupMotion.Seconds(style, dwell);
-                        bool holding = time >= contact;
-                        float ratio = holding ? 0 : time / .5f;
-                        float left = holding ? Mathf.Max(0, duration - (time - contact)) : 0;
-                        typeof(Carrier).GetProperty("Held").SetValue(carrier, holding ? shoe : null);
-                        typeof(Carrier).GetProperty("AutoPickupRatio").SetValue(carrier, ratio);
-                        Field(carrier, "_autoTarget", holding ? null : shoe);
-                        Field(carrier, "_autoStyle", style); Field(carrier, "_pickupStyle", style);
-                        Field(carrier, "_pickupFromDwell", dwell); Field(carrier, "_tossDuration", duration);
+                        float duration = PickupMotion.Seconds(style);
+                        float left = Mathf.Max(0, duration - time);
+                        typeof(Carrier).GetProperty("Held").SetValue(carrier, shoe);
+                        Field(carrier, "_pickupStyle", style); Field(carrier, "_tossDuration", duration);
                         Field(carrier, "_tossLeft", left); Field(carrier, "_tossFrom", source.transform.position);
                         Field(carrier, "_tossFromRotation", source.transform.rotation);
-                        foreach (var surface in surfaces) surface.forceRenderingOff = holding;
+                        foreach (var surface in surfaces) surface.forceRenderingOff = true;
                         float bend = carrier.PickupBend;
                         float posture = style == PickupStyle.Sliding ? .65f : style == PickupStyle.Crouched ? .42f : 0;
                         camera.transform.SetPositionAndRotation(new Vector3(0, 1.6f - posture - PickupMotion.EyeDrop(style) * bend, .10f * bend),
                             Quaternion.Euler(PickupMotion.LookDown(style) * bend, 0, 0));
-                        arms.SetHolding(holding); arms.StepVisuals(1f / 24); arms.MatchSkin(shoe);
+                        arms.SetHolding(true); arms.StepVisuals(1f / 24); arms.MatchSkin(shoe);
                         arms.RefreshPickupPresentation();
                         camera.targetTexture = target; camera.Render(); RenderTexture.active = target;
                         pixels.ReadPixels(new Rect(0, 0, 768, 432), 0, 0); pixels.Apply();

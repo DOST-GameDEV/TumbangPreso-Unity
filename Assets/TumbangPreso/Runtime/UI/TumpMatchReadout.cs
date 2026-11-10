@@ -199,8 +199,11 @@ namespace TumbangPreso.UI
             _playing = !spectating && !training && local != null; _playingAs = _playing ? local : null;
             // A spectator reads the same score plates as Tab, standing (owner, 2026-11-08), not the old chip row.
             _watching = spectating && !training;
-            _effects.Tick(local, spectating);
-            if (match == null || round == null) return;
+            if (match == null || round == null)
+            {
+                _effects.Tick(local, spectating);
+                return;
+            }
             _clockRoot.gameObject.SetActive(!training); _scoreRoot.gameObject.SetActive(!training && ShowScoreRowInPlay);
             int time = Mathf.CeilToInt(Mathf.Max(0, round.TimeLeft));
             _clock.text = $"{time / 60:00}:{time % 60:00}";
@@ -212,6 +215,7 @@ namespace TumbangPreso.UI
             _crosshair.enabled = !spectating && local != null && round.RoundActive;
             if(_aimOwner!=local){_aimOwner=local;_aimCarrier=local!=null?local.GetComponent<Carrier>():null;}
             Prompts(local, spectating);
+            _effects.Tick(local, spectating, Canvas.enabled && _approachCan && !ScreenTakeover.AnyOpen && !PresentationClock.Held);
             Warnings(local, spectating);
             _powers.Tick(local != null ? local.GetComponent<Abilities.HeroAbilitySystem>() : null,
                 !spectating && !hidePowers && SceneFlow.SelectedMode == GameMode.HeroStrike);
@@ -380,11 +384,11 @@ namespace TumbangPreso.UI
                 _status[index].enabled = true; _status[index].text = row.Label + (row.Timed ? $" · {row.Remaining:0.0}s" : ""); index++;
             }
         }
-        private bool _defenderTaskShown;
+        private bool _defenderTaskShown, _approachCan;
 
         private void Prompts(CharacterMotor local, bool spectating)
         {
-            _defenderTaskShown = false;
+            _defenderTaskShown = _approachCan = false;
             // The held reference and the emote wheel own the screen while open; the prompt drew over both (QA, 2026-11-08).
             bool covered = TumpPowerReadout.ReferenceOpen || EmoteWheel.AnyOpen;
             _promptRoot.gameObject.SetActive(local != null && !spectating && !covered);
@@ -470,8 +474,6 @@ namespace TumbangPreso.UI
                     {
                         BindingPrompt("Grab", "Retrieve Slipper");
                         if (Hud.OnTouch) TouchHud.Emphasise(Verb.Grab);
-                        // Standing on it collects it hands-free (`Carrier.StepHandsFreePickup`); the bar says how soon.
-                        if (carrier != null && carrier.AutoPickupRatio > 0) Progress(carrier.AutoPickupRatio);
                         return;
                     }
                     if (slipper.OwnerSlot == local.PlayerSlot && RooftopRecovery.Instance != null)
@@ -553,7 +555,7 @@ namespace TumbangPreso.UI
                 if (Hud.OnTouch) TouchHud.Emphasise(Verb.Grab);
                 return;
             }
-            _prompt.text = "Go to the can";
+            _approachCan = true;
         }
         /// <summary>
         /// SOULBOUND (owner 2026-10-21): next to one of her dormant ghosts, Nemu's Grab reads like the can's reset and the

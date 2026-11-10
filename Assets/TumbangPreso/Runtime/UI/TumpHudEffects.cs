@@ -25,7 +25,7 @@ namespace TumbangPreso.UI
         /// <summary>The frame's colour this frame: blue, the warning's white, or the taya's orange. For tests.</summary>
         public Color FrameColour => _frame != null ? _frame.color : Color.clear;
         private Material _dangerMaterial, _caughtMaterial;
-        private float _flash, _coverage, _threatCue, _level;
+        private float _flash, _coverage, _threatCue, _level, _canWarningAge;
         private bool _wasThreatened, _wasCanDown;
         public void Build(Transform root)
         {
@@ -48,7 +48,7 @@ namespace TumbangPreso.UI
             return image;
         }
         public void Flash(bool active) => _flash = active ? Hud.DownedFlashTime : 0;
-        public void Tick(CharacterMotor local, bool spectator)
+        public void Tick(CharacterMotor local, bool spectator, bool approachCan = false)
         {
             if (spectator)
             {
@@ -89,20 +89,31 @@ namespace TumbangPreso.UI
                 var edge = _frameCanDown ? UiTheme.Offense : Visual.TagExposure.Colour;
                 edge.a = .72f * _frameAlpha; _frame.color = edge;
             }
+            // The can marker gives direction. The vignette recedes as soon as Grab is available.
+            const float canWarningPeriod = 1.4f;
+            _canWarningAge = approachCan ? Mathf.Repeat(_canWarningAge + dt, canWarningPeriod) : 0;
             _flash = Mathf.Max(0, _flash - dt);
             if (_danger != null)
             {
                 // A brief peripheral cue marks danger returning, or the taya's can going down.
                 // The held state is the thin frame above (VISUAL-1.1), not a continuous red screen.
-                float alpha = spectator || Settings.SettingsStore.Current.ReducedUiMotion ? 0 :
+                var settings = Settings.SettingsStore.Current;
+                float alpha = spectator || settings.ReducedUiMotion ? 0 :
                     Mathf.Max(_threatCue / .36f * .20f, _flash / Hud.DownedFlashTime * .28f);
-                alpha *= Settings.SettingsStore.Current.EffectiveFlashIntensity;
+                if (approachCan)
+                {
+                    float pulse = .5f + .5f * Mathf.Cos(_canWarningAge / canWarningPeriod * (2 * Mathf.PI));
+                    alpha = Mathf.Max(alpha, settings.ReducedUiMotion ? .24f : Mathf.Lerp(.18f, .52f, pulse));
+                }
+                alpha *= settings.EffectiveFlashIntensity;
                 // ⚠️ VISUAL-1.5: ONE FULL-SCREEN TINT AT A TIME. The caught edge (frost, stun) is
                 // the stronger state and owns the screen while it lasts; the red onset or downed
                 // flash under it only muddied both.
                 if (_coverage > .001f) alpha = 0;
                 _danger.enabled = alpha > .001f;
-                _danger.color = new Color(f.ActionInk.r, f.ActionInk.g, f.ActionInk.b, alpha);
+                var tint = approachCan ? UiTheme.Defense : f.ActionInk;
+                tint.a = alpha;
+                _danger.color = tint;
             }
             float target = !spectator && local != null && local.IsStunned && !local.IsTripped && local.StunElement != StunElement.None
                 ? Mathf.Clamp01(local.StunLeft / Hud.FrostThawTime) : 0;

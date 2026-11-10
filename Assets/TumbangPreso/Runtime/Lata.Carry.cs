@@ -35,7 +35,7 @@ namespace TumbangPreso
         public enum CarryPhase : byte { None = 0, Pickup = 1, Carry = 2, SetDown = 3 }
 
         /// <summary>Seconds of the crouch that brings the can up into the hands.</summary>
-        public const float PickupSeconds = .35f;
+        public const float PickupSeconds = 1.5f;
         /// <summary>Seconds of the crouch-and-press that plants it on the mark.</summary>
         public const float SetDownSeconds = .3f;
         /// <summary>How far in front of the carrier's feet the carried can is held, metres (flat).</summary>

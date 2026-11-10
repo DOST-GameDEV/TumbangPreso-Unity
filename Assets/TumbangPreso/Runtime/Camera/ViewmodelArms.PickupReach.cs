@@ -47,7 +47,7 @@ namespace TumbangPreso.CameraSystem
         {
             if (_pickupSource == null || _rightPivot == null || _rightArm == null || _leftPivot == null) return;
             bool motion = !Settings.SettingsStore.Current.ReducedUiMotion && _charge < 0;
-            bool reaching = motion && (_pickupSource.AutoPickupRatio > 0 || _pickupSource.PickupLifting);
+            bool reaching = motion && _pickupSource.PickupLifting;
             float bend = reaching ? _pickupSource.PickupBend : 0;
             _pickupReachWeight = Mathf.MoveTowards(_pickupReachWeight, bend, Mathf.Max(0, dt) / .10f);
             if (_pickupReachWeight <= .001f && !reaching) return;
@@ -63,14 +63,14 @@ namespace TumbangPreso.CameraSystem
             float depth = Mathf.Clamp(ground.z, .55f, 1.2f);
             Vector3 low = ground.z > .1f ? ground * (depth / ground.z) : new Vector3(.14f, -1.1f, depth);
             low = new Vector3(Mathf.Clamp(low.x, -.60f, .65f), Mathf.Clamp(low.y, -1.1f, -.20f), depth);
-            float lift = _pickupSource.PickupLifting ? _pickupSource.PickupLift : 0;
+            float lift = _pickupSource.PickupLift;
             Vector3 fist = Vector3.Lerp(low, CarryAnchor + new Vector3(0, .04f, .02f), lift);
-            fist += PickupMotion.HandArc(style, _pickupSource.PickupLifting ? lift : _pickupSource.AutoPickupRatio);
+            fist += PickupMotion.HandArc(style, lift);
             AimForearm(_rightPivot, _rightArm, _rightRest, fist, PickupMotion.Shoulder(style), _pickupReachWeight);
             _leftPivot.localPosition += PickupMotion.Brace(style) * _pickupReachWeight;
 
             // The local player sees this copy, not Carrier's world shoe. Start it where the shoe lay.
-            if (_carrying && reaching && _heldSlipper != null && _pickupSource.PickupLifting)
+            if (_carrying && reaching && _heldSlipper != null)
             {
                 Vector3 grip = transform.InverseTransformPoint(_heldSlipper.position);
                 float caught = _pickupSource.PickupGrip;

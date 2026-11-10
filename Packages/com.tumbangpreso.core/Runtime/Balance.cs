@@ -435,15 +435,6 @@ namespace TumbangPreso.Core
         /// broken key and that is exactly how this was reported.</summary>
         public const float PickupRadius = 1.75f;
 
-        /// <summary>Hands-free retrieval (owner, 2026-11-07, from the external feedback document): an attacker
-        /// standing over a tsinelas they may take picks it up after this many seconds without pressing anything.
-        /// The Grab press stays the instant way.</summary>
-        public const float AutoPickupSeconds = 0.5f;
-
-        /// <summary>How close the feet must be, flat, for the hands-free pickup to count down. Tighter than
-        /// <see cref="PickupRadius"/> so walking past a shoe never collects it; standing on it does.</summary>
-        public const float AutoPickupRadius = 0.85f;
-
         /// <summary>Taya distance, flat, under which retrieving your own tsinelas is called a clutch pickup.
         /// Presentation only: it pays nothing.</summary>
         public const float ClutchPickupMetres = 2.5f;

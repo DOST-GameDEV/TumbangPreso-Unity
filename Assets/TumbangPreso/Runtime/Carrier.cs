@@ -258,42 +258,27 @@ namespace TumbangPreso
         /// </summary>
         private bool _grabPressConsumed;
 
-        // § HANDS-FREE RETRIEVAL AND THE SLIDE SCOOP (owner, 2026-11-07, from the external feedback document).
-        // Standing on a tsinelas you may take collects it after `Balance.AutoPickupSeconds`; sliding over one
-        // (the movement slide: sprint, then crouch) collects it on the spot. Both ask the same eligibility gate
-        // and the same host grab as the press, so neither can take anything a press could not.
-        private Slipper _autoTarget;
-        private float _autoDwell;
-        private float _grabRequestCooldown;
-
-        /// <summary>How far the hands-free pickup has counted, 0 to 1, or 0 when nothing is counting.</summary>
-        public float AutoPickupRatio { get; private set; }
-
         // The flip into the hand: where the shoe lay and how much of the flip is left.
         private Vector3 _tossFrom;
         private Quaternion _tossFromRotation;
         private float _tossLeft;
         private const float TossSeconds = 0.62f;
         private float _tossDuration = TossSeconds;
-        private Visual.PickupStyle _pickupStyle, _autoStyle;
-        private bool _pickupFromDwell;
+        private Visual.PickupStyle _pickupStyle;
         private float _recentRunUntil = -1;
 
-        public Visual.PickupStyle PickupStyle => _autoTarget != null ? _autoStyle : _pickupStyle;
-        public Vector3 PickupGround => _autoTarget != null ? _autoTarget.transform.position : _tossFrom;
+        public Visual.PickupStyle PickupStyle => _pickupStyle;
+        public Vector3 PickupGround => _tossFrom;
         public Quaternion PickupGroundRotation => _tossFromRotation;
         public bool PickupLifting => Held != null && _tossLeft > 0;
         public float PickupProgress => PickupLifting ? 1 - _tossLeft / _tossDuration : 1;
-        public float PickupLift => PickupLifting ? Visual.PickupMotion.Lift(PickupProgress, _pickupFromDwell) : 0;
-        public float PickupGrip => PickupLifting ? Visual.PickupMotion.Grip(PickupProgress, _pickupFromDwell) : 1;
-        public float PickupBend => Held == null ? Mathf.SmoothStep(0, 1, AutoPickupRatio)
-            : PickupLifting ? Visual.PickupMotion.Bend(PickupProgress, _pickupFromDwell) : 0;
+        public float PickupLift => PickupLifting ? Visual.PickupMotion.Lift(PickupProgress) : 0;
+        public float PickupGrip => PickupLifting ? Visual.PickupMotion.Grip(PickupProgress) : 1;
+        public float PickupBend => PickupLifting ? Visual.PickupMotion.Bend(PickupProgress) : 0;
 
         private Visual.PickupStyle CurrentPickupStyle()
         {
             Vector3 velocity = _motor.PresentationTravelVelocity; velocity.y = 0;
-            if (velocity.magnitude > Balance.Speed * 1.15f || _motor.Intent.Pressed(Verb.Sprint))
-                _recentRunUntil = Time.unscaledTime + .75f;
             return Visual.PickupMotion.Choose(_motor.ReworkSliding, _motor.ReworkCrouched,
                 _motor.Intent.Pressed(Verb.Lunge), velocity.magnitude, Time.unscaledTime < _recentRunUntil);
         }
@@ -499,7 +484,6 @@ namespace TumbangPreso
             if (what == null) return;
 
             PresentPickup(what);
-            ResetAutoPickup();
             // ⚠️⚠️ THE RETRIEVAL PAYS THE HERO ECONOMY, AND IT IS WIRED HERE BECAUSE THIS IS THE
             // ONE FUNNEL EVERY PICKUP GOES THROUGH. `HostPickUp`, the proximity grab and
             // `Slipper.HostGrab` all arrive here, and the guard above makes it idempotent, so a
@@ -704,7 +688,7 @@ namespace TumbangPreso
         {
             if (_tossLeft <= 0.0f || _tossDuration <= 0.0f) return;
             float u = 1.0f - _tossLeft / _tossDuration;
-            float ease = Visual.PickupMotion.Lift(u, _pickupFromDwell);
+            float ease = Visual.PickupMotion.Lift(u);
             var t = Held.transform;
             Vector3 target = t.position;
             Quaternion targetRotation = t.rotation;
@@ -813,28 +797,22 @@ namespace TumbangPreso
             if (IsThrowChargeDecaying) return; // Releasing during the return cannot throw.
             var intent = _motor.Intent;
 
-            // First refusal: a tap with something grabbable at your feet is a pickup, and
-            // nothing else gets to see that press.
-            //
-            // A consumed press cannot retrieve again after same-frame hand loss.
-            // The flag is set only after the pickup is already committed.
-            // `carrier.gd::_step_grab` is emphatic about the ordering for the same reason: a
-            // grab that did NOT connect must still fall through to the shove, so only a
-            // CONNECTING grab may mark the press spent.
-            if (!_grabPressConsumed && intent.JustPressed(Verb.Grab) && Held == null && TryPickup())
-            {
-                _grabPressConsumed = true;
-                return;
-            }
-
             if (Held == null)
             {
-                CancelCharge();
-                StepHandsFreePickup(dt);
+                Vector3 travel = _motor.PresentationTravelVelocity;
+                travel.y = 0;
+                const float runSpeed = Balance.Speed * 1.15f;
+                if (intent.Pressed(Verb.Sprint) || travel.sqrMagnitude > runSpeed * runSpeed)
+                    _recentRunUntil = Time.unscaledTime + .75f;
+
+                // An eligible pickup owns the Grab press until release. A refused
+                // pickup leaves the press available to shove.
+                if (!_grabPressConsumed && intent.JustPressed(Verb.Grab) && TryPickup())
+                    _grabPressConsumed = true;
+                else
+                    CancelCharge();
                 return;
             }
-
-            ResetAutoPickup();
 
             bool canThrow = GameServices.Round != null
                             && GameServices.Round.CanThrow(_motor)
@@ -1023,87 +1001,6 @@ namespace TumbangPreso
         }
 
         /// <summary>
-        /// The two pickups that need no press: sliding over a tsinelas scoops it at once, and standing on one
-        /// collects it after <see cref="Balance.AutoPickupSeconds"/>. Called only with an empty hand, on the peer
-        /// that drives this seat.
-        ///
-        /// ⚠️ NO NEW RULE AND NO NEW WIRE MESSAGE. Eligibility is `Slipper.CanBeGrabbedBy` and the grab is the
-        /// ordinary `RequestGrabServerRpc`, so the host re-checks reach against its own copy of the body exactly as
-        /// it does for a press. A client keeps asking, throttled, while it is eligible on its own screen: a slide
-        /// is fast and the host's copy of the body may cross the shoe a few frames later than the client's did.
-        /// </summary>
-        private void StepHandsFreePickup(float dt)
-        {
-            if (_grabRequestCooldown > 0.0f) _grabRequestCooldown = Mathf.Max(0.0f, _grabRequestCooldown - dt);
-
-            var round = GameServices.Round;
-            if (round == null || !round.RoundActive || _motor.IsDefender || !_motor.CanAct())
-            {
-                ResetAutoPickup();
-                return;
-            }
-
-            bool scooping = _motor.ReworkSliding;
-            Slipper best = null;
-            float bestFlat = float.MaxValue;
-
-            foreach (var s in BotSlipperInventory.All)
-            {
-                if (s == null || !s.CanBeGrabbedBy(_motor)) continue;
-                Vector3 d = s.transform.position - transform.position;
-                d.y = 0.0f;
-                float flat = d.magnitude;
-                if (flat >= bestFlat) continue;
-                bestFlat = flat;
-                best = s;
-            }
-
-            if (best == null)
-            {
-                ResetAutoPickup();
-                return;
-            }
-
-            if (!scooping)
-            {
-                if (bestFlat > Balance.AutoPickupRadius)
-                {
-                    ResetAutoPickup();
-                    return;
-                }
-
-                if (best != _autoTarget) { _autoTarget = best; _autoDwell = 0.0f; _autoStyle = CurrentPickupStyle(); }
-                _autoDwell += dt;
-                AutoPickupRatio = Mathf.Clamp01(_autoDwell / Balance.AutoPickupSeconds);
-                if (_autoDwell < Balance.AutoPickupSeconds) return;
-            }
-
-            if (NetAuthority.ShouldRequest())
-            {
-                if (_grabRequestCooldown > 0.0f) return;
-                _grabRequestCooldown = 0.12f;
-                Net.MatchRpc.Instance?.RequestGrabServerRpc(_motor.PlayerSlot, best.SeatOfOrigin);
-                return;
-            }
-
-            if (best.HostGrab(_motor)) NotifyHolding(best);
-        }
-
-        private void ResetAutoPickup()
-        {
-            if (_autoTarget != null && Held == null)
-            {
-                // An interrupted reach retreats from the shoe, not an old pickup or the world origin.
-                _tossFrom = _autoTarget.transform.position;
-                _tossFromRotation = _autoTarget.transform.rotation;
-                _pickupStyle = _autoStyle;
-            }
-            _autoTarget = null;
-            _autoDwell = 0.0f;
-            AutoPickupRatio = 0.0f;
-        }
-
-        /// <summary>
         /// Everything a pickup looks, sounds and feels like, on every peer.
         ///
         /// ⚠️⚠️ IT IS SEPARATE FROM <see cref="NotifyHolding"/> BECAUSE ONLY THE HOST EVER REACHED THAT ON A
@@ -1128,9 +1025,7 @@ namespace TumbangPreso
             if (what == null) return;
 
             bool scoop = _motor.ReworkSliding;
-            _pickupFromDwell = _autoTarget == what && AutoPickupRatio >= .8f && !scoop;
-            _pickupStyle = _pickupFromDwell ? _autoStyle : CurrentPickupStyle();
-            ResetAutoPickup();
+            _pickupStyle = CurrentPickupStyle();
             float taya = DistanceToTaya();
             var round = GameServices.Round;
 
@@ -1159,7 +1054,7 @@ namespace TumbangPreso
             // The shoe flips up off the street into the hand instead of appearing there.
             _tossFrom = layAt;
             _tossFromRotation = layRotation;
-            _tossDuration = Visual.PickupMotion.Seconds(_pickupStyle, _pickupFromDwell);
+            _tossDuration = Visual.PickupMotion.Seconds(_pickupStyle);
             _tossLeft = _tossDuration;
 
             var rig = UnityEngine.Camera.main != null
@@ -1170,7 +1065,6 @@ namespace TumbangPreso
             {
                 // Your own pickup: the view dips to the street and snaps back up with the shoe; a scoop kicks up
                 // and leans with the slide instead.
-                // The view now bends through the dwell and rises with the hand, rather than a shake pulse.
                 if (scoop) rig.ViewPunch(new Vector3(-1.0f, 0.0f, 1.2f), 2.0f);
                 InputLayer.Rumble.Pulse(scoop ? 0.28f : 0.14f, scoop ? 0.50f : 0.34f, scoop ? 0.10f : 0.07f);
 

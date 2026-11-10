@@ -4,7 +4,7 @@ namespace TumbangPreso.Visual
 {
     public enum PickupStyle { Standing, Moving, RunStop, Crouched, Sliding, QuickSnatch }
 
-    // Presentation timing only. The existing dwell and host grab still own possession.
+    // Presentation timing for a successful Grab.
     public static class PickupMotion
     {
         public static PickupStyle Choose(bool sliding, bool crouched, bool rightClick, float speed, bool recentlyRunning)
@@ -12,18 +12,17 @@ namespace TumbangPreso.Visual
              : rightClick ? PickupStyle.QuickSnatch : recentlyRunning ? PickupStyle.RunStop
              : speed > .6f ? PickupStyle.Moving : PickupStyle.Standing;
 
-        public static float Seconds(PickupStyle style, bool fromDwell)
-            => style == PickupStyle.Sliding ? .32f : fromDwell ? .36f : style == PickupStyle.QuickSnatch ? .44f : .62f;
+        public static float Seconds(PickupStyle style)
+            => style == PickupStyle.Sliding ? .32f : style == PickupStyle.QuickSnatch ? .44f : .62f;
 
-        public static float Lift(float progress, bool fromDwell)
-            => Mathf.SmoothStep(0, 1, Mathf.InverseLerp(fromDwell ? 0 : .30f, 1, progress));
+        public static float Lift(float progress)
+            => Mathf.SmoothStep(0, 1, Mathf.InverseLerp(.30f, 1, progress));
 
-        public static float Grip(float progress, bool fromDwell)
-            => Mathf.SmoothStep(0, 1, Mathf.InverseLerp(fromDwell ? 0 : .30f, fromDwell ? .16f : .46f, progress));
+        public static float Grip(float progress)
+            => Mathf.SmoothStep(0, 1, Mathf.InverseLerp(.30f, .46f, progress));
 
-        public static float Bend(float progress, bool fromDwell)
-            => fromDwell ? 1 - Lift(progress, true)
-             : progress < .30f ? Mathf.SmoothStep(0, 1, progress / .30f) : 1 - Lift(progress, false);
+        public static float Bend(float progress)
+            => progress < .30f ? Mathf.SmoothStep(0, 1, progress / .30f) : 1 - Lift(progress);
 
         public static float EyeDrop(PickupStyle style) => style == PickupStyle.Sliding ? .05f
             : style == PickupStyle.Crouched ? .12f : style == PickupStyle.RunStop ? .60f

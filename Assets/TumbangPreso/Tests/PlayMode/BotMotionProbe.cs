@@ -87,10 +87,10 @@ namespace TumbangPreso.PlayTests
                         if (!slid) slideAt = Time.time;
                         slid = true;
                         slideSpeed = Mathf.Max(slideSpeed, bot.ReworkFlatSpeed);
-                        if (carrier.Held == shoe)
+                        if (!scooped && carrier.Held == shoe)
                         {
                             scooped = true;
-                            Assert.IsFalse(bot.Intent.Pressed(Verb.Grab), "The slide must use the real scoop, without a grab press.");
+                            Assert.IsTrue(bot.Intent.Pressed(Verb.Grab), "The bot must press Grab to retrieve while sliding.");
                         }
                         if (scooped && !captured && Time.time - slideAt >= .19f)
                         {

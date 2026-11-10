@@ -54,6 +54,8 @@ namespace TumbangPreso.Net
                 writer.Write(Balance.FatigueTime);
                 writer.Write(Balance.ThrowRestoreCooldown);
                 writer.Write(Balance.CanDownGracePeriod);
+                writer.Write(Lata.PickupSeconds);
+                writer.Write(StatusRules.VulnerableSeconds);
                 writer.Write(NemuRules.DriftPull);writer.Write(NemuRules.TellPull);writer.Write(NemuRules.SurgePull);
                 // Shared placement support: constructs and resting slippers stand on the floor at their height (2026-10-29).
                 writer.Write("ground-support-step");writer.Write(Slipper.GroundStep);

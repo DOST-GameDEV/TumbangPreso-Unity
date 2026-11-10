@@ -720,7 +720,9 @@ namespace TumbangPreso.Net
         // build of the other and disagreed. Merged, both are in, and no 186 peer of either kind may meet this.
         // 188 (2026-11-03): `SkipOpening` and `OpeningVotes`, the vote to skip the match opening. A 187 peer would never
         // vote or hear the result, so a mixed match could hold a button that cannot finish: the two may not meet.
-        public const int ProtocolVersion = 189;
+        // 190 (2026-11-10): Grab-only slipper retrieval, 1.5 s can lift and 3.5 s Vulnerable.
+        // Older clients predict a shorter lift and keep Vulnerable after it expires on the host.
+        public const int ProtocolVersion = 190;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

@@ -2243,11 +2243,16 @@ namespace TumbangPreso
 
             Goto(intent, where, AiTuning.Reach * 0.75f, hurry);
 
-            // A clean run-up lets the real movement slide scoop the shoe. Save the grab press
-            // for a walk-up or a slide that ended short.
-            if (_motor.ReworkSliding || (mine.IsGrabbableIgnoringReach(_motor) &&
+            // A clean run-up lets the bot slide into reach and grab without stopping.
+            if (_motor.ReworkSliding)
+            {
+                Press(intent, Verb.Crouch, true);
+                if (mine.CanBeGrabbedBy(_motor)) Tap(intent, Verb.Grab);
+                return;
+            }
+            if (mine.IsGrabbableIgnoringReach(_motor) &&
                 Mathf.Abs(where.y - transform.position.y) <= .45f &&
-                distance > 1.35f && distance <= 2.85f && CanSlideToward(intent, where)))
+                distance > 1.35f && distance <= 2.85f && CanSlideToward(intent, where))
             {
                 Press(intent, Verb.Crouch, true);
                 return;

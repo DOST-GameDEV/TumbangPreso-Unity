@@ -139,7 +139,7 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(guide.FlightVisible);
             var flightMesh = guide.transform.Find("FlightPath").GetComponent<MeshFilter>().sharedMesh;
             Assert.Greater(flightMesh.bounds.max.y, guide.LandingPoint.y + .2f, "Flight guidance has to leave the floor.");
-            const int verticesPerMark = 2 * 8 * 3; // Chalk face and contrast edge, eight triangles each.
+            const int verticesPerMark = 2 * 2 * 3; // Dash and outline, two triangles each.
             Assert.LessOrEqual(flightMesh.vertexCount, TrajectoryPreview.MaxFlightMarks * verticesPerMark,
                 "Keep the path sparse at full charge.");
             Debug.Log("Landing review point=" + guide.LandingPoint + " viewport=" + rig.Camera.WorldToViewportPoint(guide.LandingPoint)
