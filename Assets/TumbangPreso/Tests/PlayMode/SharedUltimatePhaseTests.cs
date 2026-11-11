@@ -65,6 +65,81 @@ namespace TumbangPreso.PlayTests
         public IEnumerator IlyasCurrentIntroductionReturnsToHisLiveAbility()
             => Profiles(new[] { "rafi" });
 
+        [UnityTest, Timeout(180000)]
+        public IEnumerator AmihanFaceActsThroughTheActualUltimate()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.Eskinita, GameMode.HeroStrike, skipReadyArrival: true);
+            Settings.SettingsStore.Current.CinematicCameraMotion = true;
+            Settings.SettingsStore.Current.ReducedUiMotion = false;
+            var round = GameServices.Round;
+            var actor = round.PlayerAt(1);
+            Hero(actor, "amihan");
+            actor.Teleport(round.Lata.Mark + new Vector3(0, .06f, -2f));
+            actor.transform.rotation = Quaternion.identity;
+            foreach (var other in round.Players)
+                if (other != actor) other.Teleport(round.Lata.Mark + new Vector3(2 + other.PlayerSlot, .06f, 4));
+            Camera.main.GetComponent<CameraRig>().Follow(actor, true);
+            float readyBy = Time.realtimeSinceStartup + 8f;
+            while (UltimateIntroductionCache.Find(actor, actor.GetComponent<Carrier>().Held != null) == null
+                && Time.realtimeSinceStartup < readyBy) yield return null;
+            Assert.IsNotNull(UltimateIntroductionCache.Find(actor, actor.GetComponent<Carrier>().Held != null));
+
+            string output = System.Environment.GetEnvironmentVariable("TUMP_AMIHAN_FACE_CAPTURE_DIR")
+                ?? "Logs/amihan-face-review";
+            System.IO.Directory.CreateDirectory(output);
+            var ldr = new RenderTexture(1280, 720, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
+            var pixels = new Texture2D(1280, 720, TextureFormat.RGB24, false);
+            var block = new MaterialPropertyBlock();
+            int frame = 0, saved = 0, previousRate = Time.captureFramerate;
+            double clock = Time.realtimeSinceStartupAsDouble;
+            bool sawNewAtlas = false;
+            Time.captureFramerate = 30;
+            SharedUltimatePhase.FilmClock = () => clock + frame / 30.0;
+            try
+            {
+                for (; frame < 240; frame++)
+                {
+                    if (frame == 6) Press(actor, Verb.Ultimate);
+                    if (frame == 12) actor.Intent.Set(Verb.Ultimate, false);
+                    yield return null;
+                    var picture = GameObject.Find("UltimateScene")?.GetComponent<UnityEngine.UI.RawImage>();
+                    if (picture == null || !picture.enabled || picture.texture == null) continue;
+                    if (!sawNewAtlas)
+                    {
+                        var cast = GameObject.Find("RecordedCast-P" + (actor.PlayerSlot + 1));
+                        if (cast != null)
+                            foreach (var skin in cast.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+                            {
+                                skin.GetPropertyBlock(block);
+                                if (block.GetTexture("_MainTex") is RenderTexture ink && ink.name == "Amihan cinematic face atlas")
+                                    sawNewAtlas = true;
+                            }
+                    }
+                    Graphics.Blit(picture.texture, ldr);
+                    var old = RenderTexture.active;
+                    try
+                    {
+                        RenderTexture.active = ldr;
+                        pixels.ReadPixels(new Rect(0, 0, 1280, 720), 0, 0);
+                        pixels.Apply();
+                        System.IO.File.WriteAllBytes(System.IO.Path.Combine(output, $"{saved++:D5}.jpg"), pixels.EncodeToJPG(92));
+                    }
+                    finally { RenderTexture.active = old; }
+                }
+            }
+            finally
+            {
+                SharedUltimatePhase.FilmClock = null;
+                Time.captureFramerate = previousRate;
+                actor.Intent.Set(Verb.Ultimate, false);
+                ldr.Release();
+                Object.Destroy(ldr);
+                Object.Destroy(pixels);
+            }
+            Assert.IsTrue(sawNewAtlas, "The cinematic must paint the redesign's copied head.");
+            Assert.GreaterOrEqual(saved, 150, "Capture the complete expression sequence on the actual ultimate camera.");
+        }
+
         [UnityTest, Timeout(120000)]
         public IEnumerator LiveBlindfoldSkillsAndCompanionsCannotObscureTheUltimatePicture()
         {

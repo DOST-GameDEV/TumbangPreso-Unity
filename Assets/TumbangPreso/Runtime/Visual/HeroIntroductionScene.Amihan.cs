@@ -103,6 +103,7 @@ namespace TumbangPreso.Visual
         private WindVfx.Motif _amDust;
         private AmihanStormFan _amihanFan;
         private VoxelFace _amFace;
+        private AmihanCinematicFace _amPaintedFace;
         private float _amCourt;
 
         // THE ARRIVAL: start (scene x, height, z), the side its curl turns to (+1 her right), curl radius, delay, width.
@@ -213,8 +214,8 @@ namespace TumbangPreso.Visual
                 Core.AmihanRules.StormSurgeGatherSeconds);
             _amihanFan.enabled = false;
 
-            // Her cutscene faces (squint, whistle, grin, wink) on the copied body's own head.
-            _amFace = VoxelFace.Attach(_bodyRenderers);
+            _amPaintedFace = AmihanCinematicFace.Attach(_bodyRenderers);
+            if (_amPaintedFace == null) _amFace = VoxelFace.Attach(_bodyRenderers);
 
             BuildAmihanLane();
         }
@@ -294,7 +295,8 @@ namespace TumbangPreso.Visual
             float light = calm ? .55f : 1f;
             float leave = 1 - Ease(Seconds - .30f, Seconds, t);
             float since = story - AmReleaseAt;
-            _amFace?.Show(AmLook(t));
+            if (_amPaintedFace != null) _amPaintedFace.Sample(t);
+            else _amFace?.Show(AmLook(t));
 
             AmBirdPose(story, calm, out var birdAt, out var birdTurn, out float flap, out float birdOn);
             SampleAmihanBird(story, calm, birdAt, birdTurn, flap, birdOn);

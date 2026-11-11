@@ -554,6 +554,7 @@ namespace TumbangPreso.Visual
             if (_hero == "nemu") NemuDispose();
             if (_hero == "dante") LonghornDispose();
             _amFace?.Dispose(); _amFace = null;
+            _amPaintedFace?.Dispose(); _amPaintedFace = null;
             if (_heldItem != null) { _heldItem.SetActive(false); ObjectDestroy(_heldItem); }
             if (_root != null) { _root.SetActive(false); ObjectDestroy(_root); }
         }
