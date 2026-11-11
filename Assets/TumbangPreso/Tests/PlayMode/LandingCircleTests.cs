@@ -110,7 +110,7 @@ namespace TumbangPreso.PlayTests
             Assert.That(query(Vector3.up * 3, .045f), Is.EqualTo(1.485f).Within(.001f), "A full nonalloc buffer must not silently lose the highest support.");
         }
 
-        [UnityTest, Timeout(90000)] public IEnumerator LocalChargeDrawsASteadyFlightGuideWithoutAGroundRing()
+        [UnityTest, Timeout(180000)] public IEnumerator LocalChargeShowsTheArcAndLandingUntilRelease()
         {
             yield return MapRetrievalProbe.Load(UI.SceneFlow.Eskinita);
             var ready = Object.FindFirstObjectByType<ReadyGate>();
@@ -121,6 +121,8 @@ namespace TumbangPreso.PlayTests
             var who = GameServices.Round.PlayerAt(1); var carrier = who.GetComponent<Carrier>();
             var rig = Object.FindFirstObjectByType<CameraSystem.CameraRig>();
             foreach (var brain in Object.FindObjectsByType<AIController>()) brain.enabled = false;
+            var reader = who.GetComponent<PlayerInputReader>();
+            if (reader != null) reader.enabled = false;
             who.Teleport(new Vector3(-3, .12f, -8)); who.Intent.Clear(); who.Intent.Parked = false;
             who.transform.rotation = Quaternion.identity;
             who.Intent.AimPoint = new Vector3(-3, .12f, 0);
@@ -141,14 +143,15 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(guide.FlightVisible);
             var flightMesh = guide.transform.Find("FlightPath").GetComponent<MeshFilter>().sharedMesh;
             Assert.Greater(flightMesh.bounds.max.y, guide.LandingPoint.y + .2f, "Flight guidance has to leave the floor.");
-            const int verticesPerMark = 2 * 2 * 3; // Dash and outline, two triangles each.
-            Assert.LessOrEqual(flightMesh.vertexCount, TrajectoryPreview.MaxFlightMarks * verticesPerMark,
-                "Keep the path sparse at full charge.");
             Debug.Log("Landing review point=" + guide.LandingPoint + " viewport=" + rig.Camera.WorldToViewportPoint(guide.LandingPoint)
                 + " camera=" + rig.Camera.transform.position + " facing=" + rig.Camera.transform.forward + " rigLocal=" + rig.IsLocalFpp);
             var flags=BindingFlags.Instance|BindingFlags.NonPublic;
             var exact=guide.LandingPoint;
             var target=(List<Vector3>)typeof(TrajectoryPreview).GetField("_path",flags).GetValue(guide);
+            Assert.LessOrEqual(flightMesh.vertexCount, target.Count * 2 + 12,
+                "Keep the guide to one strip and one pointer.");
+            Assert.IsTrue(System.Array.Exists(flightMesh.vertices, point => (point - exact).sqrMagnitude < .000001f),
+                "The pointer stem must touch the predicted floor position.");
             var previous=(List<Vector3>)typeof(TrajectoryPreview).GetField("_fromPath",flags).GetValue(guide);
             previous.Clear();
             foreach (var point in target) previous.Add(point + Vector3.right * .4f);
@@ -165,8 +168,9 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(exact,guide.LandingPoint,"Presentation may not rewrite the ballistic prediction.");
             var settled=flightMesh.vertices;
             draw.Invoke(guide,new object[]{start+1f});
-            CollectionAssert.AreEqual(settled,flightMesh.vertices,"Steady aim must not make the dashes slide or pop.");
-            const string output = "Logs/steady-throw-guide";
+            CollectionAssert.AreEqual(settled,flightMesh.vertices,"Steady aim must keep the guide fixed.");
+            string review = System.Environment.GetEnvironmentVariable("TUMP_THROW_GUIDE_REVIEW_DIR");
+            string output = review ?? "Logs/throw-guide-review";
             System.IO.Directory.CreateDirectory(output);
             typeof(ThrowAimIntegrationProbe).GetMethod("CaptureGuideDifference", BindingFlags.Static | BindingFlags.NonPublic)
                 .Invoke(null, new object[] { rig.Camera, guide, output, "flight-visible" });
@@ -174,9 +178,116 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(guide.FlightVisible, "Actual render frames must retain the local flight path. charged=" + carrier.IsCharging
                 + " held=" + (carrier.Held != null) + " round=" + GameServices.Round.RoundActive + " brain=" + (who.GetComponent<AIController>()?.enabled == true)
                 + " main=" + (Camera.main == rig.Camera) + " local=" + rig.IsLocalFpp + " follows=" + rig.IsFollowing(who));
-            who.Intent.Set(Verb.SpecialAbility, false); step.Invoke(carrier, new object[] { .01f });
+            if (!string.IsNullOrEmpty(review))
+                yield return RecordGuide(rig, who, carrier, guide, step, System.IO.Path.Combine(output, "frames"));
+            else
+            {
+                who.Intent.Set(Verb.SpecialAbility, false);
+                step.Invoke(carrier, new object[] { .01f });
+            }
             guide.SendMessage("LateUpdate");
             Assert.IsFalse(guide.FlightVisible);
+            Assert.IsNull(carrier.Held, "The capture must finish with a real throw.");
+        }
+
+        private static IEnumerator RecordGuide(CameraSystem.CameraRig rig, CharacterMotor who, Carrier carrier,
+            TrajectoryPreview guide, MethodInfo step, string folder)
+        {
+            const int width = 1280, height = 720, fps = 30, releaseFrame = 108, frameCount = 174, uiLayer = 31;
+            System.IO.Directory.CreateDirectory(folder);
+            var scene = rig.Camera;
+            var hud = GameObject.Find("OwnerMatchCanvas").GetComponent<Canvas>();
+            var world = new RenderTexture(width, height, 24, RenderTextureFormat.DefaultHDR, RenderTextureReadWrite.Linear);
+            var resolved = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
+            var pixels = new Texture2D(width, height, TextureFormat.RGB24, false);
+            var ui = new GameObject("Throw guide capture UI").AddComponent<Camera>();
+            ui.enabled = false;
+            ui.clearFlags = CameraClearFlags.Depth;
+            ui.cullingMask = 1 << uiLayer;
+            ui.orthographic = true;
+            ui.nearClipPlane = .01f;
+            ui.farClipPlane = 10;
+            ui.targetTexture = resolved;
+            var oldTarget = scene.targetTexture;
+            var oldMode = hud.renderMode;
+            var oldCamera = hud.worldCamera;
+            float oldDistance = hud.planeDistance;
+            int oldMask = scene.cullingMask, oldRate = Time.captureFramerate;
+            var layers = new Dictionary<GameObject, int>();
+            var pitch = typeof(CameraSystem.CameraRig).GetField("_pitchDeg", BindingFlags.Instance | BindingFlags.NonPublic);
+            float fromPitch = (float)pitch.GetValue(rig);
+            var shoe = carrier.Held;
+            Vector3 predicted = default;
+            bool landed = false;
+            try
+            {
+                foreach (var child in hud.GetComponentsInChildren<Transform>(true))
+                {
+                    layers[child.gameObject] = child.gameObject.layer;
+                    child.gameObject.layer = uiLayer;
+                }
+                scene.cullingMask &= ~(1 << uiLayer);
+                scene.targetTexture = world;
+                hud.renderMode = RenderMode.ScreenSpaceCamera;
+                hud.worldCamera = ui;
+                hud.planeDistance = 1;
+                who.Intent.ClearAim();
+                Time.captureFramerate = fps;
+                yield return null;
+                yield return null;
+
+                for (int frame = 0; frame < frameCount; frame++)
+                {
+                    float turn = Mathf.SmoothStep(0, 1, Mathf.InverseLerp(20, 86, frame));
+                    float yaw = Mathf.Lerp(0, -12, turn);
+                    float look = Mathf.Lerp(fromPitch, 5, turn);
+                    who.transform.rotation = Quaternion.Euler(0, yaw, 0);
+                    pitch.SetValue(rig, look);
+                    if (frame == releaseFrame)
+                    {
+                        predicted = guide.LandingPoint;
+                        who.Intent.Set(Verb.SpecialAbility, false);
+                        step.Invoke(carrier, new object[] { .01f });
+                    }
+                    yield return null;
+                    if (frame >= releaseFrame && !landed && shoe.State == SlipperState.Loose)
+                    {
+                        landed = true;
+                        Vector3 actual = shoe.transform.position;
+                        actual.y = predicted.y;
+                        Assert.Less(Vector3.Distance(predicted, actual), .35f,
+                            $"The release marker at {predicted} must agree with the actual floor contact at {actual}.");
+                    }
+                    scene.Render();
+                    Graphics.Blit(world, resolved);
+                    Canvas.ForceUpdateCanvases();
+                    ui.Render();
+                    var previous = RenderTexture.active;
+                    try
+                    {
+                        RenderTexture.active = resolved;
+                        pixels.ReadPixels(new Rect(0, 0, width, height), 0, 0);
+                        pixels.Apply();
+                        System.IO.File.WriteAllBytes(System.IO.Path.Combine(folder, $"{frame:D5}.jpg"), pixels.EncodeToJPG(93));
+                    }
+                    finally { RenderTexture.active = previous; }
+                }
+            }
+            finally
+            {
+                Time.captureFramerate = oldRate;
+                scene.targetTexture = oldTarget;
+                scene.cullingMask = oldMask;
+                hud.renderMode = oldMode;
+                hud.worldCamera = oldCamera;
+                hud.planeDistance = oldDistance;
+                foreach (var entry in layers) if (entry.Key != null) entry.Key.layer = entry.Value;
+                Object.Destroy(ui.gameObject);
+                Object.Destroy(pixels);
+                world.Release(); Object.Destroy(world);
+                resolved.Release(); Object.Destroy(resolved);
+            }
+            Assert.IsTrue(landed, "The recording must show the thrown slipper reaching the court.");
         }
     }
 }
