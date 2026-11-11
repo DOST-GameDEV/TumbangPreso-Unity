@@ -149,9 +149,9 @@ namespace TumbangPreso.PlayTests
             var exact=guide.LandingPoint;
             var target=(List<Vector3>)typeof(TrajectoryPreview).GetField("_path",flags).GetValue(guide);
             Assert.LessOrEqual(flightMesh.vertexCount, target.Count * 2 + 12,
-                "Keep the guide to one strip and one pointer.");
+                "Keep the guide to one strip and one landing mark.");
             Assert.IsTrue(System.Array.Exists(flightMesh.vertices, point => (point - exact).sqrMagnitude < .000001f),
-                "The pointer stem must touch the predicted floor position.");
+                "The final mark must touch the predicted floor position.");
             var previous=(List<Vector3>)typeof(TrajectoryPreview).GetField("_fromPath",flags).GetValue(guide);
             previous.Clear();
             foreach (var point in target) previous.Add(point + Vector3.right * .4f);
@@ -167,8 +167,30 @@ namespace TumbangPreso.PlayTests
                 "The drawn path should move between predictions instead of snapping.");
             Assert.AreEqual(exact,guide.LandingPoint,"Presentation may not rewrite the ballistic prediction.");
             var settled=flightMesh.vertices;
-            draw.Invoke(guide,new object[]{start+1f});
-            CollectionAssert.AreEqual(settled,flightMesh.vertices,"Steady aim must keep the guide fixed.");
+            var renderer = guide.GetComponentInChildren<MeshRenderer>();
+            var stroke = new MaterialPropertyBlock();
+            var settings = Settings.SettingsStore.Current;
+            bool reducedMotion = settings.ReducedUiMotion;
+            try
+            {
+                settings.ReducedUiMotion = false;
+                draw.Invoke(guide, new object[] { start + 1f });
+                renderer.GetPropertyBlock(stroke);
+                float initialPhase = stroke.GetFloat("_DashPhase");
+                draw.Invoke(guide, new object[] { start + 1.25f });
+                renderer.GetPropertyBlock(stroke);
+                Assert.AreNotEqual(initialPhase, stroke.GetFloat("_DashPhase"), "The dashes must march while the aim is held still.");
+                CollectionAssert.AreEqual(settled, flightMesh.vertices, "Marching dashes must leave the flight path and landing fixed.");
+
+                settings.ReducedUiMotion = true;
+                draw.Invoke(guide, new object[] { start + 1.5f });
+                renderer.GetPropertyBlock(stroke);
+                float staticPhase = stroke.GetFloat("_DashPhase");
+                draw.Invoke(guide, new object[] { start + 2f });
+                renderer.GetPropertyBlock(stroke);
+                Assert.AreEqual(staticPhase, stroke.GetFloat("_DashPhase"), "Reduced UI motion must keep the dash pattern still.");
+            }
+            finally { settings.ReducedUiMotion = reducedMotion; }
             string review = System.Environment.GetEnvironmentVariable("TUMP_THROW_GUIDE_REVIEW_DIR");
             string output = review ?? "Logs/throw-guide-review";
             System.IO.Directory.CreateDirectory(output);
@@ -215,7 +237,6 @@ namespace TumbangPreso.PlayTests
             int oldMask = scene.cullingMask, oldRate = Time.captureFramerate;
             var layers = new Dictionary<GameObject, int>();
             var pitch = typeof(CameraSystem.CameraRig).GetField("_pitchDeg", BindingFlags.Instance | BindingFlags.NonPublic);
-            float fromPitch = (float)pitch.GetValue(rig);
             var shoe = carrier.Held;
             Vector3 predicted = default;
             bool landed = false;
@@ -240,9 +261,14 @@ namespace TumbangPreso.PlayTests
                 {
                     float turn = Mathf.SmoothStep(0, 1, Mathf.InverseLerp(20, 86, frame));
                     float yaw = Mathf.Lerp(0, -12, turn);
-                    float look = Mathf.Lerp(fromPitch, 5, turn);
+                    float look = Mathf.Lerp(-2.5f, 5, turn);
                     who.transform.rotation = Quaternion.Euler(0, yaw, 0);
                     pitch.SetValue(rig, look);
+                    if (frame < releaseFrame)
+                    {
+                        who.Intent.SpinInput = .48f * (1 - turn);
+                        step.Invoke(carrier, new object[] { 1f / fps });
+                    }
                     if (frame == releaseFrame)
                     {
                         predicted = guide.LandingPoint;

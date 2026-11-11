@@ -26,6 +26,8 @@ namespace TumbangPreso
         private readonly List<Vector2> _strokeUv = new List<Vector2>(272);
         private readonly List<Color> _colours = new List<Color>(272);
         private readonly List<int> _tris = new List<int>(800);
+        private MaterialPropertyBlock _stroke;
+        private static readonly int DashPhase = Shader.PropertyToID("_DashPhase");
         private static readonly Color Ink = new Color(.032f, .024f, .018f, .98f);
         private static Material _arcMaterial;
         private readonly RaycastHit[] _hits = new RaycastHit[64];
@@ -45,6 +47,7 @@ namespace TumbangPreso
 
         private void Awake()
         {
+            _stroke = new MaterialPropertyBlock();
             if (_arcMaterial == null)
             {
                 _arcMaterial = new Material(Shader.Find("TumbangPreso/AimGuide")) { name = "ThrowDirectionGuide" };
@@ -144,6 +147,9 @@ namespace TumbangPreso
             }
             bool legal = GameServices.Round.CanThrow(_motor);
             var tint = legal ? new Color(1, .92f, .58f, AlphaMax) : new Color(.72f, .72f, .68f, AlphaMax);
+            float phase = Settings.SettingsStore.Current.ReducedUiMotion ? .18f : Mathf.Repeat(now * .95f, 1);
+            _stroke.SetFloat(DashPhase, phase);
+            _flightRenderer.SetPropertyBlock(_stroke);
             DrawFlight(camera, tint, _shownPath);
         }
 
@@ -155,6 +161,7 @@ namespace TumbangPreso
             float near = camera.nearClipPlane + .02f;
             var eye = camera.transform;
             int previousPair = -1;
+            float distance = 0;
             Vector2 normal = Vector2.right;
             for (int i = 0; i < path.Count; i++)
             {
@@ -175,13 +182,17 @@ namespace TumbangPreso
                     // on their own sides of the strip.
                     normal = Vector2.Dot(candidate, normal) < 0 ? -candidate : candidate;
                 }
-                float pixels = 5.2f * scale;
+                // Measure spacing in screen pixels so foreshortening cannot remove
+                // the dashes on the far half of the arc.
+                if (previousPair >= 0)
+                    distance += Vector2.Distance(_screenPath[i - 1], _screenPath[i]) / scale;
+                float pixels = 4.3f * scale;
                 Vector3 offset = (eye.right * normal.x + eye.up * normal.y) * (pixels * UnitsPerPixel(camera, depth));
                 Color colour = tint;
                 colour.a *= Mathf.InverseLerp(.45f, 1.65f, depth);
                 int pair = _verts.Count;
-                AddVertex(path[i] - offset, colour, -1);
-                AddVertex(path[i] + offset, colour, 1);
+                AddVertex(path[i] - offset, colour, -1, distance);
+                AddVertex(path[i] + offset, colour, 1, distance);
                 if (previousPair >= 0)
                 {
                     AddTriangle(previousPair, previousPair + 1, pair);
@@ -190,7 +201,7 @@ namespace TumbangPreso
                 previousPair = pair;
             }
             if (path.Count > 1 && _screenPath[^1].z > near)
-                DrawLandingPointer(eye, path[^1], UnitsPerPixel(camera, _screenPath[^1].z) * scale, tint);
+                DrawLandingMark(eye, path[^1], UnitsPerPixel(camera, _screenPath[^1].z) * scale, tint);
             _flightMesh.Clear(); _flightMesh.SetVertices(_verts); _flightMesh.SetUVs(0, _strokeUv);
             _flightMesh.SetColors(_colours); _flightMesh.SetTriangles(_tris, 0);
             _flightMesh.RecalculateBounds(); _flightRenderer.enabled = _tris.Count > 0;
@@ -203,31 +214,30 @@ namespace TumbangPreso
             return height / Mathf.Max(1, camera.pixelHeight);
         }
 
-        private void DrawLandingPointer(Transform eye, Vector3 point, float unit, Color tint)
+        private void DrawLandingMark(Transform eye, Vector3 point, float unit, Color tint)
         {
-            // Raise the arrow head above the charge reticle. Its short stem still
-            // terminates on the predicted ground point.
+            // The last mark stays at contact while the dashes march into it.
             Vector3 up = eye.up * unit, right = eye.right * unit;
-            Vector3 neck = point + up * 27;
-            Vector3 crown = neck + up * 19;
-            AddSolidTriangle(point, neck - right * 3, neck + right * 3, Ink);
-            AddSolidTriangle(crown - right * 15, crown + right * 15, neck, Ink);
-            AddSolidTriangle(crown - up * 3 - right * 9, crown - up * 3 + right * 9, neck + up * 4, tint);
-            AddSolidTriangle(point + up * 2, neck - right, neck + right, tint);
+            Vector3 centre = point + up * 10;
+            Vector3 left = centre - right * 8, rightEdge = centre + right * 8;
+            AddSolidTriangle(point, left, rightEdge, Ink);
+            AddSolidTriangle(centre + up * 9, rightEdge, left, Ink);
+            AddSolidTriangle(point + up * 3, centre - right * 4.5f, centre + right * 4.5f, tint);
+            AddSolidTriangle(centre + up * 5.5f, centre + right * 4.5f, centre - right * 4.5f, tint);
         }
 
         private void AddSolidTriangle(Vector3 a, Vector3 b, Vector3 c, Color colour)
         {
             int first = _verts.Count;
-            AddVertex(a, colour, 0); AddVertex(b, colour, 0); AddVertex(c, colour, 0);
+            AddVertex(a, colour, 0, -1); AddVertex(b, colour, 0, -1); AddVertex(c, colour, 0, -1);
             AddTriangle(first, first + 1, first + 2);
         }
 
-        private void AddVertex(Vector3 point, Color colour, float across)
+        private void AddVertex(Vector3 point, Color colour, float across, float distance)
         {
             _verts.Add(point);
             _colours.Add(colour);
-            _strokeUv.Add(new Vector2(across, 0));
+            _strokeUv.Add(new Vector2(across, distance));
         }
 
         private void AddTriangle(int a, int b, int c)
