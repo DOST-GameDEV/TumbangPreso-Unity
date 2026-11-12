@@ -528,10 +528,13 @@ namespace TumbangPreso
         /// less airtime, harder to body-block, and the one a person throwing a slipper at a can
         /// actually produces. The .gd drops the lob root for the same reason.
         ///
-        /// ⚠️ AND OUT OF RANGE THROWS ALONG THE PLAYER'S OWN LINE rather than falling back to
-        /// 45. The .gd is explicit about why: aiming at a distant wall would otherwise fire a
-        /// lob straight up, which is a far stranger thing to have happen than a throw that
-        /// visibly does not get there.
+        /// ⚠️ OUT OF RANGE THROWS AT THE ANGLE THAT REACHES FARTHEST ALONG THE AIM LINE, the
+        /// bisector of straight up and that line (45 degrees plus half its elevation). The .gd
+        /// fell back to a flat throw along the line instead, but at the range edge the arc is
+        /// already near that bisector, so a crosshair moved a few pixels past the edge swung
+        /// the launch from a lob to a flat throw and the landing jumped metres closer. The
+        /// bisector is the single solution exactly at the edge, so the throw and its guide stay
+        /// continuous. It never fires a fixed 45 lob: aiming up a wall still raises it.
         /// </summary>
         public Vector3 LaunchVelocityTo(Vector3 origin, Vector3 target, float charge01)
         {
@@ -556,7 +559,7 @@ namespace TumbangPreso
 
             float discriminant = v2 * v2 - g * (g * distance * distance + 2.0f * toTarget.y * v2);
 
-            if (discriminant < 0.0f) return toTarget.normalized;
+            if (discriminant < 0.0f) return (Vector3.up + toTarget.normalized).normalized;
 
             float root = Mathf.Sqrt(discriminant);
             float tangent = (v2 - root) / (g * distance);
