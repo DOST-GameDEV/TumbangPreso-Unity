@@ -28,7 +28,6 @@ namespace TumbangPreso
         private readonly List<int> _tris = new List<int>(800);
         private MaterialPropertyBlock _stroke;
         private static readonly int DashPhase = Shader.PropertyToID("_DashPhase");
-        private static readonly Color Ink = new Color(.032f, .024f, .018f, .98f);
         private static Material _arcMaterial;
         private readonly RaycastHit[] _hits = new RaycastHit[64];
         private float _nextDraw, _drawStart;
@@ -200,8 +199,6 @@ namespace TumbangPreso
                 }
                 previousPair = pair;
             }
-            if (path.Count > 1 && _screenPath[^1].z > near)
-                DrawLandingMark(eye, path[^1], UnitsPerPixel(camera, _screenPath[^1].z) * scale, tint);
             _flightMesh.Clear(); _flightMesh.SetVertices(_verts); _flightMesh.SetUVs(0, _strokeUv);
             _flightMesh.SetColors(_colours); _flightMesh.SetTriangles(_tris, 0);
             _flightMesh.RecalculateBounds(); _flightRenderer.enabled = _tris.Count > 0;
@@ -212,25 +209,6 @@ namespace TumbangPreso
             float height = camera.orthographic ? 2 * camera.orthographicSize
                 : 2 * depth * Mathf.Tan(camera.fieldOfView * Mathf.Deg2Rad * .5f);
             return height / Mathf.Max(1, camera.pixelHeight);
-        }
-
-        private void DrawLandingMark(Transform eye, Vector3 point, float unit, Color tint)
-        {
-            // The last mark stays at contact while the dashes march into it.
-            Vector3 up = eye.up * unit, right = eye.right * unit;
-            Vector3 centre = point + up * 10;
-            Vector3 left = centre - right * 8, rightEdge = centre + right * 8;
-            AddSolidTriangle(point, left, rightEdge, Ink);
-            AddSolidTriangle(centre + up * 9, rightEdge, left, Ink);
-            AddSolidTriangle(point + up * 3, centre - right * 4.5f, centre + right * 4.5f, tint);
-            AddSolidTriangle(centre + up * 5.5f, centre + right * 4.5f, centre - right * 4.5f, tint);
-        }
-
-        private void AddSolidTriangle(Vector3 a, Vector3 b, Vector3 c, Color colour)
-        {
-            int first = _verts.Count;
-            AddVertex(a, colour, 0, -1); AddVertex(b, colour, 0, -1); AddVertex(c, colour, 0, -1);
-            AddTriangle(first, first + 1, first + 2);
         }
 
         private void AddVertex(Vector3 point, Color colour, float across, float distance)

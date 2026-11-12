@@ -148,10 +148,11 @@ namespace TumbangPreso.PlayTests
             var flags=BindingFlags.Instance|BindingFlags.NonPublic;
             var exact=guide.LandingPoint;
             var target=(List<Vector3>)typeof(TrajectoryPreview).GetField("_path",flags).GetValue(guide);
-            Assert.LessOrEqual(flightMesh.vertexCount, target.Count * 2 + 12,
-                "Keep the guide to one strip and one landing mark.");
-            Assert.IsTrue(System.Array.Exists(flightMesh.vertices, point => (point - exact).sqrMagnitude < .000001f),
-                "The final mark must touch the predicted floor position.");
+            Assert.LessOrEqual(flightMesh.vertexCount, target.Count * 2,
+                "Keep the guide to one strip with no landing mark.");
+            var strip = flightMesh.vertices;
+            Assert.Less(Vector3.Distance((strip[^1] + strip[^2]) * .5f, exact), .0001f,
+                "The strip must end at the predicted floor position.");
             var previous=(List<Vector3>)typeof(TrajectoryPreview).GetField("_fromPath",flags).GetValue(guide);
             previous.Clear();
             foreach (var point in target) previous.Add(point + Vector3.right * .4f);
@@ -282,7 +283,7 @@ namespace TumbangPreso.PlayTests
                         Vector3 actual = shoe.transform.position;
                         actual.y = predicted.y;
                         Assert.Less(Vector3.Distance(predicted, actual), .35f,
-                            $"The release marker at {predicted} must agree with the actual floor contact at {actual}.");
+                            $"The predicted landing at {predicted} must agree with the actual floor contact at {actual}.");
                     }
                     scene.Render();
                     Graphics.Blit(world, resolved);
