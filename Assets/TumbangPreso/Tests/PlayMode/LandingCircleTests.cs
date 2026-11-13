@@ -150,9 +150,14 @@ namespace TumbangPreso.PlayTests
             var target=(List<Vector3>)typeof(TrajectoryPreview).GetField("_path",flags).GetValue(guide);
             Assert.LessOrEqual(flightMesh.vertexCount, target.Count * 2,
                 "Keep the guide to one strip with no landing mark.");
+            Assert.That(TrajectoryPreview.ShownFlightShare(0), Is.EqualTo(.3f).Within(1e-5f));
+            Assert.That(TrajectoryPreview.ShownFlightShare(1), Is.EqualTo(.6f).Within(1e-5f));
             var strip = flightMesh.vertices;
-            Assert.Less(Vector3.Distance((strip[^1] + strip[^2]) * .5f, exact), .0001f,
-                "The strip must end at the predicted floor position.");
+            var hand = rig.Camera.ViewportToWorldPoint(TrajectoryPreview.HandViewport);
+            Assert.Less(Vector3.Distance((strip[0] + strip[1]) * .5f, hand), .001f,
+                "The guide starts at the held slipper.");
+            Assert.Greater(Vector3.Distance((strip[^1] + strip[^2]) * .5f, exact), .5f,
+                "The guide shows part of the flight and leaves the landing to the player.");
             var draw=typeof(TrajectoryPreview).GetMethod("Draw",flags);
             float start=Time.unscaledTime;
             var predicted=flightMesh.vertices;

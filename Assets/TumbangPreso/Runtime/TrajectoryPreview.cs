@@ -8,17 +8,22 @@ namespace TumbangPreso
     /// Local flight path for the current throw. Real gravity, signed curve,
     /// world banks and supporting floor are predicted without changing gameplay.
     /// Moving players, can impacts and later ability effects may still intercept it.
+    /// The line is drawn from the held slipper over the first share of that flight.
     /// </summary>
     [DefaultExecutionOrder(900)]
     public sealed class TrajectoryPreview : MonoBehaviour
     {
         public const float AlphaMax = .92f;
         public const float FloorEpsilon = .018f;
+        /// <summary>Where the held slipper sits in the first person view, at its depth.</summary>
+        public static readonly Vector3 HandViewport = new Vector3(.6f, .3f, .55f);
+        private const float TailFade = .35f;
         private CharacterMotor _motor;
         private Carrier _carrier;
         private MeshRenderer _flightRenderer;
         private Mesh _flightMesh;
         private readonly List<Vector3> _path = new List<Vector3>(128);
+        private readonly List<Vector3> _shownPath = new List<Vector3>(128);
         private readonly List<Vector3> _screenPath = new List<Vector3>(128);
         private readonly List<Vector3> _verts = new List<Vector3>(272);
         private readonly List<Vector2> _strokeUv = new List<Vector2>(272);
@@ -123,7 +128,30 @@ namespace TumbangPreso
             float phase = Settings.SettingsStore.Current.ReducedUiMotion ? .18f : Mathf.Repeat(now * .95f, 1);
             _stroke.SetFloat(DashPhase, phase);
             _flightRenderer.SetPropertyBlock(_stroke);
-            DrawFlight(camera, tint, _path);
+            DrawFlight(camera, tint, BuildShownPath(camera));
+        }
+
+        /// <summary>The share of the flight drawn: 30 percent fresh, 60 percent once the aim settles.</summary>
+        public static float ShownFlightShare(float confidence) => .3f + .3f * Mathf.Clamp01(confidence);
+
+        // The throw leaves from the sight line, which a first person view sees end on as a
+        // stroke through the crosshair. The drawn line starts at the held slipper instead,
+        // and that offset shrinks in step with flight time, so the line is itself a thrown
+        // arc from the hand to the same landing in the same time, with no elbow. Only a
+        // share of it is shown, so it keeps one shape at every range instead of flipping
+        // between ending in mid-air and reaching the landing. The tip sits between samples.
+        private List<Vector3> BuildShownPath(UnityEngine.Camera camera)
+        {
+            Vector3 lead = camera.ViewportToWorldPoint(HandViewport) - _path[0];
+            int last = _path.Count - 1;
+            float shown = ShownFlightShare(_carrier != null ? _carrier.AimGuideConfidence : 1) * last;
+            int whole = Mathf.Min(Mathf.FloorToInt(shown), last);
+            _shownPath.Clear();
+            for (int i = 0; i <= whole; i++) _shownPath.Add(FromHand(i));
+            if (whole < last) _shownPath.Add(Vector3.Lerp(FromHand(whole), FromHand(whole + 1), shown - whole));
+            return _shownPath;
+
+            Vector3 FromHand(int i) => _path[i] + lead * (1 - (float)i / last);
         }
 
         private void DrawFlight(UnityEngine.Camera camera, Color tint, List<Vector3> path)
@@ -162,7 +190,10 @@ namespace TumbangPreso
                 float pixels = 4.3f * scale;
                 Vector3 offset = (eye.right * normal.x + eye.up * normal.y) * (pixels * UnitsPerPixel(camera, depth));
                 Color colour = tint;
-                colour.a *= Mathf.InverseLerp(.45f, 1.65f, depth);
+                // Rise out of the held slipper, and fade out toward the tip so the end of the
+                // line does not read as a landing mark.
+                colour.a *= Mathf.InverseLerp(.3f, .8f, depth);
+                colour.a *= Mathf.Clamp01((path.Count - 1 - i) / (TailFade * Mathf.Max(1, path.Count - 1)));
                 int pair = _verts.Count;
                 AddVertex(path[i] - offset, colour, -1, distance);
                 AddVertex(path[i] + offset, colour, 1, distance);
@@ -173,7 +204,7 @@ namespace TumbangPreso
                 }
                 previousPair = pair;
             }
-            // Count dash spacing back from the landing. The near end sits just in front of
+            // Count dash spacing back from the far end. The near end sits just in front of
             // the eye, where a small turn changes its screen length a lot and would slide
             // every dash along the line.
             for (int i = 0; i < _strokeUv.Count; i++)
