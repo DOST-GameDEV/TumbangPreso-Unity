@@ -231,6 +231,9 @@ namespace TumbangPreso.PlayTests
             int oldMask = scene.cullingMask, oldRate = Time.captureFramerate;
             var layers = new Dictionary<GameObject, int>();
             var pitch = typeof(CameraSystem.CameraRig).GetField("_pitchDeg", BindingFlags.Instance | BindingFlags.NonPublic);
+            // The carrier stays disabled for stepping, so advance its hold clock here; otherwise
+            // the aim drift never settles and the capture shows a fresh-press wobble throughout.
+            var held = typeof(Carrier).GetField("_aimHeldSeconds", BindingFlags.Instance | BindingFlags.NonPublic);
             var shoe = carrier.Held;
             Vector3 predicted = default;
             bool landed = false;
@@ -260,6 +263,7 @@ namespace TumbangPreso.PlayTests
                     pitch.SetValue(rig, look);
                     if (frame < releaseFrame)
                     {
+                        held.SetValue(carrier, (float)held.GetValue(carrier) + 1f / fps);
                         who.Intent.SpinInput = .48f * (1 - turn);
                         step.Invoke(carrier, new object[] { 1f / fps });
                     }
