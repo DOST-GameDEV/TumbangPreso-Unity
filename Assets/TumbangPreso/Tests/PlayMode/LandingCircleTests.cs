@@ -153,19 +153,12 @@ namespace TumbangPreso.PlayTests
             var strip = flightMesh.vertices;
             Assert.Less(Vector3.Distance((strip[^1] + strip[^2]) * .5f, exact), .0001f,
                 "The strip must end at the predicted floor position.");
-            var previous=(List<Vector3>)typeof(TrajectoryPreview).GetField("_fromPath",flags).GetValue(guide);
-            previous.Clear();
-            foreach (var point in target) previous.Add(point + Vector3.right * .4f);
-            var draw=typeof(TrajectoryPreview).GetMethod("DrawInterpolated",flags);
+            var draw=typeof(TrajectoryPreview).GetMethod("Draw",flags);
             float start=Time.unscaledTime;
-            typeof(TrajectoryPreview).GetField("_drawStart",flags).SetValue(guide,start);
-            draw.Invoke(guide,new object[]{start});
-            float first=flightMesh.bounds.center.x;
-            draw.Invoke(guide,new object[]{start+TrajectoryPreview.PredictionInterval*.5f});
-            float middle=flightMesh.bounds.center.x;
-            draw.Invoke(guide,new object[]{start+TrajectoryPreview.PredictionInterval*2});
-            Assert.That(middle, Is.InRange(flightMesh.bounds.center.x + .04f, first - .04f),
-                "The drawn path should move between predictions instead of snapping.");
+            var predicted=flightMesh.vertices;
+            typeof(TrajectoryPreview).GetMethod("Rebuild", flags).Invoke(guide, null);
+            CollectionAssert.AreEqual(predicted, flightMesh.vertices,
+                "Each frame draws the current prediction, with no blend lagging behind it.");
             Assert.AreEqual(exact,guide.LandingPoint,"Presentation may not rewrite the ballistic prediction.");
             var settled=flightMesh.vertices;
             var renderer = guide.GetComponentInChildren<MeshRenderer>();

@@ -19,8 +19,6 @@ namespace TumbangPreso
         private MeshRenderer _flightRenderer;
         private Mesh _flightMesh;
         private readonly List<Vector3> _path = new List<Vector3>(128);
-        private readonly List<Vector3> _fromPath = new List<Vector3>(128);
-        private readonly List<Vector3> _shownPath = new List<Vector3>(128);
         private readonly List<Vector3> _screenPath = new List<Vector3>(128);
         private readonly List<Vector3> _verts = new List<Vector3>(272);
         private readonly List<Vector2> _strokeUv = new List<Vector2>(272);
@@ -30,8 +28,6 @@ namespace TumbangPreso
         private static readonly int DashPhase = Shader.PropertyToID("_DashPhase");
         private static Material _arcMaterial;
         private readonly RaycastHit[] _hits = new RaycastHit[64];
-        private float _nextDraw, _drawStart;
-        public const float PredictionInterval = .05f;
         public Vector3 LandingPoint { get; private set; }
         public bool FlightVisible => _flightRenderer != null && _flightRenderer.enabled;
 
@@ -73,12 +69,9 @@ namespace TumbangPreso
         private void LateUpdate()
         {
             if (!ShouldShow()) { Clear(); return; }
-            if (Time.unscaledTime >= _nextDraw)
-            {
-                _nextDraw = Time.unscaledTime + PredictionInterval;
-                Rebuild();
-            }
-            else if (_path.Count > 1) DrawInterpolated(Time.unscaledTime);
+            // Predict every frame. A throttled prediction blended between ticks lagged
+            // the camera and caught up in steps, which read as the line shaking.
+            Rebuild();
         }
 
         private bool ShouldShow()
@@ -95,8 +88,7 @@ namespace TumbangPreso
 
         private void Clear()
         {
-            _nextDraw = 0;
-            _path.Clear(); _fromPath.Clear(); _shownPath.Clear();
+            _path.Clear();
             if (_flightRenderer != null) _flightRenderer.enabled = false;
             if (_flightMesh != null && _flightMesh.vertexCount > 0) _flightMesh.Clear();
         }
@@ -118,38 +110,20 @@ namespace TumbangPreso
             // Only the guide touches the exact floor point. The prediction still has
             // the slipper's own simulation samples and the game owns the actual throw.
             if (_path.Count > 1) _path[_path.Count - 1] = landing;
-            // Blend neighbouring samples between predictions. Large aim changes or a different
-            // landing level should switch paths immediately rather than sweep through a wall.
-            bool blend = _shownPath.Count > 1 && _path.Count > 1 &&
-                         Mathf.Abs(landing.y - LandingPoint.y) < .5f &&
-                         (landing - LandingPoint).sqrMagnitude < 16 &&
-                         (_path[0] - _shownPath[0]).sqrMagnitude < 1;
-            _fromPath.Clear();
-            _fromPath.AddRange(blend ? _shownPath : _path);
             LandingPoint = landing;
-            _drawStart = Time.unscaledTime;
-            DrawInterpolated(_drawStart);
+            Draw(Time.unscaledTime);
         }
 
-        private void DrawInterpolated(float now)
+        private void Draw(float now)
         {
             var camera = UnityEngine.Camera.main;
             if (camera == null || _path.Count < 2) return;
-            float t = Mathf.Clamp01((now - _drawStart) / PredictionInterval);
-            _shownPath.Clear();
-            int samples = t >= 1 ? _path.Count : Mathf.Max(_fromPath.Count, _path.Count);
-            for (int i = 0; i < samples; i++)
-            {
-                var from = _fromPath[Mathf.Min(i, _fromPath.Count - 1)];
-                var to = _path[Mathf.Min(i, _path.Count - 1)];
-                _shownPath.Add(Vector3.Lerp(from, to, t));
-            }
             bool legal = GameServices.Round.CanThrow(_motor);
             var tint = legal ? new Color(1, .92f, .58f, AlphaMax) : new Color(.72f, .72f, .68f, AlphaMax);
             float phase = Settings.SettingsStore.Current.ReducedUiMotion ? .18f : Mathf.Repeat(now * .95f, 1);
             _stroke.SetFloat(DashPhase, phase);
             _flightRenderer.SetPropertyBlock(_stroke);
-            DrawFlight(camera, tint, _shownPath);
+            DrawFlight(camera, tint, _path);
         }
 
         private void DrawFlight(UnityEngine.Camera camera, Color tint, List<Vector3> path)
@@ -199,6 +173,11 @@ namespace TumbangPreso
                 }
                 previousPair = pair;
             }
+            // Count dash spacing back from the landing. The near end sits just in front of
+            // the eye, where a small turn changes its screen length a lot and would slide
+            // every dash along the line.
+            for (int i = 0; i < _strokeUv.Count; i++)
+                _strokeUv[i] = new Vector2(_strokeUv[i].x, distance - _strokeUv[i].y);
             _flightMesh.Clear(); _flightMesh.SetVertices(_verts); _flightMesh.SetUVs(0, _strokeUv);
             _flightMesh.SetColors(_colours); _flightMesh.SetTriangles(_tris, 0);
             _flightMesh.RecalculateBounds(); _flightRenderer.enabled = _tris.Count > 0;
