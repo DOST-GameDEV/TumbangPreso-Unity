@@ -1762,7 +1762,7 @@ namespace TumbangPreso
             // ⚠️ THE SAME SOLVE THE THROW ITSELF USES, which is what makes this a prediction
             // rather than a second opinion. It was a fixed 45-degree lob here too, so the bot
             // was walking an arc the game does not fly and answering about the wrong lane.
-            Vector3 velocity = Slipper.SolveArc(origin, aimTarget, speed) * speed;
+            Vector3 velocity = Slipper.SolveThrowArc(origin, aimTarget, speed) * speed;
 
             float step = Mathf.Clamp(AiTuning.LaneSampleArc / Mathf.Max(speed, 1.0f),
                                      AiTuning.LaneStepMin, AiTuning.LaneStepMax);
@@ -1825,7 +1825,7 @@ namespace TumbangPreso
             flat.y = 0.0f;
             if (flat.sqrMagnitude < 0.01f) return target;
 
-            Vector3 launch = Slipper.SolveArc(origin, target, speed) * speed;
+            Vector3 launch = Slipper.SolveThrowArc(origin, target, speed) * speed;
             float flightTime = flat.magnitude /
                 Mathf.Max(new Vector2(launch.x, launch.z).magnitude, 0.1f);
             Vector3 lateral = Vector3.Cross(flat.normalized, Vector3.up).normalized;

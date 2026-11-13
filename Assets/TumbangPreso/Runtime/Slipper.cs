@@ -539,7 +539,25 @@ namespace TumbangPreso
         public Vector3 LaunchVelocityTo(Vector3 origin, Vector3 target, float charge01)
         {
             float speed = ThrowRules.LaunchSpeedFor(_skinIndex, charge01);
-            return SolveArc(origin, target, speed) * speed;
+            return SolveThrowArc(origin, target, speed) * speed;
+        }
+
+        /// <summary>
+        /// <see cref="SolveArc"/> for a slipper throw, never leaving more than
+        /// <see cref="ThrowRules.ThrowArcCapDegrees"/> above the aim line. Both branches are
+        /// continuous, so the minimum of them is too. A target past the capped reach falls
+        /// short along the aim instead of lobbing. Ability projectiles keep the uncapped solve.
+        /// </summary>
+        public static Vector3 SolveThrowArc(Vector3 origin, Vector3 target, float speed)
+        {
+            Vector3 direction = SolveArc(origin, target, speed);
+            Vector3 toTarget = target - origin;
+            Vector3 flat = new Vector3(toTarget.x, 0.0f, toTarget.z);
+            float distance = flat.magnitude;
+            if (distance < 0.05f) return direction;
+            float limit = Mathf.Atan2(toTarget.y, distance) + ThrowRules.ThrowArcCapDegrees * Mathf.Deg2Rad;
+            if (limit >= Mathf.PI * 0.5f || Mathf.Asin(Mathf.Clamp(direction.y, -1.0f, 1.0f)) <= limit) return direction;
+            return flat / distance * Mathf.Cos(limit) + Vector3.up * Mathf.Sin(limit);
         }
 
         /// <summary>The unit launch direction from origin to target at a given speed.</summary>

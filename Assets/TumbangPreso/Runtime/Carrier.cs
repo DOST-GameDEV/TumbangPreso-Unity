@@ -407,7 +407,7 @@ namespace TumbangPreso
                 float fast = aimed.magnitude * SeanRules.MoltenThrowSpeedScale;
                 var turn = aimed.sqrMagnitude > .0001f && velocity.sqrMagnitude > .0001f
                     ? Quaternion.FromToRotation(aimed.normalized, velocity.normalized) : Quaternion.identity;
-                velocity = turn * (Slipper.SolveArc(origin, aimPoint, fast) * fast);
+                velocity = turn * (Slipper.SolveThrowArc(origin, aimPoint, fast) * fast);
                 spin = 0.0f;
             }
             else if (ability != null && ability.Kit is RafiHeroKit rafi && rafi.ConsumeSkim(Held))

@@ -49,6 +49,39 @@ namespace TumbangPreso.Tests
             }
         }
 
+        [Test]
+        public void SlipperThrowStaysContinuousAndUnderTheCap()
+        {
+            var origin = new Vector3(0, 1.6f, 0);
+            float speed = ThrowRules.LaunchSpeedFor(-1, 1);
+            for (float elevation = -20; elevation <= 25; elevation += 5)
+            {
+                var line = Quaternion.AngleAxis(-elevation, Vector3.right) * Vector3.forward;
+                Vector3 previous = default;
+                for (float distance = 2; distance <= 60; distance += .005f)
+                {
+                    var launch = Slipper.SolveThrowArc(origin, origin + line * distance, speed);
+                    float pitch = Mathf.Asin(launch.y) * Mathf.Rad2Deg;
+                    Assert.LessOrEqual(pitch, elevation + ThrowRules.ThrowArcCapDegrees + .01f,
+                        $"Throw rose past the cap at elevation {elevation} and distance {distance:0.00}.");
+                    if (distance > 2)
+                        Assert.Less(Vector3.Angle(previous, launch), 1.5f,
+                            $"Throw jumped at elevation {elevation} and distance {distance:0.00}.");
+                    previous = launch;
+                }
+            }
+        }
+
+        [Test]
+        public void CappedThrowKeepsTheFormerFlatReach()
+        {
+            float speed = ThrowRules.LaunchSpeedFor(-1, 1);
+            float capped = speed * speed * Mathf.Sin(2 * ThrowRules.ThrowArcCapDegrees * Mathf.Deg2Rad) / Balance.Gravity;
+            Assert.That(capped, Is.EqualTo(ThrowRules.MaxRange(Balance.LaunchSpeed * Roster.SlipperFlightScale(-1))).Within(.01f));
+            var launch = Slipper.SolveThrowArc(Vector3.zero, Vector3.forward * 200, speed);
+            Assert.That(Mathf.Asin(launch.y) * Mathf.Rad2Deg, Is.EqualTo(ThrowRules.ThrowArcCapDegrees).Within(.01f));
+        }
+
         private static bool InRange(Vector3 toTarget, float speed)
         {
             float distance = new Vector2(toTarget.x, toTarget.z).magnitude, v2 = speed * speed, g = Balance.Gravity;

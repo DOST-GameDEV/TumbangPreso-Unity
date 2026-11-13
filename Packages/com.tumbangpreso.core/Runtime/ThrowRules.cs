@@ -103,8 +103,24 @@ namespace TumbangPreso.Core
         public static float LaunchSpeedFor(int slipperIndex, float charge01)
         {
             float power = Balance.ChargeMinPower + (1.0f - Balance.ChargeMinPower) * Clamp01(charge01);
-            return Balance.LaunchSpeed * Roster.SlipperFlightScale(slipperIndex) * power;
+            return Balance.LaunchSpeed * Roster.SlipperFlightScale(slipperIndex) * power * CappedReachSpeedScale;
         }
+
+        /// <summary>
+        /// The steepest a slipper throw leaves above its own aim line. At the old 45 degree
+        /// reach the first person guide rose almost straight off the top of the screen; the
+        /// owner asked for a flatter throw at the same reach (November 13).
+        /// </summary>
+        public const float ThrowArcCapDegrees = 30.0f;
+
+        /// <summary>
+        /// Launch speed scale that keeps a capped throw's flat reach equal to the 45 degree
+        /// reach of <see cref="Balance.LaunchSpeed"/>: sin(2 * cap) * scale^2 = 1. Map reach
+        /// checks, displayed skin speeds and the AI's range inversion keep using the base
+        /// speed and stay correct because the reach itself is unchanged.
+        /// </summary>
+        public static readonly float CappedReachSpeedScale =
+            (float)(1.0 / Math.Sqrt(Math.Sin(2.0 * ThrowArcCapDegrees * Math.PI / 180.0)));
 
         /// <summary>Charge ratio from how long the button has been held.</summary>
         public static float ChargeRatio(float heldSeconds) =>

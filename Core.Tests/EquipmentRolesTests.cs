@@ -28,7 +28,7 @@ namespace TumbangPreso.Core.Tests
                 Roster.Cans.Select(item => item.Id));
             foreach (int index in new[] { -1, 0, 999 })
             {
-                Assert.Equal(Balance.LaunchSpeed, ThrowRules.LaunchSpeedFor(index, 1));
+                Assert.Equal(Balance.LaunchSpeed * ThrowRules.CappedReachSpeedScale, ThrowRules.LaunchSpeedFor(index, 1));
                 Assert.Equal(Balance.ThrowLockTime, ThrowRules.ThrowLockFor(index));
             }
         }
