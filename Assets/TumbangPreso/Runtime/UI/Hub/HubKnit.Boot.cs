@@ -41,7 +41,7 @@ namespace TumbangPreso.UI.Hub
         // Thin-slab buttons for dense lists: the button's face at its own scale, the slab squeezed (280 tall, not 336).
         private static Cut KitThin(string art, Color ink) => new Cut { Face = art, FaceBorder = new Vector4(235, 0, 235, 0), SourceHeight = 280, Depth = new Vector2(0, -5), Ink = ink, Kit = true };
         // Checker paint cards: the centre is two checker periods square, so it tiles without a seam.
-        private static Cut KitPaint(string art, Color ink) => new Cut { Face = art, FaceBorder = new Vector4(46, 60, 46, 46), Density = 1, Tiled = true, Depth = new Vector2(0, -6), Ink = ink, Kit = true };
+        private static Cut KitPaint(string art, Color ink) => new Cut { Face = art, FaceBorder = new Vector4(92, 120, 92, 92), Density = 2, Tiled = true, Depth = new Vector2(0, -6), Ink = ink, Kit = true };
 
         /// <summary>A kit card or well: the pieces a press darkens instead of brightening.</summary>
         private static bool IsKitCard(Knit k)
@@ -50,6 +50,7 @@ namespace TumbangPreso.UI.Hub
             {
                 case Knit.Card: case Knit.CardOn: case Knit.Well:
                 case Knit.DarkCard: case Knit.DarkCardOn: case Knit.DarkCardViewed: case Knit.DarkCardViewedOn:
+                case Knit.DarkSeat: case Knit.DarkSeatOn: case Knit.DarkCardWide:
                 case Knit.PaintYellow: case Knit.PaintRed: case Knit.PaintBlue: case Knit.PaintGo:
                     return true;
             }
@@ -92,6 +93,9 @@ namespace TumbangPreso.UI.Hub
                     return true;
                 case Knit.DarkCard: cut = KitDarkCard(KitArt + "dark-card"); return true;
                 case Knit.DarkCardOn: cut = KitDarkCard(KitArt + "dark-card-on"); return true;
+                case Knit.DarkSeat: cut = KitDarkCard(KitArt + "dark-seat"); return true;
+                case Knit.DarkSeatOn: cut = KitDarkCard(KitArt + "dark-seat-on"); return true;
+                case Knit.DarkCardWide: cut = KitDarkCard(KitArt + "dark-card-wide"); return true;
                 case Knit.DarkCardViewed: cut = KitDarkCard(KitArt + "dark-card-viewed"); return true;
                 case Knit.DarkCardViewedOn: cut = KitDarkCard(KitArt + "dark-card-viewed-on"); return true;
                 // Checker paint cards, the GAMEMODE card. Inks are the mock-up's (`boot_menus.CARD_INK`).
@@ -403,7 +407,8 @@ namespace TumbangPreso.UI.Hub
             if (_image == null) _image = GetComponent<Image>();
             var sprite = _image.sprite;
             float h = ((RectTransform)transform).rect.height;
-            if (_image.type != Image.Type.Sliced || sprite == null || h <= 1) return;
+            // Without mipmaps the centre can keep both joins, sampling the same columns as the caps.
+            if (_image.type != Image.Type.Sliced || sprite == null || sprite.texture.mipmapCount == 1 || h <= 1) return;
             var inner = UnityEngine.Sprites.DataUtility.GetInnerUV(sprite);
             NarrowCentre(vh, inner.x, inner.z, SourceHeight / h / sprite.texture.width);
         }

@@ -36,7 +36,7 @@ namespace TumbangPreso.UI.Hub
                        // A card's rim alone, closing over a picture drawn under it.
                        CardRim, CardRimOn, DarkCardRim, DarkCardRimOn,
                        // A dark panel with a lime rim: the chosen mode on Let's Play.
-                       DarkPanelOn }
+                       DarkPanelOn, DarkSeat, DarkSeatOn, DarkCardWide }
 
     public static partial class HubKnit
     {

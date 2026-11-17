@@ -151,15 +151,28 @@ def scrim(b, rgba):
     b.place("dim-%02x%02x%02x%02x" % rgba, Image.new("RGBA", (1920, 1080), rgba), 0, 0, "Dim")
 
 
-def wobble(points, amp, seed):
+def wobble(points, amp, seed, tile_edges=()):
     rnd = random.Random(seed)
     out = []
     for i, (x0, y0) in enumerate(points):
         x1, y1 = points[(i + 1) % len(points)]
         n = max(2, int(math.hypot(x1 - x0, y1 - y0) / 40))
+        samples = []
         for k in range(n):
             t = k / n
-            out.append((x0 + (x1 - x0) * t + rnd.uniform(-amp, amp), y0 + (y1 - y0) * t + rnd.uniform(-amp, amp)))
+            samples.append((t, x0 + (x1 - x0) * t + rnd.uniform(-amp, amp),
+                            y0 + (y1 - y0) * t + rnd.uniform(-amp, amp)))
+        if x0 == x1 or y0 == y1:
+            start, end = (y0, y1) if x0 == x1 else (x0, x1)
+            for edge in tile_edges:
+                # Each end of the repeating strip has the same straight profile at the join.
+                t = (edge - start) / (end - start)
+                if 0 < t < 1:
+                    half = min(10 / abs(end - start), t * .85, (1 - t) * .85)
+                    a, b = t - half, t + half
+                    samples = [sample for sample in samples if not a <= sample[0] <= b]
+                    samples.extend((t, x0 + (x1 - x0) * t, y0 + (y1 - y0) * t) for t in (a, b))
+        out.extend((x, y) for _, x, y in sorted(samples))
     return out
 
 
@@ -212,8 +225,9 @@ def softened_dark_frame(w, h, on, shade, drop, cut, rim, density=1):
     else:
         dark, lit = (0x36, 0x0A, 0x15), (0x6E, 0x1E, 0x30)
         colours = [tuple(int(v * shade) for v in colour) for colour in (dark, lit)]
-        if w < 300:
-            grain = weave(*colours).crop((0, 0, w, h + drop)).resize(size, Image.Resampling.BICUBIC)
+        if density > 1 or w < 300:
+            # Keep the weave's original texel density on the small card family.
+            grain = weave(*colours).crop((0, 0, *size))
         else:
             grain = weave(*colours, size=size)
         grain.putalpha(opening)
@@ -431,26 +445,43 @@ def frame_art(w, h, on, fill=CARD):
     return im
 
 
-def paint_card_art(w, h, kind, pattern="weave"):
+def paint_card_art(w, h, kind, pattern="weave", density=1, rim_only=False, tile_edges=()):
     """A card painted like one of the buttons: its slab below, a lit rim, its own colour as the face."""
     slab, face, light = BUTTONS[kind][0] or ((0x6B, 0x8A, 0x1A), (0xBB, 0xD6, 0x48), (0xDC, 0xEE, 0x72))
     c, seed = min(34, int(min(w, h) * 0.22)), 3
-    im = Image.new("RGBA", (w, h + 14))
-    d = ImageDraw.Draw(im)
-    d.polygon(wobble(chamfer(2, 16, w - 4, h - 4, c), 1.6, seed), fill=slab)
-    d.polygon(wobble(chamfer(2, 2, w - 4, h - 4, c), 1.6, seed), fill=light)
-    # The face carries the boot weave in its own colour, at the same scale on every card.
-    mask = Image.new("L", im.size)
-    ImageDraw.Draw(mask).polygon(wobble(chamfer(12, 12, w - 24, h - 24, max(6, c - 8)), 1.2, seed + 1), fill=255)
-    # Patterns are an overlay blend over the card's colour, never a darker shade of it (owner).
-    size = (h + 14, w)
+    from PIL import ImageChops, ImageFilter
+    size = (w * density, (h + 14) * density)
+    scale = density * 3
+
+    def coverage(box, cut, amount, shape_seed):
+        points = wobble(chamfer(*box, cut), amount, shape_seed, tile_edges)
+        mask = Image.new("L", (w * scale, (h + 14) * scale))
+        ImageDraw.Draw(mask).polygon([(x * scale, y * scale) for x, y in points], fill=255)
+        return mask.resize(size, Image.Resampling.LANCZOS)
+
+    face_mask = coverage((2, 2, w - 4, h - 4), c, 1.6, seed)
+    opening = coverage((12, 12, w - 24, h - 24), max(6, c - 8), 1.2, seed + 1)
+    if rim_only:
+        rim = Image.new("RGBA", size, "white")
+        rim.putalpha(ImageChops.subtract(face_mask, opening))
+        return rim
+
+    im = Image.new("RGBA", size)
+    for colour, alpha in (
+        (slab, coverage((2, 16, w - 4, h - 4), c, 1.6, seed)),
+        (light, face_mask),
+    ):
+        layer = Image.new("RGBA", size, colour)
+        layer.putalpha(alpha)
+        im.alpha_composite(layer)
+    # The checker repeats at the same size, regardless of the texture's pixel density.
     if pattern == "checker":
-        sq = 44
-        yy, xx = np.indices(size)
+        sq = 44 * density
+        yy, xx = np.indices((size[1], size[0]))
         grain = np.where((xx // sq + yy // sq) % 2 == 0, .5, .74)
     else:
-        grain = np.asarray(art("login-background").resize((1920, 1080)).convert("L"), dtype=np.float32) / 255
-        grain = grain[:size[0], :size[1]]
+        grain = np.asarray(art("login-background").resize((1920 * density, 1080 * density)).convert("L"), dtype=np.float32) / 255
+        grain = grain[:size[1], :size[0]]
         grain = np.clip(.5 + (grain - grain.mean()) * 1.6, 0, 1)
     # The fill sits deeper than the rim, its hue nudged toward the darker neighbouring colour.
     import colorsys
@@ -461,15 +492,15 @@ def paint_card_art(w, h, kind, pattern="weave"):
     g = grain[..., None]
     blend = np.where(base < .5, 2 * base * g, 1 - 2 * (1 - base) * (1 - g))
     tile = Image.fromarray((blend.clip(0, 1) * 255).astype(np.uint8)).convert("RGBA")
-    im.paste(tile, (0, 0), mask)
-    # A sharp inner shadow: the face's own shape stepped down and right, in the card's slab colour.
-    from PIL import ImageChops
-    shadow = ImageChops.subtract(mask, ImageChops.offset(mask, 7, 9))
+    tile.putalpha(opening)
+    im.alpha_composite(tile)
+    # The face's own shape stepped down and right, in the card's slab colour.
+    shadow = ImageChops.subtract(opening, ImageChops.offset(opening, 7 * density, 9 * density))
     im.paste(Image.new("RGBA", im.size, tuple(slab) + (255,)), (0, 0), shadow)
     # And a soft one from the opposite corner, fading in from the bottom and right edges.
-    from PIL import ImageFilter
-    soft = ImageChops.subtract(mask, ImageChops.offset(mask, -8, -10)).filter(ImageFilter.GaussianBlur(9))
-    soft = ImageChops.multiply(soft, mask).point(lambda v: int(min(255, v * 1.1) * .55))
+    soft = ImageChops.subtract(opening, ImageChops.offset(opening, -8 * density, -10 * density))
+    soft = soft.filter(ImageFilter.GaussianBlur(9 * density))
+    soft = ImageChops.multiply(soft, opening).point(lambda v: int(min(255, v * 1.1) * .55))
     im.paste(Image.new("RGBA", im.size, tuple(slab) + (255,)), (0, 0), soft)
     return im
 
@@ -738,12 +769,18 @@ def export_game_kit():
     pieces["card-on"] = frame_art(240, 200, True)
     pieces["dark-card"] = dark_card_art(240, 200, False, density=2)
     pieces["dark-card-on"] = dark_card_art(240, 200, True, density=2)
+    # The room's tall seats and wide ticket each use a weave cut at their own proportions.
+    pieces["dark-seat"] = dark_card_art(420, 520, False, density=2)
+    pieces["dark-seat-on"] = dark_card_art(420, 520, True, density=2)
+    pieces["dark-card-wide"] = dark_card_art(460, 170, False, density=2)
     pieces["dark-card-viewed"] = dark_card_art(240, 200, False, shade=.72, density=2)
     pieces["dark-card-viewed-on"] = dark_card_art(240, 200, True, shade=.72, density=2)
     # Coloured checker cards. The centre is two checker periods (4 x 44) square, so a tiled
     # centre repeats without a seam: 46 + 176 + 46 across, 46 + 176 + 60 (slab included) down.
     for kind in ("yellow", "red", "blue", "go"):
-        pieces["paint-" + kind] = paint_card_art(268, 268, kind, "checker")
+        pieces["paint-" + kind] = paint_card_art(268, 268, kind, "checker", density=2, tile_edges=(46, 222))
+        pieces["paint-" + kind + "-rim"] = paint_card_art(268, 268, kind, "checker", density=2,
+                                                       rim_only=True, tile_edges=(46, 222))
     # Rim-only cards: a picture runs under them and the rim, with a clear opening, closes over it,
     # so nothing passes the border (the boards' `framed`).
     for on in (False, True):
@@ -762,7 +799,13 @@ def export_game_kit():
         im.save(target)
         meta = target.with_suffix(".png.meta")
         if not meta.exists():  # keep a texture's guid once Unity knows it
-            lines = template.splitlines()
+            # Nine-sliced strips shrink on one axis at a time. Isotropic mip selection
+            # softens the strip across both axes and leaves it mismatched at its corners.
+            sliced = name.startswith(("button-", "paint-", "dark-")) or name == "field"
+            settings = template
+            if sliced:
+                settings = settings.replace("enableMipMap: 1", "enableMipMap: 0").replace("filterMode: 2", "filterMode: 1")
+            lines = [line.rstrip() for line in settings.splitlines()]
             lines[1] = "guid: " + uuid.uuid4().hex
             meta.write_text("\n".join(lines) + "\n", encoding="utf-8")
     folder_meta = GAME_KIT.with_suffix(".meta")

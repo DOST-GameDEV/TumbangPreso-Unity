@@ -294,15 +294,16 @@ namespace TumbangPreso.UI
             for (int i = 0; i < seats.Length; i++)
             {
                 var info = live ? MatchRpc.Instance?.GetSeatInfo(i) : null;
-                bool mine = !GameLaunch.Spectator && i == local && (live || i == local);
-                bool occupied = mine || (info != null && info.Occupied);
+                // Count the host's roster even while a separate seat-assignment message is in flight.
+                bool occupied = live ? info != null && info.Occupied && !info.Spectator : i == local && !GameLaunch.Spectator;
+                bool mine = occupied && !GameLaunch.Spectator && i == local && (!live || info.PeerId == NetAuthority.LocalPeerId);
                 seats[i] = new HubSeat
                 {
                     Slot = i,
                     Occupied = occupied,
                     Mine = mine,
                     Host = live && occupied && (mine ? NetAuthority.IsHost : info != null && info.PeerId == 0),
-                    Ready = mine ? _localReady : info != null && info.Ready,
+                    Ready = occupied && (mine ? _localReady : info != null && info.Ready),
                     Bot = !occupied && (HubQueueWatch.QueueRoom ? queueBots
                                                                 : CustomGameRules.SeatHasBot(SceneFlow.SelectedRules, i)),
                     Name = mine ? "YOU" : info != null && !string.IsNullOrEmpty(info.Name) ? info.Name : "PLAYER " + (i + 1),
@@ -313,8 +314,8 @@ namespace TumbangPreso.UI
         }
 
         /// <summary>
-        /// ADD BOT only. Custom room filler bots cannot be removed. Only before the
-        /// match: a queued room's bots are the queue's offer, not a seat-by-seat choice.
+        /// The custom room host can add or remove filler bots before the match.
+        /// Queued rooms use the queue's bot offer.
         /// </summary>
         public bool CanEditBots => IsHost && !MatchInProgress && !HubQueueWatch.QueueRoom;
 
@@ -330,10 +331,12 @@ namespace TumbangPreso.UI
         /// </summary>
         public void SetSeatBot(int seat, bool bot)
         {
-            if (!bot || !CanEditBots || seat < 0 || seat >= Balance.PlayerCount) return;
+            if (!CanEditBots || seat < 0 || seat >= Balance.PlayerCount) return;
             int occupied = 0;
             foreach (var s in Seats())
                 if (s.Occupied) occupied |= 1 << s.Slot;
+            if ((occupied & (1 << seat)) != 0) return;
+
             var rules = SceneFlow.SelectedRules.Clone();
             CustomGameRules.SetSeatBot(rules, seat, bot, occupied);
             SceneFlow.AdoptRemoteRules(rules);

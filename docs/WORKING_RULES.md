@@ -12,8 +12,8 @@ and [earlier full rules](archive/CLAUDE_full_2026-09-24.md). New owner instructi
 - Classic and Hero Strike are both first-class modes,defaulting to four rounds.
   Classic people are cosmetic with neutral stats. No Street Hype mechanic/meter.
   Preserve throwing,retrieval,restoring the can,chasing,escape and tagging.
-- Custom matches retain filler bots in vacant seats; players can take bot seats.
-  Bot controls select difficulty and do not offer removal or NONE.
+- Custom rooms start with filler bots in vacant seats. Players can take bot
+  seats and the host can add or remove bots seat by seat before the match.
 - Startup restores the account before admission; restored linked accounts skip the
   login/signup form, while guests retain the account choice.
 - Core stays engine-free. `Core/TumbangPreso.Core.csproj` compiles the embedded

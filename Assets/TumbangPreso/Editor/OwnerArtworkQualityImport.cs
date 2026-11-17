@@ -73,7 +73,8 @@ namespace TumbangPreso.EditorTools
             // Each menu piece has its own texture, so its mip levels cannot bleed
             // into neighboring pieces as they would in the owner-painted atlas.
             bool standaloneMenu = path.StartsWith("Assets/TumbangPreso/Resources/UI/owner-menu-edits/", StringComparison.Ordinal);
-            bool minified = (standaloneMenu && !mask) || cardTexture(path)
+            // The primary is also a sliced kit button, whose centre is only compressed horizontally.
+            bool minified = (standaloneMenu && !mask && name != "login3-primary.png") || cardTexture(path)
                 || name.Contains("cloud-bank-") || name == "main2-cloud.png" || name == "main2-leaf.png";
             importer.textureCompression = TextureImporterCompression.Uncompressed;
             importer.crunchedCompression = false;

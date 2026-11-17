@@ -476,9 +476,9 @@ namespace TumbangPreso.PlayTests
             Assert.IsFalse(HubLoading.Visible);
         }
 
-        // Custom rooms retain filler bots; humans can still take their seats.
+        // Custom rooms start with filler bots and let the host manage them.
         [UnityTest, Timeout(90000)]
-        public IEnumerator CustomRoomKeepsBotsAndStartsWithAllFourSeats()
+        public IEnumerator CustomRoomCountsSeatedPlayersAndLetsTheHostRemoveBots()
         {
             Settings.SettingsStore.Current.HighContrastHud = false;
             Settings.SettingsStore.Current.LargerText = false;
@@ -497,7 +497,7 @@ namespace TumbangPreso.PlayTests
             Assert.IsInstanceOf<HubLobby>(TumpHub.Current.Top);
             Assert.AreEqual(GameMode.HeroStrike, SceneFlow.SelectedMode, "Passing through HOME changed the room's mode.");
 
-            // A new room fills every empty seat and offers no removal action.
+            // A new room fills every empty seat.
             int host = NetAuthority.LocalSlot;
             until = Time.realtimeSinceStartup + 5;
             while (TumpHub.Current.Host.Seats().Any(s => s.Slot != host && !s.Bot) && Time.realtimeSinceStartup < until) yield return null;
@@ -508,14 +508,35 @@ namespace TumbangPreso.PlayTests
                 "; host seat " + host + ", Bots " + SceneFlow.SelectedRules.Bots + ", BotSeats " +
                 SceneFlow.SelectedRules.BotSeats + ", pinned " + SceneFlow.RulesPinned + ", can edit " +
                 TumpHub.Current.Host.CanEditBots);
-            for (int seat = 0; seat < Balance.PlayerCount; seat++)
+            int botSeat = opened.First(seat => seat.Bot).Slot;
+            Button FindRemoveButton() => TumpHub.Current.Top.Root.GetComponentsInChildren<Button>()
+                .SingleOrDefault(button => button.name == "RemoveBot" + botSeat);
+            until = Time.realtimeSinceStartup + 5;
+            while (FindRemoveButton() == null && Time.realtimeSinceStartup < until) yield return null;
+            var remove = FindRemoveButton();
+            Assert.IsNotNull(remove, "The displayed bot seat must expose its remove button.");
+            remove.onClick.Invoke();
+            Assert.IsFalse(TumpHub.Current.Host.Seats()[botSeat].Bot);
+            Assert.AreEqual(Balance.PlayerCount - 2, TumpHub.Current.Host.Seats().Count(seat => seat.Bot));
+
+            var room = NetSession.Instance.Lobby;
+            const int watcherId = 42;
+            try
             {
-                Assert.IsFalse(TumpHub.Current.GetComponentsInChildren<UnityEngine.UI.Button>(true)
-                    .Any(button => button.name == "RemoveBot" + seat));
-                if (seat != host) TumpHub.Current.Host.SetSeatBot(seat, false);
+                var watcher = room.Admit(watcherId, "watcher-test", "WATCHER", out _, spectate: true);
+                Assert.IsNotNull(watcher);
+                Assert.IsTrue(watcher.Spectator);
+                Assert.IsTrue(room.TryTakeSeat(watcherId, botSeat));
+                Assert.AreEqual(2, TumpHub.Current.Host.Seats().Count(seat => seat.Occupied));
+                Assert.IsTrue(room.TryTakeSeat(watcherId, -1));
+                Assert.AreEqual(1, room.SpectatorCount());
+                Assert.AreEqual(1, TumpHub.Current.Host.Seats().Count(seat => seat.Occupied));
+                yield return null;
+                Assert.AreEqual("PLAYERS 1 / 4", TumpHub.Current.Top.Root.Find("PlayersCount").GetComponent<Text>().text);
             }
-            foreach (var seat in TumpHub.Current.Host.Seats())
-                if (seat.Slot != host) Assert.IsTrue(seat.Bot, "A direct removal request must preserve the bot.");
+            finally { room.Depart(watcherId); }
+            TumpHub.Current.Host.SetSeatBot(botSeat, true);
+            Assert.IsTrue(TumpHub.Current.Host.Seats()[botSeat].Bot);
 
             // The host chooses the court, so no ballot stands between selection and the arena.
             var rules = SceneFlow.SelectedRules.Clone(); rules.MapVote = false;
@@ -535,7 +556,8 @@ namespace TumbangPreso.PlayTests
             until = Time.realtimeSinceStartup + 20;
             while (SceneManager.GetActiveScene().name != SceneFlow.Eskinita && Time.realtimeSinceStartup < until) yield return null;
             Assert.AreEqual(SceneFlow.Eskinita, SceneManager.GetActiveScene().name);
-            until = Time.realtimeSinceStartup + 20;
+            // Scene activation precedes the 19.6-second opening film and the countdown.
+            until = Time.realtimeSinceStartup + 35;
             while (GameServices.Round?.RoundActive != true && Time.realtimeSinceStartup < until) yield return null;
             Assert.IsTrue(GameServices.Round.RoundActive, "A host on their own must be able to play the court.");
 

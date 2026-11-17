@@ -433,7 +433,6 @@ namespace TumbangPreso.UI.Hub
         private GameObject _unread;
         private bool _chatShown, _hostLayout;
         private int _seenLines;
-        private float _panelWidth = RoomContentWidth, _panelX;
 
         // ⚠️⚠️ THE HOST'S FIREWALL LINE (LAN-VPN-JOIN-1020). A zip copy of the game hosting a LAN
         // room can be listed by every player on a VPN and answer none of them, because Windows'
@@ -499,7 +498,7 @@ namespace TumbangPreso.UI.Hub
         /// </summary>
         private void BuildTicket()
         {
-            _codeChip = HubKnit.Button(Root, "CodeChip", null, Knit.DarkCard, CopyCode);
+            _codeChip = HubKnit.Button(Root, "CodeChip", null, Knit.DarkCardWide, CopyCode);
             HubKit.Place((RectTransform)_codeChip.transform, HubKit.TopRight, new Vector2(-60, -30), new Vector2(460, 184));
             var face = _codeChip.Body;
             _codeCaption = HubKnit.Display(face, "CodeCaption", "ROOM CODE", 28, HubKnit.KitTan);
@@ -672,17 +671,14 @@ namespace TumbangPreso.UI.Hub
         }
 
         /// <summary>
-        /// The chat took or gave back the right-hand side. The host's strip steps aside for it and
-        /// the cards narrow to the left as quarter columns (<see cref="Tick"/> eases them).
+        /// The room gives the drawer its own column before it slides in.
         /// </summary>
         public void SetChatPresented(bool shown)
         {
             if (_chatShown == shown) return;
             _chatShown = shown;
             if (shown) { _seenLines = LobbyChat.RoomLineCount; if (_unread != null) _unread.SetActive(false); }
-            // Opening eases the cards aside; closing puts them back at once, as the drawer itself
-            // closes at once (`LobbyChat.PresentLobbyColumn`), so a pressed CLOSE never lingers.
-            Layout(!shown);
+            Layout();
             _drawn = "";
             _firewallDrawn = "";
             DrawFirewall();
@@ -693,8 +689,8 @@ namespace TumbangPreso.UI.Hub
         private float PanelTarget => _chatShown ? RoomSeatsOffset : 0;
         private float SeatHeight => _chatShown ? ChatSeatHeight : _hostLayout ? HostSeatHeight : GuestSeatHeight;
 
-        /// <summary>Place the pieces for the role and the chat. Snaps on a rebuild, eases otherwise.</summary>
-        private void Layout(bool snap)
+        /// <summary>Align the player row and its actions to the same available column.</summary>
+        private void Layout()
         {
             if (_playersPanel == null) return;
             if (_matchCard != null) _matchCard.gameObject.SetActive(_hostLayout && !_chatShown);
@@ -705,22 +701,22 @@ namespace TumbangPreso.UI.Hub
                 _characterDoor.gameObject.SetActive(!_chatShown && Hub != null && !Hub.Host.Spectating
                     && !(Net.NetSession.Instance != null && Net.NetSession.Instance.IsNetworked));
             if (_watch != null)
-                HubKnit.At((RectTransform)_watch.transform, (_chatShown ? 1240 : 1860) - (_hostLayout ? 260 : 280), 212, _hostLayout ? 260 : 280, 80);
-            if (snap || HubStyle.ReducedMotion) { _panelX = PanelTarget; _panelWidth = WidthTarget; }
-            ApplyPanel();
+            {
+                float watchWidth = _hostLayout ? 260 : 280;
+                float columnRight = 960 + PanelTarget + WidthTarget * .5f;
+                HubKnit.At((RectTransform)_watch.transform, columnRight - watchWidth, 212, watchWidth, 80);
+            }
+            _playersPanel.anchoredPosition = new Vector2(PanelTarget, CardsTop);
+            _playersPanel.sizeDelta = new Vector2(WidthTarget, SeatHeight);
             if (_statusPlate != null)
                 _statusPlate.sizeDelta = new Vector2(_chatShown ? 300 : 600, 104);
             if (_primary != null)
             {
-                var p = (RectTransform)_primary.transform;
-                p.anchoredPosition = new Vector2((_chatShown ? 650 : 960) - 270 - 960, 540 - 936);
+                var action = (RectTransform)_primary.transform;
+                action.anchoredPosition = new Vector2(PanelTarget - action.rect.width * .5f, action.anchoredPosition.y);
             }
-        }
-
-        private void ApplyPanel()
-        {
-            _playersPanel.anchoredPosition = new Vector2(_panelX, CardsTop);
-            _playersPanel.sizeDelta = new Vector2(_panelWidth, SeatHeight);
+            if (_watching != null)
+                _watching.anchoredPosition = new Vector2(PanelTarget - _watching.rect.width * .5f, _watching.anchoredPosition.y);
         }
 
         private void OnDisable()
@@ -738,14 +734,6 @@ namespace TumbangPreso.UI.Hub
         {
             Draw(false);
             DrawFirewall();
-            if (_playersPanel != null && (!Mathf.Approximately(_panelX, PanelTarget) || !Mathf.Approximately(_panelWidth, WidthTarget)))
-            {
-                // A short ease rather than a jump, so the eye follows the cards to their new place.
-                float k = 1 - Mathf.Exp(-Time.unscaledDeltaTime * 16);
-                _panelX = HubStyle.ReducedMotion ? PanelTarget : Mathf.MoveTowards(Mathf.Lerp(_panelX, PanelTarget, k), PanelTarget, Time.unscaledDeltaTime * 300);
-                _panelWidth = HubStyle.ReducedMotion ? WidthTarget : Mathf.MoveTowards(Mathf.Lerp(_panelWidth, WidthTarget, k), WidthTarget, Time.unscaledDeltaTime * 600);
-                ApplyPanel();
-            }
             if (_unread != null)
             {
                 if (_chatShown) _seenLines = LobbyChat.RoomLineCount;
@@ -829,10 +817,8 @@ namespace TumbangPreso.UI.Hub
             if (!force && key == _drawn) return;
             _drawn = key;
 
-            bool hostLayout = host.IsHost && !HubQueueWatch.QueueRoom;
-            bool snap = force || hostLayout != _hostLayout;
-            _hostLayout = hostLayout;
-            Layout(snap);
+            _hostLayout = host.IsHost && !HubQueueWatch.QueueRoom;
+            Layout();
 
             string title = string.IsNullOrWhiteSpace(host.RoomTitle) ? "LOBBY" : host.RoomTitle.ToUpperInvariant();
             _title.text = title;
@@ -931,20 +917,23 @@ namespace TumbangPreso.UI.Hub
             }
             var people = Roster.GetPeople(SceneFlow.SelectedMode);
             int n = Mathf.Max(1, seats.Length);
+            float cardW = (WidthTarget - (n - 1) * CardGap) / n;
+            float cardH = SeatHeight - HubKnit.SlabHeight;
+            float s = _chatShown ? 2f / 3f : 1f;
+            float stampTop = cardH - 62, subTop = stampTop - 38, nameTop = subTop - 45;
             for (int i = 0; i < seats.Length; i++)
             {
                 var seat = seats[i];
-                // ⚠️ QUARTER COLUMNS, ANCHORED, NOT PLACED: the cards reflow when the chat narrows the row.
                 var slot = HubKit.Rect(_seats, "Seat" + i);
-                slot.anchorMin = new Vector2((float)i / n, 0); slot.anchorMax = new Vector2((float)(i + 1) / n, 1);
-                slot.offsetMin = new Vector2(i == 0 ? 0 : CardGap * .5f, 0);
-                slot.offsetMax = new Vector2(i == n - 1 ? 0 : -CardGap * .5f, 0);
+                float left = (float)i / n, right = (float)(i + 1) / n;
+                slot.anchorMin = new Vector2(left, 0); slot.anchorMax = new Vector2(right, 1);
+                // Distribute the gaps across every column so the first and last card are the same width.
+                slot.offsetMin = new Vector2(CardGap * left, 0);
+                slot.offsetMax = new Vector2(-CardGap * (1 - right), 0);
                 bool open = !seat.Occupied && !seat.Bot;
-                Knit kind = open ? Knit.Well : seat.Mine ? Knit.DarkCardOn : Knit.DarkCard;
+                Knit kind = open ? Knit.Well : seat.Mine ? Knit.DarkSeatOn : Knit.DarkSeat;
                 int destination = seat.Slot;
                 bool editBots = host.CanEditBots && !seat.Occupied;
-                float s = (_chatShown ? 280 : 420) / 420f;
-                float cardW = 420 * s, cardH = SeatHeight - 14;
 
                 // ⚠️⚠️ THE WHOLE CARD IS THE DOOR (owner 2026-10-17: "click anywhere on their respective
                 // rectangle"). A card the player can move to is a button that lifts and says what a press
@@ -960,6 +949,9 @@ namespace TumbangPreso.UI.Hub
                     });
                     card = HubKit.Stretch((RectTransform)take.transform);
                     face = take.Body;
+                    // Keep the seats on one baseline while pointing at a switch target.
+                    var press = take.GetComponent<KitPress>();
+                    if (press != null) press.Motion = false;
                 }
                 else
                 {
@@ -974,16 +966,17 @@ namespace TumbangPreso.UI.Hub
                 if (open)
                 {
                     var plus = HubKit.Glyph(face, "Icon", HubGlyph.Mark.Plus, HubKnit.KitSoftRed, 0.12f);
-                    HubKnit.In(plus.rectTransform, (cardW - 70 * s) * .5f, cardH * .36f - 35 * s, 70 * s, 70 * s);
+                    HubKit.Place(plus.rectTransform, HubKit.Top, new Vector2(0, -cardH * .36f), Vector2.one * (70 * s));
                     var openWord = HubKnit.Display(face, "Name", "OPEN SEAT", Mathf.RoundToInt(44 * s), HubKnit.KitCream, TextAnchor.MiddleCenter);
-                    HubKnit.In(openWord.rectTransform, 0, cardH * .6f - 30, cardW, 60);
+                    SeatRow(openWord.rectTransform, cardH * .6f - 30, 60);
+                    HubKit.Fit(openWord, cardW - 32);
                 }
                 else
                 {
                     // The portrait is cut flat at the chest, so its window fades at the lower edge.
                     float size = Mathf.Min(cardW - 60 * s, cardH * .56f);
                     var frame = HubKit.Rect(face, "Hero");
-                    HubKnit.In(frame, (cardW - size) * .5f, 26 * s, size, size * .92f);
+                    HubKit.Place(frame, HubKit.Top, new Vector2(0, -26 * s), new Vector2(size, size * .92f));
                     frame.gameObject.AddComponent<RectMask2D>().softness = new Vector2Int(0, 30);
                     var picture = HubKit.Picture(frame, "Face", HubKit.Portrait(person?.Id));
                     HubKnit.In(picture.rectTransform, 0, 0, size, size);
@@ -995,26 +988,26 @@ namespace TumbangPreso.UI.Hub
                     else if (seat.Bot && !seat.Occupied)
                     {
                         var bot = HubKnit.BotFace(face, "Icon");
-                        HubKnit.In(bot.rectTransform, (cardW - 150 * s) * .5f, 70 * s, 150 * s, 150 * s);
+                        HubKit.Place(bot.rectTransform, HubKit.Top, new Vector2(0, -70 * s), Vector2.one * (150 * s));
                     }
                     else
                     {
                         var glyph = HubKit.Glyph(face, "Icon", HubGlyph.Mark.Person, HubKnit.KitTan, 0.08f);
-                        HubKnit.In(glyph.rectTransform, (cardW - 150 * s) * .5f, 70 * s, 150 * s, 150 * s);
+                        HubKit.Place(glyph.rectTransform, HubKit.Top, new Vector2(0, -70 * s), Vector2.one * (150 * s));
                     }
 
                     string name = seat.Occupied ? (seat.Mine ? "YOU" : seat.Name) : "BOT";
                     var label = HubKnit.Display(face, "Name", name.ToUpperInvariant(), Mathf.RoundToInt(52 * s), seat.Mine ? HubKnit.KitLime : HubKnit.KitCream, TextAnchor.MiddleCenter);
-                    float seatWidth = WidthTarget / n - slot.offsetMin.x + slot.offsetMax.x;
-                    var nameWell = HubKnit.In(HubKit.Rect(face, "NameWell"), 16, cardH - 150 * s - 30, seatWidth - 32, 60);
+                    var nameWell = HubKit.Rect(face, "NameWell");
+                    SeatRow(nameWell, nameTop, 48);
                     nameWell.gameObject.AddComponent<RectMask2D>();
                     label.transform.SetParent(nameWell, false);
                     HubKit.Stretch(label.rectTransform);
-                    HubKit.Fit(label, seatWidth - 32);
+                    HubKit.Fit(label, cardW - 32, minSize: 16);
                     string sub = person != null ? person.Name.ToUpperInvariant() : seat.Bot ? "PLAYS THIS SEAT" : "";
                     if (_chatShown && seat.Bot && person == null) sub = "";
                     var under = HubKnit.Words(face, "HeroName", sub, HubStyle.Floor, HubKnit.KitTan, TextAnchor.MiddleCenter);
-                    HubKnit.In(under.rectTransform, 16, cardH - 104 * s - 20, cardW - 32, 40);
+                    SeatRow(under.rectTransform, subTop, 36);
                     under.horizontalOverflow = HorizontalWrapMode.Overflow;
                     HubKit.Fit(under, cardW - 40);
 
@@ -1023,7 +1016,7 @@ namespace TumbangPreso.UI.Hub
                     if (seat.Host) stamp = HubKnit.Tag(face, "Stamp", "HOST", Knit.PillYellow, 52);
                     else if (seat.Ready || seat.Bot) stamp = HubKnit.Tag(face, "Stamp", "READY", Knit.PillGo, 52);
                     else stamp = HubKnit.Tag(face, "Stamp", "NOT READY", Knit.PillPlain, 52);
-                    HubKnit.In(stamp, (cardW - stamp.sizeDelta.x) * .5f, cardH - 76 * s, stamp.sizeDelta.x, 52);
+                    HubKit.Place(stamp, HubKit.Top, new Vector2(0, -stampTop), stamp.sizeDelta);
                 }
 
                 if (take != null)
@@ -1031,15 +1024,20 @@ namespace TumbangPreso.UI.Hub
                     // The hint names the press, so the card reads before it is clicked. Shown on hover
                     // and on pad focus; a thumb has no hover and simply taps.
                     var hint = HubKnit.Display(face, "Label", seat.Occupied || seat.Bot ? "SWITCH" : "MOVE HERE", 34, HubKnit.KitWhite, TextAnchor.MiddleCenter, 4);
-                    HubKnit.In(hint.rectTransform, 0, cardH * .22f, cardW, 54);
+                    SeatRow(hint.rectTransform, cardH * .22f, 54);
+                    HubKit.Fit(hint, cardW - 32);
                     hint.enabled = false;
                     take.Attention += attended => { if (hint != null) hint.enabled = attended; };
                 }
 
-                // ADD BOT in an empty chair; bot seats have no removal control in a custom
-                // room only. ⚠️ SIBLINGS OF THE CARD'S BUTTON, NOT CHILDREN OF ITS FACE: a child would
-                // lift the card and show SWITCH while the pointer is on the bot control.
-                if (editBots && !seat.Bot)
+                // Bot controls sit beside the seat button in the hierarchy so their clicks do not switch seats.
+                if (editBots && seat.Bot)
+                {
+                    var remove = HubKnit.Button(slot, "RemoveBot" + destination, null, Knit.Danger,
+                                                () => Hub.Host.SetSeatBot(destination, false), HubStyle.Label, HubGlyph.Mark.Close);
+                    HubKit.Place((RectTransform)remove.transform, HubKit.TopRight, new Vector2(-12, -12), new Vector2(76, 68));
+                }
+                else if (editBots)
                 {
                     var add = HubKnit.Button(slot, "AddBot" + destination, _chatShown ? "+ BOT" : "+ ADD BOT", Knit.Yellow,
                                              () => Hub.Host.SetSeatBot(destination, true), Mathf.RoundToInt(34 * s));
@@ -1049,6 +1047,11 @@ namespace TumbangPreso.UI.Hub
                     HubKnit.FitLabel(add);
                 }
             }
+        }
+
+        private static void SeatRow(RectTransform rect, float top, float height)
+        {
+            HubKit.Span(rect, new Vector2(0, 1), Vector2.one, new Vector2(16, -top - height), new Vector2(16, top));
         }
 
         private void Primary()

@@ -210,14 +210,15 @@ namespace TumbangPreso.Tests
             Assert.AreEqual(seat.rect.size,rect.rect.size,"The seat door must cover the whole row.");
             Assert.IsFalse(_root.GetComponentsInChildren<Text>(true).Any(t=>t.text.Contains("SIT HERE")));
         }
-        [Test] public void TheHostCanAddBotsButCannotRemoveThem()
+        [Test] public void TheCustomHostCanAddAndRemoveBotsSeatBySeat()
         {
             var add=Button("AddBot3");var remove=Button("RemoveBot2");
             Assert.IsNotNull(add,"An open seat offers ADD BOT to the host.");
-            Assert.IsNull(remove,"Custom matches must not offer a remove-bot action.");
+            Assert.IsNotNull(remove,"The bot card has a separate remove action.");
             Assert.IsNull(Button("AddBot1"),"An occupied seat has no bot control.");
             Assert.IsNull(Button("AddBot0"));
             add.onClick.Invoke();Assert.AreEqual(3,_host.BotSeat);Assert.IsTrue(_host.BotWanted);
+            remove.onClick.Invoke();Assert.AreEqual(2,_host.BotSeat);Assert.IsFalse(_host.BotWanted);
             Assert.AreEqual(-1,_host.Requested,"A bot control must not also move the player.");
         }
         [Test] public void OnlyTheHostSeesBotControls()
@@ -271,6 +272,81 @@ namespace TumbangPreso.Tests
             _screen.SetChatPresented(false);
             Assert.IsTrue(character.gameObject.activeSelf);Assert.IsTrue(chat.gameObject.activeSelf);
         }
+        [Test]
+        public void OpeningChatKeepsAllSeatFootersCenteredAndLevel()
+        {
+            _host.Hosting = false;
+            _host.EditBots = false;
+            _host.Data = new[]
+            {
+                new HubSeat { Slot = 0, Bot = true },
+                new HubSeat { Slot = 1, Occupied = true, Mine = true, CharacterPick = 1 },
+                new HubSeat { Slot = 2, Bot = true },
+                new HubSeat { Slot = 3, Occupied = true, Host = true, Name = "LONG DISPLAY NAME#1234", CharacterPick = 0 }
+            };
+            RebuildForCurrentSeats();
+            var seats = _root.transform.Find("Players/Seats");
+            var chat = LobbyChat.Attach(_root.transform, false);
+            chat.PlaceLobbyColumn();
+            var chatRect = (RectTransform)chat.transform;
+            foreach (var child in chat.GetComponentsInChildren<Transform>(true)) child.gameObject.layer = 31;
+            chat.PresentedChanged += _screen.SetChatPresented;
+
+            foreach (bool shown in new[] { false, true, false })
+            {
+                chat.SetPresented(shown);
+                _screen.Tick();
+                foreach (var slap in _root.GetComponentsInChildren<HubSlap>(true))
+                {
+                    slap.enabled = false;
+                    slap.transform.localScale = Vector3.one;
+                    slap.transform.localRotation = Quaternion.identity;
+                    var group = slap.GetComponent<CanvasGroup>();
+                    if (group != null) group.alpha = 1;
+                }
+                Canvas.ForceUpdateCanvases();
+                var first = (RectTransform)seats.GetChild(0);
+                float? stampY = null;
+                for (int i = 0; i < seats.childCount; i++)
+                {
+                    var slot = (RectTransform)seats.GetChild(i);
+                    Assert.That(slot.rect.width, Is.EqualTo(first.rect.width).Within(.1f), $"P{i + 1} has the same card width");
+                    if (i > 0)
+                    {
+                        var previous = (RectTransform)seats.GetChild(i - 1);
+                        float gap = InRoom(slot, slot.rect.min).x - InRoom(previous, previous.rect.max).x;
+                        Assert.That(gap, Is.EqualTo(HubLobby.CardGap).Within(.1f));
+                    }
+                    var nameWell = (RectTransform)slot.GetChild(0).Find("Face/NameWell");
+                    var label = nameWell.GetComponentInChildren<Text>();
+                    Assert.That(label.preferredWidth, Is.LessThanOrEqualTo(nameWell.rect.width + .1f), "The whole player name fits");
+
+                    var stamp = (RectTransform)slot.GetChild(0).Find("Face/Stamp");
+                    Assert.IsNotNull(stamp);
+                    var center = InRoom(stamp, stamp.rect.center);
+                    Assert.That(center.x, Is.EqualTo(InRoom(slot, slot.rect.center).x).Within(.1f), $"P{i + 1} stamp is centered");
+                    Assert.That(center.y, Is.EqualTo(stampY ?? center.y).Within(.1f), $"P{i + 1} stamp shares the baseline");
+                    stampY = center.y;
+                }
+                if (shown)
+                {
+                    var last = (RectTransform)seats.GetChild(seats.childCount - 1);
+                    Assert.That(InRoom(chatRect, chatRect.rect.min).x - InRoom(last, last.rect.max).x,
+                        Is.GreaterThanOrEqualTo(HubLobby.CardGap));
+                    string capture = System.Environment.GetEnvironmentVariable("TUMP_LOBBY_CAPTURE");
+                    if (!string.IsNullOrEmpty(capture) && SystemInfo.graphicsDeviceType != UnityEngine.Rendering.GraphicsDeviceType.Null)
+                    {
+                        var sheet = (RectTransform)chat.transform.Find("ChatSheet");
+                        sheet.anchoredPosition = Vector2.zero;
+                        sheet.GetComponent<CanvasGroup>().alpha = 1;
+                        Write(capture);
+                    }
+                }
+            }
+
+            Vector3 InRoom(RectTransform rect, Vector2 local) => _root.transform.InverseTransformPoint(rect.TransformPoint(local));
+        }
+
         [Test] public void FullRulesUseTheKnitControls()
         {
             var rules=_hubRoot.AddComponent<CustomGameScreen>();rules.Open();

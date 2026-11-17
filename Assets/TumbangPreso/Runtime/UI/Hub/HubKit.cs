@@ -106,13 +106,13 @@ namespace TumbangPreso.UI.Hub
         /// drawn off the screen. Every name that comes from data (a hero, a map, a player's handle)
         /// goes through here, because its width is not known when the screen is designed.
         /// </summary>
-        public static void Fit(Text text, float width = -1)
+        public static void Fit(Text text, float width = -1, int minSize = HubStyle.Floor)
         {
             if (text == null) return;
             if (width <= 0) width = text.rectTransform.rect.width;
             if (width <= 1) return;
             text.horizontalOverflow = HorizontalWrapMode.Overflow;
-            while (text.fontSize > HubStyle.Floor && text.preferredWidth > width) text.fontSize -= 2;
+            while (text.fontSize > minSize && text.preferredWidth > width) text.fontSize = Mathf.Max(minSize, text.fontSize - 2);
         }
 
         // ------------------------------------------------------------------ surfaces
