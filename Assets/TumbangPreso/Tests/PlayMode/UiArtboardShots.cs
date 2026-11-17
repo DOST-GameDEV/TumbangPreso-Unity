@@ -539,7 +539,7 @@ namespace TumbangPreso.PlayTests
             public void OpenParty() => R.OpenParty(); public void OpenCustomRules() => R.OpenCustomRules(); public void StartPractice() => R.StartPractice();
             public string StartQueue(GameMode m, QueueStake s) => R.StartQueue(m, s); public void CancelQueue() => R.CancelQueue(); public void AcceptBots() => R.AcceptBots();
             public Task<string> HostRoom(string t, string m, GameMode g, RoomVisibility v, bool o) => R.HostRoom(t, m, g, v, o);
-            public Task<string> Join(string c) => R.Join(c); public void LeaveRoom() => R.LeaveRoom();
+            public Task<string> Join(string c, bool spectate = false) => R.Join(c, spectate); public void LeaveRoom() => R.LeaveRoom();
             public bool InRoom => R.InRoom; public bool IsHost => IsHostAs ?? R.IsHost; public bool LocalReady => R.LocalReady;
             public string RoomCode => R.RoomCode; public bool RoomOnline => R.RoomOnline; public string RoomTitle => TitleAs ?? R.RoomTitle;
             public bool MatchInProgress => R.MatchInProgress; public HubSeat[] Seats() => SeatsAs ?? R.Seats();

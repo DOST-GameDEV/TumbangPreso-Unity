@@ -52,7 +52,7 @@ namespace TumbangPreso.Tests
         {
             typeof(NetSession).GetProperty("IsRelay").SetValue(_session, relay);
             typeof(PlayerAccount).GetProperty("IsSignedIn").SetValue(_account, signedIn);
-            typeof(NetSession).GetMethod("ConfigureClientHello", Hidden).Invoke(_session, null);
+            typeof(NetSession).GetMethod("ConfigureClientHello", Hidden).Invoke(_session, new object[] { false });
             return JsonUtility.FromJson<Hello>(Encoding.UTF8.GetString(_network.NetworkConfig.ConnectionData));
         }
 

@@ -122,10 +122,15 @@ namespace TumbangPreso.UI
         public static Sprite Cut(string id)
         {
             if (string.IsNullOrEmpty(id)) return null;
+            return CutPortrait(id) ?? Get(id);
+        }
+
+        internal static Sprite CutPortrait(string id)
+        {
+            if (string.IsNullOrEmpty(id)) return null;
             string key = "cut:" + id;
             if (Loaded.TryGetValue(key, out var known)) return known;
             var sprite = Resources.Load<Sprite>("UI/hero-cuts/" + (id.StartsWith("avatar_") ? id.Substring(7) : id));
-            if (sprite == null) return Get(id);
             Loaded[key] = sprite;
             return sprite;
         }

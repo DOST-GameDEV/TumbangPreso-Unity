@@ -319,9 +319,12 @@ namespace TumbangPreso.UI.Hub
                     continue;
                 }
                 string key = room.Key;
-                var join = HubKnit.Button(face, "Join" + i, "JOIN", Knit.Yellow, () => Join(key), 38);
+                bool watch = !room.IsJoinable && room.CanSpectate;
+                string action = room.IsJoinable ? "JOIN" : watch ? "SPECTATE" : "FULL";
+                var join = HubKnit.Button(face, "Join" + i, action, Knit.Yellow, () => Join(key, watch), 38);
                 HubKnit.In((RectTransform)join.transform, 870, 28, 180, 80);
-                join.interactable = room.IsJoinable;
+                HubKnit.FitLabel(join);
+                join.interactable = room.IsJoinable || watch;
             }
             Hub.RefreshFocus();
         }
@@ -334,14 +337,14 @@ namespace TumbangPreso.UI.Hub
         private float _joinStarted;
         private int _joinShownSecond = -1;
 
-        private async void Join(string key)
+        private async void Join(string key, bool spectate = false)
         {
             if (_busy || string.IsNullOrWhiteSpace(key)) return;
             _busy = true;
             _joinTarget = key.Trim().ToUpperInvariant(); _joinStarted = Time.unscaledTime; _joinShownSecond = -1;
             ShowJoining();
             string refusal;
-            try { refusal = await Hub.Host.Join(key.Trim()); }
+            try { refusal = await Hub.Host.Join(key.Trim(), spectate); }
             catch (System.Exception error)
             {
                 Debug.LogException(error);
@@ -1002,8 +1005,12 @@ namespace TumbangPreso.UI.Hub
 
                     string name = seat.Occupied ? (seat.Mine ? "YOU" : seat.Name) : "BOT";
                     var label = HubKnit.Display(face, "Name", name.ToUpperInvariant(), Mathf.RoundToInt(52 * s), seat.Mine ? HubKnit.KitLime : HubKnit.KitCream, TextAnchor.MiddleCenter);
-                    HubKnit.In(label.rectTransform, 16, cardH - 150 * s - 30, cardW - 32, 60);
-                    HubKit.Fit(label, cardW - 40);
+                    float seatWidth = WidthTarget / n - slot.offsetMin.x + slot.offsetMax.x;
+                    var nameWell = HubKnit.In(HubKit.Rect(face, "NameWell"), 16, cardH - 150 * s - 30, seatWidth - 32, 60);
+                    nameWell.gameObject.AddComponent<RectMask2D>();
+                    label.transform.SetParent(nameWell, false);
+                    HubKit.Stretch(label.rectTransform);
+                    HubKit.Fit(label, seatWidth - 32);
                     string sub = person != null ? person.Name.ToUpperInvariant() : seat.Bot ? "PLAYS THIS SEAT" : "";
                     if (_chatShown && seat.Bot && person == null) sub = "";
                     var under = HubKnit.Words(face, "HeroName", sub, HubStyle.Floor, HubKnit.KitTan, TextAnchor.MiddleCenter);

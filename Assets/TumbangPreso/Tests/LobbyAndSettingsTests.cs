@@ -31,8 +31,10 @@ namespace TumbangPreso.Tests
             var room = UI.Hub.HubRoom.FromLan(entry);
             Assert.AreEqual(2, room.Players);
             Assert.IsFalse(room.IsJoinable, "Reserved seats must not be offered to new players.");
+            Assert.IsTrue(room.CanSpectate, "Reserved player seats do not fill the gallery.");
             entry.Occupied = 2; entry.Connections = 12;
             Assert.IsFalse(UI.Hub.HubRoom.FromLan(entry).IsJoinable);
+            Assert.IsFalse(UI.Hub.HubRoom.FromLan(entry).CanSpectate);
             entry.Connections = 2;
             Assert.IsTrue(UI.Hub.HubRoom.FromLan(entry).IsJoinable);
             entry.InProgress = true;
@@ -176,6 +178,34 @@ namespace TumbangPreso.Tests
 
             Assert.IsTrue(late.Spectator, "a full match must seat the arrival as a spectator");
             Assert.AreEqual(-1, late.Seat);
+        }
+
+        [Test]
+        public void ExplicitSpectatorJoinKeepsAnOpenPlayerSeatAndRespectsTheGalleryLimit()
+        {
+            var lobby = NewLobby();
+            var player = lobby.Admit(100, "player", "Player");
+            Assert.AreEqual(0, player.Seat);
+            for (int i = 0; i < LobbySession.MaxSpectators; i++)
+            {
+                string token = "watcher" + i;
+                Assert.IsTrue(lobby.HasRoomForAnother(token, spectate: true));
+                var viewer = lobby.Admit(200 + i, token, "Viewer", out _, spectate: true);
+                Assert.IsTrue(viewer.Spectator);
+                Assert.AreEqual(-1, viewer.Seat);
+            }
+            Assert.AreEqual(LobbySession.MaxPlayers - 1, lobby.FreeSeatCount());
+            Assert.IsFalse(lobby.HasRoomForAnother("one more watcher", spectate: true));
+            Assert.IsTrue(lobby.HasRoomForAnother("another player"));
+
+            var listing = new ServerQuery.Entry
+            {
+                Seated = 4, Occupied = 4, Capacity = 4, Connections = 4
+            };
+            Assert.IsFalse(listing.IsJoinable);
+            Assert.IsTrue(listing.CanSpectate);
+            listing.Connections = LobbySession.MaxConnections;
+            Assert.IsFalse(listing.CanSpectate);
         }
 
         /// <summary>

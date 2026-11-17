@@ -69,7 +69,7 @@ namespace TumbangPreso.PlayTests
             var busy = typeof(HubJoin).GetField("_busy", Private);
             string target = "127.0.0.1:" + UnusedPort();
 
-            typeof(HubJoin).GetMethod("Join", Private).Invoke(join, new object[] { target });
+            typeof(HubJoin).GetMethod("Join", Private).Invoke(join, new object[] { target, false });
             yield return null;
             if ((bool)busy.GetValue(join)) LogAssert.Expect(LogType.Error, "Failed to connect to server.");
 

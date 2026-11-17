@@ -48,8 +48,8 @@ namespace TumbangPreso.Net
     ///
     /// ⚠️ TWO COUNTS ARE KEPT DISTINCT:
     /// - Seated count: spectators excluded. How full the match is (shown in UI).
-    /// - Occupied count: all humans attached. Whether the session is free to claim.
-    /// A lobby holding only a spectator shows 0/4 seated while correctly reporting 1 occupied.
+    /// - Occupied count: seats taken or held for reconnects.
+    /// - Connections: everybody attached, including spectators.
     /// </summary>
     public sealed class ServerQuery : MonoBehaviour
     {
@@ -71,6 +71,7 @@ namespace TumbangPreso.Net
             public int Seated;
             public int Occupied;
             public int Capacity;
+            public int Connections;
             public bool InProgress;
             public float LastSeen;
 
@@ -102,7 +103,9 @@ namespace TumbangPreso.Net
             public int Visibility;
 
             public int Players => Seated;
-            public bool IsJoinable => !InProgress && Occupied < Capacity;
+            public bool IsJoinable => !InProgress && Occupied < Capacity && Connections < LobbySession.MaxConnections;
+            public bool CanSpectate => Connections < LobbySession.MaxConnections
+                && Connections - Seated < LobbySession.MaxSpectators;
 
             public bool MatchesSkillContract(string local)
                 => local != null && local.Length == 64 && string.Equals(SkillContract, local, StringComparison.Ordinal);
@@ -167,6 +170,7 @@ namespace TumbangPreso.Net
         private bool _hasPendingCounts;
         private int _pendingSeated;
         private int _pendingOccupied;
+        private int _pendingConnections;
         private bool _pendingInProgress;
         private HostedAdvert _pendingAdvert;
         private bool _creatingLobby;
@@ -296,6 +300,7 @@ namespace TumbangPreso.Net
                             string relayCode = "";
                             int seated = lobby.Players?.Count ?? 0;
                             int occupied = seated;
+                            int connections = -1;
                             bool inProgress = false;
 
                             if (lobby.Data != null)
@@ -304,6 +309,7 @@ namespace TumbangPreso.Net
                                 if (lobby.Data.TryGetValue("RelayCode", out var rc)) relayCode = rc.Value;
                                 if (lobby.Data.TryGetValue("Seated", out var s) && int.TryParse(s.Value, out int sVal)) seated = sVal;
                                 if (lobby.Data.TryGetValue("Occupied", out var o) && int.TryParse(o.Value, out int oVal)) occupied = oVal;
+                                if (lobby.Data.TryGetValue("Connections", out var c) && int.TryParse(c.Value, out int count)) connections = count;
                                 if (lobby.Data.TryGetValue("InProgress", out var ip)) inProgress = ip.Value == "1";
                             }
 
@@ -348,6 +354,7 @@ namespace TumbangPreso.Net
                             entry.RelayCode = relayCode;
                             entry.Seated = seated;
                             entry.Occupied = occupied;
+                            entry.Connections = Mathf.Max(seated, connections);
                             entry.Capacity = lobby.MaxPlayers;
                             entry.InProgress = inProgress;
                             entry.PoolKey = poolKey;
@@ -509,7 +516,7 @@ namespace TumbangPreso.Net
         /// Registers a new UGS Lobby when hosting online via Relay.
         /// </summary>
         public async Task<string> CreateHostedLobbyAsync(string hostName, string joinCode, string relayCode,
-                                                         int seated, int occupied, HostedAdvert advert)
+                                                         int seated, int occupied, HostedAdvert advert, int connections = -1)
         {
             if (_hostLobbyCreation != null || !string.IsNullOrEmpty(_activeHostLobbyId))
                 _ = DeleteHostedLobbyAsync();
@@ -537,6 +544,7 @@ namespace TumbangPreso.Net
                         { "HostName", new DataObject(DataObject.VisibilityOptions.Public, lobbyName) },
                         { "Seated", new DataObject(DataObject.VisibilityOptions.Public, seated.ToString(), DataObject.IndexOptions.N1) },
                         { "Occupied", new DataObject(DataObject.VisibilityOptions.Public, occupied.ToString(), DataObject.IndexOptions.N2) },
+                        { "Connections", new DataObject(DataObject.VisibilityOptions.Public, Mathf.Max(seated, connections).ToString()) },
                         { "InProgress", new DataObject(DataObject.VisibilityOptions.Public, "0", DataObject.IndexOptions.S2) },
 
                         // ⚠️⚠️  THE QUEUE'S OWN FIELDS, AND ONLY `Pool` IS INDEXED.
@@ -584,7 +592,7 @@ namespace TumbangPreso.Net
                 {
                     _hasPendingCounts = false;
                     await UpdateHostedLobbyAsync(_pendingSeated, _pendingOccupied, _pendingInProgress,
-                                                 _pendingAdvert);
+                                                 _pendingAdvert, _pendingConnections);
                 }
 
                 return this != null && request == _hostLobbyRequest ? lobbyId : null;
@@ -606,7 +614,7 @@ namespace TumbangPreso.Net
         /// Updates dynamic match counts and progress state in UGS Lobby data.
         /// </summary>
         public async Task UpdateHostedLobbyAsync(int seated, int occupied, bool inProgress,
-                                                 HostedAdvert advert)
+                                                 HostedAdvert advert, int connections = -1)
         {
             if (string.IsNullOrEmpty(_activeHostLobbyId))
             {
@@ -617,6 +625,7 @@ namespace TumbangPreso.Net
                     _hasPendingCounts = true;
                     _pendingSeated = seated;
                     _pendingOccupied = occupied;
+                    _pendingConnections = connections;
                     _pendingInProgress = inProgress;
                     _pendingAdvert = advert;
                 }
@@ -631,6 +640,7 @@ namespace TumbangPreso.Net
                     {
                         { "Seated", new DataObject(DataObject.VisibilityOptions.Public, seated.ToString(), DataObject.IndexOptions.N1) },
                         { "Occupied", new DataObject(DataObject.VisibilityOptions.Public, occupied.ToString(), DataObject.IndexOptions.N2) },
+                        { "Connections", new DataObject(DataObject.VisibilityOptions.Public, Mathf.Max(seated, connections).ToString()) },
                         { "InProgress", new DataObject(DataObject.VisibilityOptions.Public, inProgress ? "1" : "0", DataObject.IndexOptions.S2) },
 
                         // ⚠️⚠️  THE BAND IS REPUBLISHED ON EVERY COUNT CHANGE AND NOT ON A
@@ -745,7 +755,7 @@ namespace TumbangPreso.Net
             {
                 foreach (var e in _seen.Values)
                 {
-                    sb.Append($"{e.Id}:{e.Name}:{e.JoinCode}:{e.Seated}/{e.Occupied}/{e.Capacity}:{e.InProgress};");
+                    sb.Append($"{e.Id}:{e.Name}:{e.JoinCode}:{e.Seated}/{e.Occupied}/{e.Capacity}:{e.Connections}:{e.InProgress};");
                     sb.Append($"{e.RelayCode}:{e.PoolKey}:{e.SkillContract}:{e.HostPlayerId}:{e.BandLow}/{e.BandHigh}/{e.SeatLow}/{e.SeatHigh}:{e.Backfill};");
                     sb.Append($"{e.Map}:{e.Visibility};");
                 }

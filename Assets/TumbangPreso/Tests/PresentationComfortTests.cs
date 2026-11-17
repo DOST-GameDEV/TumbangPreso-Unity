@@ -9,6 +9,26 @@ namespace TumbangPreso.Tests
     public sealed class PresentationComfortTests
     {
         [Test]
+        public void BroadcastSlowMotionKeepsPhysicsCadenceThroughPauseAndResume()
+        {
+            float previous = PresentationClock.RequestedScale;
+            try
+            {
+                PresentationClock.RequestScale(1f);
+                float step = Time.fixedDeltaTime;
+                PresentationClock.RequestScale(.25f);
+                Assert.That(Time.fixedDeltaTime / Time.timeScale, Is.EqualTo(step).Within(.00001f));
+                PresentationClock.RequestScale(0f);
+                Assert.AreEqual(0f, Time.timeScale);
+                PresentationClock.RequestScale(.5f);
+                Assert.That(Time.fixedDeltaTime / Time.timeScale, Is.EqualTo(step).Within(.00001f));
+                PresentationClock.RequestScale(1f);
+                Assert.That(Time.fixedDeltaTime, Is.EqualTo(step).Within(.00001f));
+            }
+            finally { PresentationClock.RequestScale(previous); }
+        }
+
+        [Test]
         public void OlderSettingsKeepUsefulDefaultsAndNewControlsRoundTrip()
         {
             var old = JsonUtility.FromJson<GameSettings>("{\"SfxVolume\":0.2}");

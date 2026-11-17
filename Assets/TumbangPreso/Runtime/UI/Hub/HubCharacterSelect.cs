@@ -295,8 +295,7 @@ namespace TumbangPreso.UI.Hub
             wellImage.sprite = HubBoard.Art("avatar_well");
             wellImage.raycastTarget = false;
             well.gameObject.AddComponent<Mask>().showMaskGraphic = false;
-            var sprite = Avatars.Cut("avatar_" + id);
-            var face = HubKit.Picture(well, "Face", sprite != null ? sprite : HubKit.Portrait(id));
+            var face = HubKit.Picture(well, "Face", Avatars.CutPortrait(id) ?? HubKit.Portrait(id));
             HubKit.Stretch(face.rectTransform);
             face.preserveAspect = true;
             return face;

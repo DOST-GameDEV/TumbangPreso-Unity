@@ -122,7 +122,7 @@ namespace TumbangPreso.UI
             ScreenTakeover.ConsumeEscape(); Close();
         }
         private void OnDestroy() => ScreenTakeover.Unregister(this);
-        private async Task<bool> NativeJoinAsync(string typed)
+        private async Task<bool> NativeJoinAsync(string typed, bool spectate = false)
         {
             if (_busy) return false;
             typed = typed?.Trim() ?? "";
@@ -133,7 +133,7 @@ namespace TumbangPreso.UI
             _nativeCancellation = cancellation; _busy = true; RefreshNative();
             try
             {
-                bool joined = await (Connection != null ? Connection(typed, cancellation.Token) : Connect(typed, cancellation.Token));
+                bool joined = await (Connection != null ? Connection(typed, cancellation.Token) : Connect(typed, cancellation.Token, spectate));
                 if (!attempt.CanContinue || this == null || !joined) return false;
                 bool previous = _nativeCompleting;
                 try { _nativeCompleting = true; Close(); }

@@ -85,7 +85,7 @@ namespace TumbangPreso.UI
             row.anchorMin = Vector2.zero; row.anchorMax = new Vector2(1, 0); row.pivot = new Vector2(0.5f, 0);
             row.anchoredPosition = new Vector2(0, 40); row.sizeDelta = new Vector2(-80, 84);
             _fieldRow = row.gameObject;
-            _field = HubKnit.Field(row, "ChatInput", "", "Say something. Enter sends.", Net.MatchRpc.MaxChatLength, HubStyle.Body);
+            _field = HubKnit.Field(row, "ChatInput", "", "Type a message…", Net.MatchRpc.MaxChatLength, HubStyle.Body);
             var fieldRect = (RectTransform)_field.transform;
             fieldRect.anchorMin = Vector2.zero; fieldRect.anchorMax = Vector2.one; fieldRect.pivot = new Vector2(0.5f, 0.5f);
             fieldRect.offsetMin = Vector2.zero; fieldRect.offsetMax = new Vector2(-114, 0);
@@ -93,9 +93,11 @@ namespace TumbangPreso.UI
             _field.textComponent.fontSize = HubStyle.Size(HubStyle.Floor);
             var hintWords = (Text)_field.placeholder;
             hintWords.fontSize = HubStyle.Size(HubStyle.Floor);
-            hintWords.horizontalOverflow = HorizontalWrapMode.Overflow;
+            hintWords.horizontalOverflow = HorizontalWrapMode.Wrap;
+            hintWords.verticalOverflow = VerticalWrapMode.Truncate;
             _field.textComponent.rectTransform.offsetMin = hintWords.rectTransform.offsetMin = new Vector2(24, 0);
             _field.textComponent.rectTransform.offsetMax = hintWords.rectTransform.offsetMax = new Vector2(-16, 0);
+            hintWords.rectTransform.parent.gameObject.AddComponent<RectMask2D>();
             _field.lineType = InputField.LineType.SingleLine;
             _field.onSubmit.AddListener(Submit);
             var send = HubKnit.Button(row, "SendChat", null, Knit.Yellow, () => { if (_field != null) Submit(_field.text); },

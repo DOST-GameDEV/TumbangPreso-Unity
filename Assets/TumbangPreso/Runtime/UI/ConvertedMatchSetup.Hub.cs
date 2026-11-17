@@ -208,7 +208,7 @@ namespace TumbangPreso.UI
             return "";
         }
 
-        public async Task<string> Join(string codeOrAddress)
+        public async Task<string> Join(string codeOrAddress, bool spectate = false)
         {
             if (_joinPanel == null) return "The join path is not ready yet.";
             ListedLanTitleFor(codeOrAddress, out string listedTitle, out string listedCode);
@@ -221,7 +221,7 @@ namespace TumbangPreso.UI
             void NoteStatus(string line) { if (request == _roomRequest) status = line; }
             panel.Status += NoteStatus;
             bool ok;
-            var joining = panel.AutomationJoin(codeOrAddress);
+            var joining = panel.AutomationJoin(codeOrAddress, spectate);
             var titleOperation = NetSession.Instance?.ClientTitleOperation;
             try { ok = await joining; }
             finally { if (panel != null) panel.Status -= NoteStatus; }
@@ -476,6 +476,7 @@ namespace TumbangPreso.UI
                     Capacity = entry.Capacity <= 0 ? LobbySession.MaxPlayers : entry.Capacity,
                     InProgress = entry.InProgress,
                     IsJoinable = entry.IsJoinable,
+                    CanSpectate = entry.CanSpectate,
                     Key = entry.JoinCode,
                 });
             }

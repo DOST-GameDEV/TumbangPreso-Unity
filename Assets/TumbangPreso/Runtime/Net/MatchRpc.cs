@@ -3145,59 +3145,84 @@ namespace TumbangPreso.Net
 
         public void RequestEmoteServerRpc(int slot, string id)
         {
+            if (id != "" && !Social.Emotes.IsKnown(id)) return;
+            var unit = Unit(slot);
+            if (unit == null) return;
             if (NetAuthority.IsHost)
             {
-                var who = Unit(slot);
-                var player = who != null ? who.GetComponent<Social.EmotePlayer>() : null;
-                if (player != null && player.CanEmote())
-                {
-                    PlayEmoteClientRpc(slot, id);
-                }
+                HostApplyEmote(unit, id);
                 return;
             }
 
-            if (_nm == null || _nm.CustomMessagingManager == null) return;
+            if (_nm?.CustomMessagingManager == null || slot != NetAuthority.LocalSlot) return;
             using var writer = new FastBufferWriter(64, Allocator.Temp);
-            writer.WriteValueSafe(slot);
-            writer.WriteValueSafe(id ?? "");
-            _nm.CustomMessagingManager.SendNamedMessage("ReqEmote", NetworkManager.ServerClientId, writer);
+            WriteEmote(writer, slot, id);
+            _nm.CustomMessagingManager.SendNamedMessage("ReqEmote", NetworkManager.ServerClientId, writer, NetworkDelivery.ReliableSequenced);
         }
 
         private void OnReqEmoteMsg(ulong senderClientId, FastBufferReader reader)
         {
-            if (!NetAuthority.IsHost) return;
+            if (!NetAuthority.IsHost || !reader.TryBeginRead(sizeof(int))) return;
             reader.ReadValueSafe(out int slot);
-            reader.ReadValueSafe(out string id);
-
-            if (!SenderOwnsClaimedSeat(senderClientId, slot, out var who)) return;
-            var player = who != null ? who.GetComponent<Social.EmotePlayer>() : null;
-            if (player != null && player.CanEmote())
-            {
-                PlayEmoteClientRpc(slot, id);
-            }
+            if (!SenderOwnsClaimedSeat(senderClientId, slot, out var unit)
+                || !TryReadEmote(ref reader, unit, out string id)) return;
+            HostApplyEmote(unit, id);
         }
 
-        private void PlayEmoteClientRpc(int slot, string id)
+        private void HostApplyEmote(CharacterMotor unit, string id)
         {
-            if (!NetAuthority.IsHost) return;
-            if (_nm != null && _nm.CustomMessagingManager != null)
+            var player = unit.GetComponent<Social.EmotePlayer>();
+            if (player == null) return;
+            if (id.Length == 0)
             {
-                using var writer = new FastBufferWriter(64, Allocator.Temp);
-                writer.WriteValueSafe(slot);
-                writer.WriteValueSafe(id ?? "");
-                _nm.CustomMessagingManager.SendNamedMessageToAll("PlayEmote", writer);
+                if (!player.IsEmoting) return;
+                player.ApplyStop();
             }
+            else
+            {
+                if (!player.CanEmote() || !player.HasEmoteClip(id)) return;
+                player.Play(id);
+            }
+            if (_nm?.CustomMessagingManager == null) return;
+            using var writer = new FastBufferWriter(64, Allocator.Temp);
+            WriteEmote(writer, unit.PlayerSlot, id);
+            _nm.CustomMessagingManager.SendNamedMessageToAll("PlayEmote", writer, NetworkDelivery.ReliableSequenced);
+        }
+
+        private void WriteEmote(FastBufferWriter writer, int slot, string id)
+        {
+            writer.WriteValueSafe(slot);
+            writer.WriteValueSafe(id);
+            writer.WriteNetworkSerializable(CaptureActionScope(slot));
+        }
+
+        // An empty ID stops the emote. Both directions are ordered, so a client's
+        // cancel reaches the host before its next start, and viewers see the same order.
+        private bool TryReadEmote(ref FastBufferReader reader, CharacterMotor unit, out string id)
+        {
+            id = null;
+            if (!reader.TryBeginRead(sizeof(uint))) return false;
+            int start = reader.Position;
+            reader.ReadValueSafe(out uint length);
+            if (length > MaxActionNameLength
+                || reader.Length - reader.Position != length * sizeof(char) + GameplayActionScope.WireBytes)
+                return false;
+            reader.Seek(start);
+            reader.ReadValueSafe(out id);
+            return (id.Length == 0 || Social.Emotes.IsKnown(id)) && ReadCurrentActionScope(ref reader, unit, out _);
         }
 
         private void OnPlayEmoteMsg(ulong senderClientId, FastBufferReader reader)
         {
-            if (!FromHost(senderClientId)) return;
-
+            if (NetAuthority.IsHost || !FromHost(senderClientId) || !reader.TryBeginRead(sizeof(int))) return;
             reader.ReadValueSafe(out int slot);
-            reader.ReadValueSafe(out string id);
             if (!ValidSlot(slot)) return;
 
-            Unit(slot)?.GetComponent<Social.EmotePlayer>()?.Play(id);
+            var unit = Unit(slot);
+            if (!TryReadEmote(ref reader, unit, out string id)) return;
+            var player = unit.GetComponent<Social.EmotePlayer>();
+            if (id.Length == 0) player?.ApplyStop();
+            else player?.Play(id);
         }
 
         // -------------------------------------------------------------------

@@ -264,7 +264,7 @@ namespace TumbangPreso.Net
         /// a returning player gets their OWN seat back before any free seat is handed to a
         /// newcomer, or a reconnecting player watches somebody else take their place.
         /// </summary>
-        public MidMatchRuling RuleOnArrival(string token)
+        public MidMatchRuling RuleOnArrival(string token, bool spectate = false)
         {
             if (string.IsNullOrEmpty(token)) return MidMatchRuling.Refuse;
 
@@ -272,6 +272,7 @@ namespace TumbangPreso.Net
             foreach (var kv in _heldSeats)
                 if (kv.Value == token) return MidMatchRuling.Reclaim;
 
+            if (spectate) return MidMatchRuling.Spectate;
             if (MatchInProgress && _recentSpectators.Contains(token)) return MidMatchRuling.Spectate;
 
             // 2. A seat is genuinely free.
@@ -307,7 +308,7 @@ namespace TumbangPreso.Net
         /// same durable token. The caller may disconnect that stale socket after the new one has
         /// taken the seat, closing the fast-reconnect window without ever freeing the chair.
         /// </summary>
-        public PeerRecord Admit(int peerId, string token, string name, out int replacedPeerId)
+        public PeerRecord Admit(int peerId, string token, string name, out int replacedPeerId, bool spectate = false)
         {
             replacedPeerId = -1;
             var record = new PeerRecord
@@ -391,7 +392,7 @@ namespace TumbangPreso.Net
             }
             else if (replaced == null)
             {
-                switch (RuleOnArrival(record.Token))
+                switch (RuleOnArrival(record.Token, spectate))
                 {
                     case MidMatchRuling.Reclaim:
                         record.Seat = ReclaimSeatFor(record.Token, record);
@@ -914,11 +915,11 @@ namespace TumbangPreso.Net
             foreach (var peer in _peers.Values) if (peer.Token == token) return true;
             return false;
         }
-        public bool HasRoomForAnother(string token)
+        public bool HasRoomForAnother(string token, bool spectate = false)
         {
             if (HasConnectedToken(token)) return true; // Replaces its own transport.
             if (!HasRoomForAnother()) return false;
-            var role = RuleOnArrival(token);
+            var role = RuleOnArrival(token, spectate);
             return role != MidMatchRuling.Refuse && (role != MidMatchRuling.Spectate || SpectatorCount() < MaxSpectators);
         }
 

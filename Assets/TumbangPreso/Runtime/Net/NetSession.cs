@@ -195,6 +195,7 @@ namespace TumbangPreso.Net
             public string SkillContract;
             public string Token;
             public string Name;
+            public bool Spectate;
 
             // ⚠️⚠️ THESE TWO ARE THE IMPERSONATION GUARD ON THE WIRE, `docs/TODO.md` § 88.1c.
             // `AccountPlayerId` is what the peer says its account is, and `HandleProof` is a
@@ -723,7 +724,8 @@ namespace TumbangPreso.Net
         // 190 (2026-11-10): Grab-only slipper retrieval, 1.5 s can lift and 3.5 s Vulnerable.
         // Older clients predict a shorter lift and keep Vulnerable after it expires on the host.
         // 191 (2026-11-10): a raised can is protected for 3.5 s and the Vulnerable status lasts 5 s.
-        public const int ProtocolVersion = 191;
+        // 192: scoped emote starts/stops and an explicit spectator request on arrival.
+        public const int ProtocolVersion = 192;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or
@@ -1391,7 +1393,8 @@ namespace TumbangPreso.Net
         /// `fe80::1` into a host of `fe80:` and a port of `1`. Bracketed IPv6 with a port
         /// (`[::1]:8910`) is handled separately for the same reason.
         /// </summary>
-        public async Task<bool> StartClientAsync(string address, int port = DefaultPort, CancellationToken cancellationToken = default)
+        public async Task<bool> StartClientAsync(string address, int port = DefaultPort,
+            CancellationToken cancellationToken = default, bool spectate = false)
         {
             var attempt = _joinAttempts.Begin(cancellationToken);
             if (!CanContinueJoin(attempt)) return false;
@@ -1403,8 +1406,8 @@ namespace TumbangPreso.Net
             address = SplitHostPort(address, ref port);
 
             Configure(address, port);
-            ConfigureClientHello();
             IsRelay = false;
+            ConfigureClientHello(spectate);
             RelayJoinCode = null;
 
             bool ok = StartNetcode(() => _nm.StartClient(), "joining");
@@ -1540,7 +1543,7 @@ namespace TumbangPreso.Net
                             relayCode,
                             Lobby.SeatedPeerCount(),
                             Lobby.OccupiedSeatCount(),
-                            Advert);
+                            Advert, Lobby.ConnectedHumanCount());
                     if (!CanContinueJoin(attempt)) return false;
                     if (string.IsNullOrEmpty(published))
                     {
@@ -1576,7 +1579,8 @@ namespace TumbangPreso.Net
         /// <summary>
         /// Connects to a host through a UGS Relay join code.
         /// </summary>
-        public async Task<bool> StartRelayClient(string relayJoinCode, CancellationToken cancellationToken = default)
+        public async Task<bool> StartRelayClient(string relayJoinCode, CancellationToken cancellationToken = default,
+            bool spectate = false)
         {
             var attempt = _joinAttempts.Begin(cancellationToken);
             if (!CanContinueJoin(attempt)) return false;
@@ -1621,7 +1625,7 @@ namespace TumbangPreso.Net
                 // TO A MATCH. See PrimeHandleProofAsync: LAN and direct-address joins may never.
                 await PrimeHandleProofAsync();
                 if (!CanContinueJoin(attempt)) return false;
-                ConfigureClientHello();
+                ConfigureClientHello(spectate);
                 bool ok = StartNetcode(() => _nm.StartClient(), "relay joining");
                 if (ok) _connectingAttempt = attempt;
                 if (ok) RegisterSeatHandler();
@@ -2010,7 +2014,7 @@ namespace TumbangPreso.Net
                 _ = Query.UpdateHostedLobbyAsync(Lobby.SeatedPeerCount(),
                                                  Lobby.OccupiedSeatCount(),
                                                  Lobby.MatchInProgress,
-                                                 Advert);
+                                                 Advert, Lobby.ConnectedHumanCount());
             }
         }
 
@@ -2020,7 +2024,7 @@ namespace TumbangPreso.Net
         /// disconnect; using it as identity is what made a returning defender reappear in the
         /// attacker's old seat.
         /// </summary>
-        private void ConfigureClientHello()
+        private void ConfigureClientHello(bool spectate = false)
         {
             var settings = Settings.SettingsStore.Current;
             var account = GameServices.Account;
@@ -2030,6 +2034,7 @@ namespace TumbangPreso.Net
                 SkillContract = SkillContractFingerprint.Current,
                 Token = LocalConnectionToken,
                 Name = LocalPlayerName(),
+                Spectate = spectate,
 
                 // ⚠️ WHATEVER IS CACHED, AND NEVER A NETWORK CALL FROM HERE. This runs inside
                 // every start path including the two LAN ones, and `FUTURE.md` § 0.5 rule 7 says
@@ -2226,7 +2231,7 @@ namespace TumbangPreso.Net
             bool skillsMatch = protocolMatches && SkillContractFingerprint.Matches(hello.SkillContract);
             bool hasCapacity = (_nm == null || Lobby.HasConnectedToken(hello?.Token) ||
                                Math.Max(_nm.ConnectedClientsIds.Count, _helloByClient.Count)
-                               < LobbySession.MaxConnections) && Lobby.HasRoomForAnother(hello?.Token);
+                               < LobbySession.MaxConnections) && Lobby.HasRoomForAnother(hello?.Token, hello?.Spectate == true);
 
             // ⚠️⚠️ THE BLOCK LIST IS ENFORCED HERE, AND THIS IS THE ONLY PLACE IN THE GAME IT
             // CAN DO ANYTHING TODAY. `FUTURE.md` § 6 asks for *"blocking, which must survive
@@ -2473,7 +2478,7 @@ namespace TumbangPreso.Net
             }
 
             var record = Lobby.Admit((int)clientId, hello.Token, hello.Name,
-                                     out int replacedPeerId);
+                                     out int replacedPeerId, hello.Spectate);
             // An admitted listen host has an established session too.
             if (clientId == _nm.LocalClientId) _everConnected = true;
             record.AccountPlayerId = hello.AccountPlayerId ?? "";

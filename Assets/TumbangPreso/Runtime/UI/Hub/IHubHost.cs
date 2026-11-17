@@ -60,7 +60,7 @@ namespace TumbangPreso.UI.Hub
         void AcceptBots();
 
         Task<string> HostRoom(string title, string map, GameMode mode, RoomVisibility visibility, bool online);
-        Task<string> Join(string codeOrAddress);
+        Task<string> Join(string codeOrAddress, bool spectate = false);
         void LeaveRoom();
 
         bool InRoom { get; }
@@ -133,6 +133,7 @@ namespace TumbangPreso.UI.Hub
         public int Capacity;
         public bool InProgress;
         public bool IsJoinable;
+        public bool CanSpectate;
 
         /// <summary>
         /// The host said a protocol and it is not ours (LAN beacon v3). The row reads DIFFERENT VERSION
@@ -149,7 +150,8 @@ namespace TumbangPreso.UI.Hub
         public static HubRoom FromLan(Net.LanEntry entry) => new HubRoom
         {
             Name = entry.HostName, Map = MapName(entry.MapId), Players = entry.Players, Capacity = entry.MaxPlayers,
-            InProgress = entry.InProgress, IsJoinable = entry.IsJoinable, DifferentVersion = entry.DifferentVersion,
+            InProgress = entry.InProgress, IsJoinable = entry.IsJoinable, CanSpectate = entry.CanSpectate,
+            DifferentVersion = entry.DifferentVersion,
             Key = $"{entry.Address}:{entry.Port}"
         };
 
@@ -171,7 +173,7 @@ namespace TumbangPreso.UI.Hub
         public bool SameListing(HubRoom other)
             => Key == other.Key && Name == other.Name && Map == other.Map
                 && Players == other.Players && Capacity == other.Capacity
-                && InProgress == other.InProgress && IsJoinable == other.IsJoinable
+                && InProgress == other.InProgress && IsJoinable == other.IsJoinable && CanSpectate == other.CanSpectate
                 && DifferentVersion == other.DifferentVersion;
     }
 }

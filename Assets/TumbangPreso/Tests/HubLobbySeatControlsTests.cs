@@ -40,7 +40,7 @@ namespace TumbangPreso.Tests
             public void StartPractice(){}public string StartQueue(GameMode mode,QueueStake stake)=>"";
             public void CancelQueue(){}public void AcceptBots(){}public void LeaveRoom(){}
             public Task<string> HostRoom(string title,string map,GameMode mode,RoomVisibility visibility,bool online)=>Task.FromResult("");
-            public Task<string> Join(string codeOrAddress)=>Task.FromResult("");
+            public Task<string> Join(string codeOrAddress, bool spectate = false)=>Task.FromResult("");
             public void StartGame(){}public void ToggleReady(){}public void LockIn(){}public void VoteMap(int index){}
             public void PublishPicks(){}public string Map;public void SelectMap(string map){Map=map;}public void SelectMode(GameMode mode){}
             public List<HubRoom> LanRooms=new List<HubRoom>(),OnlineRooms=new List<HubRoom>();

@@ -85,7 +85,8 @@ namespace TumbangPreso.Net
             !DifferentVersion && !InProgress && Occupied < MaxPlayers && Connections < MaxConnections;
 
         /// <summary>Room to attach and watch, even when every chair is taken.</summary>
-        public bool CanSpectate => !DifferentVersion && Connections < MaxConnections;
+        public bool CanSpectate => !DifferentVersion && Connections < MaxConnections
+            && Connections - Players < LobbySession.MaxSpectators;
     }
 
     /// <summary>

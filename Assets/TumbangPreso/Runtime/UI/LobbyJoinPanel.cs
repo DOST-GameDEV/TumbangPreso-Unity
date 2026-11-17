@@ -853,12 +853,12 @@ namespace TumbangPreso.UI
         /// into `NetSession` would prove the transport works and say nothing about whether the
         /// button does.
         /// </summary>
-        public async System.Threading.Tasks.Task<bool> AutomationJoin(string typed)
+        public async System.Threading.Tasks.Task<bool> AutomationJoin(string typed, bool spectate = false)
         {
-            if (_nativeJoin) return await NativeJoinAsync(typed);
+            if (_nativeJoin) return await NativeJoinAsync(typed, spectate);
             if (_entry != null) _entry.text = typed;
 
-            bool joined = await Connect(typed);
+            bool joined = await Connect(typed, spectate: spectate);
 
             if (this == null) return false;
 
@@ -869,7 +869,8 @@ namespace TumbangPreso.UI
             return true;
         }
 
-        private async System.Threading.Tasks.Task<bool> Connect(string typed, CancellationToken cancellationToken = default)
+        private async System.Threading.Tasks.Task<bool> Connect(string typed, CancellationToken cancellationToken = default,
+            bool spectate = false)
         {
             cancellationToken.ThrowIfCancellationRequested();
             // ⚠️ AN ADDRESS IS ANYTHING THAT LOOKS LIKE ONE. A join code is four characters out
@@ -882,7 +883,7 @@ namespace TumbangPreso.UI
             {
                 Report($"Connecting to {typed}...");
 
-                bool connected = await _net.StartClientAsync(typed, cancellationToken: cancellationToken);
+                bool connected = await _net.StartClientAsync(typed, cancellationToken: cancellationToken, spectate: spectate);
                 cancellationToken.ThrowIfCancellationRequested();
                 if (connected && await _net.WaitForConnectionAsync(cancellationToken)) return true;
                 cancellationToken.ThrowIfCancellationRequested();
@@ -930,7 +931,7 @@ namespace TumbangPreso.UI
                 }
                 Report($"Joining {match.HostName} at {match.Address}:{match.Port}...");
 
-                bool connected = await _net.StartClientAsync(match.Address, match.Port, cancellationToken);
+                bool connected = await _net.StartClientAsync(match.Address, match.Port, cancellationToken, spectate);
                 cancellationToken.ThrowIfCancellationRequested();
                 if (connected && await _net.WaitForConnectionAsync(cancellationToken)) return true;
                 cancellationToken.ThrowIfCancellationRequested();
@@ -942,7 +943,7 @@ namespace TumbangPreso.UI
 
             Report($"Joining {match.HostName} online...");
 
-            bool relayConnected = await _net.StartRelayClient(match.RelayCode, cancellationToken);
+            bool relayConnected = await _net.StartRelayClient(match.RelayCode, cancellationToken, spectate);
             cancellationToken.ThrowIfCancellationRequested();
             if (relayConnected && await _net.WaitForConnectionAsync(cancellationToken)) return true;
             cancellationToken.ThrowIfCancellationRequested();

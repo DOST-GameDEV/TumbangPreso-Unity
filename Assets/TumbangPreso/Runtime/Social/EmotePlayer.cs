@@ -22,6 +22,8 @@ namespace TumbangPreso.Social
 
         private CharacterMotor _motor;
         private Visual.CharacterAnimator _animator;
+        private int _emoteEpoch;
+        private int _emoteRound;
 
         public string Current { get; private set; }
         public bool IsEmoting => !string.IsNullOrEmpty(Current);
@@ -89,9 +91,7 @@ namespace TumbangPreso.Social
             if (!NetAuthority.ShouldResolve()) return;
             if (!Emotes.IsKnown(id) || !CanEmote()) return;
 
-            // ⚠️ THE BROADCAST IS THE HOST'S OWN PLAY PATH TOO. `PlayEmote` is sent with
-            // `SendNamedMessageToAll`, which Netcode loops back into the listen host's own
-            // handler, so calling `Play` here as well would start the clip twice on the host.
+            // The host applies the accepted start before broadcasting it to viewers.
             if (NetAuthority.IsNetworked)
             {
                 Net.MatchRpc.Instance?.RequestEmoteServerRpc(_motor.PlayerSlot, id);
@@ -117,10 +117,28 @@ namespace TumbangPreso.Social
             if (Animator == null || !Animator.HasEmoteClip(id)) return;
 
             Current = id;
+            _emoteEpoch = _motor.MovementEpoch;
+            _emoteRound = GameServices.Match?.RoundNumber ?? -1;
             EmoteStarted?.Invoke(id);
         }
 
         public void Stop()
+        {
+            if (!IsEmoting) return;
+
+            var rpc = NetAuthority.IsNetworked ? Net.MatchRpc.Instance : null;
+            if (rpc != null && NetAuthority.IsHost)
+            {
+                rpc.RequestEmoteServerRpc(_motor.PlayerSlot, "");
+                return;
+            }
+
+            ApplyStop();
+            if (rpc != null && _motor.IsLocallySimulated())
+                rpc.RequestEmoteServerRpc(_motor.PlayerSlot, "");
+        }
+
+        internal void ApplyStop()
         {
             if (!IsEmoting) return;
 
@@ -148,7 +166,17 @@ namespace TumbangPreso.Social
         {
             if (!IsEmoting) return;
 
+            if (_emoteEpoch != _motor.MovementEpoch || _emoteRound != (GameServices.Match?.RoundNumber ?? -1))
+            {
+                ApplyStop();
+                return;
+            }
+
+            bool drivesInput = _motor.IsLocallySimulated();
+            if (!drivesInput && !NetAuthority.IsHost) return;
             if (Animator != null && Animator.EmoteClipFinished) { Stop(); return; }
+            if (!_motor.CanAct()) { Stop(); return; }
+            if (!drivesInput) return;
 
             var intent = _motor.Intent;
             bool acted = intent.MoveAxis.sqrMagnitude > 0.01f
@@ -157,7 +185,7 @@ namespace TumbangPreso.Social
                          || intent.JustPressed(Verb.Grab)
                          || intent.JustPressed(Verb.SpecialAbility);
 
-            if (acted || !_motor.CanAct()) Stop();
+            if (acted) Stop();
         }
     }
 }

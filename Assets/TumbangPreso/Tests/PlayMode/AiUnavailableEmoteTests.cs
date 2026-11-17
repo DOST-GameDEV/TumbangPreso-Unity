@@ -2,7 +2,10 @@ using System.Collections;
 using System.Reflection;
 using NUnit.Framework;
 using TumbangPreso.Core;
+using TumbangPreso.Net;
 using TumbangPreso.Social;
+using Unity.Collections;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.TestTools;
 
@@ -27,6 +30,76 @@ namespace TumbangPreso.PlayTests
             visual.ApplyModel(art.Model,art.Tint,art.Clips,art.Palette,art.PetModel);
             var brain=go.AddComponent<AIController>();brain.enabled=false;
             return (motor,emotes,brain);
+        }
+
+        private sealed class WatchingPeer : INetProvider
+        {
+            public bool IsNetworked => true;
+            public bool IsHost => false;
+            public int LocalSlot => -1;
+            public int LocalPeerId => 43;
+            public bool IsSeatlessReferee => false;
+        }
+
+        [UnityTest]
+        public IEnumerator RemoteEmoteCancellationReleasesTheHostAndClearsTheViewer()
+        {
+            var actor = PlayableActor();
+            yield return null;
+            GameServices.Ensure();
+            var net = NetSession.Ensure();
+            var rpc = MatchRpc.Instance;
+            var lobby = net.Lobby;
+            var provider = NetAuthority.Provider;
+            try
+            {
+                lobby.Admit(41, "test-first", "First");
+                var owner = lobby.Admit(42, "test-owner", "Owner");
+                Assert.AreEqual(actor.motor.PlayerSlot, owner.Seat);
+                GameServices.Round.Register(actor.motor);
+                typeof(MatchRpc).GetProperty(nameof(MatchRpc.PresentationMatchId)).SetValue(rpc, 107L);
+
+                void Deliver(string handler, ulong sender, string emote, int epoch)
+                {
+                    using var writer = new FastBufferWriter(64, Allocator.Temp);
+                    writer.WriteValueSafe(actor.motor.PlayerSlot);
+                    writer.WriteValueSafe(emote);
+                    writer.WriteNetworkSerializable(new GameplayActionScope
+                    {
+                        Match = 107, Round = GameServices.Match.RoundNumber, Epoch = epoch
+                    });
+                    using var reader = new FastBufferReader(writer, Allocator.Temp);
+                    typeof(MatchRpc).GetMethod(handler, Hidden).Invoke(rpc, new object[] { sender, reader });
+                }
+
+                int currentEpoch = actor.motor.MovementEpoch;
+                void Request(ulong sender, string emote, int epoch) => Deliver("OnReqEmoteMsg", sender, emote, epoch);
+                Request(42, "dance", currentEpoch);
+                Assert.AreEqual("dance", actor.emotes.Current);
+                Request(41, "", currentEpoch);
+                Request(42, "", currentEpoch + 1);
+                Assert.AreEqual("dance", actor.emotes.Current, "Another seat or epoch cannot cancel the emote.");
+                Request(42, "", currentEpoch);
+                Assert.IsFalse(actor.emotes.IsEmoting);
+                Request(42, "bow", currentEpoch);
+                Assert.AreEqual("bow", actor.emotes.Current, "The host accepts the next emote from the same remote seat.");
+
+                NetAuthority.Provider = new WatchingPeer();
+                void Observe(ulong sender, string emote) => Deliver("OnPlayEmoteMsg", sender, emote, currentEpoch);
+                Observe(0, "dance");
+                Observe(42, "");
+                Assert.AreEqual("dance", actor.emotes.Current);
+                Observe(0, "");
+                Assert.IsFalse(actor.emotes.IsEmoting, "The host's cancel removes the held pose for viewers.");
+                Observe(0, "bow");
+                Assert.AreEqual("bow", actor.emotes.Current);
+            }
+            finally
+            {
+                NetAuthority.Provider = provider;
+                GameServices.Round.Unregister(actor.motor);
+                net.Stop();
+            }
         }
 
         [UnityTest]
