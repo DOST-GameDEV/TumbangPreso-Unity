@@ -273,6 +273,20 @@ Rules that make it one family:
    (`HudReadingLayout`), its high-contrast plate (`HudContrast`) and its recede
    during ultimates and replays. A new group (`UltimateSeal`) is registered in all
    three.
+7. Every screen introduces every caster of a shared ultimate on a small card of
+   their own (`UltimateIntroCards`, under object `UltimateIdentity`; owner,
+   2026-11-17: "a card that looks like it's introducing the ult of the person
+   casting", "everyone should see the ult being cast", in "the personality and
+   poppiness of the updated main game UI", then "minimalist" and "way smaller").
+   It is one line cut from the GAMEMODE kit, not the glass HUD: the yellow checker
+   paint card (`Knit.PaintYellow`), a small red sunburst window with the hero cut
+   springing up past the card's top edge (the face says who), the ultimate's name in
+   the live HUD's painted lettering (`LiveHud.Lettering`) and a red ULTIMATE! tag on
+   the top edge. Nothing else. The caster on camera is dealt first, bottom left; the
+   next bottom right; a third and fourth stack above them. Cards slide in from their
+   own edge with the hub's slap and leave before play resumes; reduced motion holds
+   them at rest. The clean feed hides them. `UltimateIdentityCardTests` asserts this
+   and writes captures to `Logs/ultimate-card`.
 
 ## Match HUD: Toy Block family, element by element
 

@@ -41,6 +41,8 @@ namespace TumbangPreso.CameraSystem
         private RawImage _picture;
         private Material _pictureMaterial;
         private ActorScene _primary;
+        // One card per caster, dealt in and out with the phase (`UltimateIntroCards`).
+        private UltimateIntroCards _cards;
         private Slipper[] _slippers;
         private bool _handedOff;
         private readonly RaycastHit[] _shotHits = new RaycastHit[32];
@@ -131,40 +133,25 @@ namespace TumbangPreso.CameraSystem
                     _pictureMaterial = new Material(frameShader) { name = "Opaque ultimate camera frame", hideFlags = HideFlags.DontSave };
                     _picture.material = _pictureMaterial;
                 }
-                var header = OwnerUiLayout.Rect(root, "UltimateIdentity");
-                CleanFeedLayer.Attach(header.gameObject);
-                header.gameObject.SetActive(!GameLaunch.GuidedTutorial);
-                header.anchorMin=header.anchorMax=header.pivot=new Vector2(.5f,1);
-                bool together=commits.Count>1;
-                header.anchoredPosition=new Vector2(0,-32);header.sizeDelta=new Vector2(900,together?(commits.Count>2?248:164):128);
-                var plate=header.gameObject.AddComponent<CourtPopupGraphic>();plate.Brush=true;plate.color=CourtPresentationPalette.DeepRed;plate.raycastTarget=false;
-                string NameForCast(int seat)
+                // ⚠️ EVERY SCREEN INTRODUCES EVERY CASTER, ONE SMALL CARD EACH (owner, 2026-11-17: "a card that
+                // looks like it's introducing the ult of the person casting", "everyone should see the ult being
+                // cast", "handle multiple ults at once", in the updated game's style, "smaller", "minimalist", "way smaller").
+                // The caster on camera is dealt first. `UltimateIntroCards` holds the look; the clean feed hides it.
+                var casters=new List<UltimateIntroCards.Caster>(commits.Count);
+                foreach(var commit in commits.OrderBy(c=>c.Seat==watching?0:1))
                 {
-                    var actor=GameServices.Round?.PlayerAt(seat);
-                    return actor!=null?actor.AbilitySystem?.Kit?.Ultimate?.Name??"ULTIMATE":"ULTIMATE";
+                    if(casters.Any(c=>c.Seat==commit.Seat))continue;
+                    var casterActor=GameServices.Round?.PlayerAt(commit.Seat);
+                    var person=EntryFor(casterActor);
+                    string heroId=person?.Id??casterActor?.AbilitySystem?.HeroId;
+                    var ultimate=casterActor?.AbilitySystem?.Kit?.Ultimate;
+                    // A kit not yet built on this peer still has a name for its ultimate.
+                    if(ultimate==null&&!string.IsNullOrEmpty(heroId))ultimate=Abilities.HeroAbilitySystem.CreateKitFor(heroId)?.Ultimate;
+                    casters.Add(new UltimateIntroCards.Caster{Seat=commit.Seat,Ultimate=ultimate?.Name,Face=FaceFor(casterActor)});
                 }
-                var title=OwnerUiLayout.Text(header,"UltimateName",together?"ULTIMATES INCOMING":NameForCast(commits[0].Seat),50,OwnerUiLayout.TypeRole.Display);
-                title.alignment=TextAnchor.MiddleCenter;title.color=CourtPresentationPalette.Paper;title.supportRichText=false;
-                title.horizontalOverflow=HorizontalWrapMode.Overflow;title.verticalOverflow=VerticalWrapMode.Overflow;
-                OwnerUiLayout.Place(title.rectTransform,35,0,830,74);
-                for(int i=0;i<commits.Count;i++)
-                {
-                    int seat=commits[i].Seat;
-                    float x=together?35+(i%2)*430:35;
-                    if(commits.Count==3&&i==2)x=250;
-                    float y=74+(i/2)*84,width=together?400:830;
-                    var name=OwnerUiLayout.Text(header,"CohortSeat"+seat,SeatLabel.WithIdentity(seat),25,OwnerUiLayout.TypeRole.Display);
-                    name.alignment=TextAnchor.MiddleCenter;name.supportRichText=false;name.color=PlayerIdentity.Colour(seat);
-                    name.verticalOverflow=VerticalWrapMode.Overflow;
-                    OwnerUiLayout.Place(name.rectTransform,x,y,width,42);
-                    if(together)
-                    {
-                        var abilityName=OwnerUiLayout.Text(header,"CohortAbility"+seat,NameForCast(seat),23);
-                        abilityName.alignment=TextAnchor.MiddleCenter;abilityName.supportRichText=false;abilityName.color=CourtPresentationPalette.Paper;
-                        abilityName.verticalOverflow=VerticalWrapMode.Overflow;
-                        OwnerUiLayout.Place(abilityName.rectTransform,x,y+39,width,40);
-                    }
-                }
+                _cards=UltimateIntroCards.Build(root,casters);
+                CleanFeedLayer.Attach(_cards.Root.gameObject);
+                _cards.Root.gameObject.SetActive(!GameLaunch.GuidedTutorial);
                 if (liveCamera != null && _primary != null)
                 {
                     var go=new GameObject("UltimateSceneCamera"); go.transform.SetParent(_stage.transform,false);
@@ -207,6 +194,7 @@ namespace TumbangPreso.CameraSystem
             // no camera move, faded in rather than cut in; the scene itself drops its flashes.
             bool moving=Settings.SettingsStore.Current.CinematicCameraMotion && !Settings.SettingsStore.Current.ReducedUiMotion && !Settings.SettingsStore.Current.ReducedEffects;
             _fade.alpha=returnBlend*(moving?1:Mathf.SmoothStep(0,1,Mathf.Clamp01(age/.3f)));
+            _cards?.Pose(age,_duration,moving);
             // Keep phase timing, sampled poses and handoff in headless simulation,
             // but never submit an off-screen render to Unity's null device.
             _picture.enabled=SystemInfo.graphicsDeviceType!=GraphicsDeviceType.Null &&
@@ -368,6 +356,23 @@ namespace TumbangPreso.CameraSystem
         /// ⚠️ Added 2026-09-26 when Paete's in-match film showed shots 2 to 4 all replaced by the end of shot 1:
         /// a borrowed shot is invisible in a green test and costs the cutscene its payoff.
         /// </summary>
+        /// <summary>The roster entry the caster picked (stable id and display name), or null.</summary>
+        private static Core.RosterEntry EntryFor(CharacterMotor actor)
+        {
+            if (actor == null) return null;
+            var people = Core.Roster.GetPeople(actor.Mode);
+            return actor.CharacterIndex >= 0 && actor.CharacterIndex < people.Count ? people[actor.CharacterIndex] : null;
+        }
+
+        /// <summary>The caster's rendered cut (the profile's hero cut), or the seat chips' portrait without one.</summary>
+        private static Sprite FaceFor(CharacterMotor actor)
+        {
+            var person = EntryFor(actor);
+            if (person == null) return null;
+            var cut = Resources.Load<Sprite>("UI/hero-cuts/" + person.Id);
+            return cut != null ? cut : OwnerPortraitArt.Get("UI/portraits/" + person.Id);
+        }
+
         public static string LastShotReport{get;private set;}=string.Empty;
         /// <summary>For films: the phase's own clock, the authored shot it drew and the lens, on the last drawn frame.</summary>
         public static float LastAge{get;private set;}public static int LastShot{get;private set;}public static Vector3 LastEye{get;private set;}
