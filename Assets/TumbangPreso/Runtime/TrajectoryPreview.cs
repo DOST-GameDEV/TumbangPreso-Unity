@@ -44,7 +44,13 @@ namespace TumbangPreso
         public bool LandingVisible => _renderer != null && _renderer.enabled;
         public bool FlightVisible => _flightRenderer != null && _flightRenderer.enabled;
         public const float CircleRadius = .4f;
-        public const int MaxFlightMarks = 10;
+        public const int MaxFlightMarks = 24;
+        /// <summary>Screen gap between dash centres at 1080p, so the near stretch is as full as the far one.</summary>
+        public const float MarkSpacingPixels = 52;
+        /// <summary>Short arcs tighten toward this gap so they still carry about eight dashes.</summary>
+        public const float MinMarkSpacingPixels = 20;
+        /// <summary>Just above the held tsinelas in the first person view, at its depth.</summary>
+        public static readonly Vector3 HandStartViewport = new Vector3(.6f, .45f, .5f);
 
         public static TrajectoryPreview AttachTo(CharacterMotor motor)
         {
@@ -178,42 +184,59 @@ namespace TumbangPreso
             _verts.Clear(); _colours.Clear(); _tris.Clear();
             float length = 0;
             for (int i = 1; i < _path.Count; i++) length += Vector3.Distance(_path[i - 1], _path[i]);
-            const float first = 1f, landingGap = .46f;
+            const float landingGap = .46f;
             float end = length - landingGap;
-            float available = Mathf.Max(0, end - first);
-            float spacing = Mathf.Max(.75f, available / MaxFlightMarks);
-            bool moving = !Settings.SettingsStore.Current.ReducedUiMotion && available > spacing;
-            float phase = moving ? Mathf.Repeat(now * .85f, 1f) : .5f;
-            float next = first + phase * Mathf.Min(spacing, available);
-            float walked = 0;
-            int marks = 0;
-            Vector2? previousScreen = null;
             float pixelScale = Mathf.Max(1f, camera.pixelHeight / 1080f);
-            float minScreenGap = 26f * pixelScale;
-            for (int i = 1; i < _path.Count && next < end && marks < MaxFlightMarks; i++)
+            bool moving = !Settings.SettingsStore.Current.ReducedUiMotion && end > 0;
+            float phase = moving ? Mathf.Repeat(now * .85f, 1f) : 0;
+            // The throw leaves from the sight line, which first person sees end on. The drawing
+            // starts just above the held tsinelas instead, and that offset shrinks in step with
+            // flight time, so the marks lie on a thrown arc from the hand to the same landing.
+            int lastSample = Mathf.Max(1, _path.Count - 1);
+            Vector3 lead = _path.Count > 1 ? camera.ViewportToWorldPoint(HandStartViewport) - _path[0] : Vector3.zero;
+            // A long arc keeps the full gap; a short one tightens so it still reads as a line.
+            float arcPixels = 0;
+            for (int i = 1; i < _path.Count; i++)
             {
-                Vector3 start = _path[i - 1], delta = _path[i] - start;
-                float segment = delta.magnitude;
-                while (segment > .001f && next <= walked + segment && next < end && marks < MaxFlightMarks)
+                Vector3 a = camera.WorldToScreenPoint(_path[i - 1] + lead * (1 - (i - 1f) / lastSample));
+                Vector3 b = camera.WorldToScreenPoint(_path[i] + lead * (1 - (float)i / lastSample));
+                if (a.z > camera.nearClipPlane && b.z > camera.nearClipPlane) arcPixels += Vector2.Distance(a, b);
+            }
+            float step = Mathf.Clamp(arcPixels / 8f, MinMarkSpacingPixels * pixelScale, MarkSpacingPixels * pixelScale);
+            // Space the marks evenly on screen, not in metres: near the hand a metre of flight
+            // crosses much of the screen, and metre spacing left that stretch nearly empty.
+            float travelled = (1 - phase) * step, metres = 0;
+            int marks = 0;
+            Vector2 previous = default;
+            bool havePrevious = false;
+            for (int i = 1; i < _path.Count && marks < MaxFlightMarks; i++)
+            {
+                float segment = Vector3.Distance(_path[i - 1], _path[i]);
+                // Subdivide by screen length so a mark lands within a quarter gap of its spot
+                // even beside the hand, where one step of flight crosses a lot of screen.
+                Vector3 from = camera.WorldToScreenPoint(_path[i - 1] + lead * (1 - (i - 1f) / lastSample));
+                Vector3 to = camera.WorldToScreenPoint(_path[i] + lead * (1 - (float)i / lastSample));
+                int pieces = from.z > 0 && to.z > 0
+                    ? Mathf.Clamp(Mathf.CeilToInt(Vector2.Distance(from, to) / (step * .25f)), 1, 32) : 4;
+                for (int sub = 1; sub <= pieces && marks < MaxFlightMarks; sub++)
                 {
-                    Vector3 point = start + delta * ((next - walked) / segment);
+                    float along = (float)sub / pieces;
+                    metres += segment / pieces;
+                    Vector3 point = Vector3.Lerp(_path[i - 1], _path[i], along) + lead * (1 - (i - 1 + along) / lastSample);
                     Vector3 projected = camera.WorldToScreenPoint(point);
+                    if (projected.z <= camera.nearClipPlane) { havePrevious = false; continue; }
                     Vector2 screen = projected;
-                    // Foreshortened marks need a screen-space gap or they read as a solid line.
-                    if (projected.z > camera.nearClipPlane && (!previousScreen.HasValue
-                        || (screen - previousScreen.Value).sqrMagnitude >= minScreenGap * minScreenGap))
-                    {
-                        float fade = moving ? Mathf.Clamp01(Mathf.Min(next - first, end - next) / (.2f * spacing)) : 1;
-                        _markPoint[marks] = point;
-                        _markScreen[marks] = projected;
-                        _markStep[marks] = (Vector2)camera.WorldToScreenPoint(point + delta) - screen;
-                        _markWeight[marks] = fade * Mathf.Lerp(1f, .8f, next / length);
-                        previousScreen = screen;
-                        marks++;
-                    }
-                    next += spacing;
+                    if (havePrevious) travelled += Vector2.Distance(previous, screen);
+                    Vector2 heading = havePrevious ? screen - previous : Vector2.up;
+                    previous = screen; havePrevious = true;
+                    if (metres > end || travelled < step) continue;
+                    travelled -= step;
+                    _markPoint[marks] = point;
+                    _markScreen[marks] = projected;
+                    _markStep[marks] = heading;
+                    _markWeight[marks] = Mathf.Lerp(1f, .8f, metres / Mathf.Max(.001f, length));
+                    marks++;
                 }
-                walked += segment;
             }
             // Lay each dash along the dotted line the player sees: the screen chord between its
             // neighbouring marks. A one-step look ahead turns sharply near the apex, where the

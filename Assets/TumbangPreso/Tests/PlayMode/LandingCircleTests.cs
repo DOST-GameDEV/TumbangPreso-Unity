@@ -161,6 +161,15 @@ namespace TumbangPreso.PlayTests
                 float turn = Vector2.Angle(axes[m], centres[m + 1] - centres[m - 1]);
                 Assert.Less(Mathf.Min(turn, 180 - turn), 8f, $"Dash {m} of {markCount} must follow the dotted line, not bend away from it.");
             }
+            // The line leaves just above the held tsinelas and keeps an even screen rhythm,
+            // so the stretch beside the hand is as full as the far end.
+            float gap = TrajectoryPreview.MarkSpacingPixels * Mathf.Max(1f, rig.Camera.pixelHeight / 1080f);
+            Vector2 handStart = rig.Camera.WorldToScreenPoint(rig.Camera.ViewportToWorldPoint(TrajectoryPreview.HandStartViewport));
+            Assert.GreaterOrEqual(markCount, 4, "Even this short on-screen arc carries several dashes.");
+            Assert.Less(Vector2.Distance(centres[0], handStart), gap * 1.5f, "The guide starts just above the held tsinelas.");
+            for (int m = 1; m < markCount; m++)
+                Assert.Less(Vector2.Distance(centres[m], centres[m - 1]), gap * 1.3f,
+                    $"Dashes {m - 1} and {m} must keep the even screen rhythm instead of leaving a gap.");
             Debug.Log("Landing review point=" + guide.LandingPoint + " viewport=" + rig.Camera.WorldToViewportPoint(guide.LandingPoint)
                 + " camera=" + rig.Camera.transform.position + " facing=" + rig.Camera.transform.forward + " rigLocal=" + rig.IsLocalFpp);
             foreach (var vertex in guide.GetComponent<MeshFilter>().sharedMesh.vertices)
