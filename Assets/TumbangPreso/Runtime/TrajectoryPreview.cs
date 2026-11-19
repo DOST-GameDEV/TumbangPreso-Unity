@@ -5,44 +5,43 @@ using UnityEngine;
 namespace TumbangPreso
 {
     /// <summary>
-    /// Local flight path for the current throw. Real gravity, signed curve,
+    /// Local flight path and landing-circle UI for the current throw. Real gravity, signed curve,
     /// world banks and supporting floor are predicted without changing gameplay.
     /// Moving players, can impacts and later ability effects may still intercept it.
-    /// The guide runs from the held slipper to the predicted landing and ends in a
-    /// landing circle on the floor.
     /// </summary>
     [DefaultExecutionOrder(900)]
     public sealed class TrajectoryPreview : MonoBehaviour
     {
+        public const int Samples = 48;
+        public const float WidthPerMetre = .004f, WidthMin = .002f, WidthMax = .075f;
         public const float AlphaMax = .92f;
+        public const float NearFadeStart = .12f, NearFadeEnd = .65f;
         public const float FloorEpsilon = .018f;
-        /// <summary>Where the held slipper sits in the first person view, at its depth.</summary>
-        public static readonly Vector3 HandViewport = new Vector3(.6f, .3f, .55f);
         private CharacterMotor _motor;
         private Carrier _carrier;
+        private MeshRenderer _renderer;
+        private Mesh _mesh;
         private MeshRenderer _flightRenderer;
         private Mesh _flightMesh;
-        private readonly List<Vector3> _path = new List<Vector3>(128);
-        private readonly List<Vector3> _shownPath = new List<Vector3>(128);
-        private readonly List<Vector3> _screenPath = new List<Vector3>(128);
-        private readonly List<Vector3> _verts = new List<Vector3>(272);
-        private readonly List<Vector2> _strokeUv = new List<Vector2>(272);
-        private readonly List<Color> _colours = new List<Color>(272);
-        private readonly List<int> _tris = new List<int>(800);
-        private MaterialPropertyBlock _stroke;
-        private static readonly int DashPhase = Shader.PropertyToID("_DashPhase");
-        // The landing circle as it was drawn until November 10: an ink ring under a tinted
-        // ring, both following the floor under each point.
-        public const float CircleRadius = .4f;
-        public const int CircleSamples = 48;
-        public const float StrokeHalfPixels = 1.6f, WidthMin = .002f;
-        private static readonly Color CircleInk = new Color(.018f, .012f, .008f, 1);
-        private readonly Vector3[] _ringInner = new Vector3[CircleSamples], _ringOuter = new Vector3[CircleSamples];
-        private readonly bool[] _ringSupported = new bool[CircleSamples];
+        private readonly List<Vector3> _path = new List<Vector3>(Samples + 2);
+        private readonly List<Vector3> _verts = new List<Vector3>(Samples * 12);
+        private readonly List<Color> _colours = new List<Color>(Samples * 12);
+        private readonly List<int> _tris = new List<int>(Samples * 12);
         private static Material _arcMaterial;
         private readonly RaycastHit[] _hits = new RaycastHit[64];
+        private readonly Vector3[] _ringInner = new Vector3[Samples], _ringOuter = new Vector3[Samples];
+        private readonly bool[] _ringSupported = new bool[Samples];
+        public const float StrokeHalfPixels = 1.6f;
+        private float _nextDraw, _drawStart;
+        private Vector3 _drawFrom;
+        private bool _hasLanding;
+        public const float PredictionInterval = .05f;
+        public Vector3 DisplayedLandingPoint { get; private set; }
         public Vector3 LandingPoint { get; private set; }
+        public bool LandingVisible => _renderer != null && _renderer.enabled;
         public bool FlightVisible => _flightRenderer != null && _flightRenderer.enabled;
+        public const float CircleRadius = .4f;
+        public const int MaxFlightMarks = 10;
 
         public static TrajectoryPreview AttachTo(CharacterMotor motor)
         {
@@ -55,12 +54,9 @@ namespace TumbangPreso
 
         private void Awake()
         {
-            _stroke = new MaterialPropertyBlock();
             if (_arcMaterial == null)
-            {
                 _arcMaterial = new Material(Shader.Find("TumbangPreso/AimGuide")) { name = "ThrowDirectionGuide" };
-                _arcMaterial.SetFloat("_OutlinedRibbon", 1);
-            }
+            _renderer = CreateMesh(gameObject, "ThrowLanding", out _mesh);
             var flight = new GameObject("FlightPath");
             flight.transform.SetParent(transform, false);
             _flightRenderer = CreateMesh(flight, "ThrowFlightPath", out _flightMesh);
@@ -82,9 +78,12 @@ namespace TumbangPreso
         private void LateUpdate()
         {
             if (!ShouldShow()) { Clear(); return; }
-            // Predict every frame. A throttled prediction blended between ticks lagged
-            // the camera and caught up in steps, which read as the line shaking.
-            Rebuild();
+            if (Time.unscaledTime >= _nextDraw)
+            {
+                _nextDraw = Time.unscaledTime + PredictionInterval;
+                Rebuild();
+            }
+            else if (_hasLanding) DrawInterpolated(Time.unscaledTime);
         }
 
         private bool ShouldShow()
@@ -101,8 +100,11 @@ namespace TumbangPreso
 
         private void Clear()
         {
-            _path.Clear();
+            _nextDraw = 0;
+            _hasLanding = false;
+            if (_renderer != null) _renderer.enabled = false;
             if (_flightRenderer != null) _flightRenderer.enabled = false;
+            if (_mesh != null && _mesh.vertexCount > 0) _mesh.Clear();
             if (_flightMesh != null && _flightMesh.vertexCount > 0) _flightMesh.Clear();
         }
 
@@ -120,131 +122,119 @@ namespace TumbangPreso
             var camera = UnityEngine.Camera.main;
             if (camera == null || !TryPredictLanding(_carrier.AimGuideOrigin(), _carrier.AimGuideVelocityNow(), _carrier.CurrentPektusSpin, out var landing))
             { Clear(); return; }
-            // Only the guide touches the exact floor point. The prediction still has
-            // the slipper's own simulation samples and the game owns the actual throw.
-            if (_path.Count > 1) _path[_path.Count - 1] = landing;
+            // Smooth only presentation. Never invent an interpolated ballistic result.
+            _drawFrom = !_hasLanding || Mathf.Abs(landing.y - LandingPoint.y) > .15f ||
+                Vector3.SqrMagnitude(landing - LandingPoint) > 64 ? landing : DisplayedLandingPoint;
             LandingPoint = landing;
-            Draw(Time.unscaledTime);
+            _drawStart = Time.unscaledTime;
+            _hasLanding = true;
+            DrawInterpolated(_drawStart);
         }
 
-        private void Draw(float now)
+        private void DrawInterpolated(float now)
         {
             var camera = UnityEngine.Camera.main;
-            if (camera == null || _path.Count < 2) return;
+            if (camera == null || !_hasLanding) return;
+            var landing = Vector3.Lerp(_drawFrom, LandingPoint, Mathf.Clamp01((now - _drawStart) / PredictionInterval));
+            DisplayedLandingPoint = landing;
+            _verts.Clear(); _colours.Clear(); _tris.Clear();
             bool legal = GameServices.Round.CanThrow(_motor);
             var tint = legal ? new Color(1, .92f, .58f, AlphaMax) : new Color(.72f, .72f, .68f, AlphaMax);
-            float phase = Settings.SettingsStore.Current.ReducedUiMotion ? .18f : Mathf.Repeat(now * .95f, 1);
-            _stroke.SetFloat(DashPhase, phase);
-            _flightRenderer.SetPropertyBlock(_stroke);
-            DrawFlight(camera, tint, BuildShownPath(camera));
-        }
-
-        // The throw leaves from the sight line, which a first person view sees end on as a
-        // stroke through the crosshair. The drawn line starts at the held slipper instead,
-        // and that offset shrinks in step with flight time, so the line is itself a thrown
-        // arc from the hand to the same landing in the same time, with no elbow.
-        private List<Vector3> BuildShownPath(UnityEngine.Camera camera)
-        {
-            Vector3 lead = camera.ViewportToWorldPoint(HandViewport) - _path[0];
-            int last = _path.Count - 1;
-            _shownPath.Clear();
-            for (int i = 0; i <= last; i++)
-                _shownPath.Add(_path[i] + lead * (1 - (float)i / last));
-            return _shownPath;
-        }
-
-        private void DrawFlight(UnityEngine.Camera camera, Color tint, List<Vector3> path)
-        {
-            _verts.Clear(); _strokeUv.Clear(); _colours.Clear(); _tris.Clear(); _screenPath.Clear();
-            foreach (var point in path) _screenPath.Add(camera.WorldToScreenPoint(point));
-            float scale = Mathf.Max(.75f, camera.pixelHeight / 1080f);
-            float near = camera.nearClipPlane + .02f;
-            var eye = camera.transform;
-            int previousPair = -1;
-            float distance = 0;
-            Vector2 normal = Vector2.right;
-            for (int i = 0; i < path.Count; i++)
-            {
-                float depth = _screenPath[i].z;
-                if (depth <= near)
-                {
-                    previousPair = -1;
-                    continue;
-                }
-
-                Vector2 before = i > 0 && _screenPath[i - 1].z > near ? _screenPath[i - 1] : _screenPath[i];
-                Vector2 after = i + 1 < path.Count && _screenPath[i + 1].z > near ? _screenPath[i + 1] : _screenPath[i];
-                Vector2 tangent = after - before;
-                if (tangent.sqrMagnitude > .01f)
-                {
-                    Vector2 candidate = new Vector2(-tangent.y, tangent.x).normalized;
-                    // When the flight doubles back on screen, keep both edges
-                    // on their own sides of the strip.
-                    normal = Vector2.Dot(candidate, normal) < 0 ? -candidate : candidate;
-                }
-                // Measure spacing in screen pixels so foreshortening cannot remove
-                // the dashes on the far half of the arc.
-                if (previousPair >= 0)
-                    distance += Vector2.Distance(_screenPath[i - 1], _screenPath[i]) / scale;
-                float pixels = 4.3f * scale;
-                Vector3 offset = (eye.right * normal.x + eye.up * normal.y) * (pixels * UnitsPerPixel(camera, depth));
-                Color colour = tint;
-                // Rise out of the held slipper and keep the far end visible at impact.
-                colour.a *= Mathf.InverseLerp(.3f, .8f, depth);
-                int pair = _verts.Count;
-                AddVertex(path[i] - offset, colour, -1, distance);
-                AddVertex(path[i] + offset, colour, 1, distance);
-                if (previousPair >= 0)
-                {
-                    AddTriangle(previousPair, previousPair + 1, pair);
-                    AddTriangle(previousPair + 1, pair + 1, pair);
-                }
-                previousPair = pair;
-            }
-            // Count dash spacing back from the far end. The near end sits just in front of
-            // the eye, where a small turn changes its screen length a lot and would slide
-            // every dash along the line.
-            for (int i = 0; i < _strokeUv.Count; i++)
-                _strokeUv[i] = new Vector2(_strokeUv[i].x, distance - _strokeUv[i].y);
-            if (path.Count > 1) DrawLandingCircle(camera, path[^1], tint);
-            _flightMesh.Clear(); _flightMesh.SetVertices(_verts); _flightMesh.SetUVs(0, _strokeUv);
-            _flightMesh.SetColors(_colours); _flightMesh.SetTriangles(_tris, 0);
-            _flightMesh.RecalculateBounds(); _flightRenderer.enabled = _tris.Count > 0;
-        }
-
-        private static float UnitsPerPixel(UnityEngine.Camera camera, float depth)
-        {
-            float height = camera.orthographic ? 2 * camera.orthographicSize
-                : 2 * depth * Mathf.Tan(camera.fieldOfView * Mathf.Deg2Rad * .5f);
-            return height / Mathf.Max(1, camera.pixelHeight);
-        }
-
-        private void DrawLandingCircle(UnityEngine.Camera camera, Vector3 landing, Color tint)
-        {
             for (int stroke = 0; stroke < 2; stroke++)
             {
-                Color colour = stroke == 0 ? CircleInk : tint;
-                for (int i = 0; i < CircleSamples; i++)
+                Color colour = stroke == 0 ? new Color(.018f, .012f, .008f, 1) : tint;
+                for (int i = 0; i < Samples; i++)
                 {
-                    float angle = i * Mathf.PI * 2 / CircleSamples;
+                    float angle = i * Mathf.PI * 2 / Samples;
                     var radial = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle));
                     var centre = landing + radial * CircleRadius;
-                    float depth = Mathf.Max(camera.nearClipPlane, Vector3.Dot(centre - camera.transform.position, camera.transform.forward));
-                    float perPixel = UnitsPerPixel(camera, depth);
-                    float half = Mathf.Clamp(perPixel * StrokeHalfPixels, WidthMin, .18f) * (stroke == 0 ? 1.8f : 1);
-                    _ringSupported[i] = ProjectRingPoint(centre - radial * half, landing.y, out _ringInner[i])
-                        && ProjectRingPoint(centre + radial * half, landing.y, out _ringOuter[i]);
+                    float depth = Mathf.Max(camera.nearClipPlane, Vector3.Dot(centre-camera.transform.position, camera.transform.forward));
+                    float perPixel = camera.orthographic ? 2*camera.orthographicSize/Mathf.Max(1,camera.pixelHeight)
+                        : 2*depth*Mathf.Tan(camera.fieldOfView*Mathf.Deg2Rad*.5f)/Mathf.Max(1,camera.pixelHeight);
+                    float half = Mathf.Clamp(perPixel*StrokeHalfPixels, WidthMin, .18f)*(stroke == 0 ? 1.8f : 1);
+                    _ringSupported[i] = ProjectRingPoint(centre-radial*half, landing.y, out _ringInner[i])
+                        && ProjectRingPoint(centre+radial*half, landing.y, out _ringOuter[i]);
                 }
-                for (int i = 0; i < CircleSamples; i++)
+                for (int i = 0; i < Samples; i++)
                 {
-                    int next = (i + 1) % CircleSamples;
+                    int next = (i+1)%Samples;
                     if (!_ringSupported[i] || !_ringSupported[next]) continue;
                     // Do not bridge an open ledge with a floating diagonal ribbon.
-                    if (Mathf.Abs(_ringInner[i].y - _ringInner[next].y) > .45f || Mathf.Abs(_ringOuter[i].y - _ringOuter[next].y) > .45f) continue;
-                    AddSolidTriangle(_ringInner[i], _ringOuter[i], _ringOuter[next], colour);
-                    AddSolidTriangle(_ringInner[i], _ringOuter[next], _ringInner[next], colour);
+                    if (Mathf.Abs(_ringInner[i].y-_ringInner[next].y)>.45f || Mathf.Abs(_ringOuter[i].y-_ringOuter[next].y)>.45f) continue;
+                    AddTri(_ringInner[i], _ringOuter[i], _ringOuter[next], colour);
+                    AddTri(_ringInner[i], _ringOuter[next], _ringInner[next], colour);
                 }
             }
+            _mesh.Clear(); _mesh.SetVertices(_verts); _mesh.SetColors(_colours); _mesh.SetTriangles(_tris, 0);
+            _mesh.RecalculateBounds(); _renderer.enabled = _verts.Count > 0;
+            DrawFlight(camera, tint, now);
+        }
+
+        private void DrawFlight(UnityEngine.Camera camera, Color tint, float now)
+        {
+            _verts.Clear(); _colours.Clear(); _tris.Clear();
+            float length = 0;
+            for (int i = 1; i < _path.Count; i++) length += Vector3.Distance(_path[i - 1], _path[i]);
+            const float first = 1f, landingGap = .46f;
+            float end = length - landingGap;
+            float available = Mathf.Max(0, end - first);
+            float spacing = Mathf.Max(.75f, available / MaxFlightMarks);
+            bool moving = !Settings.SettingsStore.Current.ReducedUiMotion && available > spacing;
+            float phase = moving ? Mathf.Repeat(now * .85f, 1f) : .5f;
+            float next = first + phase * Mathf.Min(spacing, available);
+            float walked = 0;
+            int marks = 0;
+            Vector2? previousScreen = null;
+            float pixelScale = Mathf.Max(1f, camera.pixelHeight / 1080f);
+            float minScreenGap = 26f * pixelScale;
+            for (int i = 1; i < _path.Count && next < end && marks < MaxFlightMarks; i++)
+            {
+                Vector3 start = _path[i - 1], delta = _path[i] - start;
+                float segment = delta.magnitude;
+                while (segment > .001f && next <= walked + segment && next < end && marks < MaxFlightMarks)
+                {
+                    Vector3 point = start + delta * ((next - walked) / segment);
+                    Vector3 projected = camera.WorldToScreenPoint(point);
+                    Vector2 screen = projected;
+                    // Foreshortened marks need a screen-space gap or they read as a solid line.
+                    if (projected.z > camera.nearClipPlane && (!previousScreen.HasValue
+                        || (screen - previousScreen.Value).sqrMagnitude >= minScreenGap * minScreenGap))
+                    {
+                        float fade = moving ? Mathf.Clamp01(Mathf.Min(next - first, end - next) / (.2f * spacing)) : 1;
+                        Vector2 tangent = (Vector2)camera.WorldToScreenPoint(point + delta) - screen;
+                        DrawFlightMark(camera, point, projected.z, tangent, pixelScale, tint,
+                            fade * Mathf.Lerp(1f, .8f, next / length));
+                        previousScreen = screen;
+                        marks++;
+                    }
+                    next += spacing;
+                }
+                walked += segment;
+            }
+            _flightMesh.Clear(); _flightMesh.SetVertices(_verts); _flightMesh.SetColors(_colours); _flightMesh.SetTriangles(_tris, 0);
+            _flightMesh.RecalculateBounds(); _flightRenderer.enabled = _verts.Count > 0;
+        }
+
+        private void DrawFlightMark(UnityEngine.Camera camera, Vector3 point, float depth,
+            Vector2 tangent, float pixelScale, Color tint, float weight)
+        {
+            var eye = camera.transform;
+            float perPixel = camera.orthographic ? 2 * camera.orthographicSize / Mathf.Max(1, camera.pixelHeight)
+                : 2 * depth * Mathf.Tan(camera.fieldOfView * Mathf.Deg2Rad * .5f) / Mathf.Max(1, camera.pixelHeight);
+            Vector2 direction = tangent.sqrMagnitude > .01f ? tangent.normalized : Vector2.up;
+            Vector3 along = eye.right * direction.x + eye.up * direction.y;
+            Vector3 across = eye.up * direction.x - eye.right * direction.y;
+            float unit = perPixel * pixelScale;
+            tint.a *= weight;
+            FlightDash(point, along * (10f * unit), across * (3.3f * unit), new Color(.04f, .02f, .01f, weight));
+            FlightDash(point, along * (8.6f * unit), across * (2f * unit), tint);
+        }
+
+        private void FlightDash(Vector3 point, Vector3 along, Vector3 across, Color tint)
+        {
+            Vector3 start = point - along, end = point + along;
+            AddTri(start - across, start + across, end + across, tint);
+            AddTri(start - across, end + across, end - across, tint);
         }
 
         private static bool ProjectRingPoint(Vector3 point, float referenceHeight, out Vector3 projected)
@@ -256,28 +246,18 @@ namespace TumbangPreso
             return true;
         }
 
-        private void AddSolidTriangle(Vector3 a, Vector3 b, Vector3 c, Color colour)
+        private void AddTri(Vector3 a, Vector3 b, Vector3 c, Color colour)
         {
-            int first = _verts.Count;
-            AddVertex(a, colour, 0, -1); AddVertex(b, colour, 0, -1); AddVertex(c, colour, 0, -1);
-            AddTriangle(first, first + 1, first + 2);
-        }
-
-        private void AddVertex(Vector3 point, Color colour, float across, float distance)
-        {
-            _verts.Add(point);
-            _colours.Add(colour);
-            _strokeUv.Add(new Vector2(across, distance));
-        }
-
-        private void AddTriangle(int a, int b, int c)
-        {
-            _tris.Add(a); _tris.Add(b); _tris.Add(c);
+            int index = _verts.Count;
+            _verts.Add(a); _verts.Add(b); _verts.Add(c);
+            _colours.Add(colour); _colours.Add(colour); _colours.Add(colour);
+            _tris.Add(index); _tris.Add(index + 1); _tris.Add(index + 2);
         }
 
         private void OnDisable() => Clear();
         private void OnDestroy()
         {
+            if (_mesh != null) Destroy(_mesh);
             if (_flightMesh != null) Destroy(_flightMesh);
         }
     }
