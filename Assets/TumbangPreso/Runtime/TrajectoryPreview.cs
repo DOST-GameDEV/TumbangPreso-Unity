@@ -8,7 +8,8 @@ namespace TumbangPreso
     /// Local flight path for the current throw. Real gravity, signed curve,
     /// world banks and supporting floor are predicted without changing gameplay.
     /// Moving players, can impacts and later ability effects may still intercept it.
-    /// The guide runs from the held slipper to the predicted landing.
+    /// The guide runs from the held slipper to the predicted landing and ends in a
+    /// landing circle on the floor.
     /// </summary>
     [DefaultExecutionOrder(900)]
     public sealed class TrajectoryPreview : MonoBehaviour
@@ -17,6 +18,15 @@ namespace TumbangPreso
         public const float FloorEpsilon = .018f;
         /// <summary>Where the held slipper sits in the first person view, at its depth.</summary>
         public static readonly Vector3 HandViewport = new Vector3(.6f, .3f, .55f);
+        public const float CircleRadius = .4f;
+        /// <summary>Smallest on-screen radius at 1080p, so the circle shows around the crosshair.</summary>
+        public const float CircleMinPixels = 48;
+        /// <summary>Flattest the circle may look: its height as a share of its width.</summary>
+        public const float CircleMinAspect = .5f;
+        public const int CircleSegments = 48;
+        private const int CircleDashes = 8;
+        // One dash period in stroke units; AimGuide.shader divides the stroke distance by 28.
+        private const float DashPeriod = 28;
         private CharacterMotor _motor;
         private Carrier _carrier;
         private MeshRenderer _flightRenderer;
@@ -197,9 +207,48 @@ namespace TumbangPreso
             // every dash along the line.
             for (int i = 0; i < _strokeUv.Count; i++)
                 _strokeUv[i] = new Vector2(_strokeUv[i].x, distance - _strokeUv[i].y);
+            if (path.Count > 1) DrawLandingCircle(camera, path[^1], tint, scale, near);
             _flightMesh.Clear(); _flightMesh.SetVertices(_verts); _flightMesh.SetUVs(0, _strokeUv);
             _flightMesh.SetColors(_colours); _flightMesh.SetTriangles(_tris, 0);
             _flightMesh.RecalculateBounds(); _flightRenderer.enabled = _tris.Count > 0;
+        }
+
+        // A ring around the predicted contact, drawn as the same outlined dashed ribbon so its
+        // dashes march with the line; a whole number of dashes hides the seam. From eye height
+        // a ring flat on the floor ten metres away is a sliver a few pixels tall, so the ring
+        // tips toward the camera just enough to keep CircleMinAspect, rests its lowest edge on
+        // the contact point, and never shrinks below CircleMinPixels on screen.
+        private void DrawLandingCircle(UnityEngine.Camera camera, Vector3 contact, Color tint, float scale, float near)
+        {
+            float depth = camera.WorldToScreenPoint(contact).z;
+            if (depth <= near) return;
+            float unit = scale * UnitsPerPixel(camera, depth);
+            float radius = Mathf.Max(CircleRadius, CircleMinPixels * unit);
+            float half = 1.5f * 4.3f * unit;
+            Vector3 toEye = camera.transform.position - contact;
+            Vector3 flat = new Vector3(toEye.x, 0, toEye.z);
+            flat = flat.sqrMagnitude > .0001f ? flat.normalized : -camera.transform.forward;
+            float seen = Mathf.Asin(Mathf.Clamp(toEye.normalized.y, -1, 1));
+            float tilt = Mathf.Max(0, Mathf.Asin(CircleMinAspect) - seen);
+            Vector3 across = Vector3.Cross(flat, Vector3.up).normalized;
+            Vector3 normal = Vector3.up * Mathf.Cos(tilt) + flat * Mathf.Sin(tilt);
+            Vector3 depthAxis = Vector3.Cross(normal, across);
+            Vector3 centre = contact + Vector3.up * (radius * Mathf.Abs(depthAxis.y));
+            Color colour = tint;
+            colour.a *= Mathf.InverseLerp(.3f, .8f, depth);
+            int first = _verts.Count;
+            for (int i = 0; i <= CircleSegments; i++)
+            {
+                float angle = i * Mathf.PI * 2 / CircleSegments;
+                Vector3 radial = across * Mathf.Cos(angle) + depthAxis * Mathf.Sin(angle);
+                float along = (float)i / CircleSegments * CircleDashes * DashPeriod;
+                AddVertex(centre + radial * (radius - half), colour, -1, along);
+                AddVertex(centre + radial * (radius + half), colour, 1, along);
+                if (i == 0) continue;
+                int pair = first + i * 2, previous = pair - 2;
+                AddTriangle(previous, previous + 1, pair);
+                AddTriangle(previous + 1, pair + 1, pair);
+            }
         }
 
         private static float UnitsPerPixel(UnityEngine.Camera camera, float depth)
