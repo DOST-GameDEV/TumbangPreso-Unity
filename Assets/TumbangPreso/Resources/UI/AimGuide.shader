@@ -33,7 +33,8 @@ Shader "TumbangPreso/AimGuide"
             }
             fixed4 frag(Output input) : SV_Target
             {
-                if (_OutlinedRibbon < .5) return input.colour;
+                // The landing mark is solid; its vertices carry a negative stroke distance.
+                if (_OutlinedRibbon < .5 || input.stroke.y < 0) return input.colour;
                 float edge = abs(input.stroke.x);
                 float fill = 1 - smoothstep(.55, .65, edge);
                 float coverage = 1 - smoothstep(.87, 1, edge);

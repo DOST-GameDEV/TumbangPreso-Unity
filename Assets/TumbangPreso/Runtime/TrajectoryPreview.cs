@@ -9,7 +9,7 @@ namespace TumbangPreso
     /// world banks and supporting floor are predicted without changing gameplay.
     /// Moving players, can impacts and later ability effects may still intercept it.
     /// The guide runs from the held slipper to the predicted landing and ends in a
-    /// landing circle on the floor.
+    /// stationary landing mark.
     /// </summary>
     [DefaultExecutionOrder(900)]
     public sealed class TrajectoryPreview : MonoBehaviour
@@ -18,15 +18,6 @@ namespace TumbangPreso
         public const float FloorEpsilon = .018f;
         /// <summary>Where the held slipper sits in the first person view, at its depth.</summary>
         public static readonly Vector3 HandViewport = new Vector3(.6f, .3f, .55f);
-        public const float CircleRadius = .4f;
-        /// <summary>Smallest on-screen radius at 1080p, so the circle shows around the crosshair.</summary>
-        public const float CircleMinPixels = 48;
-        /// <summary>Flattest the circle may look: its height as a share of its width.</summary>
-        public const float CircleMinAspect = .5f;
-        public const int CircleSegments = 48;
-        private const int CircleDashes = 8;
-        // One dash period in stroke units; AimGuide.shader divides the stroke distance by 28.
-        private const float DashPeriod = 28;
         private CharacterMotor _motor;
         private Carrier _carrier;
         private MeshRenderer _flightRenderer;
@@ -40,6 +31,7 @@ namespace TumbangPreso
         private readonly List<int> _tris = new List<int>(800);
         private MaterialPropertyBlock _stroke;
         private static readonly int DashPhase = Shader.PropertyToID("_DashPhase");
+        private static readonly Color Ink = new Color(.032f, .024f, .018f, .98f);
         private static Material _arcMaterial;
         private readonly RaycastHit[] _hits = new RaycastHit[64];
         public Vector3 LandingPoint { get; private set; }
@@ -207,48 +199,11 @@ namespace TumbangPreso
             // every dash along the line.
             for (int i = 0; i < _strokeUv.Count; i++)
                 _strokeUv[i] = new Vector2(_strokeUv[i].x, distance - _strokeUv[i].y);
-            if (path.Count > 1) DrawLandingCircle(camera, path[^1], tint, scale, near);
+            if (path.Count > 1 && _screenPath[^1].z > near)
+                DrawLandingMark(eye, path[^1], UnitsPerPixel(camera, _screenPath[^1].z) * scale, tint);
             _flightMesh.Clear(); _flightMesh.SetVertices(_verts); _flightMesh.SetUVs(0, _strokeUv);
             _flightMesh.SetColors(_colours); _flightMesh.SetTriangles(_tris, 0);
             _flightMesh.RecalculateBounds(); _flightRenderer.enabled = _tris.Count > 0;
-        }
-
-        // A ring around the predicted contact, drawn as the same outlined dashed ribbon so its
-        // dashes march with the line; a whole number of dashes hides the seam. From eye height
-        // a ring flat on the floor ten metres away is a sliver a few pixels tall, so the ring
-        // tips toward the camera just enough to keep CircleMinAspect, rests its lowest edge on
-        // the contact point, and never shrinks below CircleMinPixels on screen.
-        private void DrawLandingCircle(UnityEngine.Camera camera, Vector3 contact, Color tint, float scale, float near)
-        {
-            float depth = camera.WorldToScreenPoint(contact).z;
-            if (depth <= near) return;
-            float unit = scale * UnitsPerPixel(camera, depth);
-            float radius = Mathf.Max(CircleRadius, CircleMinPixels * unit);
-            float half = 1.5f * 4.3f * unit;
-            Vector3 toEye = camera.transform.position - contact;
-            Vector3 flat = new Vector3(toEye.x, 0, toEye.z);
-            flat = flat.sqrMagnitude > .0001f ? flat.normalized : -camera.transform.forward;
-            float seen = Mathf.Asin(Mathf.Clamp(toEye.normalized.y, -1, 1));
-            float tilt = Mathf.Max(0, Mathf.Asin(CircleMinAspect) - seen);
-            Vector3 across = Vector3.Cross(flat, Vector3.up).normalized;
-            Vector3 normal = Vector3.up * Mathf.Cos(tilt) + flat * Mathf.Sin(tilt);
-            Vector3 depthAxis = Vector3.Cross(normal, across);
-            Vector3 centre = contact + Vector3.up * (radius * Mathf.Abs(depthAxis.y));
-            Color colour = tint;
-            colour.a *= Mathf.InverseLerp(.3f, .8f, depth);
-            int first = _verts.Count;
-            for (int i = 0; i <= CircleSegments; i++)
-            {
-                float angle = i * Mathf.PI * 2 / CircleSegments;
-                Vector3 radial = across * Mathf.Cos(angle) + depthAxis * Mathf.Sin(angle);
-                float along = (float)i / CircleSegments * CircleDashes * DashPeriod;
-                AddVertex(centre + radial * (radius - half), colour, -1, along);
-                AddVertex(centre + radial * (radius + half), colour, 1, along);
-                if (i == 0) continue;
-                int pair = first + i * 2, previous = pair - 2;
-                AddTriangle(previous, previous + 1, pair);
-                AddTriangle(previous + 1, pair + 1, pair);
-            }
         }
 
         private static float UnitsPerPixel(UnityEngine.Camera camera, float depth)
@@ -256,6 +211,25 @@ namespace TumbangPreso
             float height = camera.orthographic ? 2 * camera.orthographicSize
                 : 2 * depth * Mathf.Tan(camera.fieldOfView * Mathf.Deg2Rad * .5f);
             return height / Mathf.Max(1, camera.pixelHeight);
+        }
+
+        private void DrawLandingMark(Transform eye, Vector3 point, float unit, Color tint)
+        {
+            // The last mark stays at contact while the dashes march into it.
+            Vector3 up = eye.up * unit, right = eye.right * unit;
+            Vector3 centre = point + up * 10;
+            Vector3 left = centre - right * 8, rightEdge = centre + right * 8;
+            AddSolidTriangle(point, left, rightEdge, Ink);
+            AddSolidTriangle(centre + up * 9, rightEdge, left, Ink);
+            AddSolidTriangle(point + up * 3, centre - right * 4.5f, centre + right * 4.5f, tint);
+            AddSolidTriangle(centre + up * 5.5f, centre + right * 4.5f, centre - right * 4.5f, tint);
+        }
+
+        private void AddSolidTriangle(Vector3 a, Vector3 b, Vector3 c, Color colour)
+        {
+            int first = _verts.Count;
+            AddVertex(a, colour, 0, -1); AddVertex(b, colour, 0, -1); AddVertex(c, colour, 0, -1);
+            AddTriangle(first, first + 1, first + 2);
         }
 
         private void AddVertex(Vector3 point, Color colour, float across, float distance)

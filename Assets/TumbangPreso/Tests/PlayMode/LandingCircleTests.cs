@@ -148,37 +148,19 @@ namespace TumbangPreso.PlayTests
             var flags=BindingFlags.Instance|BindingFlags.NonPublic;
             var exact=guide.LandingPoint;
             var target=(List<Vector3>)typeof(TrajectoryPreview).GetField("_path",flags).GetValue(guide);
-            int ring = (TrajectoryPreview.CircleSegments + 1) * 2;
-            Assert.LessOrEqual(flightMesh.vertexCount, target.Count * 2 + ring,
-                "Keep the guide to one strip and one landing circle.");
+            const int mark = 12;
+            Assert.LessOrEqual(flightMesh.vertexCount, target.Count * 2 + mark,
+                "Keep the guide to one strip and one landing mark.");
             var strip = flightMesh.vertices;
-            int stripEnd = strip.Length - ring;
+            int stripEnd = strip.Length - mark;
             var hand = rig.Camera.ViewportToWorldPoint(TrajectoryPreview.HandViewport);
             Assert.Less(Vector3.Distance((strip[0] + strip[1]) * .5f, hand), .001f,
                 "The guide starts at the held slipper.");
             Assert.Less(Vector3.Distance((strip[stripEnd - 1] + strip[stripEnd - 2]) * .5f, exact), .001f,
                 "The guide reaches the predicted landing.");
             Assert.Greater(flightMesh.colors[stripEnd - 1].a, 0f, "The guide stays visible at its endpoint.");
-            var centre = Vector3.zero;
-            float lowest = float.MaxValue;
-            for (int k = stripEnd; k < strip.Length - 2; k++) centre += strip[k];
-            centre /= ring - 2;
-            for (int k = stripEnd; k < strip.Length; k += 2) lowest = Mathf.Min(lowest, ((strip[k] + strip[k + 1]) * .5f).y);
-            Assert.Less(Vector2.Distance(new Vector2(centre.x, centre.z), new Vector2(exact.x, exact.z)), .001f,
-                "The landing circle is centred over the predicted landing.");
-            Assert.That(lowest, Is.EqualTo(exact.y).Within(.001f), "The landing circle rests on the predicted contact.");
-            Assert.GreaterOrEqual(Vector3.Distance((strip[stripEnd] + strip[stripEnd + 1]) * .5f, centre),
-                TrajectoryPreview.CircleRadius - .001f, "The landing circle keeps at least its floor radius.");
-            var seenCircle = new Vector2[4];
-            for (int q = 0; q < 4; q++)
-            {
-                int k = stripEnd + q * TrajectoryPreview.CircleSegments / 4 * 2;
-                seenCircle[q] = rig.Camera.WorldToScreenPoint((strip[k] + strip[k + 1]) * .5f);
-            }
-            float wide = Vector2.Distance(seenCircle[0], seenCircle[2]), tall = Vector2.Distance(seenCircle[1], seenCircle[3]);
-            Assert.GreaterOrEqual(tall / wide, TrajectoryPreview.CircleMinAspect - .08f,
-                "The landing circle must stay readable from eye height, not a sliver.");
-            Assert.Greater(flightMesh.colors[^1].a, 0f, "The landing circle is visible.");
+            Assert.IsTrue(System.Array.Exists(strip, point => (point - exact).sqrMagnitude < .000001f),
+                "The final mark must touch the predicted floor position.");
             var draw=typeof(TrajectoryPreview).GetMethod("Draw",flags);
             float start=Time.unscaledTime;
             var predicted=flightMesh.vertices;
