@@ -144,6 +144,23 @@ namespace TumbangPreso.PlayTests
             const int verticesPerMark = 2 * 2 * 3; // Dash and outline, two triangles each.
             Assert.LessOrEqual(flightMesh.vertexCount, TrajectoryPreview.MaxFlightMarks * verticesPerMark,
                 "Keep the path sparse at full charge.");
+            // Each dash lies along the dotted line it belongs to: the screen chord between its
+            // neighbouring marks. The ink dash's first triangle is (start-across, start+across, end+across).
+            var marks = flightMesh.vertices;
+            int markCount = marks.Length / verticesPerMark;
+            var centres = new Vector2[markCount];
+            var axes = new Vector2[markCount];
+            for (int m = 0; m < markCount; m++)
+            {
+                var v = m * verticesPerMark;
+                centres[m] = rig.Camera.WorldToScreenPoint((marks[v] + marks[v + 2]) * .5f);
+                axes[m] = (Vector2)rig.Camera.WorldToScreenPoint(marks[v + 2]) - (Vector2)rig.Camera.WorldToScreenPoint(marks[v + 1]);
+            }
+            for (int m = 1; m < markCount - 1; m++)
+            {
+                float turn = Vector2.Angle(axes[m], centres[m + 1] - centres[m - 1]);
+                Assert.Less(Mathf.Min(turn, 180 - turn), 8f, $"Dash {m} of {markCount} must follow the dotted line, not bend away from it.");
+            }
             Debug.Log("Landing review point=" + guide.LandingPoint + " viewport=" + rig.Camera.WorldToViewportPoint(guide.LandingPoint)
                 + " camera=" + rig.Camera.transform.position + " facing=" + rig.Camera.transform.forward + " rigLocal=" + rig.IsLocalFpp);
             foreach (var vertex in guide.GetComponent<MeshFilter>().sharedMesh.vertices)

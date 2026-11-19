@@ -31,6 +31,9 @@ namespace TumbangPreso
         private readonly RaycastHit[] _hits = new RaycastHit[64];
         private readonly Vector3[] _ringInner = new Vector3[Samples], _ringOuter = new Vector3[Samples];
         private readonly bool[] _ringSupported = new bool[Samples];
+        private readonly Vector3[] _markPoint = new Vector3[MaxFlightMarks], _markScreen = new Vector3[MaxFlightMarks];
+        private readonly Vector2[] _markStep = new Vector2[MaxFlightMarks];
+        private readonly float[] _markWeight = new float[MaxFlightMarks];
         public const float StrokeHalfPixels = 1.6f;
         private float _nextDraw, _drawStart;
         private Vector3 _drawFrom;
@@ -201,15 +204,25 @@ namespace TumbangPreso
                         || (screen - previousScreen.Value).sqrMagnitude >= minScreenGap * minScreenGap))
                     {
                         float fade = moving ? Mathf.Clamp01(Mathf.Min(next - first, end - next) / (.2f * spacing)) : 1;
-                        Vector2 tangent = (Vector2)camera.WorldToScreenPoint(point + delta) - screen;
-                        DrawFlightMark(camera, point, projected.z, tangent, pixelScale, tint,
-                            fade * Mathf.Lerp(1f, .8f, next / length));
+                        _markPoint[marks] = point;
+                        _markScreen[marks] = projected;
+                        _markStep[marks] = (Vector2)camera.WorldToScreenPoint(point + delta) - screen;
+                        _markWeight[marks] = fade * Mathf.Lerp(1f, .8f, next / length);
                         previousScreen = screen;
                         marks++;
                     }
                     next += spacing;
                 }
                 walked += segment;
+            }
+            // Lay each dash along the dotted line the player sees: the screen chord between its
+            // neighbouring marks. A one-step look ahead turns sharply near the apex, where the
+            // flight seen from behind doubles back on screen, and tipped those dashes sideways.
+            for (int k = 0; k < marks; k++)
+            {
+                Vector2 tangent = marks < 2 ? _markStep[k]
+                    : (Vector2)_markScreen[Mathf.Min(k + 1, marks - 1)] - (Vector2)_markScreen[Mathf.Max(k - 1, 0)];
+                DrawFlightMark(camera, _markPoint[k], _markScreen[k].z, tangent, pixelScale, tint, _markWeight[k]);
             }
             _flightMesh.Clear(); _flightMesh.SetVertices(_verts); _flightMesh.SetColors(_colours); _flightMesh.SetTriangles(_tris, 0);
             _flightMesh.RecalculateBounds(); _flightRenderer.enabled = _verts.Count > 0;
