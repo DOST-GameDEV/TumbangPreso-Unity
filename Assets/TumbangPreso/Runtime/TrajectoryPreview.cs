@@ -32,6 +32,9 @@ namespace TumbangPreso
         private MaterialPropertyBlock _stroke;
         private static readonly int DashPhase = Shader.PropertyToID("_DashPhase");
         private static readonly Color Ink = new Color(.032f, .024f, .018f, .98f);
+        // The original mark was about 16 pixels wide at 1080p, which read as a hook on the
+        // end of the line rather than as a pin. Same shape, drawn larger.
+        public const float MarkScale = 2.2f;
         private static Material _arcMaterial;
         private readonly RaycastHit[] _hits = new RaycastHit[64];
         public Vector3 LandingPoint { get; private set; }
@@ -200,7 +203,7 @@ namespace TumbangPreso
             for (int i = 0; i < _strokeUv.Count; i++)
                 _strokeUv[i] = new Vector2(_strokeUv[i].x, distance - _strokeUv[i].y);
             if (path.Count > 1 && _screenPath[^1].z > near)
-                DrawLandingMark(eye, path[^1], UnitsPerPixel(camera, _screenPath[^1].z) * scale, tint);
+                DrawLandingMark(eye, path[^1], UnitsPerPixel(camera, _screenPath[^1].z) * scale * MarkScale, tint);
             _flightMesh.Clear(); _flightMesh.SetVertices(_verts); _flightMesh.SetUVs(0, _strokeUv);
             _flightMesh.SetColors(_colours); _flightMesh.SetTriangles(_tris, 0);
             _flightMesh.RecalculateBounds(); _flightRenderer.enabled = _tris.Count > 0;
