@@ -139,7 +139,6 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(carrier.IsCharging);
             var guide = GameObject.Find("~AimArc1").GetComponent<TrajectoryPreview>();
             typeof(TrajectoryPreview).GetMethod("Rebuild", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(guide, null);
-            Assert.IsNull(guide.GetComponent<MeshRenderer>(), "The old ground circle must not be rendered.");
             Assert.IsTrue(guide.FlightVisible);
             var flightMesh = guide.transform.Find("FlightPath").GetComponent<MeshFilter>().sharedMesh;
             Assert.Greater(flightMesh.bounds.max.y, guide.LandingPoint.y + .2f, "Flight guidance has to leave the floor.");
@@ -148,19 +147,24 @@ namespace TumbangPreso.PlayTests
             var flags=BindingFlags.Instance|BindingFlags.NonPublic;
             var exact=guide.LandingPoint;
             var target=(List<Vector3>)typeof(TrajectoryPreview).GetField("_path",flags).GetValue(guide);
-            const int mark = 12;
-            Assert.LessOrEqual(flightMesh.vertexCount, target.Count * 2 + mark,
-                "Keep the guide to one strip and one landing mark.");
+            int stripVerts = ((List<Vector3>)typeof(TrajectoryPreview).GetField("_shownPath", flags).GetValue(guide)).Count * 2;
+            Assert.LessOrEqual(flightMesh.vertexCount, stripVerts + 2 * TrajectoryPreview.CircleSamples * 6,
+                "Keep the guide to one strip and one landing circle.");
             var strip = flightMesh.vertices;
-            int stripEnd = strip.Length - mark;
             var hand = rig.Camera.ViewportToWorldPoint(TrajectoryPreview.HandViewport);
             Assert.Less(Vector3.Distance((strip[0] + strip[1]) * .5f, hand), .001f,
                 "The guide starts at the held slipper.");
-            Assert.Less(Vector3.Distance((strip[stripEnd - 1] + strip[stripEnd - 2]) * .5f, exact), .001f,
+            Assert.Less(Vector3.Distance((strip[stripVerts - 1] + strip[stripVerts - 2]) * .5f, exact), .001f,
                 "The guide reaches the predicted landing.");
-            Assert.Greater(flightMesh.colors[stripEnd - 1].a, 0f, "The guide stays visible at its endpoint.");
-            Assert.IsTrue(System.Array.Exists(strip, point => (point - exact).sqrMagnitude < .000001f),
-                "The final mark must touch the predicted floor position.");
+            Assert.Greater(flightMesh.colors[stripVerts - 1].a, 0f, "The guide stays visible at its endpoint.");
+            Assert.Greater(strip.Length - stripVerts, 0, "The landing circle is drawn.");
+            for (int k = stripVerts; k < strip.Length; k++)
+            {
+                float across = Vector2.Distance(new Vector2(strip[k].x, strip[k].z), new Vector2(exact.x, exact.z));
+                Assert.That(across, Is.EqualTo(TrajectoryPreview.CircleRadius).Within(.2f),
+                    "The landing circle rings the predicted landing.");
+                Assert.Less(Mathf.Abs(strip[k].y - exact.y), .05f, "The landing circle lies on the floor.");
+            }
             var draw=typeof(TrajectoryPreview).GetMethod("Draw",flags);
             float start=Time.unscaledTime;
             var predicted=flightMesh.vertices;

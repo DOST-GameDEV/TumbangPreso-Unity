@@ -9,7 +9,7 @@ namespace TumbangPreso
     /// world banks and supporting floor are predicted without changing gameplay.
     /// Moving players, can impacts and later ability effects may still intercept it.
     /// The guide runs from the held slipper to the predicted landing and ends in a
-    /// stationary landing mark.
+    /// landing circle on the floor.
     /// </summary>
     [DefaultExecutionOrder(900)]
     public sealed class TrajectoryPreview : MonoBehaviour
@@ -31,10 +31,14 @@ namespace TumbangPreso
         private readonly List<int> _tris = new List<int>(800);
         private MaterialPropertyBlock _stroke;
         private static readonly int DashPhase = Shader.PropertyToID("_DashPhase");
-        private static readonly Color Ink = new Color(.032f, .024f, .018f, .98f);
-        // The original mark was about 16 pixels wide at 1080p, which read as a hook on the
-        // end of the line rather than as a pin. Same shape, drawn larger.
-        public const float MarkScale = 2.2f;
+        // The landing circle as it was drawn until November 10: an ink ring under a tinted
+        // ring, both following the floor under each point.
+        public const float CircleRadius = .4f;
+        public const int CircleSamples = 48;
+        public const float StrokeHalfPixels = 1.6f, WidthMin = .002f;
+        private static readonly Color CircleInk = new Color(.018f, .012f, .008f, 1);
+        private readonly Vector3[] _ringInner = new Vector3[CircleSamples], _ringOuter = new Vector3[CircleSamples];
+        private readonly bool[] _ringSupported = new bool[CircleSamples];
         private static Material _arcMaterial;
         private readonly RaycastHit[] _hits = new RaycastHit[64];
         public Vector3 LandingPoint { get; private set; }
@@ -202,8 +206,7 @@ namespace TumbangPreso
             // every dash along the line.
             for (int i = 0; i < _strokeUv.Count; i++)
                 _strokeUv[i] = new Vector2(_strokeUv[i].x, distance - _strokeUv[i].y);
-            if (path.Count > 1 && _screenPath[^1].z > near)
-                DrawLandingMark(eye, path[^1], UnitsPerPixel(camera, _screenPath[^1].z) * scale * MarkScale, tint);
+            if (path.Count > 1) DrawLandingCircle(camera, path[^1], tint);
             _flightMesh.Clear(); _flightMesh.SetVertices(_verts); _flightMesh.SetUVs(0, _strokeUv);
             _flightMesh.SetColors(_colours); _flightMesh.SetTriangles(_tris, 0);
             _flightMesh.RecalculateBounds(); _flightRenderer.enabled = _tris.Count > 0;
@@ -216,16 +219,41 @@ namespace TumbangPreso
             return height / Mathf.Max(1, camera.pixelHeight);
         }
 
-        private void DrawLandingMark(Transform eye, Vector3 point, float unit, Color tint)
+        private void DrawLandingCircle(UnityEngine.Camera camera, Vector3 landing, Color tint)
         {
-            // The last mark stays at contact while the dashes march into it.
-            Vector3 up = eye.up * unit, right = eye.right * unit;
-            Vector3 centre = point + up * 10;
-            Vector3 left = centre - right * 8, rightEdge = centre + right * 8;
-            AddSolidTriangle(point, left, rightEdge, Ink);
-            AddSolidTriangle(centre + up * 9, rightEdge, left, Ink);
-            AddSolidTriangle(point + up * 3, centre - right * 4.5f, centre + right * 4.5f, tint);
-            AddSolidTriangle(centre + up * 5.5f, centre + right * 4.5f, centre - right * 4.5f, tint);
+            for (int stroke = 0; stroke < 2; stroke++)
+            {
+                Color colour = stroke == 0 ? CircleInk : tint;
+                for (int i = 0; i < CircleSamples; i++)
+                {
+                    float angle = i * Mathf.PI * 2 / CircleSamples;
+                    var radial = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle));
+                    var centre = landing + radial * CircleRadius;
+                    float depth = Mathf.Max(camera.nearClipPlane, Vector3.Dot(centre - camera.transform.position, camera.transform.forward));
+                    float perPixel = UnitsPerPixel(camera, depth);
+                    float half = Mathf.Clamp(perPixel * StrokeHalfPixels, WidthMin, .18f) * (stroke == 0 ? 1.8f : 1);
+                    _ringSupported[i] = ProjectRingPoint(centre - radial * half, landing.y, out _ringInner[i])
+                        && ProjectRingPoint(centre + radial * half, landing.y, out _ringOuter[i]);
+                }
+                for (int i = 0; i < CircleSamples; i++)
+                {
+                    int next = (i + 1) % CircleSamples;
+                    if (!_ringSupported[i] || !_ringSupported[next]) continue;
+                    // Do not bridge an open ledge with a floating diagonal ribbon.
+                    if (Mathf.Abs(_ringInner[i].y - _ringInner[next].y) > .45f || Mathf.Abs(_ringOuter[i].y - _ringOuter[next].y) > .45f) continue;
+                    AddSolidTriangle(_ringInner[i], _ringOuter[i], _ringOuter[next], colour);
+                    AddSolidTriangle(_ringInner[i], _ringOuter[next], _ringInner[next], colour);
+                }
+            }
+        }
+
+        private static bool ProjectRingPoint(Vector3 point, float referenceHeight, out Vector3 projected)
+        {
+            projected = point;
+            point.y = referenceHeight;
+            if (!Visual.WorldGround.TryBelow(point, 1.25f, 12f, out float floor)) return false;
+            projected.y = floor + FloorEpsilon;
+            return true;
         }
 
         private void AddSolidTriangle(Vector3 a, Vector3 b, Vector3 c, Color colour)
