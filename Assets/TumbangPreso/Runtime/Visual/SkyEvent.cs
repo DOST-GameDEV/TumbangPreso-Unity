@@ -502,6 +502,13 @@ namespace TumbangPreso.Visual
             var comfort = Settings.SettingsStore.Current;
             float skyWeight = k * (comfort.ReducedEffects ? .6f : 1f);
             k *= .40f * comfort.EffectiveFlashIntensity;
+            // ⚠️⚠️ EMBERFALL'S LIGHT IS RAGO'S LIVE SKY NOW (owner 2026-11-23: *"keep the sky until the end of the effect in live
+            // too outside of cutscene"*). His volcano wears the cutscene's red sky, grade and crater light for its whole life
+            // (`SeanSkyLive`), carried on from the cutscene's last frame. Emberfall's ambient, sun, fog and skybox here would
+            // rise 0.45 s after that cut (a jump on a frame that is otherwise seamless) and darken the street a second time
+            // under that grade. So this look keeps its sound, its place in "the last cast wins" and its rejoin record, and
+            // writes the street exactly as the map has it.
+            if (_look == Look.Emberfall) { k = 0f; skyWeight = 0f; }
 
             RenderSettings.ambientMode = _ambientMode;
             RenderSettings.ambientSkyColor = Color.Lerp(_ambientSky, _profile.Sky, k);

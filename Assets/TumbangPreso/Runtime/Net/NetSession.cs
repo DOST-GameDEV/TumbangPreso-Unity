@@ -725,7 +725,8 @@ namespace TumbangPreso.Net
         // Older clients predict a shorter lift and keep Vulnerable after it expires on the host.
         // 191 (2026-11-10): a raised can is protected for 3.5 s and the Vulnerable status lasts 5 s.
         // 192: scoped emote starts/stops and an explicit spectator request on arrival.
-        public const int ProtocolVersion = 192;
+        // 193: Rago's ultimate cutscene is 7.0 s (was 5.0 s), so a 192 peer would hold a different length.
+        public const int ProtocolVersion = 193;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

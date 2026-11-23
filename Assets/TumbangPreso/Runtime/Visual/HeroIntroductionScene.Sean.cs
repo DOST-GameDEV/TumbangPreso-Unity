@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TumbangPreso.Core;
 using UnityEngine;
@@ -7,48 +8,87 @@ namespace TumbangPreso.Visual
     public sealed partial class HeroIntroductionScene
     {
         // =========================================================================================
-        // RAGO, MAYON AWAKENS v2: THE MOUNTAIN RISES, 5.0 s.
+        // RAGO, MAYON AWAKENS v4: THE SKY TURNS AND THE MOUNTAIN IS BORN, 7.0 s.
         //
-        // Owner 2026-10-24, after v1 (a mountain backdrop, a blast round him, 8 s of a buff): *"his ult sucks as shit especially
-        // cutscene i cant even tell wtf his ult does"*, then *"the ult of sean doesnt earn its place"* beside Paete's and Phaister's;
-        // he chose "The mountain rises" and pointed at Dante's: *"dante has a really good ult"*. So this is Dante's shape (the
-        // charge-up, where the power comes from, cut as it launches at the real players) on Paete's payoff (a thing in the court,
-        // placed where he chose, that everyone plays round). Play is `SeanVolcano`.
+        // Owner 2026-11-23, of v3: "i'd like for a more dramatic ultimate cutscene for rago. the current shots really dont
+        // sell the fact that he creates a whole volcano. the sky should turn red, with dark clouds etc", and "more unique
+        // camera views/shots.. from a drone/sky view etc". v3's payoff was a 3 m cone seen from 10 m in a static wide shot
+        // under the street's afternoon. v4 keeps v3's beats and its hand-back and changes two things:
+        //   THE SKY (`HeroIntroductionScene.SeanSky.cs`): as he calls the mountain the sky turns blood red with dark clouds
+        //      rolling in over him, the street's light goes red and low, ash falls, and the mountain's spirit wakes on the
+        //      horizon; the column of ash climbs into that sky at the rise.
+        //   VANTAGE AS SCALE: six shots, each one idea, on the right of the line from his fists to the spot so the lava always
+        //      travels left to right: A1 THE BLOW (court level), A2 THE SKY TURNS (worm's-eye looking up past him into the
+        //      sky), B1 THE DRONE (high over the court, riding the river), B2 THE FOOT (worm's-eye at the spot, the cone
+        //      punching up past the lens), C1 FROM THE CLOUDS (22 m up, the column climbing to the lens), C2 THE HERO (low
+        //      beside him, him and the mountain towering). The extra second is the drone and the clouds.
         //
-        // ONE SENTENCE: the lava in his fists goes into the court, races to the spot he chose, and the mountain bursts up there.
-        // ONE TRAVELLING THING: the lava, from his fists, along the court, up as the mountain.
-        //   A. THE FISTS (0 to 1.5): both fists into the court (0.35); lava wells up out of it round them and climbs his forearms
-        //      into the Molten fists (`SeanProps/molten_fist`, what `SeanMoltenLook` puts on him in play); his eyes ignite (1.1).
-        //   B. THE RUN (1.5 to 3.0): a river of lava races from his fists to the spot (1.55 to 2.45); the lens races beside it,
-        //      low; the court there bulges and vents (2.4 to 3.0).
-        //   C. THE RISE (3.0 to 5.0): wide, low, him and the spot and the real players: he hauls his fists up and the mountain
-        //      (`SeanProps/mayon`, 3 m, the same model play stands up) bursts out of the court (3.1); its wave races out to 9 m.
-        // ⚠️ IT ENDS AS THE WAVE REACHES THE PLAYERS, NOT AFTER IT THROWS THEM. The live volcano is spawned standing
-        // (`SeanVolcano.Spawn(handBack)`) and throws them the moment the cutscene hands back: the throw is seen once.
-        // ⚠️ THE SPOT IS PLAY'S SPOT (`SeanVolcano.SpotFor` on the commit's aim), so the staged mountain stands where the live one will.
-        // ⚠️ NO STAGE WALL. The spot can be 10 m off, past any wall's 8 m; the court and the real players ARE the stage here, so
-        // only the grade steps back.
+        // v3, which v4 is built on:
+        //
+        // Owner 2026-11-23: "volcano look is fine", "start rago's cutscene with the new volcano"; of v2, the execution was
+        // "pretty poor" and the concept stays (the fists, the run, the rise). Earlier, 2026-10-24: *"his ult sucks as shit
+        // especially cutscene i cant even tell wtf his ult does"*, and he chose "The mountain rises". Play is `SeanVolcano`.
+        // The direction (one sentence, the travelling thing, the beat table, the shots) is in the rework's DIRECTION.md;
+        // in short:
+        //
+        // ONE SENTENCE: he drives the lava in his fists into the court, it races to the spot he chose, and the court there
+        // gives birth to the mountain, which drinks the river and throws its wave at the players.
+        // ONE TRAVELLING THING: the lava, ONE substance the whole way: the live volcano's own shader (`SeanVolcanoLava`,
+        // dark crust plates on a molten core, a torn hot front that grows by `_Grow`) in the cracks round his fists, up his
+        // forearms (the Molten fists, the locked look, called), along the court as a river, pooling on the court where it
+        // bulges, drunk back into the spot as the mountain bursts up, and out again down the mountain's own flows.
+        //   A. THE FISTS (0 to 1.6): A1 low at court level, the wind-up and the SLAM (0.45); A2 close on his forearms, the
+        //      lava climbing them, craning up to his eyes as they ignite (1.3).
+        //   B. THE RUN (1.6 to 3.4): B1 at shin height racing beside the river's head; B2 low at the spot as it arrives,
+        //      pools, and the court bulges, cracks and vents.
+        //   C. THE RISE (3.4 to 6.0): the mountain punches up past B2's lens (3.4); C, wide and low from his side, him near,
+        //      the mountain behind, the wave riding out to the players; then the lens comes home to his own eyes.
+        // ⚠️ THE STAGED MOUNTAIN IS PLAY'S. `SeanVolcanoLook.Build` at play's spot (`SeanVolcano.SpotFor`), turned with the
+        // world, so it turns to the can by the same code; its mountain rises on play's curve; its court and rocks are posed
+        // by play's own `Live.Pose`; the eruption round it is `SeanEruption`, which play builds too and poses from the same
+        // number. Play is spawned `HandBackLead` (= this length minus `SeanRiseAt`) seconds into all of it, so its first frame
+        // is this one's last. The river, the cracks round his fists and the bulge are all drunk back by 3.9: nothing of the
+        // cutscene's own is left to vanish at the hand-back.
+        // ⚠️ IT ENDS AS THE WAVE REACHES THE PLAYERS, NOT AFTER IT THROWS THEM: play throws them at the hand-back.
+        // ⚠️ NO STAGE WALL: the court and the real players are the stage; only the grade steps back.
+        // ⚠️ NOTHING HERE RUNS ON UPDATE. Every piece is posed from the scene clock in `SampleSean`.
         // =========================================================================================
-        private const float SnSlam = .35f, SnFistsFrom = .42f, SnFistsTo = 1.05f, SnIgnite = 1.1f, SnRunFrom = 1.55f, SnRunTo = 2.45f,
-                            SnRise = 3.1f, SnRiseTo = 3.45f, SnHome = 4.55f;
-        private static readonly Color SnCore = new Color(1f, .78f, .23f, 1), SnEdge = new Color(.85f, .15f, .11f, 1),
-                                      SnEmber = new Color(1f, .45f, .12f, 1), SnAsh = new Color(.45f, .42f, .42f, 1),
-                                      SnSteam = new Color(.9f, .88f, .86f, 1);
 
-        private int _snWell, _snRiverHead, _snBulge, _snColumn, _snColumnCore, _snRing, _snRingThin, _snSummit, _snCraterBomb;
-        private Transform _snMayon;
-        private Vector3 _snMayonScale = Vector3.one, _snMayonOffset;
+        /// <summary>When the mountain begins to rise in the cutscene. Play is handed the rest (`SeanVolcano.HandBackLead`).</summary>
+        public const float SeanRiseAt = 3.60f;
+
+        private const float SnSlam = .45f, SnFistsFrom = .62f, SnFistsTo = 1.30f, SnIgnite = 1.45f, SnRunFrom = 1.75f, SnRunTo = 3.05f,
+                            SnBulge = 3.02f, SnRise = SeanRiseAt, SnRiseSeconds = .45f, SnDrain = .5f, SnHome = 6.35f,
+                            SnWebFrom = 1.70f, SnWebTo = 2.60f;
+        private static readonly Color SnCore = new Color(1f, .74f, .20f, 1), SnEmber = new Color(1f, .45f, .12f, 1);
+        private static readonly Color SnSteamLit = new Color(.88f, .84f, .80f), SnSteamShade = new Color(.66f, .61f, .58f), SnSteamLine = new Color(.45f, .40f, .38f);
+        private static readonly Color SnDustLit = new Color(.90f, .83f, .74f), SnDustShade = new Color(.70f, .61f, .53f), SnDustLine = new Color(.50f, .42f, .36f);
+
         private Vector3 _snSpot;
-        private LineRenderer _snRiver, _snRiverCore;
-        private readonly List<int> _snEmbers = new List<int>(18), _snAsh = new List<int>(10), _snFistGlows = new List<int>(2),
-                                   _snDrips = new List<int>(6), _snEyes = new List<int>(2), _snVents = new List<int>(4),
-                                   _snDebris = new List<int>(14), _snBeads = new List<int>(8);
-        private readonly List<LineRenderer> _snCracks = new List<LineRenderer>(6), _snBurstCracks = new List<LineRenderer>(8);
+        /// <summary>Where the staged mountain stands (world), for a film that hands it over to the live one. Null for others.</summary>
+        public Vector3? SeanSpotWorld => _snVolRoot != null ? _snVolRoot.position : (Vector3?)null;
+        private Transform _snVolRoot, _snVolBody;
+        private SeanVolcanoLook.Live _snLook;
+        private SeanEruption _snErupt;
+        // The lava on the court: what wells up round his fists, the river (grown from his fists, then drunk back from the
+        // spot), and the court splitting at the spot.
+        private Renderer _snFistCracks, _snFistPool, _snRiverOut, _snRiverBack, _snSpotCracks, _snSpotPool, _snDome, _snWeb;
+        private Transform _snDomeAt;
+        private float _snFistCrackLength, _snRiverLength, _snSpotCrackLength, _snWebLength;
+        private MaterialPropertyBlock _snBlock;
+        private FxCloud _snSlamDust;
+        private readonly List<FxCloud> _snVents = new List<FxCloud>(2);
+        private readonly List<Vector3> _snVentAt = new List<Vector3>(2);
+        private readonly List<int> _snFistGlows = new List<int>(2), _snDrips = new List<int>(6), _snEyes = new List<int>(2);
         private readonly List<Quaternion> _snOtherRest = new List<Quaternion>(4);
+        private readonly List<Mesh> _snMeshes = new List<Mesh>();
+        private readonly List<Renderer> _snBombs = new List<Renderer>(5);
 
         /// <summary>A Molten fist on one of the copy's hands: the model, the bone it rides, the palm in that bone's space.</summary>
         private sealed class SnFist { public Transform Model, Knuckles, Bone; public Vector3 Palm; public float Scale; public bool Carrying; }
         private readonly List<SnFist> _snFists = new List<SnFist>(2);
+
+        private static readonly int SnGrowId = Shader.PropertyToID("_Grow"), SnClockId = Shader.PropertyToID("_Clock");
 
         private void BuildSean()
         {
@@ -64,46 +104,110 @@ namespace TumbangPreso.Visual
             }
             _snSpot = _root.transform.InverseTransformPoint(spot);
             _snSpot.y = Mathf.Clamp(_snSpot.y, -1.5f, 1.5f);
+            spot = _root.transform.TransformPoint(_snSpot);
+            _snBlock = new MaterialPropertyBlock();
 
-            // Shot A: the court round his fists, lava welling up out of it; the cracks it sends out.
-            _snWell = AddGlow("SeanWell", SnEdge, billboard: false, falloff: 1.8f, core: .5f);
-            for (int i = 0; i < 6; i++) _snCracks.Add(Line("SeanCrack" + i, 7, .07f, SnCore));
+            // THE MOUNTAIN, PLAY'S OWN, built first: the court under its foot is looked for among the renderers about, and this
+            // stage's own court-coloured bulge (below) must not be there yet to be found instead.
+            _snVolRoot = new GameObject("SeanVolcanoStaged").transform;
+            _snVolRoot.SetParent(_root.transform, false);
+            _snVolRoot.SetPositionAndRotation(spot, Quaternion.identity);
+            _snVolBody = new GameObject("Body").transform;
+            _snVolBody.SetParent(_snVolRoot, false);
+            _snLook = SeanVolcanoLook.Build(_snVolRoot, _snVolBody, spot);
+            if (_snLook != null)
+            {
+                _snVolBody.localScale = Vector3.one * _snLook.Fit;
+                _snLook.Mountain.gameObject.SetActive(false);
+                if (_snLook.Surround != null) _snLook.Surround.gameObject.SetActive(false);
+                if (_snLook.Rocks != null) _snLook.Rocks.gameObject.SetActive(false);
+            }
+            _snErupt = SeanEruption.Build(_snVolRoot);
+            foreach (var r in _snVolRoot.GetComponentsInChildren<Renderer>(true)) if (r.name.StartsWith("SeanEruption-bomb")) _snBombs.Add(r);
+            // Under his sky the eruption's pale court dust is graded red with the street, and still read as pale balls near the
+            // lens (film v4r3, B2 and C2): the cutscene's copies are a darker warm dust. Play's own are untouched; at the
+            // hand-back the eruption has finished on both sides (`HandBackLead` is `SeanEruption.EndSeconds`).
+            foreach (var r in _snVolRoot.GetComponentsInChildren<Renderer>(true))
+            {
+                var m = r.sharedMaterial;
+                if (m == null || !m.HasProperty("_Lit")) continue;
+                // The crater's own ash burst: lit from the fire below like the column (`SnLitFromBelow`), so it is not a
+                // hollow ring of lines against the dark sky.
+                if (r.name.StartsWith("SeanEruption-ash"))
+                {
+                    m.SetColor("_Lit", new Color(1f, .62f, .40f)); m.SetColor("_Shade", new Color(.36f, .23f, .21f)); m.SetColor("_LineColor", new Color(.20f, .12f, .11f));
+                    SnLitFromBelow(r);
+                    continue;
+                }
+                if (!r.name.StartsWith("SeanEruption-dust") && !r.name.StartsWith("SeanEruption-wave")) continue;
+                m.SetColor("_Lit", new Color(.70f, .52f, .44f)); m.SetColor("_Shade", new Color(.47f, .33f, .29f)); m.SetColor("_LineColor", new Color(.30f, .20f, .17f));
+            }
+
+            // A: the court splits round his fists and a pool wells up; the slam's dust.
             BuildSeanFists();
-            for (int i = 0; i < 2; i++) _snFistGlows.Add(AddGlow("SeanFistGlow" + i, SnCore, falloff: 2.2f, core: .55f));
-            for (int i = 0; i < 6; i++) _snDrips.Add(AddGlow("SeanDrip" + i, i % 2 == 0 ? SnCore : SnEdge, falloff: 2.4f, core: .8f));
+            _snFistCracks = SnLavaPiece("SeanFistCracks", SnCracks(SnFistsOnCourt, 6, .85f, 1.55f, .34f, 11, null, out _snFistCrackLength), false);
+            _snFistPool = SnLavaPiece("SeanFistPool", SnPool(SnFistsOnCourt + Vector3.up * .004f, .55f, 12, null), true);
+            // The web: nine long cracks spidering out over the whole court from his fists as the river leaves (B1, the drone,
+            // sees all of it). The same lava, the same growing front; drunk back with the river. Hotter than the cracks at his
+            // fists (film v4r1: crusted dark, from 10 m up they read as the legs of a black spider).
+            _snWeb = SnLavaPiece("SeanCourtWeb", SnCracks(SnFistsOnCourt, 9, 2.8f, 5.6f, .30f, 37, null, out _snWebLength, .02f, .35f), false);
+            _snSlamDust = FxCloud.Build(_root.transform, "SeanSlamDust", 53, 40, SnDustLit, SnDustShade, SnDustLine, FxStudyCloud.Line * .3f / .62f, .07f, .30f);
+            for (int i = 0; i < 2; i++) _snFistGlows.Add(AddGlow("SeanFistGlow" + i, SnEmber, falloff: 2.2f, core: .45f));
+            for (int i = 0; i < 6; i++) _snDrips.Add(AddGlow("SeanDrip" + i, i % 2 == 0 ? SnCore : SnEmber, falloff: 2.4f, core: .8f));
             var glint = VfxShapes.Star(4, .22f);
             for (int i = 0; i < 2; i++) _snEyes.Add(AddGlow("SeanEyeGlint" + i, SnCore, glint, falloff: 1.4f, core: .8f));
-            for (int i = 0; i < 18; i++) _snEmbers.Add(AddGlow("SeanEmber" + i, i % 3 == 0 ? SnCore : SnEmber, falloff: 2.4f, core: .7f));
-            for (int i = 0; i < 10; i++) _snAsh.Add(AddGlow("SeanAsh" + i, SnAsh, falloff: 1.6f, core: .4f));
 
-            // Shot B: the river to the spot, its bright head and the beads it throws, the bulge and the vents at the spot.
-            _snRiver = Line("SeanRiver", 14, .32f, SnEdge);
-            _snRiverCore = Line("SeanRiverCore", 14, .14f, SnCore);
-            _snRiverHead = AddGlow("SeanRiverHead", SnCore, falloff: 1.8f, core: .7f);
-            for (int i = 0; i < 8; i++) _snBeads.Add(AddGlow("SeanRiverBead" + i, i % 2 == 0 ? SnCore : SnEmber, falloff: 2.4f, core: .8f));
-            _snBulge = AddGlow("SeanBulge", SnEdge, billboard: false, falloff: 1.6f, core: .5f);
-            for (int i = 0; i < 4; i++) _snVents.Add(AddGlow("SeanVent" + i, SnSteam, falloff: 1.5f, core: .3f));
+            // B: the river, twice over the same path: grown out from his fists, and the same strip measured from the spot,
+            // which is what is shown once it has arrived, so that running `_Grow` back drinks it into the spot.
+            var path = new List<Vector3>(24);
+            for (int i = 0; i <= 23; i++) path.Add(SnRiverAt(i / 23f));
+            _snRiverOut = SnLavaPiece("SeanRiver", SnStrip(path, false, out _snRiverLength), false);
+            _snRiverBack = SnLavaPiece("SeanRiverBack", SnStrip(path, true, out _), false);
 
-            // Shot C: the mountain itself, its fountain, the summit, the debris it throws, its wave and cracks, the first bomb.
-            var mayon = SeanProp.Spawn("mayon", _root.transform, SeanProp.CourtMountainPalette);
-            if (mayon != null) { _snMayon = mayon.transform; FitSeanMountain(); mayon.SetActive(false); }
-            _snColumn = AddGlow("MayonColumn", SnEdge, SnConeMesh(), billboard: false, falloff: 1.2f, core: .35f);
-            _snColumnCore = AddGlow("MayonColumnCore", SnCore, SnConeMesh(), billboard: false, falloff: 1.6f, core: .7f);
-            _snSummit = AddGlow("MayonSummit", SnEmber, falloff: 2.4f, core: .5f);
-            _snCraterBomb = AddGlow("MayonFirstBomb", SnCore, falloff: 2f, core: .7f);
-            for (int i = 0; i < 14; i++) _snDebris.Add(AddGlow("MayonDebris" + i, i % 2 == 0 ? SnCore : SnEdge, falloff: 2.2f, core: .7f));
-            _snRing = AddGlow("SeanShockwave", SnEmber, SnRingMesh(.88f), billboard: false, falloff: 1.4f, core: .6f);
-            _snRingThin = AddGlow("SeanShockwaveThin", SnCore, SnRingMesh(.96f), billboard: false, falloff: 1.4f, core: .8f);
-            for (int i = 0; i < 8; i++) _snBurstCracks.Add(Line("SeanBurstCrack" + i, 6, .1f, SnEdge));
+            // B: the court at the spot, domed up in the court's own material and mapping, and the lava splitting it.
+            var court = SeanVolcanoLook.FindCourt(spot, _snVolRoot, out var uvOf, out _);
+            if (court == null) { court = Resources.Load<Material>(SeanVolcanoLook.Folder + "volcano_paving"); uvOf = w => new Vector2(w.x, w.z) / 2f; }
+            _snDomeAt = new GameObject("SeanBulge").transform;
+            _snDomeAt.SetParent(_root.transform, false);
+            _snDomeAt.localPosition = _snSpot;
+            var domeGo = new GameObject("SeanBulgeCourt");
+            domeGo.transform.SetParent(_snDomeAt, false);
+            domeGo.AddComponent<MeshFilter>().sharedMesh = SnDomeMesh(uvOf);
+            var domeR = domeGo.AddComponent<MeshRenderer>();
+            domeR.sharedMaterial = court;
+            domeR.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            VfxRenderTag.Attach(domeGo);
+            _snDome = domeR;
+            _snSpotCracks = SnLavaPiece("SeanSpotCracks", SnCracks(Vector3.zero, 5, 1.1f, 1.75f, .30f, 23, SnDomeHeight, out _snSpotCrackLength), false, _snDomeAt);
+            _snSpotPool = SnLavaPiece("SeanSpotPool", SnPool(Vector3.zero, .75f, 29, SnDomeHeight), true, _snDomeAt);
+            for (int i = 0; i < 2; i++)
+            {
+                float a = (i * 160f + 40f) * Mathf.Deg2Rad;
+                _snVentAt.Add(new Vector3(Mathf.Sin(a), 0f, Mathf.Cos(a)) * 1.25f);
+                _snVents.Add(FxCloud.Build(_snDomeAt, "SeanVent" + i, 61 + i, 30, SnSteamLit, SnSteamShade, SnSteamLine, FxStudyCloud.Line * .45f / .62f, .10f, .45f));
+            }
 
             // The real players, where they stand (never pulled in: who is thrown is play's rule, not the stage's).
             StageOthers(1.0f, 40f);
             foreach (var other in _others) _snOtherRest.Add(other.Holder.transform.localRotation);
+
+            // v4: the sky he turns, the street's red light, the ash, the column and its lightning (`SeanSky.cs`).
+            BuildSeanSky();
+            _roll = SnRoll;
+        }
+
+        /// <summary>The lens's roll (degrees): a kick against the rise in B2, a slow lean from the clouds in C1, level elsewhere.</summary>
+        private static float SnRoll(float t)
+        {
+            if (t >= SnRise && t < 4.05f) return -3.5f * Ease(SnRise, SnRise + .2f, t);
+            if (t >= 4.05f && t < 5.05f) return 6f - 2.5f * Ease(4.05f, 5.05f, t);
+            return 0f;
         }
 
         /// <summary>
         /// One Molten fist per hand of the copy, on the hand bones the game itself uses (`CharacterVisual.HandBone`): on this rig
         /// that is the FOREARM, so the fist sits on the hand and not the elbow, and the sleeve lies along the real forearm.
+        /// ⚠️ THE LOCKED LOOK (`SeanProps/molten_fist`, what `SeanMoltenLook` puts on him in play): placed and grown, never restyled.
         /// </summary>
         private void BuildSeanFists()
         {
@@ -129,81 +233,192 @@ namespace TumbangPreso.Visual
             }
         }
 
-        /// <summary>
-        /// Measures the mountain as drawn at scale 1 and fits it to play's: its summit at `SeanRules.VolcanoHeight`, its foot on
-        /// the spot. ⚠️ FROM ITS DRAWN BOUNDS, NOT THE BUILDER'S NUMBERS (film s14: the builder's "1.0 tall" stood no taller than him).
-        /// </summary>
-        private void FitSeanMountain()
+        // ------------------------------------------------------------------ the lava's meshes (built once)
+
+        private Renderer SnLavaPiece(string name, Mesh mesh, bool pool, Transform parent = null)
         {
-            _snMayon.localPosition = Vector3.zero; _snMayon.localRotation = Quaternion.identity; _snMayon.localScale = Vector3.one;
-            var renderers = _snMayon.GetComponentsInChildren<Renderer>(true);
-            if (renderers.Length == 0) return;
-            float low = float.MaxValue, high = float.MinValue, left = float.MaxValue, right = float.MinValue, near = float.MaxValue, far = float.MinValue;
-            foreach (var r in renderers)
+            _snMeshes.Add(mesh);
+            var go = new GameObject(name);
+            go.transform.SetParent(parent != null ? parent : _root.transform, false);
+            go.AddComponent<MeshFilter>().sharedMesh = mesh;
+            var r = go.AddComponent<MeshRenderer>();
+            // The stage's own copy, drawn after the street's red grade (`SeanSkyGrade`, AlphaTest+52) so the lava on the court
+            // keeps its own heat under the red light (film v4r2: graded with the court, the river and the web went dull).
+            r.sharedMaterial = SnLavaAfterGrade(pool);
+            r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            r.receiveShadows = false;
+            r.enabled = false;
+            VfxRenderTag.Attach(go);
+            return r;
+        }
+
+        private Material _snLavaFlow, _snLavaPool;
+        private Material SnLavaAfterGrade(bool pool)
+        {
+            ref Material m = ref (pool ? ref _snLavaPool : ref _snLavaFlow);
+            if (m != null) return m;
+            var shared = SeanEruption.Lava(pool);
+            if (shared == null) return null;
+            m = new Material(shared) { name = shared.name + "-stage", renderQueue = 2504 };
+            return m;
+        }
+
+        /// <summary>The dome the court bulges into at the spot, unit high at its middle, 0 at its rim.</summary>
+        private const float SnDomeRadius = 1.9f, SnDomeTall = .5f;
+        private static float SnDomeHeight(Vector3 local)
+        {
+            float r = Mathf.Clamp01(new Vector2(local.x, local.z).magnitude / SnDomeRadius);
+            float k = 1f - r * r;
+            return k * k;
+        }
+
+        /// <summary>
+        /// A lava strip along <paramref name="path"/> in the format `SeanVolcanoLava` reads for a flow: uv0 across and down
+        /// (in repeats of the crust field), uv1 (which flow, how far it has cooled), uv2 (metres from where it grows from).
+        /// ⚠️ THE SHADER TURNS EVERY UV SET'S v BACK OVER (the importer flips the model's), so every v here is written as 1
+        /// minus itself. `back` measures the metres from the far end, so `_Grow` run down drinks it into that end.
+        /// </summary>
+        private static Mesh SnStrip(List<Vector3> path, bool back, out float length)
+        {
+            var p = new List<Vector3>(); var n = new List<Vector3>(); var uv = new List<Vector2>(); var flow = new List<Vector2>(); var grow = new List<Vector2>();
+            var tris = new List<int>();
+            length = 0f;
+            var along = new float[path.Count];
+            for (int i = 1; i < path.Count; i++) { length += Vector3.Distance(path[i - 1], path[i]); along[i] = length; }
+            SnStripInto(path, along, length, back, 0, .95f, .60f, .05f, .55f, null, p, n, uv, flow, grow, tris);
+            return SnMesh("SeanRiver" + (back ? "Back" : ""), p, n, uv, flow, grow, tris);
+        }
+
+        private static void SnStripInto(List<Vector3> path, float[] along, float length, bool back, int flowIndex, float wideAt, float wideEnd,
+                                        float coolFrom, float coolTo, Func<Vector3, float> lift,
+                                        List<Vector3> p, List<Vector3> n, List<Vector2> uv, List<Vector2> flow, List<Vector2> grow, List<int> tris)
+        {
+            const int across = 6;
+            int first = p.Count;
+            for (int i = 0; i < path.Count; i++)
             {
-                var b = r.bounds;
-                for (int i = 0; i < 8; i++)
+                float s = along[i] / Mathf.Max(.01f, length);
+                var a = path[Mathf.Max(0, i - 1)]; var b = path[Mathf.Min(path.Count - 1, i + 1)];
+                var way = b - a; way.y = 0f; if (way.sqrMagnitude < 1e-6f) way = Vector3.forward; way.Normalize();
+                var side = new Vector3(way.z, 0f, -way.x);
+                // Wide where it leaves, narrowing as it runs; the very ends pinched so a strip never ends in a square.
+                float w = Mathf.Lerp(wideAt, wideEnd, s) * Mathf.Lerp(.55f, 1f, Mathf.Clamp01(Mathf.Min(s, 1f - s) * 12f));
+                float rep = Mathf.Max(.2f, wideAt / .65f);
+                for (int k = 0; k <= across; k++)
                 {
-                    var corner = new Vector3((i & 1) == 0 ? b.min.x : b.max.x, (i & 2) == 0 ? b.min.y : b.max.y, (i & 4) == 0 ? b.min.z : b.max.z);
-                    var local = _root.transform.InverseTransformPoint(corner);
-                    low = Mathf.Min(low, local.y); high = Mathf.Max(high, local.y);
-                    left = Mathf.Min(left, local.x); right = Mathf.Max(right, local.x);
-                    near = Mathf.Min(near, local.z); far = Mathf.Max(far, local.z);
+                    float u = k / (float)across, off = (u - .5f) * w;
+                    var at = path[i] + side * off;
+                    // Domed a little across: a flow has body, it is not a decal.
+                    at.y += .012f + .028f * (1f - (2f * u - 1f) * (2f * u - 1f));
+                    if (lift != null) at.y += lift(at) * SnDomeTall;
+                    p.Add(at); n.Add(Vector3.up);
+                    uv.Add(new Vector2(u, 1f - along[i] / rep));
+                    flow.Add(new Vector2(0f, 1f - Mathf.Lerp(coolFrom, coolTo, s)));
+                    grow.Add(new Vector2(back ? length - along[i] : along[i], 1f));
+                    if (i == 0 || k == across) continue;
+                    int c = first + i * (across + 1) + k, pr = c - (across + 1);
+                    tris.Add(pr); tris.Add(c); tris.Add(pr + 1);
+                    tris.Add(pr + 1); tris.Add(c); tris.Add(c + 1);
                 }
             }
-            float tall = high - low;
-            if (tall < .001f) return;
-            float k = SeanRules.VolcanoHeight / (tall * .97f / 1.225f);
-            _snMayonScale = Vector3.one * k;
-            _snMayonOffset = new Vector3(-(left + right) * .5f * k, -low * k - .05f, -(near + far) * .5f * k);
         }
 
-        // ------------------------------------------------------------------ meshes
-
-        /// <summary>Mayon's cone as a silhouette in XY: concave sides and a small flat summit, unit high, unit wide at the base.</summary>
-        private static Mesh SnConeMesh()
+        /// <summary>Cracks that branch out from <paramref name="centre"/>: short flows, each its own wandering path, all grown
+        /// from the centre (uv2 is the metres from it), in one mesh.</summary>
+        private static Mesh SnCracks(Vector3 centre, int count, float shortest, float longest, float width, int salt, Func<Vector3, float> lift, out float longestOut,
+                                      float coolFrom = .25f, float coolTo = .80f)
         {
-            const int rows = 14;
-            var vertices = new List<Vector3>(rows * 2 + 2); var triangles = new List<int>(rows * 6);
-            for (int i = 0; i <= rows; i++)
+            var p = new List<Vector3>(); var n = new List<Vector3>(); var uv = new List<Vector2>(); var flow = new List<Vector2>(); var grow = new List<Vector2>();
+            var tris = new List<int>();
+            longestOut = 0f;
+            for (int c = 0; c < count; c++)
             {
-                float h = i / (float)rows;
-                float half = .5f * Mathf.Pow(1 - h, 1.7f) + .025f;
-                vertices.Add(new Vector3(-half, h, 0)); vertices.Add(new Vector3(half, h, 0));
-                if (i == rows) continue;
-                int n = i * 2;
-                triangles.AddRange(new[] { n, n + 1, n + 2, n + 2, n + 1, n + 3 });
+                float a = (c + .5f * SnScatter(c, salt)) / count * Mathf.PI * 2f;
+                float len = Mathf.Lerp(shortest, longest, SnScatter(c, salt + 1));
+                var path = new List<Vector3>(9); var along = new float[9];
+                var dir = new Vector3(Mathf.Sin(a), 0f, Mathf.Cos(a));
+                var at = centre + dir * .12f;
+                for (int i = 0; i < 9; i++)
+                {
+                    if (i > 0)
+                    {
+                        float turn = (SnScatter(c * 11 + i, salt + 2) - .5f) * .9f;
+                        dir = Quaternion.Euler(0f, turn * Mathf.Rad2Deg, 0f) * dir;
+                        var next = at + dir * (len / 8f);
+                        along[i] = along[i - 1] + (next - at).magnitude;
+                        at = next;
+                    }
+                    path.Add(at);
+                }
+                float total = along[8] + .12f;
+                for (int i = 0; i < 9; i++) along[i] += .12f;
+                longestOut = Mathf.Max(longestOut, total);
+                SnStripInto(path, along, total, false, 0, width, width * .35f, coolFrom, coolTo, lift, p, n, uv, flow, grow, tris);
             }
-            var mesh = new Mesh { name = "MayonCone" };
-            mesh.SetVertices(vertices); mesh.SetTriangles(triangles, 0);
-            var uv = new List<Vector2>(vertices.Count);
-            foreach (var v in vertices) uv.Add(new Vector2(v.x + .5f, v.y));
-            mesh.SetUVs(0, uv);
-            mesh.RecalculateNormals();
-            return VfxShapes.TwoSided(mesh);
+            return SnMesh("SeanCracks", p, n, uv, flow, grow, tris);
         }
 
-        /// <summary>A flat ring in XZ of unit outer radius; its band runs from <paramref name="inner"/> to 1, v across it.</summary>
-        private static Mesh SnRingMesh(float inner)
+        /// <summary>A pool, in the format `SeanVolcanoLava` reads for one: uv1.y how far out (0.25 in the middle, 1 at the rim),
+        /// uv2 the metres from the middle (so it grows outward); its rim lobed.</summary>
+        private static Mesh SnPool(Vector3 centre, float radius, int salt, Func<Vector3, float> lift)
         {
-            const int sides = 64;
-            var vertices = new List<Vector3>((sides + 1) * 2); var uv = new List<Vector2>((sides + 1) * 2);
-            var triangles = new List<int>(sides * 6);
-            for (int i = 0; i <= sides; i++)
-            {
-                float a = i * Mathf.PI * 2 / sides;
-                var way = new Vector3(Mathf.Sin(a), 0, Mathf.Cos(a));
-                vertices.Add(way * inner); vertices.Add(way);
-                uv.Add(new Vector2(i / (float)sides, 0)); uv.Add(new Vector2(i / (float)sides, 1));
-                if (i == sides) continue;
-                int n = i * 2;
-                triangles.AddRange(new[] { n, n + 1, n + 2, n + 2, n + 1, n + 3 });
-            }
-            var mesh = new Mesh { name = "SeanShockwaveRing" };
-            mesh.SetVertices(vertices); mesh.SetUVs(0, uv); mesh.SetTriangles(triangles, 0);
-            mesh.RecalculateNormals();
-            mesh.bounds = new Bounds(Vector3.zero, new Vector3(2, .2f, 2));
-            return VfxShapes.TwoSided(mesh);
+            const int rings = 6, sides = 28;
+            var p = new List<Vector3>(); var n = new List<Vector3>(); var uv = new List<Vector2>(); var flow = new List<Vector2>(); var grow = new List<Vector2>();
+            var tris = new List<int>();
+            for (int r = 0; r <= rings; r++)
+                for (int s = 0; s <= sides; s++)
+                {
+                    float a = s / (float)sides * Mathf.PI * 2f, k = r / (float)rings;
+                    float lobe = 1f + .18f * Mathf.Sin(a * 3f + salt) + .10f * Mathf.Sin(a * 7f + salt * 1.7f);
+                    var at = centre + new Vector3(Mathf.Sin(a), 0f, Mathf.Cos(a)) * radius * k * lobe;
+                    at.y += .02f + .03f * (1f - k * k);
+                    if (lift != null) at.y += lift(at) * SnDomeTall;
+                    p.Add(at); n.Add(Vector3.up);
+                    uv.Add(new Vector2(.5f + .5f * Mathf.Sin(a) * k, 1f - (.5f + .5f * Mathf.Cos(a) * k)));
+                    flow.Add(new Vector2(0f, 1f - (.25f + .75f * k)));
+                    grow.Add(new Vector2(radius * k * lobe, 1f));
+                    if (r == 0 || s == sides) continue;
+                    int c = r * (sides + 1) + s, pr = c - (sides + 1);
+                    tris.Add(pr); tris.Add(c); tris.Add(pr + 1);
+                    tris.Add(pr + 1); tris.Add(c); tris.Add(c + 1);
+                }
+            return SnMesh("SeanPool", p, n, uv, flow, grow, tris);
+        }
+
+        /// <summary>The bulge: a disc of the court, its uv the court's own at every point (so its joints carry on from the
+        /// ground round it), domed unit high in its middle. The stage scales it up from flat.</summary>
+        private Mesh SnDomeMesh(Func<Vector3, Vector2> uvOf)
+        {
+            const int rings = 12, sides = 40;
+            var p = new List<Vector3>(); var uv = new List<Vector2>(); var tris = new List<int>();
+            for (int r = 0; r <= rings; r++)
+                for (int s = 0; s <= sides; s++)
+                {
+                    float a = s / (float)sides * Mathf.PI * 2f, k = r / (float)rings;
+                    var flat = new Vector3(Mathf.Sin(a), 0f, Mathf.Cos(a)) * SnDomeRadius * k;
+                    var at = flat + Vector3.up * (SnDomeHeight(flat) * SnDomeTall + .004f);
+                    p.Add(at);
+                    uv.Add(uvOf(_root.transform.TransformPoint(_snSpot + flat)));
+                    if (r == 0 || s == sides) continue;
+                    int c = r * (sides + 1) + s, pr = c - (sides + 1);
+                    tris.Add(pr); tris.Add(c); tris.Add(pr + 1);
+                    tris.Add(pr + 1); tris.Add(c); tris.Add(c + 1);
+                }
+            var mesh = new Mesh { name = "SeanBulge", hideFlags = HideFlags.DontSave };
+            mesh.SetVertices(p); mesh.SetUVs(0, uv); mesh.SetTriangles(tris, 0);
+            mesh.RecalculateNormals(); mesh.RecalculateTangents(); mesh.RecalculateBounds();
+            _snMeshes.Add(mesh);
+            return mesh;
+        }
+
+        private static Mesh SnMesh(string name, List<Vector3> p, List<Vector3> n, List<Vector2> uv, List<Vector2> flow, List<Vector2> grow, List<int> tris)
+        {
+            var mesh = new Mesh { name = name, hideFlags = HideFlags.DontSave };
+            mesh.indexFormat = p.Count > 65000 ? UnityEngine.Rendering.IndexFormat.UInt32 : UnityEngine.Rendering.IndexFormat.UInt16;
+            mesh.SetVertices(p); mesh.SetNormals(n); mesh.SetUVs(0, uv); mesh.SetUVs(1, flow); mesh.SetUVs(2, grow);
+            mesh.SetTriangles(tris, 0);
+            mesh.RecalculateBounds();
+            return mesh;
         }
 
         /// <summary>A fixed scatter in 0 to 1 for row <paramref name="i"/>: the same every frame and on every peer.</summary>
@@ -220,69 +435,60 @@ namespace TumbangPreso.Visual
         /// <summary>The river's path from his fists to the spot, <paramref name="u"/> 0 to 1, a gentle S so it reads as poured.</summary>
         private Vector3 SnRiverAt(float u)
         {
-            var from = SnFistsOnCourt; var to = new Vector3(_snSpot.x, _snSpot.y + .03f, _snSpot.z);
+            var from = SnFistsOnCourt; var to = new Vector3(_snSpot.x, _snSpot.y + .01f, _snSpot.z);
             var way = to - from; way.y = 0;
             var side = way.sqrMagnitude > .01f ? new Vector3(way.z, 0, -way.x).normalized : Vector3.right;
-            float bend = Mathf.Sin(u * Mathf.PI * 2f) * Mathf.Min(.6f, way.magnitude * .06f);
+            float bend = Mathf.Sin(u * Mathf.PI * 2f) * Mathf.Min(.5f, way.magnitude * .05f) * (1f - u * .5f);
             var p = Vector3.Lerp(from, to, u) + side * bend;
-            p.y = Mathf.Lerp(from.y, to.y, u) + .02f;
+            p.y = Mathf.Lerp(from.y - .02f, to.y, u);
             return p;
         }
 
-        /// <summary>The river's head along its path: off his fists at 1.55, at the spot by 2.45, fast at first.</summary>
-        private float SnRiverHead(float t)
+        /// <summary>The river's head along its path, 0 to 1: off his fists at 1.65, at the spot by 2.75, fast at first.</summary>
+        private static float SnRiverHead(float t)
         {
             float u = Mathf.Clamp01(Mathf.InverseLerp(SnRunFrom, SnRunTo, t));
             return 1 - (1 - u) * (1 - u) * (1 - .3f * u);
         }
 
-        /// <summary>The wave's reach from the spot: out fast off the rise, easing as it reaches the 9 m ring at the last frame.</summary>
-        private float SnWaveReach(float t)
+        /// <summary>Play's rise curve (`SeanVolcano.Pose` on a fresh cast): up out of the court with one overshoot.</summary>
+        private static float SnRiseUp(float t)
         {
-            float u = Mathf.Clamp01(Mathf.InverseLerp(SnRise, Seconds, t));
-            return SeanRules.VolcanoBlastRadius * (1 - (1 - u) * (1 - u));
+            float u = Mathf.Clamp01((t - SnRise) / SnRiseSeconds);
+            return t <= SnRise ? 0f : 1f - Mathf.Pow(1f - u, 3f) + .12f * Mathf.Sin(u * Mathf.PI);
         }
 
         // ------------------------------------------------------------------ the clock
 
         private void SampleSean(float t)
         {
-            float present = StagePresence(t, .25f);
+            float present = StagePresence(t, .2f);
             SampleSeanFists(t, present);
-            SampleSeanAir(t, present);
-            SampleSeanRiver(t, present);
-            SampleSeanMountain(t, present);
+            SampleSeanLava(t);
+            SampleSeanMountain(t);
             SampleSeanOthers(t);
+            SampleSeanSky(t);
+        }
+
+        private void SnLava(Renderer r, float grow, float clock)
+        {
+            if (r == null) return;
+            bool on = grow > .005f;
+            r.enabled = on;
+            if (!on) return;
+            r.GetPropertyBlock(_snBlock);
+            _snBlock.SetFloat(SnGrowId, grow);
+            _snBlock.SetFloat(SnClockId, clock);
+            r.SetPropertyBlock(_snBlock);
         }
 
         private void SampleSeanFists(float t, float present)
         {
-            // The court round his fists glows as they go in, and the lava wells up out of it.
-            float well = Ease(SnSlam - .02f, SnSlam + .15f, t) * (1 - .6f * Ease(SnRunTo, SnRise + .5f, t));
-            PlaceGlow(_snWell, SnFistsOnCourt + Vector3.up * .01f, new Vector3(1.3f, 1.3f, 1) * (1 + .3f * Flash(t, SnSlam, .2f)),
-                Quaternion.Euler(90, 0, 0), well * 1.4f * present);
-            // Cracks spider out round his fists from the slam.
-            for (int i = 0; i < _snCracks.Count; i++)
-            {
-                var line = _snCracks[i];
-                float grow = Ease(SnSlam + .02f * i, SnSlam + .35f, t);
-                float angle = (-150f + 60f * i + 14f * (SnScatter(i, 1) - .5f)) * Mathf.Deg2Rad;
-                var to = SnFistsOnCourt + new Vector3(Mathf.Sin(angle), 0, Mathf.Cos(angle)) * (1.6f + .6f * SnScatter(i, 2));
-                for (int k = 0; k < line.positionCount; k++)
-                {
-                    float s = k / (float)(line.positionCount - 1);
-                    var side = new Vector3(to.z, 0, -to.x).normalized * (.14f * (SnScatter(i * 7 + k, 3) - .5f));
-                    line.SetPosition(k, Vector3.Lerp(SnFistsOnCourt, to, s * grow) + side * s + Vector3.up * .02f);
-                }
-                line.widthMultiplier = .07f * grow * present * (1 - .5f * Ease(SnRise, Seconds, t));
-                line.enabled = grow > .01f && present > .01f;
-            }
-
             // The Molten fists: lava climbs out of the court up both forearms (left, then right) and stays; he is Molten from here.
             for (int i = 0; i < _snFists.Count; i++)
             {
                 var f = _snFists[i];
-                float from = SnFistsFrom + .1f * i;
+                float from = SnFistsFrom + .12f * i;
                 float grow = Mathf.Clamp01(Mathf.InverseLerp(from, from + (SnFistsTo - SnFistsFrom), t));
                 float swell = grow <= 0 ? 0 : 1f - Mathf.Pow(1f - grow, 3f) + .2f * Mathf.Sin(grow * Mathf.PI);
                 swell *= 1 + .12f * Flash(t, SnRise, .12f);
@@ -302,12 +508,12 @@ namespace TumbangPreso.Visual
                 f.Model.localScale = Vector3.one * s;
                 if (f.Knuckles != null) f.Knuckles.localScale = Vector3.one * (1f + .08f * Mathf.Sin(t * 9f + i * 1.7f));
                 if (i < _snFistGlows.Count)
-                    PlaceGlow(_snFistGlows[i], palm, Vector3.one * .6f * Mathf.Min(1, swell), Quaternion.identity, shown ? 1.2f + .8f * Flash(t, SnRise, .2f) : 0);
+                    PlaceGlow(_snFistGlows[i], palm, Vector3.one * .45f * Mathf.Min(1, swell), Quaternion.identity, shown ? .8f + .6f * Flash(t, SnRise, .2f) : 0);
                 for (int d = i * 3; d < i * 3 + 3 && d < _snDrips.Count; d++)
                 {
                     float cycle = Mathf.Repeat(t * 1.4f + d * .29f, 1f);
                     var at = palm + new Vector3(.06f * (d % 3 - 1), -cycle * Mathf.Max(.1f, palm.y), .02f);
-                    PlaceGlow(_snDrips[d], at, Vector3.one * .06f, Quaternion.identity, shown && cycle < .95f ? 1.3f : 0);
+                    PlaceGlow(_snDrips[d], at, Vector3.one * .05f, Quaternion.identity, shown && cycle < .95f ? 1.1f : 0);
                 }
             }
 
@@ -316,144 +522,104 @@ namespace TumbangPreso.Visual
             float eyes = Ease(SnIgnite - .05f, SnIgnite + .08f, t) * (1 - Ease(SnRunFrom + .3f, SnRunFrom + .7f, t)) * (1 + 1.5f * Flash(t, SnIgnite + .05f, .12f));
             for (int i = 0; i < _snEyes.Count; i++)
                 PlaceGlow(_snEyes[i], head + new Vector3(i == 0 ? -.075f : .075f, 0, 0), Vector3.one * (.16f + .2f * Flash(t, SnIgnite + .05f, .15f)),
-                    Quaternion.Euler(0, 0, 45f * t), eyes * 1.4f);
-        }
+                    Quaternion.Euler(0, 0, 45f * t), eyes * 1.3f * present);
 
-        private void SampleSeanAir(float t, float present)
-        {
-            // Embers and ash in the air the whole time, two of them near the lens in shot A; they ride up past him.
-            for (int i = 0; i < _snEmbers.Count; i++)
+            // The slam's dust: thrown out low round his fists, settling.
+            if (_snSlamDust != null)
             {
-                float speed = .35f + .4f * SnScatter(i, 4);
-                float rise = Mathf.Repeat(SnScatter(i, 5) * 3.2f + t * speed, 3.2f);
-                var at = new Vector3((SnScatter(i, 6) - .5f) * 3.4f, rise, .4f + SnScatter(i, 7) * 2.6f);
-                if (i < 2) at = new Vector3(i == 0 ? -.35f : .3f, .35f + rise * .3f, 1.4f);
-                // Half of them ride with the river and gather round the mountain once it stands.
-                if (i % 2 == 1) at = Vector3.Lerp(at, _snSpot + new Vector3(at.x, at.y * 1.4f, at.z - 1.5f), Ease(SnRunFrom, SnRise, t));
-                float size = i < 2 ? .07f : .03f + .03f * SnScatter(i, 8);
-                PlaceGlow(_snEmbers[i], at, Vector3.one * size * (1 + Flash(t, SnRise, .3f)), Quaternion.identity, present * 1.4f);
-            }
-            for (int i = 0; i < _snAsh.Count; i++)
-            {
-                float fall = Mathf.Repeat(SnScatter(i, 9) * 4f - t * .25f, 4f);
-                var at = _snSpot * Ease(SnRunFrom, SnRise, t) + new Vector3((SnScatter(i, 10) - .5f) * 5f, fall, (SnScatter(i, 11) - .5f) * 4f);
-                PlaceGlow(_snAsh[i], at, Vector3.one * (.06f + .03f * SnScatter(i, 12)), Quaternion.identity, present * .5f);
+                // Short and low: it is gone before A2's lens comes in close over his fists (film r3: balls filled that lens).
+                var e = FxCloud.Emitter.Puff(SnFistsOnCourt + Vector3.up * .04f, new Vector3(0f, .28f, -.1f), SnSlam, .10f, .38f);
+                e.Spread = 1.0f; e.Widen = .7f; e.Weave = .12f; e.Small = .06f; e.Large = .24f; e.Gone = .04f;
+                bool on = t >= SnSlam && t <= SnSlam + .5f;
+                _snSlamDust.Piece.Renderer.enabled = on;
+                if (on) _snSlamDust.Pose(t, e);
             }
         }
 
-        private void SampleSeanRiver(float t, float present)
+        private void SampleSeanLava(float t)
         {
-            // The river: drawn from his fists to its head; bright core over a cherry body; it cools behind once the mountain is up.
+            // One clock for the crust on the court, the same pace as the mountain's.
+            float clock = 5f + t;
+            // Drunk back: everything on the court goes back toward where it came from as the mountain rises.
+            float drain = Ease(SnRise, SnRise + SnDrain, t);
+            // A: the court splits round his fists as they land, and a pool wells up between them.
+            float cracks = Ease(SnSlam, SnSlam + .38f, t);
+            SnLava(_snFistCracks, (cracks * (1f - drain)) * _snFistCrackLength, clock);
+            SnLava(_snFistPool, Ease(SnSlam + .02f, SnSlam + .45f, t) * (1f - drain) * .75f, clock);
+            // The web spiders out fast at first and slows, as a crack runs.
+            float web = Ease(SnWebFrom, SnWebTo, t);
+            SnLava(_snWeb, (1f - (1f - web) * (1f - web)) * (1f - drain) * _snWebLength, clock);
+
+            // B: the river grows from his fists to the spot; once there it is the strip measured from the spot, and the
+            // mountain drinks it.
             float head = SnRiverHead(t);
-            bool running = t > SnRunFrom && present > .01f;
-            float cool = 1 - .7f * Ease(SnRise + .2f, Seconds, t);
-            for (int k = 0; k < _snRiver.positionCount; k++)
-            {
-                float u = head * k / (_snRiver.positionCount - 1);
-                var p = SnRiverAt(u);
-                _snRiver.SetPosition(k, p); _snRiverCore.SetPosition(k, p + Vector3.up * .01f);
-            }
-            _snRiver.widthMultiplier = .32f * cool; _snRiverCore.widthMultiplier = .14f * cool;
-            _snRiver.enabled = _snRiverCore.enabled = running;
-            var at = SnRiverAt(head);
-            bool racing = t > SnRunFrom && t < SnRunTo + .1f;
-            PlaceGlow(_snRiverHead, at + Vector3.up * .25f, Vector3.one * (.9f + .2f * Mathf.Sin(t * 30f)), Quaternion.identity, racing ? 2f * present : 0);
-            // Beads of lava flicked up off the head as it runs.
-            for (int i = 0; i < _snBeads.Count; i++)
-            {
-                float phase = Mathf.Repeat(t * 3f + i / (float)_snBeads.Count, 1f);
-                float back = Mathf.Max(0, head - .08f * phase);
-                var b = SnRiverAt(back) + new Vector3((SnScatter(i, 41) - .5f) * .6f * phase, 1.2f * phase - 1.6f * phase * phase, 0);
-                PlaceGlow(_snBeads[i], b, Vector3.one * .08f, Quaternion.identity, racing && b.y > 0 ? 1.4f : 0);
-            }
+            bool arrived = t >= SnRunTo;
+            SnLava(_snRiverOut, arrived ? 0f : t > SnRunFrom ? head * _snRiverLength : 0f, clock);
+            SnLava(_snRiverBack, arrived ? (drain > 0f ? (1f - drain) * _snRiverLength : 100f) : 0f, clock);
 
-            // The bulge where it arrives: the court swells and glows, and steam vents round it, until the mountain breaks it.
-            float bulge = Ease(SnRunTo - .1f, SnRise, t) * (1 - Ease(SnRise, SnRise + .3f, t));
-            PlaceGlow(_snBulge, _snSpot + Vector3.up * .02f, new Vector3(2.4f, 2.4f, 1) * (.6f + .5f * bulge + .08f * Mathf.Sin(t * 22f)),
-                Quaternion.Euler(90, 0, 0), bulge * 1.6f * present);
+            // B: the court at the spot bulges up, trembling, cracks open and vents; the mountain breaks it.
+            float bulge = Ease(SnBulge, SnRise - .05f, t);
+            bool domeOn = t >= SnBulge - .05f && t < SnRise + .03f;
+            if (_snDome != null) _snDome.enabled = domeOn;
+            float tremble = .06f * Mathf.Sin(t * 47f) * bulge;
+            _snDomeAt.localScale = new Vector3(1f, Mathf.Max(.001f, bulge * (1f + tremble)), 1f);
+            _snDomeAt.localPosition = _snSpot;
+            SnLava(_snSpotCracks, domeOn ? Ease(SnBulge + .12f, SnRise - .05f, t) * _snSpotCrackLength : 0f, clock);
+            SnLava(_snSpotPool, domeOn ? Ease(SnRunTo - .05f, SnRunTo + .4f, t) * 1.05f : 0f, clock);
             for (int i = 0; i < _snVents.Count; i++)
             {
-                float a = (i * 90f + 30f * SnScatter(i, 42)) * Mathf.Deg2Rad;
-                float k = Mathf.Repeat(t * 1.6f + i * .25f, 1f);
-                var v = _snSpot + new Vector3(Mathf.Sin(a), 0, Mathf.Cos(a)) * 1.1f + Vector3.up * (.2f + 1.2f * k);
-                PlaceGlow(_snVents[i], v, Vector3.one * (.25f + .5f * k), Quaternion.identity, bulge * .55f * (1 - k));
+                var cloud = _snVents[i];
+                float from = SnBulge + .22f + .12f * i;
+                var e = FxCloud.Emitter.Column(_snVentAt[i] + Vector3.up * .1f, new Vector3(.15f, 1.6f, .1f));
+                e.Spread = .25f; e.Life = .7f; e.Widen = .35f; e.Weave = .12f; e.Small = .10f; e.Large = .45f; e.Gone = .05f;
+                e.From = from; e.To = SnRise;
+                bool on = t >= from && t <= SnRise + .7f;
+                cloud.Piece.Renderer.enabled = on;
+                if (on) cloud.Pose(t, e);
             }
         }
 
-        private void SampleSeanMountain(float t, float present)
+        private void SampleSeanMountain(float t)
         {
-            // It bursts up out of the court at 3.1 with one overshoot and stands; it is play's mountain from the hand-back.
-            float riseU = Mathf.Clamp01(Mathf.InverseLerp(SnRise, SnRiseTo, t));
-            float up = riseU <= 0 ? 0 : 1f - Mathf.Pow(1f - riseU, 3f) + .14f * Mathf.Sin(riseU * Mathf.PI);
-            if (_snMayon != null)
+            // The mountain punches up out of the court on play's curve, and from there it is play's: its court and rocks burst
+            // up by play's `Live.Pose`, its lava runs down from the crater over a second, the eruption goes off round it.
+            float since = t - SnRise;
+            bool up = since >= 0f;
+            if (_snLook != null)
             {
-                bool shown = t >= SnRise && present > .01f;
-                if (_snMayon.gameObject.activeSelf != shown) _snMayon.gameObject.SetActive(shown);
-                float shake = .05f * Flash(t, SnRise + .1f, .4f) * Mathf.Sin(t * 70f);
-                _snMayon.localPosition = _snSpot + _snMayonOffset + new Vector3(shake, -SeanRules.VolcanoHeight * (1 - up), 0);
-                _snMayon.localRotation = Quaternion.identity;
-                _snMayon.localScale = _snMayonScale;
+                if (_snLook.Mountain.gameObject.activeSelf != up) _snLook.Mountain.gameObject.SetActive(up);
+                if (_snLook.Surround != null && _snLook.Surround.gameObject.activeSelf != up) _snLook.Surround.gameObject.SetActive(up);
+                if (_snLook.Rocks != null && _snLook.Rocks.gameObject.activeSelf != up) _snLook.Rocks.gameObject.SetActive(up);
+                float shake = _reducedEffects ? 0f : .05f * Mathf.Clamp01(1f - since / .4f) * Mathf.Sin(t * 70f) * (up ? 1f : 0f);
+                _snVolBody.localPosition = new Vector3(shake, -SeanRules.VolcanoHeight * (1f - SnRiseUp(t)), 0f);
+                _snLook.Pose(since, since, 0f, 0f);
             }
-            float summitY = _snSpot.y + SeanRules.VolcanoHeight * up;
-            var summit = new Vector3(_snSpot.x, summitY, _snSpot.z);
-            // The fountain out of the crater in the cone's shape, flaring on the rise and settling to a glow.
-            float column = Ease(SnRise, SnRise + .1f, t) * (1 - .6f * Ease(SnRise + .5f, Seconds, t));
-            float rise = Ease(SnRise, SnRise + .35f, t);
-            var toward = new Vector3(-_snSpot.x, 0, -_snSpot.z);
-            var face = Quaternion.LookRotation(toward.sqrMagnitude > .01f ? toward : Vector3.back);
-            // (film s16: at 2.2 m it read as a needle over the crater.)
-            PlaceGlow(_snColumn, summit, new Vector3(3.6f, 6.0f * rise, 1), face, column * 1.2f * present);
-            PlaceGlow(_snColumnCore, summit, new Vector3(1.8f, 4.8f * rise, 1), face, column * (1.3f + 1.5f * Flash(t, SnRise + .05f, .2f)) * present);
-            PlaceGlow(_snSummit, summit + Vector3.up * .2f, Vector3.one * 1.6f, Quaternion.identity, Ease(SnRise, SnRise + .2f, t) * 1.3f * present);
-            // The first bomb wells up in the crater as the cut comes: what it will do next.
-            float bomb = Ease(SnHome - .35f, SnHome, t);
-            PlaceGlow(_snCraterBomb, summit + Vector3.up * (.2f + .4f * bomb), Vector3.one * (.4f + .5f * bomb), Quaternion.identity, bomb * 1.8f * present);
-            // Debris thrown up and out of the crater on fixed arcs.
-            float after = Mathf.Max(0, t - SnRise);
-            for (int i = 0; i < _snDebris.Count; i++)
+            _snErupt?.Pose(since);
+            // A bomb that would pass within 2.4 m of B2's lens is not drawn there: that close it was a flat dark ball over a
+            // quarter of the frame (film v4r7). The rest still arc over the lens.
+            if (t >= 2.95f && t < 4.05f && _snBombs.Count > 0)
             {
-                float angle = (i * (360f / 14f) + 12f * SnScatter(i, 43)) * Mathf.Deg2Rad;
-                var way = new Vector3(Mathf.Sin(angle), 0, Mathf.Cos(angle));
-                float k = after * (.9f + .3f * SnScatter(i, 44));
-                var at = _snSpot + Vector3.up * SeanRules.VolcanoHeight * .8f + way * (2f + 2.5f * SnScatter(i, 45)) * k
-                         + Vector3.up * ((5f + 3f * SnScatter(i, 46)) * k - 6f * k * k);
-                float on = t > SnRise && at.y > _snSpot.y ? present : 0;
-                PlaceGlow(_snDebris[i], at, Vector3.one * (.14f + .08f * SnScatter(i, 47)), Quaternion.identity, on * 1.3f);
-            }
-            // The wave: from its foot out to play's 9 m ring at the last frame, with cracks racing ahead of it.
-            float reach = SnWaveReach(t);
-            float wave = t > SnRise ? present : 0;
-            PlaceGlow(_snRing, _snSpot + new Vector3(0, .04f, 0), new Vector3(reach, 1, reach), Quaternion.identity, wave * 1.5f);
-            PlaceGlow(_snRingThin, _snSpot + new Vector3(0, .05f, 0), new Vector3(reach * 1.03f, 1, reach * 1.03f), Quaternion.identity, wave * 1.8f);
-            for (int i = 0; i < _snBurstCracks.Count; i++)
-            {
-                var line = _snBurstCracks[i];
-                float angle = (i * 45f + 20f * (SnScatter(i, 13) - .5f)) * Mathf.Deg2Rad;
-                var way = new Vector3(Mathf.Sin(angle), 0, Mathf.Cos(angle));
-                for (int k = 0; k < line.positionCount; k++)
-                {
-                    float u = k / (float)(line.positionCount - 1);
-                    var side = new Vector3(way.z, 0, -way.x) * (.25f * (SnScatter(i * 9 + k, 14) - .5f));
-                    line.SetPosition(k, _snSpot + way * (SeanRules.VolcanoSolidRadius + reach * .95f * u) + side * u + Vector3.up * .03f);
-                }
-                line.widthMultiplier = .1f * wave;
-                line.enabled = wave > .01f;
+                Vector3 eye = default, look = default; float fov = 0f;
+                SeanFrame(3, t, ref eye, ref look, ref fov);
+                var eyeWorld = _root.transform.TransformPoint(eye);
+                foreach (var b in _snBombs)
+                    if (b != null && b.enabled && (b.transform.position - eyeWorld).sqrMagnitude < 2.4f * 2.4f) b.enabled = false;
             }
         }
 
         private void SampleSeanOthers(float t)
         {
-            // Each staged player braces and leans away from the mountain as its wave reaches them (9 m at the last frame).
+            // Each staged player braces and leans away from the mountain as its wave reaches them (play's own reach).
+            float reach = SeanEruption.WaveReach(t - SnRise);
             for (int i = 0; i < _others.Count; i++)
             {
                 var other = _others[i];
                 if (other.Holder == null) continue;
                 if (!other.Holder.activeSelf) other.Holder.SetActive(true);
                 var away = other.Home - _snSpot; away.y = 0;
-                float reach = away.magnitude;
-                float share = Mathf.Clamp01(reach / SeanRules.VolcanoBlastRadius);
-                float reachedAt = SnRise + (Seconds - SnRise) * (1 - Mathf.Sqrt(1 - share));
-                float lean = reach <= SeanRules.VolcanoBlastRadius ? Ease(reachedAt - .12f, reachedAt + .05f, t) : 0;
+                float d = away.magnitude;
+                float lean = d <= SeanRules.VolcanoBlastRadius ? Mathf.Clamp01((reach - d + .9f) / 1.1f) : 0f;
+                lean = lean * lean * (3f - 2f * lean);
                 var axis = Vector3.Cross(Vector3.up, away.sqrMagnitude > .001f ? away.normalized : Vector3.forward);
                 other.Holder.transform.localRotation = Quaternion.AngleAxis(16f * lean, axis) * _snOtherRest[i];
             }
@@ -462,9 +628,18 @@ namespace TumbangPreso.Visual
         // ------------------------------------------------------------------ the lens, the grade, the hand-back
 
         /// <summary>
-        /// Shots B and C are placed from the real spot (the table's are fallbacks for a stage with no spot). B races low beside the
-        /// river, a step behind its head; C stands off to one side of the line from him to the mountain, far enough to hold both
-        /// and the ring, and eases back as the wave goes out. Scene space.
+        /// Every shot is placed from his body and the real spot (the table's are fallbacks for a stage with no spot). Scene space.
+        /// ⚠️ EVERY LENS STANDS ON THE RIGHT OF THE LINE FROM HIS FISTS TO THE SPOT (`side`; the left with the slipper hand), so
+        /// the lava travels left to right on screen in every cut and each cut continues the one before.
+        ///   0 A1 THE BLOW: at court level in front of his fists, looking up at him; the fists come down into frame.
+        ///   1 A2 THE SKY TURNS: worm's-eye under his fists, looking up past his face into the sky as it turns red over him.
+        ///   2 B1 THE DRONE: high over the court, looking steeply down, riding the river's head across it; the crack web
+        ///     spidering out from his fists is the scale.
+        ///   3 B2 THE FOOT: knee height, 4.4 m from the spot; the river runs in from the left, the court
+        ///     bulges with a growing shake, the cone punches up past the lens and the lens tilts and widens with the summit.
+        ///   4 C1 FROM THE CLOUDS: 22 m up beyond the spot, looking down; the column climbs toward the lens, lightning in it,
+        ///     the dust surge rings out over the little court below.
+        ///   5 C2 THE HERO: low beside and behind him, looking up past him at the summit; the wave reaches the players.
         /// </summary>
         private void SeanFrame(int index, float t, ref Vector3 eye, ref Vector3 look, ref float fov)
         {
@@ -472,40 +647,122 @@ namespace TumbangPreso.Visual
             float length = line.magnitude;
             var dir = length > .01f ? line / length : Vector3.forward;
             var side = new Vector3(dir.z, 0, -dir.x);
-            // The lens goes to the side away from the slipper hand, as the table's shots do.
+            // The lens goes to the side away from the slipper hand.
             if (_heldItem != null) side = -side;
-            if (index == 1)
+            float u;
+            switch (index)
             {
-                float head = SnRiverHead(Mathf.Max(t, SnRunFrom));
-                var at = SnRiverAt(head);
-                eye = at - dir * 2.4f + side * 1.3f + Vector3.up * .9f;
-                look = at + dir * 1.8f + Vector3.up * .35f;
-                fov = 52f;
-                // (film s16: the race ran the lens into a standing player.)
-                eye = KeepLensOffOthers(eye, 1.6f);
+                case 0:
+                    u = Ease(0f, .70f, t);
+                    // Far enough that his fists come down INTO the frame onto the court, low enough to look up at him.
+                    eye = SnFistsOnCourt + dir * (2.1f - .2f * u) - side * (1.15f - .1f * u) + Vector3.up * .28f;
+                    look = SnFistsOnCourt + Vector3.up * (.62f - .2f * Ease(.3f, .5f, t)) - dir * .15f;
+                    fov = 56f - 3f * u;
+                    break;
+                case 1:
+                {
+                    // Under his fists, looking up past his face at the sky behind him; the aim climbs as the sky turns, so
+                    // by the end he is the lower third and the red sky with its clouds is the rest.
+                    u = Ease(.70f, 1.70f, t);
+                    float turn = Ease(.75f, 1.30f, t);
+                    // (film v4r1: from 1.9 m his face filled the middle and the sky was a sliver over the roofs.)
+                    eye = SnFistsOnCourt + dir * (2.6f + .2f * u) + side * (.50f + .1f * u) + Vector3.up * (.20f + .08f * u);
+                    look = HeadPoint + Vector3.up * (1.2f + 2.6f * turn) - dir * (1.0f + 2.0f * turn);
+                    fov = 66f + 4f * u;
+                    break;
+                }
+                case 2:
+                {
+                    // The drone rides the river's head from high on the right of the line, looking steeply down and a little
+                    // ahead to the spot, so the court streams under it and the web is seen whole.
+                    u = Ease(1.70f, 2.95f, t);
+                    var at = SnRiverAt(SnRiverHead(Mathf.Clamp(t, SnRunFrom, SnRunTo)));
+                    eye = at + side * 5.2f - dir * 2.4f + Vector3.up * (10.2f - 1.4f * u);
+                    look = Vector3.Lerp(at, _snSpot, .28f);
+                    fov = 50f;
+                    break;
+                }
+                case 3:
+                {
+                    // The summit's height on screen: the lens tilts up and widens with it as it punches up.
+                    float rise = SnRiseUp(t);
+                    look = _snSpot - dir * .2f + Vector3.up * (.35f + 2.6f * Mathf.Min(1.1f, rise));
+                    // Knee height, 4.4 m out: the 3 m cone towers (film v4r1: at 0.22 m the bulge was a dune filling the frame;
+                    // v4r8: at 3.6 m the dust thrown round its foot rolled up to the lens as big balls).
+                    // Of two places on the right of the line, the one whose sight line is clearest of the players.
+                    eye = SnClearOf(_snSpot + Vector3.up * .3f, _snSpot - dir * 2.4f + side * 3.7f + Vector3.up * .55f,
+                                    _snSpot - dir * 1.0f + side * 4.3f + Vector3.up * .55f);
+                    fov = 58f + 14f * Ease(SnRise, SnRise + .35f, t);
+                    // The lens punches up with the cone as it bursts past, and the dust thrown round its foot rolls out under it
+                    // instead of into it (film v4r9: held at knee height, the last frames were big balls of dust at the lens).
+                    eye += Vector3.up * 1.5f * Ease(SnRise + .05f, SnRise + .45f, t);
+                    eye = KeepLensOffOthers(eye, 1.3f);
+                    break;
+                }
+                case 4:
+                {
+                    // Up in the clouds beyond the spot, looking down past the column at the court; it sinks as the column
+                    // climbs toward it. Still the right of the line, so he is the left of the frame and the mountain the right.
+                    u = Ease(4.05f, 5.05f, t);
+                    // (film v4r1: straight down, a column is foreshortened into one grey blob over the frame; from 35 degrees
+                    // its climb reads, and the court is still a little square under it.)
+                    // (v4r2: from 15 m up the cone hid under the column; from 11 m and further round, both read.)
+                    eye = _snSpot + dir * 5f + side * 14f + Vector3.up * (11f - 1.5f * u);
+                    look = _snSpot - dir * .5f + Vector3.up * (4.0f + 2.5f * u);
+                    fov = 50f;
+                    break;
+                }
+                default:
+                {
+                    // Low beside and behind him, looking up past him at the summit, him a towering shoulder at the left of the
+                    // frame and the mountain over the court; the lens is cut to the mountain's distance so it stands as tall in
+                    // the frame wherever he put it.
+                    u = Ease(5.05f, SnHome, t);
+                    // (film v4r1: 1.6 m behind him his shoulder was a third of the frame and soft, and the mountain sat low.)
+                    // (v4r2: 2.6 m behind him, his head was off the top of the frame and he read as a block. v4r4: drifting back
+                    // to 4 m at knee height it went into the steps behind him on Eskinita; it drifts sideways instead.)
+                    eye = SnFistsOnCourt - dir * 3.2f + side * (2.3f + .6f * u) + Vector3.up * (.35f + .15f * u);
+                    look = _snSpot - side * .5f + Vector3.up * (2.2f + .2f * u);
+                    float far = (new Vector3(_snSpot.x, 0f, _snSpot.z) - new Vector3(eye.x, 0f, eye.z)).magnitude;
+                    fov = Mathf.Clamp(2f * Mathf.Atan(4.8f / Mathf.Max(1f, far)) * Mathf.Rad2Deg, 38f, 58f) + 2f * u;
+                    eye = KeepLensOffOthers(eye, 1.3f);
+                    break;
+                }
             }
-            else if (index == 2)
-            {
-                // Over his shoulder at the mountain (film s16: from the side at 12 m he, it and the players were specks): he is
-                // in the near frame, the mountain he called up is the middle of it, the players round it are between. It eases
-                // back and up as the wave goes out, so the ring and whoever it reaches stay in.
-                float open = Ease(SnRise, Seconds, t);
-                eye = -dir * (2.2f + 1.2f * open) + side * (1.5f + .5f * open) + Vector3.up * (1.6f + .8f * open);
-                look = Vector3.Lerp(_snSpot, SnFistsOnCourt, .25f) + Vector3.up * (1.3f + .3f * open);
-                fov = 55f + 5f * open;
-                eye = KeepLensOffOthers(eye, 1.3f);
-            }
-            // The slam and the rise knock the lens.
-            float knock = Flash(t, SnSlam, .12f) * .04f + Flash(t, SnRise, .18f) * .09f;
+            // The slam and the rise knock the lens; the court's rumble grows under B2 as the bulge swells.
+            float knock = Flash(t, SnSlam, .12f) * .035f + Flash(t, SnRise + .05f, .2f) * .09f;
+            if (index == 3 && t < SnRise) knock += .028f * Ease(SnBulge, SnRise, t);
             if (knock > 0) eye += new Vector3(Mathf.Sin(t * 83f), Mathf.Sin(t * 71f), 0) * knock;
         }
 
-        /// <summary>The court steps back while the lava runs, flares on the slam and the rise, and comes back for play.</summary>
+        /// <summary>
+        /// Of two places for the lens, the one whose line of sight to <paramref name="target"/> passes furthest from every staged
+        /// player (film r2: a player stood between B2's lens and the spot and hid the whole birth). Chosen on the players'
+        /// standing places, so it never flips during a shot.
+        /// </summary>
+        private Vector3 SnClearOf(Vector3 target, Vector3 a, Vector3 b)
+        {
+            float Clear(Vector3 eye)
+            {
+                float worst = float.MaxValue;
+                foreach (var o in _others)
+                {
+                    var p = o.Home + Vector3.up * .9f; var seg = target - eye;
+                    float k = Mathf.Clamp01(Vector3.Dot(p - eye, seg) / Mathf.Max(.01f, seg.sqrMagnitude));
+                    worst = Mathf.Min(worst, (eye + seg * k - p).magnitude);
+                }
+                return worst;
+            }
+            return Clear(b) > Clear(a) + .3f ? b : a;
+        }
+
+        /// <summary>The street steps back a little under his sky (`SeanSkyGrade` does the red), flares on the slam and the rise, and
+        /// is the street exactly on the last frame.</summary>
         private void SeanGrade(float t, out float brightness, out float saturation)
         {
-            float on = Ease(0, .25f, t) * (1 - Ease(Seconds - .4f, Seconds, t));
-            brightness = Mathf.Lerp(1f, .8f, on) * (1 + .2f * Flash(t, SnSlam, .1f) + .3f * Flash(t, SnRise + .03f, .12f));
-            saturation = Mathf.Lerp(1f, .9f, on);
+            float on = Ease(0, .25f, t) * (1 - Ease(SnHome, Seconds - .03f, t));
+            brightness = Mathf.Lerp(1f, .93f, on) * (1 + .15f * Flash(t, SnSlam, .1f) + .22f * Flash(t, SnRise + .05f, .14f));
+            saturation = Mathf.Lerp(1f, .96f, on);
         }
 
         /// <summary>
@@ -517,8 +774,7 @@ namespace TumbangPreso.Visual
         {
             float home = Ease(SnHome, Seconds - .06f, t);
             // ⚠️ SET BOTH WAYS, EVERY CALL. The phase samples each shot at its end to judge it (`UltimatePhaseView.ChooseShot`):
-            // the last one's end is past `SnHome`, and a one-way "off" hid his copy for the whole cutscene in a match (film v5:
-            // shot A framed an empty court). Drawn until the lens is nearly in his eyes, at any time asked.
+            // the last one's end is past `SnHome`, and a one-way "off" hid his copy for the whole cutscene in a match (film v5).
             bool drawn = home <= .7f;
             foreach (var surface in _bodyRenderers) if (surface != null) surface.enabled = drawn;
             if (!drawn) foreach (var f in _snFists) if (f.Model != null) f.Model.gameObject.SetActive(false);
@@ -527,6 +783,23 @@ namespace TumbangPreso.Visual
             eye = Vector3.Lerp(eye, eyes, home);
             target = Vector3.Lerp(target, eyes + live.transform.forward * 8f, home);
             fov = Mathf.Lerp(fov, live.fieldOfView, home);
+        }
+
+        /// <summary>Frees what this stage made that the root does not own: the staged volcano's paved and copied meshes, the
+        /// eruption's clouds, this stage's own meshes.</summary>
+        private void SeanDispose()
+        {
+            _snLook?.Dispose(); _snLook = null;
+            _snErupt?.Dispose(); _snErupt = null;
+            _snSlamDust?.Dispose(); _snSlamDust = null;
+            SeanSkyDispose();
+            if (_snLavaFlow != null) ObjectDestroy(_snLavaFlow);
+            if (_snLavaPool != null) ObjectDestroy(_snLavaPool);
+            _snLavaFlow = _snLavaPool = null;
+            foreach (var c in _snVents) c?.Dispose();
+            _snVents.Clear();
+            foreach (var m in _snMeshes) if (m != null) ObjectDestroy(m);
+            _snMeshes.Clear();
         }
 
         /// <summary>An unlit backdrop piece, so the court's light never greys it. Cheska's stage uses it.</summary>

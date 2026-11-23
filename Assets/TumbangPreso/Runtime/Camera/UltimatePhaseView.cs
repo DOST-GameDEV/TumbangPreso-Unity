@@ -200,7 +200,7 @@ namespace TumbangPreso.CameraSystem
             _picture.enabled=SystemInfo.graphicsDeviceType!=GraphicsDeviceType.Null &&
                 (moving?_safeShot:_stillSafe) && _camera!=null && _primary?.Scene!=null;
             if (!_picture.enabled) return;
-            Vector3 eye, target; float fov; int drawnShot = -2;
+            Vector3 eye, target; float fov; int drawnShot = -2; float roll = 0f;
             if(moving)
             {
                 float contentAge = age + _primary.StartAt;
@@ -212,13 +212,15 @@ namespace TumbangPreso.CameraSystem
                 if(_pull!=null&&use>=0)eye=target+(eye-target)*_pull[use];
                 // On the caster's own screen a stage may end by bringing the lens to where their first-person view will be.
                 if(_live!=null&&_primary.Actor.PlayerSlot==_watching)_primary.Scene.HandBackView(contentAge,_duration+_primary.StartAt,_live,ref eye,ref target,ref fov);
+                // A stage may roll its lens for a shot (`HeroIntroductionScene.RollAt`); 0 everywhere else.
+                roll=_primary.Scene.RollAt(contentAge);
             }
             else
             {
                 _primary.Scene.StillShot(out eye,out target,out fov);
                 if(_stillMirror)eye=target+Vector3.Reflect(eye-target,_primary.Actor.transform.right);
             }
-            _camera.transform.position=eye; _camera.transform.LookAt(target); _camera.fieldOfView=fov;
+            _camera.transform.position=eye; _camera.transform.LookAt(target); if(roll!=0f)_camera.transform.Rotate(0f,0f,roll,Space.Self); _camera.fieldOfView=fov;
             LastAge=age;LastShot=drawnShot;LastEye=eye;
             RestoreLiveVisibility();
             try

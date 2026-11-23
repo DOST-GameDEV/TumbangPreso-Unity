@@ -232,8 +232,14 @@ namespace TumbangPreso.Core
         public const float UltimateCost = 15.0f;
 
         /// <summary>The cutscene. The method's cap is 6.5 s; Dante's lesson (*"dont force it to 7 seconds"*) is to end it as the
-        /// power launches, so it ends as the mountain bursts up and its wave heads for the players.</summary>
-        public const float CutsceneSeconds = 5.0f;
+        /// power launches, so it ends as its wave reaches the players. 6.0 since the rebuild round the live volcano
+        /// (2026-11-23): the extra second is all in THE RISE, where at 5.0 the mountain stood 1.45 s before the lens left,
+        /// too short to see its wave reach anyone. 7.0 since v4 (owner 2026-11-23, of v3: "the current shots really dont sell
+        /// the fact that he creates a whole volcano. the sky should turn red", and "more unique camera views/shots.. from a
+        /// drone/sky view"): the second goes to the drone over the court and the lens up in the clouds, the two vantages that
+        /// carry the scale; it rides on the protocol bump Zack's 7.0 s took. `Resources/UltimateIntros/sean.txt` says the same
+        /// number.</summary>
+        public const float CutsceneSeconds = 7.0f;
 
         /// <summary>Where he may put it: held where he looks, between these (as MAKILING'S EMBRACE).</summary>
         public const float VolcanoAimMinRange = 3.0f;

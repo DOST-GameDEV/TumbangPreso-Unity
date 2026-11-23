@@ -52,6 +52,11 @@ namespace TumbangPreso.Visual
         private readonly CharacterMotor _source;
         private readonly Vector3 _aim;
         public GameObject Root => _root;
+        // ⚠️ A DUTCH ANGLE (owner, 2026-11-23): a stage that wants the lens rolled sets this, in degrees on its own clock;
+        // null on every other stage, whose lens stays level exactly as before. Reduced effects keep the lens level.
+        private Func<float, float> _roll;
+        /// <summary>The lens's roll in degrees at this moment of the shared clock (0 unless the stage asks for one).</summary>
+        public float RollAt(float seconds) => _roll != null && !_reducedEffects ? _roll(Local(seconds)) : 0f;
         public UltimatePerformance Performance => _performance;
         public float Seconds => _performance?.Seconds ?? UltimatePerformance.DefaultSeconds;
         /// <summary>True once this introduction has spoken the hero's own line inside the gesture.</summary>
@@ -552,6 +557,7 @@ namespace TumbangPreso.Visual
             // Paete's opens the sky through the map for her (`NearFade.OpenSky`); it must never outlive him.
             if (_hero == "paete") NearFade.CloseSky();
             if (_hero == "nemu") NemuDispose();
+            if (_hero == "sean") SeanDispose();
             if (_hero == "dante") LonghornDispose();
             _amFace?.Dispose(); _amFace = null;
             _amPaintedFace?.Dispose(); _amPaintedFace = null;

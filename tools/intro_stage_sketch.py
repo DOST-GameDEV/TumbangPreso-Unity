@@ -140,21 +140,51 @@ def phaister(t, S, hands, seconds, cam):
 
 
 def sean(t, S, hands, seconds, cam):
+    # MAYON AWAKENS v4 (`HeroIntroductionScene.Sean.cs`, `SeanSky.cs`), sketched for a spot 7 m ahead: the court, the sky
+    # turning red over him (0.80 to 1.50) and back over the home move, the giant Mayon on the horizon toward the spot, the
+    # river (1.75 to 3.05), the crack web, the cone rising at 3.60, the ash column, the players.
     L = _leave(t, seconds)
-    dusk = ease(.6, 1.3, t) * L
-    S.wall(0, 1.0, (.14, .05, .03), .88 * dusk)
-    S.wall(1.0, 2.3, (.96, .45, .12), .62 * dusk)
-    S.wall(2.3, 11, (.21, .08, .05), .86 * dusk)
-    seats = [(-2.6, .4, -4.2), (1.9, .2, -5.3), (-4.6, .7, -2.2), (3.9, .5, -2.9), (-.4, .1, -6.2), (5.2, .3, .6)]
-    for i, s in enumerate(seats):
-        born = .8 + i * .18
-        age = max(0, t - born)
-        at = np.array(s) + [0, age * (.55 + (i % 3) * .12), 0]
-        S.disc(at, .25, cam, (1, .78, .3), ease(born, born + .4, t) * dusk)
-    centre = (hands["left"] + hands["right"]) / 2 + [0, .12, .16]
-    fill = ease(1.7, 1.95, t) * (1 - ease(2.95, 3.1, t))
-    laid = ease(.85, 1.65, t)
-    S.disc(centre, .23, cam, (1, .55, .12), max(laid * .6, fill) * L)
+    turn = ease(.80, 1.50, t) * (1 - ease(6.35, 6.95, t))
+    S.box((0, -.05, 4), (40, .1, 40), (.62, .55, .48) if turn < .5 else (.42, .22, .16), 1.0)
+    # The sky: blood red overhead, burning orange at the horizon (a far wall, sketched as one).
+    S.wall(0, 6, (.95, .42, .12), .9 * turn, radius=60)
+    S.wall(6, 40, (.42, .08, .05), .92 * turn, radius=60)
+    S.wall(40, 60, (.20, .05, .04), .95 * turn, radius=60)
+    # The giant Mayon toward the spot.
+    import math as m
+    for k in range(10):
+        y0, y1 = k * 2.4, (k + 1) * 2.4
+        w0, w1 = (24 - y0) * 1.7, (24 - y1) * 1.7
+        S.box((0, (y0 + y1) / 2, 57), ((w0 + w1) / 2, 2.4, 1), (.10, .04, .04), .95 * turn)
+    S.disc((0, 24.5, 56.5), 1.2, cam, (1, .55, .15), ease(1.2, 1.5, t) * turn)
+    # The river and the crack web.
+    head = min(1, max(0, (t - 1.75) / 1.30))
+    drain = ease(3.6, 4.1, t)
+    if head > 0 and drain < 1:
+        S.line((0, .03, .55), (0, .03, .55 + 6.45 * head), .55 * (1 - drain), (1, .5, .1), 1)
+    web = ease(1.7, 2.6, t) * (1 - drain)
+    for i in range(9):
+        a = m.radians(i * 40 + 17)
+        r = 3 + (i * 37 % 5) * .55
+        S.line((0, .03, .55), (m.sin(a) * r * web, .03, .55 + m.cos(a) * r * web), .18, (1, .45, .1), 1 if web > .02 else 0)
+    # The cone: 3 m, crater 3.05, rising on play's curve.
+    u = min(1, max(0, (t - 3.6) / .45))
+    up = 0 if t < 3.6 else 1 - (1 - u) ** 3 + .12 * m.sin(u * m.pi)
+    if up > 0:
+        for k in range(6):
+            y0, y1 = k * .5, (k + 1) * .5
+            S.box((0, (y0 + y1) / 2 - 3 * (1 - up), 7), ((3.1 - y0) * 1.3, .5, (3.1 - y0) * 1.3), (.25, .14, .11), 1)
+    # The ash column: big balls climbing to 20 m, emitting 3.65 to 5.4.
+    for i in range(14):
+        for born in (3.65 + i * .12,):
+            age = t - born
+            if age < 0 or age > 1.6 or born > 5.4:
+                continue
+            y = 3 + age * 11
+            S.disc((m.sin(i) * age, y, 7 + m.cos(i * 1.3) * age), .8 + 2.2 * age, cam, (.30, .18, .16), .95)
+    # Players.
+    for x, z in ((-3, 6), (3.5, 9.5), (2.5, 3.5)):
+        S.box((x, .9, z), (.6, 1.8, .4), (.2, .3, .7), L)
 
 
 def zack(t, S, hands, seconds, cam):

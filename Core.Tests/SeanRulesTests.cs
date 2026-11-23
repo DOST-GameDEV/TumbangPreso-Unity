@@ -20,8 +20,9 @@ namespace TumbangPreso.Core.Tests
             Assert.Equal(9.0f, SeanRules.VolcanoBlastRadius);
             Assert.Equal(8.0f, SeanRules.MoltenSeconds);
             Assert.Equal(1.2f, SeanRules.VolcanoBombEvery);
-            // The method's cap for a cutscene (`docs/HERO_KIT_METHOD.md` rule 8).
-            Assert.InRange(SeanRules.CutsceneSeconds, 1.0f, 6.5f);
+            // The cutscene: 7.0 s since v4 (the sky turns; the drone and the clouds). The brief's cap for it is 7.5 s.
+            Assert.Equal(7.0f, SeanRules.CutsceneSeconds);
+            Assert.InRange(SeanRules.CutsceneSeconds, 1.0f, 7.5f);
         }
 
         [Fact]

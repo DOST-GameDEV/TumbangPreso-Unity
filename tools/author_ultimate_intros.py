@@ -359,56 +359,99 @@ def phaister():
 
 def _sean(held):
     """
-    MAYON AWAKENS v2, THE MOUNTAIN RISES, 5.0 s (owner 2026-10-24: *"the ult of sean doesnt earn its place"*, beside Paete's
-    and Phaister's; he chose "The mountain rises", and pointed at Dante's: *"dante has a really good ult"*). Dante's lesson is
-    the shape: the cutscene is the CHARGE-UP, it shows where the power comes from, and it cuts as the power launches at the real
-    players, with play carrying on from that frame. One sentence: the lava in his fists goes into the court, races to the spot
-    he chose, and the mountain bursts up there.
-      A. THE FISTS (0 to 1.5): he drives both fists into the court (0.35); lava wells up out of it and climbs his forearms into
-         the Molten fists (the model he wears in play), his eyes ignite. Where it comes from.
-      B. THE RUN (1.5 to 3.0): the lens races low along the court beside a river of lava running from his fists to the spot;
-         the court there bulges, glows and vents. Where it goes. (The lens is computed from the real spot: `SeanFrame`.)
-      C. THE RISE (3.0 to 5.0): wide and low, him and the spot and the real players: he hauls his fists up and the mountain
-         bursts out of the court (3.1), its wave racing out to 9 m as the cut comes. What it does to them. Play throws them.
-    The last pose is standing with the lava fists, which is how play picks him up. Table lens values for B and C are only
-    the fallbacks for a film with no spot; `HeroIntroductionScene.Sean.cs` places both from the real one.
+    MAYON AWAKENS v4, THE SKY TURNS AND THE MOUNTAIN IS BORN, 7.0 s (owner 2026-11-23, of v3: "i'd like for a more dramatic
+    ultimate cutscene for rago. the current shots really dont sell the fact that he creates a whole volcano. the sky should
+    turn red, with dark clouds etc", and "more unique camera views/shots.. from a drone/sky view"). One sentence: he drives
+    the lava into the court and calls the mountain; the sky answers first, turning blood red over him, and then the court
+    gives birth to a volcano whose ash climbs into that sky and whose wave throws everyone back. The travelling thing is
+    still the lava, left to right in every cut.
+      A. THE FISTS (0 to 1.7): a dip, up onto his toes, the SLAM (0.45), the hips still dropping, heaves while the lava
+         climbs his forearms and the sky turns red over him; his head comes up to it and his eyes ignite (1.45).
+      B. THE RUN (1.7 to 3.6): he shoves in surges while the river races across the court to the spot; he digs in (3.35).
+      C. THE RISE (3.6 to 7.0): he tears his fists up as the mountain punches up (3.6), overshoots onto his toes, lands with
+         a bounce and stands Molten, which is how play picks him up.
+    WHY 7.0 AND NOT 6.0: the second goes to the two new vantages that carry the scale, the drone over the court in B and the
+    lens up in the clouds in C (`docs/HERO_KIT_METHOD.md` section 6, rule 6: held where it is the point). Every lens is
+    computed from the real spot (`SeanFrame`); the table's shots are the fallbacks for a stage with no spot, written for a
+    spot 7 m ahead, which is also what the storyboard sketch draws.
     """
-    p = Performance("sean-held" if held else "sean", 5.0)
+    p = Performance("sean-held" if held else "sean", 7.0)
     carry = (18, 28, -6)
+
+    def arms(left, right=None):
+        return dict(left=left, right=carry if held else (right if right is not None else left))
+
     rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
-    # The wind-up: a quick crouch, both fists drawn up to the chest.
-    crouch = Pose(torso=(14, 0, 0), head=(4, 0, 0), left=(60, 20, 0), right=carry if held else (60, 20, 0),
-                  legs=((14, 14), (-10, 14)))
-    # The slam: folded over, both fists driven into the court in front of him.
-    slam = Pose(torso=(48, 0, 0), head=(-22, 0, 0), left=(70, 12, 0), right=carry if held else (70, 12, 0),
-                legs=((22, 14), (-18, 14)))
-    # Pushing: still down, head up at where the lava is going.
-    push = slam.but(torso=(40, 0, 0), head=(-30, 0, 0))
-    # The haul: up off the court, fists swept up past his face to call the mountain up.
-    haul = Pose(torso=(-10, 0, 0), head=(-14, 0, 0), left=(150, 30, 0), right=carry if held else (150, 30, 0),
-                legs=((6, 13), (-6, 13)))
+    # Anticipation, 1: a quick dip down, fists drawn back to his hips.
+    dip = Pose(torso=(10, 0, 0), head=(6, 0, 0), legs=((12, 13), (-8, 13)), **arms((-14, 20, 0)))
+    # Anticipation, 2: up onto his toes, leaning back, both fists high over his head.
+    wind = Pose(torso=(-16, 0, 0), head=(-12, 0, 0), legs=((4, 12), (-6, 12)), **arms((172, 22, 0)))
+    # The slam: folded over, both fists driven into the court in front of him, legs braced wide.
+    slam = Pose(torso=(50, 0, 0), head=(-20, 0, 0), legs=((24, 16), (-20, 16)), **arms((72, 12, 0)))
+    # Follow-through: the weight keeps going after the fists stop; the head whips down past the pose.
+    through = slam.but(torso=(57, 0, 0), head=(-8, 0, 0))
+    settle = slam.but(torso=(47, 0, 0), head=(-26, 0, 0))
+    # Heaving: shoulders up (in) and down (out) as the lava climbs him. The last lifts his head to the sky as it turns.
+    heave_in = slam.but(torso=(43, 0, 0), head=(-29, 0, 0), **arms((78, 12, 0)))
+    heave_out = slam.but(torso=(51, 0, 0), head=(-22, 0, 0), **arms((68, 12, 0)))
+    look_up = slam.but(torso=(36, 0, 0), head=(-40, 0, 0), **arms((76, 12, 0)))
+    # Pushing it away: still down, head up at where the lava is going, arms driving forward, in surges.
+    push = Pose(torso=(40, 0, 0), head=(-32, 0, 0), legs=((24, 16), (-20, 16)), **arms((80, 12, 0)))
+    surge = push.but(torso=(46, 0, 0), head=(-27, 0, 0), **arms((72, 12, 0)))
+    # Digging in before the haul: lower, fists flat into the court.
+    dig = Pose(torso=(56, 0, 0), head=(-16, 0, 0), legs=((28, 17), (-24, 17)), **arms((60, 14, 0)))
+    # The haul: up off the court, fists torn up past his face to call the mountain up; past it onto his toes.
+    haul = Pose(torso=(-12, 0, 0), head=(-18, 0, 0), legs=((6, 13), (-6, 13)), **arms((152, 30, 0)))
+    over = haul.but(torso=(-17, 0, 0), head=(-22, 0, 0), **arms((166, 33, 0)))
+    # Landing out of it: fists swung down past the stand, a little bounce.
+    land = Pose(torso=(14, 0, 0), head=(4, 0, 0), legs=((6, 12), (-6, 12)), **arms((18, 26, 0)))
     # Standing out of it, Molten, fists low and ready: the first frame of play.
-    stand = Pose(torso=(8, 0, 0), head=(0, 0, 0), left=(30, 24, 0), right=carry if held else (30, 24, 0),
-                 legs=((4, 11), (-4, 11)))
+    stand = Pose(torso=(8, 0, 0), head=(0, 0, 0), legs=((4, 11), (-4, 11)), **arms((30, 24, 0)))
 
     p.key(0, rest)
-    p.key(.22, crouch)
-    p.key(.35, slam, punch=True)
-    p.hold(.35, 1.2, slam)
-    p.key(1.5, push)
-    p.hold(1.5, 2.8, push)
-    p.key(3.1, haul, punch=True)
-    p.hold(3.1, 3.5, haul)
-    p.key(3.95, stand)
-    p.hold(3.95, 5.0, stand)
+    p.key(.12, dip)
+    p.key(.30, wind)
+    p.key(.45, slam, punch=True)
+    p.key(.57, through)
+    p.key(.74, settle)
+    p.key(.95, heave_in)
+    p.key(1.15, heave_out)
+    p.key(1.36, heave_in)
+    p.key(1.52, look_up)
+    p.key(1.75, surge, punch=True)
+    p.key(2.03, push)
+    p.key(2.32, surge)
+    p.key(2.62, push)
+    p.key(2.95, surge)
+    p.key(3.35, dig)
+    p.key(3.60, haul, punch=True)
+    p.key(3.76, over)
+    p.hold(3.76, 4.00, over)
+    p.key(4.25, land)
+    p.key(4.55, stand)
+    p.hold(4.55, 7.0, stand)
+    # The weight: down in the dip, up on his toes in the wind-up, the hips still dropping after the blow, down when he digs
+    # in, up off the court on the haul, down into the landing, and home.
+    for t, m in ((0, 0), (.12, -.05), (.30, .07), (.45, -.10), (.57, -.15), (.74, -.12), (1.7, -.12), (2.95, -.12),
+                 (3.35, -.18), (3.60, .06), (3.76, .09), (4.00, .06), (4.25, -.06), (4.55, 0), (7.0, 0)):
+        p.rise(t, m)
 
     side = -1 if held else 1
-    # A: low and in front, a little off his free side: the fists going in and the lava climbing them, his face over them.
-    p.shot(0, 1.5, (-side * .9, .55, 2.6), (0, .7, .3), 50, eye_to=(-side * .7, .65, 2.2), look_to=(0, .8, .3), fov_to=46)
-    # B: racing along the court beside the river (fallback: down the lane ahead of him).
-    p.shot(1.5, 3.0, (side * 1.4, .6, 1.5), (0, .3, 5.0), 52, eye_to=(side * 1.4, .7, 4.5), look_to=(0, .4, 7.0), fov_to=52)
-    # C: wide and low from the side, him and the mountain both (fallback: a spot 6 m ahead).
-    p.shot(3.0, 5.0, (side * 7.0, 1.4, 2.0), (0, 1.4, 3.0), 55, eye_to=(side * 8.0, 1.8, 1.5), look_to=(0, 1.3, 3.0), fov_to=58)
+    # Fallbacks only: `HeroIntroductionScene.Sean.cs` places every one of these from the real spot and his body. Written for
+    # a spot 7 m ahead; the lens always stands on the right of the line from his fists to it (left with the slipper).
+    # A1 the blow: low at court level in front of his fists, looking up at him.
+    p.shot(0, .70, (-side * .85, .22, 1.5), (0, .55, .45), 58, eye_to=(-side * .75, .24, 1.35), fov_to=56)
+    # A2 the sky turns: worm's-eye under his fists, looking up past his face into the sky behind him.
+    p.shot(.70, 1.70, (side * .35, .30, 1.55), (0, 2.3, -.2), 62, eye_to=(side * .45, .45, 1.75), look_to=(0, 2.9, -.9), fov_to=64,
+           close=True)
+    # B1 the drone: high on the right of the line, looking down, riding the river to the spot.
+    p.shot(1.70, 2.95, (side * 6.0, 10.5, -1.5), (0, 0, 2.0), 52, eye_to=(side * 6.0, 9.0, 3.5), look_to=(0, 0, 6.2))
+    # B2 the foot: worm's-eye 3 m off the spot; the cone punches up past it.
+    p.shot(2.95, 4.05, (side * 2.9, .25, 5.6), (0, .6, 7.0), 58, look_to=(0, 3.2, 7.0), fov_to=72)
+    # C1 from the clouds: 22 m up beyond the spot, looking down at the column climbing toward the lens.
+    p.shot(4.05, 5.05, (side * 8.0, 22.0, 10.0), (0, 2.0, 5.0), 50, eye_to=(side * 7.5, 20.0, 9.5), fov_to=52)
+    # C2 the hero: low beside and behind him, looking up past him at the summit.
+    p.shot(5.05, 7.0, (side * 1.3, .5, -1.1), (-side * .3, 2.0, 7.0), 50, eye_to=(side * 1.6, .7, -1.6), fov_to=52)
     p.locked((side * 2.6, 1.8, 6.0), (0, 1.0, 0), 56)
     return p
 
