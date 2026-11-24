@@ -141,24 +141,28 @@ namespace TumbangPreso.UI.Hub
             blocker.color = deep; blocker.raycastTarget = true;
             root.gameObject.AddComponent<HubVignetteHolder>();
 
-            var card = OwnerUiLayout.Rect(root, "MapCard").gameObject.AddComponent<RawImage>();
+            bool mobile = Application.isMobilePlatform;
+            var content = mobile ? UiSafeArea.Content(canvas, "LoadingSafeArea") : root;
+            var card = OwnerUiLayout.Rect(content, "MapCard").gameObject.AddComponent<RawImage>();
             card.raycastTarget = false;
             card.rectTransform.anchorMin = card.rectTransform.anchorMax = card.rectTransform.pivot = Vector2.one * .5f;
             var fitter = card.gameObject.AddComponent<AspectRatioFitter>();
-            fitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+            // The map name and logo are painted into the card and need both edges on tall phones.
+            fitter.aspectMode = mobile ? AspectRatioFitter.AspectMode.FitInParent : AspectRatioFitter.AspectMode.EnvelopeParent;
             card.texture = CardFor(_scene);
             if (card.texture != null) fitter.aspectRatio = card.texture.width / (float)card.texture.height;
             else
             {
                 // A map without a card still says where the match is.
                 card.enabled = false;
-                var name = HubKit.Text(root, "Heading", SceneFlow.PreviewFor(_scene).Name, 150, true, HubBoard.Colour("#E1D2B7"), TextAnchor.MiddleCenter);
+                var name = HubKit.Text(content, "Heading", SceneFlow.PreviewFor(_scene).Name, 150, true, HubBoard.Colour("#E1D2B7"), TextAnchor.MiddleCenter);
                 HubKit.Place(name.rectTransform, HubKit.Centre, new Vector2(0, 70), new Vector2(1600, 190));
                 HubKit.Fit(name, 1600);
             }
 
             // The boot kit's sunk track holding a lime pill that grows with the work (`boot_record.py`).
-            var design = OwnerUiLayout.DesignArea(root, "MapLoadingComposition");
+            var design = OwnerUiLayout.DesignArea(content, "MapLoadingComposition");
+            content.GetComponent<UiSafeArea>()?.KeepDesignInside(design);
             var track = HubKnit.Plate(design, "LoadingProgressTrack", Knit.Track);
             OwnerUiLayout.Place(track, 750, 990, 420, 58);
             _fillClip = HubKit.Rect(track, "ActualProgressClip");

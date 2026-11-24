@@ -101,7 +101,8 @@ namespace TumbangPreso
             if (touch)
             {
                 var phoneHeader = OwnerRow(card, "PhoneLessonHeader", InputLayer.TouchMetrics.MinTargetUnits);
-                phoneHeader.SetAsFirstSibling();
+                // Decorative layers must paint first, while this remains the first layout row.
+                phoneHeader.SetSiblingIndex(headerBox.transform.GetSiblingIndex()+1);
                 _counter.transform.SetParent(phoneHeader, false);
                 OwnerUiLayout.Place(_counter.rectTransform, 0, 0, 520, 42); _counter.alignment = TextAnchor.MiddleLeft;
                 _title.transform.SetParent(phoneHeader, false);

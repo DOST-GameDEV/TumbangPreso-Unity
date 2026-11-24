@@ -114,7 +114,10 @@ namespace TumbangPreso.UI
             var canvas = _detail.gameObject.AddComponent<Canvas>(); canvas.overrideSorting = true; canvas.sortingOrder = 310;
             canvas.vertexColorAlwaysGammaSpace = true; _detail.gameObject.AddComponent<OwnerUiCanvas>();
             _detail.gameObject.AddComponent<GraphicRaycaster>();
-            Plate(_detail, "ReferencePaper", "ref-frame-flat", new Vector4(18,18,18,18), 0).raycastTarget = true;
+            var backing = OwnerUiLayout.Rect(_detail, "ReferenceBacking").gameObject.AddComponent<HudCard>();
+            OwnerUiLayout.Fill(backing.rectTransform);
+            backing.Glass(new Color(.10f, .09f, .13f, .96f), 0).raycastTarget = true;
+            Plate(_detail, "ReferencePaper", "ref-frame-flat", new Vector4(18,18,18,18), 0);
             var header = Plate(_detail, "PhonePowerHeader", "ref-head", new Vector4(18,18,18,18), 0);
             header.rectTransform.anchorMin = Vector2.up;
             header.rectTransform.anchorMax = Vector2.one;
