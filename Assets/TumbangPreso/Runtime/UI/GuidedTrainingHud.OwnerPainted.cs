@@ -43,7 +43,9 @@ namespace TumbangPreso
             // The F1 plates' stroke and slab, with their weave inside at its own scale, cropped not stretched, as see-through as they are.
             KitPanelWeave.On(card);
             // The dark grey boxes (owner, 2026-11-08): one behind where you are, one behind how to leave.
-            KitPanelWeave.Box(card,"HeaderBox",true,94);KitPanelWeave.Box(card,"FooterBox",false,92);
+            var headerBox=KitPanelWeave.Box(card,"HeaderBox",true,94);
+            if (touch) headerBox.rectTransform.offsetMin = new Vector2(0,-168);
+            else KitPanelWeave.Box(card,"FooterBox",false,92);
             var edge=OwnerUiLayout.Rect(card,"TrainingEdge").gameObject.AddComponent<Image>();
             edge.gameObject.AddComponent<LayoutElement>().ignoreLayout=true;edge.raycastTarget=false;edge.color=Color.clear;
             edge.rectTransform.anchorMin=Vector2.zero;edge.rectTransform.anchorMax=new Vector2(0,1);
@@ -65,7 +67,7 @@ namespace TumbangPreso
             var railTrack=rail.gameObject.AddComponent<Image>();railTrack.color=TrainingTrack;railTrack.raycastTarget=false;
             _route=OwnerUiLayout.Rect(rail,"RouteFill").gameObject.AddComponent<Image>();
             OwnerUiLayout.Fill(_route.rectTransform);_route.color=TrainingDone;_route.raycastTarget=false;_route.rectTransform.anchorMax=new Vector2(0,1);
-            OwnerRow(card,"HeaderGap",40);
+            OwnerRow(card,"HeaderGap",touch ? 16 : 40);
             // The lesson: its name biggest, the sentence under it, then what to press.
             _title=OwnerUiLayout.Text(card,"LessonTitle","TRAINING",48,OwnerUiLayout.TypeRole.Display);
             _title.color=TrainingInk;_title.gameObject.AddComponent<LayoutElement>().preferredHeight=56;_title.verticalOverflow=VerticalWrapMode.Overflow;
@@ -103,9 +105,13 @@ namespace TumbangPreso
                 _counter.transform.SetParent(phoneHeader, false);
                 OwnerUiLayout.Place(_counter.rectTransform, 0, 0, 520, 42); _counter.alignment = TextAnchor.MiddleLeft;
                 _title.transform.SetParent(phoneHeader, false);
-                OwnerUiLayout.Place(_title.rectTransform, 0, 48, 520, 90);
+                OwnerUiLayout.Place(_title.rectTransform, 0, 48, 510, 90);
+                _title.resizeTextForBestFit = true;
+                _title.resizeTextMinSize = 32;
+                _title.resizeTextMaxSize = 48;
+                _title.verticalOverflow = VerticalWrapMode.Truncate;
                 footer.SetParent(phoneHeader, false);
-                OwnerUiLayout.Place(footer, 540, 0, 308, InputLayer.TouchMetrics.MinTargetUnits);
+                OwnerUiLayout.Place(footer, 528, 0, 308, InputLayer.TouchMetrics.MinTargetUnits);
                 OwnerUiLayout.Place((RectTransform)skip.transform, 0, 0, 144, 144);
                 OwnerUiLayout.Place(_ownerQuit, 164, 0, 144, 144);
                 _ownerSkipLabel.text = "SKIP";

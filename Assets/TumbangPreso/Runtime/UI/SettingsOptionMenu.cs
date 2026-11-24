@@ -56,7 +56,11 @@ namespace TumbangPreso.UI
                 Mathf.Clamp(local.y-height*.5f-8,bounds.yMin+height*.5f+18,bounds.yMax-height*.5f-18));
             var paper=box.gameObject.AddComponent<Image>();paper.color=touch ? SettingsPalette.Background : SettingsPalette.Surface;paper.raycastTarget=true;
             var column=OwnerScrollColumn.Build(box,"ChoiceList",new Rect(22,20,522,height-40),out var scroll);
-            if (touch) column.GetComponent<VerticalLayoutGroup>().padding.bottom = 16;
+            if (touch)
+            {
+                var layout = column.GetComponent<VerticalLayoutGroup>();
+                layout.padding.top = layout.padding.bottom = Mathf.CeilToInt(InputLayer.TouchMetrics.MinGapUnits);
+            }
             Button selectedButton=null;
             for(int i=0;i<_options.Length;i++)
             {
@@ -68,16 +72,19 @@ namespace TumbangPreso.UI
                 if(i==_selected)selectedButton=button;
             }
             SettingsReadingLayout.Apply(_popup, null);
+            var focus = _popup.GetComponent<InputLayer.ScreenFocus>();
+            focus.Rebuild();
             if (touch)
             {
-                // The touch floor can leave the rows taller than the estimate above: fit the box to what they came to.
+                // Focus can expand the rows to the thumb target before we size the viewport.
+                Canvas.ForceUpdateCanvases();
                 LayoutRebuilder.ForceRebuildLayoutImmediate(column);
-                height=Mathf.Min(720,column.rect.height+40);box.sizeDelta=new Vector2(566,height);
+                height=Mathf.Min(720, bounds.height-36, column.rect.height+40);box.sizeDelta=new Vector2(566,height);
                 box.anchoredPosition=new Vector2(box.anchoredPosition.x,Mathf.Clamp(local.y-height*.5f-8,bounds.yMin+height*.5f+18,bounds.yMax-height*.5f-18));
                 OwnerUiLayout.Place((RectTransform)scroll.transform,22,20,522,height-40);
+                Canvas.ForceUpdateCanvases();
                 scroll.verticalNormalizedPosition=1;
             }
-            _popup.GetComponent<InputLayer.ScreenFocus>().Rebuild();
             selectedButton?.Select();
             ScreenTakeover.Register(this,()=>_popup!=null && _popup.gameObject.activeInHierarchy);
         }

@@ -46,6 +46,14 @@ the current source catalog; do not reactivate retired maps to satisfy old probes
 
 ## Tools and qualification
 
+The Android builder is `TumbangPreso.EditorTools.GameBuilder.BuildAndroid`.
+It uses Unity's installed Android module, ARM64 IL2CPP and a landscape APK.
+The phone UI uses the same uGUI canvas and input actions as the rest of the
+game, with touch-specific layouts. SettingsOptionMenu, GuidedTrainingHud and
+TumpPowerReadout own the device picker, guided prompts and held powers panel.
+The local `tumbangpreso` emulator advertises ARM64 translation on an x86_64
+Android 14 image. Its results do not measure physical-phone performance.
+
 Python/.NET and the installed matching Unity Editor support validation.
 No connected Unity MCP was available during this audit; the manifest's pipeline
 package alone does not establish a connected tool. Use [TESTING](TESTING.md) and
