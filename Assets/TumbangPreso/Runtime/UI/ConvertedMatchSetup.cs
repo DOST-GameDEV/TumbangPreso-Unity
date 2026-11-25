@@ -2515,9 +2515,8 @@ namespace TumbangPreso.UI
             //
             // ⚠️⚠️ AND THE TWO INSTRUCTIONS DO NOT ACTUALLY CONFLICT, WHICH IS WHY BOTH ARE
             // OBEYED. His sentence was about who STARTS a match, and READY does not start one:
-            // `MatchRpc.HostStartMatch` is reached only from `OnStartPressed`, only on the host,
-            // and no tally gates it. READY is now a signal to the host that you are set, which is
-            // what the tick over your head was always drawing. Nobody is blocked by forgetting it.
+            // Custom rooms require READY from seated guests before the host can start.
+            // The host still chooses when to start the match.
             if (IsLobby && GameLaunch.Spectator) return;
 
             // ⚠️ THE PRESS CARRIES ITS STATE, because the button is a toggle and the message was
@@ -2621,6 +2620,12 @@ namespace TumbangPreso.UI
                 }
                 else
                 {
+                    if (!Hub.HubQueueWatch.QueueRoom && MatchRpc.Instance?.LobbyGuestsReady == false)
+                    {
+                        SetAlert("Guests must ready up.");
+                        return;
+                    }
+
                     // ⚠️ NO SECOND `SceneFlow.StartMatch()` HERE. `HostStartMatch` fires
                     // `OnMatchStarted`, which this screen answers with the load. Calling it again
                     // on the next line queued a second load of the same arena in the same frame.
@@ -3857,11 +3862,13 @@ namespace TumbangPreso.UI
                     // ⚠️ THE AUTHORED SIZE IS PASSED SO THE SHORT STRING IS UNAFFECTED. It only
                     // steps down while the text is wider than the plate, so START MATCH still
                     // draws at full size and only the long state shrinks.
-                    SetFittedButtonLabel("StartButton", fullWithoutBots
-                        ? "START MATCH"
-                        : "WAITING FOR 4 PLAYERS", MaxButtonFontSize);
+                    bool guestsReady = Hub.HubQueueWatch.QueueRoom || MatchRpc.Instance?.LobbyGuestsReady == true;
+                    string startLabel = fullWithoutBots
+                        ? guestsReady ? "START MATCH" : "WAITING FOR READY"
+                        : "WAITING FOR 4 PLAYERS";
+                    SetFittedButtonLabel("StartButton", startLabel, MaxButtonFontSize);
                     var btn = startNode.GetComponent<Button>();
-                    if (btn != null) btn.interactable = fullWithoutBots;
+                    if (btn != null) btn.interactable = fullWithoutBots && guestsReady;
                 }
                 return;
             }

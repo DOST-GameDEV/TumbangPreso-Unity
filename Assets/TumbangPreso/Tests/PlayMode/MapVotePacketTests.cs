@@ -157,6 +157,24 @@ namespace TumbangPreso.PlayTests
         [Test]
         public void CustomStartSelectsCharactersBeforeOpeningTheBallot()
         {
+            _session.Lobby.Admit(2, "watcher", "Watcher", out _, spectate: true);
+            _rpc.HostBeginCharacterSelection();
+            Assert.IsFalse(_rpc.CharacterSelecting);
+
+            void SetGuestReady(bool ready)
+            {
+                using var writer = new FastBufferWriter(16, Allocator.Temp);
+                writer.WriteValueSafe(0L);
+                writer.WriteValueSafe((byte)(ready ? 1 : 0));
+                Deliver("OnDeclareReadyMsg", 1, writer);
+            }
+
+            SetGuestReady(true);
+            SetGuestReady(false);
+            _rpc.HostBeginCharacterSelection();
+            Assert.IsFalse(_rpc.CharacterSelecting);
+
+            SetGuestReady(true);
             _rpc.HostBeginCharacterSelection();
             Assert.IsTrue(_rpc.CharacterSelecting); Assert.IsFalse(_rpc.QueueMapVoting);
             Assert.That(_rpc.CharacterSelectSecondsLeft, Is.InRange(29f, 30f));

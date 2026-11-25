@@ -19,6 +19,7 @@ namespace TumbangPreso.Net
             if (!NetAuthority.IsHost || _characterSelecting || _queueMapVoting || !InPreparationScene()) return;
             var lobby = NetSession.Instance?.Lobby;
             if (lobby == null || lobby.MatchInProgress) return;
+            if (!UI.Hub.HubQueueWatch.QueueRoom && !LobbyGuestsReady) return;
             // A custom room with only spectators has nobody who can pick or vote.
             if (!UI.Hub.HubQueueWatch.QueueRoom && lobby.SeatedPeerCount() == 0)
             {

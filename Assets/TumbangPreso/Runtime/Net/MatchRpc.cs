@@ -1280,9 +1280,8 @@ namespace TumbangPreso.Net
         // never get to press. Readiness is now what it says on the button: an ANSWER, drawn on
         // every screen by `ReadyTally`, that the host reads before choosing its moment.
         //
-        // ⚠️ AND THE HOST IS NOT BLOCKED ON IT EITHER. START stays live whatever the tally says,
-        // because a lobby of one host and three bots is a legitimate match and waiting for a
-        // quorum of one would be a gate with nothing on the other side of it.
+        // Custom rooms check the live guest tally before character selection. A room with
+        // just the host, open seats, or bots already satisfies that check.
         //
         // ⚠️ THERE IS STILL EXACTLY ONE PATH INTO AN ARENA, `HostStartMatch`, so the broadcast
         // that carries every other peer in with it cannot be forgotten on one of them.
@@ -1365,6 +1364,8 @@ namespace TumbangPreso.Net
             var lobby = NetSession.Instance?.Lobby;
             return lobby == null ? 0 : lobby.ReadyVoterCount(NetAuthority.LocalPeerId);
         }
+
+        internal bool LobbyGuestsReady => LobbyReadyCount() == LobbyExpectedReady();
 
         public void BroadcastReadyTally()
         {

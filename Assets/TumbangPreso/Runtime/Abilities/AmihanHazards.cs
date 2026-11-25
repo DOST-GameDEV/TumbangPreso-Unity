@@ -191,11 +191,7 @@ namespace TumbangPreso.Abilities
                 Vector3 flat = p.transform.position - Origin; flat.y = 0f;
                 float flown = afterCutscene ? Mathf.Clamp(CutsceneTail - flat.magnitude * CutsceneHitPerMetre, 0f, hold) : 0f;
                 if (flown > 0f)
-                {
-                    // Where the cutscene's last frame drew them: the same speed, lift and 20 m/s2 as the live throw.
-                    float rise = Mathf.Max(0f, AmihanRules.StormSurgeLift * flown - .5f * Balance.CharacterGravity * flown * flown);
-                    p.ApplyResolvedRelocate(p.transform.position + dir * (AmihanRules.StormSurgeSpeed * flown) + Vector3.up * rise);
-                }
+                    p.ApplyResolvedAirborneRelocate(dir * AmihanRules.StormSurgeSpeed + Vector3.up * AmihanRules.StormSurgeLift, flown);
                 float lift = Mathf.Max(0f, AmihanRules.StormSurgeLift - Balance.CharacterGravity * flown);
                 p.ApplyResolvedCarry(dir * AmihanRules.StormSurgeSpeed + Vector3.up * lift, Mathf.Max(0f, hold - flown));
             }

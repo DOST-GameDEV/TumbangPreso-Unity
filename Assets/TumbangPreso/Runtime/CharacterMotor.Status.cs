@@ -516,6 +516,37 @@ namespace TumbangPreso
             _cc.enabled = false;
             transform.position = position;
             _cc.enabled = true;
+            PublishResolvedRelocation(position);
+        }
+
+        /// <summary>Advances a cutscene's catch-up flight through the same collisions as live movement.</summary>
+        internal void ApplyResolvedAirborneRelocate(Vector3 launchVelocity, float elapsed)
+        {
+            if (!NetAuthority.ShouldResolve() || !MayMutateGameplayState() ||
+                _cc == null || !_cc.enabled || !gameObject.activeInHierarchy || !_cc.detectCollisions ||
+                !Finite(launchVelocity) || !float.IsFinite(elapsed) || elapsed <= 0f) return;
+
+            Vector3 start = transform.position;
+            Vector3 flat = new Vector3(launchVelocity.x, 0f, launchVelocity.z);
+            Vector3 previousOffset = Vector3.zero;
+            int steps = Mathf.CeilToInt(elapsed * 30f);
+            for (int i = 1; i <= steps; i++)
+            {
+                float time = elapsed * i / steps;
+                float rise = Mathf.Max(0f, launchVelocity.y * time - 0.5f * Balance.CharacterGravity * time * time);
+                Vector3 offset = flat * time + Vector3.up * rise;
+                Vector3 current = transform.position;
+                Vector3 next = AIController.ClampToPlayable(current + offset - previousOffset);
+                _cc.Move(next - current);
+                previousOffset = offset;
+            }
+
+            if (transform.position != start)
+                PublishResolvedRelocation(transform.position);
+        }
+
+        private void PublishResolvedRelocation(Vector3 position)
+        {
             _networkTargetPosition = position;
             _networkTargetVelocity = Vector3.zero;
             _networkSmoothVelocity = Vector3.zero;

@@ -423,6 +423,7 @@ namespace TumbangPreso.UI.Hub
         /// <summary>The chat drawer's left edge, measured from the canvas centre.</summary>
         internal const float RoomChatLeft = RoomContentWidth * .5f - ChatWidth;
         internal const float RoomChatWidth = ChatWidth;
+        private const int RoomCodeSize = 60;
 
         private Text _code, _codeCaption, _address, _count, _status, _unreadCount;
         private RectTransform _seats, _playersPanel, _matchCard, _summaryStrip, _networkTag, _statusPlate, _watching;
@@ -493,7 +494,7 @@ namespace TumbangPreso.UI.Hub
 
         /// <summary>
         /// The code is the one fact a host reads out loud, so it is a berry card, top right: the code
-        /// large, the network as a tag (a fact, not a setting), the LAN address beside it.
+        /// large, with a network tag and a separate line for the LAN address.
         /// Pressing it copies the code.
         /// </summary>
         private void BuildTicket()
@@ -503,14 +504,13 @@ namespace TumbangPreso.UI.Hub
             var face = _codeChip.Body;
             _codeCaption = HubKnit.Display(face, "CodeCaption", "ROOM CODE", 28, HubKnit.KitTan);
             HubKnit.In(_codeCaption.rectTransform, 40, 26, 260, 40);
-            _code = HubKnit.Display(face, "Code", "", 60, HubKnit.KitCream);
-            HubKnit.In(_code.rectTransform, 40, 70, 170, 80);
+            _code = HubKnit.Display(face, "Code", "", RoomCodeSize, HubKnit.KitCream);
+            HubKnit.In(_code.rectTransform, 40, 76, 390, 54);
             _networkTag = HubKnit.Tag(face, "NetworkTag", "LAN", Knit.PillGo, 56);
             HubKit.Place(_networkTag, HubKit.TopRight, new Vector2(-30, -20), _networkTag.sizeDelta);
             _networkWord = _networkTag.Find("Face/Label").GetComponent<Text>();
             _address = HubKnit.Words(face, "Address", "", HubStyle.Floor, HubKnit.KitTan, TextAnchor.MiddleRight);
-            HubKit.Place(_address.rectTransform, HubKit.TopRight, new Vector2(-30, -92), new Vector2(240, 60));
-            _address.horizontalOverflow = HorizontalWrapMode.Overflow;
+            HubKnit.In(_address.rectTransform, 40, 134, 390, 32);
         }
 
         // ------------------------------------------------------------------ the cards
@@ -829,6 +829,8 @@ namespace TumbangPreso.UI.Hub
             _titleCaption.text = host.IsHost ? "YOUR ROOM" : string.IsNullOrEmpty(owner) ? "CUSTOM ROOM" : ("HOSTED BY " + owner).ToUpperInvariant();
 
             _code.text = host.RoomCode ?? "";
+            _code.fontSize = HubStyle.Size(RoomCodeSize);
+            HubKit.Fit(_code);
             string address = host.RoomAddress;
             _address.text = host.RoomOnline ? "tap to copy" : address ?? "";
             string network = host.RoomOnline ? "ONLINE" : "LAN";
@@ -860,16 +862,12 @@ namespace TumbangPreso.UI.Hub
             _watching.gameObject.SetActive(false);
             if (host.IsHost)
             {
-                // ⚠️ ALWAYS PRESSABLE FOR THE HOST. A custom room starts with whoever is in it,
-                // and an OPEN seat is an empty chair (`ConvertedMatchSetup.StartGame`).
+                bool canStart = HubQueueWatch.QueueRoom ||
+                    !System.Array.Exists(seats, seat => seat.Occupied && !seat.Host && !seat.Ready);
                 HubKnit.Say(_primary, "START GAME");
                 _primary.gameObject.SetActive(true);
-                _primary.interactable = true;
-                int open = 0;
-                foreach (var s in seats) if (!s.Occupied && !s.Bot) open++;
-                // ⚠️ NO RUNNING COMMENTARY (owner 2026-10-28, of "3 seats are open": "why do they need to
-                // know that, intuitive na un"). The cards already show the open seats.
-                _status.text = "";
+                _primary.interactable = canStart;
+                _status.text = canStart ? "" : "Guests must ready up.";
             }
             else if (host.Spectating)
             {

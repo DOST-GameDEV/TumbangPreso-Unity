@@ -54,6 +54,25 @@ namespace TumbangPreso.PlayTests
             Assert.IsFalse(_caster.IsWhirled); Assert.IsFalse(_outside.IsWhirled);
             float left=_victim.WhirledLeft; storm.Release(); Assert.AreEqual(left,_victim.WhirledLeft);
         }
+        [UnityTest] public IEnumerator CutsceneHandbackStopsAtWorldGeometry()
+        {
+            yield return Open();
+            Vector3 start = _victim.transform.position;
+            var wall = Track(GameObject.CreatePrimitive(PrimitiveType.Cube));
+            wall.transform.position = start + new Vector3(0f, 3f, 6f);
+            wall.transform.localScale = new Vector3(12f, 6f, 6f);
+            Physics.SyncTransforms();
+
+            Storm().Release(afterCutscene: true);
+            Assert.IsTrue(_victim.IsWhirled);
+            Assert.IsTrue(_victim.IsCarried);
+            Assert.Greater(_victim.transform.position.z, start.z + 1f);
+            Assert.Less(_victim.transform.position.z, wall.GetComponent<Collider>().bounds.min.z);
+
+            for (int i = 0; i < 20; i++) yield return new WaitForFixedUpdate();
+            Assert.Less(_victim.transform.position.z, wall.GetComponent<Collider>().bounds.min.z);
+        }
+
         [UnityTest] public IEnumerator CaughtLooseSlipperBecomesAirborne()
         {
             yield return Open();
