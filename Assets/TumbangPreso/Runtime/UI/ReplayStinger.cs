@@ -29,9 +29,15 @@ namespace TumbangPreso.UI
         /// <summary>Crosses and stays until <see cref="Release"/>, hiding the work of building a replay.</summary>
         public static ReplayStinger Cover(Transform owner, Color accent) => Open(owner, accent, false, false);
 
+        /// <summary>
+        /// The leaving band (white logo, no REPLAY), held until <see cref="Release"/> and SILENT: the match's end uses it to
+        /// carry the court into the result board (`MatchEndBeat`), and the whistle has already played that beat's one cue.
+        /// </summary>
+        public static ReplayStinger CoverLeaving(Transform owner) => Open(owner, HudDraw.Alarm, false, true, false);
+
         public void Release() { if (_releasedAt < 0) _releasedAt = Mathf.Max(Time.unscaledTime, _born + InSeconds + HoldSeconds); }
 
-        private static ReplayStinger Open(Transform owner, Color accent, bool autoRelease, bool leaving)
+        private static ReplayStinger Open(Transform owner, Color accent, bool autoRelease, bool leaving, bool cue = true)
         {
             if (owner == null || Settings.SettingsStore.Current.ReducedUiMotion) return null;
             var canvas = OwnerUiLayout.Canvas(owner, "~ReplayStinger", 900);
@@ -42,7 +48,7 @@ namespace TumbangPreso.UI
             stinger._leaving = leaving; stinger.Build((RectTransform)canvas.transform, leaving ? HudDraw.Alarm : accent);   // white needs the red
             stinger._autoRelease = autoRelease; stinger._born = Time.unscaledTime;
             stinger.Animate();
-            GameServices.Audio?.PlayReplayCue("replay_wipe", 1, .8f, 0);
+            if (cue) GameServices.Audio?.PlayReplayCue("replay_wipe", 1, .8f, 0);
             return stinger;
         }
 

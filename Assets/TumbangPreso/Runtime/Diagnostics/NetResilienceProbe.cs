@@ -183,12 +183,30 @@ namespace TumbangPreso.Diagnostics
                 var hub = TumpHub.Current;
                 if (hub == null || _lostAt < 0 || NetSession.Instance?.IsNetworked == true)
                     throw new InvalidOperationException("Rejoin requires the actual disconnected Home state.");
-                if (hub.Find<HubDisconnectedNotice>()?.FirstFocus is UnityEngine.UI.Button acknowledge)
-                    acknowledge.onClick.Invoke();
+                var notice = hub.Find<HubDisconnectedNotice>();
+                string offered = notice != null ? notice.RejoinOffered : "";
                 if (_oldMatch != null) _oldMatch.MatchEnded -= Ended;
                 _oldMatch = null; _oldRound = null; _live = false; _lostAt = -1;
-                string error = await hub.Host.Join(address.Trim());
-                if (!string.IsNullOrEmpty(error)) throw new InvalidOperationException(error);
+                if (!string.IsNullOrEmpty(offered))
+                {
+                    // The player's own path: CONNECTION LOST's REJOIN, which must name the room this peer was in.
+                    if (!string.Equals(offered, address.Trim(), StringComparison.OrdinalIgnoreCase))
+                        throw new InvalidOperationException($"REJOIN offered {offered}, not the room {address.Trim()}.");
+                    _trace.WriteLine("{\"rejoin\":\"button\",\"target\":\"" + offered + "\"}");
+                    notice.Rejoin();
+                    double until = Time.realtimeSinceStartupAsDouble + 60;
+                    while (NetSession.Instance?.IsAdmitted != true)
+                    {
+                        if (Time.realtimeSinceStartupAsDouble > until) throw new InvalidOperationException("REJOIN was never admitted.");
+                        await Awaitable.NextFrameAsync();
+                    }
+                }
+                else
+                {
+                    if (notice?.FirstFocus is UnityEngine.UI.Button acknowledge) acknowledge.onClick.Invoke();
+                    string error = await hub.Host.Join(address.Trim());
+                    if (!string.IsNullOrEmpty(error)) throw new InvalidOperationException(error);
+                }
                 Save(".joined", Read());
             }
             catch (Exception error)

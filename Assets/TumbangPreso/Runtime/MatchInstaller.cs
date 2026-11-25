@@ -169,7 +169,7 @@ namespace TumbangPreso
         /// applies to anything added here: hold it in a field, take it off in `OnDestroy`.
         /// </summary>
         private System.Action<int, int> _roundVoice;
-        private System.Action<int> _wonVoice;
+        private System.Action<long, int> _wonVoice;
         private System.Action<MatchMoment> _momentVoice;
 
         private void OnDestroy()
@@ -177,9 +177,9 @@ namespace TumbangPreso
             if (GameServices.Match != null)
             {
                 if (_roundVoice != null) GameServices.Match.RoundStarted -= _roundVoice;
-                if (_wonVoice != null) GameServices.Match.MatchEnded -= _wonVoice;
                 if (_momentVoice != null) GameServices.Match.MomentPresented -= _momentVoice;
             }
+            if (_wonVoice != null) MatchEndBeat.Revealed -= _wonVoice;
 
             _roundVoice = null;
             _wonVoice = null;
@@ -1750,12 +1750,14 @@ namespace TumbangPreso
             UI.CursorMode.Capture();
 
             _roundVoice = (round, _) => { GameServices.Voice?.OnRoundStarted(round); GameServices.HeroVoice?.OnRoundStarted(round); };
-                _wonVoice = slot => { GameServices.Voice?.OnMatchWon(slot); GameServices.HeroVoice?.OnMatchWon(slot); };
+                // The winner's call is said over the board, with its sting, so it waits for `MatchEndBeat.Revealed` rather
+                // than the whistle: MATCH OVER is the whistle's only word.
+                _wonVoice = (_, slot) => { GameServices.Voice?.OnMatchWon(slot); GameServices.HeroVoice?.OnMatchWon(slot); };
                 _momentVoice = moment => GameServices.HeroVoice?.OnMoment(moment);
                 GameServices.Match.MomentPresented += _momentVoice;
 
                 GameServices.Match.RoundStarted += _roundVoice;
-                GameServices.Match.MatchEnded += _wonVoice;
+                MatchEndBeat.Revealed += _wonVoice;
             }
 
             // ⚠️⚠️ THE TWO MATCH CARDS ARE NOT BUILT FOR THE GUIDED ROUTE. 🧑, 2026-08-26:

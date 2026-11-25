@@ -407,8 +407,20 @@ namespace TumbangPreso
         /// </summary>
         public void FreezeForMatchEnd()
         {
-            _velocity = Vector3.zero;
+            // ⚠️ PARKED IS NOT HELD UP (owner handoff 2026-11-25, bodies floating under the board). Gravity keeps
+            // running: an Updraft is let down on its glide, a carry, a swing, a vine pull, a possession and a fear stop
+            // driving the body, and nothing keeps rising. A haul and an edge recovery are left to finish, because each
+            // already ends on a verified landing. Whatever is still not at rest by the reveal is the host's to correct
+            // (`CharacterMotor.MatchEnd.cs`).
+            _velocity.x = 0.0f; _velocity.z = 0.0f;
+            if (_velocity.y > 0.0f) _velocity.y = 0.0f;
             _externalVelocity = Vector3.zero;
+            _carryLeft = 0.0f; _keepMomentumUntil = 0.0f;
+            EndSwing();
+            _paetePull?.Stop("match over");
+            ClearPossession();
+            _fearedLeft = 0.0f;
+            if (_flight == FlightMode.Aloft) EndFlight();
             Intent.Clear();
             Intent.CommitFrame();
             Intent.Parked = true;

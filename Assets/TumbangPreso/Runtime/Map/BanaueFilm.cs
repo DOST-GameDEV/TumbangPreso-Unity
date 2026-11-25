@@ -60,6 +60,10 @@ namespace TumbangPreso.Map
         private readonly int[] _file = new int[Seats];            // order in the file, the taya last
         private readonly int[] _round = new int[Seats];           // the light's order round the ring, ending on the taya
         private int _count;
+        // ---- the ground under each walk in, every `Pace` metres, and where on its way it starts
+        private const float Pace = 0.25f;
+        private readonly float[][] _ground = new float[Seats][];
+        private readonly float[] _enter = new float[Seats];
 
         // ---- the fire and the light
         private readonly Light[] _torchLamp = new Light[Seats];
@@ -122,6 +126,7 @@ namespace TumbangPreso.Map
                 if (s == Taya) _via[s] = Centre + new Vector3(0.0f, 0.0f, -5.0f);
                 _via[s].y = Floor(_via[s], Centre.y);
                 _arrive[s] = FileHigh + 0.5f + 0.4f * k;
+                TraceGround(s);
             }
             // The light's way round: from the one after the taya in the ring, round, ending on the taya.
             var ring = new System.Collections.Generic.List<int>();
@@ -129,6 +134,51 @@ namespace TumbangPreso.Map
             ring.Sort((a, b) => Bearing(a).CompareTo(Bearing(b)));
             int start = ring.IndexOf(Taya);
             for (int i = 0; i < ring.Count; i++) _round[i] = ring[(start + 1 + i) % ring.Count];
+        }
+
+        /// <summary>
+        /// The floor under every `Pace` metres of a walk in, traced back from its spot on the plaza, each point found
+        /// within half a metre of the one after it (a stair's slope is followed). Where a block's edge drops or rises
+        /// more than that, the walk starts after it (`_enter`), so the walker appears on the ground.
+        ///
+        /// ⚠️ NOT `Floor(at, Centre.y)` (owner, 2026-11-26: things in the openings "would float"). On the raised
+        /// layouts (`hagdan`, the can 1.2 m up) the terraces south of the plaza are 0.6 and 1.05 m lower. `Floor`
+        /// found nothing within half a metre of the plaza there and kept the plaza's height, so the file walked
+        /// 0.5 to 1 m in the air.
+        /// </summary>
+        private void TraceGround(int s)
+        {
+            float a = Vector3.Distance(_from[s], _via[s]), b = Vector3.Distance(_via[s], _spot[s]), total = a + b;
+            int n = Mathf.Max(1, Mathf.CeilToInt(total / Pace));
+            var ground = new float[n + 1];
+            ground[n] = _spot[s].y;
+            _enter[s] = 0.0f;
+            for (int i = n - 1; i >= 0; i--)
+            {
+                if (TryFloor(Along(s, total * i / n), ground[i + 1], out float y)) { ground[i] = y; continue; }
+                _enter[s] = total * (i + 1) / n;
+                for (int j = i; j >= 0; j--) ground[j] = ground[i + 1];
+                break;
+            }
+            _ground[s] = ground;
+        }
+
+        /// <summary>`d` metres along a walk in: from its start, by its turn, to its spot.</summary>
+        private Vector3 Along(int s, float d)
+        {
+            float a = Vector3.Distance(_from[s], _via[s]), b = Vector3.Distance(_via[s], _spot[s]);
+            return d < a ? Vector3.Lerp(_from[s], _via[s], d / Mathf.Max(0.01f, a)) : Vector3.Lerp(_via[s], _spot[s], (d - a) / Mathf.Max(0.01f, b));
+        }
+
+        /// <summary>The traced floor `d` metres along a walk in.</summary>
+        private float GroundAt(int s, float d)
+        {
+            var ground = _ground[s];
+            float total = Vector3.Distance(_from[s], _via[s]) + Vector3.Distance(_via[s], _spot[s]);
+            if (ground == null || total <= 0.0f) return _spot[s].y;
+            float i = Mathf.Clamp01(d / total) * (ground.Length - 1);
+            int lo = Mathf.FloorToInt(i), hi = Mathf.Min(lo + 1, ground.Length - 1);
+            return Mathf.Lerp(ground[lo], ground[hi], i - lo);
         }
 
         private void Spot(int s, float angle)
@@ -349,10 +399,10 @@ namespace TumbangPreso.Map
                     // Up out of the south to the plaza, then round the disc to the point: a slow, even step.
                     float total = _arrive[s] - start;
                     float a = Vector3.Distance(_from[s], _via[s]), b = Vector3.Distance(_via[s], _spot[s]);
-                    float d = (age - start) / total * (a + b);
+                    float d = _enter[s] + (age - start) / total * (a + b - _enter[s]);
                     Vector3 from = d < a ? _from[s] : _via[s], to = d < a ? _via[s] : _spot[s];
                     float p = d < a ? d / Mathf.Max(0.01f, a) : (d - a) / Mathf.Max(0.01f, b);
-                    Vector3 at = Vector3.Lerp(from, to, p); at.y = Floor(at, Centre.y);
+                    Vector3 at = Along(s, d); at.y = GroundAt(s, d);
                     Vector3 way = to - from; way.y = 0.0f;
                     float yaw = way.sqrMagnitude > 0.01f ? Quaternion.LookRotation(way).eulerAngles.y : _spotYaw[s];
                     if (d >= a) yaw = Mathf.LerpAngle(yaw, _spotYaw[s], Smooth((p - 0.7f) / 0.3f));

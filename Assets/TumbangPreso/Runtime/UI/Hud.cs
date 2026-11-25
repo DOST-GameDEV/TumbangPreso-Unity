@@ -681,6 +681,38 @@ namespace TumbangPreso.UI
             _countdownPop = 0.0f;
         }
 
+        /// <summary>
+        /// MATCH OVER, up from the final whistle until the board (`MatchEndBeat`). Said where and how the countdown says
+        /// GO!, over the live court; the cue is the beat's, not this banner's.
+        /// </summary>
+        public void ShowMatchOver(bool show)
+        {
+            if (_nativeReadout != null) { _nativeReadout.MatchOver(show); return; }
+            if (_countdown == null) return;
+            _countdownPop = 0.0f;
+            if (_countdownRt != null) _countdownRt.localScale = Vector3.one;
+            if (show)
+            {
+                _countdown.text = TumpMatchReadout.MatchOverWords;
+                _countdown.color = UiTheme.Highlight;
+                _countdown.enabled = true;
+                Hub.HubKit.Fit(_countdown, _countdown.rectTransform.rect.width - 12.0f, 24);
+            }
+            else if (_countdown.text == TumpMatchReadout.MatchOverWords) _countdown.enabled = false;
+        }
+
+        /// <summary>For probes and tests: MATCH OVER is on screen on this peer's HUD.</summary>
+        public static bool MatchOverShowing
+        {
+            get
+            {
+                var hud = Instance;
+                if (hud == null) return false;
+                if (hud._nativeReadout != null) return hud._nativeReadout.MatchOverShowing;
+                return hud._countdown != null && hud._countdown.enabled && hud._countdown.text == TumpMatchReadout.MatchOverWords;
+            }
+        }
+
         /// <summary>Brief on-screen call-out for a locally-relevant event that is not otherwise
         /// visible on the HUD.</summary>
         public void ShowToast(string text, float duration = 1.5f)

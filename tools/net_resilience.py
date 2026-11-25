@@ -218,6 +218,8 @@ def main():
                 restored = read(out / (name + '.ready'))
                 assert restored['local'] == initial[name]['local'] and restored['match'] == match and restored['ended'] == 0, restored
                 assert restored['spectator'] == initial[name]['spectator'], restored
+                trace = (out / (name + '.trace')).read_text(encoding='utf-8-sig')
+                assert '"rejoin":"button"' in trace, name + ' did not rejoin through CONNECTION LOST\'s REJOIN.'
                 shutil.copy2(out / (name + '.ready'), out / (name + '.same-process-rejoined.json'))
                 print(name, 'same-process rejoin admitted to original seat', restored['local'], flush=True)
         # Preserve client receipts before the host deliberately closes the room.

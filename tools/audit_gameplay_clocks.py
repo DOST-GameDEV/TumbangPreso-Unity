@@ -78,6 +78,7 @@ GAMEPLAY_CRITICAL = {
 PERSISTENT_OK = [
     ("WalletStore.cs", "Calendar day selects the daily/weekly task preview; claims and rewards are independently validated by Cloud Code, never this client clock."),
     ("NetIceProbe.cs", "Cross-process receipt timestamp; never a gameplay deadline."),
+    ("NetMatchEndProbe.cs", "Cross-process trace timestamp comparing peers' reveals; never a gameplay deadline."),
     ("NetPersonalBuffProbe.cs", "Cross-process receipt timestamp; never a gameplay deadline."),
     ("NetRafiProbe.cs", "Cross-process receipt timestamp; never a gameplay deadline."),
     ("NetRoundBoundaryProbe.cs", "Cross-process receipt timestamp; never a gameplay deadline."),

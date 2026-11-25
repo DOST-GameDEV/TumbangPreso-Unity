@@ -212,10 +212,17 @@ namespace TumbangPreso.Map
 
         /// <summary>The walkable floor under `at` within half a metre of `near` (world y), ignoring every body,
         /// slipper and can; `near` when there is none.</summary>
-        protected float Floor(Vector3 at, float near)
+        protected float Floor(Vector3 at, float near) => TryFloor(at, near, out float floor) ? floor : near;
+
+        /// <summary>
+        /// As <see cref="Floor"/>, but says when there is no walkable floor within half a metre of `near` (a gutter, a
+        /// drop, open water). Anything placed where this is false stands on nothing: `Floor`'s fallback keeps it at
+        /// `near`, in the air over whatever is really there (the Tondo doors, 2026-11-26).
+        /// </summary>
+        protected bool TryFloor(Vector3 at, float near, out float floor)
         {
             int count = Physics.RaycastNonAlloc(new Vector3(at.x, near + 1.25f, at.z), Vector3.down, _hits, 2.5f, ~0, QueryTriggerInteraction.Ignore);
-            float best = float.PositiveInfinity, floor = near;
+            float best = float.PositiveInfinity; floor = near;
             for (int i = 0; i < count; i++)
             {
                 var hit = _hits[i];
@@ -224,7 +231,7 @@ namespace TumbangPreso.Map
                 if (d > 0.5f || d >= best) continue;
                 best = d; floor = hit.point.y;
             }
-            return floor;
+            return !float.IsInfinity(best);
         }
 
         protected static bool World(Collider collider) => collider != null

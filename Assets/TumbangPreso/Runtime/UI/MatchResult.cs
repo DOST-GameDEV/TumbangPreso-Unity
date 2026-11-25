@@ -136,6 +136,7 @@ namespace TumbangPreso.UI
         private void OnEnable()
         {
             if (GameServices.Match != null) GameServices.Match.MatchEnded += OnMatchWon;
+            MatchEndBeat.Revealed += OnBeatRevealed;
             if (GameServices.Stats != null) GameServices.Stats.RecordReady += OnRecordReady;
             _hookedCareer = GameServices.Career;
             if (_hookedCareer != null) _hookedCareer.Changed += OnCareerChanged;
@@ -148,6 +149,8 @@ namespace TumbangPreso.UI
             _rematchPending = false;
             if (_nativeResult && _canvas != null) _canvas.gameObject.SetActive(false);
             if (GameServices.Match != null) GameServices.Match.MatchEnded -= OnMatchWon;
+            MatchEndBeat.Revealed -= OnBeatRevealed;
+            _awaitingBeat = 0;
             if (GameServices.Stats != null) GameServices.Stats.RecordReady -= OnRecordReady;
             if (_hookedCareer != null) _hookedCareer.Changed -= OnCareerChanged;
             _hookedCareer = null;
@@ -183,8 +186,44 @@ namespace TumbangPreso.UI
         /// <summary>True while THIS board is the reason the match clock is stopped.</summary>
         private bool _stoppedTime;
 
-        /// <summary>Shown when the match ends. -1 is a genuine draw, not an error.</summary>
+        /// <summary>
+        /// The match has ended (`MatchDirector.MatchEnded`, the whistle). -1 is a genuine draw, not an error.
+        ///
+        /// ⚠️ THE BOARD WAITS FOR THE WHISTLE'S BEAT, AND ONLY THE BOARD. Owner handoff 2026-11-25: the ending felt abrupt
+        /// because this appeared on the whistle's own frame. `MatchEndBeat` holds MATCH OVER over the live court for
+        /// `MatchEndBeat.Duration`, on the host's clock for every peer, and raises `Revealed` once; the board, its sting
+        /// and music, the cursor and single player's pause all move there. The result was locked at the whistle and the
+        /// winner reported here is the one drawn. A call with no beat for the current match (a capture, a probe, a
+        /// test) is shown at once, as it always was.
+        /// </summary>
         public void OnMatchWon(int winningSlot)
+        {
+            long match = GameServices.Match != null ? GameServices.Match.PresentationMatchId : 0;
+            if (MatchEndBeat.Defers(match))
+            {
+                _awaitingBeat = match;
+                _awaitedWinner = winningSlot;
+                return;
+            }
+
+            _awaitingBeat = 0;
+            RevealBoard(winningSlot);
+        }
+
+        /// <summary>The match this board is waiting to reveal, 0 for none.</summary>
+        private long _awaitingBeat;
+        private int _awaitedWinner;
+
+        private void OnBeatRevealed(long match, int winner)
+        {
+            if (_awaitingBeat == 0 || match != _awaitingBeat) return;
+            _awaitingBeat = 0;
+            if (GameServices.Match == null || GameServices.Match.PresentationMatchId != match) return;
+            RevealBoard(_awaitedWinner);
+        }
+
+        /// <summary>The board itself, once per match.</summary>
+        private void RevealBoard(int winningSlot)
         {
             CloseCourtPicker();
             _canvas.gameObject.SetActive(true);
@@ -1508,7 +1547,7 @@ namespace TumbangPreso.UI
         {
             CloseCourtPicker();
             if (_rematchStarting) return;
-            _rematchStarting = true; _rematchPending = false;
+            _rematchStarting = true; _rematchPending = false; _awaitingBeat = 0;
             RestoreTime();
             if (_canvas != null) _canvas.gameObject.SetActive(false);
             if (Hud.Instance != null && _canvas != null) Hud.Instance.SetResultHud(_canvas, false);

@@ -131,7 +131,7 @@ namespace TumbangPreso.Map
                     {
                         // No house front to come out of: they come in from out of frame along the court.
                         Vector3 away = Mark(s) - Centre; away.y = 0.0f; away = away.sqrMagnitude > 0.01f ? away.normalized : Vector3.forward;
-                        _doors[s].Start = ClearStart(_ring[s], _ring[s] + away * 7.0f);
+                        _doors[s].Start = OnFloor(_ring[s], ClearStart(_ring[s], _ring[s] + away * 7.0f));
                         _doors[s].Yaw = Quaternion.LookRotation(-away).eulerAngles.y;
                     }
                     ChipAt(s, DoorsAt + k * DoorGap + 0.45f, 1.9f);
@@ -537,6 +537,12 @@ namespace TumbangPreso.Map
         /// The house front this seat can walk straight out of: tried round the seat (its own side first), a wall within
         /// 16 m that stands a storey (hit at 1 m and at 2.1 m), facing back toward the court, with floor and nothing
         /// in the way to its place in the ring, and not crowding another seat's door.
+        ///
+        /// ⚠️ THE SILL AND THE WAY OUT MUST BE ON REAL FLOOR, LEVEL WITH THE RING (owner, 2026-11-26: things in the
+        /// openings "would float"). Two of Eskinita's walls stand behind a strip of ground 0.65 m below the court. `Floor`
+        /// found nothing within half a metre there and fell back to the mark's height, so the door, its step and the
+        /// kid stepping out of it were built 0.7 to 0.9 m above the strip. A wall like that is refused and the next
+        /// one tried.
         /// </summary>
         private void FindDoor(int seat, Door door)
         {
@@ -555,9 +561,12 @@ namespace TumbangPreso.Map
                     Vector3 normal = new Vector3(wall.normal.x, 0.0f, wall.normal.z);
                     if (normal.sqrMagnitude < 0.5f || Vector3.Dot(normal.normalized, -dir) < 0.6f) continue;
                     normal.Normalize();
-                    Vector3 sill = new Vector3(wall.point.x, Floor(wall.point + normal * 0.3f, origin.y), wall.point.z);
+                    if (!TryFloor(wall.point + normal * 0.3f, origin.y, out float sillY)) continue;
+                    Vector3 sill = new Vector3(wall.point.x, sillY, wall.point.z);
                     Vector3 start = sill + normal * 0.5f;
                     if (Vector3.Distance(ClearStart(_ring[seat], start), start) > 0.35f) continue;
+                    Vector3 reach = OnFloor(_ring[seat], start);
+                    if (Vector3.Distance(reach, start) > 0.35f || Mathf.Abs(reach.y - sill.y) > 0.12f) continue;
                     bool crowded = false;
                     for (int o = 0; o < Seats; o++) if (o != seat && _doors[o] != null && _doors[o].Found && Vector3.Distance(_doors[o].Sill, sill) < 1.5f) crowded = true;
                     if (crowded) continue;
@@ -565,6 +574,23 @@ namespace TumbangPreso.Map
                     door.Yaw = Quaternion.LookRotation(normal).eulerAngles.y;
                     return;
                 }
+        }
+
+        /// <summary>
+        /// The farthest point from `to` toward `from` with floor under every step of the way and no step up or down of
+        /// more than 0.15 m between them: where a body can walk on the ground rather than over a drop at the ring's
+        /// height.
+        /// </summary>
+        private Vector3 OnFloor(Vector3 to, Vector3 from)
+        {
+            Vector3 best = to;
+            for (int k = 1; k <= 16; k++)
+            {
+                Vector3 at = Vector3.Lerp(to, from, k / 16.0f);
+                if (!TryFloor(at, best.y, out float y) || Mathf.Abs(y - best.y) > 0.15f) break;
+                at.y = y; best = at;
+            }
+            return best;
         }
 
         private bool Wall(Vector3 from, Vector3 dir, out RaycastHit wall)

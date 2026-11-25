@@ -370,5 +370,97 @@ namespace TumbangPreso.Tests
             if (expected) Assert.AreSame(record, selected);
             else Assert.IsNull(selected);
         }
+
+        // ------------------------------------------------------------------ the final whistle's beat on a client
+        //
+        // `MatchEndBeat`: one host-authored start per match on the shared clock, which a client's own terminal snapshot
+        // may precede (a provisional start) and which may arrive twice (the whistle, then a late joiner's snapshot resend).
+
+        private double _clock;
+        private int _reveals;
+        private void CountReveal(long match, int winner) => _reveals++;
+
+        private MatchEndBeat EndOnClient(long match)
+        {
+            _match.AdoptPresentationMatch(match);
+            Assert.AreEqual(match, _match.PresentationMatchId, "Control: the client holds the host's match.");
+            Receive(_match.TotalRounds, false, false);
+            Assert.AreEqual(1, _ends, "Control: the terminal snapshot ended the match on the client.");
+            var beat = MatchEndBeat.Instance;
+            Assert.IsNotNull(beat, "The client's terminal edge did not start a beat.");
+            Assert.IsTrue(beat.Active);
+            Assert.AreEqual(match, beat.MatchId);
+            return beat;
+        }
+
+        private void WithClock(System.Action body)
+        {
+            _reveals = 0;
+            SharedUltimatePhase.FilmClock = () => _clock;
+            MatchEndBeat.Revealed += CountReveal;
+            try { body(); }
+            finally { SharedUltimatePhase.FilmClock = null; MatchEndBeat.Revealed -= CountReveal; }
+        }
+
+        [Test]
+        public void TheHostsWhistleTimesTheClientsBeatOnceAndRepeatsChangeNothing() => WithClock(() =>
+        {
+            _clock = 1000.0;
+            var beat = EndOnClient(4242);
+            Assert.IsFalse(beat.HostTimed, "A client's own snapshot is only a provisional start.");
+            Assert.AreEqual(1000.0, beat.Began, 1e-9);
+
+            int final = _match.TotalRounds;
+            Assert.IsTrue(beat.Receive(4242, final, 999.5), "The host's start was refused.");
+            Assert.IsTrue(beat.HostTimed);
+            Assert.AreEqual(999.5, beat.Began, 1e-9, "The provisional start did not give way to the host's.");
+
+            Assert.IsFalse(beat.Receive(4242, final, 999.5), "A duplicate whistle was applied again.");
+            Assert.IsFalse(beat.Receive(4242, final, 1000.2), "A later resend moved the deadline.");
+            Assert.IsFalse(beat.Receive(4241, final, 999.0), "Another match's whistle was accepted.");
+            Assert.IsFalse(beat.Receive(4243, final, 999.0), "A future match's whistle was accepted.");
+            Assert.IsFalse(beat.Receive(4242, 0, 999.0), "A whistle with no round was accepted.");
+            Assert.IsFalse(beat.Receive(4242, final, double.NaN), "A non-finite whistle was accepted.");
+            Assert.IsFalse(beat.Receive(4242, final, 1005.0), "A whistle stamped in the future was accepted.");
+            Assert.AreEqual(999.5, beat.Began, 1e-9);
+
+            _clock = 999.5 + MatchEndBeat.Duration - 0.01; beat.Tick();
+            Assert.AreEqual(0, _reveals, "The board came before the host's deadline.");
+            Assert.IsTrue(MatchEndBeat.Holding);
+            _clock = 999.5 + MatchEndBeat.Duration + 0.01; beat.Tick();
+            Assert.AreEqual(1, _reveals, "The board did not come at the host's deadline.");
+            beat.Tick(); beat.Receive(4242, final, 999.5); beat.Tick();
+            Assert.AreEqual(1, _reveals, "The board was revealed twice.");
+            Assert.IsTrue(MatchEndBeat.RevealedFor(4242));
+            Assert.AreEqual(1, _ends, "The beat replayed the match's end.");
+        });
+
+        [Test]
+        public void ALatePeerSeesOnlyWhatIsLeftOrTheBoardAtOnce() => WithClock(() =>
+        {
+            _clock = 2000.0;
+            var beat = EndOnClient(5151);
+            // Arriving after the host's beat is over: straight to the board, on the first frame.
+            Assert.IsTrue(beat.Receive(5151, _match.TotalRounds, 1990.0));
+            Assert.AreEqual(0.0f, beat.Remaining);
+            beat.Tick();
+            Assert.AreEqual(1, _reveals, "A peer that arrived after the deadline was made to wait.");
+        });
+
+        [Test]
+        public void ARematchClearsTheBeatAndRefusesTheLastMatchsWhistle() => WithClock(() =>
+        {
+            _clock = 3000.0;
+            var beat = EndOnClient(6161);
+            Assert.IsTrue(beat.Receive(6161, _match.TotalRounds, 3000.0));
+            _match.ResetForNewMatch();
+            Assert.IsFalse(beat.Active, "The last match's beat survived the reset.");
+            Assert.IsFalse(MatchEndBeat.Holding);
+            _match.AdoptPresentationMatch(6262);
+            Assert.IsFalse(beat.Receive(6161, _match.TotalRounds, 3000.0), "The last match's whistle was accepted in the next.");
+            Assert.IsFalse(beat.Active);
+            _clock = 3010.0; beat.Tick();
+            Assert.AreEqual(0, _reveals, "A cleared beat revealed a board.");
+        });
     }
 }

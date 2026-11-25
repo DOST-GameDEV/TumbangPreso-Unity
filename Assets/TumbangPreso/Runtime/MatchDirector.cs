@@ -81,10 +81,17 @@ namespace TumbangPreso
             // Room teardown may restore local rules before departure is classified.
             HasCompleted = true;
             CompletedTotalRounds = TotalRounds;
+
+            // ⚠️ THE WHISTLE STARTS THE BEAT BEFORE ANYBODY HEARS THE EVENT. `UI.MatchResult` asks the beat whether to
+            // wait, and every gameplay listener below (the runners' freeze, the record, the round rules) still runs now.
+            MatchEndBeat.Ensure(this)?.Whistle(this);
             MatchEnded?.Invoke(_scores.WinningSlot());
         }
 
         public int ScoreFor(int slot) => _scores[slot];
+
+        /// <summary>The current leader by the scoring and tie rules, -1 for a draw. Locked once the match has ended.</summary>
+        public int WinningSlot => _scores.WinningSlot();
 
         /// <summary>
         /// Seats ordered by score, highest first, from `match_manager.gd:154`.
@@ -292,6 +299,7 @@ namespace TumbangPreso
         public void StartMatch()
         {
             SharedUltimatePhase.Instance?.Cancel();
+            MatchEndBeat.Instance?.Clear();
             BeginPresentationMatch();
             HalftimePresentation.Ensure();
             _scores.Reset();
@@ -321,6 +329,7 @@ namespace TumbangPreso
         public void ResetForNewMatch()
         {
             SharedUltimatePhase.Instance?.Cancel();
+            MatchEndBeat.Instance?.Clear();
             ResetHostChains();
             _scores.Reset();
             RoundNumber = 0;

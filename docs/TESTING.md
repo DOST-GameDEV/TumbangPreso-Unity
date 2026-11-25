@@ -142,6 +142,8 @@ guide preserve the detailed category rationale and historical measurements.
   cannot establish native behavior or peer playback.
 - tools/net_link.py,net_matrix.py and existing presentation-peer tools use actual
   players. Obsolete DebugSimulator APIs may do nothing; never infer link impairment.
+- tools/net_match_end.py runs the final whistle in built players: every court offline,
+  then host, delayed client and spectator, with a real link cut and REJOIN.
 - tools/run_ui_player_review.py uses an internal player,explicit named profile and
   opt-in diagnostics. Do not add player `-batchmode`: that selects a dedicated-server
   route. Synthetic diagnostic input is not physical-device certification.

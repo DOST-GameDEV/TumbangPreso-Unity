@@ -462,6 +462,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("ReplayEnd", OnReplayEnd);
             cm.RegisterNamedMessageHandler("ReplayReady", OnReplayReady);
             cm.RegisterNamedMessageHandler("MatchBreak", OnMatchBreak);
+            cm.RegisterNamedMessageHandler("MatchEnd", OnMatchEndMsg);
             cm.RegisterNamedMessageHandler("Tsinelas", OnTsinelasMsg);
             cm.RegisterNamedMessageHandler("SelectMapVote", OnSelectMapVoteMsg);
             cm.RegisterNamedMessageHandler("MapVoteTally", OnMapVoteTallyMsg);
@@ -5971,6 +5972,8 @@ namespace TumbangPreso.Net
                                        match.MatchInProgress, roundActive);
             BroadcastMatchState();
             BroadcastBreak();
+            // After `SyncWorld` on the same stream: a joiner has the terminal state before the deadline that reveals it.
+            BroadcastMatchEnd();
             if (SharedUltimatePhase.Instance != null && SharedUltimatePhase.Instance.Active)
                 BroadcastUltimatePhase(SharedUltimatePhase.Instance);
 

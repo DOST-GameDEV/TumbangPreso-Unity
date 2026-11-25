@@ -1,6 +1,6 @@
 # Current work
 
-Only active queue. Updated 2026-11-09. Old unchecked boxes are not assignments.
+Only active queue. Updated 2026-11-26. Old unchecked boxes are not assignments.
 [Retirement decisions](RETIRED_WORK.md) explain superseded requirements.
 All original IDs and full bodies remain in the
 [previous queue](archive/cleanup-2026-10-25/docs/TODO.md),
@@ -10,6 +10,7 @@ All original IDs and full bodies remain in the
 
 | ID | Status | Acceptance / next action |
 |---|---|---|
+| MATCH-END-1126 | Branch `match-end-and-rejoin-20261126`, Nov 26 | MATCH OVER beat at the whistle, then the board once; REJOIN after a dropped link; Tondo opening doors on the floor. [Report](reports/match-end-2026-11-26/README.md). Owner play and two-PC peers open. |
 | TJ-CADENA-1109 | `tj-cadena-fixes` candidate | [Design](Design.md) Nov 9. Throw arc, defender timing and UI. Native evidence: Logs/tj-cadena-fixes/. Owner play and actual peers open. |
 | FEEL-PICKUP-1107 | Integrated on main by owner request, Nov 8 | [Design](Design.md) Nov 7. Dwell crouch, six contexts, clickable skip. Edit 4/4, exact Play 9/9: Logs/feel-pickup-revision-20261107/. Actual peers open. |
 | PAD-1107 | Hardware open | [Evidence](reports/controller-native-2026-11-07.md) |
@@ -18,9 +19,6 @@ All original IDs and full bodies remain in the
 | LOBBY-UI-1028 | DESKTOP FIXES integrated | Knit rules sheet, MATCH SETTINGS footer, joined-room spacing and immediate input on rules close are integrated. Evidence: Logs/lobby-ui-20261028/fixes/. Phone work excluded. |
 | ONLINE-CAST-1028 | FIXED: desktop checks passed | 73b1f403b built. Ult victims/can on own floor from host-frozen pose; GroundY ignores awnings. Delayed Payo pairs: Cheska gap 3.2 m to 0, Nemu 0.015, Paete tree grounded; EditMode 23/23. Open: victims in Paete/Amihan/Phaister reach, physical multi-PC. Logs/ult-terrain-20261029/. |
 | ZACK-SPEEDSTER-1025 | Visuals approved; SFX review open | Owner approved electrical-outline rewind `308fb345f` for publication. The skin-mounted hand zigzag overlay and its retired test are removed, with a final native capture passing 1/1. Rewind integration 23/23 plus final stroke capture 1/1 passed; both exports were reviewed at 1x. The procedural SFX challenger was rejected; source-material auditions remain separate from the installed mix. Listening acceptance and actual peers remain open. [Evidence](reports/zack-kit-2026-10-25/refinement-validation.md). |
-| SPECTATOR-1025 | DONE desktop, main | Controls/pacing, actual player FPP, body/effect framing, all six maps and private hallucination/held-marker delivery implemented and checked. Current skill/prop/transition checks are recorded with NETWORKFIX; mobile remains its explicit separate assignment. [Evidence](reports/spectator-2026-10-25/README.md) |
-| NETWORKFIX-1025 | DONE within recorded Windows/Android scope, mobile+network | Host/referee loss stops old simulation; departure card supports manual spectator pause, real yellow/red quality badge, bounded loading buffers and stable LAN identity. Android same-process and background reconnect reclaimed the original seat/match; physical/WAN/Relay limits remain. [Evidence](reports/mobile-2026-10-26/README.md); [earlier Windows checks](reports/networkfix-2026-10-25/README.md). |
-| MOBILE-1025 | DONE within recorded emulator scope, mobile+network | Touch aiming/lifecycle, spectator tools/replay, safe areas and actual source lens implemented. Windows/Android player/spectator/host view transfer, seat-preserving reconnect, actual phone UI taps, six map scenes and Classic HUD checked. Lossless asset payload is about71% smaller. [Evidence and limits](reports/mobile-2026-10-26/README.md). Unrelated future sessions do not automatically owe mobile updates. |
 | MOBILE-UI-1026 | HANDED OFF at owner request, mobile+network | ff9 APK uploaded as candidate; native41/41 and recorded actual touch journeys passed. Newer source6/7 with picker clipping failing. Final fetch found newmain43c158b86; integrate/recheck compatibility before rebuilding and finishing target match/replay/crossplay checks. [Exact handoff](reports/mobile-ui-2026-10-26/HANDOFF.md). No future every-feature mobile mandate. |
 
 ## Existing evidence limits worth retaining

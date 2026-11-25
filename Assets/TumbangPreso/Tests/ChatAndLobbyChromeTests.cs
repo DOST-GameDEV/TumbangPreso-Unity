@@ -416,7 +416,8 @@ namespace TumbangPreso.Tests
             //188 adds the vote to skip the match opening.
             //189 trims Yasmin's shared introduction after the heart.
             //193 Rago's ultimate cutscene is 7.0 s, so the shared phase length every peer reads has changed.
-            Assert.AreEqual(193, NetSession.ProtocolVersion,
+            //194 adds the host's final whistle, so every peer holds MATCH OVER on the same clock before the board.
+            Assert.AreEqual(194, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");

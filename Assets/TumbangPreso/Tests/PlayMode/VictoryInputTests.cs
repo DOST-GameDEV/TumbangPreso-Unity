@@ -33,7 +33,8 @@ namespace TumbangPreso.PlayTests
                 var reader = local.GetComponent<PlayerInputReader>();
                 var rules = CustomGameRules.Defaults(GameMode.Classic); rules.Rounds = 1; SceneFlow.PinSelectedRules(rules);
                 GameServices.Round.EndRound(); GameServices.Match.BeginIntermission();
-                yield return null;
+                // The board (and the screen it takes over) comes after the whistle's MATCH OVER beat (`MatchEndBeat`).
+                yield return MatchEndBeatTests.UntilBoard(Object.FindAnyObjectByType<MatchResult>());
                 Assert.IsFalse(GameServices.Match.MatchInProgress); Assert.IsTrue(ScreenTakeover.AnyOpen);
                 Assert.AreEqual(CursorLockMode.None, Cursor.lockState); Assert.IsTrue(Cursor.visible);
                 var camera = Camera.main; Quaternion facing = camera.transform.rotation;
@@ -89,6 +90,7 @@ namespace TumbangPreso.PlayTests
                 yield return null; yield return null;
                 Assert.Greater(Vector3.Distance(before, spectator.transform.position), .001f, "Control: spectator flight must work before the result opens.");
                 GameServices.Round.EndRound(); GameServices.Match.BeginIntermission();
+                yield return MatchEndBeatTests.UntilBoard(result);
                 Assert.IsTrue(ScreenTakeover.AnyOpen);
                 var frozen = spectator.transform.position; var facing = spectator.transform.rotation;
                 for (int i = 0; i < 4; i++) yield return null;

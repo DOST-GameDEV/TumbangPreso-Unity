@@ -114,6 +114,40 @@ namespace TumbangPreso.Tests
             Assert.IsFalse(text.supportRichText);
         }
 
+        /// <summary>
+        /// A dropped link offers REJOIN to the room this machine was in, first in focus. A new session (REJOIN's own join,
+        /// or any later one) forgets that room so a later drop cannot offer it again, while the open notice keeps its own
+        /// copy for another try after a refusal.
+        /// </summary>
+        [Test]
+        public void ADroppedLinkOffersRejoinAndANewSessionForgetsTheRoom()
+        {
+            var target = typeof(NetSession).GetProperty(nameof(NetSession.RejoinTarget));
+            var forget = typeof(NetSession).GetMethod("ForgetRejoinTarget", BindingFlags.Static | BindingFlags.NonPublic);
+            Assert.IsNotNull(forget);
+            try
+            {
+                target.SetValue(null, "192.168.1.20:7777");
+                MatchAbandon.Note(null, false);
+                Assert.IsTrue(NetSession.CanOfferRejoin, "Control: a lost link with a room to go back to.");
+                NetSession.LastDisconnectReason = "The host connection closed.";
+                typeof(ConvertedMatchSetup).GetMethod("PresentPendingDisconnect", Hidden).Invoke(_controller, null);
+                var notices = _root.GetComponentsInChildren<HubDisconnectedNotice>(true);
+                Assert.AreEqual(1, notices.Length);
+                Assert.AreEqual("RejoinRoom", notices[0].FirstFocus.name, "REJOIN is not the first choice.");
+                Assert.AreEqual("192.168.1.20:7777", notices[0].RejoinOffered);
+
+                forget.Invoke(null, null);
+                Assert.IsFalse(NetSession.CanOfferRejoin, "A new session still offers the last room.");
+                Assert.AreEqual("192.168.1.20:7777", notices[0].RejoinOffered, "The open notice lost its room.");
+            }
+            finally
+            {
+                forget.Invoke(null, null);
+                MatchAbandon.Forget();
+            }
+        }
+
         [Test]
         public void OfflineFallbackHostDoesNotIgnoreTheActualDisconnect()
         {

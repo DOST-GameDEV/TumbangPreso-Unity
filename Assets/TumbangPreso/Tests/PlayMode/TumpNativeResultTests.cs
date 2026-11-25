@@ -108,6 +108,11 @@ namespace TumbangPreso.PlayTests
                 Assert.IsFalse(match.MatchInProgress);
                 Assert.IsFalse(runner.Running, "SliceRunner did not receive the match-end event.");
                 Assert.IsTrue(local.Intent.Parked, "The match-end event did not park local input.");
+                Assert.IsFalse(result.IsVisible, "The board must wait for the whistle's MATCH OVER beat.");
+                yield return MatchEndBeatTests.UntilBoard(result);
+                // The beat reveals the board inside a frame; a GraphicRaycaster needs it laid out and drawn once.
+                yield return null;
+                yield return null;
                 Assert.IsTrue(result.IsVisible, "The director event did not present the result board.");
                 Assert.IsFalse(touch.ShouldBeOnScreen);
                 Assert.IsFalse(touch.Canvas.enabled, "Parked touch controls still intercept the result board.");

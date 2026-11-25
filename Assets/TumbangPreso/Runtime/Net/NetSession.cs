@@ -175,6 +175,53 @@ namespace TumbangPreso.Net
         public static string LastDisconnectReason { get; set; } = "";
 
         /// <summary>
+        /// The room this machine was admitted to when its connection was lost, in the form the join box takes (a LAN
+        /// `address:port`, or an online room's code), or "" when there is none. Read by CONNECTION LOST's REJOIN.
+        ///
+        /// ⚠️ A REJOIN IS AN ORDINARY JOIN WITH THE SAME DURABLE TOKEN. The host already holds a dropped player's chair
+        /// (`OnClientDisconnected`: "THE SEAT IS HELD, NOT FREED") and `LobbySession.Admit` gives it back to the token
+        /// that left it, with its score, picks and spectator flag; this only saves the player typing the room again.
+        /// </summary>
+        public static string RejoinTarget { get; private set; } = "";
+        public static bool RejoinSpectate { get; private set; }
+
+        /// <summary>
+        /// REJOIN is offered only for a lost connection (`SessionEndCause.HostLost`: a host that vanished and this
+        /// machine's own dropped link look the same on the wire). Not for a removal, a full room, another version, or a
+        /// session of this player's that has replaced this one, where joining again would only be refused or would take
+        /// the seat back from the newer session.
+        /// </summary>
+        public static bool CanOfferRejoin => !string.IsNullOrEmpty(RejoinTarget) && MatchAbandon.Cause == Core.SessionEndCause.HostLost;
+
+        private string _clientAddress;
+        private int _clientPort;
+        private bool _clientSpectate;
+
+        /// <summary>Taken as an admitted client's connection ends, before the room's state is reset.</summary>
+        private void CaptureRejoinTarget()
+        {
+            string target = "";
+            if (IsRelay)
+            {
+                string code = Lobby?.JoinCode;
+                if (!string.IsNullOrWhiteSpace(code) && code.Trim().Length == LobbySession.JoinCodeLength) target = code.Trim().ToUpperInvariant();
+            }
+            else if (!string.IsNullOrWhiteSpace(_clientAddress) && _clientPort > 0)
+                target = (_clientAddress.Contains(":") ? "[" + _clientAddress + "]" : _clientAddress) + ":" + _clientPort;
+            RejoinTarget = target;
+            // A watcher comes back to watch: one who joined to play and then asked for a watcher's place included. Without
+            // it a returning spectator is a fresh arrival to the host and can be seated in a bot's chair mid-match.
+            RejoinSpectate = _clientSpectate || GameLaunch.Spectator;
+        }
+
+        /// <summary>
+        /// ⚠️ EVERY NEW SESSION FORGETS THE LAST ROOM. Otherwise a later join that drops before it is seated (never
+        /// captured, so the old value stays) would offer REJOIN to a room this machine left long ago. CONNECTION LOST
+        /// keeps its own copy, so its REJOIN, which is itself a new session, can still be pressed again after a refusal.
+        /// </summary>
+        private static void ForgetRejoinTarget() { RejoinTarget = ""; RejoinSpectate = false; }
+
+        /// <summary>
         /// Raised on THIS process whenever its own seat or spectator flag changes.
         ///
         /// ⚠️⚠️ THE LOBBY SCREEN HAD NO WAY TO KNOW IT HAD BEEN SEATED. `LocalSlot` is written
@@ -726,7 +773,9 @@ namespace TumbangPreso.Net
         // 191 (2026-11-10): a raised can is protected for 3.5 s and the Vulnerable status lasts 5 s.
         // 192: scoped emote starts/stops and an explicit spectator request on arrival.
         // 193: Rago's ultimate cutscene is 7.0 s (was 5.0 s), so a 192 peer would hold a different length.
-        public const int ProtocolVersion = 193;
+        // 194 (2026-11-26): "MatchEnd", the host's final whistle (match, final round, start on the shared clock), so every peer
+        // holds MATCH OVER for the same two seconds before the board. A 193 peer would show its board at once: the two may not meet.
+        public const int ProtocolVersion = 194;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or
@@ -1073,6 +1122,7 @@ namespace TumbangPreso.Net
 
         public async Task<bool> StartHostAsync(int port = DefaultPort, bool dedicated = false)
         {
+            ForgetRejoinTarget();
             var attempt = _joinAttempts.Begin();
             _clientTitleOperation = attempt;
             ClearJoinedClientRoomTitle();
@@ -1405,6 +1455,8 @@ namespace TumbangPreso.Net
             if (!CanContinueJoin(attempt)) return false;
 
             address = SplitHostPort(address, ref port);
+            ForgetRejoinTarget();
+            _clientAddress = address; _clientPort = port; _clientSpectate = spectate;
 
             Configure(address, port);
             IsRelay = false;
@@ -1468,6 +1520,7 @@ namespace TumbangPreso.Net
         public async Task<bool> StartRelayHost(int maxConnections = LobbySession.MaxConnections,
                                                CancellationToken cancellationToken = default)
         {
+            ForgetRejoinTarget();
             var attempt = _joinAttempts.Begin(cancellationToken);
             if (!CanContinueJoin(attempt)) return false;
             _clientTitleOperation = attempt;
@@ -1621,6 +1674,8 @@ namespace TumbangPreso.Net
 
                 IsRelay = true;
                 RelayJoinCode = relayJoinCode.Trim();
+                ForgetRejoinTarget();
+                _clientAddress = null; _clientPort = 0; _clientSpectate = spectate;
 
                 // ⚠️ THE RELAY PATHS ARE THE ONLY ONES ALLOWED TO SPEND A SERVICE CALL ON THE WAY
                 // TO A MATCH. See PrimeHandleProofAsync: LAN and direct-address joins may never.
@@ -1827,6 +1882,7 @@ namespace TumbangPreso.Net
             MatchRpc.Instance?.CancelNemuGhostPresentation();
             SharedUltimatePhase.Instance?.Cancel();
             HalftimePresentation.Instance?.End(false);
+            MatchEndBeat.Instance?.Clear();
             foreach (var arrival in UnityEngine.Object.FindObjectsByType<MatchArrivalPresentation>(
                 FindObjectsInactive.Include, FindObjectsSortMode.None)) arrival.Cancel();
             Hitstop.End();
@@ -2583,6 +2639,7 @@ namespace TumbangPreso.Net
             _localShutdown = false;
             _everConnected = false;
 
+            if (!wasLocal && wasConnected && _seatApplied) CaptureRejoinTarget();
             ResetJoinedRoom();
 
             // ⚠️ A CONNECTION THAT NEVER COMPLETED IS NOT A DISCONNECTION. The join screen is

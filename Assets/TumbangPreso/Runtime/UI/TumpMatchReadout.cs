@@ -153,7 +153,31 @@ namespace TumbangPreso.UI
         }
         public void Toast(string words, float duration)
         { if (!_toast.enabled || _toast.text != words) _toastBorn = Time.unscaledTime; _toast.text = words; _toastLeft = duration; _toast.enabled = true; SizeToastPlate(); }
-        public void Countdown(string words) { _countdown.text = words; _countdown.enabled = !string.IsNullOrEmpty(words); }
+        public void Countdown(string words)
+        {
+            if (_countdownSize > 0) { _countdown.fontSize = _countdownSize; _countdownSize = 0; }
+            MatchOverShowing = false;
+            _countdown.text = words; _countdown.enabled = !string.IsNullOrEmpty(words);
+        }
+
+        public const string MatchOverWords = "MATCH OVER";
+        public bool MatchOverShowing { get; private set; }
+        private int _countdownSize;
+
+        /// <summary>
+        /// The whistle's banner (`MatchEndBeat`): the countdown's place, ink and voice, so the end reads as the same
+        /// system as the start. ⚠️ FITTED TO THE COUNTDOWN'S OWN BOX: the countdown was sized for "3" and "GO!", and two
+        /// words at its size run off both sides. The size is given back when the countdown speaks again.
+        /// </summary>
+        public void MatchOver(bool show)
+        {
+            if (!show) { if (MatchOverShowing) Countdown(""); return; }
+            Countdown("");
+            _countdownSize = _countdown.fontSize;
+            _countdown.text = MatchOverWords; _countdown.enabled = true;
+            Hub.HubKit.Fit(_countdown, _countdown.rectTransform.rect.width - 24.0f, 48);
+            MatchOverShowing = true;
+        }
         /// <summary>
         /// The two things `RoundLabel` can ever say, and the widest form of each.
         ///
