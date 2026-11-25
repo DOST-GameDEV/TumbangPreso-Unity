@@ -115,6 +115,25 @@ Source audits: the findings that name files this change touched are rows unchang
 These are allowlist rows, cue rows and anonymous subscriptions. The new `MatchEnd` message reads
 "no writer in this file", as `MatchBreak` and `MatchMoment` do, because its writer is in a partial.
 
+Built player 731991a84 (`harness2`, `tools/net_match_end.py`):
+
+- Offline, six courts and a score-target finish: every match ended once, played 2/2 highlights and
+  showed the board at 15.6 s, then the rematch went live.
+- Network, host with a delayed client and a spectator: the same result on all three, the board at
+  2.0 s on all three. There were no highlights because nothing in that match made one (idle players,
+  open seats; the only points were the taya's).
+- Rejoin: the client's link was cut during MATCH OVER. It showed its board on the host's clock, came
+  back through REJOIN to the board, and went live in the rematch 0.09 s after the host.
+- The first verdict listed nine problems, none of them a fault on screen. The judge was changed and
+  the same outputs judged again (`--judge`); that passes, with one harness race explained:
+  - A rejoining client reveals its board twice: once before the drop and once on arrival.
+  - A rematch counts as live when the peer's own trace shows it live. The host's probe quits three
+    seconds into the rematch, which closed the client's link 0.09 s before its own probe finished.
+  - A body is flagged only when it is neither grounded nor within 0.3 m of the floor. The probe's
+    single ray read 0.31 m and 0.41 m under two grounded bodies (a step's edge, or a body, can or
+    tsinelas, which it ignores). On the host, two bodies the whistle set down on the floor kept
+    their airborne flags while parked; every peer had them at floor height.
+
 The first built-player run of `tools/net_match_end.py` (on c3da27dad) failed in the probe, not the
 game. Offline it began the match itself, and the court then began its own, so every court "never
 ended". Online the host pressed START GAME before its guest was READY, which a custom room ignores
