@@ -775,7 +775,9 @@ namespace TumbangPreso.Net
         // 193: Rago's ultimate cutscene is 7.0 s (was 5.0 s), so a 192 peer would hold a different length.
         // 194 (2026-11-26): "MatchEnd", the host's final whistle (match, final round, start on the shared clock), so every peer
         // holds MATCH OVER for the same two seconds before the board. A 193 peer would show its board at once: the two may not meet.
-        public const int ProtocolVersion = 194;
+        // 195 (2026-11-26): "MatchEnd" also carries the highlights the host chose, which every peer plays before the board.
+        // A 194 peer would refuse the longer message and keep its own two-second clock: the boards would not meet.
+        public const int ProtocolVersion = 195;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

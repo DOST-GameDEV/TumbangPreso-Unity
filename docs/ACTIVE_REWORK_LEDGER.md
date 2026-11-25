@@ -1,11 +1,13 @@
 # Current checkpoint
 
-MATCH-END-1126 is on branch `match-end-and-rejoin-20261126`, with a PR against main.
+MATCH-END-1126 is on main, pushed directly (owner, Nov 26: TUMP pushes go straight to main, no PR).
 [Report, evidence and limits](reports/match-end-2026-11-26/README.md).
 
 - Final whistle: `MatchEndBeat` shows MATCH OVER over the live court for 2 s from the host's start
-  (`MatchEnd` message, protocol 194). It parks and settles the cast, then reveals the existing board
-  once. Single player now really pauses under the board.
+  (`MatchEnd` message, protocol 195). It parks and settles the cast, plays up to two of the match's
+  recorded moments (6.8 s each), then reveals the existing board once. The board brings the standings
+  in from last place and the winner last, with the win sting. Single player now really pauses under
+  the board.
 - Rejoin: after a dropped link, the CONNECTION LOST notice offers REJOIN to the same room (code or
   address) or BACK TO HOME. Refusal, cancel and spectator rejoins are handled.
 - Openings: Tondo's doors, and the kids stepping out of them, are only built on floor level with the

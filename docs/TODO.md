@@ -10,7 +10,7 @@ All original IDs and full bodies remain in the
 
 | ID | Status | Acceptance / next action |
 |---|---|---|
-| MATCH-END-1126 | Branch `match-end-and-rejoin-20261126`, Nov 26 | MATCH OVER beat at the whistle, then the board once; REJOIN after a dropped link; Tondo opening doors on the floor. [Report](reports/match-end-2026-11-26/README.md). Owner play and two-PC peers open. |
+| MATCH-END-1126 | On main, Nov 26 | MATCH OVER at the whistle, up to two highlights, then the board once with the winner revealed last; REJOIN after a dropped link; Tondo opening doors on the floor. [Report](reports/match-end-2026-11-26/README.md). Owner play and two-PC peers open. |
 | TJ-CADENA-1109 | `tj-cadena-fixes` candidate | [Design](Design.md) Nov 9. Throw arc, defender timing and UI. Native evidence: Logs/tj-cadena-fixes/. Owner play and actual peers open. |
 | FEEL-PICKUP-1107 | Integrated on main by owner request, Nov 8 | [Design](Design.md) Nov 7. Dwell crouch, six contexts, clickable skip. Edit 4/4, exact Play 9/9: Logs/feel-pickup-revision-20261107/. Actual peers open. |
 | PAD-1107 | Hardware open | [Evidence](reports/controller-native-2026-11-07.md) |

@@ -288,7 +288,7 @@ namespace TumbangPreso.UI
                 _stoppedTime = true;
             }
 
-            PlayTheWin();
+            QueueTheWin();
             if (_nativeResult) PresentNativeResult(winningSlot);
         }
 
@@ -340,6 +340,14 @@ namespace TumbangPreso.UI
                           : "MATCH MOMENT  ·  " + NameFor(best.Value.Actor) + "  ·  " + Core.HighlightRules.Describe(best.Value))
                 : "";
             if (_board) PaintBoardMoment(best);
+        }
+
+        /// <summary>The sting lands with the winner on the board's slow reveal (`FinishPerformance`), or at once without one.</summary>
+        private void QueueTheWin()
+        {
+            _winStingPending = false;
+            if (_nativeResult && _finishFigure != null && !Settings.SettingsStore.Current.ReducedUiMotion) { _winStingPending = true; return; }
+            PlayTheWin();
         }
 
         private void PlayTheWin()
@@ -1547,7 +1555,7 @@ namespace TumbangPreso.UI
         {
             CloseCourtPicker();
             if (_rematchStarting) return;
-            _rematchStarting = true; _rematchPending = false; _awaitingBeat = 0;
+            _rematchStarting = true; _rematchPending = false; _awaitingBeat = 0; _winStingPending = false;
             RestoreTime();
             if (_canvas != null) _canvas.gameObject.SetActive(false);
             if (Hud.Instance != null && _canvas != null) Hud.Instance.SetResultHud(_canvas, false);

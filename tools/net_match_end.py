@@ -116,8 +116,10 @@ def judge_match(m, role, problems, expect_board_at_once=False):
     if not expect_board_at_once:
         if m.get('bannerSamples', 0) <= 0:
             problems.append(name + ': MATCH OVER was never seen')
-        if m.get('revealAge', 0) < 1.95:
-            problems.append(f"{name}: board at age {m.get('revealAge')}")
+        # MATCH OVER (2.0 s), then 6.8 s per highlight the host chose (protocol 195), then the board.
+        due = 2.0 + 6.8 * max(0, m.get('clips', 0) or 0)
+        if m.get('revealAge', 0) < due - 0.05:
+            problems.append(f"{name}: board at age {m.get('revealAge')}, due at {due:.2f} after {m.get('clips')} highlights")
     scores = m.get('scores') or []
     if len(scores) == 4 and winner_of(scores) != m.get('winner'):
         problems.append(f"{name}: winner {m.get('winner')} does not match scores {scores}")
@@ -218,6 +220,9 @@ def network_suite(runner, out, problems, summary, rejoin):
     ids = {m.get('id') for m in firsts.values()}
     if len(ids) != 1:
         local.append(f'peers traced different first matches: {ids}')
+    clips = {m.get('clips') for m in firsts.values()}
+    if len(clips) != 1:
+        local.append(f'peers disagree on the highlights: {clips}')
     winners = {m.get('winner') for m in firsts.values()}
     scores = {tuple(m.get('scores') or []) for m in firsts.values()}
     if len(winners) != 1 or len(scores) != 1:

@@ -10,6 +10,16 @@ namespace TumbangPreso.UI
         private RectTransform _finishFigure;
         private TumpSymbol _finishDraw;
         private float _finishEntered;
+        private RectTransform _finishStage;
+        private CanvasGroup _finishStageFade, _messageFade;
+        private bool _winStingPending;
+
+        // ⚠️ LAST PLACE FIRST, THE WINNER LAST (owner, 2026-11-26: "slowly reveal the winner bcz sobrang abrupt"). The
+        // standings come in from the bottom a beat apart, then a held breath, then the winner's row, figure and name land
+        // together with the win sting (`QueueTheWin`). The actions are live from the first frame, so nobody has to wait.
+        private const float RowFirst = .3f, RowGap = .55f, RowFade = .35f, WinnerPause = .5f, WinnerPop = .32f;
+        public const float WinnerAt = RowFirst + 3 * RowGap + WinnerPause;
+        private static float RowAt(int rank) => rank <= 0 ? WinnerAt : RowFirst + (3 - Mathf.Min(rank, 3)) * RowGap;
         private readonly HudCard[] _finishTickets=new HudCard[4];
         private readonly CanvasGroup[] _finishFades=new CanvasGroup[4];
         private readonly Vector2[] _finishRowOrigins=new Vector2[4];
@@ -20,6 +30,8 @@ namespace TumbangPreso.UI
             OwnerUiLayout.Place(stage.rectTransform, 1146, 0, 566, 469);
             stage.Glass(SheetCard, slant: 0, radius: 16);
             stage.raycastTarget = false;
+            _finishStage = stage.rectTransform; // the sheet's stage scales from where `Place` pivots it
+            _finishStageFade = stage.gameObject.AddComponent<CanvasGroup>(); // alpha only: hits on the board are unchanged
             _finishFigure=OwnerUiLayout.Rect(stage.transform,"WinnerFigure");OwnerUiLayout.Place(_finishFigure,10,6,546,457);
             _finishPreview=_finishFigure.gameObject.AddComponent<ModelPreview>();_finishPreview.Attach(_finishFigure);
             _finishCelebration=_finishFigure.gameObject.AddComponent<FinishCelebration>();
@@ -32,6 +44,7 @@ namespace TumbangPreso.UI
         {
             if(_finishFigure==null)return;
             _finishEntered=Time.unscaledTime;
+            if(_messageFade==null&&_message!=null)_messageFade=_message.gameObject.AddComponent<CanvasGroup>();
             bool hasWinner=winner>=0&&GameServices.Round?.PlayerAt(winner)!=null;
             _finishFigure.gameObject.SetActive(hasWinner);_finishDraw.gameObject.SetActive(!hasWinner);
             if(hasWinner)
@@ -74,13 +87,22 @@ namespace TumbangPreso.UI
         {
             if(_finishFigure==null||!NativeVisible)return;
             bool reduced=Settings.SettingsStore.Current.ReducedUiMotion;
+            float since=Time.unscaledTime-_finishEntered;
             for(int i=0;i<4;i++)
             {
-                float t=reduced?1:Mathf.Clamp01((Time.unscaledTime-_finishEntered-i*.065f)/.26f);
+                float t=reduced?1:Mathf.Clamp01((since-RowAt(i))/RowFade);
                 float enter=1-Mathf.Pow(1-t,3);
-                _finishFades[i].alpha=reduced?1:Mathf.Lerp(.35f,1,t);
-                (_board?_boardRows[i]:_finishTickets[i].rectTransform).anchoredPosition=_finishRowOrigins[i]+Vector2.right*(22*(1-enter));
+                _finishFades[i].alpha=t;
+                var row=_board?_boardRows[i]:_finishTickets[i].rectTransform;
+                row.anchoredPosition=_finishRowOrigins[i]+Vector2.right*((i==0?60:22)*(1-enter));
+                row.localScale=Vector3.one*(i==0?Mathf.Lerp(1.08f,1,enter):1);
             }
+            // The winner: their figure and their name pop in on the same frame as their row.
+            float w=reduced?1:Mathf.Clamp01((since-WinnerAt)/WinnerPop);
+            float pop=1-Mathf.Pow(1-w,3);
+            if(_finishStageFade!=null){_finishStageFade.alpha=w;_finishStage.localScale=Vector3.one*Mathf.Lerp(1.1f,1,pop);}
+            if(_messageFade!=null){_messageFade.alpha=w;_message.rectTransform.localScale=Vector3.one*Mathf.Lerp(1.25f,1,pop);}
+            if(_winStingPending&&(reduced||since>=WinnerAt)){_winStingPending=false;PlayTheWin();}
         }
     }
 }

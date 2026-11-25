@@ -462,5 +462,38 @@ namespace TumbangPreso.Tests
             _clock = 3010.0; beat.Tick();
             Assert.AreEqual(0, _reveals, "A cleared beat revealed a board.");
         });
+
+        // Owner 2026-11-26: "do highlights ulet after match ends tapos slowly reveal the winner". The host's whistle carries
+        // the highlights it chose; every peer holds the board until they are over, and a bad list is refused whole.
+        [Test]
+        public void TheHostsHighlightsHoldTheBoardUntilTheyAreOver() => WithClock(() =>
+        {
+            _clock = 4000.0;
+            var beat = EndOnClient(7171);
+            int final = _match.TotalRounds;
+            Assert.IsFalse(beat.Receive(7171, final, 4000.0, new long[] { 11, 12, 13 }), "More highlights than the reel holds were accepted.");
+            Assert.IsFalse(beat.Receive(7171, final, 4000.0, new long[] { 11, 11 }), "One highlight twice was accepted.");
+            Assert.IsFalse(beat.Receive(7171, final, 4000.0, new long[] { 0 }), "A highlight with no clip was accepted.");
+            Assert.IsFalse(beat.HostTimed, "A refused whistle timed the beat.");
+            Assert.AreEqual(0, beat.ClipCount);
+
+            Assert.IsTrue(beat.Receive(7171, final, 4000.0, new long[] { 21, 22 }), "The host's whistle with its highlights was refused.");
+            Assert.AreEqual(2, beat.ClipCount);
+            Assert.AreEqual(21, beat.ClipAt(0));
+            Assert.AreEqual(22, beat.ClipAt(1));
+            Assert.AreEqual(MatchEndBeat.Duration + 2 * MatchEndBeat.ClipSeconds, beat.RevealAt, 1e-4);
+
+            _clock = 4000.0 + MatchEndBeat.Duration + 0.01; beat.Tick();
+            Assert.AreEqual(0, _reveals, "The board came over the highlights.");
+            Assert.IsTrue(MatchEndBeat.Holding);
+            _clock = 4000.0 + beat.RevealAt - 0.01; beat.Tick();
+            Assert.AreEqual(0, _reveals, "The board cut the last highlight short.");
+            _clock = 4000.0 + beat.RevealAt + 0.01; beat.Tick();
+            Assert.AreEqual(1, _reveals, "The board did not come when the highlights were over.");
+            Assert.IsFalse(beat.Receive(7171, final, 4000.0, new long[] { 31 }), "A resend changed the highlights.");
+            Assert.AreEqual(2, beat.ClipCount);
+            beat.Tick();
+            Assert.AreEqual(1, _reveals, "The board was revealed twice.");
+        });
     }
 }

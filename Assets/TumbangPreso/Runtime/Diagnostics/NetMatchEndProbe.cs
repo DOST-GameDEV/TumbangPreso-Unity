@@ -55,6 +55,7 @@ namespace TumbangPreso.Diagnostics
             public List<string> restLate = new List<string>();
             public bool leftoverInNext, ended; public string endPath = "";
             public float firstSeenAge = -1;
+            public int clips = -1, clipsShown = -1;
         }
 
         private readonly List<MatchTrace> _matches = new List<MatchTrace>();
@@ -87,6 +88,7 @@ namespace TumbangPreso.Diagnostics
             rules.RoundSeconds = Mathf.Clamp(IntArg("-tp-matchend-seconds", 30), CustomGameRules.MinRoundSeconds, CustomGameRules.MaxRoundSeconds);
             rules.ScoreTarget = Mathf.Clamp(IntArg("-tp-matchend-target", 0), CustomGameRules.MinScoreTarget, CustomGameRules.MaxScoreTarget);
             rules.ManualReady = false;
+            rules.MapVote = false; // the court under test is the one named, not a vote's
             SceneFlow.PinSelectedRules(rules);
             SceneFlow.SelectedMode = mode;
         }
@@ -148,11 +150,14 @@ namespace TumbangPreso.Diagnostics
             float waited = 0;
             while (waited < 30f && (GameServices.Round == null || GameServices.Round.Players.Count < Balance.PlayerCount))
             { waited += Time.unscaledDeltaTime; yield return null; }
+            // ⚠️ THE COURT BEGINS ITS OWN MATCH after its arrival. Beginning the runner here as well put a second match
+            // on top of the first (2026-11-26 harness: every offline court "never ended", each traced a restart), so it
+            // is only begun when the court has not begun one by itself.
             var runner = FindFirstObjectByType<SliceRunner>();
-            if (runner != null && !runner.Running) runner.Begin();
             for (float t = 0; t < 120f; t += Time.unscaledDeltaTime)
             {
                 if (GameServices.Round != null && GameServices.Round.RoundActive) break;
+                if (t > 45f && runner != null && !runner.Running) runner.Begin();
                 var gate = FindFirstObjectByType<ReadyGate>();
                 if (gate != null && gate.AwaitingReady && !gate.CountingDown) gate.StartLocalCountdown();
                 yield return null;
@@ -179,6 +184,7 @@ namespace TumbangPreso.Diagnostics
             StepOfflineRematch();
             StepHostStart();
             StepSpectator();
+            StepLobbyReady();
             // The opening film is checked on its own (`OpeningGroundingTests`); a run of endings does not sit through it.
             if (Settings.SettingsStore.Current.CinematicCameraMotion) Settings.SettingsStore.Current.CinematicCameraMotion = false;
 
@@ -234,6 +240,8 @@ namespace TumbangPreso.Diagnostics
             _current.revealAge = MatchEndBeat.Instance != null ? MatchEndBeat.Instance.Age : -1;
             _current.hostTimed = MatchEndBeat.Instance != null && MatchEndBeat.Instance.HostTimed;
             _current.corrections = MatchEndBeat.Instance != null ? MatchEndBeat.Instance.Corrections : -1;
+            _current.clips = MatchEndBeat.Instance != null ? MatchEndBeat.Instance.ClipCount : -1;
+            _current.clipsShown = MatchEndBeat.Instance != null ? MatchEndBeat.Instance.ClipsShown : -1;
             _current.restAtReveal = Bodies();
             StartCoroutine(AfterReveal(_current));
             Debug.Log($"[MatchEndProbe] reveal match={id} winner={winner} age={_current.revealAge:0.00} host={_current.hostTimed} " +
@@ -264,7 +272,7 @@ namespace TumbangPreso.Diagnostics
             }
         }
 
-        private float _nextStartCheck, _nextSeatRequest;
+        private float _nextStartCheck, _nextSeatRequest, _nextReady;
         private bool _startSent;
 
         /// <summary>Host: START GAME from the visible room once the players and one spectator are seated.</summary>
@@ -277,11 +285,27 @@ namespace TumbangPreso.Diagnostics
             if (net == null || !net.IsAdmitted || hub == null || !(hub.Top is UI.Hub.HubLobby)) return;
             int peers = IntArg("-tp-matchend-peers", 2);
             if (net.Lobby.PlayingPeerCount() < peers || !net.Lobby.Peers.Any(p => p.Spectator)) return;
+            // A custom room's START GAME waits for its guests' READY (`HostBeginCharacterSelection`); pressed earlier it
+            // does nothing, and it is pressed once.
+            if (MatchRpc.Instance == null || !MatchRpc.Instance.LobbyGuestsReady) return;
             _startSent = true;
             string map = Arg("-tp-matchend-map") ?? SceneFlow.Eskinita;
             hub.Host.SelectMap(map);
             hub.Host.StartGame();
             _notes.Add("host pressed START GAME on " + map);
+        }
+
+        /// <summary>A seated guest presses READY in the room and LOCK IN at character select, as a player does.</summary>
+        private void StepLobbyReady()
+        {
+            if (_role == "offline" || _role == "host" || _role == "spectator" || GameLaunch.Spectator
+                || Time.realtimeSinceStartup < _nextReady) return;
+            var net = NetSession.Instance;
+            var rpc = MatchRpc.Instance;
+            if (net == null || !net.IsAdmitted || rpc == null || net.Lobby.MatchInProgress
+                || FindFirstObjectByType<ReadyGate>() != null) return;
+            _nextReady = Time.realtimeSinceStartup + 1.0f;
+            rpc.DeclareReadyServerRpc(true);
         }
 
         /// <summary>Spectator: ask the room for a watcher's place before the match starts.</summary>
@@ -464,11 +488,13 @@ namespace TumbangPreso.Diagnostics
                     "\"id\":{0},\"map\":\"{1}\",\"mode\":\"{2}\",\"totalRounds\":{3},\"scoreTarget\":{4},\"ended\":{5},\"endPath\":\"{6}\",\"finalRound\":{7}," +
                     "\"whistleWall\":{8},\"firstBannerWall\":{9},\"revealWall\":{10},\"boardWall\":{11},\"reveals\":{12},\"bannerSamples\":{13}," +
                     "\"boardSamplesDuringBeat\":{14},\"hostTimed\":{15},\"revealAge\":{16},\"firstSeenAge\":{17},\"corrections\":{18},\"winner\":{19}," +
-                    "\"rematchOffered\":{20},\"rematchHidden\":{21},\"timePausedAfterReveal\":{22},\"leftoverInNext\":{23},\"liveRoundSeen\":{24}",
+                    "\"rematchOffered\":{20},\"rematchHidden\":{21},\"timePausedAfterReveal\":{22},\"leftoverInNext\":{23},\"liveRoundSeen\":{24}," +
+                    "\"clips\":{25},\"clipsShown\":{26}",
                     m.id, m.map, m.mode, m.totalRounds, m.scoreTarget, B(m.ended), m.endPath, m.finalRound,
                     m.whistleWall, m.firstBannerWall, m.revealWall, m.boardWall, m.reveals, m.bannerSamples,
                     m.boardSamplesDuringBeat, B(m.hostTimed), m.revealAge, m.firstSeenAge, m.corrections, m.winner,
-                    B(m.rematchOffered), B(m.rematchHidden), B(m.timePausedAfterReveal), B(m.leftoverInNext), B(m.liveRoundSeen));
+                    B(m.rematchOffered), B(m.rematchHidden), B(m.timePausedAfterReveal), B(m.leftoverInNext), B(m.liveRoundSeen),
+                    m.clips, m.clipsShown);
                 json.Append(",\"scores\":[").Append(m.scores == null ? "" : string.Join(",", m.scores)).Append(']');
                 json.Append(",\"restAtReveal\":[").Append(string.Join(",", m.restAtReveal.Select(s => "\"" + s + "\""))).Append(']');
                 json.Append(",\"restLate\":[").Append(string.Join(",", m.restLate.Select(s => "\"" + s + "\""))).Append(']');

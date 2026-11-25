@@ -1,4 +1,4 @@
-# MATCH-END-1126: the final whistle, rejoin and grounded openings
+# MATCH-END-1126: the final whistle, highlights, rejoin and grounded openings
 
 Owner handoff, 2026-11-25 and 2026-11-26. The match ending felt abrupt, bodies could be left in the
 air under the result board, things in the opening films floated, and rejoining had to be safe.
@@ -15,21 +15,41 @@ Windows only: no macOS player this time.
    carries, vine pulls and swings end. At 1.45 s the silent leaving band (`ReplayStinger.CoverLeaving`)
    crosses. Under it, the host moves anyone still unsettled to a safe map spot through the
    authoritative teleport (`CharacterMotor.CorrectUnrestedForMatchEnd`).
-4. At 2.0 s the existing board is revealed once (`MatchEndBeat.Revealed`, then `MatchResult.RevealBoard`).
-   Standings, result music, progression, rematch, next map and return all work as before. Single
-   player now really stops its clock under the board. Before, the runner's own scale request at the
-   whistle overrode the board's pause.
+4. After any highlights (below), the existing board is revealed once (`MatchEndBeat.Revealed`, then
+   `MatchResult.RevealBoard`). Standings, result music, progression, rematch, next map and return all
+   work as before. Single player now really stops its clock under the board. Before, the runner's own
+   scale request at the whistle overrode the board's pause.
+
+## Highlights, then the winner
+
+Owner, 2026-11-26: the end was still too abrupt. Play highlights after the match ends, then reveal the
+winner slowly.
+
+1. At the whistle the host picks up to two of this match's recorded moments from the replay archive
+   (`MatchReplayArchive`). It takes the most important ones that last 4.5 s or less and plays them in
+   the order they happened. Online it only picks clips every peer already holds.
+2. After MATCH OVER, the REPLAY band crosses and each clip plays in a 6.8 s slot at the halftime
+   replay's pace, slowed around the hit. The band crosses again between clips, and the silent leaving
+   band carries the last one into the board. The board comes at 2.0 s, 8.8 s or 15.6 s.
+3. A match with no recorded moment, or Reduced UI motion, goes from MATCH OVER to the board as
+   before. A peer that does not hold a clip keeps MATCH OVER up for that slot, so every peer still
+   reaches the board together.
+4. The board then reveals itself slowly. The standings come in from last place, 0.55 s apart. After a
+   held half second, the winner's row, figure and name land together with the win sting
+   (`MatchResult.WinnerAt`, 2.45 s). REMATCH, NEXT and HOME work from the first frame. Reduced UI
+   motion shows it all at once.
 
 ## The same ending for everyone
 
 - The host stamps the beat's start on the shared clock (`SharedUltimatePhase.Now`) and sends `MatchEnd`
-  (match id, final round, start) right after the terminal snapshot, on the same reliable stream.
-  Protocol 194.
+  (match id, final round, start and the highlight ids) right after the terminal snapshot, on the same
+  reliable stream. Protocol 195.
 - A client times its beat from the host's stamp. A late or rejoining peer sees only what is left of
   it, or the board at once. A client whose terminal snapshot is late keeps MATCH OVER up until the
   snapshot lands.
-- The message is refused for another match, a round out of range, or a start that is not finite or
-  is in the future. Duplicates and resends change nothing. A rematch, a new match, a scene change or a
+- The message is refused for another match, a round out of range, a start that is not finite or is
+  in the future, or a bad highlight list (more than two, a repeat, or an empty id). Duplicates and
+  resends change nothing. A rematch, a new match, a scene change or a
   transport change clears the beat.
 
 ## Rejoin
@@ -77,8 +97,15 @@ only.
 | `play4` | The opening on all five Banaue layouts | Failed: the `hagdan` walk-in, 0.5 to 1.0 m up |
 | `play5` | The opening, after the Banaue fix | 1/1 passed: six courts, five Banaue layouts |
 | `edit1` | CompletedMatchArrivalTests, protocol pins, three CONNECTION LOST cases | 20/20 passed |
+| `edit2` | CompletedMatchArrivalTests with the highlight timeline, protocol 195 pins | 18/18 passed |
+| `play6` | MatchEndBeatTests with the slow reveal, VictoryInputTests, the native result case | Victory 2/2 passed. The beat cases failed: the live board's winner card was outside the reveal (fixed: one `WinnerStage`), and that failure's reveal counter leaked into the next cases (now dropped in teardown) |
+| `play7` | MatchEndBeatTests, the winner presentation case | 5 of 6 passed, slow reveal included. AIRBURST: a body grounded 0.67 m over the floor, on something the support probe ignored |
+| `play8` | AIRBURST, and a recorded can knockdown played as a highlight | 2/2 passed: highlight 1/1 drawn with MATCH OVER down, board at 8.85 s, then the slow reveal |
 
-Victory input (2/2, `play1`) and all five `MatchEndBeatTests` (`play2`) pass.
+Victory input (2/2, `play1` and `play6`) and all six `MatchEndBeatTests` (`play7` and `play8`) pass.
+The support probe used to ignore every body, the can and the tsinelas; it now ignores only the
+body's own colliders and names what each body stands on. The airburst lands differently from run
+to run, and play8 did not repeat play7's position, so what that body stood on is not known.
 `TumpNativeResultTests.RealMatchEndParksTouchAndLeavesOverlayResultActionsHittable` now waits out
 the beat, and its board actions are hittable. It still fails its last check, which looks for live
 HUD layers under the board's own canvas. The board has been a root canvas since 9e1aac96a
@@ -88,4 +115,7 @@ Source audits: the findings that name files this change touched are rows unchang
 These are allowlist rows, cue rows and anonymous subscriptions. The new `MatchEnd` message reads
 "no writer in this file", as `MatchBreak` and `MatchMoment` do, because its writer is in a partial.
 
-Built-player runs (`tools/net_match_end.py`, `tools/net_resilience.py`) are recorded in the PR.
+The first built-player run of `tools/net_match_end.py` (on c3da27dad) failed in the probe, not the
+game. Offline it began the match itself, and the court then began its own, so every court "never
+ended". Online the host pressed START GAME before its guest was READY, which a custom room ignores
+since a354b468d. The probe now waits for the court and readies seated guests first.

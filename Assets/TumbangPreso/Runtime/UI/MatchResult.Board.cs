@@ -97,8 +97,14 @@ namespace TumbangPreso.UI
                 _rows.Add(new[] { place, name, score, title });
             }
 
-            // The winner on a sunburst, under MATCH WINNER, with their name on a kit card below.
-            var winner = HubKnit.Piece(page, "WinnerCard", Knit.Card, 1230, 232, 580, 626);
+            // The winner on a sunburst, under MATCH WINNER, with their name on a kit card below. All three are one stage,
+            // so the board can land the winner last (`FinishPerformance`); it grows from its own centre.
+            var stage = HubKnit.In(OwnerUiLayout.Rect(page, "WinnerStage"), 1230, 232, 580, 626 + HubKnit.SlabHeight);
+            var centre = new Vector2(.5f, .5f) - stage.pivot;
+            stage.pivot = new Vector2(.5f, .5f);
+            stage.anchoredPosition += Vector2.Scale(centre, stage.sizeDelta);
+            _finishStage = stage; _finishStageFade = stage.gameObject.AddComponent<CanvasGroup>();
+            var winner = HubKnit.Piece(stage, "WinnerCard", Knit.Card, 0, 0, 580, 626);
             var face2 = HubKnit.FaceOf(winner);
             HubKnit.Picture(face2, "Burst", Resources.Load<Texture2D>("UI/break/burst-winner"), 0, 0, 580, 626, .5f, HubKnit.ShowCardCut).CutEnd = HubKnit.ShowCardCut;
             _finishFigure = OwnerUiLayout.Rect(face2, "WinnerFigure"); HubKnit.In(_finishFigure, 20, 104, 540, 400);
@@ -108,11 +114,11 @@ namespace TumbangPreso.UI
             HubKnit.In(_finishDraw.rectTransform, 190, 170, 200, 240); _finishDraw.Kind = TumpSymbol.Icon.Can;
             _finishDraw.color = CourtPresentationPalette.Red; _finishDraw.raycastTarget = false; _finishDraw.gameObject.SetActive(false);
             HubKnit.RimOver(face2);
-            var banner = HubKnit.Tag(page, "WinnerBanner", "MATCH WINNER", Knit.Go, 66);
-            HubKnit.In(banner, 1330, 264, 380, 66);
+            var banner = HubKnit.Tag(stage, "WinnerBanner", "MATCH WINNER", Knit.Go, 66);
+            HubKnit.In(banner, 100, 32, 380, 66);
             _finishCaption = HubKnit.FaceOf(banner) != null ? HubKnit.FaceOf(banner).GetComponentInChildren<Text>() : banner.GetComponentInChildren<Text>();
             _finishCaption.name = "WinnerCaption";
-            var tag = HubKnit.Piece(page, "WinnerTag", Knit.Card, 1250, 734, 540, 92);
+            var tag = HubKnit.Piece(stage, "WinnerTag", Knit.Card, 20, 502, 540, 92);
             _winnerName = HubKnit.Display(HubKnit.FaceOf(tag), "WinnerName", "", 60, HubKnit.KitCream, TextAnchor.MiddleCenter);
             OwnerUiLayout.Fill(_winnerName.rectTransform); _winnerName.rectTransform.offsetMin = new Vector2(16, 0); _winnerName.rectTransform.offsetMax = new Vector2(-16, 0);
             _winnerName.horizontalOverflow = HorizontalWrapMode.Wrap; _winnerName.resizeTextForBestFit = true; _winnerName.resizeTextMinSize = 32; _winnerName.resizeTextMaxSize = 60;
